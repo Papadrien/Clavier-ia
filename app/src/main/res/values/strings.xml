@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Clavier AZERTY</string>
+    <string name="ime_name">Clavier AZERTY</string>
+    <string name="subtype_fr">Français (AZERTY)</string>
+    <string name="main_title">Clavier AZERTY</string>
+    <string name="main_description">Clavier Android minimal français AZERTY.\n\nPour l&#8217;utiliser :\n1. Appuyez sur «&#160;Activer le clavier&#160;»\n2. Activez «&#160;Clavier AZERTY&#160;»\n3. Appuyez sur «&#160;Choisir la méthode de saisie&#160;» puis sélectionnez «&#160;Clavier AZERTY&#160;».</string>
+    <string name="button_enable">Activer le clavier</string>
+    <string name="button_select">Choisir la méthode de saisie</string>
+</resources>
