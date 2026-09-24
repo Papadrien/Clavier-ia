@@ -19,7 +19,7 @@ une implémentation propre a été préférée.
 
 - **Android Gradle Plugin** 9.4.0 (Kotlin intégré, AGP 9)
 - **Gradle** 9.6.0 (wrapper inclus)
-- **minSdk** 26, **targetSdk** 37
+- **minSdk** 26, **compileSdk** 37.1, **targetSdk** 37
 - **JUnit** Jupiter 6 / JUnit Platform 6.1.3 pour les tests unitaires
 - Tests ciblés sur la logique pure : layouts (`KeyboardLayout`) et contrôleur de saisie (`KeyboardController`)
 

@@ -5,6 +5,7 @@ plugins {
 android {
     namespace = "fr.papadrien.clavier"
     compileSdk = 37
+    compileSdkMinor = 1
 
     defaultConfig {
         applicationId = "fr.papadrien.clavier"
