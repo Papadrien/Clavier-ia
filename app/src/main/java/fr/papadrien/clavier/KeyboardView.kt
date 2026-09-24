@@ -8,13 +8,14 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.os.Handler
 import android.os.Looper
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 
 @SuppressLint("ViewConstructor")
 class KeyboardView(context: Context) : View(context) {
 
-    interface OnKeyListener {
+    fun interface OnKeyListener {
         fun onKey(key: Key)
     }
 
@@ -79,7 +80,7 @@ class KeyboardView(context: Context) : View(context) {
         val rowHeight = height / layout.rows.size.toFloat()
 
         layout.rows.forEachIndexed { rowIndex, row ->
-            val totalWeight = row.sumOf { it.weight }
+            val totalWeight = row.fold(0f) { acc, key -> acc + key.weight }
             val top = rowIndex * rowHeight
             var left = 0f
 
@@ -124,11 +125,17 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     private fun autoSizeTextPaint(key: Key) {
-        var size = 22f * resources.displayMetrics.scaledDensity
+        val defaultSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP, 22f, resources.displayMetrics,
+        )
+        val bigSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP, 26f, resources.displayMetrics,
+        )
         if (key.id == "backspace" || key.id == "enter" || key.id == "shift" || key.id == "toggle") {
-            size = 26f * resources.displayMetrics.scaledDensity
+            textPaint.textSize = bigSize
+        } else {
+            textPaint.textSize = defaultSize
         }
-        textPaint.textSize = size
     }
 
     private fun displayLabel(key: Key): String = when (val action = key.action) {
@@ -194,7 +201,7 @@ class KeyboardView(context: Context) : View(context) {
         val rowHeight = height / rows.size.toFloat()
         val rowIndex = (y / rowHeight).toInt().coerceIn(0, rows.lastIndex)
         val row = rows[rowIndex]
-        val totalWeight = row.sumOf { it.weight }
+        val totalWeight = row.fold(0f) { acc, key -> acc + key.weight }
         var acc = 0f
         for (key in row) {
             acc += width * key.weight / totalWeight

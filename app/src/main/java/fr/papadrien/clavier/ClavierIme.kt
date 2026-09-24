@@ -1,6 +1,7 @@
 package fr.papadrien.clavier
 
 import android.inputmethodservice.InputMethodService
+import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 
@@ -44,7 +45,7 @@ class ClavierIme : InputMethodService() {
         if (isMultiline || !hasAction) {
             currentInputConnection?.commitText("\n", 1)
         } else {
-            performEditorAction(action)
+            sendDownUpKeyEvents(KeyEvent.KEYCODE_ENTER)
         }
     }
 
