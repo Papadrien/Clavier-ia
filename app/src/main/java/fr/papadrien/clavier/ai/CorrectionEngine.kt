@@ -45,7 +45,14 @@ class CorrectionEngine(private val appContext: Context) {
         return withContext(Dispatchers.Default) {
             activeEngine.createConversation(conversationConfig).use { conversation ->
                 val response = conversation.sendMessage(text)
-                response.text?.trim().orEmpty()
+                // `Message.text` n'existe pas encore dans litertlm-android 0.17.1 (build en
+                // erreur : "Unresolved reference 'text'"). La doc officielle Kotlin
+                // (https://ai.google.dev/edge/litert-lm/android) montre `print(conversation
+                // .sendMessage(...))` et `println("Answer: $response")` : Message expose donc
+                // sa réponse texte via toString(). À remplacer par `response.text` si une
+                // montée de version de litertlm-android l'expose un jour (vérifier
+                // l'autocomplétion sur `response.` dans Android Studio).
+                response.toString().trim()
             }
         }
     }
