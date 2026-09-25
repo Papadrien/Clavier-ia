@@ -18,6 +18,7 @@ import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import android.widget.LinearLayout
 import android.widget.Toast
+import android.util.Log
 import fr.papadrien.clavier.ai.CorrectionEngine
 import fr.papadrien.clavier.ai.VoiceEngine
 import fr.papadrien.clavier.ai.VoiceRecorder
@@ -84,7 +85,10 @@ class ClavierIme : InputMethodService() {
             )
             addView(
                 keyboardView,
-                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
+                LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    resources.displayMetrics.heightPixels / 3,
+                ),
             )
         }
 
@@ -179,6 +183,7 @@ class ClavierIme : InputMethodService() {
                 correctionBar.state = CorrectionBarState.CORRECTING
                 applyCorrection(ic, captured, corrected)
             } catch (t: Throwable) {
+                Log.e(TAG, "Échec de la correction IA", t)
                 Toast.makeText(
                     this@ClavierIme,
                     getString(R.string.correction_error, t.message ?: t.javaClass.simpleName),
@@ -344,6 +349,7 @@ class ClavierIme : InputMethodService() {
                 voiceRecorder = recorder
                 recorder.start()
             } catch (t: Throwable) {
+                Log.e(TAG, "Échec du démarrage de l'enregistrement vocal", t)
                 isRecording = false
                 correctionBar.voiceState = VoiceBarState.IDLE
                 Toast.makeText(
@@ -372,6 +378,7 @@ class ClavierIme : InputMethodService() {
                     currentInputConnection?.commitText(text, 1)
                 }
             } catch (t: Throwable) {
+                Log.e(TAG, "Échec de la transcription vocale", t)
                 Toast.makeText(
                     this@ClavierIme,
                     getString(R.string.voice_error, t.message ?: t.javaClass.simpleName),
@@ -417,6 +424,7 @@ class ClavierIme : InputMethodService() {
     }
 
     companion object {
+        private const val TAG = "ClavierIme"
         private const val MAX_ACCESSIBLE_CHARS = 10_000
 
         /** #5A7FD4 (couleur accent existante du clavier) avec transparence (alpha 0x55). */
