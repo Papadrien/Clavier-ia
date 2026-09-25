@@ -35,4 +35,18 @@
         android:layout_height="wrap_content"
         android:text="@string/button_select" />
 
+    <Button
+        android:id="@+id/button_model_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/button_model_settings" />
+
+    <Button
+        android:id="@+id/button_voice_model_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/button_voice_model_settings" />
+
 </LinearLayout>

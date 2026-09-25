@@ -7,4 +7,35 @@
     <string name="main_description">Clavier Android minimal français AZERTY.\n\nPour l&#8217;utiliser :\n1. Appuyez sur «&#160;Activer le clavier&#160;»\n2. Activez «&#160;Clavier AZERTY&#160;»\n3. Appuyez sur «&#160;Choisir la méthode de saisie&#160;» puis sélectionnez «&#160;Clavier AZERTY&#160;».</string>
     <string name="button_enable">Activer le clavier</string>
     <string name="button_select">Choisir la méthode de saisie</string>
+    <string name="button_model_settings">Modèle IA</string>
+
+    <string name="model_settings_title">Modèle IA</string>
+    <string name="model_settings_description">Prototype : aucun téléchargement. Choisissez un modèle dans la liste, puis fournissez vous-même le fichier .litertlm correspondant depuis le stockage du téléphone.</string>
+    <string name="model_settings_spinner_label">Modèle</string>
+    <string name="model_settings_model_info">Modèle technique : %1$s\n\nFormat attendu : fichier %2$s (LiteRT-LM)\n\n%3$s\n\nDépôt Hugging Face de référence : %4$s\n\nAucun checksum de référence n\'est vérifié dans ce prototype : seule la taille du fichier est comparée à titre indicatif.</string>
+    <string name="model_settings_pick_file">Choisir le fichier .litertlm</string>
+    <string name="model_settings_current_file">Fichier actuel : %1$s</string>
+    <string name="model_settings_no_file">Aucun fichier fourni pour ce modèle.</string>
+    <string name="model_settings_forget_file">Oublier ce fichier</string>
+    <string name="model_settings_file_saved">Fichier enregistré pour le modèle %1$s</string>
+
+    <string name="correction_button_idle">Corriger</string>
+    <string name="correction_button_loading">Chargement du modèle…</string>
+    <string name="correction_button_correcting">Correction…</string>
+    <string name="correction_no_model_selected">Aucun modèle sélectionné : ouvrez « Modèle IA » dans les paramètres.</string>
+    <string name="correction_error">Échec de la correction : %1$s</string>
+
+    <string name="button_voice_model_settings">Modèle vocal</string>
+    <string name="voice_model_title">Modèle vocal</string>
+    <string name="voice_model_description">Prototype : aucun téléchargement. Fournissez les 4 fichiers du modèle de transcription vocale (Nemotron 3.5 ASR Streaming, export sherpa-onnx) depuis le stockage du téléphone.</string>
+    <string name="voice_model_pick_file">Choisir le fichier</string>
+    <string name="voice_model_current_file">Fichier actuel : %1$s</string>
+    <string name="voice_model_no_file">Aucun fichier fourni.</string>
+
+    <string name="voice_button_idle">Vocal</string>
+    <string name="voice_button_recording">Écoute…</string>
+    <string name="voice_button_transcribing">Transcription…</string>
+    <string name="voice_no_model_selected">Modèle vocal incomplet : ouvrez « Modèle vocal » dans les paramètres et fournissez les 4 fichiers.</string>
+    <string name="voice_permission_denied">Permission micro requise : appuyez à nouveau sur Vocal après l\'avoir accordée.</string>
+    <string name="voice_error">Échec de la transcription : %1$s</string>
 </resources>

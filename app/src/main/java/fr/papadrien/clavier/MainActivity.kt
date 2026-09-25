@@ -18,5 +18,11 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.button_select).setOnClickListener {
             startActivity(Intent(Settings.ACTION_INPUT_METHOD_SUBTYPE_SETTINGS))
         }
+        findViewById<View>(R.id.button_model_settings).setOnClickListener {
+            startActivity(Intent(this, ModelSettingsActivity::class.java))
+        }
+        findViewById<View>(R.id.button_voice_model_settings).setOnClickListener {
+            startActivity(Intent(this, VoiceModelSettingsActivity::class.java))
+        }
     }
 }
