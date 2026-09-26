@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -27,7 +28,9 @@ import kotlinx.coroutines.launch
 class VoiceRecorder(private val engine: VoiceEngine, private val scope: CoroutineScope) {
 
     private var audioRecord: AudioRecord? = null
-    private var recordingJob: Job? = null
+    private var captureJob: Job? = null
+    private var decodeJob: Job? = null
+    private var audioChannel: Channel<FloatArray>? = null
     private var stream: OnlineStream? = null
 
     /** Appelé (sur un thread d'arrière-plan) si 20s de silence continu sont détectées. */
@@ -54,7 +57,16 @@ class VoiceRecorder(private val engine: VoiceEngine, private val scope: Coroutin
         stream = voiceStream
         record.startRecording()
 
-        recordingJob = scope.launch(Dispatchers.IO) {
+        // File illimitée entre capture et décodage : si decodeAvailable() met du
+        // temps (typiquement son tout premier appel, avec le coût d'initialisation
+        // du graphe ONNX), la capture continue à vider le micro sans attendre, au
+        // lieu de laisser le petit buffer natif d'AudioRecord déborder et perdre
+        // le tout début de la phrase (bug observé sur les enregistrements un peu
+        // longs, retour du 26/09/2026).
+        val channel = Channel<FloatArray>(capacity = Channel.UNLIMITED)
+        audioChannel = channel
+
+        captureJob = scope.launch(Dispatchers.IO) {
             val buffer = ShortArray(bufferSize)
             var silenceStartAt = -1L
             while (isActive) {
@@ -62,8 +74,7 @@ class VoiceRecorder(private val engine: VoiceEngine, private val scope: Coroutin
                 if (read <= 0) continue
 
                 val samples = FloatArray(read) { i -> buffer[i] / 32768.0f }
-                voiceStream.acceptWaveform(samples, SAMPLE_RATE)
-                engine.decodeAvailable(voiceStream)
+                channel.trySend(samples)
 
                 val now = System.currentTimeMillis()
                 if (rms(buffer, read) < SILENCE_RMS_THRESHOLD) {
@@ -77,13 +88,29 @@ class VoiceRecorder(private val engine: VoiceEngine, private val scope: Coroutin
                     silenceStartAt = -1L
                 }
             }
+            channel.close()
+        }
+
+        decodeJob = scope.launch(Dispatchers.Default) {
+            for (samples in channel) {
+                voiceStream.acceptWaveform(samples, SAMPLE_RATE)
+                engine.decodeAvailable(voiceStream)
+            }
         }
     }
 
     /** Arrête l'enregistrement et renvoie le texte transcrit final. */
     suspend fun stopAndGetResult(): String {
-        recordingJob?.cancelAndJoin()
-        recordingJob = null
+        captureJob?.cancelAndJoin()
+        captureJob = null
+        // La capture ferme déjà le channel en fin de boucle normale, mais pas si
+        // elle est annulée en plein `record.read()` bloquant : on le referme donc
+        // ici aussi (idempotent) pour que le décodage ait bien tout reçu avant de
+        // s'arrêter à son tour.
+        audioChannel?.close()
+        decodeJob?.join()
+        decodeJob = null
+        audioChannel = null
         audioRecord?.let {
             it.stop()
             it.release()
