@@ -10,9 +10,11 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import fr.papadrien.clavier.ai.CorrectionPromptPreferences
 import fr.papadrien.clavier.model.AiModel
 import fr.papadrien.clavier.model.ModelPreferences
 import fr.papadrien.clavier.model.sizeWarning
@@ -28,11 +30,14 @@ import fr.papadrien.clavier.model.sizeWarning
 class ModelSettingsActivity : Activity() {
 
     private lateinit var preferences: ModelPreferences
+    private lateinit var promptPreferences: CorrectionPromptPreferences
     private lateinit var spinner: Spinner
     private lateinit var textModelInfo: TextView
     private lateinit var textCurrentFile: TextView
     private lateinit var textSizeWarning: TextView
     private lateinit var buttonForgetFile: Button
+    private lateinit var editCorrectionPrompt: EditText
+    private lateinit var textPromptStatus: TextView
 
     /** Modèle actuellement affiché dans la page (correspond à la sélection du spinner). */
     private var displayedModel: AiModel = AiModel.entriesOrdered().first()
@@ -41,12 +46,35 @@ class ModelSettingsActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_model_settings)
         preferences = ModelPreferences(this)
+        promptPreferences = CorrectionPromptPreferences(this)
 
         spinner = findViewById(R.id.spinner_model)
         textModelInfo = findViewById(R.id.text_model_info)
         textCurrentFile = findViewById(R.id.text_current_file)
         textSizeWarning = findViewById(R.id.text_size_warning)
         buttonForgetFile = findViewById(R.id.button_forget_file)
+        editCorrectionPrompt = findViewById(R.id.edit_correction_prompt)
+        textPromptStatus = findViewById(R.id.text_prompt_status)
+
+        editCorrectionPrompt.setText(promptPreferences.get())
+        refreshPromptStatus()
+
+        findViewById<Button>(R.id.button_save_prompt).setOnClickListener {
+            val newPrompt = editCorrectionPrompt.text.toString()
+            if (newPrompt.isBlank()) {
+                promptPreferences.reset()
+            } else {
+                promptPreferences.set(newPrompt)
+            }
+            refreshPromptStatus()
+            Toast.makeText(this, getString(R.string.correction_prompt_saved), Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<Button>(R.id.button_reset_prompt).setOnClickListener {
+            promptPreferences.reset()
+            editCorrectionPrompt.setText(promptPreferences.get())
+            refreshPromptStatus()
+        }
 
         val models = AiModel.entriesOrdered()
         spinner.adapter = ArrayAdapter(
@@ -156,6 +184,13 @@ class ModelSettingsActivity : Activity() {
             buttonForgetFile.visibility = View.GONE
             textSizeWarning.visibility = View.GONE
         }
+    }
+
+    private fun refreshPromptStatus() {
+        textPromptStatus.text = getString(
+            if (promptPreferences.isCustom()) R.string.correction_prompt_status_custom
+            else R.string.correction_prompt_status_default,
+        )
     }
 
     /** Code de requête stable pour distinguer les 4 sélecteurs de fichier (onActivityResult). */

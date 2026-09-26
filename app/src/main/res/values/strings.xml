@@ -19,6 +19,14 @@
     <string name="model_settings_forget_file">Oublier ce fichier</string>
     <string name="model_settings_file_saved">Fichier enregistré pour le modèle %1$s</string>
 
+    <string name="correction_prompt_title">Prompt de correction (test)</string>
+    <string name="correction_prompt_description">Instruction système envoyée au modèle pour l\'action "Corriger". Le prompt par défaut interdit de changer un mot qui n\'est pas une faute d\'orthographe/grammaire - ce qui empêche aussi de corriger un mot mal retranscrit par la saisie vocale. Modifiez-le ici pour tester d\'autres formulations, sans avoir à recompiler.</string>
+    <string name="correction_prompt_save">Enregistrer ce prompt</string>
+    <string name="correction_prompt_reset">Réinitialiser au prompt par défaut</string>
+    <string name="correction_prompt_saved">Prompt de correction enregistré.</string>
+    <string name="correction_prompt_status_custom">Prompt personnalisé actif.</string>
+    <string name="correction_prompt_status_default">Prompt par défaut du prototype.</string>
+
     <string name="correction_button_idle">Corriger</string>
     <string name="correction_button_loading">Chargement du modèle…</string>
     <string name="correction_button_correcting">Correction…</string>
