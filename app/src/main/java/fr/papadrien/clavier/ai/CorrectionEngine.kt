@@ -42,9 +42,18 @@ class CorrectionEngine(private val appContext: Context) {
         val conversationConfig = ConversationConfig(
             systemInstruction = Contents.of(CorrectionPrompt.SYSTEM),
         )
+        // Les petits modèles (ex. gemma-3-270m-it, "Ultra-léger") respectent mal le
+        // rôle système seul et peuvent halluciner (observé : le modèle paraphrase le
+        // prompt système au lieu de corriger un mot ambigu comme "touile"). On répète
+        // donc l'instruction essentielle directement dans le tour utilisateur, en plus
+        // du systemInstruction, ce qui améliore nettement la fiabilité sur les petits
+        // modèles sans rien changer pour les plus gros.
+        val userTurn = "Corrige uniquement l'orthographe et la grammaire du texte ci-dessous. " +
+            "Réponds uniquement avec le texte corrigé, rien d'autre : aucune phrase " +
+            "d'introduction, aucun commentaire, aucun guillemet.\n\nTexte à corriger :\n$text"
         return withContext(Dispatchers.Default) {
             activeEngine.createConversation(conversationConfig).use { conversation ->
-                val response = conversation.sendMessage(text)
+                val response = conversation.sendMessage(userTurn)
                 // `Message.text` n'existe pas encore dans litertlm-android 0.17.1 (build en
                 // erreur : "Unresolved reference 'text'"). La doc officielle Kotlin
                 // (https://ai.google.dev/edge/litert-lm/android) montre `print(conversation
