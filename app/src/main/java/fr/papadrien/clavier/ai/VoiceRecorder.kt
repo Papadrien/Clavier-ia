@@ -9,6 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -36,6 +39,21 @@ class VoiceRecorder(private val engine: VoiceEngine, private val scope: Coroutin
     /** Appelé (sur un thread d'arrière-plan) si 20s de silence continu sont détectées. */
     var onSilenceTimeout: (() -> Unit)? = null
 
+    private val _partialText = MutableStateFlow("")
+
+    /**
+     * Hypothèse de transcription courante, mise à jour en continu pendant
+     * l'enregistrement au fil du décodage streaming sherpa-onnx (et non plus
+     * seulement disponible à la fin via [stopAndGetResult]). Permet à
+     * l'appelant d'insérer le texte au fur et à mesure dans le champ de
+     * saisie. Chaque nouvelle valeur remplace entièrement la précédente : le
+     * décodeur en streaming peut réviser des mots déjà "affichés" au fil des
+     * mots suivants, donc l'appelant doit toujours retirer l'insertion
+     * précédente avant d'insérer la nouvelle plutôt que de simplement
+     * concaténer.
+     */
+    val partialText: StateFlow<String> = _partialText.asStateFlow()
+
     @Suppress("MissingPermission") // Vérifié par l'appelant avant d'appeler start().
     fun start() {
         val minBufferSize = AudioRecord.getMinBufferSize(
@@ -55,6 +73,7 @@ class VoiceRecorder(private val engine: VoiceEngine, private val scope: Coroutin
         audioRecord = record
         val voiceStream = engine.createStream()
         stream = voiceStream
+        _partialText.value = ""
         record.startRecording()
 
         // File illimitée entre capture et décodage : si decodeAvailable() met du
@@ -95,6 +114,7 @@ class VoiceRecorder(private val engine: VoiceEngine, private val scope: Coroutin
             for (samples in channel) {
                 voiceStream.acceptWaveform(samples, SAMPLE_RATE)
                 engine.decodeAvailable(voiceStream)
+                _partialText.value = engine.currentText(voiceStream)
             }
         }
     }
@@ -123,7 +143,9 @@ class VoiceRecorder(private val engine: VoiceEngine, private val scope: Coroutin
 
         finalStream.inputFinished()
         engine.decodeAvailable(finalStream)
-        return engine.currentText(finalStream)
+        val finalText = engine.currentText(finalStream)
+        _partialText.value = finalText
+        return finalText
     }
 
     private fun rms(buffer: ShortArray, length: Int): Double {

@@ -27,6 +27,7 @@ import fr.papadrien.clavier.model.VoiceModelPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 
 class ClavierIme : InputMethodService() {
@@ -63,6 +64,13 @@ class ClavierIme : InputMethodService() {
     private var isRecording = false
     private var isHoldModeRecording = false
     private var longPressTriggered = false
+
+    // Insertion progressive de l'hypothèse de transcription pendant
+    // l'enregistrement (streaming sherpa-onnx) : on retient ce qui a déjà été
+    // inséré pour pouvoir le remplacer entièrement à chaque nouvelle
+    // hypothèse plutôt que de simplement l'ajouter à la suite.
+    private var voicePartialJob: Job? = null
+    private var insertedPartialText = ""
     private val longPressRunnable = Runnable {
         longPressTriggered = true
         isHoldModeRecording = true
@@ -332,6 +340,7 @@ class ClavierIme : InputMethodService() {
         }
 
         isRecording = true
+        insertedPartialText = ""
         correctionBar.voiceState = VoiceBarState.RECORDING
         serviceScope.launch {
             try {
@@ -348,6 +357,13 @@ class ClavierIme : InputMethodService() {
                 }
                 voiceRecorder = recorder
                 recorder.start()
+                // Insertion au fur et à mesure : chaque nouvelle hypothèse remplace
+                // entièrement la précédente (le décodeur streaming peut réviser des
+                // mots déjà affichés), le texte final restera inséré par
+                // stopVoiceRecording()/cancelVoiceRecording() une fois l'écoute arrêtée.
+                voicePartialJob = serviceScope.launch {
+                    recorder.partialText.collect { partial -> applyVoicePartialText(partial) }
+                }
             } catch (t: Throwable) {
                 Log.e(TAG, "Échec du démarrage de l'enregistrement vocal", t)
                 isRecording = false
@@ -371,12 +387,16 @@ class ClavierIme : InputMethodService() {
         isRecording = false
         correctionBar.voiceState = VoiceBarState.TRANSCRIBING
         serviceScope.launch {
+            // On arrête d'abord de suivre les hypothèses partielles pour ne pas
+            // risquer une mise à jour concurrente pendant qu'on insère le texte final.
+            voicePartialJob?.cancelAndJoin()
+            voicePartialJob = null
             try {
                 val text = recorder.stopAndGetResult()
-                if (text.isNotBlank()) {
-                    // Décision 6.4 : insertion automatique au curseur, sans aperçu, sans surlignage.
-                    currentInputConnection?.commitText(text, 1)
-                }
+                // Décision 6.4 : insertion automatique au curseur, sans aperçu, sans
+                // surlignage — le texte final remplace ici la dernière hypothèse
+                // partielle déjà insérée pendant l'écoute (peut différer légèrement).
+                replaceInsertedPartialText(text)
             } catch (t: Throwable) {
                 Log.e(TAG, "Échec de la transcription vocale", t)
                 Toast.makeText(
@@ -398,12 +418,61 @@ class ClavierIme : InputMethodService() {
         isRecording = false
         correctionBar.voiceState = VoiceBarState.IDLE
         serviceScope.launch {
+            voicePartialJob?.cancelAndJoin()
+            voicePartialJob = null
             try {
                 recorder.stopAndGetResult()
             } catch (_: Throwable) {
                 // Le clavier se ferme de toute façon : rien à faire de plus.
             }
+            // Enregistrement annulé : on retire l'hypothèse partielle déjà insérée
+            // pendant l'écoute (best effort — l'InputConnection peut ne plus être
+            // valide si le champ a déjà perdu le focus à ce stade).
+            replaceInsertedPartialText(null)
         }
+    }
+
+    /**
+     * Remplace le texte de la dernière hypothèse partielle insérée
+     * (voir [insertedPartialText]) par [finalText] ("null" pour un simple
+     * retrait, sans rien insérer à la place — cas de l'annulation).
+     */
+    private fun replaceInsertedPartialText(finalText: String?) {
+        val ic = currentInputConnection
+        if (ic == null) {
+            insertedPartialText = ""
+            return
+        }
+        ic.beginBatchEdit()
+        if (insertedPartialText.isNotEmpty()) {
+            ic.deleteSurroundingText(insertedPartialText.length, 0)
+        }
+        if (!finalText.isNullOrBlank()) {
+            ic.commitText(finalText, 1)
+        }
+        ic.endBatchEdit()
+        insertedPartialText = ""
+    }
+
+    /**
+     * Insère l'hypothèse de transcription courante à la place de la
+     * précédente pendant l'enregistrement. Le décodeur en streaming peut
+     * réviser des mots déjà "affichés" au fil des mots suivants : on
+     * remplace donc toujours l'insertion précédente en bloc plutôt que de
+     * concaténer.
+     */
+    private fun applyVoicePartialText(partial: String) {
+        if (partial == insertedPartialText) return
+        val ic = currentInputConnection ?: return
+        ic.beginBatchEdit()
+        if (insertedPartialText.isNotEmpty()) {
+            ic.deleteSurroundingText(insertedPartialText.length, 0)
+        }
+        if (partial.isNotEmpty()) {
+            ic.commitText(partial, 1)
+        }
+        ic.endBatchEdit()
+        insertedPartialText = partial
     }
 
     private fun pressEnter() {
