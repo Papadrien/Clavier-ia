@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Clavier-ia"
+rootProject.name = "Taipo"
 include(":app")

@@ -3,12 +3,12 @@ plugins {
 }
 
 android {
-    namespace = "fr.papadrien.clavier"
+    namespace = "fr.junade.taipo"
     compileSdk = 37
     compileSdkMinor = 1
 
     defaultConfig {
-        applicationId = "fr.papadrien.clavier"
+        applicationId = "fr.junade.taipo"
         minSdk = 26
         targetSdk = 37
         versionCode = 1
