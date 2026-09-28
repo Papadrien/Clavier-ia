@@ -46,6 +46,12 @@ class ClavierIme : InputMethodService() {
 
     private val correctionEngine by lazy { CorrectionEngine(applicationContext) }
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
+    private val keyboardPreferences by lazy { KeyboardPreferences(applicationContext) }
+
+    // Story 1.5 : rangée de chiffres, relue à chaque ouverture de champ
+    // (onStartInputView) pour prendre en compte un changement fait dans les paramètres.
+    private var numberRowEnabled = false
+
     private val personalDictionary by lazy { PersonalDictionaryProvider.repository(applicationContext) }
 
     private val voiceEngine by lazy { VoiceEngine(applicationContext) }
@@ -88,6 +94,7 @@ class ClavierIme : InputMethodService() {
         // personnel est asynchrone ; on la déclenche dès la création du
         // service pour qu'elle soit prête avant la première frappe.
         personalDictionary
+        numberRowEnabled = keyboardPreferences.isNumberRowEnabled
     }
 
     override fun onCreateInputView(): View {
@@ -124,6 +131,7 @@ class ClavierIme : InputMethodService() {
         // *changement* de subtype : on resynchronise ici explicitement au cas
         // où le subtype actif (choisi avant l'affichage du clavier, ou par
         // défaut au premier lancement) n'a jamais généré de callback.
+        numberRowEnabled = keyboardPreferences.isNumberRowEnabled
         controller.setLanguage(currentKeyboardLanguage())
         controller.reset()
         syncAutoCapitalization()
@@ -604,7 +612,7 @@ class ClavierIme : InputMethodService() {
     }
 
     private fun applyState() {
-        keyboardView.layout = Keyboards.layoutOf(controller.state.activeLayout, controller.state.language)
+        keyboardView.layout = Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled)
         keyboardView.isShifted = controller.state.isShifted
     }
 

@@ -88,8 +88,33 @@ object Keyboards {
         ),
     )
 
-    fun layoutOf(id: LayoutId, language: KeyboardLanguage = KeyboardLanguage.FR): KeyboardLayout = when (id) {
-        LayoutId.LETTERS -> if (language == KeyboardLanguage.EN) lettersEn else letters
+    /**
+     * Rangée de chiffres (story 1.5) : 1 à 0, comme sur un clavier physique
+     * (ordre différent de la rangée de chiffres du clavier symboles, qui
+     * commence par 0 pour rester compatible avec son historique).
+     */
+    private val numberRow: List<Key> = "1234567890".map(::digit)
+
+    /** Variantes pré-construites (évite de reconstruire un layout à chaque frappe). */
+    private val lettersWithNumberRow = letters.withNumberRow()
+    private val lettersEnWithNumberRow = lettersEn.withNumberRow()
+
+    private fun KeyboardLayout.withNumberRow() = copy(rows = listOf(numberRow) + rows)
+
+    /**
+     * Layout à afficher. [numberRow] (story 1.5) ajoute la rangée de chiffres
+     * en haut du clavier de lettres ; il est sans effet sur le clavier
+     * symboles, qui contient déjà ses propres chiffres.
+     */
+    fun layoutOf(
+        id: LayoutId,
+        language: KeyboardLanguage = KeyboardLanguage.FR,
+        numberRow: Boolean = false,
+    ): KeyboardLayout = when (id) {
+        LayoutId.LETTERS -> when (language) {
+            KeyboardLanguage.EN -> if (numberRow) lettersEnWithNumberRow else lettersEn
+            KeyboardLanguage.FR -> if (numberRow) lettersWithNumberRow else letters
+        }
         LayoutId.SYMBOLS -> symbols
     }
 

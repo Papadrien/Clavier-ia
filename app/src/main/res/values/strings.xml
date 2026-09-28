@@ -62,4 +62,9 @@
     <string name="personal_dictionary_invalid">Mot invalide : 2 à 40 caractères, lettres, apostrophe ou trait d\'union uniquement (pas d\'espace ni de chiffre).</string>
     <string name="personal_dictionary_error">Le dictionnaire personnel est momentanément inaccessible. Réessayez.</string>
     <string name="personal_dictionary_full">Dictionnaire plein (%1$d mots maximum).</string>
+
+    <string name="button_keyboard_settings">Paramètres du clavier</string>
+    <string name="keyboard_settings_title">Paramètres du clavier</string>
+    <string name="keyboard_settings_number_row">Rangée de chiffres</string>
+    <string name="keyboard_settings_number_row_description">Affiche une rangée de chiffres (1 à 0) au-dessus des lettres. Désactivée, les chiffres restent accessibles via la touche « 123 ». S\'applique à la prochaine ouverture du clavier.</string>
 </resources>

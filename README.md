@@ -3,7 +3,7 @@
 Clavier Android natif minimal en français (AZERTY) : on tape simplement sur les touches pour écrire.
 
 - Lettres AZERTY (avec touche Maj, une seule lettre en majuscule)
-- Chiffres et symboles (bascule `123` / `ABC`)
+- Chiffres et symboles (bascule `123` / `ABC`) ; **rangée de chiffres** optionnelle au-dessus des lettres (Paramètres du clavier)
 - Ponctuation (`?`, `,`, `.`, `!`, accents français `é è ç à`, apostrophe, parenthèses…)
 - **Dictionnaire personnel** (écran « Dictionnaire personnel ») : mots ajoutés à la main, jamais corrigés par l'autocorrection locale et utilisés comme candidats de correction ; stocké dans une base **Room chiffrée par SQLCipher**
 - Touches **effacer** (⌫, répétition maintenue) et **entrée** (⏎)

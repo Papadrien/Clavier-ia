@@ -136,6 +136,64 @@ class KeyboardLayoutTest {
         assertEquals(Keyboards.symbols, Keyboards.layoutOf(LayoutId.SYMBOLS, KeyboardLanguage.EN))
     }
 
+    // Story 1.5 : rangée de chiffres activable.
+
+    private val languages = KeyboardLanguage.entries
+
+    private fun lettersWithNumberRow(language: KeyboardLanguage) =
+        Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow = true)
+
+    @Test
+    fun `layoutOf sans rangee de chiffres est le comportement par defaut`() {
+        languages.forEach { language ->
+            assertEquals(
+                Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow = false),
+                Keyboards.layoutOf(LayoutId.LETTERS, language),
+            )
+            assertEquals(4, Keyboards.layoutOf(LayoutId.LETTERS, language).rows.size)
+        }
+    }
+
+    @Test
+    fun `la rangee de chiffres ajoute en haut les chiffres 1 a 0 dans l ordre`() {
+        languages.forEach { language ->
+            val layout = lettersWithNumberRow(language)
+            assertEquals(5, layout.rows.size)
+            val topRow = layout.rows.first().mapNotNull { (it.action as? KeyAction.TypeChar)?.char }
+            assertEquals("1234567890".toList(), topRow)
+        }
+    }
+
+    @Test
+    fun `la rangee de chiffres laisse les autres rangees inchangees`() {
+        languages.forEach { language ->
+            val base = Keyboards.layoutOf(LayoutId.LETTERS, language)
+            assertEquals(base.rows, lettersWithNumberRow(language).rows.drop(1))
+            assertEquals(base.id, lettersWithNumberRow(language).id)
+        }
+    }
+
+    @Test
+    fun `la rangee de chiffres respecte les regles des layouts`() {
+        languages.forEach { language ->
+            val layout = lettersWithNumberRow(language)
+            val ids = layout.rows.flatten().map { it.id }
+            assertEquals(ids.size, ids.distinct().size, "Ids en double dans ${layout.id} ($language)")
+            assertTrue(layout.rows.all { it.size <= 10 })
+            assertTrue(layout.rows.flatten().all { it.weight > 0f })
+        }
+    }
+
+    @Test
+    fun `la rangee de chiffres est sans effet sur le clavier symboles`() {
+        languages.forEach { language ->
+            assertEquals(
+                Keyboards.symbols,
+                Keyboards.layoutOf(LayoutId.SYMBOLS, language, numberRow = true),
+            )
+        }
+    }
+
     private fun assertActionPresent(layout: KeyboardLayout, action: KeyAction) {
         assertTrue(
             layout.rows.flatten().any { it.action == action },
