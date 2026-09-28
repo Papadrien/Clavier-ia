@@ -20,9 +20,16 @@ data class Key(
     val secondary: Boolean = false,
     /**
      * Symboles proposés par un appui long sur la touche, sous forme de grille (rangées de
-     * caractères). Vide si la touche n'a pas d'appui long.
+     * caractères, la rangée du bas étant la plus proche du doigt) : accents d'une lettre
+     * (story 1.8) ou symboles du point. Vide si la touche n'a pas de bulle d'appui long.
      */
     val popup: List<List<Char>> = emptyList(),
+    /**
+     * Chiffre des touches du haut quand la rangée de chiffres est désactivée (story 1.6), affiché
+     * en petit indice sur la touche. Un appui long le saisit directement, sauf si la touche a une
+     * bulle [popup] (story 1.8) : le chiffre en est alors le premier choix.
+     */
+    val longPressChar: Char? = null,
 )
 
 data class KeyboardLayout(
@@ -52,6 +59,52 @@ object Keyboards {
         listOf('(', ')', '#', '!', ',', '?'),
     )
 
+    /**
+     * Story 1.8 : caractères proposés par un appui long sur une lettre, du plus courant au moins
+     * courant (le premier est celui qu'on veut le plus souvent). Français : accents français
+     * d'abord ; anglais : accents des emprunts (café, naïve, señor...).
+     */
+    private val accentsFr: Map<Char, String> = mapOf(
+        'a' to "àâæáäãåā",
+        'c' to "çćč",
+        'e' to "éèêëēę",
+        'i' to "îïíìī",
+        'l' to "ł",
+        'n' to "ñń",
+        'o' to "ôœöòóõøō",
+        's' to "ßśš",
+        'u' to "ùûüúū",
+        'y' to "ÿý",
+        'z' to "žźż",
+    )
+
+    private val accentsEn: Map<Char, String> = mapOf(
+        'a' to "áàâäæãåā",
+        'c' to "çćč",
+        'e' to "éèêëēę",
+        'i' to "íìîïī",
+        'l' to "ł",
+        'n' to "ñń",
+        'o' to "óòôöœõøō",
+        's' to "ßśš",
+        'u' to "úùûüū",
+        'y' to "ýÿ",
+        'z' to "žźż",
+    )
+
+    /** Nombre maximal de caractères par rangée de la bulle (au-delà, la bulle passe sur 2 rangées). */
+    private const val POPUP_MAX_COLUMNS = 5
+
+    /**
+     * Range [items] (par ordre de priorité) en grille : la première rangée, celle des choix les
+     * plus courants, est en bas, au plus près du doigt.
+     */
+    private fun popupGrid(items: List<Char>): List<List<Char>> =
+        items.chunked(POPUP_MAX_COLUMNS).reversed()
+
+    /** Inverse de [popupGrid] : les caractères par ordre de priorité. */
+    private fun popupItems(popup: List<List<Char>>): List<Char> = popup.reversed().flatten()
+
     /** Rangée du bas : le ! et le ? sont accessibles par appui long sur le point, ce qui agrandit l'espace. */
     private val punctuationRow = listOf(
         Key("comma", ",", KeyAction.TypeChar(','), secondary = true),
@@ -60,27 +113,50 @@ object Keyboards {
         Key("enter", "⏎", KeyAction.Enter, 1.8f),
     )
 
-    /** Disposition AZERTY (français). */
-    val letters = KeyboardLayout(
+    /** Disposition AZERTY (français), sans les chiffres en appui long (voir [letters]). */
+    private val lettersBase = KeyboardLayout(
         id = LayoutId.LETTERS,
         rows = listOf(
-            "azertyuiop".map(::letter),
-            "qsdfghjklm".map(::letter),
-            listOf(shiftKey(1.4f)) + "wxcvbn".map(::letter) + listOf(apostrophe, backspace),
+            "azertyuiop".map { letter(it, accentsFr) },
+            "qsdfghjklm".map { letter(it, accentsFr) },
+            listOf(shiftKey(1.4f)) + "wxcvbn".map { letter(it, accentsFr) } + listOf(apostrophe, backspace),
             listOf(toggleLetters) + punctuationRow,
         ),
     )
 
-    /** Disposition QWERTY (anglais), décision 1.1. */
-    val lettersEn = KeyboardLayout(
+    /** Disposition QWERTY (anglais), décision 1.1, sans les chiffres en appui long. */
+    private val lettersEnBase = KeyboardLayout(
         id = LayoutId.LETTERS,
         rows = listOf(
-            "qwertyuiop".map(::letter),
-            "asdfghjkl".map(::letter),
-            listOf(shiftKey()) + "zxcvbnm".map(::letter) + listOf(backspace),
+            "qwertyuiop".map { letter(it, accentsEn) },
+            "asdfghjkl".map { letter(it, accentsEn) },
+            listOf(shiftKey()) + "zxcvbnm".map { letter(it, accentsEn) } + listOf(backspace),
             listOf(toggleLetters) + punctuationRow,
         ),
     )
+
+    /**
+     * Story 1.6 : quand la rangée de chiffres est désactivée, les 10 touches de la rangée du haut
+     * saisissent 1 à 0 (dans l'ordre) par appui long, comme sur Gboard. Story 1.8 : quand la touche
+     * a aussi des accents, le chiffre est le premier choix de la bulle, suivi des accents.
+     */
+    private fun KeyboardLayout.withTopRowLongPressDigits() = copy(
+        rows = listOf(
+            rows.first().mapIndexed { i, key ->
+                val digit = NUMBER_ROW_CHARS[i]
+                key.copy(
+                    longPressChar = digit,
+                    popup = if (key.popup.isEmpty()) key.popup else popupGrid(listOf(digit) + popupItems(key.popup)),
+                )
+            },
+        ) + rows.drop(1),
+    )
+
+    /** Disposition AZERTY (français) : rangée de chiffres désactivée, chiffres en appui long. */
+    val letters = lettersBase.withTopRowLongPressDigits()
+
+    /** Disposition QWERTY (anglais) : rangée de chiffres désactivée, chiffres en appui long. */
+    val lettersEn = lettersEnBase.withTopRowLongPressDigits()
 
     val symbols = KeyboardLayout(
         id = LayoutId.SYMBOLS,
@@ -108,18 +184,24 @@ object Keyboards {
      * (ordre différent de la rangée de chiffres du clavier symboles, qui
      * commence par 0 pour rester compatible avec son historique).
      */
-    private val numberRow: List<Key> = "1234567890".map(::digit)
+    private const val NUMBER_ROW_CHARS = "1234567890"
+    private val numberRow: List<Key> = NUMBER_ROW_CHARS.map(::digit)
 
-    /** Variantes pré-construites (évite de reconstruire un layout à chaque frappe). */
-    private val lettersWithNumberRow = letters.withNumberRow()
-    private val lettersEnWithNumberRow = lettersEn.withNumberRow()
+    /**
+     * Variantes pré-construites (évite de reconstruire un layout à chaque frappe). Elles partent
+     * des bases sans appui long : avec la rangée de chiffres, les chiffres sont déjà à l'écran.
+     */
+    private val lettersWithNumberRow = lettersBase.withNumberRow()
+    private val lettersEnWithNumberRow = lettersEnBase.withNumberRow()
 
     private fun KeyboardLayout.withNumberRow() = copy(rows = listOf(numberRow) + rows)
 
     /**
      * Layout à afficher. [numberRow] (story 1.5) ajoute la rangée de chiffres
      * en haut du clavier de lettres ; il est sans effet sur le clavier
-     * symboles, qui contient déjà ses propres chiffres.
+     * symboles, qui contient déjà ses propres chiffres. Sans rangée de chiffres
+     * (story 1.6), les chiffres restent accessibles via la bascule `123` et par
+     * appui long sur les touches du haut.
      */
     fun layoutOf(
         id: LayoutId,
@@ -133,8 +215,13 @@ object Keyboards {
         LayoutId.SYMBOLS -> symbols
     }
 
-    private fun letter(c: Char): Key =
-        Key("letter_$c", c.toString(), KeyAction.TypeChar(c))
+    private fun letter(c: Char, accents: Map<Char, String> = emptyMap()): Key =
+        Key(
+            "letter_$c",
+            c.toString(),
+            KeyAction.TypeChar(c),
+            popup = accents[c]?.let { popupGrid(it.toList()) }.orEmpty(),
+        )
 
     private fun digit(c: Char): Key =
         Key("digit_$c", c.toString(), KeyAction.TypeChar(c))

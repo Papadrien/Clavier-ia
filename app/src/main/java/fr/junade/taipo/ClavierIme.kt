@@ -39,6 +39,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 class ClavierIme : InputMethodService() {
 
@@ -135,6 +136,7 @@ class ClavierIme : InputMethodService() {
     override fun onCreateInputView(): View {
         keyboardView = KeyboardView(this)
         keyboardView.setOnKeyListener { key -> onKeyPressed(key) }
+        keyboardView.setOnCursorMoveListener { steps -> onCursorMoved(steps) }
 
         correctionBar = CorrectionBarView(this)
         correctionBar.setOnCorrectListener { onCorrectClicked() }
@@ -142,6 +144,9 @@ class ClavierIme : InputMethodService() {
 
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
+            // Story 1.8 : la bulle d'accents des touches du haut est dessinée par le clavier
+            // au-dessus de sa propre zone, par-dessus la barre d'actions.
+            clipChildren = false
             addView(
                 correctionBar,
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
@@ -256,6 +261,14 @@ class ClavierIme : InputMethodService() {
         }
         pendingAutocorrection = null
 
+        // Suppression avec une sélection : on efface la sélection, pas le caractère avant son début.
+        if (key.action == KeyAction.Backspace && deleteSelectedText()) {
+            syncAutoCapitalization()
+            applyState()
+            updateCorrectionBarVisibility()
+            return
+        }
+
         // Story 1.3 : dictionnaire local pour l'autocorrection (pas d'IA, pas
         // d'apprentissage auto) — le mot qui vient de se terminer est vérifié
         // juste avant que la touche de ponctuation/espace/entrée qui le
@@ -287,6 +300,24 @@ class ClavierIme : InputMethodService() {
         }
         applyState()
         updateCorrectionBarVisibility()
+    }
+
+    /**
+     * Story 1.7 : glissement sur la barre espace. Déplace le curseur de [steps] caractères
+     * (négatif = vers la gauche) via des touches directionnelles, ce qui replie aussi une
+     * éventuelle sélection et respecte les caractères composés du champ.
+     */
+    private fun onCursorMoved(steps: Int) {
+        val ic = currentInputConnection ?: return
+        clearHighlightIfNeeded()
+        pendingAutocorrection = null
+        val keyCode = if (steps < 0) KeyEvent.KEYCODE_DPAD_LEFT else KeyEvent.KEYCODE_DPAD_RIGHT
+        repeat(abs(steps)) {
+            ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, keyCode))
+            ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, keyCode))
+        }
+        syncAutoCapitalization()
+        applyState()
     }
 
     /**
@@ -339,6 +370,16 @@ class ClavierIme : InputMethodService() {
         ic.commitText(correction, 1)
         ic.endBatchEdit()
         return AppliedAutocorrection(original = word, corrected = correction)
+    }
+
+    /** Efface le texte sélectionné dans le champ actif. Renvoie faux s'il n'y a pas de sélection. */
+    private fun deleteSelectedText(): Boolean {
+        val ic = currentInputConnection ?: return false
+        val hasSelection = !ic.getSelectedText(0).isNullOrEmpty() ||
+            (lastSelectionStart >= 0 && lastSelectionEnd >= 0 && lastSelectionStart != lastSelectionEnd)
+        if (!hasSelection) return false
+        ic.commitText("", 1) // remplace la sélection par du vide
+        return true
     }
 
     /**

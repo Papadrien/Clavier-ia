@@ -167,8 +167,11 @@ class KeyboardLayoutTest {
     @Test
     fun `la rangee de chiffres laisse les autres rangees inchangees`() {
         languages.forEach { language ->
+            // Les chiffres en appui long (story 1.6) disparaissent avec la rangée de chiffres :
+            // on compare donc sans eux.
             val base = Keyboards.layoutOf(LayoutId.LETTERS, language)
-            assertEquals(base.rows, lettersWithNumberRow(language).rows.drop(1))
+                .rows.map { row -> row.map { it.copy(longPressChar = null) } }
+            assertEquals(base, lettersWithNumberRow(language).rows.drop(1))
             assertEquals(base.id, lettersWithNumberRow(language).id)
         }
     }
@@ -192,6 +195,62 @@ class KeyboardLayoutTest {
                 Keyboards.layoutOf(LayoutId.SYMBOLS, language, numberRow = true),
             )
         }
+    }
+
+    // Story 1.6 : rangée de chiffres désactivée → chiffres via `123` ou appui long sur les touches du haut.
+
+    @Test
+    fun `sans rangee de chiffres les touches du haut saisissent 1 a 0 par appui long`() {
+        languages.forEach { language ->
+            val topRow = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow = false).rows.first()
+            assertEquals(10, topRow.size)
+            assertEquals("1234567890".toList(), topRow.map { it.longPressChar })
+        }
+    }
+
+    @Test
+    fun `l appui long des chiffres suit la disposition AZERTY et QWERTY`() {
+        val fr = Keyboards.letters.rows.first().associate { (it.action as KeyAction.TypeChar).char to it.longPressChar }
+        assertEquals('1', fr['a'])
+        assertEquals('2', fr['z'])
+        assertEquals('0', fr['p'])
+        val en = Keyboards.lettersEn.rows.first().associate { (it.action as KeyAction.TypeChar).char to it.longPressChar }
+        assertEquals('1', en['q'])
+        assertEquals('2', en['w'])
+        assertEquals('0', en['p'])
+    }
+
+    @Test
+    fun `seule la rangee du haut porte des chiffres en appui long`() {
+        languages.forEach { language ->
+            val layout = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow = false)
+            assertTrue(layout.rows.drop(1).flatten().all { it.longPressChar == null })
+        }
+    }
+
+    @Test
+    fun `avec la rangee de chiffres aucune touche n a de chiffre en appui long`() {
+        languages.forEach { language ->
+            assertTrue(lettersWithNumberRow(language).rows.flatten().all { it.longPressChar == null })
+        }
+    }
+
+    @Test
+    fun `le clavier symboles reste accessible avec les chiffres quand la rangee est desactivee`() {
+        languages.forEach { language ->
+            val layout = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow = false)
+            assertActionPresent(layout, KeyAction.ToggleLayout)
+            val digits = Keyboards.layoutOf(LayoutId.SYMBOLS, language).rows.flatten()
+                .mapNotNull { (it.action as? KeyAction.TypeChar)?.char }.filter { it.isDigit() }
+            assertEquals("0123456789".toList().sorted(), digits.sorted())
+        }
+    }
+
+    @Test
+    fun `un chiffre saisi par appui long est commit tel quel meme avec Maj actif`() {
+        val controller = KeyboardController(KeyboardState(isShifted = true))
+        val result = controller.onKey(Key("longpress_1", "1", KeyAction.TypeChar('1')))
+        assertEquals("1", result.commit)
     }
 
     // Apostrophe, rangée du bas et appui long sur le point.
@@ -236,6 +295,108 @@ class KeyboardLayoutTest {
             assertTrue(c in symbols, "Le symbole $c doit être dans la bulle du point")
         }
         assertTrue('.' !in symbols)
+    }
+
+    // Story 1.8 : appui long sur une lettre = bulle d'accents, sélection par glissement.
+
+    private fun letterKey(layout: KeyboardLayout, c: Char) =
+        layout.rows.flatten().first { it.id == "letter_$c" }
+
+    /** Caractères de la bulle par ordre de priorité (la rangée du bas est la plus proche du doigt). */
+    private fun popupItems(key: Key) = key.popup.reversed().flatten()
+
+    @Test
+    fun `les voyelles francaises proposent leurs accents en appui long`() {
+        val letters = Keyboards.layoutOf(LayoutId.LETTERS, KeyboardLanguage.FR, numberRow = true)
+        assertEquals("éèêë", popupItems(letterKey(letters, 'e')).take(4).joinToString(""))
+        assertEquals("àâæ", popupItems(letterKey(letters, 'a')).take(3).joinToString(""))
+        assertEquals("îï", popupItems(letterKey(letters, 'i')).take(2).joinToString(""))
+        assertEquals("ôœ", popupItems(letterKey(letters, 'o')).take(2).joinToString(""))
+        assertEquals("ùûü", popupItems(letterKey(letters, 'u')).take(3).joinToString(""))
+        assertEquals('ç', popupItems(letterKey(letters, 'c')).first())
+        assertEquals('ÿ', popupItems(letterKey(letters, 'y')).first())
+    }
+
+    @Test
+    fun `le clavier anglais propose aussi des accents en appui long`() {
+        val letters = Keyboards.layoutOf(LayoutId.LETTERS, KeyboardLanguage.EN, numberRow = true)
+        assertEquals('é', popupItems(letterKey(letters, 'e')).first())
+        assertTrue('ñ' in popupItems(letterKey(letters, 'n')))
+    }
+
+    @Test
+    fun `les lettres sans variante n ont pas de bulle`() {
+        val letters = Keyboards.layoutOf(LayoutId.LETTERS, KeyboardLanguage.FR, numberRow = true)
+        listOf('q', 'b', 'd', 'k', 'w').forEach { c ->
+            assertTrue(letterKey(letters, c).popup.isEmpty(), "La lettre $c ne doit pas avoir de bulle")
+        }
+    }
+
+    @Test
+    fun `les bulles d accents sont bien formees`() {
+        languages.forEach { language ->
+            listOf(true, false).forEach { numberRow ->
+                Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow).rows.flatten()
+                    .filter { it.id.startsWith("letter_") && it.popup.isNotEmpty() }
+                    .forEach { key ->
+                        val items = key.popup.flatten()
+                        assertEquals(items.size, items.distinct().size, "Doublon dans la bulle de ${key.id}")
+                        assertTrue(key.popup.all { row -> row.isNotEmpty() && row.size <= 5 }, key.id)
+                        assertTrue(key.popup.size <= 2, "Au plus 2 rangées pour ${key.id}")
+                    }
+            }
+        }
+    }
+
+    @Test
+    fun `sans rangee de chiffres le chiffre est le premier choix de la bulle des touches du haut`() {
+        val fr = Keyboards.layoutOf(LayoutId.LETTERS, KeyboardLanguage.FR, numberRow = false)
+        assertEquals('3', popupItems(letterKey(fr, 'e')).first())
+        assertEquals("3éèê", popupItems(letterKey(fr, 'e')).take(4).joinToString(""))
+        assertEquals('3', letterKey(fr, 'e').longPressChar)
+        // Sans accents : pas de bulle, l'appui long saisit directement le chiffre (story 1.6).
+        assertTrue(letterKey(fr, 'z').popup.isNotEmpty()) // z a des variantes (ž)
+        assertTrue(letterKey(fr, 'r').popup.isEmpty())
+        assertEquals('4', letterKey(fr, 'r').longPressChar)
+    }
+
+    @Test
+    fun `avec la rangee de chiffres la bulle ne contient que des lettres`() {
+        languages.forEach { language ->
+            lettersWithNumberRow(language).rows.flatten()
+                .filter { it.id.startsWith("letter_") }
+                .forEach { key -> assertTrue(key.popup.flatten().none { it.isDigit() }, key.id) }
+        }
+    }
+
+    @Test
+    fun `seules les lettres du haut ont un chiffre en tete de bulle`() {
+        languages.forEach { language ->
+            val layout = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow = false)
+            layout.rows.drop(1).flatten().forEach { key ->
+                assertTrue(key.popup.flatten().none { it.isDigit() }, key.id)
+            }
+        }
+    }
+
+    @Test
+    fun `un accent choisi dans la bulle passe en majuscule avec Maj actif`() {
+        val controller = KeyboardController(KeyboardState(isShifted = true))
+        val result = controller.onKey(Key("popup_é", "é", KeyAction.TypeChar('é')))
+        assertEquals("É", result.commit)
+        assertEquals(false, result.newState.isShifted)
+    }
+
+    @Test
+    fun `un accent choisi dans la bulle reste en minuscule sans Maj`() {
+        val controller = KeyboardController()
+        assertEquals("é", controller.onKey(Key("popup_é", "é", KeyAction.TypeChar('é'))).commit)
+    }
+
+    @Test
+    fun `la bulle du point n a pas change`() {
+        val period = Keyboards.letters.rows.last().first { it.id == "period" }
+        assertEquals(3, period.popup.size)
     }
 
     private fun assertActionPresent(layout: KeyboardLayout, action: KeyAction) {

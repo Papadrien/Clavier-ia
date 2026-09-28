@@ -3,9 +3,11 @@
 Clavier Android natif minimal en français (AZERTY) : on tape simplement sur les touches pour écrire.
 
 - Lettres AZERTY (avec touche Maj, une seule lettre en majuscule)
-- Chiffres et symboles (bascule `123` / `ABC`) ; **rangée de chiffres** optionnelle au-dessus des lettres (Paramètres du clavier)
+- Chiffres et symboles (bascule `123` / `ABC`) ; **rangée de chiffres** optionnelle au-dessus des lettres (Paramètres du clavier) ; si elle est désactivée, les chiffres restent accessibles via `123` ou par **appui long** sur les touches de la rangée du haut (1 à 0)
 - Ponctuation (`?`, `,`, `.`, `!`, accents français `é è ç à`, apostrophe, parenthèses…)
 - **Dictionnaire personnel** (écran « Dictionnaire personnel ») : mots ajoutés à la main, jamais corrigés par l'autocorrection locale et utilisés comme candidats de correction ; stocké dans une base **Room chiffrée par SQLCipher**
+- **Appui long sur une lettre** : bulle d'accents et caractères spéciaux (é è ê ë, à â æ, ç, ô œ, ù û ü, ñ, ß…), sélection en glissant le doigt puis en le relevant sur le caractère voulu ; les lettres du haut proposent leur chiffre en premier quand la rangée de chiffres est désactivée ; les caractères passent en majuscule avec Maj
+- **Barre espace** : glisser le doigt dessus déplace le curseur (un caractère par pas), sans saisir d'espace
 - Touches **effacer** (⌫, répétition maintenue) et **entrée** (⏎)
 - Typé en Kotlin, `InputMethodService` + vue custom, sans aucune dépendance UI externe.
 

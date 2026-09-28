@@ -20,7 +20,13 @@ class KeyboardView(context: Context) : View(context) {
         fun onKey(key: Key)
     }
 
+    /** Story 1.7 : déplacement du curseur par glissement sur la barre espace (négatif = gauche). */
+    fun interface OnCursorMoveListener {
+        fun onCursorMove(steps: Int)
+    }
+
     private var keyListener: OnKeyListener? = null
+    private var cursorMoveListener: OnCursorMoveListener? = null
     private var pressedKey: Key? = null
 
     var layout: KeyboardLayout = Keyboards.letters
@@ -75,9 +81,26 @@ class KeyboardView(context: Context) : View(context) {
     private var popupCellHeight = 0f
     private var popupPadding = 0f
 
+    // Story 1.6 : vrai quand l'appui long a déjà saisi le chiffre de la touche (le relâchement ne
+    // doit alors pas saisir aussi la lettre).
+    private var longPressCommitted = false
+
+    private val hintPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#9E9E9E")
+        textAlign = Paint.Align.CENTER
+    }
+
     private val longPressRunnable = Runnable {
         val key = pressedKey ?: return@Runnable
-        if (key.popup.isNotEmpty()) showPopup(key)
+        val digit = key.longPressChar
+        if (key.popup.isNotEmpty()) {
+            // Story 1.8 : bulle d'accents / symboles, sélection par glissement du doigt.
+            showPopup(key)
+        } else if (digit != null) {
+            longPressCommitted = true
+            keyListener?.onKey(Key("longpress_$digit", digit.toString(), KeyAction.TypeChar(digit)))
+            invalidate()
+        }
     }
 
     private val repeatHandler = Handler(Looper.getMainLooper())
@@ -95,6 +118,13 @@ class KeyboardView(context: Context) : View(context) {
     fun setOnKeyListener(listener: OnKeyListener) {
         keyListener = listener
     }
+
+    fun setOnCursorMoveListener(listener: OnCursorMoveListener) {
+        cursorMoveListener = listener
+    }
+
+    // Story 1.7 : glissement horizontal sur la barre espace = déplacement du curseur.
+    private val spaceSwipe = SpaceSwipeTracker(activationPx = dp(16f), stepPx = dp(12f))
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
@@ -159,8 +189,22 @@ class KeyboardView(context: Context) : View(context) {
                     val baseline = keyRect.centerY() - (textPaint.ascent() + textPaint.descent()) / 2f
                     canvas.drawText(label, keyRect.centerX(), baseline, textPaint)
                 }
+                key.longPressChar?.let { drawLongPressHint(canvas, it) }
             }
         }
+    }
+
+    /** Petit indice du chiffre accessible par appui long, en haut à droite de la touche. */
+    private fun drawLongPressHint(canvas: Canvas, char: Char) {
+        hintPaint.textSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP, 10f, resources.displayMetrics,
+        )
+        canvas.drawText(
+            char.toString(),
+            keyRect.right - dp(7f),
+            keyRect.top + dp(3f) - hintPaint.ascent(),
+            hintPaint,
+        )
     }
 
     private fun autoSizeTextPaint(key: Key) {
@@ -197,7 +241,10 @@ class KeyboardView(context: Context) : View(context) {
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                longPressCommitted = false
+                spaceSwipe.reset()
                 pressedKey = keyAt(event.x, event.y)
+                if (pressedKey?.action is KeyAction.Space) spaceSwipe.onDown(event.x)
                 startRepeat(pressedKey)
                 scheduleLongPress(pressedKey)
                 invalidate()
@@ -208,6 +255,13 @@ class KeyboardView(context: Context) : View(context) {
                 if (popupKey != null) {
                     updatePopupSelection(event.x, event.y)
                     return true
+                }
+                if (longPressCommitted) return true
+                if (pressedKey?.action is KeyAction.Space) {
+                    val steps = spaceSwipe.onMove(event.x)
+                    if (steps != 0) cursorMoveListener?.onCursorMove(steps)
+                    // Une fois le glissement engagé, le doigt peut sortir de la barre espace sans changer de touche.
+                    if (spaceSwipe.isActive) return true
                 }
                 val current = keyAt(event.x, event.y)
                 if (current != pressedKey) {
@@ -237,6 +291,17 @@ class KeyboardView(context: Context) : View(context) {
                 }
                 val key = pressedKey
                 pressedKey = null
+                if (spaceSwipe.isActive) {
+                    // Le glissement a déplacé le curseur : le relâchement ne saisit pas d'espace.
+                    spaceSwipe.reset()
+                    invalidate()
+                    return true
+                }
+                if (longPressCommitted) {
+                    longPressCommitted = false
+                    invalidate()
+                    return true
+                }
                 if (key != null && keyAt(event.x, event.y) == key) {
                     keyListener?.onKey(key)
                 }
@@ -248,6 +313,8 @@ class KeyboardView(context: Context) : View(context) {
                 stopRepeat()
                 cancelKeyLongPress()
                 dismissPopup()
+                longPressCommitted = false
+                spaceSwipe.reset()
                 pressedKey = null
                 invalidate()
                 return true
@@ -258,7 +325,7 @@ class KeyboardView(context: Context) : View(context) {
 
     private fun scheduleLongPress(key: Key?) {
         cancelKeyLongPress()
-        if (key != null && key.popup.isNotEmpty()) {
+        if (key != null && (key.popup.isNotEmpty() || key.longPressChar != null)) {
             repeatHandler.postDelayed(longPressRunnable, ViewConfiguration.getLongPressTimeout().toLong())
         }
     }
@@ -292,18 +359,22 @@ class KeyboardView(context: Context) : View(context) {
         val gap = dp(4f)
         val padding = dp(8f)
 
-        // La bulle doit tenir dans la vue : la hauteur des cellules s'adapte à la place disponible
-        // au-dessus de la rangée de la touche.
+        // Place disponible au-dessus de la vue : la bulle peut recouvrir la barre d'actions qui la
+        // surmonte (le parent ne clippe pas ses enfants, voir ClavierIme), pas au-delà de la fenêtre.
+        val headroom = top.toFloat().coerceAtLeast(0f)
+
+        // La bulle doit tenir dans cet espace : la hauteur des cellules s'adapte à la place
+        // disponible au-dessus de la rangée de la touche.
         val cellWidth = minOf(dp(44f), (width - 2 * margin - 2 * padding) / cols)
-        val cellHeight = minOf(dp(44f), (bounds.top - gap - 2 * padding) / rows).coerceAtLeast(dp(24f))
+        val cellHeight = minOf(dp(44f), (bounds.top + headroom - gap - 2 * padding) / rows).coerceAtLeast(dp(24f))
         val popupWidth = cols * cellWidth + 2 * padding
         val popupHeight = rows * cellHeight + 2 * padding
 
         val left = (bounds.centerX() - popupWidth / 2f)
             .coerceIn(margin, (width - margin - popupWidth).coerceAtLeast(margin))
-        val top = (bounds.top - gap - popupHeight).coerceAtLeast(0f)
+        val popupTop = (bounds.top - gap - popupHeight).coerceAtLeast(-headroom)
 
-        popupRect.set(left, top, left + popupWidth, top + popupHeight)
+        popupRect.set(left, popupTop, left + popupWidth, popupTop + popupHeight)
         popupCellWidth = cellWidth
         popupCellHeight = cellHeight
         popupPadding = padding
@@ -356,10 +427,14 @@ class KeyboardView(context: Context) : View(context) {
                 if (rowIndex == popupSelectedRow && colIndex == popupSelectedCol) {
                     canvas.drawCircle(cx, cy, minOf(popupCellWidth, popupCellHeight) / 2f - dp(1f), popupSelectionPaint)
                 }
-                canvas.drawText(symbol.toString(), cx, cy + baselineOffset, popupTextPaint)
+                canvas.drawText(popupLabel(symbol), cx, cy + baselineOffset, popupTextPaint)
             }
         }
     }
+
+    /** Comme sur les touches, les lettres de la bulle passent en majuscule quand Maj est actif. */
+    private fun popupLabel(symbol: Char): String =
+        if (isShifted && symbol.isLetter()) symbol.uppercaseChar().toString() else symbol.toString()
 
     private fun keyAt(x: Float, y: Float): Key? {
         val rows = layout.rows
