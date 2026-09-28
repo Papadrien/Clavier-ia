@@ -14,6 +14,7 @@ class KeyboardSettingsActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_keyboard_settings)
+        applySystemBarInsets()
         val preferences = KeyboardPreferences(this)
 
         findViewById<CompoundButton>(R.id.switch_number_row).apply {

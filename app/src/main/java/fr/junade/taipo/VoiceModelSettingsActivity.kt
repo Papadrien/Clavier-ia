@@ -27,6 +27,7 @@ class VoiceModelSettingsActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_voice_model_settings)
+        applySystemBarInsets()
         preferences = VoiceModelPreferences(this)
 
         val container = findViewById<LinearLayout>(R.id.voice_model_file_list)

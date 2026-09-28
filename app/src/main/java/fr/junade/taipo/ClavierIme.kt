@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.inputmethodservice.InputMethodService
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.BackgroundColorSpan
@@ -21,7 +22,12 @@ import android.view.inputmethod.InputMethodSubtype
 import android.widget.LinearLayout
 import android.widget.Toast
 import android.util.Log
+import fr.junade.taipo.ai.ChangedRange
+import fr.junade.taipo.ai.CorrectedSentenceMemory
+import fr.junade.taipo.ai.CorrectionDiff
 import fr.junade.taipo.ai.CorrectionEngine
+import fr.junade.taipo.ai.CorrectionPlanner
+import fr.junade.taipo.ai.TextBlock
 import fr.junade.taipo.ai.VoiceEngine
 import fr.junade.taipo.ai.VoiceRecorder
 import fr.junade.taipo.dictionary.DictionaryLoader
@@ -60,15 +66,36 @@ class ClavierIme : InputMethodService() {
 
     private var correctionInProgress = false
 
-    // État du surlignage temporaire après correction (décision 3.2). Le
-    // surlignage disparaît dès la première action utilisateur : si c'est une
-    // touche de ce clavier, on le retire nous-mêmes avant de traiter la
-    // touche (cas sûr, cf. clearHighlightIfNeeded) ; si le curseur a bougé
-    // autrement (tap direct dans le champ), on abandonne juste l'idée de le
-    // retirer plutôt que de risquer de modifier le mauvais texte.
+    // Phrases déjà corrigées (mémoire vive uniquement) : une phrase identique n'est pas renvoyée à l'IA.
+    private val correctedSentences = CorrectedSentenceMemory()
+
+    // État du surlignage temporaire après correction (décision 3.2). Seuls les mots corrigés
+    // sont surlignés. Le surlignage disparaît dès la première action utilisateur ailleurs :
+    // touche de ce clavier, bouton Corriger/Vocal, ou déplacement du curseur dans le champ.
+    // Pour le retirer, on remplace la zone [premier mot corrigé → dernier mot corrigé] par le
+    // même texte sans surlignage (voir removeCorrectionHighlight).
     private var correctionHighlightActive = false
+
+    /** Texte brut (sans surlignage) de la zone à re-saisir : du premier au dernier mot corrigé. */
     private var correctionHighlightText = ""
-    private var awaitingOwnSelectionReport = false
+
+    /**
+     * Offset absolu, dans le champ, de la fin de la zone surlignée ; -1 si l'app ne permet pas
+     * de le connaître (dans ce cas la zone re-saisie est tout le texte, le curseur est à la fin,
+     * et le surlignage n'est retiré qu'à la frappe d'une touche).
+     */
+    private var correctionZoneEnd = -1
+
+    /** Sélection (offsets absolus) laissée par la correction : si elle bouge, l'utilisateur a agi ailleurs. */
+    private var correctionSelectionStart = -1
+    private var correctionSelectionEnd = -1
+
+    /** Dernière sélection (offsets absolus) connue, mise à jour par onUpdateSelection. */
+    private var lastSelectionStart = -1
+    private var lastSelectionEnd = -1
+
+    /** Les mises à jour de sélection reçues avant cet instant sont l'écho de nos propres modifications. */
+    private var ignoreSelectionUpdatesUntil = 0L
 
     // Saisie vocale (décision 6.1) : appui bref = bascule marche/arrêt,
     // appui long = écoute tant que le doigt reste sur le bouton.
@@ -178,11 +205,15 @@ class ClavierIme : InputMethodService() {
         candidatesEnd: Int,
     ) {
         super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd, candidatesStart, candidatesEnd)
-        if (awaitingOwnSelectionReport) {
-            // Écho de notre propre remplacement de texte après correction : ignoré.
-            awaitingOwnSelectionReport = false
-        } else if (correctionHighlightActive) {
-            correctionHighlightActive = false
+        lastSelectionStart = newSelStart
+        lastSelectionEnd = newSelEnd
+        if (correctionHighlightActive && SystemClock.uptimeMillis() >= ignoreSelectionUpdatesUntil) {
+            val selectionUnchanged = correctionZoneEnd >= 0 &&
+                newSelStart == correctionSelectionStart && newSelEnd == correctionSelectionEnd
+            if (!selectionUnchanged) {
+                // Le curseur a bougé (tap ailleurs, texte ajouté par une autre fonction) : le surlignage disparaît.
+                if (correctionZoneEnd >= 0) removeCorrectionHighlight() else correctionHighlightActive = false
+            }
         }
         if (!correctionInProgress && this::correctionBar.isInitialized) {
             updateCorrectionBarVisibility()
@@ -295,7 +326,16 @@ class ClavierIme : InputMethodService() {
 
     private fun onCorrectClicked() {
         if (correctionInProgress) return
+        clearHighlightIfNeeded()
         val ic = currentInputConnection ?: return
+
+        // Texte sélectionné : seul ce texte est corrigé (sans le principe des phrases déjà corrigées).
+        val selected = ic.getSelectedText(0)?.toString().orEmpty()
+        if (selected.isNotEmpty()) {
+            correctSelection(ic, selected)
+            return
+        }
+
         val captured = captureFieldText(ic) ?: return
         if (captured.text.isBlank()) return
 
@@ -305,15 +345,107 @@ class ClavierIme : InputMethodService() {
             return
         }
 
+        // On ne renvoie à l'IA que les phrases pas encore corrigées (nouvelles ou modifiées).
+        val blocks = CorrectionPlanner.blocksToCorrect(captured.text, correctedSentences::contains)
+        if (blocks.isEmpty()) {
+            Toast.makeText(this, getString(R.string.correction_nothing_new), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        launchCorrection {
+            val correctedBlocks = blocks.map { block ->
+                val original = captured.text.substring(block.start, block.endExclusive)
+                val corrected = correctionEngine.correct(model, original) {
+                    correctionBar.state = CorrectionBarState.LOADING
+                }
+                corrected.ifBlank { original }
+            }
+            correctionBar.state = CorrectionBarState.CORRECTING
+            applyCorrection(ic, captured, blocks, correctedBlocks)
+        }
+    }
+
+    /** Corrige uniquement le texte sélectionné ; les espaces en bordure de sélection sont conservés. */
+    private fun correctSelection(ic: InputConnection, selected: String) {
+        if (selected.isBlank()) return
+        val model = modelPreferences.activeModel()
+        if (model == null) {
+            Toast.makeText(this, getString(R.string.correction_no_model_selected), Toast.LENGTH_SHORT).show()
+            return
+        }
+        val leading = selected.length - selected.trimStart().length
+        val trailing = selected.length - selected.trimEnd().length
+        val core = selected.substring(leading, selected.length - trailing)
+
+        // Offset absolu du début de la sélection, s'il est connu (pour pouvoir retirer le surlignage plus tard).
+        val captured = captureFieldText(ic)
+        val absSelectionStart = if (captured != null && captured.startOffset >= 0) {
+            captured.startOffset + captured.beforeCursor
+        } else {
+            -1
+        }
+
+        launchCorrection {
+            val corrected = correctionEngine.correct(model, core) {
+                correctionBar.state = CorrectionBarState.LOADING
+            }.ifBlank { core }
+            correctionBar.state = CorrectionBarState.CORRECTING
+            applySelectionCorrection(ic, selected, leading, trailing, core, corrected, absSelectionStart)
+        }
+    }
+
+    private fun applySelectionCorrection(
+        ic: InputConnection,
+        selected: String,
+        leading: Int,
+        trailing: Int,
+        core: String,
+        corrected: String,
+        absSelectionStart: Int,
+    ) {
+        if (corrected == core) {
+            clearHighlightState()
+            return
+        }
+        // La sélection a pu changer pendant que le modèle travaillait : on ne remplace que si elle est identique.
+        if (ic.getSelectedText(0)?.toString() != selected) {
+            Toast.makeText(this, getString(R.string.correction_text_changed), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val ranges = CorrectionDiff.changedRanges(core, corrected).map {
+            ChangedRange(it.start + leading, it.endExclusive + leading)
+        }
+        val newText = selected.substring(0, leading) + corrected + selected.substring(selected.length - trailing)
+
+        clearHighlightState()
+        ignoreSelectionUpdatesUntil = SystemClock.uptimeMillis() + SELF_EDIT_GRACE_MS
+        ic.commitText(highlighted(newText, ranges), 1) // remplace la sélection ; le curseur se place après le texte corrigé
+        if (ranges.isEmpty()) return // uniquement des suppressions : rien à surligner
+
+        correctionHighlightActive = true
+        if (absSelectionStart >= 0) {
+            correctionHighlightText = newText.substring(ranges.first().start, ranges.last().endExclusive)
+            correctionZoneEnd = absSelectionStart + ranges.last().endExclusive
+            val cursor = absSelectionStart + newText.length
+            correctionSelectionStart = cursor
+            correctionSelectionEnd = cursor
+            lastSelectionStart = cursor
+            lastSelectionEnd = cursor
+        } else {
+            // Position inconnue : le curseur est juste après le texte corrigé, qu'on re-saisira en entier.
+            correctionHighlightText = newText
+            correctionZoneEnd = -1
+        }
+    }
+
+    /** Lance une correction en arrière-plan avec indicateur de chargement et gestion d'erreur communs. */
+    private fun launchCorrection(work: suspend () -> Unit) {
         correctionInProgress = true
         correctionBar.state = CorrectionBarState.LOADING
         serviceScope.launch {
             try {
-                val corrected = correctionEngine.correct(model, captured.text) {
-                    correctionBar.state = CorrectionBarState.LOADING
-                }
-                correctionBar.state = CorrectionBarState.CORRECTING
-                applyCorrection(ic, captured, corrected)
+                work()
             } catch (t: Throwable) {
                 Log.e(TAG, "Échec de la correction IA", t)
                 Toast.makeText(
@@ -329,7 +461,13 @@ class ClavierIme : InputMethodService() {
     }
 
     /** Texte capturé et sa longueur avant/après le curseur, pour pouvoir le remplacer précisément. */
-    private data class CapturedText(val text: String, val beforeCursor: Int, val afterCursor: Int)
+    private data class CapturedText(
+        val text: String,
+        val beforeCursor: Int,
+        val afterCursor: Int,
+        /** Offset absolu du début du texte capturé dans le champ, -1 si inconnu. */
+        val startOffset: Int = -1,
+    )
 
     /**
      * Capture le texte accessible du champ (décision 3.1 : tout le texte du
@@ -343,7 +481,7 @@ class ClavierIme : InputMethodService() {
             val text = extractedText.toString()
             val selStart = extracted.selectionStart.coerceIn(0, text.length)
             val selEnd = extracted.selectionEnd.coerceIn(0, text.length)
-            return CapturedText(text, beforeCursor = selStart, afterCursor = text.length - selEnd)
+            return CapturedText(text, beforeCursor = selStart, afterCursor = text.length - selEnd, startOffset = extracted.startOffset)
         }
         // Repli si l'app ne fournit pas d'ExtractedText.
         val before = ic.getTextBeforeCursor(MAX_ACCESSIBLE_CHARS, 0)?.toString().orEmpty()
@@ -352,46 +490,204 @@ class ClavierIme : InputMethodService() {
         return CapturedText(before + after, beforeCursor = before.length, afterCursor = after.length)
     }
 
-    private fun applyCorrection(ic: InputConnection, captured: CapturedText, correctedText: String) {
-        if (correctedText.isBlank() || correctedText == captured.text) {
-            correctionHighlightActive = false
+    /**
+     * Remplace dans le champ uniquement la zone allant de la première à la dernière phrase
+     * corrigée ; les phrases déjà corrigées situées avant, après ou entre les zones ne sont pas
+     * touchées. Seuls les mots modifiés par l'IA sont surlignés.
+     */
+    private fun applyCorrection(
+        ic: InputConnection,
+        captured: CapturedText,
+        blocks: List<TextBlock>,
+        correctedBlocks: List<String>,
+    ) {
+        val spanStart = blocks.first().start
+        val spanEnd = blocks.last().endExclusive
+        val oldSpan = captured.text.substring(spanStart, spanEnd)
+
+        // Reconstitue la zone : phrases corrigées + phrases déjà corrigées intercalées.
+        val replacement = StringBuilder()
+        val ranges = mutableListOf<ChangedRange>()
+        var cursor = spanStart
+        blocks.forEachIndexed { index, block ->
+            replacement.append(captured.text, cursor, block.start)
+            val original = captured.text.substring(block.start, block.endExclusive)
+            val corrected = correctedBlocks[index]
+            val offset = replacement.length
+            CorrectionDiff.changedRanges(original, corrected).forEach {
+                ranges += ChangedRange(it.start + offset, it.endExclusive + offset)
+            }
+            replacement.append(corrected)
+            cursor = block.endExclusive
+        }
+        val newSpan = replacement.toString()
+
+        // Ces phrases sont désormais corrigées, qu'elles aient changé ou non.
+        correctedBlocks.forEach { correctedSentences.remember(it) }
+
+        if (newSpan == oldSpan) {
+            clearHighlightState()
             return
         }
-        val spannable = SpannableString(correctedText).apply {
-            setSpan(BackgroundColorSpan(HIGHLIGHT_COLOR), 0, correctedText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
-        ic.beginBatchEdit()
-        ic.deleteSurroundingText(captured.beforeCursor, captured.afterCursor)
-        ic.commitText(spannable, 1)
-        ic.endBatchEdit()
 
+        clearHighlightState()
+        ignoreSelectionUpdatesUntil = SystemClock.uptimeMillis() + SELF_EDIT_GRACE_MS
+
+        if (captured.startOffset >= 0) {
+            replaceKnownSpan(ic, captured, spanStart, spanEnd, oldSpan, newSpan, ranges)
+        } else {
+            replaceWholeText(ic, captured, spanStart, spanEnd, newSpan, ranges)
+        }
+    }
+
+    private fun highlighted(text: String, ranges: List<ChangedRange>, shift: Int = 0) = SpannableString(text).apply {
+        ranges.forEach {
+            setSpan(
+                BackgroundColorSpan(HIGHLIGHT_COLOR),
+                it.start + shift,
+                it.endExclusive + shift,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+        }
+    }
+
+    /** Position exacte connue : remplace uniquement la zone, puis restaure la sélection de l'utilisateur. */
+    private fun replaceKnownSpan(
+        ic: InputConnection,
+        captured: CapturedText,
+        spanStart: Int,
+        spanEnd: Int,
+        oldSpan: String,
+        newSpan: String,
+        ranges: List<ChangedRange>,
+    ) {
+        val absStart = captured.startOffset + spanStart
+        val absEnd = captured.startOffset + spanEnd
+        val selStart = captured.startOffset + captured.beforeCursor
+        val selEnd = captured.startOffset + captured.text.length - captured.afterCursor
+        val delta = newSpan.length - oldSpan.length
+        fun mapOffset(offset: Int) = when {
+            offset >= absEnd -> offset + delta
+            offset <= absStart -> offset
+            else -> absStart + newSpan.length
+        }
+
+        var applied = false
+        ic.beginBatchEdit()
+        try {
+            ic.setSelection(absEnd, absEnd)
+            // Le texte a pu changer pendant que le modèle travaillait : on ne remplace que s'il est identique.
+            if (ic.getTextBeforeCursor(oldSpan.length, 0)?.toString() == oldSpan) {
+                ic.deleteSurroundingText(oldSpan.length, 0)
+                ic.commitText(highlighted(newSpan, ranges), 1)
+                applied = true
+            }
+            if (applied) {
+                ic.setSelection(mapOffset(selStart), mapOffset(selEnd))
+            } else {
+                ic.setSelection(selStart, selEnd)
+            }
+        } finally {
+            ic.endBatchEdit()
+        }
+
+        if (!applied) {
+            Toast.makeText(this, getString(R.string.correction_text_changed), Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (ranges.isEmpty()) return // uniquement des suppressions : rien à surligner
+
+        correctionHighlightText = newSpan.substring(ranges.first().start, ranges.last().endExclusive)
+        correctionZoneEnd = absStart + ranges.last().endExclusive
+        correctionSelectionStart = mapOffset(selStart)
+        correctionSelectionEnd = mapOffset(selEnd)
+        lastSelectionStart = correctionSelectionStart
+        lastSelectionEnd = correctionSelectionEnd
         correctionHighlightActive = true
-        correctionHighlightText = correctedText
-        awaitingOwnSelectionReport = true
+    }
+
+    /** Position inconnue (l'app ne fournit pas ExtractedText) : remplace tout le texte accessible autour du curseur. */
+    private fun replaceWholeText(
+        ic: InputConnection,
+        captured: CapturedText,
+        spanStart: Int,
+        spanEnd: Int,
+        newSpan: String,
+        ranges: List<ChangedRange>,
+    ) {
+        val newFull = captured.text.substring(0, spanStart) + newSpan + captured.text.substring(spanEnd)
+        val beforeExpected = captured.text.substring(0, captured.beforeCursor)
+        val afterExpected = captured.text.substring(captured.text.length - captured.afterCursor)
+
+        var applied = false
+        ic.beginBatchEdit()
+        try {
+            val before = ic.getTextBeforeCursor(captured.beforeCursor, 0)?.toString().orEmpty()
+            val after = ic.getTextAfterCursor(captured.afterCursor, 0)?.toString().orEmpty()
+            if (before == beforeExpected && after == afterExpected) {
+                ic.deleteSurroundingText(captured.beforeCursor, captured.afterCursor)
+                ic.commitText(highlighted(newFull, ranges, shift = spanStart), 1)
+                applied = true
+            }
+        } finally {
+            ic.endBatchEdit()
+        }
+
+        if (!applied) {
+            Toast.makeText(this, getString(R.string.correction_text_changed), Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (ranges.isEmpty()) return
+
+        correctionHighlightText = newFull
+        correctionZoneEnd = -1
+        correctionHighlightActive = true
     }
 
     /**
-     * Retire le surlignage si le curseur est toujours juste après le texte
-     * corrigé (cas normal : l'utilisateur tape la touche suivante sur ce
-     * clavier). Si le curseur a bougé ailleurs entre-temps, on ne tente rien
-     * (voir onUpdateSelection) pour ne pas risquer de modifier le mauvais texte.
+     * Retire le surlignage de correction : la zone surlignée est remplacée par le même texte
+     * sans surlignage, puis la sélection de l'utilisateur est restaurée telle quelle. Si le texte
+     * de la zone n'est plus celui attendu (modifié entre-temps), on ne touche à rien pour ne
+     * pas risquer de modifier le mauvais texte.
      */
-    private fun clearHighlightIfNeeded() {
+    private fun removeCorrectionHighlight() {
         if (!correctionHighlightActive) return
-        correctionHighlightActive = false
+        val plainText = correctionHighlightText
+        val zoneEnd = correctionZoneEnd
+        val restoreStart = lastSelectionStart
+        val restoreEnd = lastSelectionEnd
+        clearHighlightState()
+
         val ic = currentInputConnection ?: return
-        val length = correctionHighlightText.length
-        if (length <= 0) return
+        if (plainText.isEmpty()) return
+        ignoreSelectionUpdatesUntil = SystemClock.uptimeMillis() + SELF_EDIT_GRACE_MS
         ic.beginBatchEdit()
-        ic.deleteSurroundingText(length, 0)
-        ic.commitText(correctionHighlightText, 1)
-        ic.endBatchEdit()
+        try {
+            if (zoneEnd >= 0) ic.setSelection(zoneEnd, zoneEnd)
+            val beforeCursor = ic.getTextBeforeCursor(plainText.length, 0)?.toString()
+            if (beforeCursor == plainText) {
+                ic.deleteSurroundingText(plainText.length, 0)
+                ic.commitText(plainText, 1)
+            }
+            if (zoneEnd >= 0 && restoreStart >= 0 && restoreEnd >= 0) {
+                ic.setSelection(restoreStart, restoreEnd)
+            }
+        } finally {
+            ic.endBatchEdit()
+        }
+    }
+
+    /** Appelée avant toute action de l'utilisateur (touche, Corriger, Vocal) : le surlignage disparaît. */
+    private fun clearHighlightIfNeeded() {
+        removeCorrectionHighlight()
     }
 
     private fun clearHighlightState() {
         correctionHighlightActive = false
         correctionHighlightText = ""
-        awaitingOwnSelectionReport = false
+        correctionZoneEnd = -1
+        correctionSelectionStart = -1
+        correctionSelectionEnd = -1
     }
 
     /** Décision 3.3 : le bouton Corriger n'est visible que si le champ contient du texte. */
@@ -399,7 +695,11 @@ class ClavierIme : InputMethodService() {
         if (correctionInProgress) return
         val ic = currentInputConnection
         val hasText = ic != null &&
-            (!ic.getTextBeforeCursor(1, 0).isNullOrEmpty() || !ic.getTextAfterCursor(1, 0).isNullOrEmpty())
+            (
+                !ic.getTextBeforeCursor(1, 0).isNullOrEmpty() ||
+                    !ic.getTextAfterCursor(1, 0).isNullOrEmpty() ||
+                    !ic.getSelectedText(0).isNullOrEmpty() // tout le texte peut être sélectionné
+                )
         correctionBar.state = if (hasText) CorrectionBarState.IDLE else CorrectionBarState.HIDDEN
     }
 
@@ -463,6 +763,7 @@ class ClavierIme : InputMethodService() {
             return
         }
 
+        clearHighlightIfNeeded()
         isRecording = true
         insertedPartialText = ""
         correctionBar.voiceState = VoiceBarState.RECORDING
@@ -625,5 +926,8 @@ class ClavierIme : InputMethodService() {
 
         /** #5A7FD4 (couleur accent existante du clavier) avec transparence (alpha 0x55). */
         private const val HIGHLIGHT_COLOR = 0x555A7FD4
+
+        /** Délai pendant lequel les mises à jour de sélection sont considérées comme l'écho de nos propres modifications. */
+        private const val SELF_EDIT_GRACE_MS = 500L
     }
 }

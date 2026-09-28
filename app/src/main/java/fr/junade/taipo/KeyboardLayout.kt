@@ -18,6 +18,11 @@ data class Key(
     val weight: Float = 1f,
     /** Touches accessoires (ponctuation rapide) stylées comme les touches fonctionnelles (fond foncé). */
     val secondary: Boolean = false,
+    /**
+     * Symboles proposés par un appui long sur la touche, sous forme de grille (rangées de
+     * caractères). Vide si la touche n'a pas d'appui long.
+     */
+    val popup: List<List<Char>> = emptyList(),
 )
 
 data class KeyboardLayout(
@@ -29,19 +34,29 @@ object Keyboards {
 
     private val toggleLetters = Key("toggle", "123", KeyAction.ToggleLayout, 1.4f)
     private val toggleSymbols = Key("toggle", "ABC", KeyAction.ToggleLayout, 1.4f)
-    /** Le rétrécissement de la rangée médiane est compensé pour que la largeur d'une
-     * lettre reste la même sur toutes les rangées (décision : cohérence visuelle avec
-     * le clavier système de référence, où shift et backspace ont une largeur quasi
-     * identique). */
-    private fun shiftKey() = Key("shift", "⇧", KeyAction.Shift, 1.6f)
+    /**
+     * Largeur des touches Maj/Effacer : elle est choisie pour que la largeur d'une lettre reste la
+     * même sur toutes les rangées (10 unités par rangée). Sur l'AZERTY, la rangée du bas contient
+     * 7 lettres + apostrophe : Maj (1,4) + Effacer (1,6) + 7 lettres = 10.
+     */
+    private fun shiftKey(weight: Float = 1.6f) = Key("shift", "⇧", KeyAction.Shift, weight)
     private val backspace = Key("backspace", "⌫", KeyAction.Backspace, 1.6f)
 
+    /** Touche apostrophe, uniquement sur le clavier français (entre N et Effacer). */
+    private val apostrophe = Key("apostrophe", "'", KeyAction.TypeChar('\''))
+
+    /** Symboles de l'appui long sur la touche point (grille 3 × 6). */
+    private val periodPopup: List<List<Char>> = listOf(
+        listOf('&', '%', '+', '·', '"', '_'),
+        listOf(';', '/', '-', ':', '\'', '@'),
+        listOf('(', ')', '#', '!', ',', '?'),
+    )
+
+    /** Rangée du bas : le ! et le ? sont accessibles par appui long sur le point, ce qui agrandit l'espace. */
     private val punctuationRow = listOf(
-        Key("qmark", "?", KeyAction.TypeChar('?'), secondary = true),
         Key("comma", ",", KeyAction.TypeChar(','), secondary = true),
-        Key("space", "", KeyAction.Space, 3f),
-        Key("period", ".", KeyAction.TypeChar('.'), secondary = true),
-        Key("exclam", "!", KeyAction.TypeChar('!'), secondary = true),
+        Key("space", "", KeyAction.Space, 5.8f),
+        Key("period", ".", KeyAction.TypeChar('.'), secondary = true, popup = periodPopup),
         Key("enter", "⏎", KeyAction.Enter, 1.8f),
     )
 
@@ -51,7 +66,7 @@ object Keyboards {
         rows = listOf(
             "azertyuiop".map(::letter),
             "qsdfghjklm".map(::letter),
-            listOf(shiftKey()) + "wxcvbn".map(::letter) + listOf(backspace),
+            listOf(shiftKey(1.4f)) + "wxcvbn".map(::letter) + listOf(apostrophe, backspace),
             listOf(toggleLetters) + punctuationRow,
         ),
     )

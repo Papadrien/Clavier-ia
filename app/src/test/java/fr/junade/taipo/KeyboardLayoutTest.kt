@@ -79,7 +79,7 @@ class KeyboardLayoutTest {
 
         val chars = Keyboards.symbols.rows.flatten()
             .mapNotNull { (it.action as? KeyAction.TypeChar)?.char }
-        listOf('?', ',', '.', '!', '\'', '(', ')', '&', 'é', 'è', 'à', 'ç').forEach { c ->
+        listOf(',', '.', '\'', '(', ')', '&', 'é', 'è', 'à', 'ç').forEach { c ->
             assertTrue(c in chars, "Le caractère $c doit être présent sur le clavier symboles")
         }
     }
@@ -192,6 +192,50 @@ class KeyboardLayoutTest {
                 Keyboards.layoutOf(LayoutId.SYMBOLS, language, numberRow = true),
             )
         }
+    }
+
+    // Apostrophe, rangée du bas et appui long sur le point.
+
+    private fun chars(layout: KeyboardLayout) =
+        layout.rows.flatten().mapNotNull { (it.action as? KeyAction.TypeChar)?.char }
+
+    @Test
+    fun `l apostrophe est entre le n et effacer sur le clavier francais uniquement`() {
+        val row = Keyboards.letters.rows[2]
+        val index = row.indexOfFirst { it.id == "apostrophe" }
+        assertEquals("letter_n", row[index - 1].id)
+        assertEquals("backspace", row[index + 1].id)
+        assertTrue('\'' !in chars(Keyboards.lettersEn))
+    }
+
+    @Test
+    fun `la touche maj francaise est plus etroite et les lettres gardent la meme largeur`() {
+        val frRow = Keyboards.letters.rows[2]
+        assertTrue(frRow.first { it.id == "shift" }.weight < 1.6f)
+        assertEquals(10f, frRow.sumOf { it.weight.toDouble() }.toFloat(), 0.001f)
+        assertEquals(1.6f, Keyboards.lettersEn.rows[2].first { it.id == "shift" }.weight)
+    }
+
+    @Test
+    fun `la rangee du bas n a plus ni point d exclamation ni point d interrogation`() {
+        listOf(Keyboards.letters, Keyboards.lettersEn, Keyboards.symbols).forEach { layout ->
+            val bottom = layout.rows.last().mapNotNull { (it.action as? KeyAction.TypeChar)?.char }
+            assertEquals(listOf(',', '.'), bottom)
+            assertEquals(10f, layout.rows.last().sumOf { it.weight.toDouble() }.toFloat(), 0.001f)
+        }
+    }
+
+    @Test
+    fun `l appui long sur le point propose tous les autres symboles`() {
+        val period = Keyboards.letters.rows.last().first { it.id == "period" }
+        assertEquals(3, period.popup.size)
+        assertTrue(period.popup.all { it.size == 6 })
+        val symbols = period.popup.flatten()
+        assertEquals(symbols.size, symbols.distinct().size)
+        listOf('&', '%', '+', '"', '_', ';', '/', '-', ':', '\'', '@', '(', ')', '#', '!', ',', '?').forEach { c ->
+            assertTrue(c in symbols, "Le symbole $c doit être dans la bulle du point")
+        }
+        assertTrue('.' !in symbols)
     }
 
     private fun assertActionPresent(layout: KeyboardLayout, action: KeyAction) {

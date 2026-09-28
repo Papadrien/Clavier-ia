@@ -11,6 +11,7 @@ import android.os.Looper
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 
 @SuppressLint("ViewConstructor")
 class KeyboardView(context: Context) : View(context) {
@@ -58,6 +59,27 @@ class KeyboardView(context: Context) : View(context) {
 
     private val keyRect = RectF()
 
+    // Appui long : bulle de symboles (grille) affichée au-dessus de la touche.
+    private val popupPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#3A3A3A") }
+    private val popupSelectionPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#26A69A") }
+    private val popupTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.WHITE
+        textAlign = Paint.Align.CENTER
+        isFakeBoldText = true
+    }
+    private val popupRect = RectF()
+    private var popupKey: Key? = null
+    private var popupSelectedRow = -1
+    private var popupSelectedCol = -1
+    private var popupCellWidth = 0f
+    private var popupCellHeight = 0f
+    private var popupPadding = 0f
+
+    private val longPressRunnable = Runnable {
+        val key = pressedKey ?: return@Runnable
+        if (key.popup.isNotEmpty()) showPopup(key)
+    }
+
     private val repeatHandler = Handler(Looper.getMainLooper())
     private val repeatRunnable = object : Runnable {
         override fun run() {
@@ -77,6 +99,7 @@ class KeyboardView(context: Context) : View(context) {
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         repeatHandler.removeCallbacksAndMessages(null)
+        popupKey = null
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -103,6 +126,8 @@ class KeyboardView(context: Context) : View(context) {
                 left += keyWidth
             }
         }
+
+        drawPopup(canvas)
     }
 
     private fun drawKey(canvas: Canvas, key: Key, left: Float, top: Float, keyWidth: Float, rowHeight: Float, inset: Float) {
@@ -174,13 +199,19 @@ class KeyboardView(context: Context) : View(context) {
             MotionEvent.ACTION_DOWN -> {
                 pressedKey = keyAt(event.x, event.y)
                 startRepeat(pressedKey)
+                scheduleLongPress(pressedKey)
                 invalidate()
                 return true
             }
 
             MotionEvent.ACTION_MOVE -> {
+                if (popupKey != null) {
+                    updatePopupSelection(event.x, event.y)
+                    return true
+                }
                 val current = keyAt(event.x, event.y)
                 if (current != pressedKey) {
+                    cancelLongPress()
                     pressedKey = current
                     startRepeat(current)
                     invalidate()
@@ -190,6 +221,20 @@ class KeyboardView(context: Context) : View(context) {
 
             MotionEvent.ACTION_UP -> {
                 stopRepeat()
+                cancelLongPress()
+                val popup = popupKey
+                if (popup != null) {
+                    // Relâcher sur un symbole le saisit ; relâcher ailleurs ferme la bulle sans rien saisir.
+                    updatePopupSelection(event.x, event.y)
+                    val symbol = popup.popup.getOrNull(popupSelectedRow)?.getOrNull(popupSelectedCol)
+                    dismissPopup()
+                    pressedKey = null
+                    if (symbol != null) {
+                        keyListener?.onKey(Key("popup_$symbol", symbol.toString(), KeyAction.TypeChar(symbol)))
+                    }
+                    invalidate()
+                    return true
+                }
                 val key = pressedKey
                 pressedKey = null
                 if (key != null && keyAt(event.x, event.y) == key) {
@@ -201,12 +246,119 @@ class KeyboardView(context: Context) : View(context) {
 
             MotionEvent.ACTION_CANCEL -> {
                 stopRepeat()
+                cancelLongPress()
+                dismissPopup()
                 pressedKey = null
                 invalidate()
                 return true
             }
         }
         return super.onTouchEvent(event)
+    }
+
+    private fun scheduleLongPress(key: Key?) {
+        cancelLongPress()
+        if (key != null && key.popup.isNotEmpty()) {
+            repeatHandler.postDelayed(longPressRunnable, ViewConfiguration.getLongPressTimeout().toLong())
+        }
+    }
+
+    private fun cancelLongPress() {
+        repeatHandler.removeCallbacks(longPressRunnable)
+    }
+
+    /** Position (gauche, haut, largeur) de la touche dans la vue, ou null si elle n'est pas affichée. */
+    private fun keyBounds(target: Key): RectF? {
+        val rowHeight = usableHeightPx() / layout.rows.size.toFloat()
+        layout.rows.forEachIndexed { rowIndex, row ->
+            val totalWeight = row.fold(0f) { acc, key -> acc + key.weight }
+            var left = 0f
+            row.forEach { key ->
+                val keyWidth = width * key.weight / totalWeight
+                if (key == target) {
+                    return RectF(left, rowIndex * rowHeight, left + keyWidth, (rowIndex + 1) * rowHeight)
+                }
+                left += keyWidth
+            }
+        }
+        return null
+    }
+
+    private fun showPopup(key: Key) {
+        val bounds = keyBounds(key) ?: return
+        val rows = key.popup.size
+        val cols = key.popup.maxOf { it.size }
+        val margin = dp(4f)
+        val gap = dp(4f)
+        val padding = dp(8f)
+
+        // La bulle doit tenir dans la vue : la hauteur des cellules s'adapte à la place disponible
+        // au-dessus de la rangée de la touche.
+        val cellWidth = minOf(dp(44f), (width - 2 * margin - 2 * padding) / cols)
+        val cellHeight = minOf(dp(44f), (bounds.top - gap - 2 * padding) / rows).coerceAtLeast(dp(24f))
+        val popupWidth = cols * cellWidth + 2 * padding
+        val popupHeight = rows * cellHeight + 2 * padding
+
+        val left = (bounds.centerX() - popupWidth / 2f)
+            .coerceIn(margin, (width - margin - popupWidth).coerceAtLeast(margin))
+        val top = (bounds.top - gap - popupHeight).coerceAtLeast(0f)
+
+        popupRect.set(left, top, left + popupWidth, top + popupHeight)
+        popupCellWidth = cellWidth
+        popupCellHeight = cellHeight
+        popupPadding = padding
+        popupSelectedRow = -1
+        popupSelectedCol = -1
+        popupKey = key
+        invalidate()
+    }
+
+    private fun dismissPopup() {
+        popupKey = null
+        popupSelectedRow = -1
+        popupSelectedCol = -1
+        invalidate()
+    }
+
+    private fun updatePopupSelection(x: Float, y: Float) {
+        val key = popupKey ?: return
+        var row = -1
+        var col = -1
+        if (popupRect.contains(x, y)) {
+            val r = ((y - popupRect.top - popupPadding) / popupCellHeight).toInt()
+                .coerceIn(0, key.popup.lastIndex)
+            val c = ((x - popupRect.left - popupPadding) / popupCellWidth).toInt()
+                .coerceIn(0, key.popup[r].lastIndex)
+            row = r
+            col = c
+        }
+        if (row != popupSelectedRow || col != popupSelectedCol) {
+            popupSelectedRow = row
+            popupSelectedCol = col
+            invalidate()
+        }
+    }
+
+    private fun drawPopup(canvas: Canvas) {
+        val key = popupKey ?: return
+        val radius = dp(20f)
+        canvas.drawRoundRect(popupRect, radius, radius, popupPaint)
+
+        popupTextPaint.textSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP, 22f, resources.displayMetrics,
+        )
+        val baselineOffset = -(popupTextPaint.ascent() + popupTextPaint.descent()) / 2f
+
+        key.popup.forEachIndexed { rowIndex, row ->
+            row.forEachIndexed { colIndex, symbol ->
+                val cx = popupRect.left + popupPadding + (colIndex + 0.5f) * popupCellWidth
+                val cy = popupRect.top + popupPadding + (rowIndex + 0.5f) * popupCellHeight
+                if (rowIndex == popupSelectedRow && colIndex == popupSelectedCol) {
+                    canvas.drawCircle(cx, cy, minOf(popupCellWidth, popupCellHeight) / 2f - dp(1f), popupSelectionPaint)
+                }
+                canvas.drawText(symbol.toString(), cx, cy + baselineOffset, popupTextPaint)
+            }
+        }
     }
 
     private fun keyAt(x: Float, y: Float): Key? {
@@ -239,10 +391,10 @@ class KeyboardView(context: Context) : View(context) {
 
     // Dimensions calées sur la mesure du clavier système de référence (Gboard,
     // thème sombre) : hauteur de touche ~37dp + marge d'insertion ~3dp de
-    // chaque côté ⇒ ~43dp par rangée, et ~60dp de marge basse pour ne pas
+    // chaque côté ⇒ ~43dp par rangée, agrandie de 20 % (51,6dp) à la demande, et ~60dp de marge basse pour ne pas
     // chevaucher la zone système (bouton de changement de clavier, geste de
     // navigation) qui se superpose sinon aux dernières touches.
-    private fun rowHeightPx(): Float = dp(43f)
+    private fun rowHeightPx(): Float = dp(51.6f)
     private fun bottomMarginPx(): Float = dp(60f)
     private fun usableHeightPx(): Float = (height - bottomMarginPx()).coerceAtLeast(0f)
 

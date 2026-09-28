@@ -2,8 +2,6 @@
 <resources>
     <string name="app_name">Taipo</string>
     <string name="ime_name">Taipo</string>
-    <string name="subtype_fr">Français (AZERTY)</string>
-    <string name="subtype_en">English (QWERTY)</string>
     <string name="main_title">Taipo</string>
     <string name="main_description">Clavier Android minimal, bilingue français (AZERTY) / anglais (QWERTY) selon la langue active.\n\nPour l&#8217;utiliser :\n1. Appuyez sur «&#160;Activer le clavier&#160;»\n2. Activez «&#160;Taipo&#160;»\n3. Appuyez sur «&#160;Choisir la méthode de saisie&#160;» puis sélectionnez «&#160;Taipo&#160;».</string>
     <string name="button_enable">Activer le clavier</string>
@@ -32,6 +30,8 @@
     <string name="correction_button_loading">Chargement du modèle…</string>
     <string name="correction_button_correcting">Correction…</string>
     <string name="correction_no_model_selected">Aucun modèle sélectionné : ouvrez « Modèle IA » dans les paramètres.</string>
+    <string name="correction_nothing_new">Rien de nouveau à corriger.</string>
+    <string name="correction_text_changed">Le texte a changé pendant la correction : correction annulée.</string>
     <string name="correction_error">Échec de la correction : %1$s</string>
 
     <string name="button_voice_model_settings">Modèle vocal</string>

@@ -34,6 +34,7 @@ class PersonalDictionaryActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_personal_dictionary)
+        applySystemBarInsets()
         repository = PersonalDictionaryProvider.repository(this)
 
         input = findViewById(R.id.personal_dictionary_input)

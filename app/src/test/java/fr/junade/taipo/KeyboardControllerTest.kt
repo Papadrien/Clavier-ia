@@ -100,8 +100,7 @@ class KeyboardControllerTest {
         val controller = KeyboardController()
         assertEquals(",", controller.onKey(key("comma")).commit)
         assertEquals(".", controller.onKey(key("period")).commit)
-        assertEquals("?", controller.onKey(key("qmark")).commit)
-        assertEquals("!", controller.onKey(key("exclam")).commit)
+        assertEquals("'", controller.onKey(key("apostrophe")).commit)
     }
 
     @Test

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
+    <!-- Pas de barre d'action framework : chaque écran affiche déjà son propre titre dans la page,
+         et la barre d'action se superposait au contenu en mode bord à bord. -->
+    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:colorAccent">#5A7FD4</item>
     </style>
 </resources>
