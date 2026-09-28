@@ -211,7 +211,7 @@ class KeyboardView(context: Context) : View(context) {
                 }
                 val current = keyAt(event.x, event.y)
                 if (current != pressedKey) {
-                    cancelLongPress()
+                    cancelKeyLongPress()
                     pressedKey = current
                     startRepeat(current)
                     invalidate()
@@ -221,7 +221,7 @@ class KeyboardView(context: Context) : View(context) {
 
             MotionEvent.ACTION_UP -> {
                 stopRepeat()
-                cancelLongPress()
+                cancelKeyLongPress()
                 val popup = popupKey
                 if (popup != null) {
                     // Relâcher sur un symbole le saisit ; relâcher ailleurs ferme la bulle sans rien saisir.
@@ -246,7 +246,7 @@ class KeyboardView(context: Context) : View(context) {
 
             MotionEvent.ACTION_CANCEL -> {
                 stopRepeat()
-                cancelLongPress()
+                cancelKeyLongPress()
                 dismissPopup()
                 pressedKey = null
                 invalidate()
@@ -257,13 +257,13 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     private fun scheduleLongPress(key: Key?) {
-        cancelLongPress()
+        cancelKeyLongPress()
         if (key != null && key.popup.isNotEmpty()) {
             repeatHandler.postDelayed(longPressRunnable, ViewConfiguration.getLongPressTimeout().toLong())
         }
     }
 
-    private fun cancelLongPress() {
+    private fun cancelKeyLongPress() {
         repeatHandler.removeCallbacks(longPressRunnable)
     }
 
