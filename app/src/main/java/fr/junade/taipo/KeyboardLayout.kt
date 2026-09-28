@@ -55,7 +55,7 @@ object Keyboards {
     /** Rangée du bas : le ! et le ? sont accessibles par appui long sur le point, ce qui agrandit l'espace. */
     private val punctuationRow = listOf(
         Key("comma", ",", KeyAction.TypeChar(','), secondary = true),
-        Key("space", "", KeyAction.Space, 5.8f),
+        Key("space", "", KeyAction.Space, 4.8f),
         Key("period", ".", KeyAction.TypeChar('.'), secondary = true, popup = periodPopup),
         Key("enter", "⏎", KeyAction.Enter, 1.8f),
     )

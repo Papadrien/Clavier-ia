@@ -39,6 +39,11 @@ object CorrectionDiff {
 
         val changed = BooleanArray(b.size)
         for (j in bMid.indices) changed[prefix + j] = j !in matched
+        // Deux tokens modifiés séparés uniquement par des espaces inchangés forment une seule zone.
+        val wasChanged = changed.copyOf()
+        for (k in 1 until b.size - 1) {
+            if (!wasChanged[k] && b[k].text.isBlank() && wasChanged[k - 1] && wasChanged[k + 1]) changed[k] = true
+        }
 
         val ranges = mutableListOf<ChangedRange>()
         var i = 0

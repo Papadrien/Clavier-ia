@@ -66,6 +66,14 @@ class ClavierIme : InputMethodService() {
 
     private var correctionInProgress = false
 
+    /**
+     * Dernière autocorrection du dictionnaire, tant que rien d'autre n'a été fait depuis :
+     * une suppression immédiate la rétablit (mot tel que tapé), comme sur les claviers usuels.
+     */
+    private class AppliedAutocorrection(val original: String, val corrected: String, val boundary: String = "")
+
+    private var pendingAutocorrection: AppliedAutocorrection? = null
+
     // Phrases déjà corrigées (mémoire vive uniquement) : une phrase identique n'est pas renvoyée à l'IA.
     private val correctedSentences = CorrectedSentenceMemory()
 
@@ -239,17 +247,29 @@ class ClavierIme : InputMethodService() {
     private fun onKeyPressed(key: Key) {
         clearHighlightIfNeeded()
 
+        // Suppression juste après une autocorrection : on annule la correction au lieu d'effacer un caractère.
+        if (key.action == KeyAction.Backspace && undoLastAutocorrection()) {
+            syncAutoCapitalization()
+            applyState()
+            updateCorrectionBarVisibility()
+            return
+        }
+        pendingAutocorrection = null
+
         // Story 1.3 : dictionnaire local pour l'autocorrection (pas d'IA, pas
         // d'apprentissage auto) — le mot qui vient de se terminer est vérifié
         // juste avant que la touche de ponctuation/espace/entrée qui le
         // termine ne soit elle-même traitée.
-        if (isWordBoundaryKey(key)) {
-            applyDictionaryAutocorrection()
-        }
+        val autocorrection = if (isWordBoundaryKey(key)) applyDictionaryAutocorrection() else null
 
         val result = controller.onKey(key)
 
         result.commit?.let { text -> currentInputConnection?.commitText(text, 1) }
+        // Entrée exclue : le retour à la ligne n'est pas un texte que l'on peut réinsérer à l'identique.
+        val boundary = result.commit
+        if (autocorrection != null && boundary != null) {
+            pendingAutocorrection = AppliedAutocorrection(autocorrection.original, autocorrection.corrected, boundary)
+        }
         if (result.deleteBefore > 0) {
             currentInputConnection?.deleteSurroundingText(result.deleteBefore, 0)
         }
@@ -302,22 +322,44 @@ class ClavierIme : InputMethodService() {
         return textBeforeCursor.substring(start)
     }
 
-    private fun applyDictionaryAutocorrection() {
-        val ic = currentInputConnection ?: return
+    private fun applyDictionaryAutocorrection(): AppliedAutocorrection? {
+        val ic = currentInputConnection ?: return null
         val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
         val word = trailingWord(before)
-        if (word.isEmpty()) return
+        if (word.isEmpty()) return null
 
         val dictionary = DictionaryLoader.forLanguage(applicationContext, controller.state.language)
         // Story 1.4 : les mots du dictionnaire personnel ne sont jamais
         // corrigés et servent aussi de candidats de correction.
-        val correction = dictionary.correctionFor(word, personalWords = personalDictionary.snapshot()) ?: return
-        if (correction == word) return
+        val correction = dictionary.correctionFor(word, personalWords = personalDictionary.snapshot()) ?: return null
+        if (correction == word) return null
 
         ic.beginBatchEdit()
         ic.deleteSurroundingText(word.length, 0)
         ic.commitText(correction, 1)
         ic.endBatchEdit()
+        return AppliedAutocorrection(original = word, corrected = correction)
+    }
+
+    /**
+     * Rétablit le mot tel que tapé si la dernière action était une autocorrection
+     * (mot corrigé + espace/ponctuation juste avant le curseur). Le séparateur est conservé :
+     * le mot rétabli n'est donc pas recorrigé. Renvoie faux si rien n'a été annulé.
+     */
+    private fun undoLastAutocorrection(): Boolean {
+        val pending = pendingAutocorrection ?: return false
+        pendingAutocorrection = null
+        val ic = currentInputConnection ?: return false
+        if (!ic.getSelectedText(0).isNullOrEmpty()) return false
+        val expected = pending.corrected + pending.boundary
+        val before = ic.getTextBeforeCursor(expected.length, 0)?.toString() ?: return false
+        if (before != expected) return false // le texte ou le curseur a changé entre-temps
+
+        ic.beginBatchEdit()
+        ic.deleteSurroundingText(expected.length, 0)
+        ic.commitText(pending.original + pending.boundary, 1)
+        ic.endBatchEdit()
+        return true
     }
 
     // ------------------------------------------------------------------
@@ -683,6 +725,7 @@ class ClavierIme : InputMethodService() {
     }
 
     private fun clearHighlightState() {
+        pendingAutocorrection = null
         correctionHighlightActive = false
         correctionHighlightText = ""
         correctionZoneEnd = -1
