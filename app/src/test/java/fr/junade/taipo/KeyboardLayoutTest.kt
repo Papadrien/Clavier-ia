@@ -169,10 +169,10 @@ class KeyboardLayoutTest {
         languages.forEach { language ->
             // Les chiffres en appui long (story 1.6) disparaissent avec la rangée de chiffres :
             // on compare donc sans eux.
-            val base = Keyboards.layoutOf(LayoutId.LETTERS, language)
-                .rows.map { row -> row.map { it.copy(longPressChar = null) } }
+            val baseLayout = Keyboards.layoutOf(LayoutId.LETTERS, language)
+            val base = baseLayout.rows.map { row -> row.map { it.copy(longPressChar = null) } }
             assertEquals(base, lettersWithNumberRow(language).rows.drop(1))
-            assertEquals(base.id, lettersWithNumberRow(language).id)
+            assertEquals(baseLayout.id, lettersWithNumberRow(language).id)
         }
     }
 
