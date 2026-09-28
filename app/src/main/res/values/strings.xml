@@ -47,4 +47,19 @@
     <string name="voice_no_model_selected">Modèle vocal incomplet : ouvrez « Modèle vocal » dans les paramètres et fournissez les 4 fichiers.</string>
     <string name="voice_permission_denied">Permission micro requise : appuyez à nouveau sur Vocal après l\'avoir accordée.</string>
     <string name="voice_error">Échec de la transcription : %1$s</string>
+
+    <string name="button_personal_dictionary">Dictionnaire personnel</string>
+    <string name="personal_dictionary_title">Dictionnaire personnel</string>
+    <string name="personal_dictionary_description">Ajoutez ici vos noms propres, pseudos ou termes spécifiques : l\'autocorrection ne les modifiera plus et pourra même corriger une faute de frappe vers eux. Aucun mot n\'est ajouté automatiquement.</string>
+    <string name="personal_dictionary_hint">Nouveau mot</string>
+    <string name="personal_dictionary_add">Ajouter</string>
+    <string name="personal_dictionary_empty">Aucun mot personnel pour le moment.</string>
+    <string name="personal_dictionary_count">%1$d mot(s)</string>
+    <string name="personal_dictionary_remove">Supprimer</string>
+    <string name="personal_dictionary_added">« %1$s » ajouté.</string>
+    <string name="personal_dictionary_removed">« %1$s » supprimé.</string>
+    <string name="personal_dictionary_already_present">Ce mot est déjà dans votre dictionnaire.</string>
+    <string name="personal_dictionary_invalid">Mot invalide : 2 à 40 caractères, lettres, apostrophe ou trait d\'union uniquement (pas d\'espace ni de chiffre).</string>
+    <string name="personal_dictionary_error">Le dictionnaire personnel est momentanément inaccessible. Réessayez.</string>
+    <string name="personal_dictionary_full">Dictionnaire plein (%1$d mots maximum).</string>
 </resources>

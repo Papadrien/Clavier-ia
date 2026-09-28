@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Sauvegarde cloud et transfert d'appareil (Android 12+). Voir backup_rules.xml.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="database" path="personal_dictionary.db" />
+        <exclude domain="database" path="personal_dictionary.db-journal" />
+        <exclude domain="database" path="personal_dictionary.db-wal" />
+        <exclude domain="database" path="personal_dictionary.db-shm" />
+        <exclude domain="sharedpref" path="personal_dictionary_key.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="database" path="personal_dictionary.db" />
+        <exclude domain="database" path="personal_dictionary.db-journal" />
+        <exclude domain="database" path="personal_dictionary.db-wal" />
+        <exclude domain="database" path="personal_dictionary.db-shm" />
+        <exclude domain="sharedpref" path="personal_dictionary_key.xml" />
+    </device-transfer>
+</data-extraction-rules>

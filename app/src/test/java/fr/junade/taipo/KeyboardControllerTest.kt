@@ -153,4 +153,82 @@ class KeyboardControllerTest {
 
         assertEquals(KeyboardLanguage.EN, controller.state.language)
     }
+
+    // Story 1.2 : majuscule automatique en début de phrase/après ponctuation, non désactivable.
+
+    @Test
+    fun `shouldAutoCapitalize est vrai si le champ est vide`() {
+        assertTrue(KeyboardController.shouldAutoCapitalize(""))
+    }
+
+    @Test
+    fun `shouldAutoCapitalize est vrai apres un point suivi d espaces`() {
+        assertTrue(KeyboardController.shouldAutoCapitalize("Bonjour."))
+        assertTrue(KeyboardController.shouldAutoCapitalize("Bonjour. "))
+        assertTrue(KeyboardController.shouldAutoCapitalize("Bonjour.   "))
+    }
+
+    @Test
+    fun `shouldAutoCapitalize est vrai apres un point d exclamation ou d interrogation`() {
+        assertTrue(KeyboardController.shouldAutoCapitalize("Salut ! "))
+        assertTrue(KeyboardController.shouldAutoCapitalize("Ça va ? "))
+    }
+
+    @Test
+    fun `shouldAutoCapitalize est vrai juste apres un retour a la ligne`() {
+        assertTrue(KeyboardController.shouldAutoCapitalize("Bonjour\n"))
+    }
+
+    @Test
+    fun `shouldAutoCapitalize est faux au milieu d une phrase`() {
+        assertFalse(KeyboardController.shouldAutoCapitalize("Bonjour"))
+        assertFalse(KeyboardController.shouldAutoCapitalize("Bonjour "))
+        assertFalse(KeyboardController.shouldAutoCapitalize("Bonjour, comment vas"))
+    }
+
+    @Test
+    fun `shouldAutoCapitalize est faux apres une virgule`() {
+        assertFalse(KeyboardController.shouldAutoCapitalize("Bonjour,"))
+        assertFalse(KeyboardController.shouldAutoCapitalize("Bonjour, "))
+    }
+
+    @Test
+    fun `applyTextContext active la majuscule en debut de champ`() {
+        val controller = KeyboardController()
+        controller.applyTextContext("")
+
+        val result = controller.onKey(key("letter_a"))
+        assertEquals("A", result.commit)
+    }
+
+    @Test
+    fun `applyTextContext active la majuscule apres une ponctuation de fin de phrase`() {
+        val controller = KeyboardController()
+        controller.applyTextContext("Bonjour. ")
+
+        val result = controller.onKey(key("letter_a"))
+        assertEquals("A", result.commit)
+    }
+
+    @Test
+    fun `applyTextContext desactive la majuscule au milieu d une phrase`() {
+        val controller = KeyboardController()
+        controller.onKey(key("shift"))
+        controller.applyTextContext("Bonjour ")
+
+        val result = controller.onKey(key("letter_a"))
+        assertEquals("a", result.commit)
+    }
+
+    @Test
+    fun `une majuscule automatique reste annulable manuellement via la touche maj`() {
+        // Non desactivable dans les parametres, mais l'utilisateur garde la main
+        // touche par touche via le bouton Maj (comme sur Gboard).
+        val controller = KeyboardController()
+        controller.applyTextContext("")
+        controller.onKey(key("shift"))
+
+        val result = controller.onKey(key("letter_a"))
+        assertEquals("a", result.commit)
+    }
 }

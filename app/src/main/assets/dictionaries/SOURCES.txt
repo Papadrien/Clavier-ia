@@ -1,0 +1,8 @@
+Listes de mots (fr.txt, en.txt) : extraites des listes de fréquence FrequencyWords
+(hermitdave/FrequencyWords, contenu 2018, dérivé du corpus OpenSubtitles2018),
+via le miroir Hugging Face StephanAkkerman/frequency-words-2018 (fr_50k.txt, en_50k.txt).
+Licence du contenu : CC-BY-SA 4.0 (dépôt d'origine) — attribution requise, à reprendre
+dans l'écran "Licences / crédits" de l'app avant publication.
+Nettoyage : fréquences retirées, fragments de contractions issus de la tokenisation
+retirés, contractions courantes ajoutées à la main, onomatopées de sous-titres retirées.
+Couverture : en.txt ~9 000 mots, fr.txt ~2 400 mots (préfixe des listes 50k, PAS le fichier complet).

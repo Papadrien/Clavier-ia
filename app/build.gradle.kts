@@ -1,5 +1,7 @@
 plugins {
     id("com.android.application")
+    id("com.google.devtools.ksp")
+    id("androidx.room")
 }
 
 android {
@@ -28,6 +30,13 @@ kotlin {
     }
 }
 
+// Export des schémas Room (JSON versionné dans le dépôt) : indispensable pour
+// écrire et tester les futures migrations. Le fichier <version>.json est
+// généré au premier build et doit être commité.
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
 dependencies {
     implementation("androidx.core:core-ktx:1.18.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
@@ -53,6 +62,18 @@ dependencies {
     //      officiel. Pas de ligne implementation(...) à ajouter ici pour ça.
     // Non fait ici (pas d'accès réseau dans cet environnement) : à faire par
     // Adrien avant que ce module ne compile.
+
+    // Dictionnaire personnel (story 1.4) : Room chiffré par SQLCipher.
+    // La clé de chiffrement est générée aléatoirement et protégée par
+    // l'Android Keystore (voir DatabasePassphraseProvider). Room reste à la
+    // même version que le plugin androidx.room du build.gradle.kts racine.
+    val roomVersion = "2.8.4"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+    // Fournit SupportOpenHelperFactory (passerelle Room <-> SQLCipher).
+    // androidx.sqlite arrive déjà via room-runtime.
+    implementation("net.zetetic:sqlcipher-android:4.18.0@aar")
 
     testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")

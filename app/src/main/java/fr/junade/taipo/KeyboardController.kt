@@ -29,6 +29,24 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
         state = state.copy(language = language, isShifted = false)
     }
 
+    /**
+     * Recalcule la majuscule automatique (story 1.2 : majuscule en début de
+     * phrase ou après une ponctuation de fin de phrase, non désactivable —
+     * aucun paramètre ne permet de couper ce comportement).
+     *
+     * [textBeforeCursor] est le texte du champ actif juste avant le curseur,
+     * fourni par l'IME (InputConnection) à chaque événement pertinent : le
+     * contrôleur ne le suit pas lui-même en interne, car le texte peut
+     * changer par d'autres biais que les touches de ce clavier (correction
+     * IA, saisie vocale, déplacement du curseur par l'utilisateur).
+     */
+    fun applyTextContext(textBeforeCursor: String) {
+        val shouldCapitalize = shouldAutoCapitalize(textBeforeCursor)
+        if (state.isShifted != shouldCapitalize) {
+            state = state.copy(isShifted = shouldCapitalize)
+        }
+    }
+
     fun onKey(key: Key): KeyPressResult {
         return when (val action = key.action) {
             is KeyAction.TypeChar -> {
@@ -62,6 +80,29 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
                     isShifted = false,
                 )
                 KeyPressResult(newState = state)
+            }
+        }
+    }
+
+    companion object {
+        /** Au-delà de cette distance avant le curseur, la réponse ne peut plus changer (espaces mis à part). */
+        private const val LOOKBEHIND_LIMIT = 50
+
+        /**
+         * Vrai si le texte juste avant le curseur se termine par une
+         * ponctuation de fin de phrase (point, point d'exclamation, point
+         * d'interrogation), par un retour à la ligne, ou s'il n'y a rien
+         * avant le curseur (tout début de champ) — en ignorant les espaces
+         * et tabulations de fin. Fonction pure, testable indépendamment de
+         * l'IME.
+         */
+        fun shouldAutoCapitalize(textBeforeCursor: String): Boolean {
+            val relevant = textBeforeCursor.takeLast(LOOKBEHIND_LIMIT)
+            val trimmed = relevant.trimEnd(' ', '\t')
+            if (trimmed.isEmpty()) return true
+            return when (trimmed.last()) {
+                '.', '!', '?', '\n' -> true
+                else -> false
             }
         }
     }

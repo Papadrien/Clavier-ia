@@ -49,4 +49,11 @@
         android:layout_marginTop="12dp"
         android:text="@string/button_voice_model_settings" />
 
+    <Button
+        android:id="@+id/button_personal_dictionary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/button_personal_dictionary" />
+
 </LinearLayout>

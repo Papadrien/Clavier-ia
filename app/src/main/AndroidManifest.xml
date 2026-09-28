@@ -7,6 +7,8 @@
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
         android:supportsRtl="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:theme="@style/AppTheme">
 
         <activity
@@ -27,6 +29,12 @@
         <activity
             android:name=".VoiceModelSettingsActivity"
             android:label="@string/voice_model_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".PersonalDictionaryActivity"
+            android:label="@string/personal_dictionary_title"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
 
         <activity

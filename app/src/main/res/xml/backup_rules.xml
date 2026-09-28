@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Sauvegarde automatique (Android 6 à 11). Le dictionnaire personnel est
+    chiffré avec une clé de l'Android Keystore, qui ne suit pas une
+    restauration : base et clé chiffrée sont donc exclues ensemble.
+-->
+<full-backup-content>
+    <exclude domain="database" path="personal_dictionary.db" />
+    <exclude domain="database" path="personal_dictionary.db-journal" />
+    <exclude domain="database" path="personal_dictionary.db-wal" />
+    <exclude domain="database" path="personal_dictionary.db-shm" />
+    <exclude domain="sharedpref" path="personal_dictionary_key.xml" />
+</full-backup-content>

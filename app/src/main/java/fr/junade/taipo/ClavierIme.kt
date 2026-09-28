@@ -24,6 +24,8 @@ import android.util.Log
 import fr.junade.taipo.ai.CorrectionEngine
 import fr.junade.taipo.ai.VoiceEngine
 import fr.junade.taipo.ai.VoiceRecorder
+import fr.junade.taipo.dictionary.DictionaryLoader
+import fr.junade.taipo.dictionary.PersonalDictionaryProvider
 import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.VoiceModelPreferences
 import kotlinx.coroutines.CoroutineScope
@@ -44,6 +46,7 @@ class ClavierIme : InputMethodService() {
 
     private val correctionEngine by lazy { CorrectionEngine(applicationContext) }
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
+    private val personalDictionary by lazy { PersonalDictionaryProvider.repository(applicationContext) }
 
     private val voiceEngine by lazy { VoiceEngine(applicationContext) }
     private val voiceModelPreferences by lazy { VoiceModelPreferences(applicationContext) }
@@ -77,6 +80,14 @@ class ClavierIme : InputMethodService() {
         longPressTriggered = true
         isHoldModeRecording = true
         startVoiceRecording()
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        // Story 1.4 : l'ouverture de la base chiffrée du dictionnaire
+        // personnel est asynchrone ; on la déclenche dès la création du
+        // service pour qu'elle soit prête avant la première frappe.
+        personalDictionary
     }
 
     override fun onCreateInputView(): View {
@@ -115,6 +126,7 @@ class ClavierIme : InputMethodService() {
         // défaut au premier lancement) n'a jamais généré de callback.
         controller.setLanguage(currentKeyboardLanguage())
         controller.reset()
+        syncAutoCapitalization()
         clearHighlightState()
         applyState()
         updateCorrectionBarVisibility()
@@ -123,7 +135,10 @@ class ClavierIme : InputMethodService() {
     override fun onCurrentInputMethodSubtypeChanged(newSubtype: InputMethodSubtype?) {
         super.onCurrentInputMethodSubtypeChanged(newSubtype)
         controller.setLanguage(languageForSubtype(newSubtype))
-        if (this::keyboardView.isInitialized) applyState()
+        if (this::keyboardView.isInitialized) {
+            syncAutoCapitalization()
+            applyState()
+        }
     }
 
     /** Langue active selon le subtype IME actuellement sélectionné par le système (décision 1.1). */
@@ -164,6 +179,14 @@ class ClavierIme : InputMethodService() {
         if (!correctionInProgress && this::correctionBar.isInitialized) {
             updateCorrectionBarVisibility()
         }
+        // Le curseur a pu bouger pour une raison hors de notre contrôle (tap de
+        // l'utilisateur ailleurs dans le champ, action d'une autre fonctionnalité
+        // comme la correction ou la saisie vocale) : la majuscule automatique
+        // (story 1.2) doit rester synchronisée avec le nouveau contexte.
+        if (this::keyboardView.isInitialized) {
+            syncAutoCapitalization()
+            applyState()
+        }
     }
 
     override fun onDestroy() {
@@ -177,6 +200,14 @@ class ClavierIme : InputMethodService() {
     private fun onKeyPressed(key: Key) {
         clearHighlightIfNeeded()
 
+        // Story 1.3 : dictionnaire local pour l'autocorrection (pas d'IA, pas
+        // d'apprentissage auto) — le mot qui vient de se terminer est vérifié
+        // juste avant que la touche de ponctuation/espace/entrée qui le
+        // termine ne soit elle-même traitée.
+        if (isWordBoundaryKey(key)) {
+            applyDictionaryAutocorrection()
+        }
+
         val result = controller.onKey(key)
 
         result.commit?.let { text -> currentInputConnection?.commitText(text, 1) }
@@ -186,8 +217,68 @@ class ClavierIme : InputMethodService() {
         if (result.isEnter) {
             pressEnter()
         }
+        // On ne resynchronise qu'après une touche qui modifie réellement le
+        // texte (lettre, espace, suppression, entrée). Un simple appui sur
+        // Maj ne change pas le texte : le recalcul écraserait sinon aussitôt
+        // le choix manuel de l'utilisateur de désactiver la majuscule
+        // automatique pour la lettre suivante (cf. tests KeyboardController).
+        val textChanged = result.commit != null || result.deleteBefore > 0 || result.isEnter
+        if (textChanged) {
+            syncAutoCapitalization()
+        }
         applyState()
         updateCorrectionBarVisibility()
+    }
+
+    /**
+     * Recalcule la majuscule automatique (story 1.2) à partir du texte
+     * réellement présent juste avant le curseur dans le champ actif, plutôt
+     * que de se fier au seul historique des touches pressées sur ce clavier
+     * (le champ peut déjà contenir du texte à l'ouverture, ou avoir été
+     * modifié par la correction IA / la saisie vocale).
+     */
+    private fun syncAutoCapitalization() {
+        val ic = currentInputConnection ?: return
+        val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
+        controller.applyTextContext(before)
+    }
+
+    // ------------------------------------------------------------------
+    // Dictionnaire local / autocorrection (story 1.3)
+    // ------------------------------------------------------------------
+
+    /** Touches qui terminent un mot et déclenchent donc une vérification dictionnaire. */
+    private fun isWordBoundaryKey(key: Key): Boolean = when (val action = key.action) {
+        KeyAction.Space, KeyAction.Enter -> true
+        is KeyAction.TypeChar -> !action.char.isLetterOrDigit() && action.char != '\'' && action.char != '-'
+        else -> false
+    }
+
+    private fun isWordChar(c: Char): Boolean = c.isLetter() || c == '\'' || c == '-'
+
+    /** Dernier "mot" avant le curseur : lettres/apostrophes/traits d'union contigus en fin de texte. */
+    private fun trailingWord(textBeforeCursor: String): String {
+        var start = textBeforeCursor.length
+        while (start > 0 && isWordChar(textBeforeCursor[start - 1])) start--
+        return textBeforeCursor.substring(start)
+    }
+
+    private fun applyDictionaryAutocorrection() {
+        val ic = currentInputConnection ?: return
+        val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
+        val word = trailingWord(before)
+        if (word.isEmpty()) return
+
+        val dictionary = DictionaryLoader.forLanguage(applicationContext, controller.state.language)
+        // Story 1.4 : les mots du dictionnaire personnel ne sont jamais
+        // corrigés et servent aussi de candidats de correction.
+        val correction = dictionary.correctionFor(word, personalWords = personalDictionary.snapshot()) ?: return
+        if (correction == word) return
+
+        ic.beginBatchEdit()
+        ic.deleteSurroundingText(word.length, 0)
+        ic.commitText(correction, 1)
+        ic.endBatchEdit()
     }
 
     // ------------------------------------------------------------------
@@ -520,6 +611,9 @@ class ClavierIme : InputMethodService() {
     companion object {
         private const val TAG = "ClavierIme"
         private const val MAX_ACCESSIBLE_CHARS = 10_000
+
+        /** Nombre de caractères avant le curseur récupérés pour la majuscule automatique (1.2) et le dictionnaire local (1.3). */
+        private const val TEXT_CONTEXT_LOOKBEHIND = 50
 
         /** #5A7FD4 (couleur accent existante du clavier) avec transparence (alpha 0x55). */
         private const val HIGHLIGHT_COLOR = 0x555A7FD4

@@ -24,5 +24,8 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.button_voice_model_settings).setOnClickListener {
             startActivity(Intent(this, VoiceModelSettingsActivity::class.java))
         }
+        findViewById<View>(R.id.button_personal_dictionary).setOnClickListener {
+            startActivity(Intent(this, PersonalDictionaryActivity::class.java))
+        }
     }
 }
