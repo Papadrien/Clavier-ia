@@ -167,11 +167,15 @@ class KeyboardLayoutTest {
     @Test
     fun `la rangee de chiffres laisse les autres rangees inchangees`() {
         languages.forEach { language ->
-            // Les chiffres en appui long (story 1.6) disparaissent avec la rangée de chiffres :
-            // on compare donc sans eux.
+            // Sans rangée de chiffres, la rangée du haut porte les chiffres en appui long (story 1.6)
+            // et dans la bulle des accents (story 1.8) : ces deux champs disparaissent avec la
+            // rangée de chiffres. On compare donc la rangée du haut sur l'identité des touches
+            // uniquement, et les autres rangées intégralement.
             val baseLayout = Keyboards.layoutOf(LayoutId.LETTERS, language)
-            val base = baseLayout.rows.map { row -> row.map { it.copy(longPressChar = null) } }
-            assertEquals(base, lettersWithNumberRow(language).rows.drop(1))
+            val withRow = lettersWithNumberRow(language)
+            fun identity(row: List<Key>) = row.map { listOf(it.id, it.label, it.action, it.weight) }
+            assertEquals(identity(baseLayout.rows.first()), identity(withRow.rows[1]))
+            assertEquals(baseLayout.rows.drop(1), withRow.rows.drop(2))
             assertEquals(baseLayout.id, lettersWithNumberRow(language).id)
         }
     }
