@@ -10,6 +10,7 @@ Clavier Android natif minimal en français (AZERTY) : on tape simplement sur les
 - **Barre espace** : glisser le doigt dessus déplace le curseur (un caractère par pas), sans saisir d'espace
 - **Hauteur du clavier** réglable (Paramètres du clavier) : 5 niveaux de 80 % à 120 % de la hauteur de référence (100 % par défaut), appliqués à la hauteur des touches ; la marge basse (zone système) n'est pas modifiée
 - **Mode paysage** : clavier plus bas (rangées et marge basse raccourcies, réglage de hauteur plafonné à 100 % pour laisser de la place à l'application), sans mode plein écran : le champ de saisie reste visible ; les bulles ouvertes sont fermées à la rotation
+- **Frappe rapide (multi-touch)** : quand un doigt se pose avant que le précédent soit levé, la touche précédente est validée aussitôt, dans l'ordre, au lieu d'être perdue
 - Touches **effacer** (⌫, répétition maintenue) et **entrée** (⏎)
 - Typé en Kotlin, `InputMethodService` + vue custom, sans aucune dépendance UI externe.
 

@@ -69,6 +69,7 @@ class KeyboardView(context: Context) : View(context) {
     // touches "accessoires" (fonction + ponctuation rapide) gris très foncé,
     // et un accent turquoise réservé à la touche Entrée.
     private val backgroundColor = Color.parseColor("#000000")
+    private val backgroundPaint = Paint().apply { color = backgroundColor }
     private val normalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#2E2E2E") }
     private val functionalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#141414") }
     private val pressedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#4A4A4A") }
@@ -125,6 +126,9 @@ class KeyboardView(context: Context) : View(context) {
     }
     private val previewRect = RectF()
 
+    // Taille de la bulle d'agrandissement (largeur, hauteur et texte) : 50 % de la taille d'origine.
+    private val PREVIEW_SCALE = 0.5f
+
     private fun showsPreview(key: Key?): Boolean = key?.action is KeyAction.TypeChar
 
     private val longPressRunnable = Runnable {
@@ -177,6 +181,7 @@ class KeyboardView(context: Context) : View(context) {
         super.onDetachedFromWindow()
         repeatHandler.removeCallbacksAndMessages(null)
         popupKey = null
+        activePointerId = MotionEvent.INVALID_POINTER_ID
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -198,7 +203,9 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     override fun onDraw(canvas: Canvas) {
-        canvas.drawColor(backgroundColor)
+        // Fond borné à la vue : le parent a clipChildren = false (bulles qui dépassent, voir
+        // ClavierIme), donc canvas.drawColor() peindrait aussi la barre d'actions au-dessus.
+        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), backgroundPaint)
 
         val inset = insetPx()
         val usableHeight = usableHeightPx()
@@ -299,113 +306,154 @@ class KeyboardView(context: Context) : View(context) {
         KeyAction.Shift, KeyAction.Backspace, KeyAction.Enter, KeyAction.ToggleLayout -> true
     }
 
+    // Multi-touch : en frappe rapide, le doigt suivant se pose avant que le précédent soit levé.
+    // Un seul doigt est « actif » à la fois (celui qui alimente appui long, bulles et glissements) ;
+    // quand un nouveau doigt se pose, la touche de l'ancien est validée immédiatement, dans l'ordre.
+    private var activePointerId = MotionEvent.INVALID_POINTER_ID
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                longPressCommitted = false
-                spaceSwipe.reset()
-                backspaceSwipe.reset()
-                pressedKey = keyAt(event.x, event.y)
-                previewKey = pressedKey.takeIf { showsPreview(it) }
-                if (pressedKey?.action is KeyAction.Space) spaceSwipe.onDown(event.x)
-                if (pressedKey?.action is KeyAction.Backspace) backspaceSwipe.onDown(event.x)
-                startRepeat(pressedKey)
-                scheduleLongPress(pressedKey)
-                invalidate()
+                activePointerId = event.getPointerId(0)
+                pressStart(event.getX(0), event.getY(0))
+                return true
+            }
+
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                // Le doigt précédent est considéré comme relâché à sa dernière position connue :
+                // sa touche est saisie avant celle du nouveau doigt, sans être perdue.
+                val activeIndex = event.findPointerIndex(activePointerId)
+                if (activeIndex >= 0) releaseTouch(event.getX(activeIndex), event.getY(activeIndex))
+                val index = event.actionIndex
+                activePointerId = event.getPointerId(index)
+                pressStart(event.getX(index), event.getY(index))
                 return true
             }
 
             MotionEvent.ACTION_MOVE -> {
-                if (popupKey != null) {
-                    updatePopupSelection(event.x, event.y)
-                    return true
-                }
-                if (longPressCommitted) return true
-                if (pressedKey?.action is KeyAction.Space) {
-                    val steps = spaceSwipe.onMove(event.x)
-                    if (steps != 0) cursorMoveListener?.onCursorMove(steps)
-                    // Une fois le glissement engagé, le doigt peut sortir de la barre espace sans changer de touche.
-                    if (spaceSwipe.isActive) return true
-                }
-                if (pressedKey?.action is KeyAction.Backspace) {
-                    val words = backspaceSwipe.onMove(event.x)
-                    if (words > 0) {
-                        // Le glissement remplace la suppression caractère par caractère de l'appui maintenu (repeatRunnable).
-                        stopRepeat()
-                        repeat(words) { deleteWordListener?.onDeleteWord() }
-                    }
-                    // Une fois le glissement engagé, le doigt peut sortir de la touche sans changer de touche.
-                    if (backspaceSwipe.isActive) return true
-                }
-                val current = keyAt(event.x, event.y)
-                if (current != pressedKey) {
-                    cancelKeyLongPress()
-                    pressedKey = current
-                    previewKey = current.takeIf { showsPreview(it) }
-                    startRepeat(current)
-                    invalidate()
-                }
+                val index = event.findPointerIndex(activePointerId)
+                if (index >= 0) moveTouch(event.getX(index), event.getY(index))
                 return true
             }
 
-            MotionEvent.ACTION_UP -> {
-                stopRepeat()
-                cancelKeyLongPress()
-                previewKey = null
-                val popup = popupKey
-                if (popup != null) {
-                    // Relâcher sur un symbole le saisit ; relâcher ailleurs ferme la bulle sans rien saisir.
-                    updatePopupSelection(event.x, event.y)
-                    val symbol = popup.popup.getOrNull(popupSelectedRow)?.getOrNull(popupSelectedCol)
-                    dismissPopup()
-                    pressedKey = null
-                    if (symbol != null) {
-                        keyListener?.onKey(Key("popup_$symbol", symbol.toString(), KeyAction.TypeChar(symbol)))
-                    }
-                    invalidate()
-                    return true
+            MotionEvent.ACTION_POINTER_UP, MotionEvent.ACTION_UP -> {
+                val index = event.actionIndex
+                // Le relâchement d'un doigt déjà validé (voir ACTION_POINTER_DOWN) est ignoré.
+                if (event.getPointerId(index) == activePointerId) {
+                    activePointerId = MotionEvent.INVALID_POINTER_ID
+                    releaseTouch(event.getX(index), event.getY(index))
                 }
-                val key = pressedKey
-                pressedKey = null
-                if (spaceSwipe.isActive) {
-                    // Le glissement a déplacé le curseur : le relâchement ne saisit pas d'espace.
-                    spaceSwipe.reset()
-                    invalidate()
-                    return true
-                }
-                if (backspaceSwipe.isActive) {
-                    // Le glissement a déjà supprimé le(s) mot(s) : le relâchement n'efface pas un caractère de plus.
-                    backspaceSwipe.reset()
-                    invalidate()
-                    return true
-                }
-                if (longPressCommitted) {
-                    longPressCommitted = false
-                    invalidate()
-                    return true
-                }
-                if (key != null && keyAt(event.x, event.y) == key) {
-                    keyListener?.onKey(key)
-                }
-                invalidate()
                 return true
             }
 
             MotionEvent.ACTION_CANCEL -> {
-                stopRepeat()
-                cancelKeyLongPress()
-                dismissPopup()
-                previewKey = null
-                longPressCommitted = false
-                spaceSwipe.reset()
-                backspaceSwipe.reset()
-                pressedKey = null
-                invalidate()
+                activePointerId = MotionEvent.INVALID_POINTER_ID
+                cancelTouch()
                 return true
             }
         }
         return super.onTouchEvent(event)
+    }
+
+    private fun pressStart(x: Float, y: Float) {
+        longPressCommitted = false
+        spaceSwipe.reset()
+        backspaceSwipe.reset()
+        pressedKey = keyAt(x, y)
+        previewKey = pressedKey.takeIf { showsPreview(it) }
+        if (pressedKey?.action is KeyAction.Space) spaceSwipe.onDown(x)
+        if (pressedKey?.action is KeyAction.Backspace) backspaceSwipe.onDown(x)
+        startRepeat(pressedKey)
+        scheduleLongPress(pressedKey)
+        invalidate()
+    }
+
+    private fun moveTouch(x: Float, y: Float) {
+        if (popupKey != null) {
+            updatePopupSelection(x, y)
+            return
+        }
+        if (longPressCommitted) return
+        if (pressedKey?.action is KeyAction.Space) {
+            val steps = spaceSwipe.onMove(x)
+            if (steps != 0) cursorMoveListener?.onCursorMove(steps)
+            // Une fois le glissement engagé, le doigt peut sortir de la barre espace sans changer de touche.
+            if (spaceSwipe.isActive) return
+        }
+        if (pressedKey?.action is KeyAction.Backspace) {
+            val words = backspaceSwipe.onMove(x)
+            if (words > 0) {
+                // Le glissement remplace la suppression caractère par caractère de l'appui maintenu (repeatRunnable).
+                stopRepeat()
+                repeat(words) { deleteWordListener?.onDeleteWord() }
+            }
+            // Une fois le glissement engagé, le doigt peut sortir de la touche sans changer de touche.
+            if (backspaceSwipe.isActive) return
+        }
+        val current = keyAt(x, y)
+        if (current != pressedKey) {
+            cancelKeyLongPress()
+            pressedKey = current
+            previewKey = current.takeIf { showsPreview(it) }
+            startRepeat(current)
+            invalidate()
+        }
+    }
+
+    /** Relâchement du doigt actif en (x, y) : saisit la touche, le symbole de la bulle, ou rien. */
+    private fun releaseTouch(x: Float, y: Float) {
+        stopRepeat()
+        cancelKeyLongPress()
+        previewKey = null
+        val popup = popupKey
+        if (popup != null) {
+            // Relâcher sur un symbole le saisit ; relâcher ailleurs ferme la bulle sans rien saisir.
+            updatePopupSelection(x, y)
+            val symbol = popup.popup.getOrNull(popupSelectedRow)?.getOrNull(popupSelectedCol)
+            dismissPopup()
+            pressedKey = null
+            if (symbol != null) {
+                keyListener?.onKey(Key("popup_$symbol", symbol.toString(), KeyAction.TypeChar(symbol)))
+            }
+            invalidate()
+            return
+        }
+        val key = pressedKey
+        pressedKey = null
+        if (spaceSwipe.isActive) {
+            // Le glissement a déplacé le curseur : le relâchement ne saisit pas d'espace.
+            spaceSwipe.reset()
+            invalidate()
+            return
+        }
+        if (backspaceSwipe.isActive) {
+            // Le glissement a déjà supprimé le(s) mot(s) : le relâchement n'efface pas un caractère de plus.
+            backspaceSwipe.reset()
+            invalidate()
+            return
+        }
+        if (longPressCommitted) {
+            longPressCommitted = false
+            invalidate()
+            return
+        }
+        if (key != null && keyAt(x, y) == key) {
+            keyListener?.onKey(key)
+        }
+        invalidate()
+    }
+
+    private fun cancelTouch() {
+        stopRepeat()
+        cancelKeyLongPress()
+        dismissPopup()
+        previewKey = null
+        longPressCommitted = false
+        spaceSwipe.reset()
+        backspaceSwipe.reset()
+        pressedKey = null
+        invalidate()
     }
 
     private fun scheduleLongPress(key: Key?) {
@@ -529,8 +577,8 @@ class KeyboardView(context: Context) : View(context) {
         val label = displayLabel(key)
         if (label.isEmpty()) return
 
-        val previewWidth = (bounds.width() * 1.6f).coerceAtMost(dp(72f))
-        val previewHeight = bounds.height() * 1.8f
+        val previewWidth = (bounds.width() * 1.6f).coerceAtMost(dp(72f)) * PREVIEW_SCALE
+        val previewHeight = bounds.height() * 1.8f * PREVIEW_SCALE
         val gap = dp(4f)
         // Place disponible au-dessus de la vue : comme la bulle d'accents (1.8), la bulle peut
         // recouvrir la barre d'actions qui la surmonte, pas au-delà de la fenêtre.
@@ -545,7 +593,7 @@ class KeyboardView(context: Context) : View(context) {
         canvas.drawRoundRect(previewRect, cornerRadiusPx(), cornerRadiusPx(), previewPaint)
 
         previewTextPaint.textSize = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_SP, 30f, resources.displayMetrics,
+            TypedValue.COMPLEX_UNIT_SP, 30f * PREVIEW_SCALE, resources.displayMetrics,
         )
         val baseline = previewRect.centerY() - (previewTextPaint.ascent() + previewTextPaint.descent()) / 2f
         canvas.drawText(label, previewRect.centerX(), baseline, previewTextPaint)
