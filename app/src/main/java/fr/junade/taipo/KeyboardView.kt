@@ -2,6 +2,7 @@ package fr.junade.taipo
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -25,8 +26,14 @@ class KeyboardView(context: Context) : View(context) {
         fun onCursorMove(steps: Int)
     }
 
+    /** Story 1.9 : glissement vers la gauche depuis la touche retour arrière = suppression d'un mot entier. */
+    fun interface OnDeleteWordListener {
+        fun onDeleteWord()
+    }
+
     private var keyListener: OnKeyListener? = null
     private var cursorMoveListener: OnCursorMoveListener? = null
+    private var deleteWordListener: OnDeleteWordListener? = null
     private var pressedKey: Key? = null
 
     var layout: KeyboardLayout = Keyboards.letters
@@ -35,6 +42,21 @@ class KeyboardView(context: Context) : View(context) {
             invalidate()
             requestLayout()
         }
+
+    /** Story 1.12 : coefficient appliqué à la hauteur des rangées (1 = hauteur de référence). */
+    var heightScale: Float = KeyboardHeight.DEFAULT.scale
+        set(value) {
+            if (field == value) return
+            field = value
+            requestLayout()
+            invalidate()
+        }
+
+    // Story 1.13 : orientation courante, qui détermine les dimensions verticales (KeyboardMetrics).
+    private var isLandscape: Boolean =
+        context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    private fun metrics(): KeyboardMetrics = KeyboardMetrics.forOrientation(isLandscape)
 
     var isShifted: Boolean = false
         set(value) {
@@ -90,6 +112,21 @@ class KeyboardView(context: Context) : View(context) {
         textAlign = Paint.Align.CENTER
     }
 
+    // Story 1.10 : bulle d'agrandissement de la touche pressée (retour visuel de frappe), affichée
+    // au-dessus de la touche tant qu'elle est maintenue. Réservée aux touches qui saisissent un
+    // caractère (lettres/chiffres/symboles) : les touches de fonction (espace, maj, retour arrière,
+    // entrée, bascule) ont déjà leur propre retour visuel (fond éclairci). Disparaît dès qu'une
+    // bulle d'accents (1.8) s'affiche par-dessus, ou au relâchement/annulation.
+    private var previewKey: Key? = null
+    private val previewPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#3A3A3A") }
+    private val previewTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.WHITE
+        textAlign = Paint.Align.CENTER
+    }
+    private val previewRect = RectF()
+
+    private fun showsPreview(key: Key?): Boolean = key?.action is KeyAction.TypeChar
+
     private val longPressRunnable = Runnable {
         val key = pressedKey ?: return@Runnable
         val digit = key.longPressChar
@@ -98,6 +135,7 @@ class KeyboardView(context: Context) : View(context) {
             showPopup(key)
         } else if (digit != null) {
             longPressCommitted = true
+            previewKey = null
             keyListener?.onKey(Key("longpress_$digit", digit.toString(), KeyAction.TypeChar(digit)))
             invalidate()
         }
@@ -123,8 +161,17 @@ class KeyboardView(context: Context) : View(context) {
         cursorMoveListener = listener
     }
 
+    fun setOnDeleteWordListener(listener: OnDeleteWordListener) {
+        deleteWordListener = listener
+    }
+
     // Story 1.7 : glissement horizontal sur la barre espace = déplacement du curseur.
     private val spaceSwipe = SpaceSwipeTracker(activationPx = dp(16f), stepPx = dp(12f))
+
+    // Story 1.9 : glissement horizontal vers la gauche sur la touche retour arrière = suppression
+    // de mots entiers. Seuils plus larges que ceux de la barre espace : le geste doit rester
+    // distinct d'un simple appui long sur la touche.
+    private val backspaceSwipe = BackspaceSwipeTracker(activationPx = dp(24f), stepPx = dp(40f))
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
@@ -132,9 +179,21 @@ class KeyboardView(context: Context) : View(context) {
         popupKey = null
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        val landscape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
+        if (landscape == isLandscape) return
+        isLandscape = landscape
+        // Une bulle ouverte pendant la rotation serait mal positionnée : on la ferme.
+        previewKey = null
+        dismissPopup()
+        requestLayout()
+        invalidate()
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = View.MeasureSpec.getSize(widthMeasureSpec)
-        val desiredHeight = (rowHeightPx() * layout.rows.size + bottomMarginPx()).toInt()
+        val desiredHeight = (rowsHeightPx() + bottomMarginPx()).toInt()
         setMeasuredDimension(width, desiredHeight)
     }
 
@@ -158,6 +217,7 @@ class KeyboardView(context: Context) : View(context) {
         }
 
         drawPopup(canvas)
+        drawPreview(canvas)
     }
 
     private fun drawKey(canvas: Canvas, key: Key, left: Float, top: Float, keyWidth: Float, rowHeight: Float, inset: Float) {
@@ -219,6 +279,8 @@ class KeyboardView(context: Context) : View(context) {
         } else {
             textPaint.textSize = defaultSize
         }
+        // Rangées basses (paysage, hauteur réduite) : le texte ne doit pas déborder de la touche.
+        textPaint.textSize = textPaint.textSize.coerceAtMost(keyRect.height() * 0.62f)
     }
 
     private fun displayLabel(key: Key): String = when (val action = key.action) {
@@ -243,8 +305,11 @@ class KeyboardView(context: Context) : View(context) {
             MotionEvent.ACTION_DOWN -> {
                 longPressCommitted = false
                 spaceSwipe.reset()
+                backspaceSwipe.reset()
                 pressedKey = keyAt(event.x, event.y)
+                previewKey = pressedKey.takeIf { showsPreview(it) }
                 if (pressedKey?.action is KeyAction.Space) spaceSwipe.onDown(event.x)
+                if (pressedKey?.action is KeyAction.Backspace) backspaceSwipe.onDown(event.x)
                 startRepeat(pressedKey)
                 scheduleLongPress(pressedKey)
                 invalidate()
@@ -263,10 +328,21 @@ class KeyboardView(context: Context) : View(context) {
                     // Une fois le glissement engagé, le doigt peut sortir de la barre espace sans changer de touche.
                     if (spaceSwipe.isActive) return true
                 }
+                if (pressedKey?.action is KeyAction.Backspace) {
+                    val words = backspaceSwipe.onMove(event.x)
+                    if (words > 0) {
+                        // Le glissement remplace la suppression caractère par caractère de l'appui maintenu (repeatRunnable).
+                        stopRepeat()
+                        repeat(words) { deleteWordListener?.onDeleteWord() }
+                    }
+                    // Une fois le glissement engagé, le doigt peut sortir de la touche sans changer de touche.
+                    if (backspaceSwipe.isActive) return true
+                }
                 val current = keyAt(event.x, event.y)
                 if (current != pressedKey) {
                     cancelKeyLongPress()
                     pressedKey = current
+                    previewKey = current.takeIf { showsPreview(it) }
                     startRepeat(current)
                     invalidate()
                 }
@@ -276,6 +352,7 @@ class KeyboardView(context: Context) : View(context) {
             MotionEvent.ACTION_UP -> {
                 stopRepeat()
                 cancelKeyLongPress()
+                previewKey = null
                 val popup = popupKey
                 if (popup != null) {
                     // Relâcher sur un symbole le saisit ; relâcher ailleurs ferme la bulle sans rien saisir.
@@ -297,6 +374,12 @@ class KeyboardView(context: Context) : View(context) {
                     invalidate()
                     return true
                 }
+                if (backspaceSwipe.isActive) {
+                    // Le glissement a déjà supprimé le(s) mot(s) : le relâchement n'efface pas un caractère de plus.
+                    backspaceSwipe.reset()
+                    invalidate()
+                    return true
+                }
                 if (longPressCommitted) {
                     longPressCommitted = false
                     invalidate()
@@ -313,8 +396,10 @@ class KeyboardView(context: Context) : View(context) {
                 stopRepeat()
                 cancelKeyLongPress()
                 dismissPopup()
+                previewKey = null
                 longPressCommitted = false
                 spaceSwipe.reset()
+                backspaceSwipe.reset()
                 pressedKey = null
                 invalidate()
                 return true
@@ -352,6 +437,7 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     private fun showPopup(key: Key) {
+        previewKey = null
         val bounds = keyBounds(key) ?: return
         val rows = key.popup.size
         val cols = key.popup.maxOf { it.size }
@@ -436,6 +522,35 @@ class KeyboardView(context: Context) : View(context) {
     private fun popupLabel(symbol: Char): String =
         if (isShifted && symbol.isLetter()) symbol.uppercaseChar().toString() else symbol.toString()
 
+    /** Story 1.10 : bulle d'agrandissement affichée au-dessus de la touche de caractère pressée. */
+    private fun drawPreview(canvas: Canvas) {
+        val key = previewKey ?: return
+        val bounds = keyBounds(key) ?: return
+        val label = displayLabel(key)
+        if (label.isEmpty()) return
+
+        val previewWidth = (bounds.width() * 1.6f).coerceAtMost(dp(72f))
+        val previewHeight = bounds.height() * 1.8f
+        val gap = dp(4f)
+        // Place disponible au-dessus de la vue : comme la bulle d'accents (1.8), la bulle peut
+        // recouvrir la barre d'actions qui la surmonte, pas au-delà de la fenêtre.
+        val headroom = top.toFloat().coerceAtLeast(0f)
+
+        val left = (bounds.centerX() - previewWidth / 2f)
+            .coerceIn(0f, (width - previewWidth).coerceAtLeast(0f))
+        val previewBottom = bounds.top - gap
+        val previewTop = (previewBottom - previewHeight).coerceAtLeast(-headroom)
+
+        previewRect.set(left, previewTop, left + previewWidth, previewBottom)
+        canvas.drawRoundRect(previewRect, cornerRadiusPx(), cornerRadiusPx(), previewPaint)
+
+        previewTextPaint.textSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP, 30f, resources.displayMetrics,
+        )
+        val baseline = previewRect.centerY() - (previewTextPaint.ascent() + previewTextPaint.descent()) / 2f
+        canvas.drawText(label, previewRect.centerX(), baseline, previewTextPaint)
+    }
+
     private fun keyAt(x: Float, y: Float): Key? {
         val rows = layout.rows
         if (rows.isEmpty()) return null
@@ -466,11 +581,13 @@ class KeyboardView(context: Context) : View(context) {
 
     // Dimensions calées sur la mesure du clavier système de référence (Gboard,
     // thème sombre) : hauteur de touche ~37dp + marge d'insertion ~3dp de
-    // chaque côté ⇒ ~43dp par rangée, agrandie de 20 % (51,6dp) à la demande, et ~60dp de marge basse pour ne pas
+    // chaque côté ⇒ ~43dp par rangée, agrandie de 20 % (51,6dp) à la demande puis multipliée par le réglage de hauteur (story 1.12), et ~60dp de marge basse pour ne pas
     // chevaucher la zone système (bouton de changement de clavier, geste de
     // navigation) qui se superpose sinon aux dernières touches.
-    private fun rowHeightPx(): Float = dp(51.6f)
-    private fun bottomMarginPx(): Float = dp(60f)
+    // Story 1.13 : en paysage, rangées et marge basse sont raccourcies (KeyboardMetrics).
+    private fun rowsHeightPx(): Float =
+        dp(metrics().rowsHeightDp(layout.rows.size, heightScale))
+    private fun bottomMarginPx(): Float = dp(metrics().bottomMarginDp)
     private fun usableHeightPx(): Float = (height - bottomMarginPx()).coerceAtLeast(0f)
 
     private fun insetPx(): Float = dp(3f)

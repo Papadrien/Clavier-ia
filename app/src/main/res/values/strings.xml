@@ -67,4 +67,16 @@
     <string name="keyboard_settings_title">Paramètres du clavier</string>
     <string name="keyboard_settings_number_row">Rangée de chiffres</string>
     <string name="keyboard_settings_number_row_description">Affiche une rangée de chiffres (1 à 0) au-dessus des lettres. Désactivée, les chiffres restent accessibles via la touche « 123 ». S\'applique à la prochaine ouverture du clavier.</string>
+    <string name="keyboard_settings_haptic_title">Retour haptique</string>
+    <string name="keyboard_settings_haptic_off">Désactivé</string>
+    <string name="keyboard_settings_haptic_light">Léger</string>
+    <string name="keyboard_settings_haptic_medium">Moyen</string>
+    <string name="keyboard_settings_haptic_strong">Fort</string>
+    <string name="keyboard_settings_height_title">Hauteur du clavier</string>
+    <string name="keyboard_settings_height_compact">Très compacte (80 %)</string>
+    <string name="keyboard_settings_height_small">Compacte (90 %)</string>
+    <string name="keyboard_settings_height_normal">Normale (100 %)</string>
+    <string name="keyboard_settings_height_large">Grande (110 %)</string>
+    <string name="keyboard_settings_height_extra_large">Très grande (120 %)</string>
+    <string name="keyboard_settings_height_description">Ajuste la hauteur des touches. S\'applique à la prochaine ouverture du clavier.</string>
 </resources>

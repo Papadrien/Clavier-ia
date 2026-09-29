@@ -54,10 +54,15 @@ class ClavierIme : InputMethodService() {
     private val correctionEngine by lazy { CorrectionEngine(applicationContext) }
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
     private val keyboardPreferences by lazy { KeyboardPreferences(applicationContext) }
+    private val hapticFeedback by lazy { HapticFeedbackPlayer(applicationContext) }
 
     // Story 1.5 : rangée de chiffres, relue à chaque ouverture de champ
     // (onStartInputView) pour prendre en compte un changement fait dans les paramètres.
     private var numberRowEnabled = false
+
+    // Story 1.11 : niveau de retour haptique, relu de la même façon.
+    private var hapticIntensity = HapticIntensity.DEFAULT
+    private var keyboardHeight = KeyboardHeight.DEFAULT
 
     private val personalDictionary by lazy { PersonalDictionaryProvider.repository(applicationContext) }
 
@@ -131,12 +136,22 @@ class ClavierIme : InputMethodService() {
         // service pour qu'elle soit prête avant la première frappe.
         personalDictionary
         numberRowEnabled = keyboardPreferences.isNumberRowEnabled
+        hapticIntensity = keyboardPreferences.hapticIntensity
+        keyboardHeight = keyboardPreferences.keyboardHeight
     }
+
+    /**
+     * Story 1.13 : pas de mode plein écran (zone d'édition « extraite ») en paysage : le champ de
+     * l'application reste visible au-dessus du clavier, comme sur Gboard.
+     */
+    override fun onEvaluateFullscreenMode(): Boolean = false
 
     override fun onCreateInputView(): View {
         keyboardView = KeyboardView(this)
+        keyboardView.heightScale = keyboardHeight.scale
         keyboardView.setOnKeyListener { key -> onKeyPressed(key) }
         keyboardView.setOnCursorMoveListener { steps -> onCursorMoved(steps) }
+        keyboardView.setOnDeleteWordListener { onDeleteWord() }
 
         correctionBar = CorrectionBarView(this)
         correctionBar.setOnCorrectListener { onCorrectClicked() }
@@ -172,6 +187,9 @@ class ClavierIme : InputMethodService() {
         // où le subtype actif (choisi avant l'affichage du clavier, ou par
         // défaut au premier lancement) n'a jamais généré de callback.
         numberRowEnabled = keyboardPreferences.isNumberRowEnabled
+        hapticIntensity = keyboardPreferences.hapticIntensity
+        keyboardHeight = keyboardPreferences.keyboardHeight
+        keyboardView.heightScale = keyboardHeight.scale
         controller.setLanguage(currentKeyboardLanguage())
         controller.reset()
         syncAutoCapitalization()
@@ -250,6 +268,7 @@ class ClavierIme : InputMethodService() {
     }
 
     private fun onKeyPressed(key: Key) {
+        hapticFeedback.perform(hapticIntensity)
         clearHighlightIfNeeded()
 
         // Suppression juste après une autocorrection : on annule la correction au lieu d'effacer un caractère.
@@ -318,6 +337,42 @@ class ClavierIme : InputMethodService() {
         }
         syncAutoCapitalization()
         applyState()
+    }
+
+    /**
+     * Story 1.9 : glissement vers la gauche depuis la touche retour arrière. Supprime le mot entier
+     * précédent (espaces/tabulations de fin comprises), ou, s'il n'y a pas de mot immédiatement
+     * avant le curseur (ponctuation, ou aucun texte), un seul caractère pour que le geste ne reste
+     * jamais sans effet.
+     */
+    private fun onDeleteWord() {
+        val ic = currentInputConnection ?: return
+        clearHighlightIfNeeded()
+        pendingAutocorrection = null
+        val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
+        val toDelete = wordToDeleteBeforeCursor(before)
+        if (toDelete.isEmpty()) return
+        hapticFeedback.perform(hapticIntensity)
+        ic.deleteSurroundingText(toDelete.length, 0)
+        syncAutoCapitalization()
+        applyState()
+        updateCorrectionBarVisibility()
+    }
+
+    /** Portion de [textBeforeCursor], en partant de la fin, à supprimer pour la story 1.9. */
+    private fun wordToDeleteBeforeCursor(textBeforeCursor: String): String {
+        if (textBeforeCursor.isEmpty()) return ""
+        var start = textBeforeCursor.length
+        while (start > 0 && (textBeforeCursor[start - 1] == ' ' || textBeforeCursor[start - 1] == '\t')) start--
+        val afterTrailingSpace = start
+        while (start > 0 && isWordChar(textBeforeCursor[start - 1])) start--
+        return if (start < afterTrailingSpace) {
+            textBeforeCursor.substring(start)
+        } else if (afterTrailingSpace < textBeforeCursor.length) {
+            textBeforeCursor.substring(afterTrailingSpace) // que des espaces/tabulations
+        } else {
+            textBeforeCursor.substring(textBeforeCursor.length - 1) // ni mot ni espace : un caractère
+        }
     }
 
     /**

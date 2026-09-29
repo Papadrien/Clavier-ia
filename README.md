@@ -8,6 +8,8 @@ Clavier Android natif minimal en français (AZERTY) : on tape simplement sur les
 - **Dictionnaire personnel** (écran « Dictionnaire personnel ») : mots ajoutés à la main, jamais corrigés par l'autocorrection locale et utilisés comme candidats de correction ; stocké dans une base **Room chiffrée par SQLCipher**
 - **Appui long sur une lettre** : bulle d'accents et caractères spéciaux (é è ê ë, à â æ, ç, ô œ, ù û ü, ñ, ß…), sélection en glissant le doigt puis en le relevant sur le caractère voulu ; les lettres du haut proposent leur chiffre en premier quand la rangée de chiffres est désactivée ; les caractères passent en majuscule avec Maj
 - **Barre espace** : glisser le doigt dessus déplace le curseur (un caractère par pas), sans saisir d'espace
+- **Hauteur du clavier** réglable (Paramètres du clavier) : 5 niveaux de 80 % à 120 % de la hauteur de référence (100 % par défaut), appliqués à la hauteur des touches ; la marge basse (zone système) n'est pas modifiée
+- **Mode paysage** : clavier plus bas (rangées et marge basse raccourcies, réglage de hauteur plafonné à 100 % pour laisser de la place à l'application), sans mode plein écran : le champ de saisie reste visible ; les bulles ouvertes sont fermées à la rotation
 - Touches **effacer** (⌫, répétition maintenue) et **entrée** (⏎)
 - Typé en Kotlin, `InputMethodService` + vue custom, sans aucune dépendance UI externe.
 

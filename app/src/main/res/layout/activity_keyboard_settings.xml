@@ -32,5 +32,110 @@
             android:lineSpacingMultiplier="1.2"
             android:layout_marginTop="4dp" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/keyboard_settings_haptic_title"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/radio_group_haptic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/radio_haptic_off"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/keyboard_settings_haptic_off" />
+
+            <RadioButton
+                android:id="@+id/radio_haptic_light"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/keyboard_settings_haptic_light" />
+
+            <RadioButton
+                android:id="@+id/radio_haptic_medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/keyboard_settings_haptic_medium" />
+
+            <RadioButton
+                android:id="@+id/radio_haptic_strong"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/keyboard_settings_haptic_strong" />
+
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/keyboard_settings_height_title"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/radio_group_height"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/radio_height_compact"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/keyboard_settings_height_compact" />
+
+            <RadioButton
+                android:id="@+id/radio_height_small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/keyboard_settings_height_small" />
+
+            <RadioButton
+                android:id="@+id/radio_height_normal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/keyboard_settings_height_normal" />
+
+            <RadioButton
+                android:id="@+id/radio_height_large"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/keyboard_settings_height_large" />
+
+            <RadioButton
+                android:id="@+id/radio_height_extra_large"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/keyboard_settings_height_extra_large" />
+
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/keyboard_settings_height_description"
+            android:textSize="14sp"
+            android:lineSpacingMultiplier="1.2"
+            android:layout_marginTop="4dp" />
+
     </LinearLayout>
 </ScrollView>
