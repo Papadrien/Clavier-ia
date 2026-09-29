@@ -294,16 +294,22 @@ class ClavierIme : InputMethodService() {
         // termine ne soit elle-même traitée.
         val autocorrection = if (isWordBoundaryKey(key)) applyDictionaryAutocorrection() else null
 
-        val result = controller.onKey(key)
+        // Double espace : l'espace précédent est remplacé par ". " (pas de sélection active).
+        val doubleSpaceContext = if (key.action == KeyAction.Space && autocorrection == null && !hasSelection()) {
+            currentInputConnection?.getTextBeforeCursor(2, 0)?.toString()
+        } else null
 
+        val result = controller.onKey(key, doubleSpaceContext)
+
+        // La suppression précède l'insertion (double espace : on retire l'espace avant d'ajouter ". ").
+        if (result.deleteBefore > 0) {
+            currentInputConnection?.deleteSurroundingText(result.deleteBefore, 0)
+        }
         result.commit?.let { text -> currentInputConnection?.commitText(text, 1) }
         // Entrée exclue : le retour à la ligne n'est pas un texte que l'on peut réinsérer à l'identique.
         val boundary = result.commit
         if (autocorrection != null && boundary != null) {
             pendingAutocorrection = AppliedAutocorrection(autocorrection.original, autocorrection.corrected, boundary)
-        }
-        if (result.deleteBefore > 0) {
-            currentInputConnection?.deleteSurroundingText(result.deleteBefore, 0)
         }
         if (result.isEnter) {
             pressEnter()
@@ -427,12 +433,16 @@ class ClavierIme : InputMethodService() {
         return AppliedAutocorrection(original = word, corrected = correction)
     }
 
+    private fun hasSelection(): Boolean {
+        val ic = currentInputConnection ?: return false
+        return !ic.getSelectedText(0).isNullOrEmpty() ||
+            (lastSelectionStart >= 0 && lastSelectionEnd >= 0 && lastSelectionStart != lastSelectionEnd)
+    }
+
     /** Efface le texte sélectionné dans le champ actif. Renvoie faux s'il n'y a pas de sélection. */
     private fun deleteSelectedText(): Boolean {
         val ic = currentInputConnection ?: return false
-        val hasSelection = !ic.getSelectedText(0).isNullOrEmpty() ||
-            (lastSelectionStart >= 0 && lastSelectionEnd >= 0 && lastSelectionStart != lastSelectionEnd)
-        if (!hasSelection) return false
+        if (!hasSelection()) return false
         ic.commitText("", 1) // remplace la sélection par du vide
         return true
     }

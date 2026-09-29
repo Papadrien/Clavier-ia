@@ -63,6 +63,23 @@ class KeyboardControllerTest {
     }
 
     @Test
+    fun `double espace apres un mot remplace l espace par un point espace`() {
+        val result = KeyboardController().onKey(key("space"), "bonjour ")
+        assertEquals(". ", result.commit)
+        assertEquals(1, result.deleteBefore)
+    }
+
+    @Test
+    fun `double espace sans mot avant ou apres ponctuation ne change rien`() {
+        listOf("", " ", "mot  ", "fin. ", "ok, ").forEach { text ->
+            val result = KeyboardController().onKey(key("space"), text)
+            assertEquals(" ", result.commit, "texte: '$text'")
+            assertEquals(0, result.deleteBefore)
+        }
+        assertEquals(" ", KeyboardController().onKey(key("space")).commit)
+    }
+
+    @Test
     fun `la touche effacer signale la suppression d un caractere`() {
         val controller = KeyboardController()
         val result = controller.onKey(key("backspace"))

@@ -9,13 +9,13 @@ import android.os.VibratorManager
 /**
  * Story 1.11 : niveaux de retour haptique réglables depuis les paramètres du clavier. « Moyen »
  * est le niveau par défaut. Chaque niveau a sa propre durée et amplitude de vibration ; [OFF]
- * désactive complètement le retour haptique.
+ * désactive complètement le retour haptique. Impulsion très brève à amplitude fixe (effet « clic »).
  */
 enum class HapticIntensity(val storageKey: String, private val durationMs: Long, private val amplitude: Int) {
     OFF("off", 0L, 0),
-    LIGHT("light", 8L, 40),
-    MEDIUM("medium", 12L, 100),
-    STRONG("strong", 20L, 220),
+    LIGHT("light", 4L, 40),
+    MEDIUM("medium", 6L, 100),
+    STRONG("strong", 10L, 220),
     ;
 
     /** Effet de vibration correspondant, ou null si le retour haptique est désactivé. */

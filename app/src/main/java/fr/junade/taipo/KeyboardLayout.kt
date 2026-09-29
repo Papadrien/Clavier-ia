@@ -25,6 +25,12 @@ data class Key(
      */
     val popup: List<List<Char>> = emptyList(),
     /**
+     * Caractère de la bulle [popup] sélectionné d'office à l'ouverture de la bulle : relâcher le
+     * doigt sans le bouger le saisit (ex. appui long puis relâchement sur E = é). C'est le
+     * choix le plus courant de la touche ; null si aucun choix ne prime (bulle du point).
+     */
+    val defaultPopupChar: Char? = null,
+    /**
      * Chiffre des touches du haut quand la rangée de chiffres est désactivée (story 1.6), affiché
      * en petit indice sur la touche. Un appui long le saisit directement, sauf si la touche a une
      * bulle [popup] (story 1.8) : le chiffre en est alors le premier choix.
@@ -221,6 +227,7 @@ object Keyboards {
             c.toString(),
             KeyAction.TypeChar(c),
             popup = accents[c]?.let { popupGrid(it.toList()) }.orEmpty(),
+            defaultPopupChar = accents[c]?.first(),
         )
 
     private fun digit(c: Char): Key =

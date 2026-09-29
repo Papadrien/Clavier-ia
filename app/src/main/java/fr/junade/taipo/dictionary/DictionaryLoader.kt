@@ -5,8 +5,9 @@ import fr.junade.taipo.KeyboardLanguage
 
 /**
  * Charge le [Dictionary] correspondant à une [KeyboardLanguage] depuis les
- * assets de l'app (un fichier texte, un mot par ligne — voir
- * `assets/dictionaries/fr.txt` et `en.txt`).
+ * assets de l'app (un fichier texte, une ligne « mot fréquence » — voir
+ * `assets/dictionaries/fr.txt` et `en.txt`, ~50 000 mots triés par fréquence décroissante ;
+ * la fréquence sert à départager les corrections, story 1.14).
  *
  * Résultat mis en cache par langue : le fichier n'est lu qu'une fois par
  * processus IME (le dictionnaire est fixe, story 1.3 — pas besoin de
@@ -19,8 +20,7 @@ object DictionaryLoader {
     @Synchronized
     fun forLanguage(context: Context, language: KeyboardLanguage): Dictionary {
         cache[language]?.let { return it }
-        val words = readAsset(context, assetNameFor(language))
-        val dictionary = Dictionary(words)
+        val dictionary = Dictionary.withFrequencies(readAsset(context, assetNameFor(language)))
         cache[language] = dictionary
         return dictionary
     }
@@ -30,8 +30,8 @@ object DictionaryLoader {
         KeyboardLanguage.EN -> "dictionaries/en.txt"
     }
 
-    private fun readAsset(context: Context, assetPath: String): List<String> =
+    private fun readAsset(context: Context, assetPath: String): Map<String, Long> =
         context.assets.open(assetPath).bufferedReader(Charsets.UTF_8).useLines { lines ->
-            lines.map { it.trim() }.filter { it.isNotEmpty() }.toList()
+            Dictionary.parseFrequencyLines(lines)
         }
 }

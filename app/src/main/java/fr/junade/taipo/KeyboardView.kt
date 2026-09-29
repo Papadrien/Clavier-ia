@@ -103,6 +103,13 @@ class KeyboardView(context: Context) : View(context) {
     private var popupCellWidth = 0f
     private var popupCellHeight = 0f
     private var popupPadding = 0f
+    private var popupPaddingV = 0f
+
+    // Cellule sélectionnée d'office à l'ouverture (Key.defaultPopupChar) et zone « de départ » (la
+    // touche pressée jusqu'à la bulle) où le doigt la conserve : relâcher sans bouger la saisit.
+    private var popupDefaultRow = -1
+    private var popupDefaultCol = -1
+    private val popupHomeRect = RectF()
 
     // Story 1.6 : vrai quand l'appui long a déjà saisi le chiffre de la touche (le relâchement ne
     // doit alors pas saisir aussi la lettre).
@@ -128,6 +135,9 @@ class KeyboardView(context: Context) : View(context) {
 
     // Taille de la bulle d'agrandissement (largeur, hauteur et texte) : 50 % de la taille d'origine.
     private val PREVIEW_SCALE = 0.5f
+
+    // Hauteur supplémentaire (dp, en haut et en bas) de la bulle d'appui long, sans toucher aux symboles.
+    private val POPUP_EXTRA_VERTICAL_PADDING_DP = 4f
 
     private fun showsPreview(key: Key?): Boolean = key?.action is KeyAction.TypeChar
 
@@ -492,6 +502,9 @@ class KeyboardView(context: Context) : View(context) {
         val margin = dp(4f)
         val gap = dp(4f)
         val padding = dp(8f)
+        // Marge verticale un peu plus grande que la marge horizontale : la bulle est plus haute
+        // de quelques pixels sans grossir les symboles ni les cellules.
+        val paddingV = padding + dp(POPUP_EXTRA_VERTICAL_PADDING_DP)
 
         // Place disponible au-dessus de la vue : la bulle peut recouvrir la barre d'actions qui la
         // surmonte (le parent ne clippe pas ses enfants, voir ClavierIme), pas au-delà de la fenêtre.
@@ -500,9 +513,9 @@ class KeyboardView(context: Context) : View(context) {
         // La bulle doit tenir dans cet espace : la hauteur des cellules s'adapte à la place
         // disponible au-dessus de la rangée de la touche.
         val cellWidth = minOf(dp(44f), (width - 2 * margin - 2 * padding) / cols)
-        val cellHeight = minOf(dp(44f), (bounds.top + headroom - gap - 2 * padding) / rows).coerceAtLeast(dp(24f))
+        val cellHeight = minOf(dp(44f), (bounds.top + headroom - gap - 2 * paddingV) / rows).coerceAtLeast(dp(24f))
         val popupWidth = cols * cellWidth + 2 * padding
-        val popupHeight = rows * cellHeight + 2 * padding
+        val popupHeight = rows * cellHeight + 2 * paddingV
 
         val left = (bounds.centerX() - popupWidth / 2f)
             .coerceIn(margin, (width - margin - popupWidth).coerceAtLeast(margin))
@@ -512,8 +525,24 @@ class KeyboardView(context: Context) : View(context) {
         popupCellWidth = cellWidth
         popupCellHeight = cellHeight
         popupPadding = padding
-        popupSelectedRow = -1
-        popupSelectedCol = -1
+        popupPaddingV = paddingV
+        // Zone de départ : la touche et l'espace jusqu'à la bulle, avec une petite tolérance.
+        popupHomeRect.set(
+            bounds.left - dp(4f), popupRect.bottom, bounds.right + dp(4f), bounds.bottom + dp(4f),
+        )
+        popupDefaultRow = -1
+        popupDefaultCol = -1
+        key.defaultPopupChar?.let { default ->
+            key.popup.forEachIndexed { r, row ->
+                val c = row.indexOf(default)
+                if (c >= 0) {
+                    popupDefaultRow = r
+                    popupDefaultCol = c
+                }
+            }
+        }
+        popupSelectedRow = popupDefaultRow
+        popupSelectedCol = popupDefaultCol
         popupKey = key
         invalidate()
     }
@@ -522,6 +551,8 @@ class KeyboardView(context: Context) : View(context) {
         popupKey = null
         popupSelectedRow = -1
         popupSelectedCol = -1
+        popupDefaultRow = -1
+        popupDefaultCol = -1
         invalidate()
     }
 
@@ -530,12 +561,17 @@ class KeyboardView(context: Context) : View(context) {
         var row = -1
         var col = -1
         if (popupRect.contains(x, y)) {
-            val r = ((y - popupRect.top - popupPadding) / popupCellHeight).toInt()
+            val r = ((y - popupRect.top - popupPaddingV) / popupCellHeight).toInt()
                 .coerceIn(0, key.popup.lastIndex)
             val c = ((x - popupRect.left - popupPadding) / popupCellWidth).toInt()
                 .coerceIn(0, key.popup[r].lastIndex)
             row = r
             col = c
+        } else if (popupDefaultRow >= 0 && popupHomeRect.contains(x, y)) {
+            // Doigt resté sur la touche d'origine (ou juste au-dessus) : le choix par défaut reste
+            // sélectionné, un léger tremblement du doigt ne l'annule donc pas.
+            row = popupDefaultRow
+            col = popupDefaultCol
         }
         if (row != popupSelectedRow || col != popupSelectedCol) {
             popupSelectedRow = row
@@ -557,7 +593,7 @@ class KeyboardView(context: Context) : View(context) {
         key.popup.forEachIndexed { rowIndex, row ->
             row.forEachIndexed { colIndex, symbol ->
                 val cx = popupRect.left + popupPadding + (colIndex + 0.5f) * popupCellWidth
-                val cy = popupRect.top + popupPadding + (rowIndex + 0.5f) * popupCellHeight
+                val cy = popupRect.top + popupPaddingV + (rowIndex + 0.5f) * popupCellHeight
                 if (rowIndex == popupSelectedRow && colIndex == popupSelectedCol) {
                     canvas.drawCircle(cx, cy, minOf(popupCellWidth, popupCellHeight) / 2f - dp(1f), popupSelectionPaint)
                 }

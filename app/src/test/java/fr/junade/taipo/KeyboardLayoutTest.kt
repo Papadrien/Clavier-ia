@@ -398,6 +398,34 @@ class KeyboardLayoutTest {
     }
 
     @Test
+    fun `le choix le plus courant est selectionne d office dans la bulle des lettres`() {
+        for (numberRow in listOf(true, false)) {
+            val fr = Keyboards.layoutOf(LayoutId.LETTERS, KeyboardLanguage.FR, numberRow = numberRow)
+            assertEquals('é', letterKey(fr, 'e').defaultPopupChar)
+            assertEquals('à', letterKey(fr, 'a').defaultPopupChar)
+            assertEquals('î', letterKey(fr, 'i').defaultPopupChar)
+            assertEquals('ô', letterKey(fr, 'o').defaultPopupChar)
+            assertEquals('ù', letterKey(fr, 'u').defaultPopupChar)
+            assertEquals('ç', letterKey(fr, 'c').defaultPopupChar)
+            // Le choix par défaut figure toujours dans la bulle (même quand le chiffre y est ajouté).
+            fr.rows.flatten().filter { it.defaultPopupChar != null }.forEach { key ->
+                assertTrue(key.defaultPopupChar in key.popup.flatten(), key.id)
+            }
+            // Sans accents : pas de bulle, donc pas de choix par défaut.
+            assertEquals(null, letterKey(fr, 'r').defaultPopupChar)
+        }
+        val en = Keyboards.layoutOf(LayoutId.LETTERS, KeyboardLanguage.EN, numberRow = false)
+        assertEquals('é', letterKey(en, 'e').defaultPopupChar)
+        assertEquals('á', letterKey(en, 'a').defaultPopupChar)
+    }
+
+    @Test
+    fun `la bulle du point n a pas de choix par defaut`() {
+        val period = Keyboards.letters.rows.last().first { it.id == "period" }
+        assertEquals(null, period.defaultPopupChar)
+    }
+
+    @Test
     fun `la bulle du point n a pas change`() {
         val period = Keyboards.letters.rows.last().first { it.id == "period" }
         assertEquals(3, period.popup.size)

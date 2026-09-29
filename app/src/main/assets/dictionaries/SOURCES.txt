@@ -1,8 +1,18 @@
-Listes de mots (fr.txt, en.txt) : extraites des listes de fréquence FrequencyWords
+Listes de mots avec fréquences (fr.txt, en.txt) : extraites des listes de fréquence FrequencyWords
 (hermitdave/FrequencyWords, contenu 2018, dérivé du corpus OpenSubtitles2018),
 via le miroir Hugging Face StephanAkkerman/frequency-words-2018 (fr_50k.txt, en_50k.txt).
 Licence du contenu : CC-BY-SA 4.0 (dépôt d'origine) — attribution requise, à reprendre
 dans l'écran "Licences / crédits" de l'app avant publication.
-Nettoyage : fréquences retirées, fragments de contractions issus de la tokenisation
-retirés, contractions courantes ajoutées à la main, onomatopées de sous-titres retirées.
-Couverture : en.txt ~9 000 mots, fr.txt ~2 400 mots (préfixe des listes 50k, PAS le fichier complet).
+
+Format : une ligne par mot, "mot fréquence" (nombre d'occurrences dans le corpus), triées par
+fréquence décroissante. La fréquence sert à départager les corrections (story 1.14).
+
+Nettoyage (fr.txt ~49 500 mots, en.txt ~48 650 mots, soit les 50 000 mots des listes d'origine moins
+les entrées non retenues) :
+- retirés : fragments issus de la tokenisation (l', j', 's, 't...), abréviations avec point (mr., u.s.),
+  entrées contenant chiffres ou autres caractères, lettres isolées sauf a / à / y (fr) et a / i (en) ;
+- contractions ajoutées à la main dans l'ancienne version (j'ai, c'est, don't...) conservées ; leur
+  fréquence est estimée à partir des fragments du corpus (min des deux fragments) ;
+- formes sans apostrophe de ces contractions (jai, cest, dont, im...) retirées : ce sont des fautes
+  du corpus, corrigées automatiquement vers la contraction.
+Non nettoyé : fautes de frappe et noms propres rares du corpus (ex. "helo") restent dans les listes.

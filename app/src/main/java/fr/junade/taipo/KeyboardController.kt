@@ -47,7 +47,11 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
         }
     }
 
-    fun onKey(key: Key): KeyPressResult {
+    /**
+     * [textBeforeCursor] (optionnel) sert au double espace : si l'espace tapé suit
+     * un mot déjà suivi d'un seul espace, ce dernier est remplacé par ". ".
+     */
+    fun onKey(key: Key, textBeforeCursor: String? = null): KeyPressResult {
         return when (val action = key.action) {
             is KeyAction.TypeChar -> {
                 val c = if (state.isShifted && action.char.isLetter()) action.char.uppercaseChar() else action.char
@@ -71,7 +75,11 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
 
             KeyAction.Space -> {
                 state = state.copy(isShifted = false)
-                KeyPressResult(commit = " ", newState = state)
+                if (textBeforeCursor != null && shouldInsertPeriodOnDoubleSpace(textBeforeCursor)) {
+                    KeyPressResult(commit = ". ", deleteBefore = 1, newState = state)
+                } else {
+                    KeyPressResult(commit = " ", newState = state)
+                }
             }
 
             KeyAction.ToggleLayout -> {
@@ -104,6 +112,16 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
                 '.', '!', '?', '\n' -> true
                 else -> false
             }
+        }
+
+        /**
+         * Vrai si le texte se termine par une lettre ou un chiffre suivi d'un
+         * seul espace : un nouvel espace doit alors devenir ". " (double espace).
+         */
+        fun shouldInsertPeriodOnDoubleSpace(textBeforeCursor: String): Boolean {
+            val n = textBeforeCursor.length
+            if (n < 2 || textBeforeCursor[n - 1] != ' ') return false
+            return textBeforeCursor[n - 2].isLetterOrDigit()
         }
     }
 }
