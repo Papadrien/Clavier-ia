@@ -37,22 +37,23 @@ class CorrectionEngine(private val appContext: Context) {
     /**
      * Corrige [text] avec le modèle [model]. [onLoading] est appelé si le
      * modèle doit être (re)chargé avant de pouvoir corriger, pour afficher un
-     * indicateur de chargement (décision 8.7).
+     * indicateur de chargement (décision 8.7). [protectedWords] : mots du dictionnaire personnel
+     * présents dans [text] (voir [ProtectedWords.inText]), à ne pas corriger.
      */
-    suspend fun correct(model: AiModel, text: String, onLoading: () -> Unit): String {
+    suspend fun correct(
+        model: AiModel,
+        text: String,
+        protectedWords: List<String> = emptyList(),
+        onLoading: () -> Unit,
+    ): String {
         val activeEngine = ensureEngineLoaded(model, onLoading)
         val conversationConfig = ConversationConfig(
             systemInstruction = Contents.of(promptPreferences.get()),
         )
-        // Les petits modèles (ex. gemma-3-270m-it, "Ultra-léger") respectent mal le
-        // rôle système seul et peuvent halluciner (observé : le modèle paraphrase le
-        // prompt système au lieu de corriger un mot ambigu comme "touile"). On répète
-        // donc une consigne de FORMAT dans le tour utilisateur, en plus du
-        // systemInstruction. Important : cette consigne ne redit PAS "orthographe et
-        // grammaire uniquement" - cette portée-là ne vit que dans promptPreferences.get()
-        // ci-dessus, pour que la personnaliser dans les paramètres ait un effet réel.
-        val userTurn = "Réponds uniquement avec le texte corrigé ci-dessous, rien d'autre : " +
-            "aucune phrase d'introduction, aucun commentaire, aucun guillemet.\n\nTexte :\n$text"
+        // Les petits modèles (ex. gemma-3-270m-it, "Ultra-léger") respectent mal le rôle système seul
+        // et peuvent halluciner : la consigne de FORMAT est donc répétée dans le tour utilisateur,
+        // avec les mots du dictionnaire personnel présents dans le texte (voir CorrectionPrompt.userTurn).
+        val userTurn = CorrectionPrompt.userTurn(text, protectedWords)
         return withContext(Dispatchers.Default) {
             activeEngine.createConversation(conversationConfig).use { conversation ->
                 val response = conversation.sendMessage(userTurn)

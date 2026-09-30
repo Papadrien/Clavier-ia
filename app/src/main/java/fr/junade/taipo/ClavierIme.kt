@@ -29,6 +29,7 @@ import fr.junade.taipo.ai.CorrectionDiff
 import fr.junade.taipo.ai.CorrectionEngine
 import fr.junade.taipo.ai.CorrectionPlanner
 import fr.junade.taipo.ai.CorrectionSafeguard
+import fr.junade.taipo.ai.ProtectedWords
 import fr.junade.taipo.ai.TextBlock
 import fr.junade.taipo.ai.VoiceEngine
 import fr.junade.taipo.ai.VoiceRecorder
@@ -212,6 +213,7 @@ class ClavierIme : InputMethodService() {
         correctionBar.voiceButton.setOnTouchListener { _, event -> onVoiceButtonTouch(event) }
         correctionBar.setOnEmojiSuggestionClickListener { onEmojiSuggestionTapped() }
         correctionBar.setOnClipboardClickListener { showClipboardPanel() }
+        correctionBar.setOnClipboardCloseClickListener { hideClipboardPanel() }
         correctionBar.setOnPasteClickListener { onPasteTapped() }
         correctionBar.setOnWordSuggestionClickListener { suggestion -> onWordSuggestionTapped(suggestion) }
 
@@ -223,7 +225,6 @@ class ClavierIme : InputMethodService() {
 
         clipboardPanel = ClipboardPanelView(this)
         clipboardPanel.visibility = View.GONE
-        clipboardPanel.setOnCloseListener { hideClipboardPanel() }
         clipboardPanel.setOnPasteListener { item -> onClipboardItemTapped(item) }
         clipboardPanel.setOnPinListener { item -> onClipboardItemPin(item) }
         clipboardPanel.setOnDeleteListener { item -> onClipboardItemDelete(item) }
@@ -237,10 +238,11 @@ class ClavierIme : InputMethodService() {
                 correctionBar,
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
             )
-            // Le panneau emoji recouvre exactement le clavier (le clavier reste mesuré, seulement
-            // masqué) : la hauteur ne change pas en basculant, rotation et réglage de hauteur compris.
+            // Les panneaux (emoji, Smart Clipboard) recouvrent exactement le clavier (le clavier reste
+            // mesuré, seulement masqué) : la hauteur est celle du clavier et ne change pas en
+            // basculant, même si le contenu d'un panneau est plus haut (rotation et réglage compris).
             addView(
-                FrameLayout(this@ClavierIme).apply {
+                KeyboardStackLayout(this@ClavierIme).apply {
                     clipChildren = false
                     addView(
                         keyboardView,
@@ -512,11 +514,12 @@ class ClavierIme : InputMethodService() {
     private fun showClipboardPanel() {
         if (isRecording || correctionInProgress) return
         hapticFeedback.perform(hapticIntensity)
-        correctionBar.collapseMenu() // story 2.4 : au retour des touches (ABC), mots ou puce, pas le menu ouvert
+        correctionBar.collapseMenu() // story 2.4 : au retour des touches, mots ou puce, pas le menu ouvert
         hideEmojiPanel(resync = false)
-        clipboardPanel.configure(keyboardView.rowHeightPx(), keyboardView.bottomInsetPx())
+        clipboardPanel.configure(keyboardView.bottomInsetPx())
         keyboardView.visibility = View.INVISIBLE
         clipboardPanel.visibility = View.VISIBLE
+        correctionBar.setClipboardPanelOpen(true)
         clearSuggestions()
         // Story 2.5 : les cartes suivent les éléments épinglés tant que le panneau est ouvert.
         refreshClipboardPanel()
@@ -526,13 +529,14 @@ class ClavierIme : InputMethodService() {
         }
     }
 
-    /** Retour aux touches (bouton ABC, nouveau champ, rotation) ; [resync] resynchronise majuscule et barre. */
+    /** Retour aux touches (croix de la barre, nouveau champ, rotation) ; [resync] resynchronise majuscule et barre. */
     private fun hideClipboardPanel(resync: Boolean = true) {
         if (!clipboardPanelVisible()) return
         clipboardPanelJob?.cancel()
         clipboardPanelJob = null
         clipboardPanel.closeMenu()
         clipboardPanel.visibility = View.GONE
+        correctionBar.setClipboardPanelOpen(false)
         keyboardView.visibility = View.VISIBLE
         if (resync) {
             syncAutoCapitalization()
@@ -722,6 +726,7 @@ class ClavierIme : InputMethodService() {
         clearHighlightIfNeeded()
         pendingAutocorrection = null
         val keyCode = if (steps < 0) KeyEvent.KEYCODE_DPAD_LEFT else KeyEvent.KEYCODE_DPAD_RIGHT
+        hapticFeedback.perform(hapticIntensity.cursorMoveFeedback()) // toujours faible, absent si désactivé
         repeat(abs(steps)) {
             ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, keyCode))
             ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, keyCode))
@@ -996,7 +1001,7 @@ class ClavierIme : InputMethodService() {
         launchCorrection {
             val correctedBlocks = blocks.map { block ->
                 val original = captured.text.substring(block.start, block.endExclusive)
-                val corrected = correctionEngine.correct(model, original) {
+                val corrected = correctionEngine.correct(model, original, protectedWordsIn(original)) {
                     correctionBar.state = CorrectionBarState.LOADING
                 }
                 // null : réponse vide ou tronquée, le texte d'origine est alors conservé.
@@ -1009,6 +1014,10 @@ class ClavierIme : InputMethodService() {
             }
         }
     }
+
+    /** Mots du dictionnaire personnel présents dans [text] : signalés à l'IA pour qu'elle ne les corrige pas. */
+    private fun protectedWordsIn(text: String): List<String> =
+        ProtectedWords.inText(text, personalDictionary.snapshot())
 
     /** Corrige uniquement le texte sélectionné ; les espaces en bordure de sélection sont conservés. */
     private fun correctSelection(ic: InputConnection, selected: String) {
@@ -1060,7 +1069,7 @@ class ClavierIme : InputMethodService() {
         if (core.isEmpty()) return paragraph
         val leading = paragraph.length - paragraph.trimStart().length
         val trailing = paragraph.length - paragraph.trimEnd().length
-        val corrected = correctionEngine.correct(model, core) {
+        val corrected = correctionEngine.correct(model, core, protectedWordsIn(core)) {
             correctionBar.state = CorrectionBarState.LOADING
         }
         val accepted = CorrectionSafeguard.accept(core, corrected) ?: core

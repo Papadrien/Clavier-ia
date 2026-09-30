@@ -146,6 +146,8 @@ class Dictionary private constructor(
         val personal = HashMap<String, String>(personalWords.size)
         personalWords.forEach { personal[it.lowercase()] = it }
         if (lower in personal) return null
+        // « l'Taipo », « d'Adrien », « Taipo's » : le clavier voit un seul mot avec apostrophe.
+        if (isPersonalWithApostrophe(lower, personal)) return null
 
         if (lower in frequencies) {
             // Mot présent dans les listes : corrigé seulement si c'est une faute du corpus dont la
@@ -288,10 +290,36 @@ class Dictionary private constructor(
             val key = personal.lowercase()
             if (key.startsWith(lower)) offer(personalDisplay(typed, personal), key)
         }
+        // Après une élision (« l'Ta »), les mots personnels sont proposés avec leur élision (« l'Taipo »).
+        val apostrophe = typed.lastIndexOf('\'')
+        if (apostrophe > 0 && apostrophe < typed.length - 1) {
+            val elision = typed.substring(0, apostrophe + 1)
+            val stem = typed.substring(apostrophe + 1)
+            val stemLower = stem.lowercase()
+            for (personal in personalWords) {
+                val key = personal.lowercase()
+                if (key.length > stemLower.length && key.startsWith(stemLower)) {
+                    offer(elision + personalDisplay(stem, personal), elision.lowercase() + key)
+                }
+            }
+        }
         if (result.size < limit) {
             for (word in topCompletions(lower, limit + 1)) offer(applyOriginalCasing(typed, word), word)
         }
         return result
+    }
+
+    /**
+     * Vrai si [lower] (minuscules) est un mot personnel collé à une élision (« l'Taipo », « qu'Adrien »,
+     * soit le mot personnel après la dernière apostrophe) ou suivi du possessif anglais (« Taipo's »).
+     */
+    private fun isPersonalWithApostrophe(lower: String, personal: Map<String, String>): Boolean {
+        val last = lower.lastIndexOf('\'')
+        if (last < 0) return false
+        val after = lower.substring(last + 1)
+        if (after.length >= MIN_WORD_LENGTH_FOR_CORRECTION && after in personal) return true
+        val first = lower.indexOf('\'')
+        return lower.substring(first + 1) == "s" && lower.substring(0, first) in personal
     }
 
     /** Mot personnel tel qu'affiché : casse enregistrée si elle est particulière, sinon casse tapée. */

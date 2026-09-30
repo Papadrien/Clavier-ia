@@ -72,6 +72,15 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
 
     /** Story 2.1 : bouton « menu », visible pendant la saisie, qui donne accès au bouton Smart Clipboard. */
     private val menuButton = Button(context)
+
+    /** Menu de droite : range les boutons Vocal et Corriger pendant les suggestions de mots. */
+    private val actionsMenuButton = Button(context)
+
+    /** Croix de fermeture du panneau Smart Clipboard : visible seulement tant qu'il est ouvert. */
+    private val closeButton = Button(context)
+    private var clipboardPanelOpen = false
+    private var clipboardCloseListener: (() -> Unit)? = null
+    private var actionsMenuBackgroundExpanded: Boolean? = null
     private val zoneState = SuggestionZoneState()
     private var menuBackgroundExpanded: Boolean? = null
     private var clipboardListener: OnClipboardClickListener? = null
@@ -106,6 +115,10 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             zoneState.toggleMenu()
             renderZone()
         }
+        addView(
+            menuButton,
+            LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginEnd = dp(8f).toInt() },
+        )
 
         styleButton(clipboardButton, "#3A3F47")
         compact(clipboardButton, paddingDp = 12f)
@@ -150,14 +163,51 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
                 listener?.onCorrectClicked()
             }
         }
-        addView(correctButton, LayoutParams(LayoutParams.WRAP_CONTENT, dp(36f).toInt()).apply { marginEnd = dp(8f).toInt() })
+        addView(correctButton, LayoutParams(LayoutParams.WRAP_CONTENT, dp(36f).toInt()))
 
-        // Menu « ··· » à l'extrémité droite de la barre : pendant les suggestions de mots, il range
-        // derrière lui les boutons Vocal et Corriger (et donne accès au bouton Smart Clipboard).
-        addView(menuButton, LayoutParams(dp(40f).toInt(), dp(36f).toInt()))
+        // Menu de droite : pendant les suggestions de mots, il range derrière lui Vocal et Corriger.
+        styleButton(actionsMenuButton, "#3A3F47")
+        compact(actionsMenuButton, paddingDp = 0f)
+        actionsMenuButton.text = "\u00B7\u00B7\u00B7"
+        actionsMenuButton.contentDescription = context.getString(R.string.actions_menu_description)
+        actionsMenuButton.setOnClickListener {
+            zoneState.toggleActionsMenu()
+            renderZone()
+        }
+        addView(
+            actionsMenuButton,
+            LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginStart = dp(8f).toInt() },
+        )
+
+        // Croix de fermeture du panneau Smart Clipboard, à l'extrémité droite de la barre.
+        styleButton(closeButton, "#3A3F47")
+        compact(closeButton, paddingDp = 0f)
+        closeButton.text = "\u2715"
+        closeButton.contentDescription = context.getString(R.string.clipboard_panel_close_description)
+        closeButton.setOnClickListener { clipboardCloseListener?.invoke() }
+        closeButton.visibility = View.GONE
+        addView(
+            closeButton,
+            LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginStart = dp(8f).toInt() },
+        )
 
         renderCorrect()
         renderVoice()
+        renderZone()
+    }
+
+    /** Touche sur la croix : le panneau Smart Clipboard doit se fermer. */
+    fun setOnClipboardCloseClickListener(listener: () -> Unit) {
+        clipboardCloseListener = listener
+    }
+
+    /**
+     * Le panneau Smart Clipboard est ouvert (ou refermé) : la croix de fermeture apparaît à la place
+     * du menu de droite, et le menu de gauche (qui n'a plus d'objet) se cache.
+     */
+    fun setClipboardPanelOpen(open: Boolean) {
+        if (clipboardPanelOpen == open) return
+        clipboardPanelOpen = open
         renderZone()
     }
 
@@ -243,9 +293,9 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     }
 
     /**
-     * Vocal et Corriger sont rangés derrière le menu tant que la bande de mots est affichée, sauf
-     * pendant une écoute, une transcription ou une correction : leur bouton sert alors d'arrêt ou
-     * d'indicateur d'avancement et doit rester visible (même si du texte vient d'être inséré).
+     * Vocal et Corriger sont rangés derrière le menu de droite tant que la bande de mots est
+     * affichée, sauf pendant une écoute, une transcription ou une correction : leur bouton sert alors
+     * d'arrêt ou d'indicateur d'avancement et doit rester visible (même si du texte vient d'être inséré).
      */
     private fun renderActionButtons() {
         val busy = voiceState != VoiceBarState.IDLE ||
@@ -254,6 +304,9 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         voiceButton.visibility = if (actionsVisible) View.VISIBLE else View.GONE
         correctButton.visibility =
             if (actionsVisible && state != CorrectionBarState.HIDDEN) View.VISIBLE else View.GONE
+        actionsMenuButton.visibility =
+            if (!clipboardPanelOpen && zoneState.actionsMenuButtonVisible(busy)) View.VISIBLE else View.GONE
+        closeButton.visibility = if (clipboardPanelOpen) View.VISIBLE else View.GONE
     }
 
     private fun renderZone() {
@@ -262,10 +315,16 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         suggestionStrip.visibility = if (words) View.VISIBLE else View.GONE
         clipboardButton.visibility = if (zoneState.zone == SuggestionZoneState.Zone.CLIPBOARD) View.VISIBLE else View.GONE
         pasteChip.visibility = if (zoneState.zone == SuggestionZoneState.Zone.PASTE) View.VISIBLE else View.GONE
-        menuButton.visibility = if (zoneState.menuButtonVisible) View.VISIBLE else View.GONE
+        menuButton.visibility =
+            if (zoneState.menuButtonVisible && !clipboardPanelOpen) View.VISIBLE else View.GONE
         if (menuBackgroundExpanded != zoneState.menuExpanded) {
             menuBackgroundExpanded = zoneState.menuExpanded
             menuButton.background = roundedBackground(if (zoneState.menuExpanded) "#5A7FD4" else "#3A3F47")
+        }
+        if (actionsMenuBackgroundExpanded != zoneState.actionsExpanded) {
+            actionsMenuBackgroundExpanded = zoneState.actionsExpanded
+            actionsMenuButton.background =
+                roundedBackground(if (zoneState.actionsExpanded) "#5A7FD4" else "#3A3F47")
         }
     }
 

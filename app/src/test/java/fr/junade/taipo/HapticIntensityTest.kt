@@ -23,4 +23,17 @@ class HapticIntensityTest {
         assertEquals(HapticIntensity.DEFAULT, HapticIntensity.fromStorageKey(null))
         assertEquals(HapticIntensity.DEFAULT, HapticIntensity.fromStorageKey("inconnu"))
     }
+
+    @Test
+    fun `la duree de l'impulsion est de 9 ms`() {
+        assertEquals(9L, HapticIntensity.CLICK_DURATION_MS)
+    }
+
+    @Test
+    fun `le deplacement du curseur reste faible ou absent`() {
+        assertEquals(HapticIntensity.LIGHT, HapticIntensity.LIGHT.cursorMoveFeedback())
+        assertEquals(HapticIntensity.LIGHT, HapticIntensity.MEDIUM.cursorMoveFeedback())
+        assertEquals(HapticIntensity.LIGHT, HapticIntensity.STRONG.cursorMoveFeedback())
+        assertEquals(HapticIntensity.OFF, HapticIntensity.OFF.cursorMoveFeedback())
+    }
 }

@@ -19,7 +19,8 @@ import fr.junade.taipo.R
 
 /**
  * Stories 2.1 et 2.5 : panneau Smart Clipboard, qui remplace les touches quand on appuie sur le
- * bouton « Presse-papiers » de la barre (même principe que le panneau emoji de la story 1.15).
+ * bouton « Presse-papiers » de la barre (même principe que le panneau emoji de la story 1.15). Il n'a pas de bouton « ABC » : on le ferme par
+ * la croix de la barre du haut.
  *
  * Il affiche les éléments en cartes (2 par rangée, aperçu sur 3 lignes, masqué si le contenu est
  * sensible) : la dernière copie puis les éléments épinglés, marqués d'une épingle. Un appui sur une
@@ -34,10 +35,6 @@ import fr.junade.taipo.R
 @SuppressLint("ViewConstructor")
 class ClipboardPanelView(context: Context) : FrameLayout(context) {
 
-    fun interface OnCloseListener {
-        fun onClose()
-    }
-
     /** Une action sur une carte (collage, épinglage, suppression). */
     fun interface OnItemListener {
         fun onItem(item: ClipboardItems.Item)
@@ -46,15 +43,12 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
     private val content = LinearLayout(context)
     private val list = LinearLayout(context)
     private val emptyMessage = TextView(context)
-    private val bottomBar = LinearLayout(context)
     private val bottomSpacer = View(context)
-    private val abcKey = TextView(context)
     private val scrim = FrameLayout(context)
     private val pinEntry = TextView(context)
     private val deleteEntry = TextView(context)
 
     private var menuItem: ClipboardItems.Item? = null
-    private var closeListener: OnCloseListener? = null
     private var pasteListener: OnItemListener? = null
     private var pinListener: OnItemListener? = null
     private var deleteListener: OnItemListener? = null
@@ -79,32 +73,9 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         listArea.addView(emptyMessage, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
         content.addView(listArea, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f))
 
-        abcKey.text = context.getString(R.string.clipboard_panel_close)
-        abcKey.setTextColor(Color.WHITE)
-        abcKey.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-        abcKey.gravity = Gravity.CENTER
-        abcKey.background = GradientDrawable().apply {
-            setColor(Color.parseColor("#141414"))
-            cornerRadius = dp(8f).toFloat()
-        }
-        abcKey.setOnClickListener { closeListener?.onClose() }
-
-        bottomBar.orientation = LinearLayout.HORIZONTAL
-        val margin = dp(3f)
-        bottomBar.addView(
-            abcKey,
-            LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1.4f)
-                .apply { setMargins(margin, margin, margin, margin) },
-        )
-        bottomBar.addView(View(context), LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 8.6f))
-        content.addView(bottomBar, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(44f)))
         content.addView(bottomSpacer, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0))
 
         buildMenu()
-    }
-
-    fun setOnCloseListener(listener: OnCloseListener) {
-        closeListener = listener
     }
 
     /** Appui sur une carte : coller son texte. */
@@ -122,9 +93,8 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         deleteListener = listener
     }
 
-    /** Même calage que le panneau emoji : [rowHeightPx] = une rangée de touches, [bottomMarginPx] = zone système. */
-    fun configure(rowHeightPx: Int, bottomMarginPx: Int) {
-        setHeight(bottomBar, (rowHeightPx * BOTTOM_ROW_RATIO).toInt())
+    /** [bottomMarginPx] = zone système en bas. La fermeture se fait par la croix de la barre du haut. */
+    fun configure(bottomMarginPx: Int) {
         setHeight(bottomSpacer, bottomMarginPx)
     }
 
@@ -258,7 +228,6 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
     private fun dp(value: Float): Int = (value * resources.displayMetrics.density).toInt()
 
     companion object {
-        private const val BOTTOM_ROW_RATIO = 0.85f
         private const val COLUMNS = 2
         private const val CARD_MAX_LINES = 3
     }

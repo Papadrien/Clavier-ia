@@ -8,21 +8,31 @@ import android.os.VibratorManager
 
 /**
  * Story 1.11 : niveaux de retour haptique réglables depuis les paramètres du clavier. « Moyen »
- * est le niveau par défaut. Chaque niveau a sa propre durée et amplitude de vibration ; [OFF]
- * désactive complètement le retour haptique. Impulsion très brève à amplitude fixe (effet « clic »).
+ * est le niveau par défaut. Les niveaux se distinguent par l'amplitude seule : la durée est la même
+ * ([CLICK_DURATION_MS]) pour tous ; [OFF] désactive complètement le retour haptique. Impulsion très
+ * brève à amplitude fixe (effet « clic »).
  */
-enum class HapticIntensity(val storageKey: String, private val durationMs: Long, private val amplitude: Int) {
-    OFF("off", 0L, 0),
-    LIGHT("light", 4L, 40),
-    MEDIUM("medium", 6L, 100),
-    STRONG("strong", 10L, 220),
+enum class HapticIntensity(val storageKey: String, private val amplitude: Int) {
+    OFF("off", 0),
+    LIGHT("light", 40),
+    MEDIUM("medium", 100),
+    STRONG("strong", 220),
     ;
 
     /** Effet de vibration correspondant, ou null si le retour haptique est désactivé. */
     fun toVibrationEffect(): VibrationEffect? =
-        if (this == OFF) null else VibrationEffect.createOneShot(durationMs, amplitude)
+        if (this == OFF) null else VibrationEffect.createOneShot(CLICK_DURATION_MS, amplitude)
+
+    /**
+     * Niveau utilisé quand on déplace le curseur en glissant sur la barre espace : toujours faible,
+     * quel que soit le niveau choisi, et absent quand le retour haptique est désactivé.
+     */
+    fun cursorMoveFeedback(): HapticIntensity = if (this == OFF) OFF else LIGHT
 
     companion object {
+        /** Durée de l'impulsion, identique pour tous les niveaux (l'ancien niveau fort durait 10 ms). */
+        const val CLICK_DURATION_MS = 9L
+
         val DEFAULT = MEDIUM
 
         fun fromStorageKey(key: String?): HapticIntensity = entries.firstOrNull { it.storageKey == key } ?: DEFAULT

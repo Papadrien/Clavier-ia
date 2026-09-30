@@ -94,9 +94,10 @@
     <string name="keyboard_settings_height_description">Ajuste la hauteur des touches. S\'applique à la prochaine ouverture du clavier.</string>
 
     <string name="clipboard_button">Presse-papiers</string>
-    <string name="clipboard_menu_description">Menu : presse-papiers, saisie vocale et correction</string>
+    <string name="clipboard_menu_description">Menu : afficher le presse-papiers</string>
+    <string name="actions_menu_description">Menu : saisie vocale et correction</string>
     <string name="clipboard_empty">Rien à coller pour le moment.</string>
-    <string name="clipboard_panel_close">ABC</string>
+    <string name="clipboard_panel_close_description">Fermer le presse-papiers</string>
     <string name="clipboard_paste_description">Coller : %1$s</string>
     <string name="clipboard_paste_description_masked">Coller le texte copié (aperçu masqué)</string>
     <string name="clipboard_pinned_description">Épinglé</string>

@@ -213,56 +213,92 @@ class SuggestionZoneStateTypingTest {
     }
 }
 
-/** Vocal et Corriger sont rangés derrière le menu tant que la bande de mots est affichée. */
+/** Menu de droite : Vocal et Corriger sont rangés derrière lui tant que la bande de mots est affichée. */
 class SuggestionZoneStateActionsTest {
 
+    private fun typing() = SuggestionZoneState().also { it.onFieldTextChanged(true) }
+
     @Test
-    fun `pendant les suggestions de mots Vocal et Corriger sont caches`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
+    fun `pendant les suggestions de mots Vocal et Corriger sont caches et le menu de droite visible`() {
+        val state = typing()
+        assertEquals(Zone.WORDS, state.zone)
+        assertFalse(state.actionButtonsVisible(busy = false))
+        assertTrue(state.actionsMenuButtonVisible(busy = false))
+    }
+
+    @Test
+    fun `le menu de droite ouvre puis referme Vocal et Corriger`() {
+        val state = typing()
+        state.toggleActionsMenu()
+        assertEquals(Zone.ACTIONS, state.zone)
+        assertTrue(state.actionButtonsVisible(busy = false))
+        assertTrue(state.actionsMenuButtonVisible(busy = false))
+        state.toggleActionsMenu()
         assertEquals(Zone.WORDS, state.zone)
         assertFalse(state.actionButtonsVisible(busy = false))
     }
 
     @Test
-    fun `le menu ouvert fait reapparaitre Vocal et Corriger`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
-        state.toggleMenu()
-        assertTrue(state.actionButtonsVisible(busy = false))
-        state.toggleMenu()
-        assertFalse(state.actionButtonsVisible(busy = false))
-    }
-
-    @Test
-    fun `la frappe referme le menu et range de nouveau les boutons`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
-        state.toggleMenu()
+    fun `la frappe referme le menu de droite`() {
+        val state = typing()
+        state.toggleActionsMenu()
         state.onTyping()
+        assertEquals(Zone.WORDS, state.zone)
         assertFalse(state.actionButtonsVisible(busy = false))
     }
 
     @Test
-    fun `champ vide (avant saisie) Vocal reste visible`() {
-        val state = SuggestionZoneState()
-        assertTrue(state.actionButtonsVisible(busy = false))
+    fun `ouvrir un menu referme l'autre`() {
+        val state = typing()
+        state.toggleActionsMenu()
+        state.toggleMenu()
+        assertEquals(Zone.CLIPBOARD, state.zone)
+        assertFalse(state.actionsExpanded)
+        state.toggleMenu() // referme le menu de gauche : le menu de droite n'est pas rouvert
+        assertEquals(Zone.WORDS, state.zone)
     }
 
     @Test
-    fun `la puce de collage ne range pas Vocal et Corriger`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
-        state.setPasteAvailable(true)
-        assertEquals(Zone.PASTE, state.zone)
-        assertTrue(state.actionButtonsVisible(busy = false))
+    fun `sans suggestions de mots le menu de droite n'existe pas et Vocal reste visible`() {
+        val empty = SuggestionZoneState() // champ vide : bouton Smart Clipboard
+        assertTrue(empty.actionButtonsVisible(busy = false))
+        assertFalse(empty.actionsMenuButtonVisible(busy = false))
+        empty.toggleActionsMenu()
+        assertFalse(empty.actionsExpanded)
     }
 
     @Test
-    fun `une ecoute ou une correction en cours garde les boutons visibles meme pendant les mots`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true) // ex. texte dicté inséré : la zone repasse aux mots
+    fun `la puce de collage ou le menu de gauche gardent Vocal et Corriger visibles`() {
+        val paste = typing()
+        paste.setPasteAvailable(true)
+        assertEquals(Zone.PASTE, paste.zone)
+        assertTrue(paste.actionButtonsVisible(busy = false))
+        assertFalse(paste.actionsMenuButtonVisible(busy = false))
+
+        val clipboard = typing()
+        clipboard.toggleMenu()
+        assertTrue(clipboard.actionButtonsVisible(busy = false))
+        assertFalse(clipboard.actionsMenuButtonVisible(busy = false))
+    }
+
+    @Test
+    fun `une puce de collage ou un champ vide referment le menu de droite`() {
+        val paste = typing()
+        paste.toggleActionsMenu()
+        paste.setPasteAvailable(true)
+        assertFalse(paste.actionsExpanded)
+
+        val cleared = typing()
+        cleared.toggleActionsMenu()
+        cleared.onFieldTextChanged(false)
+        assertFalse(cleared.actionsExpanded)
+    }
+
+    @Test
+    fun `une ecoute ou une correction en cours garde Vocal et Corriger visibles sans menu`() {
+        val state = typing() // ex. texte dicté inséré : la zone repasse aux mots
         assertEquals(Zone.WORDS, state.zone)
         assertTrue(state.actionButtonsVisible(busy = true))
+        assertFalse(state.actionsMenuButtonVisible(busy = true))
     }
 }

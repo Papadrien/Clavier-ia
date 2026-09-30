@@ -69,6 +69,25 @@ class DictionaryTest {
     }
 
     @Test
+    fun `correctionFor ne corrige pas un mot personnel apres une elision`() {
+        val personal = listOf("Taipo", "Adrien")
+        assertNull(dictionary.correctionFor("l'Taipo", personalWords = personal))
+        assertNull(dictionary.correctionFor("d'Adrien", personalWords = personal))
+        assertNull(dictionary.correctionFor("qu'adrien", personalWords = personal))
+    }
+
+    @Test
+    fun `correctionFor ne corrige pas un mot personnel suivi du possessif anglais`() {
+        assertNull(dictionary.correctionFor("Taipo's", personalWords = listOf("Taipo")))
+    }
+
+    @Test
+    fun `les completions personnelles sont proposees apres une elision`() {
+        val slots = dictionary.suggestionSlotsFor("l'Ta", personalWords = listOf("Taipo"))
+        assertEquals("l'Taipo", slots.firstOrNull { it != null }?.text)
+    }
+
+    @Test
     fun `correctionFor utilise un mot personnel comme candidat`() {
         assertEquals("Taipo", dictionary.correctionFor("Taipoo", personalWords = listOf("Taipo")))
     }
