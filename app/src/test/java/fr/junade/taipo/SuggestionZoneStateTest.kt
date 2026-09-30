@@ -212,3 +212,57 @@ class SuggestionZoneStateTypingTest {
         assertEquals(Zone.CLIPBOARD, state.zone)
     }
 }
+
+/** Vocal et Corriger sont rangés derrière le menu tant que la bande de mots est affichée. */
+class SuggestionZoneStateActionsTest {
+
+    @Test
+    fun `pendant les suggestions de mots Vocal et Corriger sont caches`() {
+        val state = SuggestionZoneState()
+        state.onFieldTextChanged(true)
+        assertEquals(Zone.WORDS, state.zone)
+        assertFalse(state.actionButtonsVisible(busy = false))
+    }
+
+    @Test
+    fun `le menu ouvert fait reapparaitre Vocal et Corriger`() {
+        val state = SuggestionZoneState()
+        state.onFieldTextChanged(true)
+        state.toggleMenu()
+        assertTrue(state.actionButtonsVisible(busy = false))
+        state.toggleMenu()
+        assertFalse(state.actionButtonsVisible(busy = false))
+    }
+
+    @Test
+    fun `la frappe referme le menu et range de nouveau les boutons`() {
+        val state = SuggestionZoneState()
+        state.onFieldTextChanged(true)
+        state.toggleMenu()
+        state.onTyping()
+        assertFalse(state.actionButtonsVisible(busy = false))
+    }
+
+    @Test
+    fun `champ vide (avant saisie) Vocal reste visible`() {
+        val state = SuggestionZoneState()
+        assertTrue(state.actionButtonsVisible(busy = false))
+    }
+
+    @Test
+    fun `la puce de collage ne range pas Vocal et Corriger`() {
+        val state = SuggestionZoneState()
+        state.onFieldTextChanged(true)
+        state.setPasteAvailable(true)
+        assertEquals(Zone.PASTE, state.zone)
+        assertTrue(state.actionButtonsVisible(busy = false))
+    }
+
+    @Test
+    fun `une ecoute ou une correction en cours garde les boutons visibles meme pendant les mots`() {
+        val state = SuggestionZoneState()
+        state.onFieldTextChanged(true) // ex. texte dicté inséré : la zone repasse aux mots
+        assertEquals(Zone.WORDS, state.zone)
+        assertTrue(state.actionButtonsVisible(busy = true))
+    }
+}

@@ -106,10 +106,6 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             zoneState.toggleMenu()
             renderZone()
         }
-        addView(
-            menuButton,
-            LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginEnd = dp(8f).toInt() },
-        )
 
         styleButton(clipboardButton, "#3A3F47")
         compact(clipboardButton, paddingDp = 12f)
@@ -150,10 +146,15 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         styleButton(correctButton, "#5A7FD4")
         correctButton.setOnClickListener {
             if (state == CorrectionBarState.IDLE) {
+                collapseMenu()
                 listener?.onCorrectClicked()
             }
         }
-        addView(correctButton, LayoutParams(LayoutParams.WRAP_CONTENT, dp(36f).toInt()))
+        addView(correctButton, LayoutParams(LayoutParams.WRAP_CONTENT, dp(36f).toInt()).apply { marginEnd = dp(8f).toInt() })
+
+        // Menu « ··· » à l'extrémité droite de la barre : pendant les suggestions de mots, il range
+        // derrière lui les boutons Vocal et Corriger (et donne accès au bouton Smart Clipboard).
+        addView(menuButton, LayoutParams(dp(40f).toInt(), dp(36f).toInt()))
 
         renderCorrect()
         renderVoice()
@@ -241,7 +242,22 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         renderZone()
     }
 
+    /**
+     * Vocal et Corriger sont rangés derrière le menu tant que la bande de mots est affichée, sauf
+     * pendant une écoute, une transcription ou une correction : leur bouton sert alors d'arrêt ou
+     * d'indicateur d'avancement et doit rester visible (même si du texte vient d'être inséré).
+     */
+    private fun renderActionButtons() {
+        val busy = voiceState != VoiceBarState.IDLE ||
+            state == CorrectionBarState.LOADING || state == CorrectionBarState.CORRECTING
+        val actionsVisible = zoneState.actionButtonsVisible(busy)
+        voiceButton.visibility = if (actionsVisible) View.VISIBLE else View.GONE
+        correctButton.visibility =
+            if (actionsVisible && state != CorrectionBarState.HIDDEN) View.VISIBLE else View.GONE
+    }
+
     private fun renderZone() {
+        renderActionButtons()
         val words = zoneState.zone == SuggestionZoneState.Zone.WORDS
         suggestionStrip.visibility = if (words) View.VISIBLE else View.GONE
         clipboardButton.visibility = if (zoneState.zone == SuggestionZoneState.Zone.CLIPBOARD) View.VISIBLE else View.GONE
@@ -272,31 +288,27 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
 
     private fun renderCorrect() {
         when (state) {
-            CorrectionBarState.HIDDEN -> {
-                correctButton.visibility = View.GONE
-            }
+            CorrectionBarState.HIDDEN -> Unit
 
             CorrectionBarState.IDLE -> {
-                correctButton.visibility = View.VISIBLE
                 correctButton.isEnabled = true
                 correctButton.alpha = 1f
                 correctButton.text = context.getString(R.string.correction_button_idle)
             }
 
             CorrectionBarState.LOADING -> {
-                correctButton.visibility = View.VISIBLE
                 correctButton.isEnabled = false
                 correctButton.alpha = 0.6f
                 correctButton.text = context.getString(R.string.correction_button_loading)
             }
 
             CorrectionBarState.CORRECTING -> {
-                correctButton.visibility = View.VISIBLE
                 correctButton.isEnabled = false
                 correctButton.alpha = 0.6f
                 correctButton.text = context.getString(R.string.correction_button_correcting)
             }
         }
+        renderActionButtons()
     }
 
     private fun renderVoice() {
@@ -319,6 +331,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
                 voiceButton.alpha = 0.6f
             }
         }
+        renderActionButtons()
     }
 
     private fun roundedBackground(colorHex: String): GradientDrawable = GradientDrawable().apply {

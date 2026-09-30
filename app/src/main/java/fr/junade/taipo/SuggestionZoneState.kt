@@ -7,13 +7,17 @@ package fr.junade.taipo
  *
  * - Champ vide (« avant saisie ») : le bouton Smart Clipboard est visible dans la barre.
  * - Dès qu'il y a du texte : le bouton est caché et la zone montre les suggestions de mots. Il reste
- *   accessible par le bouton « menu » (à gauche de la barre, visible seulement quand il y a du
+ *   accessible par le bouton « menu » (à droite de la barre, visible seulement quand il y a du
  *   texte), qui bascule la zone vers l'affichage « avant saisie ».
  * - Story 2.2 : tant qu'un collage est proposé, la puce prend la place de la bande de mots (et du
  *   bouton Smart Clipboard). Le bouton « menu » est alors visible même sur un champ vide : il
  *   donne accès au bouton Smart Clipboard à la place de la puce, et la puce revient en le retouchant.
  * - Retour automatique aux suggestions de mots dès le début de la frappe (story 2.4, déjà gérée ici
  *   par [onTyping]) ; le menu ne reste jamais ouvert quand le bouton « menu » n'est pas visible.
+ *
+ * - Tant que la bande de mots est affichée, les boutons Vocal et Corriger sont rangés derrière le
+ *   menu « ··· », placé à l'extrémité droite de la barre ([actionButtonsVisible]) ; ouvrir le menu
+ *   les fait réapparaître (avec le bouton Smart Clipboard) à la place de la bande.
  *
  * Logique pure (sans Android), testée en JVM.
  */
@@ -45,6 +49,14 @@ class SuggestionZoneState {
      */
     val menuButtonVisible: Boolean
         get() = fieldHasText || pasteAvailable
+
+    /**
+     * Les boutons Vocal et Corriger sont rangés derrière le menu « ··· » (à droite de la barre) tant
+     * que la bande de mots est affichée. Ils restent visibles dans les autres zones (bouton Smart
+     * Clipboard, puce de collage) et quand [busy] : écoute, transcription ou correction en cours,
+     * où le bouton sert d'arrêt ou d'indicateur d'avancement.
+     */
+    fun actionButtonsVisible(busy: Boolean): Boolean = busy || zone != Zone.WORDS
 
     /** Le champ contient (ou non) du texte : un champ vidé referme le menu, sauf si la puce le garde visible. */
     fun onFieldTextChanged(hasText: Boolean) {

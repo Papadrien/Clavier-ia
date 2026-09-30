@@ -91,8 +91,9 @@ object CorrectionPlanner {
 
     /**
      * Zones à corriger : les phrases pas encore corrigées (nouvelles, ou dont un mot a été
-     * modifié ou ajouté). Les phrases consécutives sont regroupées en une seule zone, pour
-     * un seul appel au modèle ; les phrases déjà corrigées ne sont pas envoyées.
+     * modifié ou ajouté). Les phrases consécutives d'un même paragraphe sont regroupées en
+     * une seule zone, pour un seul appel au modèle (une zone ne franchit jamais un retour à
+     * la ligne) ; les phrases déjà corrigées ne sont pas envoyées.
      */
     fun blocksToCorrect(text: String, isAlreadyCorrected: (String) -> Boolean): List<TextBlock> {
         val blocks = mutableListOf<TextBlock>()
@@ -105,6 +106,14 @@ object CorrectionPlanner {
                     blockStart = -1
                 }
             } else {
+                // Un retour à la ligne (nouveau paragraphe) ferme la zone en cours : chaque
+                // paragraphe fait l'objet d'un appel distinct au modèle. Envoyer plusieurs
+                // paragraphes d'un coup faisait parfois répondre le modèle avec le premier
+                // seulement, et les suivants étaient alors effacés du champ.
+                if (blockStart >= 0 && text.substring(blockEnd, sentence.start).contains('\n')) {
+                    blocks += TextBlock(blockStart, blockEnd)
+                    blockStart = -1
+                }
                 if (blockStart < 0) blockStart = sentence.start
                 blockEnd = sentence.endExclusive
             }

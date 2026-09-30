@@ -45,4 +45,22 @@ class SuggestionPolicyTest {
         assertFalse(SuggestionPolicy.allowsSuggestions(InputType.TYPE_CLASS_DATETIME))
         assertFalse(SuggestionPolicy.allowsSuggestions(InputType.TYPE_NULL))
     }
+
+    @Test
+    fun `la puce de collage est proposee partout sauf dans les mots de passe`() {
+        listOf(
+            text,
+            text or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS,
+            text or InputType.TYPE_TEXT_VARIATION_URI,
+            text or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS,
+            text or InputType.TYPE_TEXT_VARIATION_FILTER,
+        ).forEach { assertTrue(SuggestionPolicy.allowsPasteSuggestion(it), "inputType $it") }
+        listOf(
+            InputType.TYPE_TEXT_VARIATION_PASSWORD,
+            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,
+            InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD,
+        ).forEach { assertFalse(SuggestionPolicy.allowsPasteSuggestion(text or it), "variation $it") }
+        assertFalse(SuggestionPolicy.allowsPasteSuggestion(InputType.TYPE_CLASS_NUMBER))
+        assertFalse(SuggestionPolicy.allowsPasteSuggestion(0))
+    }
 }

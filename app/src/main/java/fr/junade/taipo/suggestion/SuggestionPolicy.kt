@@ -26,4 +26,21 @@ object SuggestionPolicy {
             else -> true
         }
     }
+
+    /**
+     * Story 2.2 : la puce de collage est proposée dans tout champ de texte, sauf les champs de mot de
+     * passe (story 10.1). Contrairement aux suggestions de mots, elle ignore l'indicateur
+     * `NO_SUGGESTIONS` posé par certaines applications (qui vise la correction orthographique) et les
+     * champs e-mail, URL ou filtre, où coller est justement utile.
+     */
+    fun allowsPasteSuggestion(inputType: Int): Boolean {
+        if (inputType and InputType.TYPE_MASK_CLASS != InputType.TYPE_CLASS_TEXT) return false
+        return when (inputType and InputType.TYPE_MASK_VARIATION) {
+            InputType.TYPE_TEXT_VARIATION_PASSWORD,
+            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,
+            InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD,
+            -> false
+            else -> true
+        }
+    }
 }

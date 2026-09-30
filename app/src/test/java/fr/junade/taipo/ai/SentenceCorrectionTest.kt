@@ -96,6 +96,27 @@ class SentenceCorrectionTest {
     }
 
     @Test
+    fun `des paragraphes a corriger ne sont jamais regroupes dans une meme zone`() {
+        val text = "Premier paragraphe. Suite du premier.\n\nSecond paragraphe."
+        assertEquals(
+            listOf("Premier paragraphe. Suite du premier.", "Second paragraphe."),
+            blocks(text, CorrectedSentenceMemory()),
+        )
+    }
+
+    @Test
+    fun `un simple retour a la ligne separe aussi les zones`() {
+        assertEquals(listOf("Salut", "Ça va"), blocks("Salut\nÇa va", CorrectedSentenceMemory()))
+    }
+
+    @Test
+    fun `les zones separees par un retour a la ligne gardent leurs positions`() {
+        val text = "Un.\n\nDeux."
+        val found = CorrectionPlanner.blocksToCorrect(text) { false }
+        assertEquals(listOf(TextBlock(0, 3), TextBlock(5, 10)), found)
+    }
+
+    @Test
     fun `tout est deja corrige donne aucune zone`() {
         val memory = CorrectedSentenceMemory()
         memory.remember("A. B.")

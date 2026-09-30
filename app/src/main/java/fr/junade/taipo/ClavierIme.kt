@@ -28,6 +28,7 @@ import fr.junade.taipo.ai.CorrectedSentenceMemory
 import fr.junade.taipo.ai.CorrectionDiff
 import fr.junade.taipo.ai.CorrectionEngine
 import fr.junade.taipo.ai.CorrectionPlanner
+import fr.junade.taipo.ai.CorrectionSafeguard
 import fr.junade.taipo.ai.TextBlock
 import fr.junade.taipo.ai.VoiceEngine
 import fr.junade.taipo.ai.VoiceRecorder
@@ -45,6 +46,7 @@ import fr.junade.taipo.emoji.RecentEmojis
 import fr.junade.taipo.suggestion.EmojiSuggesterLoader
 import fr.junade.taipo.suggestion.SuggestionPolicy
 import fr.junade.taipo.dictionary.PersonalDictionaryProvider
+import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.VoiceModelPreferences
 import kotlinx.coroutines.CoroutineScope
@@ -94,6 +96,9 @@ class ClavierIme : InputMethodService() {
 
     /** Faux dans les champs sans suggestions (mot de passe, e-mail, URL, nombre...), relu à chaque champ. */
     private var suggestionsAllowed = true
+
+    /** Faux dans les champs de mot de passe : la puce de collage y est masquée (story 10.1), relu à chaque champ. */
+    private var pasteAllowedInField = true
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -285,6 +290,7 @@ class ClavierIme : InputMethodService() {
         hideClipboardPanel(resync = false)
         correctionBar.collapseMenu()
         suggestionsAllowed = SuggestionPolicy.allowsSuggestions(info?.inputType ?: 0)
+        pasteAllowedInField = SuggestionPolicy.allowsPasteSuggestion(info?.inputType ?: 0)
         lastSuggestionInput = null
         controller.setLanguage(currentKeyboardLanguage())
         controller.reset()
@@ -295,6 +301,13 @@ class ClavierIme : InputMethodService() {
         // champ (le processus du clavier a pu être tué depuis la dernière copie).
         clipboardReader.start()
         readClipboard()
+        // Diagnostic temporaire (puce de collage absente dans certaines applis) : aucun texte copié n'est journalisé.
+        Log.d(
+            TAG,
+            "puce collage: pkg=${info?.packageName} inputType=0x${Integer.toHexString(info?.inputType ?: 0)} " +
+                "suggestionsAllowed=$suggestionsAllowed pasteAllowedInField=$pasteAllowedInField " +
+                "copieLue=${clipboardState.lastClip() != null} puce=${clipboardState.suggestion() != null}",
+        )
         updateCorrectionBarVisibility()
     }
 
@@ -641,7 +654,7 @@ class ClavierIme : InputMethodService() {
      * ni dans les champs sans suggestions (mot de passe, e-mail, URL…).
      */
     private fun pasteSuggestionAllowed(): Boolean =
-        suggestionsAllowed && !isRecording && !correctionInProgress && !emojiPanelVisible() && !clipboardPanelVisible()
+        pasteAllowedInField && !isRecording && !correctionInProgress && !emojiPanelVisible() && !clipboardPanelVisible()
 
     /** Met la puce de la barre d'accord avec l'état de la copie, et planifie son expiration (story 2.3). */
     private fun refreshPasteSuggestion() {
@@ -986,10 +999,14 @@ class ClavierIme : InputMethodService() {
                 val corrected = correctionEngine.correct(model, original) {
                     correctionBar.state = CorrectionBarState.LOADING
                 }
-                corrected.ifBlank { original }
+                // null : réponse vide ou tronquée, le texte d'origine est alors conservé.
+                CorrectionSafeguard.accept(original, corrected)
             }
             correctionBar.state = CorrectionBarState.CORRECTING
             applyCorrection(ic, captured, blocks, correctedBlocks)
+            if (correctedBlocks.any { it == null }) {
+                Toast.makeText(this@ClavierIme, getString(R.string.correction_partial), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -1014,12 +1031,40 @@ class ClavierIme : InputMethodService() {
         }
 
         launchCorrection {
-            val corrected = correctionEngine.correct(model, core) {
-                correctionBar.state = CorrectionBarState.LOADING
-            }.ifBlank { core }
+            val corrected = correctByParagraph(model, core)
             correctionBar.state = CorrectionBarState.CORRECTING
             applySelectionCorrection(ic, selected, leading, trailing, core, corrected, absSelectionStart)
         }
+    }
+
+    /**
+     * Corrige [text] paragraphe par paragraphe (un appel au modèle par ligne non vide) en gardant
+     * les retours à la ligne d'origine. Les petits modèles tronquent souvent leur réponse au
+     * premier retour à la ligne : corrigé d'un bloc, un texte de deux paragraphes perdait le second.
+     */
+    private suspend fun correctByParagraph(model: AiModel, text: String): String {
+        val result = StringBuilder()
+        var cursor = 0
+        for (separator in Regex("\n+").findAll(text)) {
+            result.append(correctParagraph(model, text.substring(cursor, separator.range.first)))
+            result.append(separator.value)
+            cursor = separator.range.last + 1
+        }
+        result.append(correctParagraph(model, text.substring(cursor)))
+        return result.toString()
+    }
+
+    /** Corrige un paragraphe (espaces en bordure conservés) ; réponse vide ou tronquée : paragraphe inchangé. */
+    private suspend fun correctParagraph(model: AiModel, paragraph: String): String {
+        val core = paragraph.trim()
+        if (core.isEmpty()) return paragraph
+        val leading = paragraph.length - paragraph.trimStart().length
+        val trailing = paragraph.length - paragraph.trimEnd().length
+        val corrected = correctionEngine.correct(model, core) {
+            correctionBar.state = CorrectionBarState.LOADING
+        }
+        val accepted = CorrectionSafeguard.accept(core, corrected) ?: core
+        return paragraph.substring(0, leading) + accepted + paragraph.substring(paragraph.length - trailing)
     }
 
     private fun applySelectionCorrection(
@@ -1129,7 +1174,7 @@ class ClavierIme : InputMethodService() {
         ic: InputConnection,
         captured: CapturedText,
         blocks: List<TextBlock>,
-        correctedBlocks: List<String>,
+        correctedBlocks: List<String?>,
     ) {
         val spanStart = blocks.first().start
         val spanEnd = blocks.last().endExclusive
@@ -1142,7 +1187,7 @@ class ClavierIme : InputMethodService() {
         blocks.forEachIndexed { index, block ->
             replacement.append(captured.text, cursor, block.start)
             val original = captured.text.substring(block.start, block.endExclusive)
-            val corrected = correctedBlocks[index]
+            val corrected = correctedBlocks[index] ?: original
             val offset = replacement.length
             CorrectionDiff.changedRanges(original, corrected).forEach {
                 ranges += ChangedRange(it.start + offset, it.endExclusive + offset)
@@ -1152,8 +1197,9 @@ class ClavierIme : InputMethodService() {
         }
         val newSpan = replacement.toString()
 
-        // Ces phrases sont désormais corrigées, qu'elles aient changé ou non.
-        correctedBlocks.forEach { correctedSentences.remember(it) }
+        // Ces phrases sont désormais corrigées, qu'elles aient changé ou non. Une zone rejetée par le
+        // garde-fou n'est pas mémorisée : elle sera renvoyée au modèle à la prochaine correction.
+        correctedBlocks.filterNotNull().forEach { correctedSentences.remember(it) }
 
         if (newSpan == oldSpan) {
             clearHighlightState()
