@@ -7,4 +7,7 @@ sealed interface KeyAction {
     data object Enter : KeyAction
     data object Space : KeyAction
     data object ToggleLayout : KeyAction
+
+    /** Story 1.15 : ouvre le panneau emoji (aucun texte saisi par la touche elle-même). */
+    data object Emoji : KeyAction
 }

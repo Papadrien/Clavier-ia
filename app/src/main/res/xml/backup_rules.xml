@@ -9,5 +9,10 @@
     <exclude domain="database" path="personal_dictionary.db-journal" />
     <exclude domain="database" path="personal_dictionary.db-wal" />
     <exclude domain="database" path="personal_dictionary.db-shm" />
+    <exclude domain="database" path="clipboard.db" />
+    <exclude domain="database" path="clipboard.db-journal" />
+    <exclude domain="database" path="clipboard.db-wal" />
+    <exclude domain="database" path="clipboard.db-shm" />
     <exclude domain="sharedpref" path="personal_dictionary_key.xml" />
+    <exclude domain="sharedpref" path="clipboard_key.xml" />
 </full-backup-content>

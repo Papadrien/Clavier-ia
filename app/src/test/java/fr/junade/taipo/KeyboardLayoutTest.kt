@@ -437,4 +437,37 @@ class KeyboardLayoutTest {
             "L'action $action doit être présente sur le layout ${layout.id}",
         )
     }
+
+    @Test
+    fun `le bouton emoji est a gauche de la barre espace et a droite de la virgule`() {
+        listOf(Keyboards.letters, Keyboards.lettersEn, Keyboards.symbols).forEach { layout ->
+            val row = layout.rows.last()
+            val ids = row.map { it.id }
+            val emoji = ids.indexOf("emoji")
+            assertTrue(emoji >= 0, "bouton emoji absent de ${layout.id}")
+            assertEquals("comma", ids[emoji - 1], "la virgule doit précéder le bouton emoji")
+            assertEquals("space", ids[emoji + 1], "la barre espace doit suivre le bouton emoji")
+            assertEquals(KeyAction.Emoji, row[emoji].action)
+        }
+    }
+
+    @Test
+    fun `le bouton emoji existe aussi avec la rangee de chiffres et en anglais`() {
+        listOf(KeyboardLanguage.FR, KeyboardLanguage.EN).forEach { language ->
+            listOf(false, true).forEach { numberRow ->
+                val bottom = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow).rows.last()
+                assertEquals(1, bottom.count { it.action == KeyAction.Emoji })
+            }
+        }
+    }
+
+    @Test
+    fun `le bouton emoji ne saisit aucun caractere et reste plus etroit que la barre espace`() {
+        val row = Keyboards.letters.rows.last()
+        val emoji = row.first { it.id == "emoji" }
+        val space = row.first { it.id == "space" }
+        assertTrue(emoji.action !is KeyAction.TypeChar)
+        assertTrue(emoji.weight < space.weight)
+        assertTrue(emoji.popup.isEmpty())
+    }
 }

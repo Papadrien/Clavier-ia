@@ -25,11 +25,18 @@ import javax.crypto.spec.GCMParameterSpec
  * Keystore ne suit pas une restauration sur un autre appareil, la base
  * restaurée serait donc illisible.
  *
+ * Les nom de préférences et alias Keystore sont paramétrables (valeurs par défaut : dictionnaire
+ * personnel) pour que chaque base chiffrée ait sa propre clé (presse-papiers : story 2.5).
+ *
  * À appeler hors du thread principal (accès Keystore).
  */
-class DatabasePassphraseProvider(context: Context) {
+class DatabasePassphraseProvider(
+    context: Context,
+    prefsName: String = PREFS_NAME,
+    private val keyAlias: String = KEY_ALIAS,
+) {
 
-    private val prefs = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private val prefs = context.applicationContext.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
 
     /**
      * Retourne la clé, en la générant et en la persistant à la première
@@ -61,16 +68,16 @@ class DatabasePassphraseProvider(context: Context) {
     fun reset() {
         prefs.edit().remove(KEY_BLOB).commit()
         val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
-        if (keyStore.containsAlias(KEY_ALIAS)) keyStore.deleteEntry(KEY_ALIAS)
+        if (keyStore.containsAlias(keyAlias)) keyStore.deleteEntry(keyAlias)
     }
 
     private fun getOrCreateKeystoreKey(): SecretKey {
         val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
-        (keyStore.getKey(KEY_ALIAS, null) as? SecretKey)?.let { return it }
+        (keyStore.getKey(keyAlias, null) as? SecretKey)?.let { return it }
 
         val generator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
         generator.init(
-            KeyGenParameterSpec.Builder(KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+            KeyGenParameterSpec.Builder(keyAlias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .setKeySize(256)
@@ -105,7 +112,7 @@ class DatabasePassphraseProvider(context: Context) {
 
         private const val KEY_BLOB = "encrypted_passphrase"
         private const val ANDROID_KEYSTORE = "AndroidKeyStore"
-        private const val KEY_ALIAS = "taipo_personal_dictionary_key"
+        const val KEY_ALIAS = "taipo_personal_dictionary_key"
         private const val TRANSFORMATION = "AES/GCM/NoPadding"
         private const val GCM_TAG_BITS = 128
         private const val PASSPHRASE_BYTES = 32

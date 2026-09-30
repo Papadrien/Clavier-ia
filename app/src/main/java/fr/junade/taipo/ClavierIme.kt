@@ -19,6 +19,7 @@ import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodSubtype
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
 import android.util.Log
@@ -30,7 +31,19 @@ import fr.junade.taipo.ai.CorrectionPlanner
 import fr.junade.taipo.ai.TextBlock
 import fr.junade.taipo.ai.VoiceEngine
 import fr.junade.taipo.ai.VoiceRecorder
+import fr.junade.taipo.clipboard.ClipboardItems
+import fr.junade.taipo.clipboard.ClipboardPanelView
+import fr.junade.taipo.clipboard.ClipboardProvider
+import fr.junade.taipo.clipboard.ClipboardPreview
+import fr.junade.taipo.clipboard.ClipboardReader
+import fr.junade.taipo.clipboard.ClipboardSuggestionState
 import fr.junade.taipo.dictionary.DictionaryLoader
+import fr.junade.taipo.dictionary.WordSuggestion
+import fr.junade.taipo.emoji.EmojiPanelView
+import fr.junade.taipo.emoji.EmojiText
+import fr.junade.taipo.emoji.RecentEmojis
+import fr.junade.taipo.suggestion.EmojiSuggesterLoader
+import fr.junade.taipo.suggestion.SuggestionPolicy
 import fr.junade.taipo.dictionary.PersonalDictionaryProvider
 import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.VoiceModelPreferences
@@ -46,6 +59,41 @@ class ClavierIme : InputMethodService() {
     private val controller = KeyboardController()
     private lateinit var keyboardView: KeyboardView
     private lateinit var correctionBar: CorrectionBarView
+
+    // Story 1.15 : panneau emoji, superposé au clavier (même taille) tant qu'il est affiché.
+    private lateinit var emojiPanel: EmojiPanelView
+
+    // Story 2.1 : panneau Smart Clipboard (coquille), ouvert par le bouton « Presse-papiers » de la barre.
+    private lateinit var clipboardPanel: ClipboardPanelView
+
+    // Story 2.2 : puce de collage après une copie récente. Seule la dernière copie est gardée, en
+    // mémoire vive ; l'expiration à 10 minutes (story 2.3) est planifiée avec [pasteExpiryRunnable].
+    private val clipboardState = ClipboardSuggestionState(clock = { System.currentTimeMillis() })
+    private val clipboardReader by lazy { ClipboardReader(applicationContext) { onClipboardChanged() } }
+    private var currentPasteSuggestion: ClipboardSuggestionState.Suggestion? = null
+
+    // Story 2.5 : éléments épinglés (base chiffrée séparée de celle du dictionnaire personnel).
+    // Le dépôt est instancié dès la création du service : l'ouverture de la base (Keystore) est
+    // asynchrone et doit être terminée avant la première ouverture du panneau.
+    private val clipboardRepository by lazy { ClipboardProvider.repository(applicationContext) }
+    private var clipboardPanelJob: Job? = null
+    private val pasteExpiryRunnable = Runnable { refreshPasteSuggestion() }
+
+    // Story 1.16 : emoji suggéré d'après le dernier mot (4e emplacement de la barre de suggestions).
+    private val emojiSuggester by lazy { EmojiSuggesterLoader.get(applicationContext) }
+    private var currentEmojiSuggestion: String? = null
+
+    // Story 1.17 : mots suggérés d'après le mot en cours de frappe (3 premiers emplacements).
+    private var currentWordSuggestions: List<WordSuggestion?> = emptyList()
+
+    // Entrée de la dernière mise à jour des suggestions : évite de tout recalculer quand la même
+    // mise à jour est demandée deux fois de suite (touche puis onUpdateSelection).
+    private var lastSuggestionInput: SuggestionInput? = null
+
+    private data class SuggestionInput(val text: String, val language: KeyboardLanguage, val available: Boolean)
+
+    /** Faux dans les champs sans suggestions (mot de passe, e-mail, URL, nombre...), relu à chaque champ. */
+    private var suggestionsAllowed = true
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -135,6 +183,7 @@ class ClavierIme : InputMethodService() {
         // personnel est asynchrone ; on la déclenche dès la création du
         // service pour qu'elle soit prête avant la première frappe.
         personalDictionary
+        clipboardRepository
         numberRowEnabled = keyboardPreferences.isNumberRowEnabled
         hapticIntensity = keyboardPreferences.hapticIntensity
         keyboardHeight = keyboardPreferences.keyboardHeight
@@ -156,6 +205,23 @@ class ClavierIme : InputMethodService() {
         correctionBar = CorrectionBarView(this)
         correctionBar.setOnCorrectListener { onCorrectClicked() }
         correctionBar.voiceButton.setOnTouchListener { _, event -> onVoiceButtonTouch(event) }
+        correctionBar.setOnEmojiSuggestionClickListener { onEmojiSuggestionTapped() }
+        correctionBar.setOnClipboardClickListener { showClipboardPanel() }
+        correctionBar.setOnPasteClickListener { onPasteTapped() }
+        correctionBar.setOnWordSuggestionClickListener { suggestion -> onWordSuggestionTapped(suggestion) }
+
+        emojiPanel = EmojiPanelView(this)
+        emojiPanel.visibility = View.GONE
+        emojiPanel.setOnEmojiSelectedListener { emoji -> onEmojiSelected(emoji) }
+        emojiPanel.setOnBackspaceListener { onEmojiBackspace() }
+        emojiPanel.setOnCloseListener { hideEmojiPanel() }
+
+        clipboardPanel = ClipboardPanelView(this)
+        clipboardPanel.visibility = View.GONE
+        clipboardPanel.setOnCloseListener { hideClipboardPanel() }
+        clipboardPanel.setOnPasteListener { item -> onClipboardItemTapped(item) }
+        clipboardPanel.setOnPinListener { item -> onClipboardItemPin(item) }
+        clipboardPanel.setOnDeleteListener { item -> onClipboardItemDelete(item) }
 
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -166,8 +232,33 @@ class ClavierIme : InputMethodService() {
                 correctionBar,
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
             )
+            // Le panneau emoji recouvre exactement le clavier (le clavier reste mesuré, seulement
+            // masqué) : la hauteur ne change pas en basculant, rotation et réglage de hauteur compris.
             addView(
-                keyboardView,
+                FrameLayout(this@ClavierIme).apply {
+                    clipChildren = false
+                    addView(
+                        keyboardView,
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT,
+                        ),
+                    )
+                    addView(
+                        emojiPanel,
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                        ),
+                    )
+                    addView(
+                        clipboardPanel,
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                        ),
+                    )
+                },
                 LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -190,11 +281,20 @@ class ClavierIme : InputMethodService() {
         hapticIntensity = keyboardPreferences.hapticIntensity
         keyboardHeight = keyboardPreferences.keyboardHeight
         keyboardView.heightScale = keyboardHeight.scale
+        hideEmojiPanel(resync = false)
+        hideClipboardPanel(resync = false)
+        correctionBar.collapseMenu()
+        suggestionsAllowed = SuggestionPolicy.allowsSuggestions(info?.inputType ?: 0)
+        lastSuggestionInput = null
         controller.setLanguage(currentKeyboardLanguage())
         controller.reset()
         syncAutoCapitalization()
         clearHighlightState()
         applyState()
+        // Story 2.2 : écoute des copies tant que le clavier est actif, et relecture à l'ouverture du
+        // champ (le processus du clavier a pu être tué depuis la dernière copie).
+        clipboardReader.start()
+        readClipboard()
         updateCorrectionBarVisibility()
     }
 
@@ -219,9 +319,21 @@ class ClavierIme : InputMethodService() {
         return if (locale.startsWith("en")) KeyboardLanguage.EN else KeyboardLanguage.FR
     }
 
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Le panneau emoji est calé sur les dimensions du clavier : on revient aux touches après
+        // une rotation ou un changement de taille de fenêtre, plutôt que d'afficher un panneau mal ajusté.
+        if (this::emojiPanel.isInitialized && emojiPanel.visibility == View.VISIBLE) hideEmojiPanel()
+        if (clipboardPanelVisible()) hideClipboardPanel()
+    }
+
     override fun onFinishInputView(finishingInput: Boolean) {
         super.onFinishInputView(finishingInput)
+        if (this::emojiPanel.isInitialized) hideEmojiPanel(resync = false)
+        if (this::clipboardPanel.isInitialized) hideClipboardPanel(resync = false)
         clearHighlightState()
+        clipboardReader.stop()
+        mainHandler.removeCallbacks(pasteExpiryRunnable)
         if (isRecording) {
             cancelVoiceRecording()
         }
@@ -264,6 +376,9 @@ class ClavierIme : InputMethodService() {
         correctionEngine.close()
         voiceEngine.close()
         mainHandler.removeCallbacks(longPressRunnable)
+        mainHandler.removeCallbacks(pasteExpiryRunnable)
+        clipboardReader.stop()
+        clipboardState.clear()
         serviceJob.cancel()
     }
 
@@ -271,8 +386,16 @@ class ClavierIme : InputMethodService() {
         hapticFeedback.perform(hapticIntensity)
         clearHighlightIfNeeded()
 
+        // Story 1.15 : la touche emoji ouvre le panneau, sans saisir de texte.
+        if (key.action == KeyAction.Emoji) {
+            pendingAutocorrection = null
+            showEmojiPanel()
+            return
+        }
+
         // Suppression juste après une autocorrection : on annule la correction au lieu d'effacer un caractère.
         if (key.action == KeyAction.Backspace && undoLastAutocorrection()) {
+            onUserTyped()
             syncAutoCapitalization()
             applyState()
             updateCorrectionBarVisibility()
@@ -282,6 +405,7 @@ class ClavierIme : InputMethodService() {
 
         // Suppression avec une sélection : on efface la sélection, pas le caractère avant son début.
         if (key.action == KeyAction.Backspace && deleteSelectedText()) {
+            onUserTyped()
             syncAutoCapitalization()
             applyState()
             updateCorrectionBarVisibility()
@@ -303,7 +427,7 @@ class ClavierIme : InputMethodService() {
 
         // La suppression précède l'insertion (double espace : on retire l'espace avant d'ajouter ". ").
         if (result.deleteBefore > 0) {
-            currentInputConnection?.deleteSurroundingText(result.deleteBefore, 0)
+            if (key.action == KeyAction.Backspace) deleteLastCluster() else deleteBeforeCursor(result.deleteBefore)
         }
         result.commit?.let { text -> currentInputConnection?.commitText(text, 1) }
         // Entrée exclue : le retour à la ligne n'est pas un texte que l'on peut réinsérer à l'identique.
@@ -321,9 +445,257 @@ class ClavierIme : InputMethodService() {
         // automatique pour la lettre suivante (cf. tests KeyboardController).
         val textChanged = result.commit != null || result.deleteBefore > 0 || result.isEnter
         if (textChanged) {
+            onUserTyped() // stories 2.2 et 2.4 : la frappe écarte la puce et referme le menu
             syncAutoCapitalization()
         }
         applyState()
+        updateCorrectionBarVisibility()
+    }
+
+    private fun deleteBeforeCursor(count: Int) {
+        currentInputConnection?.deleteSurroundingText(count, 0)
+    }
+
+    /**
+     * Retour arrière : supprime le dernier « caractère » avant le curseur en entier. Un emoji peut
+     * occuper plusieurs caractères UTF-16 (paire de substitution, teinte, drapeau, séquence ZWJ...) :
+     * en supprimer un seul en laisserait une moitié illisible. Pour une lettre, c'est 1 caractère.
+     */
+    private fun deleteLastCluster() {
+        val ic = currentInputConnection ?: return
+        val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)
+        val length = if (before.isNullOrEmpty()) 1 else EmojiText.lastClusterLength(before).coerceAtLeast(1)
+        ic.deleteSurroundingText(length, 0)
+    }
+
+    // ------------------------------------------------------------------
+    // Panneau emoji (story 1.15)
+    // ------------------------------------------------------------------
+
+    private fun showEmojiPanel() {
+        emojiPanel.configure(keyboardView.rowHeightPx(), keyboardView.bottomInsetPx())
+        emojiPanel.show(keyboardPreferences.recentEmojis)
+        keyboardView.visibility = View.INVISIBLE
+        emojiPanel.visibility = View.VISIBLE
+        clearSuggestions()
+    }
+
+    /** Retour aux touches (bouton ABC, nouveau champ, rotation) ; [resync] resynchronise majuscule et barre. */
+    private fun hideEmojiPanel(resync: Boolean = true) {
+        if (emojiPanel.visibility != View.VISIBLE) return
+        emojiPanel.visibility = View.GONE
+        keyboardView.visibility = View.VISIBLE
+        if (resync) {
+            syncAutoCapitalization()
+            applyState()
+            updateCorrectionBarVisibility()
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Panneau Smart Clipboard (stories 2.1 et 2.5)
+    // ------------------------------------------------------------------
+
+    private fun showClipboardPanel() {
+        if (isRecording || correctionInProgress) return
+        hapticFeedback.perform(hapticIntensity)
+        correctionBar.collapseMenu() // story 2.4 : au retour des touches (ABC), mots ou puce, pas le menu ouvert
+        hideEmojiPanel(resync = false)
+        clipboardPanel.configure(keyboardView.rowHeightPx(), keyboardView.bottomInsetPx())
+        keyboardView.visibility = View.INVISIBLE
+        clipboardPanel.visibility = View.VISIBLE
+        clearSuggestions()
+        // Story 2.5 : les cartes suivent les éléments épinglés tant que le panneau est ouvert.
+        refreshClipboardPanel()
+        clipboardPanelJob?.cancel()
+        clipboardPanelJob = serviceScope.launch {
+            clipboardRepository.pinned.collect { refreshClipboardPanel() }
+        }
+    }
+
+    /** Retour aux touches (bouton ABC, nouveau champ, rotation) ; [resync] resynchronise majuscule et barre. */
+    private fun hideClipboardPanel(resync: Boolean = true) {
+        if (!clipboardPanelVisible()) return
+        clipboardPanelJob?.cancel()
+        clipboardPanelJob = null
+        clipboardPanel.closeMenu()
+        clipboardPanel.visibility = View.GONE
+        keyboardView.visibility = View.VISIBLE
+        if (resync) {
+            syncAutoCapitalization()
+            applyState()
+            updateCorrectionBarVisibility()
+        }
+    }
+
+    private fun clipboardPanelVisible(): Boolean =
+        this::clipboardPanel.isInitialized && clipboardPanel.visibility == View.VISIBLE
+
+    /** Cartes du panneau : dernière copie (même écartée ou collée) puis éléments épinglés. */
+    private fun refreshClipboardPanel() {
+        if (!clipboardPanelVisible()) return
+        clipboardPanel.setItems(ClipboardItems.build(clipboardState.lastClip(), clipboardRepository.snapshot()))
+    }
+
+    /**
+     * Appui sur une carte : colle son texte au curseur (`commitText` remplace une éventuelle
+     * sélection) et revient aux touches. Coller la dernière copie compte comme collage de la puce.
+     */
+    private fun onClipboardItemTapped(item: ClipboardItems.Item) {
+        val ic = currentInputConnection ?: return
+        hapticFeedback.perform(hapticIntensity)
+        clearHighlightIfNeeded()
+        pendingAutocorrection = null
+        ic.commitText(item.text, 1)
+        if (item.isLastClip) clipboardState.onPasted()
+        correctionBar.collapseMenu()
+        hideClipboardPanel() // resynchronise majuscule, suggestions et barre
+    }
+
+    /** Menu d'appui long, « Épingler » : refus expliqués par un message (sensible, vide, trop long, doublon, plafond). */
+    private fun onClipboardItemPin(item: ClipboardItems.Item) {
+        ClipboardItems.pinRefusal(item.text, item.sensitive)?.let {
+            Toast.makeText(this, pinMessage(it), Toast.LENGTH_SHORT).show()
+            return
+        }
+        serviceScope.launch {
+            try {
+                val result = clipboardRepository.pin(item.text)
+                Toast.makeText(this@ClavierIme, pinMessage(result), Toast.LENGTH_SHORT).show()
+            } catch (t: Throwable) {
+                Log.e(TAG, "Échec de l'épinglage", t)
+                Toast.makeText(
+                    this@ClavierIme,
+                    getString(R.string.clipboard_pin_error, t.message ?: t.javaClass.simpleName),
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+        }
+    }
+
+    private fun pinMessage(result: ClipboardItems.PinResult): String = getString(
+        when (result) {
+            ClipboardItems.PinResult.PINNED -> R.string.clipboard_pin_done
+            ClipboardItems.PinResult.ALREADY_PINNED -> R.string.clipboard_pin_already
+            ClipboardItems.PinResult.FULL -> R.string.clipboard_pin_full
+            ClipboardItems.PinResult.TOO_LONG -> R.string.clipboard_pin_too_long
+            ClipboardItems.PinResult.SENSITIVE -> R.string.clipboard_pin_sensitive
+            ClipboardItems.PinResult.EMPTY -> R.string.clipboard_pin_empty
+        },
+    )
+
+    /**
+     * Menu d'appui long, « Supprimer » : un élément épinglé est retiré de la base ; la dernière copie
+     * est retirée du panneau (et de la puce) jusqu'à la prochaine copie.
+     */
+    private fun onClipboardItemDelete(item: ClipboardItems.Item) {
+        if (item.isLastClip) {
+            clipboardState.onDeleted()
+            refreshClipboardPanel()
+        }
+        val id = item.pinnedId ?: return
+        serviceScope.launch {
+            try {
+                clipboardRepository.remove(id) // le panneau se met à jour via le flux des éléments épinglés
+            } catch (t: Throwable) {
+                Log.e(TAG, "Échec de la suppression d'un élément épinglé", t)
+                Toast.makeText(
+                    this@ClavierIme,
+                    getString(R.string.clipboard_delete_error, t.message ?: t.javaClass.simpleName),
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Puce de collage après une copie récente (stories 2.2 et 2.3)
+    // ------------------------------------------------------------------
+
+    /**
+     * Story 2.4 : point d'entrée unique pour tout texte saisi ou supprimé par l'utilisateur (touche,
+     * emoji, suggestion, collage, suppression, dictée). Il écarte la puce de collage pour cette copie
+     * (story 2.2) et referme le menu « ··· » : retour aux suggestions de mots dès la frappe. Les
+     * touches sans texte (Maj, changement de disposition) et les simples déplacements du curseur ne
+     * l'appellent pas. L'appelant met la barre à jour ensuite (updateCorrectionBarVisibility).
+     */
+    private fun onUserTyped() {
+        clipboardState.onTyping()
+        if (this::correctionBar.isInitialized) correctionBar.collapseMenu()
+    }
+
+    /** Une copie vient d'être faite (écoute active tant que le clavier est affiché). */
+    private fun onClipboardChanged() {
+        readClipboard()
+        refreshPasteSuggestion()
+        refreshClipboardPanel() // story 2.5 : une copie faite pendant que le panneau est ouvert s'y ajoute
+    }
+
+    private fun readClipboard() {
+        val snapshot = clipboardReader.read()
+        clipboardState.onClipRead(snapshot?.text, snapshot?.copiedAtMillis ?: 0L, snapshot?.sensitive ?: false)
+    }
+
+    /**
+     * Rien n'est proposé pendant une dictée ou une correction, sous un panneau (emoji, presse-papiers),
+     * ni dans les champs sans suggestions (mot de passe, e-mail, URL…).
+     */
+    private fun pasteSuggestionAllowed(): Boolean =
+        suggestionsAllowed && !isRecording && !correctionInProgress && !emojiPanelVisible() && !clipboardPanelVisible()
+
+    /** Met la puce de la barre d'accord avec l'état de la copie, et planifie son expiration (story 2.3). */
+    private fun refreshPasteSuggestion() {
+        if (!this::correctionBar.isInitialized) return
+        val suggestion = if (pasteSuggestionAllowed()) clipboardState.suggestion() else null
+        if (suggestion != currentPasteSuggestion) {
+            currentPasteSuggestion = suggestion
+            if (suggestion == null) {
+                correctionBar.setPasteSuggestion(null, sensitive = false)
+            } else {
+                val preview = ClipboardPreview.forDisplay(suggestion.text, suggestion.sensitive)
+                correctionBar.setPasteSuggestion(preview, suggestion.sensitive)
+            }
+        }
+        mainHandler.removeCallbacks(pasteExpiryRunnable)
+        clipboardState.expiresInMillis()?.let { mainHandler.postDelayed(pasteExpiryRunnable, it + PASTE_EXPIRY_MARGIN_MS) }
+    }
+
+    /**
+     * Appui sur la puce : colle le texte copié au curseur (`commitText` remplace une éventuelle
+     * sélection), réinitialise l'autocorrection en attente et resynchronise la barre.
+     */
+    private fun onPasteTapped() {
+        val suggestion = currentPasteSuggestion ?: return
+        if (isRecording || correctionInProgress) return
+        val ic = currentInputConnection ?: return
+        hapticFeedback.perform(hapticIntensity)
+        clearHighlightIfNeeded()
+        pendingAutocorrection = null
+        ic.commitText(suggestion.text, 1)
+        clipboardState.onPasted()
+        correctionBar.collapseMenu()
+        syncAutoCapitalization()
+        applyState()
+        updateCorrectionBarVisibility()
+    }
+
+    private fun onEmojiSelected(emoji: String) {
+        hapticFeedback.perform(hapticIntensity)
+        onUserTyped()
+        clearHighlightIfNeeded()
+        pendingAutocorrection = null
+        // commitText remplace une éventuelle sélection, comme n'importe quelle saisie.
+        currentInputConnection?.commitText(emoji, 1)
+        keyboardPreferences.recentEmojis = RecentEmojis.add(keyboardPreferences.recentEmojis, emoji)
+        updateCorrectionBarVisibility()
+    }
+
+    private fun onEmojiBackspace() {
+        hapticFeedback.perform(hapticIntensity)
+        onUserTyped()
+        clearHighlightIfNeeded()
+        pendingAutocorrection = null
+        if (!deleteSelectedText()) deleteLastCluster()
         updateCorrectionBarVisibility()
     }
 
@@ -359,6 +731,7 @@ class ClavierIme : InputMethodService() {
         val toDelete = wordToDeleteBeforeCursor(before)
         if (toDelete.isEmpty()) return
         hapticFeedback.perform(hapticIntensity)
+        onUserTyped()
         ic.deleteSurroundingText(toDelete.length, 0)
         syncAutoCapitalization()
         applyState()
@@ -392,6 +765,113 @@ class ClavierIme : InputMethodService() {
         val ic = currentInputConnection ?: return
         val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
         controller.applyTextContext(before)
+        refreshSuggestions(before)
+    }
+
+    /**
+     * Stories 1.16 et 1.17 : met à jour les suggestions de la barre (mots et emoji) d'après le texte
+     * avant le curseur. Rien n'est proposé quand le panneau emoji est ouvert, pendant une dictée ou
+     * une correction, avec une sélection, ou dans un champ sans suggestions.
+     *
+     * Les mots ne sont proposés que pendant la frappe d'un mot (le curseur suit une lettre, et la
+     * lettre suivante, s'il y en a une, n'appartient pas au même mot) : après une espace ou une
+     * ponctuation, il n'y a pas de prédiction du mot suivant (le dictionnaire est fixe, sans
+     * apprentissage). L'emoji, lui, reste proposé après le mot suivi d'une espace (story 1.16).
+     */
+    private fun refreshSuggestions(textBeforeCursor: String) {
+        if (!this::correctionBar.isInitialized) return
+        val language = controller.state.language
+        val available = suggestionsAllowed && !isRecording && !correctionInProgress &&
+            !emojiPanelVisible() && !clipboardPanelVisible() && !hasSelection()
+        val input = SuggestionInput(textBeforeCursor, language, available)
+        if (input == lastSuggestionInput) return
+        lastSuggestionInput = input
+
+        val emoji = if (available) emojiSuggester.suggest(textBeforeCursor, language) else null
+        currentEmojiSuggestion = emoji
+        correctionBar.setEmojiSuggestion(emoji)
+
+        val words = if (available) wordSuggestionsFor(textBeforeCursor, language) else emptyList()
+        currentWordSuggestions = words
+        correctionBar.setWordSuggestions(words)
+    }
+
+    private fun wordSuggestionsFor(textBeforeCursor: String, language: KeyboardLanguage): List<WordSuggestion?> {
+        val typed = trailingWord(textBeforeCursor)
+        if (typed.isEmpty()) return emptyList()
+        // Curseur au milieu d'un mot : compléter le début du mot serait trompeur.
+        val after = currentInputConnection?.getTextAfterCursor(1, 0)?.firstOrNull()
+        if (after != null && isWordChar(after)) return emptyList()
+        return DictionaryLoader.forLanguage(applicationContext, language)
+            .suggestionSlotsFor(typed, personalWords = personalDictionary.snapshot())
+    }
+
+    /** Vide la bande de suggestions (panneau emoji, dictée ou correction en cours). */
+    private fun clearSuggestions() {
+        lastSuggestionInput = null
+        currentEmojiSuggestion = null
+        currentWordSuggestions = emptyList()
+        if (!this::correctionBar.isInitialized) return
+        correctionBar.setEmojiSuggestion(null)
+        correctionBar.setWordSuggestions(emptyList())
+        refreshPasteSuggestion() // dictée, correction ou panneau en cours : la puce disparaît aussi
+    }
+
+    /**
+     * Touche sur un mot suggéré, suivi d'une espace :
+     * - autocorrection (centre, gras) : remplace le mot tapé, comme le ferait l'espace ; une
+     *   suppression immédiate rétablit le mot tapé ;
+     * - mot tapé (entre guillemets) : conservé tel quel, sans correction ;
+     * - complétion : remplace le mot en cours.
+     */
+    private fun onWordSuggestionTapped(suggestion: WordSuggestion) {
+        if (suggestion !in currentWordSuggestions) return
+        if (isRecording || correctionInProgress || hasSelection()) return
+        val ic = currentInputConnection ?: return
+        val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
+        val typed = trailingWord(before)
+        if (typed.isEmpty()) return
+        hapticFeedback.perform(hapticIntensity)
+        onUserTyped()
+        clearHighlightIfNeeded()
+
+        ic.beginBatchEdit()
+        if (suggestion.kind != WordSuggestion.Kind.TYPED) ic.deleteSurroundingText(typed.length, 0)
+        ic.commitText(if (suggestion.kind == WordSuggestion.Kind.TYPED) " " else "${suggestion.text} ", 1)
+        ic.endBatchEdit()
+
+        pendingAutocorrection = if (suggestion.replacesOnSpace) {
+            AppliedAutocorrection(original = typed, corrected = suggestion.text, boundary = " ")
+        } else {
+            null
+        }
+        syncAutoCapitalization()
+        applyState()
+        updateCorrectionBarVisibility()
+    }
+
+    private fun emojiPanelVisible(): Boolean =
+        this::emojiPanel.isInitialized && emojiPanel.visibility == View.VISIBLE
+
+    /**
+     * Touche sur l'emoji suggéré : il est inséré au curseur, précédé d'une espace si le mot vient
+     * d'être tapé sans espace après lui. Il rejoint aussi les emojis récents.
+     */
+    private fun onEmojiSuggestionTapped() {
+        val emoji = currentEmojiSuggestion ?: return
+        if (isRecording || correctionInProgress || hasSelection()) return
+        val ic = currentInputConnection ?: return
+        hapticFeedback.perform(hapticIntensity)
+        onUserTyped()
+        clearHighlightIfNeeded()
+        pendingAutocorrection = null
+        val lastChar = ic.getTextBeforeCursor(1, 0)?.lastOrNull()
+        val needsSpace = lastChar != null && lastChar.isLetterOrDigit()
+        ic.commitText(if (needsSpace) " $emoji" else emoji, 1)
+        keyboardPreferences.recentEmojis = RecentEmojis.add(keyboardPreferences.recentEmojis, emoji)
+        syncAutoCapitalization()
+        applyState()
+        updateCorrectionBarVisibility()
     }
 
     // ------------------------------------------------------------------
@@ -590,6 +1070,7 @@ class ClavierIme : InputMethodService() {
     /** Lance une correction en arrière-plan avec indicateur de chargement et gestion d'erreur communs. */
     private fun launchCorrection(work: suspend () -> Unit) {
         correctionInProgress = true
+        clearSuggestions()
         correctionBar.state = CorrectionBarState.LOADING
         serviceScope.launch {
             try {
@@ -604,6 +1085,7 @@ class ClavierIme : InputMethodService() {
             } finally {
                 correctionInProgress = false
                 updateCorrectionBarVisibility()
+                syncAutoCapitalization() // relance aussi la suggestion d'emoji, coupée pendant la correction
             }
         }
     }
@@ -841,6 +1323,7 @@ class ClavierIme : InputMethodService() {
 
     /** Décision 3.3 : le bouton Corriger n'est visible que si le champ contient du texte. */
     private fun updateCorrectionBarVisibility() {
+        refreshPasteSuggestion() // story 2.2 : la puce suit l'état courant (dictée, correction, frappe, expiration…)
         if (correctionInProgress) return
         val ic = currentInputConnection
         val hasText = ic != null &&
@@ -849,6 +1332,7 @@ class ClavierIme : InputMethodService() {
                     !ic.getTextAfterCursor(1, 0).isNullOrEmpty() ||
                     !ic.getSelectedText(0).isNullOrEmpty() // tout le texte peut être sélectionné
                 )
+        correctionBar.setFieldHasText(hasText)
         correctionBar.state = if (hasText) CorrectionBarState.IDLE else CorrectionBarState.HIDDEN
     }
 
@@ -914,6 +1398,7 @@ class ClavierIme : InputMethodService() {
 
         clearHighlightIfNeeded()
         isRecording = true
+        clearSuggestions()
         insertedPartialText = ""
         correctionBar.voiceState = VoiceBarState.RECORDING
         serviceScope.launch {
@@ -942,6 +1427,7 @@ class ClavierIme : InputMethodService() {
                 Log.e(TAG, "Échec du démarrage de l'enregistrement vocal", t)
                 isRecording = false
                 correctionBar.voiceState = VoiceBarState.IDLE
+                refreshPasteSuggestion()
                 Toast.makeText(
                     this@ClavierIme,
                     getString(R.string.voice_error, t.message ?: t.javaClass.simpleName),
@@ -981,6 +1467,7 @@ class ClavierIme : InputMethodService() {
             } finally {
                 correctionBar.voiceState = VoiceBarState.IDLE
                 updateCorrectionBarVisibility()
+                syncAutoCapitalization() // relance la suggestion d'emoji, coupée pendant l'écoute
             }
         }
     }
@@ -1025,6 +1512,7 @@ class ClavierIme : InputMethodService() {
             ic.commitText(finalText, 1)
         }
         ic.endBatchEdit()
+        if (!finalText.isNullOrBlank()) onUserTyped() // story 2.4 : texte final inséré par la dictée
         insertedPartialText = ""
     }
 
@@ -1046,6 +1534,7 @@ class ClavierIme : InputMethodService() {
             ic.commitText(partial, 1)
         }
         ic.endBatchEdit()
+        if (partial.isNotEmpty()) onUserTyped() // story 2.4 : du texte a été inséré par la dictée
         insertedPartialText = partial
     }
 
@@ -1078,5 +1567,8 @@ class ClavierIme : InputMethodService() {
 
         /** Délai pendant lequel les mises à jour de sélection sont considérées comme l'écho de nos propres modifications. */
         private const val SELF_EDIT_GRACE_MS = 500L
+
+        /** Marge ajoutée au délai d'expiration de la puce, pour que l'horloge ait bien dépassé l'échéance. */
+        private const val PASTE_EXPIRY_MARGIN_MS = 50L
     }
 }

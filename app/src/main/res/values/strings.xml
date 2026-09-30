@@ -48,6 +48,18 @@
     <string name="voice_permission_denied">Permission micro requise : appuyez à nouveau sur Vocal après l\'avoir accordée.</string>
     <string name="voice_error">Échec de la transcription : %1$s</string>
 
+    <string name="emoji_no_recent">Aucun emoji récent pour le moment.</string>
+    <string name="emoji_category_recent">Récents</string>
+    <string name="emoji_category_smileys">Smileys et émotions</string>
+    <string name="emoji_category_people">Personnes et corps</string>
+    <string name="emoji_category_animals">Animaux et nature</string>
+    <string name="emoji_category_food">Nourriture et boissons</string>
+    <string name="emoji_category_activities">Activités</string>
+    <string name="emoji_category_travel">Voyages et lieux</string>
+    <string name="emoji_category_objects">Objets</string>
+    <string name="emoji_category_symbols">Symboles</string>
+    <string name="emoji_category_flags">Drapeaux</string>
+
     <string name="button_personal_dictionary">Dictionnaire personnel</string>
     <string name="personal_dictionary_title">Dictionnaire personnel</string>
     <string name="personal_dictionary_description">Ajoutez ici vos noms propres, pseudos ou termes spécifiques : l\'autocorrection ne les modifiera plus et pourra même corriger une faute de frappe vers eux. Aucun mot n\'est ajouté automatiquement.</string>
@@ -79,4 +91,22 @@
     <string name="keyboard_settings_height_large">Grande (110 %)</string>
     <string name="keyboard_settings_height_extra_large">Très grande (120 %)</string>
     <string name="keyboard_settings_height_description">Ajuste la hauteur des touches. S\'applique à la prochaine ouverture du clavier.</string>
+
+    <string name="clipboard_button">Presse-papiers</string>
+    <string name="clipboard_menu_description">Menu : afficher le presse-papiers</string>
+    <string name="clipboard_empty">Rien à coller pour le moment.</string>
+    <string name="clipboard_panel_close">ABC</string>
+    <string name="clipboard_paste_description">Coller : %1$s</string>
+    <string name="clipboard_paste_description_masked">Coller le texte copié (aperçu masqué)</string>
+    <string name="clipboard_pinned_description">Épinglé</string>
+    <string name="clipboard_menu_pin">Épingler</string>
+    <string name="clipboard_menu_delete">Supprimer</string>
+    <string name="clipboard_pin_done">Élément épinglé</string>
+    <string name="clipboard_pin_already">Déjà épinglé</string>
+    <string name="clipboard_pin_full">Limite atteinte : 50 éléments épinglés</string>
+    <string name="clipboard_pin_too_long">Trop long pour être épinglé (10 000 caractères max)</string>
+    <string name="clipboard_pin_sensitive">Contenu sensible : impossible à épingler</string>
+    <string name="clipboard_pin_empty">Rien à épingler</string>
+    <string name="clipboard_pin_error">Échec de l\'épinglage : %1$s</string>
+    <string name="clipboard_delete_error">Échec de la suppression : %1$s</string>
 </resources>

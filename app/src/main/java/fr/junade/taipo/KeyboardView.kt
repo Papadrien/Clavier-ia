@@ -88,6 +88,15 @@ class KeyboardView(context: Context) : View(context) {
 
     private val keyRect = RectF()
 
+    // Icône de la touche emoji (story 1.15).
+    private val iconStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#E0E0E0")
+        style = Paint.Style.STROKE
+        strokeCap = Paint.Cap.ROUND
+    }
+    private val iconFillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#E0E0E0") }
+    private val iconRect = RectF()
+
     // Appui long : bulle de symboles (grille) affichée au-dessus de la touche.
     private val popupPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#3A3A3A") }
     private val popupSelectionPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#26A69A") }
@@ -206,6 +215,16 @@ class KeyboardView(context: Context) : View(context) {
         invalidate()
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        // Story 1.14 : largeur modifiée (dépliage d'un pliable, multi-fenêtre) ; une bulle ouverte
+        // serait mal positionnée, on la ferme.
+        if (oldw != 0 && w != oldw) {
+            previewKey = null
+            dismissPopup()
+        }
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = View.MeasureSpec.getSize(widthMeasureSpec)
         val desiredHeight = (rowsHeightPx() + bottomMarginPx()).toInt()
@@ -220,14 +239,15 @@ class KeyboardView(context: Context) : View(context) {
         val inset = insetPx()
         val usableHeight = usableHeightPx()
         val rowHeight = usableHeight / layout.rows.size.toFloat()
+        val content = keyboardWidth()
 
         layout.rows.forEachIndexed { rowIndex, row ->
             val totalWeight = row.fold(0f) { acc, key -> acc + key.weight }
             val top = rowIndex * rowHeight
-            var left = 0f
+            var left = content.leftPx
 
             row.forEach { key ->
-                val keyWidth = width * key.weight / totalWeight
+                val keyWidth = content.widthPx * key.weight / totalWeight
                 drawKey(canvas, key, left, top, keyWidth, rowHeight, inset)
                 left += keyWidth
             }
@@ -259,6 +279,8 @@ class KeyboardView(context: Context) : View(context) {
                 )
             }
 
+            KeyAction.Emoji -> drawEmojiIcon(canvas)
+
             else -> {
                 val label = displayLabel(key)
                 if (label.isNotEmpty()) {
@@ -269,6 +291,21 @@ class KeyboardView(context: Context) : View(context) {
                 key.longPressChar?.let { drawLongPressHint(canvas, it) }
             }
         }
+    }
+
+    /** Story 1.15 : icône « smiley » de la touche emoji (dessinée, donc indépendante des polices). */
+    private fun drawEmojiIcon(canvas: Canvas) {
+        val cx = keyRect.centerX()
+        val cy = keyRect.centerY()
+        val radius = minOf(keyRect.height() * 0.3f, dp(11f))
+        iconStrokePaint.strokeWidth = dp(1.8f)
+        canvas.drawCircle(cx, cy, radius, iconStrokePaint)
+        val eyeRadius = radius * 0.13f
+        canvas.drawCircle(cx - radius * 0.36f, cy - radius * 0.28f, eyeRadius, iconFillPaint)
+        canvas.drawCircle(cx + radius * 0.36f, cy - radius * 0.28f, eyeRadius, iconFillPaint)
+        val smile = radius * 0.55f
+        iconRect.set(cx - smile, cy - smile, cx + smile, cy + smile)
+        canvas.drawArc(iconRect, 25f, 130f, false, iconStrokePaint)
     }
 
     /** Petit indice du chiffre accessible par appui long, en haut à droite de la touche. */
@@ -309,11 +346,12 @@ class KeyboardView(context: Context) : View(context) {
         KeyAction.Enter -> "⏎"
         KeyAction.Space -> ""
         KeyAction.ToggleLayout -> if (layout.id == LayoutId.LETTERS) "123" else "ABC"
+        KeyAction.Emoji -> "" // icône dessinée par drawEmojiIcon
     }
 
     private fun isFunctional(key: Key): Boolean = when (key.action) {
         is KeyAction.TypeChar, KeyAction.Space -> false
-        KeyAction.Shift, KeyAction.Backspace, KeyAction.Enter, KeyAction.ToggleLayout -> true
+        KeyAction.Shift, KeyAction.Backspace, KeyAction.Enter, KeyAction.ToggleLayout, KeyAction.Emoji -> true
     }
 
     // Multi-touch : en frappe rapide, le doigt suivant se pose avant que le précédent soit levé.
@@ -480,11 +518,12 @@ class KeyboardView(context: Context) : View(context) {
     /** Position (gauche, haut, largeur) de la touche dans la vue, ou null si elle n'est pas affichée. */
     private fun keyBounds(target: Key): RectF? {
         val rowHeight = usableHeightPx() / layout.rows.size.toFloat()
+        val content = keyboardWidth()
         layout.rows.forEachIndexed { rowIndex, row ->
             val totalWeight = row.fold(0f) { acc, key -> acc + key.weight }
-            var left = 0f
+            var left = content.leftPx
             row.forEach { key ->
-                val keyWidth = width * key.weight / totalWeight
+                val keyWidth = content.widthPx * key.weight / totalWeight
                 if (key == target) {
                     return RectF(left, rowIndex * rowHeight, left + keyWidth, (rowIndex + 1) * rowHeight)
                 }
@@ -508,17 +547,40 @@ class KeyboardView(context: Context) : View(context) {
 
         // Place disponible au-dessus de la vue : la bulle peut recouvrir la barre d'actions qui la
         // surmonte (le parent ne clippe pas ses enfants, voir ClavierIme), pas au-delà de la fenêtre.
-        val headroom = top.toFloat().coerceAtLeast(0f)
+        val headroom = headroomPx()
 
         // La bulle doit tenir dans cet espace : la hauteur des cellules s'adapte à la place
         // disponible au-dessus de la rangée de la touche.
-        val cellWidth = minOf(dp(44f), (width - 2 * margin - 2 * padding) / cols)
+        val content = keyboardWidth()
+        val cellWidth = minOf(dp(44f), (content.widthPx - 2 * margin - 2 * padding) / cols)
         val cellHeight = minOf(dp(44f), (bounds.top + headroom - gap - 2 * paddingV) / rows).coerceAtLeast(dp(24f))
         val popupWidth = cols * cellWidth + 2 * padding
         val popupHeight = rows * cellHeight + 2 * paddingV
 
-        val left = (bounds.centerX() - popupWidth / 2f)
-            .coerceIn(margin, (width - margin - popupWidth).coerceAtLeast(margin))
+        // Choix présélectionné (Key.defaultPopupChar) : il doit se trouver centré juste au-dessus
+        // de la touche pressée, pour que relâcher sans bouger le doigt le saisisse et que le geste
+        // vers le haut soit naturel. Sans choix par défaut, c'est la bulle entière qui est centrée.
+        var defaultRow = -1
+        var defaultCol = -1
+        key.defaultPopupChar?.let { default ->
+            key.popup.forEachIndexed { r, row ->
+                val c = row.indexOf(default)
+                if (c >= 0) {
+                    defaultRow = r
+                    defaultCol = c
+                }
+            }
+        }
+        val anchorInPopup = if (defaultCol >= 0) padding + (defaultCol + 0.5f) * cellWidth else popupWidth / 2f
+        // Une bulle trop proche d'un bord de l'écran est décalée pour rester visible : le choix
+        // présélectionné ne peut alors plus être centré exactement sur la touche.
+        val left = PopupPlacement.left(
+            keyCenterX = bounds.centerX(),
+            anchorInPopup = anchorInPopup,
+            popupWidth = popupWidth,
+            minLeft = content.leftPx + margin,
+            maxRight = content.rightPx - margin,
+        )
         val popupTop = (bounds.top - gap - popupHeight).coerceAtLeast(-headroom)
 
         popupRect.set(left, popupTop, left + popupWidth, popupTop + popupHeight)
@@ -530,17 +592,8 @@ class KeyboardView(context: Context) : View(context) {
         popupHomeRect.set(
             bounds.left - dp(4f), popupRect.bottom, bounds.right + dp(4f), bounds.bottom + dp(4f),
         )
-        popupDefaultRow = -1
-        popupDefaultCol = -1
-        key.defaultPopupChar?.let { default ->
-            key.popup.forEachIndexed { r, row ->
-                val c = row.indexOf(default)
-                if (c >= 0) {
-                    popupDefaultRow = r
-                    popupDefaultCol = c
-                }
-            }
-        }
+        popupDefaultRow = defaultRow
+        popupDefaultCol = defaultCol
         popupSelectedRow = popupDefaultRow
         popupSelectedCol = popupDefaultCol
         popupKey = key
@@ -618,10 +671,11 @@ class KeyboardView(context: Context) : View(context) {
         val gap = dp(4f)
         // Place disponible au-dessus de la vue : comme la bulle d'accents (1.8), la bulle peut
         // recouvrir la barre d'actions qui la surmonte, pas au-delà de la fenêtre.
-        val headroom = top.toFloat().coerceAtLeast(0f)
+        val headroom = headroomPx()
 
+        val content = keyboardWidth()
         val left = (bounds.centerX() - previewWidth / 2f)
-            .coerceIn(0f, (width - previewWidth).coerceAtLeast(0f))
+            .coerceIn(content.leftPx, (content.rightPx - previewWidth).coerceAtLeast(content.leftPx))
         val previewBottom = bounds.top - gap
         val previewTop = (previewBottom - previewHeight).coerceAtLeast(-headroom)
 
@@ -643,10 +697,13 @@ class KeyboardView(context: Context) : View(context) {
         val rowHeight = usableHeight / rows.size.toFloat()
         val rowIndex = (y / rowHeight).toInt().coerceIn(0, rows.lastIndex)
         val row = rows[rowIndex]
+        val content = keyboardWidth()
+        // Story 1.14 : en classe large, les marges de part et d'autre de la zone des touches sont inertes.
+        if (content.leftPx > 0f && (x < content.leftPx || x >= content.rightPx)) return null
         val totalWeight = row.fold(0f) { acc, key -> acc + key.weight }
-        var acc = 0f
+        var acc = content.leftPx
         for (key in row) {
-            acc += width * key.weight / totalWeight
+            acc += content.widthPx * key.weight / totalWeight
             if (x < acc) return key
         }
         return row.last()
@@ -669,6 +726,22 @@ class KeyboardView(context: Context) : View(context) {
     // chevaucher la zone système (bouton de changement de clavier, geste de
     // navigation) qui se superpose sinon aux dernières touches.
     // Story 1.13 : en paysage, rangées et marge basse sont raccourcies (KeyboardMetrics).
+    /**
+     * Place disponible au-dessus de la vue pour les bulles (accents, agrandissement). Le clavier est
+     * dans un conteneur (avec le panneau emoji, story 1.15) placé sous la barre d'actions : la
+     * position à prendre en compte est celle du conteneur plus celle de la vue dans ce conteneur.
+     */
+    private fun headroomPx(): Float {
+        val parentTop = (parent as? View)?.top ?: 0
+        return (top + parentTop).toFloat().coerceAtLeast(0f)
+    }
+
+    /** Story 1.15 : hauteur d'une rangée de touches, pour caler le panneau emoji sur le clavier. */
+    fun rowHeightPx(): Int = (rowsHeightPx() / layout.rows.size.coerceAtLeast(1)).toInt()
+
+    /** Story 1.15 : marge basse (zone système) du clavier, reprise par le panneau emoji. */
+    fun bottomInsetPx(): Int = bottomMarginPx().toInt()
+
     private fun rowsHeightPx(): Float =
         dp(metrics().rowsHeightDp(layout.rows.size, heightScale))
     private fun bottomMarginPx(): Float = dp(metrics().bottomMarginDp)
@@ -677,6 +750,10 @@ class KeyboardView(context: Context) : View(context) {
     private fun insetPx(): Float = dp(3f)
     private fun cornerRadiusPx(): Float = dp(8f)
     private fun spaceBarLengthPx(): Float = dp(22f)
+
+    /** Story 1.14 : zone horizontale des touches (plein écran en Compact, plafonnée et centrée en large). */
+    private fun keyboardWidth(): KeyboardWidth =
+        KeyboardWidth.forAvailableWidth(width.toFloat(), resources.displayMetrics.density)
 
     private fun dp(value: Float): Float = value * resources.displayMetrics.density
 }

@@ -111,10 +111,16 @@ object Keyboards {
     /** Inverse de [popupGrid] : les caractères par ordre de priorité. */
     private fun popupItems(popup: List<List<Char>>): List<Char> = popup.reversed().flatten()
 
-    /** Rangée du bas : le ! et le ? sont accessibles par appui long sur le point, ce qui agrandit l'espace. */
+    /**
+     * Rangée du bas : le ! et le ? sont accessibles par appui long sur le point, ce qui agrandit
+     * l'espace. Story 1.15 : le bouton emoji est à gauche de la barre espace et à droite de la
+     * virgule, comme sur Gboard ; il prend 1 unité sur l'espace (4,8 → 3,8) pour que la rangée
+     * reste à 10 unités.
+     */
     private val punctuationRow = listOf(
         Key("comma", ",", KeyAction.TypeChar(','), secondary = true),
-        Key("space", "", KeyAction.Space, 4.8f),
+        Key("emoji", "☺", KeyAction.Emoji, secondary = true),
+        Key("space", "", KeyAction.Space, 3.8f),
         Key("period", ".", KeyAction.TypeChar('.'), secondary = true, popup = periodPopup),
         Key("enter", "⏎", KeyAction.Enter, 1.8f),
     )

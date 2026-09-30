@@ -1,0 +1,128 @@
+# Emoji suggestions (story 1.16), English: an emoji then the words that trigger it.
+# Priority = file order: if a word appears twice, the first line wins.
+# Words are compared without accents or capitals; a plural « s » is recognised automatically.
+# No learning: fixed list, maintained by hand.
+😀 smile happy glad cheerful
+😂 lol lmao rofl hilarious funny laugh
+😍 adore adorable gorgeous
+😘 kiss kisses
+❤️ love heart loved
+😢 sad sadness
+😭 cry crying tears sob
+😡 angry furious mad
+😴 sleep sleepy tired sleeping
+👍 ok okay agreed perfect nice
+👏 bravo congrats congratulations applause
+🙏 thanks thank please pray
+👋 hi hello hey bye goodbye
+🎉 party celebrate
+🎂 birthday
+🎁 gift present
+🎄 christmas
+🎃 halloween
+🐣 easter
+🔥 fire hot flame
+❄️ cold winter
+⛄ snow
+☀️ sun sunny summer
+🌧️ rain rainy
+🌈 rainbow
+🌙 moon night
+⭐ star
+🌍 world earth planet
+🍕 pizza
+🍔 burger hamburger
+🍟 fries
+🍝 pasta spaghetti
+🍣 sushi
+🥐 croissant
+🥖 baguette bread
+🧀 cheese
+🍷 wine
+🍺 beer
+☕ coffee
+🍵 tea
+🍰 cake
+🍫 chocolate
+🍦 icecream
+🍎 apple
+🍌 banana
+🍓 strawberry
+🍇 grapes
+🍉 watermelon
+🥕 carrot
+🍅 tomato
+🥑 avocado
+🥚 egg
+🥩 meat steak
+🍗 chicken
+🥗 salad
+🍽️ lunch dinner meal
+🐱 cat kitten
+🐶 dog puppy
+🐭 mouse
+🐰 rabbit bunny
+🐻 bear
+🦊 fox
+🐼 panda
+🐴 horse
+🐷 pig
+🐮 cow
+🐔 rooster
+🐟 fish
+🐢 turtle
+🐍 snake
+🦁 lion
+🐯 tiger
+🐵 monkey
+🐦 bird
+🦋 butterfly
+🐝 bee
+🌹 rose roses
+🌻 sunflower
+🌸 flower flowers
+🌳 tree
+🚗 car
+🚲 bike bicycle
+🚌 bus
+🚆 train
+✈️ plane flight travel
+🚀 rocket
+🏠 home house
+🏢 building
+🏖️ beach vacation holiday
+🏔️ mountain
+⚽ soccer football
+🏀 basketball
+🎾 tennis
+🏊 swim swimming
+🎮 game games gaming
+🎵 music song
+🎸 guitar
+🎬 movie film cinema
+📚 book books read
+📱 phone mobile
+💻 laptop computer
+📷 photo camera
+💡 idea
+💰 money
+📅 appointment
+⏰ alarm
+🔑 key
+📞 call
+📧 mail email
+💼 work job
+✅ done finished
+❌ error
+💪 gym strong strength
+🤔 think maybe hmm
+😅 oops sorry
+😔 unfortunately
+🙈 embarrassed
+😱 scared
+🤒 sick ill
+😎 cool
+🤗 hug hugs
+🤩 awesome amazing
+🏆 win winner champion victory
+🎓 graduation diploma

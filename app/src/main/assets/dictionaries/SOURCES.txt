@@ -16,3 +16,11 @@ les entrées non retenues) :
 - formes sans apostrophe de ces contractions (jai, cest, dont, im...) retirées : ce sont des fautes
   du corpus, corrigées automatiquement vers la contraction.
 Non nettoyé : fautes de frappe et noms propres rares du corpus (ex. "helo") restent dans les listes.
+
+Limites connues des listes, compensées par le code (Dictionary / InflectionRules) et non par le fichier :
+- pluriels et féminins absents (« durée » présent, « durées » absent) : reconnus par des règles régulières
+  (s, x, aux ; règles anglaises pour en.txt) ; les conjugaisons irrégulières ne sont pas couvertes ;
+- fautes sans accent présentes dans fr.txt (« ca », « etait », « etre », « tres », « meme »...) : corrigées
+  quand la forme accentuée est au moins 10 fois plus fréquente ; « a »/« à », « ou »/« où », « la »/« là »
+  restent intacts. Une meilleure solution à terme : un lexique français complet avec formes fléchies.
+

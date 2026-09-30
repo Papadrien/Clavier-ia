@@ -247,4 +247,19 @@ class KeyboardControllerTest {
         val result = controller.onKey(key("letter_a"))
         assertEquals("a", result.commit)
     }
+
+    @Test
+    fun `la touche emoji ne change ni le texte ni l etat du clavier`() {
+        val controller = KeyboardController()
+        controller.onKey(key("shift"))
+        val before = controller.state
+
+        val result = controller.onKey(key("emoji"))
+
+        assertNull(result.commit)
+        assertEquals(0, result.deleteBefore)
+        assertFalse(result.isEnter)
+        assertEquals(before, result.newState)
+        assertEquals(before, controller.state)
+    }
 }

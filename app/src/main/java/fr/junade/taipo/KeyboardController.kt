@@ -82,6 +82,9 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
                 }
             }
 
+            // Story 1.15 : le panneau emoji est géré par l'IME ; la touche ne change ni texte ni état.
+            KeyAction.Emoji -> KeyPressResult(newState = state)
+
             KeyAction.ToggleLayout -> {
                 state = state.copy(
                     activeLayout = if (state.activeLayout == LayoutId.LETTERS) LayoutId.SYMBOLS else LayoutId.LETTERS,

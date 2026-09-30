@@ -20,7 +20,10 @@ object DictionaryLoader {
     @Synchronized
     fun forLanguage(context: Context, language: KeyboardLanguage): Dictionary {
         cache[language]?.let { return it }
-        val dictionary = Dictionary.withFrequencies(readAsset(context, assetNameFor(language)))
+        val dictionary = Dictionary.withFrequencies(
+            readAsset(context, assetNameFor(language)),
+            inflectionsFor(language),
+        )
         cache[language] = dictionary
         return dictionary
     }
@@ -28,6 +31,12 @@ object DictionaryLoader {
     private fun assetNameFor(language: KeyboardLanguage): String = when (language) {
         KeyboardLanguage.FR -> "dictionaries/fr.txt"
         KeyboardLanguage.EN -> "dictionaries/en.txt"
+    }
+
+    /** Formes régulières (pluriels, etc.) absentes des listes de fréquence : voir [InflectionRules]. */
+    private fun inflectionsFor(language: KeyboardLanguage): InflectionRules = when (language) {
+        KeyboardLanguage.FR -> InflectionRules.FRENCH
+        KeyboardLanguage.EN -> InflectionRules.ENGLISH
     }
 
     private fun readAsset(context: Context, assetPath: String): Map<String, Long> =

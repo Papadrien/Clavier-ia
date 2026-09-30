@@ -1,6 +1,7 @@
 package fr.junade.taipo
 
 import android.content.Context
+import fr.junade.taipo.emoji.RecentEmojis
 
 /**
  * Paramètres du clavier modifiables depuis l'écran « Paramètres du clavier »
@@ -36,11 +37,22 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putString(KEY_KEYBOARD_HEIGHT, value.storageKey).apply()
         }
 
+    /**
+     * Emojis récemment utilisés (story 1.15), du plus récent au plus ancien. Stockés localement,
+     * comme les autres réglages : juste la liste des derniers emojis choisis, rien n'est analysé.
+     */
+    var recentEmojis: List<String>
+        get() = RecentEmojis.decode(prefs.getString(KEY_RECENT_EMOJIS, null))
+        set(value) {
+            prefs.edit().putString(KEY_RECENT_EMOJIS, RecentEmojis.encode(value)).apply()
+        }
+
     companion object {
         private const val PREFS_NAME = "keyboard_prefs"
         private const val KEY_NUMBER_ROW = "number_row_enabled"
         const val DEFAULT_NUMBER_ROW = false
         private const val KEY_HAPTIC_INTENSITY = "haptic_intensity"
         private const val KEY_KEYBOARD_HEIGHT = "keyboard_height"
+        private const val KEY_RECENT_EMOJIS = "recent_emojis"
     }
 }

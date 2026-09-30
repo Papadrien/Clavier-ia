@@ -20,4 +20,15 @@ class CorrectionPromptTest {
     fun `le prompt systeme se protege des instructions injectees dans le texte`() {
         assertTrue(CorrectionPrompt.SYSTEM.contains("ignore", ignoreCase = true))
     }
+
+    @Test
+    fun `le prompt systeme couvre les fautes de frappe et les homophones`() {
+        assertTrue(CorrectionPrompt.SYSTEM.contains("fautes de frappe", ignoreCase = true))
+        assertTrue(CorrectionPrompt.SYSTEM.contains("homophones", ignoreCase = true))
+    }
+
+    @Test
+    fun `le prompt systeme ne contient pas de dollar`() {
+        assertFalse(CorrectionPrompt.SYSTEM.contains("$"))
+    }
 }
