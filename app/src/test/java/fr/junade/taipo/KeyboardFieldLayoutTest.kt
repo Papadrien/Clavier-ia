@@ -95,7 +95,7 @@ class KeyboardFieldLayoutTest {
     }
 
     @Test
-    fun `champ numerique : pave quel que soit le layout demande`() {
+    fun `champ numerique, pave quel que soit le layout demande`() {
         for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS)) for (language in languages) for (numberRow in booleans) {
             val pad = Keyboards.layoutOf(id, language, numberRow, FieldType.NUMBER)
             assertEquals(LayoutId.PAD, pad.id)
@@ -106,7 +106,7 @@ class KeyboardFieldLayoutTest {
     }
 
     @Test
-    fun `pave numerique : chiffres une fois chacun, separateurs, moins, effacer, espace et entree`() {
+    fun `pave numerique avec chiffres une fois chacun, separateurs, moins, effacer, espace et entree`() {
         val pad = Keyboards.layoutOf(LayoutId.LETTERS, KeyboardLanguage.FR, false, FieldType.NUMBER)
         assertEquals("0123456789".toList(), pad.chars().filter { it.isDigit() }.sorted())
         listOf(',', '.', '-').forEach { assertTrue(pad.has(it), "$it") }
@@ -118,7 +118,7 @@ class KeyboardFieldLayoutTest {
     }
 
     @Test
-    fun `pave telephone : chiffres, plus, etoile, diese, moins, effacer et entree`() {
+    fun `pave telephone avec chiffres, plus, etoile, diese, moins, effacer et entree`() {
         val pad = Keyboards.layoutOf(LayoutId.LETTERS, KeyboardLanguage.EN, true, FieldType.PHONE)
         assertEquals(LayoutId.PAD, pad.id)
         assertEquals("0123456789".toList(), pad.chars().filter { it.isDigit() }.sorted())
