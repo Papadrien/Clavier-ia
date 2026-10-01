@@ -5,4 +5,9 @@
     <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:colorAccent">#5A7FD4</item>
     </style>
+
+    <!-- Story 2.6 : fenêtre de modification d'un élément du presse-papiers. -->
+    <style name="EditDialogTheme" parent="android:Theme.Material.Light.Dialog.NoActionBar">
+        <item name="android:colorAccent">#5A7FD4</item>
+    </style>
 </resources>

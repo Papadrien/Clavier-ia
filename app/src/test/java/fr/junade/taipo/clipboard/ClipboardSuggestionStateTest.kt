@@ -251,4 +251,131 @@ class ClipboardSuggestionStateTest {
         assertEquals("Bonjour", state.lastClip()?.text)
         assertNotNull(state.suggestion())
     }
+
+    // Story 2.6
+
+    @Test
+    fun `une copie modifiee montre le nouveau texte dans le panneau et la puce`() {
+        copy("Bonjour")
+        state.onEdited("Bonjour à tous")
+        assertEquals("Bonjour à tous", state.lastClip()?.text)
+        assertEquals("Bonjour à tous", state.suggestion()?.text)
+    }
+
+    @Test
+    fun `relire le presse-papiers Android ne defait pas la modification`() {
+        copy("Bonjour", at = now)
+        state.onEdited("Bonjour à tous")
+        copy("Bonjour", at = now)
+        assertEquals("Bonjour à tous", state.lastClip()?.text)
+        assertEquals("Bonjour à tous", state.suggestion()?.text)
+    }
+
+    @Test
+    fun `une nouvelle copie remplace la modification`() {
+        copy("Bonjour", at = now)
+        state.onEdited("Bonjour à tous")
+        now += 5_000
+        copy("Salut", at = now)
+        assertEquals("Salut", state.lastClip()?.text)
+    }
+
+    @Test
+    fun `modifier une copie deja collee ne fait pas revenir la puce`() {
+        copy("Bonjour")
+        state.onPasted()
+        state.onEdited("Bonjour à tous")
+        assertNull(state.suggestion())
+        assertEquals("Bonjour à tous", state.lastClip()?.text)
+    }
+
+    @Test
+    fun `la modification ne prolonge pas l expiration de la puce`() {
+        copy("Bonjour", at = now)
+        state.onEdited("Bonjour à tous")
+        now += tenMinutes + 1
+        assertNull(state.suggestion())
+    }
+
+    @Test
+    fun `un texte modifie vide est ignore et sans copie la modification ne fait rien`() {
+        state.onEdited("rien")
+        assertNull(state.lastClip())
+        copy("Bonjour")
+        state.onEdited("   ")
+        assertEquals("Bonjour", state.lastClip()?.text)
+    }
+    // Story 2.9
+
+    private val oneHour = ClipboardItems.HISTORY_RETENTION_MILLIS
+
+    @Test
+    fun `onClipRead indique une nouvelle copie, pas une relecture ni un presse-papiers vide`() {
+        assertTrue(copy("Bonjour"))
+        assertFalse(copy("Bonjour"))
+        assertTrue(copy("Salut"))
+        assertFalse(copy(null))
+    }
+
+    @Test
+    fun `une nouvelle copie du meme texte avec un autre horodatage est une nouvelle copie`() {
+        assertTrue(copy("Bonjour", at = now))
+        now += 1_000
+        assertTrue(copy("Bonjour", at = now))
+    }
+
+    @Test
+    fun `sans horodatage une relecture du meme texte n est pas une nouvelle copie`() {
+        assertTrue(copy("Bonjour", at = 0))
+        now += 5_000
+        assertFalse(copy("Bonjour", at = 0))
+    }
+
+    @Test
+    fun `lastClip reste montree jusqu a une heure apres la copie puis disparait`() {
+        copy("Bonjour", at = now)
+        now += oneHour - 1
+        assertEquals("Bonjour", state.lastClip()?.text)
+        now += 1
+        assertNull(state.lastClip())
+    }
+
+    @Test
+    fun `l expiration d une heure se compte depuis la copie, pas depuis la lecture`() {
+        copy("Bonjour", at = now - oneHour + 1_000)
+        assertEquals("Bonjour", state.lastClip()?.text)
+        now += 1_000
+        assertNull(state.lastClip())
+    }
+
+    @Test
+    fun `la modification ne prolonge pas l expiration d une heure`() {
+        copy("Bonjour", at = now)
+        now += oneHour - 1_000
+        state.onEdited("Bonjour à tous")
+        now += 1_000
+        assertNull(state.lastClip())
+    }
+    // Story 2.10
+
+    @Test
+    fun `une copie qui ressemble a une carte est sensible sans drapeau, pour la puce et le panneau`() {
+        copy("4111 1111 1111 1111", sensitive = false)
+        assertTrue(state.suggestion()!!.sensitive)
+        assertTrue(state.lastClip()!!.sensitive)
+    }
+
+    @Test
+    fun `un texte ordinaire n est pas sensible sans drapeau`() {
+        copy("Bonjour", sensitive = false)
+        assertFalse(state.suggestion()!!.sensitive)
+        assertFalse(state.lastClip()!!.sensitive)
+    }
+
+    @Test
+    fun `une copie modifiee en numero de carte devient sensible`() {
+        copy("Bonjour")
+        state.onEdited("4111 1111 1111 1111")
+        assertTrue(state.lastClip()!!.sensitive)
+    }
 }

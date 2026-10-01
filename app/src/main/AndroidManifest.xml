@@ -50,6 +50,26 @@
             android:excludeFromRecents="true"
             android:taskAffinity="" />
 
+        <!-- Story 2.6 : modification d'un élément du Smart Clipboard (fenêtre de dialogue lancée par le clavier). -->
+        <activity
+            android:name=".ClipboardEditActivity"
+            android:exported="false"
+            android:theme="@style/EditDialogTheme"
+            android:windowSoftInputMode="adjustResize|stateVisible"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:taskAffinity="" />
+
+        <!-- Stories 2.7 et 2.8 : étiquette d'un élément épinglé du Smart Clipboard (fenêtre de dialogue lancée par le clavier). -->
+        <activity
+            android:name=".ClipboardLabelActivity"
+            android:exported="false"
+            android:theme="@style/EditDialogTheme"
+            android:windowSoftInputMode="adjustResize|stateVisible"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:taskAffinity="" />
+
         <service
             android:name=".ClavierIme"
             android:label="@string/ime_name"

@@ -1,5 +1,7 @@
 package fr.junade.taipo.clipboard
 
+import fr.junade.taipo.clipboard.ClipboardItems.EditResult
+import fr.junade.taipo.clipboard.ClipboardItems.LabelResult
 import fr.junade.taipo.clipboard.ClipboardItems.PinResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +40,20 @@ class PinnedClipRepositoryTest {
             val id = nextId++
             state.value = state.value + entity.copy(id = id)
             return id
+        }
+
+        override suspend fun updateText(id: Long, text: String): Int {
+            val before = state.value
+            if (before.none { it.id == id }) return 0
+            state.value = before.map { if (it.id == id) it.copy(text = text) else it }
+            return 1
+        }
+
+        override suspend fun updateLabel(id: Long, label: String?): Int {
+            val before = state.value
+            if (before.none { it.id == id }) return 0
+            state.value = before.map { if (it.id == id) it.copy(label = label) else it }
+            return 1
         }
 
         override suspend fun deleteById(id: Long): Int {
@@ -114,5 +130,116 @@ class PinnedClipRepositoryTest {
         repository.remove(id)
         awaitPinned { it.isEmpty() }
         assertEquals(PinResult.PINNED, repository.pin("a", nowMillis = 2))
+    }
+
+    // Story 2.6
+
+    @Test
+    fun `updateText remplace le texte en gardant l ordre et l etiquette`() = runBlocking {
+        repository.pin("a", nowMillis = 1)
+        repository.pin("b", nowMillis = 2)
+        val before = awaitPinned { it.size == 2 }
+        assertEquals(EditResult.SAVED, repository.updateText(before.first { it.text == "a" }.id, "a modifié"))
+        val after = awaitPinned { list -> list.any { it.text == "a modifié" } }
+        assertEquals(listOf("b", "a modifié"), after.map { it.text })
+        assertEquals(before.map { it.id }, after.map { it.id })
+        assertEquals(before.map { it.pinnedAtMillis }, after.map { it.pinnedAtMillis })
+    }
+
+    @Test
+    fun `un texte modifie identique a un autre element epingle est accepte`() = runBlocking {
+        repository.pin("a", nowMillis = 1)
+        repository.pin("b", nowMillis = 2)
+        val pinned = awaitPinned { it.size == 2 }
+        assertEquals(EditResult.SAVED, repository.updateText(pinned.first { it.text == "a" }.id, "b"))
+        assertEquals(listOf("b", "b"), awaitPinned { list -> list.all { it.text == "b" } }.map { it.text })
+    }
+
+    @Test
+    fun `updateText refuse un texte vide ou trop long sans toucher la base`() = runBlocking {
+        repository.pin("a", nowMillis = 1)
+        val id = awaitPinned { it.isNotEmpty() }.single().id
+        assertEquals(EditResult.EMPTY, repository.updateText(id, "   "))
+        assertEquals(EditResult.TOO_LONG, repository.updateText(id, "x".repeat(ClipboardItems.MAX_PINNED_CHARS + 1)))
+        assertEquals(EditResult.SAVED, repository.updateText(id, "x".repeat(ClipboardItems.MAX_PINNED_CHARS)))
+        assertEquals(ClipboardItems.MAX_PINNED_CHARS, awaitPinned { it.single().text.startsWith("x") }.single().text.length)
+    }
+
+    @Test
+    fun `updateText d un identifiant inconnu retourne NOT_FOUND`() = runBlocking {
+        assertEquals(EditResult.NOT_FOUND, repository.updateText(42, "texte"))
+    }
+
+    // Stories 2.7 et 2.8
+
+    private suspend fun pinnedId(text: String): Long {
+        repository.pin(text, nowMillis = System.nanoTime())
+        return awaitPinned { list -> list.any { it.text == text } }.first { it.text == text }.id
+    }
+
+    @Test
+    fun `un element epingle n a pas d etiquette au depart`() = runBlocking {
+        pinnedId("a")
+        assertEquals(listOf<String?>(null), awaitPinned { it.isNotEmpty() }.map { it.label })
+    }
+
+    @Test
+    fun `setLabel enregistre l etiquette sans espaces autour et en gardant la casse`() = runBlocking {
+        val id = pinnedId("a")
+        assertEquals(LabelResult.SAVED, repository.setLabel(id, "  Mon IBAN \n"))
+        assertEquals("Mon IBAN", awaitPinned { list -> list.single().label != null }.single().label)
+    }
+
+    @Test
+    fun `setLabel remplace une etiquette existante`() = runBlocking {
+        val id = pinnedId("a")
+        repository.setLabel(id, "Avant")
+        awaitPinned { list -> list.single().label == "Avant" }
+        assertEquals(LabelResult.SAVED, repository.setLabel(id, "Après"))
+        assertEquals("Après", awaitPinned { list -> list.single().label == "Après" }.single().label)
+    }
+
+    @Test
+    fun `une etiquette de 15 caracteres est acceptee, de 16 refusee, vide refusee`() = runBlocking {
+        val id = pinnedId("a")
+        assertEquals(LabelResult.SAVED, repository.setLabel(id, "x".repeat(ClipboardItems.MAX_LABEL_CHARS)))
+        assertEquals(LabelResult.TOO_LONG, repository.setLabel(id, "x".repeat(ClipboardItems.MAX_LABEL_CHARS + 1)))
+        assertEquals(LabelResult.EMPTY, repository.setLabel(id, "   "))
+        assertEquals(ClipboardItems.MAX_LABEL_CHARS, awaitPinned { list -> list.single().label != null }.single().label?.length)
+    }
+
+    @Test
+    fun `deux elements peuvent avoir la meme etiquette`() = runBlocking {
+        val a = pinnedId("a")
+        val b = pinnedId("b")
+        assertEquals(LabelResult.SAVED, repository.setLabel(a, "Perso"))
+        assertEquals(LabelResult.SAVED, repository.setLabel(b, "Perso"))
+        assertEquals(listOf("Perso", "Perso"), awaitPinned { list -> list.size == 2 && list.all { it.label != null } }.map { it.label })
+    }
+
+    @Test
+    fun `clearLabel retire l etiquette et garde le texte`() = runBlocking {
+        val id = pinnedId("a")
+        repository.setLabel(id, "Perso")
+        awaitPinned { list -> list.single().label == "Perso" }
+        assertTrue(repository.clearLabel(id))
+        val after = awaitPinned { list -> list.single().label == null }.single()
+        assertEquals("a", after.text)
+    }
+
+    @Test
+    fun `modifier le texte garde l etiquette`() = runBlocking {
+        val id = pinnedId("a")
+        repository.setLabel(id, "Perso")
+        awaitPinned { list -> list.single().label == "Perso" }
+        assertEquals(EditResult.SAVED, repository.updateText(id, "a modifié"))
+        val after = awaitPinned { list -> list.single().text == "a modifié" }.single()
+        assertEquals("Perso", after.label)
+    }
+
+    @Test
+    fun `setLabel et clearLabel d un identifiant inconnu`() = runBlocking {
+        assertEquals(LabelResult.NOT_FOUND, repository.setLabel(42, "Perso"))
+        assertFalse(repository.clearLabel(42))
     }
 }

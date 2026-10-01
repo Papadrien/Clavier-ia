@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /**
- * Point d'accès unique aux éléments épinglés (story 2.5).
+ * Point d'accès unique aux éléments épinglés (stories 2.5 à 2.8).
  *
  * - [pinned] : liste à jour (du plus récemment épinglé au plus ancien), réémise à chaque
  *   modification en base ; [snapshot] en donne la valeur courante sans suspendre.
- * - [pin] / [remove] : écritures asynchrones.
+ * - [pin] / [updateText] / [setLabel] / [clearLabel] / [remove] : écritures asynchrones.
  *
  * L'ouverture de la base (Keystore + SQLCipher, potentiellement lente) est déclenchée dès la
  * construction, hors thread principal : tant qu'elle n'est pas terminée, [pinned] est vide.
@@ -36,7 +36,7 @@ class PinnedClipRepository(
         scope.launch {
             try {
                 dao.await().observeAll().collect { entities ->
-                    _pinned.value = entities.map { PinnedClip(it.id, it.text, it.pinnedAt) }
+                    _pinned.value = entities.map { PinnedClip(it.id, it.text, it.pinnedAt, it.label) }
                 }
             } catch (e: CancellationException) {
                 throw e
@@ -59,6 +59,36 @@ class PinnedClipRepository(
         return dao.await().insertBounded(PinnedClipEntity(text = text, pinnedAt = nowMillis), ClipboardItems.MAX_PINNED)
     }
 
+    /**
+     * Story 2.7 : donne l'étiquette [raw] à l'élément [id] (espaces autour retirés ; vide ou plus de
+     * [ClipboardItems.MAX_LABEL_CHARS] caractères refusés). Remplace l'étiquette existante (story 2.8).
+     */
+    suspend fun setLabel(id: Long, raw: String): ClipboardItems.LabelResult {
+        ClipboardItems.labelRefusal(raw)?.let { return it }
+        val label = ClipboardItems.normalizeLabel(raw)
+        return if (dao.await().updateLabel(id, label) > 0) {
+            ClipboardItems.LabelResult.SAVED
+        } else {
+            ClipboardItems.LabelResult.NOT_FOUND
+        }
+    }
+
+    /** Story 2.8 : retire l'étiquette de l'élément [id]. Retourne vrai s'il existait. */
+    suspend fun clearLabel(id: Long): Boolean = dao.await().updateLabel(id, null) > 0
+
     /** Supprime l'élément [id]. Retourne vrai s'il existait. */
     suspend fun remove(id: Long): Boolean = dao.await().deleteById(id) > 0
+
+    /**
+     * Story 2.6 : remplace le texte de l'élément [id] (texte vide ou trop long refusés). L'ordre et
+     * l'étiquette sont conservés ; un texte identique à celui d'un autre élément est accepté.
+     */
+    suspend fun updateText(id: Long, text: String): ClipboardItems.EditResult {
+        ClipboardItems.editRefusal(text)?.let { return it }
+        return if (dao.await().updateText(id, text) > 0) {
+            ClipboardItems.EditResult.SAVED
+        } else {
+            ClipboardItems.EditResult.NOT_FOUND
+        }
+    }
 }

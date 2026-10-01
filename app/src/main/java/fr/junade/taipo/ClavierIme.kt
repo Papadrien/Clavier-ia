@@ -33,6 +33,7 @@ import fr.junade.taipo.ai.ProtectedWords
 import fr.junade.taipo.ai.TextBlock
 import fr.junade.taipo.ai.VoiceEngine
 import fr.junade.taipo.ai.VoiceRecorder
+import fr.junade.taipo.clipboard.ClipboardEditBridge
 import fr.junade.taipo.clipboard.ClipboardItems
 import fr.junade.taipo.clipboard.ClipboardPanelView
 import fr.junade.taipo.clipboard.ClipboardProvider
@@ -79,6 +80,9 @@ class ClavierIme : InputMethodService() {
     // Le dépôt est instancié dès la création du service : l'ouverture de la base (Keystore) est
     // asynchrone et doit être terminée avant la première ouverture du panneau.
     private val clipboardRepository by lazy { ClipboardProvider.repository(applicationContext) }
+
+    // Story 2.9 : historique des copies (1 h, chiffré), dans la même base que les éléments épinglés.
+    private val clipHistoryRepository by lazy { ClipboardProvider.historyRepository(applicationContext) }
     private var clipboardPanelJob: Job? = null
     private val pasteExpiryRunnable = Runnable { refreshPasteSuggestion() }
 
@@ -97,6 +101,9 @@ class ClavierIme : InputMethodService() {
 
     /** Faux dans les champs sans suggestions (mot de passe, e-mail, URL, nombre...), relu à chaque champ. */
     private var suggestionsAllowed = true
+
+    /** Story 1.18 : type du champ courant (e-mail, URL, numérique...), fixé à chaque ouverture de champ. */
+    private var fieldType = FieldType.TEXT
 
     /** Faux dans les champs de mot de passe : la puce de collage y est masquée (story 10.1), relu à chaque champ. */
     private var pasteAllowedInField = true
@@ -190,6 +197,8 @@ class ClavierIme : InputMethodService() {
         // service pour qu'elle soit prête avant la première frappe.
         personalDictionary
         clipboardRepository
+        clipHistoryRepository
+        ClipboardEditBridge.onLastClipEdited = { text -> onLastClipEdited(text) } // story 2.6
         numberRowEnabled = keyboardPreferences.isNumberRowEnabled
         hapticIntensity = keyboardPreferences.hapticIntensity
         keyboardHeight = keyboardPreferences.keyboardHeight
@@ -227,6 +236,9 @@ class ClavierIme : InputMethodService() {
         clipboardPanel.visibility = View.GONE
         clipboardPanel.setOnPasteListener { item -> onClipboardItemTapped(item) }
         clipboardPanel.setOnPinListener { item -> onClipboardItemPin(item) }
+        clipboardPanel.setOnEditListener { item -> onClipboardItemEdit(item) }
+        clipboardPanel.setOnLabelListener { item -> onClipboardItemLabel(item) }
+        clipboardPanel.setOnDeleteLabelListener { item -> onClipboardItemDeleteLabel(item) }
         clipboardPanel.setOnDeleteListener { item -> onClipboardItemDelete(item) }
 
         val root = LinearLayout(this).apply {
@@ -293,6 +305,8 @@ class ClavierIme : InputMethodService() {
         correctionBar.collapseMenu()
         suggestionsAllowed = SuggestionPolicy.allowsSuggestions(info?.inputType ?: 0)
         pasteAllowedInField = SuggestionPolicy.allowsPasteSuggestion(info?.inputType ?: 0)
+        fieldType = FieldType.of(info?.inputType ?: 0)
+        controller.setAutoCapitalization(fieldType.autoCapitalizes)
         lastSuggestionInput = null
         controller.setLanguage(currentKeyboardLanguage())
         controller.reset()
@@ -394,6 +408,8 @@ class ClavierIme : InputMethodService() {
         mainHandler.removeCallbacks(pasteExpiryRunnable)
         clipboardReader.stop()
         clipboardState.clear()
+        ClipboardEditBridge.onLastClipEdited = null
+        ClipboardEditBridge.lastClipText = null
         serviceJob.cancel()
     }
 
@@ -431,10 +447,12 @@ class ClavierIme : InputMethodService() {
         // d'apprentissage auto) — le mot qui vient de se terminer est vérifié
         // juste avant que la touche de ponctuation/espace/entrée qui le
         // termine ne soit elle-même traitée.
-        val autocorrection = if (isWordBoundaryKey(key)) applyDictionaryAutocorrection() else null
+        val autocorrection = if (isWordBoundaryKey(key) && autocorrectionAllowed()) applyDictionaryAutocorrection() else null
 
         // Double espace : l'espace précédent est remplacé par ". " (pas de sélection active).
-        val doubleSpaceContext = if (key.action == KeyAction.Space && autocorrection == null && !hasSelection()) {
+        val doubleSpaceContext = if (key.action == KeyAction.Space && autocorrection == null && !hasSelection() &&
+            fieldType.doubleSpacePeriod
+        ) {
             currentInputConnection?.getTextBeforeCursor(2, 0)?.toString()
         } else null
 
@@ -521,11 +539,20 @@ class ClavierIme : InputMethodService() {
         clipboardPanel.visibility = View.VISIBLE
         correctionBar.setClipboardPanelOpen(true)
         clearSuggestions()
-        // Story 2.5 : les cartes suivent les éléments épinglés tant que le panneau est ouvert.
+        // Stories 2.5 et 2.9 : les cartes suivent les éléments épinglés et l'historique tant que le
+        // panneau est ouvert ; les copies expirées sont purgées à l'ouverture.
         refreshClipboardPanel()
         clipboardPanelJob?.cancel()
         clipboardPanelJob = serviceScope.launch {
-            clipboardRepository.pinned.collect { refreshClipboardPanel() }
+            launch { clipboardRepository.pinned.collect { refreshClipboardPanel() } }
+            launch { clipHistoryRepository.history.collect { refreshClipboardPanel() } }
+            launch {
+                try {
+                    clipHistoryRepository.purgeExpired()
+                } catch (t: Throwable) {
+                    Log.e(TAG, "Échec de la purge de l'historique du presse-papiers", t)
+                }
+            }
         }
     }
 
@@ -548,10 +575,20 @@ class ClavierIme : InputMethodService() {
     private fun clipboardPanelVisible(): Boolean =
         this::clipboardPanel.isInitialized && clipboardPanel.visibility == View.VISIBLE
 
-    /** Cartes du panneau : dernière copie (même écartée ou collée) puis éléments épinglés. */
+    /**
+     * Cartes du panneau : dernière copie (même écartée ou collée), copies récentes de l'historique
+     * (moins d'1 h), puis éléments épinglés.
+     */
     private fun refreshClipboardPanel() {
         if (!clipboardPanelVisible()) return
-        clipboardPanel.setItems(ClipboardItems.build(clipboardState.lastClip(), clipboardRepository.snapshot()))
+        clipboardPanel.setItems(
+            ClipboardItems.build(
+                lastClip = clipboardState.lastClip(),
+                pinned = clipboardRepository.snapshot(),
+                history = clipHistoryRepository.snapshot(),
+                nowMillis = System.currentTimeMillis(),
+            ),
+        )
     }
 
     /**
@@ -602,20 +639,114 @@ class ClavierIme : InputMethodService() {
     )
 
     /**
-     * Menu d'appui long, « Supprimer » : un élément épinglé est retiré de la base ; la dernière copie
-     * est retirée du panneau (et de la puce) jusqu'à la prochaine copie.
+     * Story 2.6, menu d'appui long, « Modifier » : ouvre l'écran de modification. Un élément épinglé
+     * ou une ligne d'historique (story 2.9) y est identifié par son id ; la dernière copie, qui
+     * existe en mémoire ici, lui est passée par [ClipboardEditBridge] et revient par [onLastClipEdited].
+     */
+    private fun onClipboardItemEdit(item: ClipboardItems.Item) {
+        if (!ClipboardItems.canEdit(item)) return
+        val intent = Intent(this, ClipboardEditActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val pinnedId = item.pinnedId
+        val historyId = item.historyId
+        if (pinnedId != null) {
+            intent.putExtra(ClipboardEditActivity.EXTRA_PINNED_ID, pinnedId)
+        } else if (!item.isLastClip && historyId != null) {
+            // Story 2.9 : ligne d'historique (pas la dernière copie) : relue et réécrite par son id.
+            intent.putExtra(ClipboardEditActivity.EXTRA_HISTORY_ID, historyId)
+        } else {
+            ClipboardEditBridge.lastClipText = item.text
+        }
+        try {
+            startActivity(intent)
+        } catch (t: Throwable) {
+            Log.e(TAG, "Échec de l'ouverture de l'écran de modification", t)
+            ClipboardEditBridge.lastClipText = null
+            Toast.makeText(
+                this,
+                getString(R.string.clipboard_edit_error, t.message ?: t.javaClass.simpleName),
+                Toast.LENGTH_SHORT,
+            ).show()
+        }
+    }
+
+    /**
+     * Stories 2.7 et 2.8, menu d'appui long, « Ajouter une étiquette » / « Modifier l'étiquette » :
+     * ouvre le pop-up de saisie de l'étiquette de l'élément épinglé (identifié par son id).
+     */
+    private fun onClipboardItemLabel(item: ClipboardItems.Item) {
+        if (!ClipboardItems.canLabel(item)) return
+        val id = item.pinnedId ?: return
+        val intent = Intent(this, ClipboardLabelActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .putExtra(ClipboardLabelActivity.EXTRA_PINNED_ID, id)
+        try {
+            startActivity(intent)
+        } catch (t: Throwable) {
+            Log.e(TAG, "Échec de l'ouverture du pop-up d'étiquette", t)
+            Toast.makeText(
+                this,
+                getString(R.string.clipboard_label_error, t.message ?: t.javaClass.simpleName),
+                Toast.LENGTH_SHORT,
+            ).show()
+        }
+    }
+
+    /** Story 2.8, « Supprimer l'étiquette » (après confirmation dans le panneau) : le panneau suit le flux des éléments épinglés. */
+    private fun onClipboardItemDeleteLabel(item: ClipboardItems.Item) {
+        val id = item.pinnedId ?: return
+        serviceScope.launch {
+            try {
+                clipboardRepository.clearLabel(id)
+            } catch (t: Throwable) {
+                Log.e(TAG, "Échec de la suppression d'une étiquette", t)
+                Toast.makeText(
+                    this@ClavierIme,
+                    getString(R.string.clipboard_label_delete_error, t.message ?: t.javaClass.simpleName),
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+        }
+    }
+
+    /** Retour de l'écran de modification pour la dernière copie : le panneau et la puce montrent le nouveau texte. */
+    private fun onLastClipEdited(text: String) {
+        val previous = clipboardState.lastClip()?.text
+        clipboardState.onEdited(text)
+        if (previous != null && previous != text) {
+            // Story 2.9 : sa ligne d'historique suit, sinon l'ancien texte réapparaîtrait en doublon.
+            serviceScope.launch {
+                try {
+                    clipHistoryRepository.replaceText(previous, text)
+                } catch (t: Throwable) {
+                    Log.e(TAG, "Échec de la mise à jour de l'historique après modification", t)
+                }
+            }
+        }
+        refreshClipboardPanel()
+        refreshPasteSuggestion()
+    }
+
+    /**
+     * Menu d'appui long, « Supprimer » (après confirmation dans le panneau) : un élément épinglé est
+     * retiré de la base ; la dernière copie est retirée du panneau (et de la puce) jusqu'à la
+     * prochaine copie ; la ligne d'historique qui porte le même texte (story 2.9) est supprimée
+     * aussi, sinon la carte reviendrait aussitôt comme copie récente.
      */
     private fun onClipboardItemDelete(item: ClipboardItems.Item) {
         if (item.isLastClip) {
             clipboardState.onDeleted()
             refreshClipboardPanel()
         }
-        val id = item.pinnedId ?: return
+        val pinnedId = item.pinnedId
+        val historyId = item.historyId
+        if (pinnedId == null && historyId == null) return
         serviceScope.launch {
             try {
-                clipboardRepository.remove(id) // le panneau se met à jour via le flux des éléments épinglés
+                // Le panneau se met à jour via les flux des éléments épinglés et de l'historique.
+                if (pinnedId != null) clipboardRepository.remove(pinnedId)
+                if (historyId != null) clipHistoryRepository.remove(historyId)
             } catch (t: Throwable) {
-                Log.e(TAG, "Échec de la suppression d'un élément épinglé", t)
+                Log.e(TAG, "Échec de la suppression d'un élément du presse-papiers", t)
                 Toast.makeText(
                     this@ClavierIme,
                     getString(R.string.clipboard_delete_error, t.message ?: t.javaClass.simpleName),
@@ -650,7 +781,25 @@ class ClavierIme : InputMethodService() {
 
     private fun readClipboard() {
         val snapshot = clipboardReader.read()
-        clipboardState.onClipRead(snapshot?.text, snapshot?.copiedAtMillis ?: 0L, snapshot?.sensitive ?: false)
+        val isNewCopy = clipboardState.onClipRead(snapshot?.text, snapshot?.copiedAtMillis ?: 0L, snapshot?.sensitive ?: false)
+        if (isNewCopy && snapshot != null) recordInClipHistory(snapshot)
+    }
+
+    /**
+     * Story 2.9 : une nouvelle copie entre dans l'historique chiffré (1 h). Une copie vide ou de
+     * plus de 10 000 caractères reste en mémoire du clavier seulement ; une copie sensible est
+     * enregistrée comme les autres, avec son drapeau (le panneau en masque l'aperçu). Le texte
+     * copié n'est jamais journalisé.
+     */
+    private fun recordInClipHistory(snapshot: ClipboardReader.Snapshot) {
+        if (ClipboardItems.historyRefusal(snapshot.text)) return
+        serviceScope.launch {
+            try {
+                clipHistoryRepository.record(snapshot.text, snapshot.copiedAtMillis, snapshot.sensitive)
+            } catch (t: Throwable) {
+                Log.e(TAG, "Échec de l'enregistrement dans l'historique du presse-papiers", t)
+            }
+        }
     }
 
     /**
@@ -911,6 +1060,12 @@ class ClavierIme : InputMethodService() {
         while (start > 0 && isWordChar(textBeforeCursor[start - 1])) start--
         return textBeforeCursor.substring(start)
     }
+
+    /**
+     * Story 1.18 : pas d'autocorrection dans les champs e-mail, URL, mot de passe et numériques, ni
+     * quand l'application demande de ne rien suggérer (même règle que les suggestions de mots).
+     */
+    private fun autocorrectionAllowed(): Boolean = suggestionsAllowed && fieldType.autoCorrects
 
     private fun applyDictionaryAutocorrection(): AppliedAutocorrection? {
         val ic = currentInputConnection ?: return null
@@ -1606,7 +1761,7 @@ class ClavierIme : InputMethodService() {
     }
 
     private fun applyState() {
-        keyboardView.layout = Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled)
+        keyboardView.layout = Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled, fieldType)
         keyboardView.isShifted = controller.state.isShifted
     }
 

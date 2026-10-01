@@ -3,6 +3,9 @@ package fr.junade.taipo
 enum class LayoutId {
     LETTERS,
     SYMBOLS,
+
+    /** Story 1.18 : pavé numérique des champs numériques et téléphone (aucune bascule vers les lettres). */
+    PAD,
 }
 
 /** Langue active du clavier (décision 1.1 : AZERTY pour le français, QWERTY pour l'anglais). */
@@ -209,22 +212,87 @@ object Keyboards {
     private fun KeyboardLayout.withNumberRow() = copy(rows = listOf(numberRow) + rows)
 
     /**
+     * Story 1.18 : touches qui remplacent la virgule dans les champs e-mail et URL. La virgule reste
+     * accessible par l'appui long sur le point (bulle [periodPopup]), comme « @ » et « / ».
+     */
+    private val emailAtKey = Key("email_at", "@", KeyAction.TypeChar('@'), secondary = true)
+    private val urlSlashKey = Key("url_slash", "/", KeyAction.TypeChar('/'), secondary = true)
+
+    private fun padKey(c: Char) = Key("pad_$c", c.toString(), KeyAction.TypeChar(c), secondary = true)
+
+    /** Pavé des champs numériques : chiffres, virgule et point décimaux, moins, espace, entrée en bas à droite. */
+    private val numberPad = KeyboardLayout(
+        id = LayoutId.PAD,
+        rows = listOf(
+            listOf(digit('1'), digit('2'), digit('3'), backspace.copy(weight = 1f)),
+            listOf(digit('4'), digit('5'), digit('6'), Key("space", "", KeyAction.Space, secondary = true)),
+            listOf(digit('7'), digit('8'), digit('9'), padKey('-')),
+            listOf(padKey(','), digit('0'), padKey('.'), Key("enter", "⏎", KeyAction.Enter)),
+        ),
+    )
+
+    /** Pavé des champs téléphone : chiffres, « + », « - », « * » et « # ». */
+    private val phonePad = KeyboardLayout(
+        id = LayoutId.PAD,
+        rows = listOf(
+            listOf(digit('1'), digit('2'), digit('3'), backspace.copy(weight = 1f)),
+            listOf(digit('4'), digit('5'), digit('6'), padKey('+')),
+            listOf(digit('7'), digit('8'), digit('9'), padKey('-')),
+            listOf(padKey('*'), digit('0'), padKey('#'), Key("enter", "⏎", KeyAction.Enter)),
+        ),
+    )
+
+    private data class VariantKey(
+        val id: LayoutId,
+        val language: KeyboardLanguage,
+        val numberRow: Boolean,
+        val fieldType: FieldType,
+    )
+
+    /** Dispositions e-mail/URL, construites une fois (layoutOf est appelé à chaque frappe). */
+    private val fieldVariants = java.util.concurrent.ConcurrentHashMap<VariantKey, KeyboardLayout>()
+
+    private fun KeyboardLayout.withCommaReplacedBy(replacement: Key) = copy(
+        rows = rows.map { row -> row.map { key -> if (key.id == "comma") replacement else key } },
+    )
+
+    private fun baseLayoutOf(id: LayoutId, language: KeyboardLanguage, numberRow: Boolean): KeyboardLayout = when (id) {
+        LayoutId.LETTERS -> when (language) {
+            KeyboardLanguage.EN -> if (numberRow) lettersEnWithNumberRow else lettersEn
+            KeyboardLanguage.FR -> if (numberRow) lettersWithNumberRow else letters
+        }
+        LayoutId.SYMBOLS, LayoutId.PAD -> symbols
+    }
+
+    /**
      * Layout à afficher. [numberRow] (story 1.5) ajoute la rangée de chiffres
      * en haut du clavier de lettres ; il est sans effet sur le clavier
      * symboles, qui contient déjà ses propres chiffres. Sans rangée de chiffres
      * (story 1.6), les chiffres restent accessibles via la bascule `123` et par
      * appui long sur les touches du haut.
+     *
+     * Story 1.18 : selon [fieldType], un champ numérique ou téléphone affiche un pavé numérique
+     * (quel que soit [id]) ; un champ e-mail ou URL remplace la virgule par « @ » ou « / », sur les
+     * claviers de lettres et de symboles.
      */
     fun layoutOf(
         id: LayoutId,
         language: KeyboardLanguage = KeyboardLanguage.FR,
         numberRow: Boolean = false,
-    ): KeyboardLayout = when (id) {
-        LayoutId.LETTERS -> when (language) {
-            KeyboardLanguage.EN -> if (numberRow) lettersEnWithNumberRow else lettersEn
-            KeyboardLanguage.FR -> if (numberRow) lettersWithNumberRow else letters
+        fieldType: FieldType = FieldType.TEXT,
+    ): KeyboardLayout {
+        val replacement = when (fieldType) {
+            FieldType.NUMBER -> return numberPad
+            FieldType.PHONE -> return phonePad
+            FieldType.EMAIL -> emailAtKey
+            FieldType.URL -> urlSlashKey
+            FieldType.TEXT, FieldType.PASSWORD -> null
         }
-        LayoutId.SYMBOLS -> symbols
+        val base = baseLayoutOf(id, language, numberRow)
+        if (replacement == null) return base
+        return fieldVariants.getOrPut(VariantKey(base.id, language, numberRow, fieldType)) {
+            base.withCommaReplacedBy(replacement)
+        }
     }
 
     private fun letter(c: Char, accents: Map<Char, String> = emptyMap()): Key =

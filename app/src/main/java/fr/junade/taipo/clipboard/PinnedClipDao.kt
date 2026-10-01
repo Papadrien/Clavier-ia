@@ -7,7 +7,7 @@ import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Accès aux éléments épinglés (story 2.5).
+ * Accès aux éléments épinglés (stories 2.5 à 2.8).
  *
  * Classe abstraite pour que [insertBounded] porte la règle « pas de doublon + plafond » dans une
  * seule transaction : deux épinglages simultanés ne peuvent pas dépasser [ClipboardItems.MAX_PINNED].
@@ -32,6 +32,21 @@ abstract class PinnedClipDao {
     /** Retourne le nombre de lignes supprimées (0 si l'élément était absent). */
     @Query("DELETE FROM pinned_clips WHERE id = :id")
     abstract suspend fun deleteById(id: Long): Int
+
+    /**
+     * Story 2.6 : remplace le texte de l'élément [id] ; l'ordre ([PinnedClipEntity.pinnedAt]) et
+     * l'étiquette sont conservés, et un doublon avec un autre élément est autorisé. Retourne le
+     * nombre de lignes modifiées (0 si l'élément était absent).
+     */
+    @Query("UPDATE pinned_clips SET text = :text WHERE id = :id")
+    abstract suspend fun updateText(id: Long, text: String): Int
+
+    /**
+     * Stories 2.7 et 2.8 : remplace l'étiquette de l'élément [id] (null = la retirer) ; le texte et
+     * l'ordre sont conservés. Retourne le nombre de lignes modifiées (0 si l'élément était absent).
+     */
+    @Query("UPDATE pinned_clips SET label = :label WHERE id = :id")
+    abstract suspend fun updateLabel(id: Long, label: String?): Int
 
     @Transaction
     open suspend fun insertBounded(entity: PinnedClipEntity, maxPinned: Int): ClipboardItems.PinResult {

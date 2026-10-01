@@ -24,6 +24,21 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
         state = state.copy(activeLayout = LayoutId.LETTERS, isShifted = false)
     }
 
+    /**
+     * Story 1.18 : majuscule automatique (story 1.2) active dans le champ courant. Elle est coupée
+     * dans les champs e-mail, URL, mot de passe et numériques, où une majuscule de début de champ
+     * serait fausse. Le choix manuel de la touche Maj reste possible. Piloté par le type de champ
+     * ([FieldType.autoCapitalizes]), pas par un réglage : il survit à [reset].
+     */
+    var autoCapitalization: Boolean = true
+        private set
+
+    fun setAutoCapitalization(enabled: Boolean) {
+        if (autoCapitalization == enabled) return
+        autoCapitalization = enabled
+        if (!enabled && state.isShifted) state = state.copy(isShifted = false)
+    }
+
     fun setLanguage(language: KeyboardLanguage) {
         if (state.language == language) return
         state = state.copy(language = language, isShifted = false)
@@ -41,7 +56,7 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
      * IA, saisie vocale, déplacement du curseur par l'utilisateur).
      */
     fun applyTextContext(textBeforeCursor: String) {
-        val shouldCapitalize = shouldAutoCapitalize(textBeforeCursor)
+        val shouldCapitalize = autoCapitalization && shouldAutoCapitalize(textBeforeCursor)
         if (state.isShifted != shouldCapitalize) {
             state = state.copy(isShifted = shouldCapitalize)
         }
