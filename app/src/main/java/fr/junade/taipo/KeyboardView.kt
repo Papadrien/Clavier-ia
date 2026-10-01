@@ -64,6 +64,13 @@ class KeyboardView(context: Context) : View(context) {
             invalidate()
         }
 
+    /** Verrouillage des majuscules (double appui sur Maj) : une barre est dessinée sous la flèche. */
+    var isCapsLock: Boolean = false
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     // Palette alignée sur le clavier système de référence (Gboard, thème sombre) :
     // fond quasi noir, touches "principales" (lettres/chiffres/espace) gris moyen,
     // touches "accessoires" (fonction + ponctuation rapide) gris très foncé,
@@ -287,10 +294,21 @@ class KeyboardView(context: Context) : View(context) {
                     autoSizeTextPaint(key)
                     val baseline = keyRect.centerY() - (textPaint.ascent() + textPaint.descent()) / 2f
                     canvas.drawText(label, keyRect.centerX(), baseline, textPaint)
+                    if (key.action is KeyAction.Shift && isCapsLock) drawCapsLockBar(canvas, baseline)
                 }
                 key.longPressChar?.let { drawLongPressHint(canvas, it) }
             }
         }
+    }
+
+    /** Barre sous la flèche de la touche Maj quand les majuscules sont verrouillées. */
+    private fun drawCapsLockBar(canvas: Canvas, textBaseline: Float) {
+        val halfWidth = dp(7f)
+        val top = (textBaseline + dp(3f)).coerceAtMost(keyRect.bottom - dp(4f))
+        canvas.drawRoundRect(
+            keyRect.centerX() - halfWidth, top, keyRect.centerX() + halfWidth, top + dp(2.5f),
+            dp(1.25f), dp(1.25f), iconFillPaint,
+        )
     }
 
     /** Story 1.15 : icône « smiley » de la touche emoji (dessinée, donc indépendante des polices). */

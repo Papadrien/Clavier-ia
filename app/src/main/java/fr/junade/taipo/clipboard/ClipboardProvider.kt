@@ -1,11 +1,11 @@
 package fr.junade.taipo.clipboard
 
 import android.content.Context
-import android.util.Log
 import fr.junade.taipo.dictionary.DatabasePassphraseProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import fr.junade.taipo.AppLog
 
 /**
  * Instances uniques (par processus) des dépôts du presse-papiers : [PinnedClipRepository]
@@ -40,13 +40,13 @@ object ClipboardProvider {
     private fun createPinned(appContext: Context) = PinnedClipRepository(
         scope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
         openDao = { database(appContext).pinnedClipDao() },
-        onError = { Log.e(TAG, "Échec d'accès aux éléments épinglés", it) },
+        onError = { AppLog.e(TAG, "Échec d'accès aux éléments épinglés", it) },
     )
 
     private fun createHistory(appContext: Context) = ClipHistoryRepository(
         scope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
         openDao = { database(appContext).clipHistoryDao() },
-        onError = { Log.e(TAG, "Échec d'accès à l'historique du presse-papiers", it) },
+        onError = { AppLog.e(TAG, "Échec d'accès à l'historique du presse-papiers", it) },
     )
 
     /** La base partagée, ouverte au premier appel (hors thread principal : appelé depuis `openDao`). */
@@ -72,7 +72,7 @@ object ClipboardProvider {
         return try {
             openAndVerify(appContext, provider)
         } catch (e: Exception) {
-            Log.e(TAG, "Base illisible : réinitialisation des éléments épinglés et de l'historique", e)
+            AppLog.e(TAG, "Base illisible : réinitialisation des éléments épinglés et de l'historique", e)
             appContext.deleteDatabase(ClipboardDatabase.NAME)
             provider.reset()
             openAndVerify(appContext, provider)

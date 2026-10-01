@@ -34,8 +34,19 @@ class SuggestionPolicyTest {
     }
 
     @Test
-    fun `l application peut refuser les suggestions`() {
-        assertFalse(SuggestionPolicy.allowsSuggestions(text or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS))
+    fun `l indicateur NO_SUGGESTIONS de l application est ignore`() {
+        assertTrue(SuggestionPolicy.allowsSuggestions(text or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS))
+        assertTrue(
+            SuggestionPolicy.allowsSuggestions(
+                text or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_FLAG_MULTI_LINE,
+            ),
+        )
+        // Les champs sensibles restent exclus, même avec l'indicateur.
+        assertFalse(
+            SuggestionPolicy.allowsSuggestions(
+                text or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_VARIATION_PASSWORD,
+            ),
+        )
     }
 
     @Test

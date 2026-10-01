@@ -1,10 +1,10 @@
 package fr.junade.taipo.dictionary
 
 import android.content.Context
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.Dispatchers
+import fr.junade.taipo.AppLog
 
 /**
  * Instance unique (par processus) du [PersonalDictionaryRepository]. L'écran
@@ -28,7 +28,7 @@ object PersonalDictionaryProvider {
         // Portée liée au processus : le dépôt vit aussi longtemps que l'IME.
         scope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
         openDao = { openDatabase(appContext).personalWordDao() },
-        onError = { Log.e(TAG, "Échec d'accès au dictionnaire personnel", it) },
+        onError = { AppLog.e(TAG, "Échec d'accès au dictionnaire personnel", it) },
     )
 
     /**
@@ -43,7 +43,7 @@ object PersonalDictionaryProvider {
         return try {
             openAndVerify(appContext, passphraseProvider)
         } catch (e: Exception) {
-            Log.e(TAG, "Base illisible : réinitialisation du dictionnaire personnel", e)
+            AppLog.e(TAG, "Base illisible : réinitialisation du dictionnaire personnel", e)
             appContext.deleteDatabase(PersonalDictionaryDatabase.NAME)
             passphraseProvider.reset()
             openAndVerify(appContext, passphraseProvider)

@@ -4,6 +4,11 @@ data class KeyboardState(
     val activeLayout: LayoutId = LayoutId.LETTERS,
     val isShifted: Boolean = false,
     val language: KeyboardLanguage = KeyboardLanguage.FR,
+    /**
+     * Verrouillage des majuscules (double appui sur Maj) : [isShifted] reste vrai après chaque
+     * lettre, jusqu'à un nouvel appui sur Maj.
+     */
+    val isCapsLock: Boolean = false,
 )
 
 data class KeyPressResult(
@@ -21,8 +26,12 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
     fun reset() {
         // Ne réinitialise pas la langue : elle est pilotée par le subtype IME
         // actif (décision 1.1), pas par le cycle de vie du champ de saisie.
-        state = state.copy(activeLayout = LayoutId.LETTERS, isShifted = false)
+        state = state.copy(activeLayout = LayoutId.LETTERS, isShifted = false, isCapsLock = false)
+        lastShiftTapAt = null
     }
+
+    /** Instant du dernier appui sur Maj, pour détecter un double appui ; null si aucun appui récent. */
+    private var lastShiftTapAt: Long? = null
 
     /**
      * Story 1.18 : majuscule automatique (story 1.2) active dans le champ courant. Elle est coupée
@@ -36,12 +45,12 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
     fun setAutoCapitalization(enabled: Boolean) {
         if (autoCapitalization == enabled) return
         autoCapitalization = enabled
-        if (!enabled && state.isShifted) state = state.copy(isShifted = false)
+        if (!enabled && state.isShifted && !state.isCapsLock) state = state.copy(isShifted = false)
     }
 
     fun setLanguage(language: KeyboardLanguage) {
         if (state.language == language) return
-        state = state.copy(language = language, isShifted = false)
+        state = state.copy(language = language, isShifted = false, isCapsLock = false)
     }
 
     /**
@@ -56,6 +65,7 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
      * IA, saisie vocale, déplacement du curseur par l'utilisateur).
      */
     fun applyTextContext(textBeforeCursor: String) {
+        if (state.isCapsLock) return // le verrouillage des majuscules prime sur la majuscule automatique
         val shouldCapitalize = autoCapitalization && shouldAutoCapitalize(textBeforeCursor)
         if (state.isShifted != shouldCapitalize) {
             state = state.copy(isShifted = shouldCapitalize)
@@ -65,17 +75,32 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
     /**
      * [textBeforeCursor] (optionnel) sert au double espace : si l'espace tapé suit
      * un mot déjà suivi d'un seul espace, ce dernier est remplacé par ". ".
+     *
+     * [uptimeMillis] (optionnel) est l'instant de l'appui : deux appuis sur Maj à moins de
+     * [SHIFT_DOUBLE_TAP_MS] verrouillent les majuscules. Sans lui, aucun double appui n'est détecté.
      */
-    fun onKey(key: Key, textBeforeCursor: String? = null): KeyPressResult {
+    fun onKey(key: Key, textBeforeCursor: String? = null, uptimeMillis: Long? = null): KeyPressResult {
+        // Toute autre touche entre deux appuis sur Maj annule le double appui.
+        if (key.action != KeyAction.Shift) lastShiftTapAt = null
         return when (val action = key.action) {
             is KeyAction.TypeChar -> {
                 val c = if (state.isShifted && action.char.isLetter()) action.char.uppercaseChar() else action.char
-                state = state.copy(isShifted = false)
+                state = state.copy(isShifted = state.isCapsLock)
                 KeyPressResult(commit = c.toString(), newState = state)
             }
 
             KeyAction.Shift -> {
-                state = state.copy(isShifted = !state.isShifted)
+                val previousTap = lastShiftTapAt
+                val isDoubleTap = uptimeMillis != null && previousTap != null &&
+                    uptimeMillis - previousTap in 0..SHIFT_DOUBLE_TAP_MS
+                state = when {
+                    // Verrouillage actif : un appui le désactive.
+                    state.isCapsLock -> state.copy(isShifted = false, isCapsLock = false)
+                    // Double appui : verrouillage des majuscules.
+                    isDoubleTap -> state.copy(isShifted = true, isCapsLock = true)
+                    else -> state.copy(isShifted = !state.isShifted)
+                }
+                lastShiftTapAt = if (isDoubleTap) null else uptimeMillis
                 KeyPressResult(newState = state)
             }
 
@@ -84,12 +109,12 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
             }
 
             KeyAction.Enter -> {
-                state = state.copy(isShifted = false)
+                state = state.copy(isShifted = state.isCapsLock)
                 KeyPressResult(isEnter = true, newState = state)
             }
 
             KeyAction.Space -> {
-                state = state.copy(isShifted = false)
+                state = state.copy(isShifted = state.isCapsLock)
                 if (textBeforeCursor != null && shouldInsertPeriodOnDoubleSpace(textBeforeCursor)) {
                     KeyPressResult(commit = ". ", deleteBefore = 1, newState = state)
                 } else {
@@ -103,7 +128,7 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
             KeyAction.ToggleLayout -> {
                 state = state.copy(
                     activeLayout = if (state.activeLayout == LayoutId.LETTERS) LayoutId.SYMBOLS else LayoutId.LETTERS,
-                    isShifted = false,
+                    isShifted = state.isCapsLock,
                 )
                 KeyPressResult(newState = state)
             }
@@ -111,6 +136,9 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
     }
 
     companion object {
+        /** Délai maximal entre deux appuis sur Maj pour verrouiller les majuscules. */
+        const val SHIFT_DOUBLE_TAP_MS = 350L
+
         /** Au-delà de cette distance avant le curseur, la réponse ne peut plus changer (espaces mis à part). */
         private const val LOOKBEHIND_LIMIT = 50
 

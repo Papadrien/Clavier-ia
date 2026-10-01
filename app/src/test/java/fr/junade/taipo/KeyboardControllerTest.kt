@@ -262,4 +262,99 @@ class KeyboardControllerTest {
         assertEquals(before, result.newState)
         assertEquals(before, controller.state)
     }
+
+    @Test
+    fun `double appui rapide sur maj verrouille les majuscules`() {
+        val controller = KeyboardController()
+        controller.onKey(key("shift"), uptimeMillis = 1_000)
+        controller.onKey(key("shift"), uptimeMillis = 1_200)
+
+        assertTrue(controller.state.isCapsLock)
+        assertTrue(controller.state.isShifted)
+    }
+
+    @Test
+    fun `deux appuis sur maj trop espaces ne verrouillent pas`() {
+        val controller = KeyboardController()
+        controller.onKey(key("shift"), uptimeMillis = 1_000)
+        controller.onKey(key("shift"), uptimeMillis = 1_000 + KeyboardController.SHIFT_DOUBLE_TAP_MS + 1)
+
+        assertFalse(controller.state.isCapsLock)
+        assertFalse(controller.state.isShifted)
+    }
+
+    @Test
+    fun `sans horodatage maj ne verrouille jamais`() {
+        val controller = KeyboardController()
+        controller.onKey(key("shift"))
+        controller.onKey(key("shift"))
+
+        assertFalse(controller.state.isCapsLock)
+    }
+
+    @Test
+    fun `le verrouillage reste actif apres plusieurs lettres, un espace et une entree`() {
+        val controller = KeyboardController()
+        controller.onKey(key("shift"), uptimeMillis = 1_000)
+        controller.onKey(key("shift"), uptimeMillis = 1_100)
+
+        assertEquals("A", controller.onKey(key("letter_a")).commit)
+        assertEquals("B", controller.onKey(key("letter_b")).commit)
+        controller.onKey(key("space"))
+        controller.onKey(key("enter"))
+        assertEquals("C", controller.onKey(key("letter_c")).commit)
+        assertTrue(controller.state.isCapsLock)
+        assertTrue(controller.state.isShifted)
+    }
+
+    @Test
+    fun `un appui sur maj desactive le verrouillage`() {
+        val controller = KeyboardController()
+        controller.onKey(key("shift"), uptimeMillis = 1_000)
+        controller.onKey(key("shift"), uptimeMillis = 1_100)
+        controller.onKey(key("shift"), uptimeMillis = 5_000)
+
+        assertFalse(controller.state.isCapsLock)
+        assertFalse(controller.state.isShifted)
+        assertEquals("a", controller.onKey(key("letter_a")).commit)
+    }
+
+    @Test
+    fun `une lettre entre deux appuis sur maj annule le double appui`() {
+        val controller = KeyboardController()
+        controller.onKey(key("shift"), uptimeMillis = 1_000)
+        controller.onKey(key("letter_a"), uptimeMillis = 1_050)
+        controller.onKey(key("shift"), uptimeMillis = 1_100)
+
+        assertFalse(controller.state.isCapsLock)
+        assertTrue(controller.state.isShifted)
+    }
+
+    @Test
+    fun `la majuscule automatique ne desactive pas le verrouillage`() {
+        val controller = KeyboardController()
+        controller.onKey(key("shift"), uptimeMillis = 1_000)
+        controller.onKey(key("shift"), uptimeMillis = 1_100)
+
+        controller.applyTextContext("bonjour")
+        controller.setAutoCapitalization(false)
+
+        assertTrue(controller.state.isCapsLock)
+        assertTrue(controller.state.isShifted)
+    }
+
+    @Test
+    fun `changer de champ ou de langue desactive le verrouillage`() {
+        val controller = KeyboardController()
+        controller.onKey(key("shift"), uptimeMillis = 1_000)
+        controller.onKey(key("shift"), uptimeMillis = 1_100)
+        controller.reset()
+        assertFalse(controller.state.isCapsLock)
+
+        controller.onKey(key("shift"), uptimeMillis = 2_000)
+        controller.onKey(key("shift"), uptimeMillis = 2_100)
+        controller.setLanguage(KeyboardLanguage.EN)
+        assertFalse(controller.state.isCapsLock)
+        assertFalse(controller.state.isShifted)
+    }
 }

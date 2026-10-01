@@ -22,6 +22,11 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    // BuildConfig.DEBUG pilote AppLog : journaux actifs uniquement en debug.
+    buildFeatures {
+        buildConfig = true
+    }
+
 }
 
 kotlin {

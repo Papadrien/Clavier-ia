@@ -4,7 +4,7 @@ import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
-import android.util.Log
+import fr.junade.taipo.AppLog
 
 /**
  * Story 2.2 : lecture du presse-papiers système pour la puce de collage.
@@ -57,7 +57,7 @@ class ClipboardReader(context: Context, private val onChanged: () -> Unit) {
         } catch (e: RuntimeException) {
             // SecurityException (lecture refusée par le système) ou échec de transfert d'un très gros
             // contenu : pas de suggestion, sans faire planter le clavier.
-            Log.w(TAG, "Lecture du presse-papiers impossible", e)
+            AppLog.w(TAG, "Lecture du presse-papiers impossible", e)
             null
         }
     }

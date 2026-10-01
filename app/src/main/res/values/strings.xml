@@ -31,6 +31,8 @@
     <string name="correction_button_correcting">Correction…</string>
     <string name="correction_no_model_selected">Aucun modèle sélectionné : ouvrez « Modèle IA » dans les paramètres.</string>
     <string name="correction_nothing_new">Rien de nouveau à corriger.</string>
+    <string name="correction_no_change">Aucune correction appliquée : texte inchangé ou réponse du modèle refusée.</string>
+    <string name="message_dialog_ok">OK</string>
     <string name="correction_partial">Une partie du texte n\'a pas été corrigée (réponse incomplète du modèle).</string>
     <string name="correction_text_changed">Le texte a changé pendant la correction : correction annulée.</string>
     <string name="correction_error">Échec de la correction : %1$s</string>
@@ -94,6 +96,7 @@
     <string name="keyboard_settings_height_description">Ajuste la hauteur des touches. S\'applique à la prochaine ouverture du clavier.</string>
 
     <string name="clipboard_button">Presse-papiers</string>
+    <string name="settings_button_description">Ouvrir les réglages de l\'application</string>
     <string name="clipboard_menu_description">Menu : afficher le presse-papiers</string>
     <string name="actions_menu_description">Menu : saisie vocale et correction</string>
     <string name="clipboard_empty">Rien à coller pour le moment.</string>

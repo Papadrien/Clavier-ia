@@ -8,8 +8,8 @@ import android.text.InputType
  *
  * - [numericPad] : le clavier de lettres est remplacé par un pavé numérique ([Keyboards.layoutOf]).
  * - [autoCapitalizes] : majuscule automatique de début de phrase (story 1.2).
- * - [autoCorrects] : autocorrection du dictionnaire à la fin d'un mot (story 1.3). S'y ajoute, dans
- *   `ClavierIme`, l'absence de suggestions demandée par l'application (`NO_SUGGESTIONS`).
+ * - [autoCorrects] : autocorrection du dictionnaire à la fin d'un mot (story 1.3). L'indicateur
+ *   `NO_SUGGESTIONS` de l'application est ignoré (voir `SuggestionPolicy`).
  * - [doubleSpacePeriod] : un double espace devient « . ».
  *
  * Logique pure : elle ne lit que des constantes, testée en JVM.

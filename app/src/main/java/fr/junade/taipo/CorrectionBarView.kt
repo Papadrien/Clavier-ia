@@ -11,6 +11,8 @@ import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import fr.junade.taipo.dictionary.WordSuggestion
@@ -61,7 +63,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
      * Story 2.1 : bouton Smart Clipboard, dans la même zone que la bande de suggestions : la zone
      * montre l'un ou l'autre selon [zoneState] (barre « avant saisie » ou saisie en cours).
      */
-    private val clipboardButton = Button(context)
+    private val clipboardButton = ImageButton(context)
+
+    /** Roue crantée : ouvre la page d'accueil de l'application, visible hors saisie seulement. */
+    private val settingsButton = ImageButton(context)
+    private var settingsListener: (() -> Unit)? = null
 
     /**
      * Story 2.2 : puce de collage (aperçu du texte copié récemment), dans la même zone : elle prend
@@ -76,7 +82,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     /** Menu de droite : range les boutons Vocal et Corriger pendant les suggestions de mots. */
     private val actionsMenuButton = Button(context)
 
-    /** Croix de fermeture du panneau Smart Clipboard : visible seulement tant qu'il est ouvert. */
+    /** Croix de fermeture du panneau Smart Clipboard (à gauche de la barre) : visible seulement tant qu'il est ouvert. */
     private val closeButton = Button(context)
     private var clipboardPanelOpen = false
     private var clipboardCloseListener: (() -> Unit)? = null
@@ -107,6 +113,18 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         val paddingV = dp(6f).toInt()
         setPadding(paddingH, paddingV, paddingH, paddingV)
 
+        // Croix de fermeture du panneau Smart Clipboard, à l'extrémité gauche de la barre.
+        styleButton(closeButton, "#3A3F47")
+        compact(closeButton, paddingDp = 0f)
+        closeButton.text = "\u2715"
+        closeButton.contentDescription = context.getString(R.string.clipboard_panel_close_description)
+        closeButton.setOnClickListener { clipboardCloseListener?.invoke() }
+        closeButton.visibility = View.GONE
+        addView(
+            closeButton,
+            LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginEnd = dp(8f).toInt() },
+        )
+
         styleButton(menuButton, "#3A3F47")
         compact(menuButton, paddingDp = 0f)
         menuButton.text = "\u00B7\u00B7\u00B7"
@@ -120,11 +138,18 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginEnd = dp(8f).toInt() },
         )
 
-        styleButton(clipboardButton, "#3A3F47")
-        compact(clipboardButton, paddingDp = 12f)
-        clipboardButton.text = context.getString(R.string.clipboard_button)
-        clipboardButton.maxLines = 1
-        clipboardButton.ellipsize = TextUtils.TruncateAt.END
+        // Bouton « roue crantée » entre le menu « ··· » et le bouton Smart Clipboard.
+        styleIconButton(settingsButton, R.drawable.ic_settings)
+        settingsButton.contentDescription = context.getString(R.string.settings_button_description)
+        settingsButton.setOnClickListener { settingsListener?.invoke() }
+        addView(
+            settingsButton,
+            LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginEnd = dp(8f).toInt() },
+        )
+
+        // Bouton Smart Clipboard : icône « coller » à la place du texte.
+        styleIconButton(clipboardButton, R.drawable.ic_paste)
+        clipboardButton.contentDescription = context.getString(R.string.clipboard_button)
         clipboardButton.setOnClickListener { clipboardListener?.onClipboardClick() }
 
         pasteChip.setTextColor(Color.WHITE)
@@ -141,7 +166,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         zone.addView(suggestionStrip, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
         zone.addView(
             clipboardButton,
-            FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT, Gravity.START),
+            FrameLayout.LayoutParams(dp(48f).toInt(), FrameLayout.LayoutParams.MATCH_PARENT, Gravity.START),
         )
         zone.addView(
             pasteChip,
@@ -179,21 +204,14 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginStart = dp(8f).toInt() },
         )
 
-        // Croix de fermeture du panneau Smart Clipboard, à l'extrémité droite de la barre.
-        styleButton(closeButton, "#3A3F47")
-        compact(closeButton, paddingDp = 0f)
-        closeButton.text = "\u2715"
-        closeButton.contentDescription = context.getString(R.string.clipboard_panel_close_description)
-        closeButton.setOnClickListener { clipboardCloseListener?.invoke() }
-        closeButton.visibility = View.GONE
-        addView(
-            closeButton,
-            LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginStart = dp(8f).toInt() },
-        )
-
         renderCorrect()
         renderVoice()
         renderZone()
+    }
+
+    /** Touche sur la roue crantée : ouvrir la page d'accueil de l'application. */
+    fun setOnSettingsClickListener(listener: () -> Unit) {
+        settingsListener = listener
     }
 
     /** Touche sur la croix : le panneau Smart Clipboard doit se fermer. */
@@ -202,8 +220,8 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     }
 
     /**
-     * Le panneau Smart Clipboard est ouvert (ou refermé) : la croix de fermeture apparaît à la place
-     * du menu de droite, et le menu de gauche (qui n'a plus d'objet) se cache.
+     * Le panneau Smart Clipboard est ouvert (ou refermé) : la croix de fermeture apparaît à gauche de
+     * la barre, et les menus « ··· » (celui de gauche n'a plus d'objet) ainsi que la roue crantée se cachent.
      */
     fun setClipboardPanelOpen(open: Boolean) {
         if (clipboardPanelOpen == open) return
@@ -317,6 +335,8 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         pasteChip.visibility = if (zoneState.zone == SuggestionZoneState.Zone.PASTE) View.VISIBLE else View.GONE
         menuButton.visibility =
             if (zoneState.menuButtonVisible && !clipboardPanelOpen) View.VISIBLE else View.GONE
+        settingsButton.visibility =
+            if (zoneState.settingsButtonVisible && !clipboardPanelOpen) View.VISIBLE else View.GONE
         if (menuBackgroundExpanded != zoneState.menuExpanded) {
             menuBackgroundExpanded = zoneState.menuExpanded
             menuButton.background = roundedBackground(if (zoneState.menuExpanded) "#5A7FD4" else "#3A3F47")
@@ -335,6 +355,15 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         button.minHeight = 0
         button.minimumHeight = 0
         button.setPadding(dp(paddingDp).toInt(), 0, dp(paddingDp).toInt(), 0)
+    }
+
+    /** Bouton à icône blanche centrée, sur le même fond arrondi que les autres boutons de la barre. */
+    private fun styleIconButton(button: ImageButton, iconRes: Int) {
+        button.setImageResource(iconRes)
+        button.scaleType = ImageView.ScaleType.CENTER_INSIDE
+        button.background = roundedBackground("#3A3F47")
+        val padding = dp(8f).toInt()
+        button.setPadding(padding, padding, padding, padding)
     }
 
     private fun styleButton(button: Button, backgroundColor: String) {

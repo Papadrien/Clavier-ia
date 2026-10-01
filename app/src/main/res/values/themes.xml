@@ -10,4 +10,9 @@
     <style name="EditDialogTheme" parent="android:Theme.Material.Light.Dialog.NoActionBar">
         <item name="android:colorAccent">#5A7FD4</item>
     </style>
+
+    <!-- Pop-up d'information du clavier (remplace les toasts). -->
+    <style name="MessageDialogTheme" parent="android:Theme.Material.Light.Dialog.Alert">
+        <item name="android:colorAccent">#5A7FD4</item>
+    </style>
 </resources>

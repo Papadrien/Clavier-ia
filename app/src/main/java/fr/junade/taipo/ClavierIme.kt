@@ -1,6 +1,7 @@
 package fr.junade.taipo
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.inputmethodservice.InputMethodService
@@ -10,10 +11,12 @@ import android.os.SystemClock
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.BackgroundColorSpan
+import android.view.ContextThemeWrapper
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
@@ -22,7 +25,6 @@ import android.view.inputmethod.InputMethodSubtype
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
-import android.util.Log
 import fr.junade.taipo.ai.ChangedRange
 import fr.junade.taipo.ai.CorrectedSentenceMemory
 import fr.junade.taipo.ai.CorrectionDiff
@@ -44,6 +46,8 @@ import fr.junade.taipo.dictionary.DictionaryLoader
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.emoji.EmojiPanelView
 import fr.junade.taipo.emoji.EmojiText
+import fr.junade.taipo.emoji.MessagingFieldPolicy
+import fr.junade.taipo.emoji.RecentEmojiBarView
 import fr.junade.taipo.emoji.RecentEmojis
 import fr.junade.taipo.suggestion.EmojiSuggesterLoader
 import fr.junade.taipo.suggestion.SuggestionPolicy
@@ -101,6 +105,15 @@ class ClavierIme : InputMethodService() {
 
     /** Faux dans les champs sans suggestions (mot de passe, e-mail, URL, nombre...), relu à chaque champ. */
     private var suggestionsAllowed = true
+
+    /** Pop-up d'information en cours (remplace les toasts), s'il y en a un. */
+    private var messageDialog: AlertDialog? = null
+
+    /** Barre des emojis récents (champs de messagerie), au-dessus de la barre du haut. */
+    private lateinit var recentEmojiBar: RecentEmojiBarView
+
+    /** Vrai quand le champ courant est celui d'une messagerie, relu à chaque champ. */
+    private var messagingField = false
 
     /** Story 1.18 : type du champ courant (e-mail, URL, numérique...), fixé à chaque ouverture de champ. */
     private var fieldType = FieldType.TEXT
@@ -217,12 +230,17 @@ class ClavierIme : InputMethodService() {
         keyboardView.setOnCursorMoveListener { steps -> onCursorMoved(steps) }
         keyboardView.setOnDeleteWordListener { onDeleteWord() }
 
+        recentEmojiBar = RecentEmojiBarView(this)
+        recentEmojiBar.visibility = View.GONE
+        recentEmojiBar.setOnEmojiClickListener { emoji -> onRecentEmojiBarTapped(emoji) }
+
         correctionBar = CorrectionBarView(this)
         correctionBar.setOnCorrectListener { onCorrectClicked() }
         correctionBar.voiceButton.setOnTouchListener { _, event -> onVoiceButtonTouch(event) }
         correctionBar.setOnEmojiSuggestionClickListener { onEmojiSuggestionTapped() }
         correctionBar.setOnClipboardClickListener { showClipboardPanel() }
         correctionBar.setOnClipboardCloseClickListener { hideClipboardPanel() }
+        correctionBar.setOnSettingsClickListener { openAppHome() }
         correctionBar.setOnPasteClickListener { onPasteTapped() }
         correctionBar.setOnWordSuggestionClickListener { suggestion -> onWordSuggestionTapped(suggestion) }
 
@@ -246,6 +264,10 @@ class ClavierIme : InputMethodService() {
             // Story 1.8 : la bulle d'accents des touches du haut est dessinée par le clavier
             // au-dessus de sa propre zone, par-dessus la barre d'actions.
             clipChildren = false
+            addView(
+                recentEmojiBar,
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
+            )
             addView(
                 correctionBar,
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
@@ -306,6 +328,7 @@ class ClavierIme : InputMethodService() {
         suggestionsAllowed = SuggestionPolicy.allowsSuggestions(info?.inputType ?: 0)
         pasteAllowedInField = SuggestionPolicy.allowsPasteSuggestion(info?.inputType ?: 0)
         fieldType = FieldType.of(info?.inputType ?: 0)
+        messagingField = MessagingFieldPolicy.isMessagingField(info?.packageName, info?.inputType ?: 0)
         controller.setAutoCapitalization(fieldType.autoCapitalizes)
         lastSuggestionInput = null
         controller.setLanguage(currentKeyboardLanguage())
@@ -318,12 +341,13 @@ class ClavierIme : InputMethodService() {
         clipboardReader.start()
         readClipboard()
         // Diagnostic temporaire (puce de collage absente dans certaines applis) : aucun texte copié n'est journalisé.
-        Log.d(
+        AppLog.d(
             TAG,
             "puce collage: pkg=${info?.packageName} inputType=0x${Integer.toHexString(info?.inputType ?: 0)} " +
                 "suggestionsAllowed=$suggestionsAllowed pasteAllowedInField=$pasteAllowedInField " +
                 "copieLue=${clipboardState.lastClip() != null} puce=${clipboardState.suggestion() != null}",
         )
+        refreshRecentEmojiBar()
         updateCorrectionBarVisibility()
     }
 
@@ -358,6 +382,7 @@ class ClavierIme : InputMethodService() {
 
     override fun onFinishInputView(finishingInput: Boolean) {
         super.onFinishInputView(finishingInput)
+        dismissMessage()
         if (this::emojiPanel.isInitialized) hideEmojiPanel(resync = false)
         if (this::clipboardPanel.isInitialized) hideClipboardPanel(resync = false)
         clearHighlightState()
@@ -402,6 +427,7 @@ class ClavierIme : InputMethodService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        dismissMessage()
         correctionEngine.close()
         voiceEngine.close()
         mainHandler.removeCallbacks(longPressRunnable)
@@ -411,6 +437,44 @@ class ClavierIme : InputMethodService() {
         ClipboardEditBridge.onLastClipEdited = null
         ClipboardEditBridge.lastClipText = null
         serviceJob.cancel()
+    }
+
+    /**
+     * Affiche [message] dans un pop-up avec un bouton OK (les toasts passaient inaperçus). Le pop-up
+     * est rattaché à la fenêtre du clavier, qui garde la saisie en cours. Si le clavier n'est plus
+     * affiché (pas de fenêtre pour accrocher le pop-up), repli sur un toast.
+     */
+    private fun showMessage(message: String) {
+        val token = if (this::keyboardView.isInitialized && keyboardView.isAttachedToWindow) keyboardView.windowToken else null
+        if (token == null) {
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            return
+        }
+        dismissMessage()
+        val dialog = AlertDialog.Builder(ContextThemeWrapper(this, R.style.MessageDialogTheme))
+            .setMessage(message)
+            .setPositiveButton(R.string.message_dialog_ok, null)
+            .create()
+        dialog.window?.let { window ->
+            val params = window.attributes
+            params.token = token
+            params.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG
+            window.attributes = params
+            window.addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+        }
+        messageDialog = dialog
+        try {
+            dialog.show()
+        } catch (t: Throwable) {
+            messageDialog = null
+            AppLog.e(TAG, "Impossible d'afficher le pop-up", t)
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun dismissMessage() {
+        messageDialog?.dismiss()
+        messageDialog = null
     }
 
     private fun onKeyPressed(key: Key) {
@@ -456,7 +520,7 @@ class ClavierIme : InputMethodService() {
             currentInputConnection?.getTextBeforeCursor(2, 0)?.toString()
         } else null
 
-        val result = controller.onKey(key, doubleSpaceContext)
+        val result = controller.onKey(key, doubleSpaceContext, SystemClock.uptimeMillis())
 
         // La suppression précède l'insertion (double espace : on retire l'espace avant d'ajouter ". ").
         if (result.deleteBefore > 0) {
@@ -510,6 +574,7 @@ class ClavierIme : InputMethodService() {
         emojiPanel.show(keyboardPreferences.recentEmojis)
         keyboardView.visibility = View.INVISIBLE
         emojiPanel.visibility = View.VISIBLE
+        refreshRecentEmojiBar()
         clearSuggestions()
     }
 
@@ -518,6 +583,7 @@ class ClavierIme : InputMethodService() {
         if (emojiPanel.visibility != View.VISIBLE) return
         emojiPanel.visibility = View.GONE
         keyboardView.visibility = View.VISIBLE
+        refreshRecentEmojiBar()
         if (resync) {
             syncAutoCapitalization()
             applyState()
@@ -529,6 +595,16 @@ class ClavierIme : InputMethodService() {
     // Panneau Smart Clipboard (stories 2.1 et 2.5)
     // ------------------------------------------------------------------
 
+    /** Roue crantée de la barre : ouvre la page d'accueil de l'application. */
+    private fun openAppHome() {
+        hapticFeedback.perform(hapticIntensity)
+        try {
+            startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        } catch (t: Throwable) {
+            AppLog.e(TAG, "Échec de l'ouverture de la page d'accueil", t)
+        }
+    }
+
     private fun showClipboardPanel() {
         if (isRecording || correctionInProgress) return
         hapticFeedback.perform(hapticIntensity)
@@ -538,6 +614,7 @@ class ClavierIme : InputMethodService() {
         keyboardView.visibility = View.INVISIBLE
         clipboardPanel.visibility = View.VISIBLE
         correctionBar.setClipboardPanelOpen(true)
+        refreshRecentEmojiBar()
         clearSuggestions()
         // Stories 2.5 et 2.9 : les cartes suivent les éléments épinglés et l'historique tant que le
         // panneau est ouvert ; les copies expirées sont purgées à l'ouverture.
@@ -550,7 +627,7 @@ class ClavierIme : InputMethodService() {
                 try {
                     clipHistoryRepository.purgeExpired()
                 } catch (t: Throwable) {
-                    Log.e(TAG, "Échec de la purge de l'historique du presse-papiers", t)
+                    AppLog.e(TAG, "Échec de la purge de l'historique du presse-papiers", t)
                 }
             }
         }
@@ -565,6 +642,7 @@ class ClavierIme : InputMethodService() {
         clipboardPanel.visibility = View.GONE
         correctionBar.setClipboardPanelOpen(false)
         keyboardView.visibility = View.VISIBLE
+        refreshRecentEmojiBar()
         if (resync) {
             syncAutoCapitalization()
             applyState()
@@ -609,20 +687,16 @@ class ClavierIme : InputMethodService() {
     /** Menu d'appui long, « Épingler » : refus expliqués par un message (sensible, vide, trop long, doublon, plafond). */
     private fun onClipboardItemPin(item: ClipboardItems.Item) {
         ClipboardItems.pinRefusal(item.text, item.sensitive)?.let {
-            Toast.makeText(this, pinMessage(it), Toast.LENGTH_SHORT).show()
+            showMessage(pinMessage(it))
             return
         }
         serviceScope.launch {
             try {
                 val result = clipboardRepository.pin(item.text)
-                Toast.makeText(this@ClavierIme, pinMessage(result), Toast.LENGTH_SHORT).show()
+                showMessage(pinMessage(result))
             } catch (t: Throwable) {
-                Log.e(TAG, "Échec de l'épinglage", t)
-                Toast.makeText(
-                    this@ClavierIme,
-                    getString(R.string.clipboard_pin_error, t.message ?: t.javaClass.simpleName),
-                    Toast.LENGTH_SHORT,
-                ).show()
+                AppLog.e(TAG, "Échec de l'épinglage", t)
+                showMessage(getString(R.string.clipboard_pin_error, t.message ?: t.javaClass.simpleName))
             }
         }
     }
@@ -659,13 +733,9 @@ class ClavierIme : InputMethodService() {
         try {
             startActivity(intent)
         } catch (t: Throwable) {
-            Log.e(TAG, "Échec de l'ouverture de l'écran de modification", t)
+            AppLog.e(TAG, "Échec de l'ouverture de l'écran de modification", t)
             ClipboardEditBridge.lastClipText = null
-            Toast.makeText(
-                this,
-                getString(R.string.clipboard_edit_error, t.message ?: t.javaClass.simpleName),
-                Toast.LENGTH_SHORT,
-            ).show()
+            showMessage(getString(R.string.clipboard_edit_error, t.message ?: t.javaClass.simpleName))
         }
     }
 
@@ -682,12 +752,8 @@ class ClavierIme : InputMethodService() {
         try {
             startActivity(intent)
         } catch (t: Throwable) {
-            Log.e(TAG, "Échec de l'ouverture du pop-up d'étiquette", t)
-            Toast.makeText(
-                this,
-                getString(R.string.clipboard_label_error, t.message ?: t.javaClass.simpleName),
-                Toast.LENGTH_SHORT,
-            ).show()
+            AppLog.e(TAG, "Échec de l'ouverture du pop-up d'étiquette", t)
+            showMessage(getString(R.string.clipboard_label_error, t.message ?: t.javaClass.simpleName))
         }
     }
 
@@ -698,12 +764,8 @@ class ClavierIme : InputMethodService() {
             try {
                 clipboardRepository.clearLabel(id)
             } catch (t: Throwable) {
-                Log.e(TAG, "Échec de la suppression d'une étiquette", t)
-                Toast.makeText(
-                    this@ClavierIme,
-                    getString(R.string.clipboard_label_delete_error, t.message ?: t.javaClass.simpleName),
-                    Toast.LENGTH_SHORT,
-                ).show()
+                AppLog.e(TAG, "Échec de la suppression d'une étiquette", t)
+                showMessage(getString(R.string.clipboard_label_delete_error, t.message ?: t.javaClass.simpleName))
             }
         }
     }
@@ -718,7 +780,7 @@ class ClavierIme : InputMethodService() {
                 try {
                     clipHistoryRepository.replaceText(previous, text)
                 } catch (t: Throwable) {
-                    Log.e(TAG, "Échec de la mise à jour de l'historique après modification", t)
+                    AppLog.e(TAG, "Échec de la mise à jour de l'historique après modification", t)
                 }
             }
         }
@@ -746,12 +808,8 @@ class ClavierIme : InputMethodService() {
                 if (pinnedId != null) clipboardRepository.remove(pinnedId)
                 if (historyId != null) clipHistoryRepository.remove(historyId)
             } catch (t: Throwable) {
-                Log.e(TAG, "Échec de la suppression d'un élément du presse-papiers", t)
-                Toast.makeText(
-                    this@ClavierIme,
-                    getString(R.string.clipboard_delete_error, t.message ?: t.javaClass.simpleName),
-                    Toast.LENGTH_SHORT,
-                ).show()
+                AppLog.e(TAG, "Échec de la suppression d'un élément du presse-papiers", t)
+                showMessage(getString(R.string.clipboard_delete_error, t.message ?: t.javaClass.simpleName))
             }
         }
     }
@@ -797,7 +855,7 @@ class ClavierIme : InputMethodService() {
             try {
                 clipHistoryRepository.record(snapshot.text, snapshot.copiedAtMillis, snapshot.sensitive)
             } catch (t: Throwable) {
-                Log.e(TAG, "Échec de l'enregistrement dans l'historique du presse-papiers", t)
+                AppLog.e(TAG, "Échec de l'enregistrement dans l'historique du presse-papiers", t)
             }
         }
     }
@@ -854,6 +912,29 @@ class ClavierIme : InputMethodService() {
         currentInputConnection?.commitText(emoji, 1)
         keyboardPreferences.recentEmojis = RecentEmojis.add(keyboardPreferences.recentEmojis, emoji)
         updateCorrectionBarVisibility()
+    }
+
+    /**
+     * Un emoji de la barre des récents est inséré au curseur (il remplace une éventuelle sélection) et
+     * rejoint la tête des récents ; la barre garde son ordre jusqu'à la prochaine ouverture de champ
+     * ou du panneau, pour ne pas bouger sous le doigt.
+     */
+    private fun onRecentEmojiBarTapped(emoji: String) {
+        if (isRecording || correctionInProgress) return
+        onEmojiSelected(emoji)
+        syncAutoCapitalization()
+        applyState()
+    }
+
+    /** La barre n'est visible que dans un champ de messagerie, avec des récents, sans panneau ouvert. */
+    private fun refreshRecentEmojiBar() {
+        if (!this::recentEmojiBar.isInitialized) return
+        val recents = keyboardPreferences.recentEmojis
+        val visible = messagingField && recents.isNotEmpty() &&
+            !(this::emojiPanel.isInitialized && emojiPanel.visibility == View.VISIBLE) &&
+            !clipboardPanelVisible()
+        if (visible) recentEmojiBar.setEmojis(recents)
+        recentEmojiBar.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
     private fun onEmojiBackspace() {
@@ -1142,14 +1223,14 @@ class ClavierIme : InputMethodService() {
 
         val model = modelPreferences.activeModel()
         if (model == null) {
-            Toast.makeText(this, getString(R.string.correction_no_model_selected), Toast.LENGTH_SHORT).show()
+            showMessage(getString(R.string.correction_no_model_selected))
             return
         }
 
         // On ne renvoie à l'IA que les phrases pas encore corrigées (nouvelles ou modifiées).
         val blocks = CorrectionPlanner.blocksToCorrect(captured.text, correctedSentences::contains)
         if (blocks.isEmpty()) {
-            Toast.makeText(this, getString(R.string.correction_nothing_new), Toast.LENGTH_SHORT).show()
+            showMessage(getString(R.string.correction_nothing_new))
             return
         }
 
@@ -1165,7 +1246,7 @@ class ClavierIme : InputMethodService() {
             correctionBar.state = CorrectionBarState.CORRECTING
             applyCorrection(ic, captured, blocks, correctedBlocks)
             if (correctedBlocks.any { it == null }) {
-                Toast.makeText(this@ClavierIme, getString(R.string.correction_partial), Toast.LENGTH_SHORT).show()
+                showMessage(getString(R.string.correction_partial))
             }
         }
     }
@@ -1179,7 +1260,7 @@ class ClavierIme : InputMethodService() {
         if (selected.isBlank()) return
         val model = modelPreferences.activeModel()
         if (model == null) {
-            Toast.makeText(this, getString(R.string.correction_no_model_selected), Toast.LENGTH_SHORT).show()
+            showMessage(getString(R.string.correction_no_model_selected))
             return
         }
         val leading = selected.length - selected.trimStart().length
@@ -1227,8 +1308,9 @@ class ClavierIme : InputMethodService() {
         val corrected = correctionEngine.correct(model, core, protectedWordsIn(core)) {
             correctionBar.state = CorrectionBarState.LOADING
         }
-        val accepted = CorrectionSafeguard.accept(core, corrected) ?: core
-        return paragraph.substring(0, leading) + accepted + paragraph.substring(paragraph.length - trailing)
+        val accepted = CorrectionSafeguard.accept(core, corrected)
+        if (accepted == null) AppLog.w(TAG, "correction refusée par le garde-fou (réponse vide ou tronquée) : texte conservé")
+        return paragraph.substring(0, leading) + (accepted ?: core) + paragraph.substring(paragraph.length - trailing)
     }
 
     private fun applySelectionCorrection(
@@ -1242,11 +1324,12 @@ class ClavierIme : InputMethodService() {
     ) {
         if (corrected == core) {
             clearHighlightState()
+            showMessage(getString(R.string.correction_no_change))
             return
         }
         // La sélection a pu changer pendant que le modèle travaillait : on ne remplace que si elle est identique.
         if (ic.getSelectedText(0)?.toString() != selected) {
-            Toast.makeText(this, getString(R.string.correction_text_changed), Toast.LENGTH_SHORT).show()
+            showMessage(getString(R.string.correction_text_changed))
             return
         }
 
@@ -1285,12 +1368,8 @@ class ClavierIme : InputMethodService() {
             try {
                 work()
             } catch (t: Throwable) {
-                Log.e(TAG, "Échec de la correction IA", t)
-                Toast.makeText(
-                    this@ClavierIme,
-                    getString(R.string.correction_error, t.message ?: t.javaClass.simpleName),
-                    Toast.LENGTH_SHORT,
-                ).show()
+                AppLog.e(TAG, "Échec de la correction IA", t)
+                showMessage(getString(R.string.correction_error, t.message ?: t.javaClass.simpleName))
             } finally {
                 correctionInProgress = false
                 updateCorrectionBarVisibility()
@@ -1432,7 +1511,7 @@ class ClavierIme : InputMethodService() {
         }
 
         if (!applied) {
-            Toast.makeText(this, getString(R.string.correction_text_changed), Toast.LENGTH_SHORT).show()
+            showMessage(getString(R.string.correction_text_changed))
             return
         }
         if (ranges.isEmpty()) return // uniquement des suppressions : rien à surligner
@@ -1474,7 +1553,7 @@ class ClavierIme : InputMethodService() {
         }
 
         if (!applied) {
-            Toast.makeText(this, getString(R.string.correction_text_changed), Toast.LENGTH_SHORT).show()
+            showMessage(getString(R.string.correction_text_changed))
             return
         }
         if (ranges.isEmpty()) return
@@ -1595,14 +1674,14 @@ class ClavierIme : InputMethodService() {
         if (isRecording) return
 
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, getString(R.string.voice_permission_denied), Toast.LENGTH_LONG).show()
+            showMessage(getString(R.string.voice_permission_denied))
             startActivity(
                 Intent(this, VoicePermissionActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
             )
             return
         }
         if (!voiceModelPreferences.isComplete()) {
-            Toast.makeText(this, getString(R.string.voice_no_model_selected), Toast.LENGTH_LONG).show()
+            showMessage(getString(R.string.voice_no_model_selected))
             return
         }
 
@@ -1634,15 +1713,11 @@ class ClavierIme : InputMethodService() {
                     recorder.partialText.collect { partial -> applyVoicePartialText(partial) }
                 }
             } catch (t: Throwable) {
-                Log.e(TAG, "Échec du démarrage de l'enregistrement vocal", t)
+                AppLog.e(TAG, "Échec du démarrage de l'enregistrement vocal", t)
                 isRecording = false
                 correctionBar.voiceState = VoiceBarState.IDLE
                 refreshPasteSuggestion()
-                Toast.makeText(
-                    this@ClavierIme,
-                    getString(R.string.voice_error, t.message ?: t.javaClass.simpleName),
-                    Toast.LENGTH_SHORT,
-                ).show()
+                showMessage(getString(R.string.voice_error, t.message ?: t.javaClass.simpleName))
             }
         }
     }
@@ -1668,12 +1743,8 @@ class ClavierIme : InputMethodService() {
                 // partielle déjà insérée pendant l'écoute (peut différer légèrement).
                 replaceInsertedPartialText(text)
             } catch (t: Throwable) {
-                Log.e(TAG, "Échec de la transcription vocale", t)
-                Toast.makeText(
-                    this@ClavierIme,
-                    getString(R.string.voice_error, t.message ?: t.javaClass.simpleName),
-                    Toast.LENGTH_SHORT,
-                ).show()
+                AppLog.e(TAG, "Échec de la transcription vocale", t)
+                showMessage(getString(R.string.voice_error, t.message ?: t.javaClass.simpleName))
             } finally {
                 correctionBar.voiceState = VoiceBarState.IDLE
                 updateCorrectionBarVisibility()
@@ -1763,6 +1834,7 @@ class ClavierIme : InputMethodService() {
     private fun applyState() {
         keyboardView.layout = Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled, fieldType)
         keyboardView.isShifted = controller.state.isShifted
+        keyboardView.isCapsLock = controller.state.isCapsLock
     }
 
     companion object {

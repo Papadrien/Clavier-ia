@@ -1,6 +1,7 @@
 package fr.junade.taipo.ai
 
 import android.content.Context
+import android.os.SystemClock
 import com.google.ai.edge.litertlm.Backend
 import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.ConversationConfig
@@ -11,6 +12,7 @@ import fr.junade.taipo.model.ModelFileResolver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import fr.junade.taipo.AppLog
 
 /**
  * Charge et garde en mémoire un moteur LiteRT-LM pour le modèle actif, et
@@ -54,6 +56,7 @@ class CorrectionEngine(private val appContext: Context) {
         // et peuvent halluciner : la consigne de FORMAT est donc répétée dans le tour utilisateur,
         // avec les mots du dictionnaire personnel présents dans le texte (voir CorrectionPrompt.userTurn).
         val userTurn = CorrectionPrompt.userTurn(text, protectedWords)
+        val startedAt = SystemClock.elapsedRealtime()
         return withContext(Dispatchers.Default) {
             activeEngine.createConversation(conversationConfig).use { conversation ->
                 val response = conversation.sendMessage(userTurn)
@@ -64,7 +67,14 @@ class CorrectionEngine(private val appContext: Context) {
                 // sa réponse texte via toString(). À remplacer par `response.text` si une
                 // montée de version de litertlm-android l'expose un jour (vérifier
                 // l'autocomplétion sur `response.` dans Android Studio).
-                response.toString().trim()
+                val result = response.toString().trim()
+                // Diagnostic : jamais le texte lui-même, seulement les longueurs et la durée.
+                AppLog.i(
+                    TAG,
+                    "correction: modèle=${model.id} entrée=${text.length} car. sortie=${result.length} car. " +
+                        "identique=${result == text.trim()} durée=${SystemClock.elapsedRealtime() - startedAt} ms",
+                )
+                result
             }
         }
     }
@@ -94,6 +104,10 @@ class CorrectionEngine(private val appContext: Context) {
         loadedModel = model
         loadedFile = file
         return newEngine
+    }
+
+    private companion object {
+        private const val TAG = "CorrectionEngine"
     }
 
     /** Libère le moteur chargé, s'il y en a un. À appeler quand l'IME est détruit. */

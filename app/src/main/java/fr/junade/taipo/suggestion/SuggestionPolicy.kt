@@ -6,14 +6,14 @@ import android.text.InputType
  * Stories 1.16 et 1.17 : dans quels champs la barre propose des suggestions (emoji et mots). Comme sur Gboard
  * (décision « adaptation selon le type de champ »), rien n'est proposé dans les champs qui ne sont
  * pas du texte libre (mot de passe, e-mail, adresse web, filtre, champ numérique, téléphone,
- * date), ni quand l'application demande explicitement de ne pas suggérer. Logique pure : elle ne
- * lit que des constantes.
+ * date). L'indicateur `NO_SUGGESTIONS` posé par l'application est volontairement ignoré (Google Keep,
+ * par exemple, le pose alors que les suggestions y sont utiles) : il vise la correction orthographe
+ * du clavier système. Logique pure : elle ne lit que des constantes.
  */
 object SuggestionPolicy {
 
     fun allowsSuggestions(inputType: Int): Boolean {
         if (inputType and InputType.TYPE_MASK_CLASS != InputType.TYPE_CLASS_TEXT) return false
-        if (inputType and InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS != 0) return false
         return when (inputType and InputType.TYPE_MASK_VARIATION) {
             InputType.TYPE_TEXT_VARIATION_PASSWORD,
             InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,
@@ -29,9 +29,8 @@ object SuggestionPolicy {
 
     /**
      * Story 2.2 : la puce de collage est proposée dans tout champ de texte, sauf les champs de mot de
-     * passe (story 10.1). Contrairement aux suggestions de mots, elle ignore l'indicateur
-     * `NO_SUGGESTIONS` posé par certaines applications (qui vise la correction orthographique) et les
-     * champs e-mail, URL ou filtre, où coller est justement utile.
+     * passe (story 10.1). Contrairement aux suggestions de mots, elle accepte aussi les champs
+     * e-mail, URL ou filtre, où coller est justement utile.
      */
     fun allowsPasteSuggestion(inputType: Int): Boolean {
         if (inputType and InputType.TYPE_MASK_CLASS != InputType.TYPE_CLASS_TEXT) return false
