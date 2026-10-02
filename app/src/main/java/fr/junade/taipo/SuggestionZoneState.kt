@@ -20,11 +20,16 @@ package fr.junade.taipo
  *   Corriger ([actionButtonsVisible], [toggleActionsMenu]). Un seul est ouvert à la fois ; la frappe
  *   referme les deux.
  *
+ * - Suggestions d'auto-remplissage en ligne (gestionnaire de mots de passe, identifiants) : tant
+ *   que le service d'auto-remplissage en propose, elles remplacent la bande de mots, le bouton
+ *   Smart Clipboard et la puce de collage ; seul le menu de gauche ouvert (bouton Smart Clipboard
+ *   demandé explicitement) garde la priorité. Vocal et Corriger restent visibles à côté.
+ *
  * Logique pure (sans Android), testée en JVM.
  */
 class SuggestionZoneState {
 
-    enum class Zone { WORDS, CLIPBOARD, PASTE, ACTIONS }
+    enum class Zone { WORDS, CLIPBOARD, PASTE, ACTIONS, INLINE }
 
     var fieldHasText: Boolean = false
         private set
@@ -43,9 +48,14 @@ class SuggestionZoneState {
     var actionsExpanded: Boolean = false
         private set
 
+    /** Le service d'auto-remplissage propose des suggestions en ligne (identifiants, mots de passe). */
+    var inlineAvailable: Boolean = false
+        private set
+
     val zone: Zone
         get() = when {
             menuExpanded -> Zone.CLIPBOARD
+            inlineAvailable -> Zone.INLINE
             pasteAvailable -> Zone.PASTE
             !fieldHasText -> Zone.CLIPBOARD
             actionsExpanded -> Zone.ACTIONS
@@ -97,6 +107,11 @@ class SuggestionZoneState {
     fun onFieldTextChanged(hasText: Boolean) {
         fieldHasText = hasText
         closeMenuIfUnavailable()
+    }
+
+    /** Des suggestions d'auto-remplissage en ligne sont (ou ne sont plus) disponibles. */
+    fun setInlineAvailable(available: Boolean) {
+        inlineAvailable = available
     }
 
     /** Story 2.2 : un collage est (ou n'est plus) proposé. */

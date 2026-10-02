@@ -3,4 +3,5 @@
      entrée « Taipo ». Avec plusieurs sous-types, Android liste un clavier par sous-type. -->
 <input-method
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:supportsSwitchingToNextInputMethod="true" />
+    android:supportsSwitchingToNextInputMethod="true"
+    android:supportsInlineSuggestions="true" />

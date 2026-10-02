@@ -71,7 +71,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
     private var deleteListener: OnItemListener? = null
 
     init {
-        setBackgroundColor(Color.BLACK)
+        // Fond transparent : le panneau laisse voir le fond commun du clavier (KeyboardBackgroundDrawable).
 
         content.orientation = LinearLayout.VERTICAL
         addView(content, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))

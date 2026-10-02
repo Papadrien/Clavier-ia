@@ -58,7 +58,7 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
 
     init {
         orientation = VERTICAL
-        setBackgroundColor(Color.BLACK)
+        // Fond transparent : le panneau laisse voir le fond commun du clavier (KeyboardBackgroundDrawable).
 
         addView(tabs, LayoutParams(LayoutParams.MATCH_PARENT, dp(36f)))
         addView(grid, LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f))

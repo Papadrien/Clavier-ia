@@ -45,6 +45,7 @@
     <string name="voice_model_no_file">Aucun fichier fourni.</string>
 
     <string name="voice_button_idle">Vocal</string>
+    <string name="voice_button_loading">Chargement…</string>
     <string name="voice_button_recording">Écoute…</string>
     <string name="voice_button_transcribing">Transcription…</string>
     <string name="voice_no_model_selected">Modèle vocal incomplet : ouvrez « Modèle vocal » dans les paramètres et fournissez les 4 fichiers.</string>

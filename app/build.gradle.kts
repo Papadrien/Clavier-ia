@@ -44,6 +44,10 @@ room {
 
 dependencies {
     implementation("androidx.core:core-ktx:1.18.0")
+
+    // Suggestions d'auto-remplissage « en ligne » (gestionnaire de mots de passe) affichées dans la
+    // barre du clavier : la bibliothèque fournit le style que les services d'auto-remplissage exigent.
+    implementation("androidx.autofill:autofill:1.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
 
     // Runtime d'inférence locale (voir décision ai-keyboard.md du 23/09/2026).

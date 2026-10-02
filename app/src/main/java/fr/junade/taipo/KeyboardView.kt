@@ -26,14 +26,25 @@ class KeyboardView(context: Context) : View(context) {
         fun onCursorMove(steps: Int)
     }
 
-    /** Story 1.9 : glissement vers la gauche depuis la touche retour arrière = suppression d'un mot entier. */
-    fun interface OnDeleteWordListener {
-        fun onDeleteWord()
+    /**
+     * Story 1.9 : glissement vers la gauche depuis la touche retour arrière. Le texte n'est pas
+     * supprimé pendant le glissement : il est surligné, et la suppression n'a lieu qu'au relâchement.
+     */
+    interface OnDeleteSwipeListener {
+        /** Nombre total de mots à surligner avant le curseur de départ (0 = rien ; peut diminuer). */
+        fun onDeleteSwipeUpdate(words: Int)
+
+        /** Doigt relâché : supprime la zone surlignée. */
+        fun onDeleteSwipeRelease()
+
+        /** Geste interrompu par le système : retire le surlignage sans rien supprimer. */
+        fun onDeleteSwipeCancel()
     }
 
     private var keyListener: OnKeyListener? = null
     private var cursorMoveListener: OnCursorMoveListener? = null
-    private var deleteWordListener: OnDeleteWordListener? = null
+    private var deleteSwipeListener: OnDeleteSwipeListener? = null
+    private var deleteSwipeWords = 0
     private var pressedKey: Key? = null
 
     var layout: KeyboardLayout = Keyboards.letters
@@ -75,8 +86,6 @@ class KeyboardView(context: Context) : View(context) {
     // fond quasi noir, touches "principales" (lettres/chiffres/espace) gris moyen,
     // touches "accessoires" (fonction + ponctuation rapide) gris très foncé,
     // et un accent turquoise réservé à la touche Entrée.
-    private val backgroundColor = Color.parseColor("#000000")
-    private val backgroundPaint = Paint().apply { color = backgroundColor }
     private val normalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#2E2E2E") }
     private val functionalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#141414") }
     private val pressedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#4A4A4A") }
@@ -191,8 +200,8 @@ class KeyboardView(context: Context) : View(context) {
         cursorMoveListener = listener
     }
 
-    fun setOnDeleteWordListener(listener: OnDeleteWordListener) {
-        deleteWordListener = listener
+    fun setOnDeleteSwipeListener(listener: OnDeleteSwipeListener) {
+        deleteSwipeListener = listener
     }
 
     // Story 1.7 : glissement horizontal sur la barre espace = déplacement du curseur.
@@ -239,10 +248,8 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     override fun onDraw(canvas: Canvas) {
-        // Fond borné à la vue : le parent a clipChildren = false (bulles qui dépassent, voir
-        // ClavierIme), donc canvas.drawColor() peindrait aussi la barre d'actions au-dessus.
-        canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), backgroundPaint)
-
+        // Pas de fond propre : le clavier est transparent et laisse voir le fond commun posé sur la
+        // racine de l'IME (KeyboardBackgroundDrawable), partagé avec la barre du haut.
         val inset = insetPx()
         val usableHeight = usableHeightPx()
         val rowHeight = usableHeight / layout.rows.size.toFloat()
@@ -426,6 +433,7 @@ class KeyboardView(context: Context) : View(context) {
         longPressCommitted = false
         spaceSwipe.reset()
         backspaceSwipe.reset()
+        deleteSwipeWords = 0
         pressedKey = keyAt(x, y)
         previewKey = pressedKey.takeIf { showsPreview(it) }
         if (pressedKey?.action is KeyAction.Space) spaceSwipe.onDown(x)
@@ -449,13 +457,16 @@ class KeyboardView(context: Context) : View(context) {
         }
         if (pressedKey?.action is KeyAction.Backspace) {
             val words = backspaceSwipe.onMove(x)
-            if (words > 0) {
+            if (backspaceSwipe.isActive) {
                 // Le glissement remplace la suppression caractère par caractère de l'appui maintenu (repeatRunnable).
                 stopRepeat()
-                repeat(words) { deleteWordListener?.onDeleteWord() }
+                if (words != deleteSwipeWords) {
+                    deleteSwipeWords = words
+                    deleteSwipeListener?.onDeleteSwipeUpdate(words)
+                }
+                // Une fois le glissement engagé, le doigt peut sortir de la touche sans changer de touche.
+                return
             }
-            // Une fois le glissement engagé, le doigt peut sortir de la touche sans changer de touche.
-            if (backspaceSwipe.isActive) return
         }
         val current = keyAt(x, y)
         if (current != pressedKey) {
@@ -494,8 +505,10 @@ class KeyboardView(context: Context) : View(context) {
             return
         }
         if (backspaceSwipe.isActive) {
-            // Le glissement a déjà supprimé le(s) mot(s) : le relâchement n'efface pas un caractère de plus.
+            // Le glissement a surligné le(s) mot(s) : on les supprime maintenant, sans effacer un caractère de plus.
             backspaceSwipe.reset()
+            deleteSwipeWords = 0
+            deleteSwipeListener?.onDeleteSwipeRelease()
             invalidate()
             return
         }
@@ -511,6 +524,8 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     private fun cancelTouch() {
+        if (backspaceSwipe.isActive) deleteSwipeListener?.onDeleteSwipeCancel()
+        deleteSwipeWords = 0
         stopRepeat()
         cancelKeyLongPress()
         dismissPopup()

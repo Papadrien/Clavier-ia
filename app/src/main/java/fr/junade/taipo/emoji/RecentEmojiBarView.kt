@@ -26,7 +26,7 @@ class RecentEmojiBarView(context: Context) : HorizontalScrollView(context) {
     private val row = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
 
     init {
-        setBackgroundColor(Color.parseColor("#17181B"))
+        // Fond transparent : la bande laisse voir le fond commun du clavier (KeyboardBackgroundDrawable).
         isHorizontalScrollBarEnabled = false
         overScrollMode = OVER_SCROLL_NEVER
         addView(row, LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dp(BAR_HEIGHT_DP)))

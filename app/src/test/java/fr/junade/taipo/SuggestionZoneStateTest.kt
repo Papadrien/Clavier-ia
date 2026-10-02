@@ -316,4 +316,35 @@ class SuggestionZoneStateActionsTest {
         state.onFieldTextChanged(false)
         assertTrue(state.settingsButtonVisible)
     }
+
+    @Test
+    fun `les suggestions d auto-remplissage remplacent mots, bouton Smart Clipboard et puce de collage`() {
+        val state = SuggestionZoneState()
+        state.setInlineAvailable(true)
+        assertEquals(Zone.INLINE, state.zone) // champ vide
+        state.onFieldTextChanged(true)
+        assertEquals(Zone.INLINE, state.zone) // saisie
+        state.setPasteAvailable(true)
+        assertEquals(Zone.INLINE, state.zone) // puce de collage
+    }
+
+    @Test
+    fun `sans suggestion d auto-remplissage la zone redevient celle d avant`() {
+        val state = SuggestionZoneState()
+        state.onFieldTextChanged(true)
+        state.setInlineAvailable(true)
+        state.setInlineAvailable(false)
+        assertEquals(Zone.WORDS, state.zone)
+    }
+
+    @Test
+    fun `le menu de gauche ouvert garde la priorite sur l auto-remplissage et Vocal reste visible`() {
+        val state = SuggestionZoneState()
+        state.onFieldTextChanged(true)
+        state.setInlineAvailable(true)
+        assertTrue(state.actionButtonsVisible(busy = false))
+        assertFalse(state.actionsMenuButtonVisible(busy = false))
+        state.toggleMenu()
+        assertEquals(Zone.CLIPBOARD, state.zone)
+    }
 }

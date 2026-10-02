@@ -28,40 +28,41 @@ class BackspaceSwipeTrackerTest {
     }
 
     @Test
-    fun `le premier mot est supprime des l activation vers la gauche`() {
+    fun `le premier mot est selectionne des l activation vers la gauche`() {
         val t = tracker()
         t.onDown(100f)
+        assertEquals(1, t.onMove(80f))
+        assertTrue(t.isActive)
+    }
+
+    @Test
+    fun `un mot de plus par pas parcouru vers la gauche`() {
+        val t = tracker()
+        t.onDown(100f)
+        assertEquals(1, t.onMove(75f))
+        assertEquals(1, t.onMove(55f)) // 45 px : activation (20) + 25 px, pas encore un 2e pas
+        assertEquals(2, t.onMove(50f)) // 50 px : activation + 1 pas
+        assertEquals(3, t.onMove(20f)) // 80 px : activation + 2 pas
+    }
+
+    @Test
+    fun `revenir vers la droite diminue le nombre de mots`() {
+        val t = tracker()
+        t.onDown(100f)
+        assertEquals(3, t.onMove(20f))
+        assertEquals(2, t.onMove(50f))
         assertEquals(1, t.onMove(75f))
         assertTrue(t.isActive)
     }
 
     @Test
-    fun `un mot de plus par distance parcourue vers la gauche`() {
+    fun `revenir sous le seuil d activation annule la selection mais le geste reste actif`() {
         val t = tracker()
         t.onDown(100f)
-        t.onMove(75f) // active, 1er mot supprimé, ancre à 75
-        assertEquals(0, t.onMove(60f))
-        assertEquals(1, t.onMove(45f))
-        assertEquals(2, t.onMove(-15f))
-    }
-
-    @Test
-    fun `le reste de distance est conserve entre deux mouvements`() {
-        val t = tracker()
-        t.onDown(100f)
-        t.onMove(70f) // active, 1er mot supprimé, ancre à 70
-        assertEquals(1, t.onMove(35f)) // 35 px parcourus -> 1 mot, 5 px de reste (ancre à 40)
-        assertEquals(0, t.onMove(40f)) // retour à l'ancre : rien
-        assertEquals(1, t.onMove(0f)) // 40 px parcourus depuis l'ancre -> 1 mot de plus
-    }
-
-    @Test
-    fun `changer de sens dans le meme geste ne supprime rien vers la droite`() {
-        val t = tracker()
-        t.onDown(100f)
-        t.onMove(60f) // active, 1er mot supprimé, ancre à 60
-        assertEquals(1, t.onMove(20f)) // encore 40 px à gauche -> 1 mot, ancre à 30
-        assertEquals(0, t.onMove(50f)) // retour vers la droite -> rien
+        assertEquals(1, t.onMove(70f))
+        assertEquals(0, t.onMove(95f))
+        assertTrue(t.isActive) // le relâchement ne doit pas effacer un caractère
+        assertEquals(1, t.onMove(70f)) // et on peut repartir vers la gauche
     }
 
     @Test

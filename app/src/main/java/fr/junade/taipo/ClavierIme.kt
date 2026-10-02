@@ -5,6 +5,8 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.inputmethodservice.InputMethodService
+import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -21,7 +23,14 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputMethodManager
+import android.view.inputmethod.InlineSuggestionsRequest
+import android.view.inputmethod.InlineSuggestionsResponse
 import android.view.inputmethod.InputMethodSubtype
+import android.util.Size
+import android.widget.inline.InlinePresentationSpec
+import androidx.annotation.RequiresApi
+import androidx.autofill.inline.UiVersions
+import androidx.autofill.inline.v1.InlineSuggestionUi
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -50,12 +59,16 @@ import fr.junade.taipo.emoji.MessagingFieldPolicy
 import fr.junade.taipo.emoji.RecentEmojiBarView
 import fr.junade.taipo.emoji.RecentEmojis
 import fr.junade.taipo.suggestion.EmojiSuggesterLoader
+import fr.junade.taipo.suggestion.NextWordModel
+import fr.junade.taipo.suggestion.NextWordProvider
 import fr.junade.taipo.suggestion.SuggestionPolicy
 import fr.junade.taipo.dictionary.PersonalDictionaryProvider
 import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.VoiceModelPreferences
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -93,6 +106,12 @@ class ClavierIme : InputMethodService() {
     // Story 1.16 : emoji suggéré d'après le dernier mot (4e emplacement de la barre de suggestions).
     private val emojiSuggester by lazy { EmojiSuggesterLoader.get(applicationContext) }
     private var currentEmojiSuggestion: String? = null
+
+    // Prédiction du mot suivant d'après les habitudes d'écriture (apprentissage local, chiffré).
+    private val nextWords by lazy { NextWordProvider.repository(applicationContext) }
+
+    /** Faux dans les champs sans suggestions et quand l'application demande de ne pas apprendre (mode privé). */
+    private var learningAllowed = true
 
     // Story 1.17 : mots suggérés d'après le mot en cours de frappe (3 premiers emplacements).
     private var currentWordSuggestions: List<WordSuggestion?> = emptyList()
@@ -196,7 +215,22 @@ class ClavierIme : InputMethodService() {
     // inséré pour pouvoir le remplacer entièrement à chaque nouvelle
     // hypothèse plutôt que de simplement l'ajouter à la suite.
     private var voicePartialJob: Job? = null
+
+    /** Numéro de la dernière réponse d'auto-remplissage en ligne : les vues d'une réponse périmée sont ignorées. */
+    private var inlineGeneration = 0
+
+    // Démarrage en cours (chargement du modèle puis ouverture du micro) : annulable tant que
+    // l'écoute n'a pas réellement commencé (second appui, relâchement en mode maintenu, clavier fermé).
+    private var voiceStartJob: Job? = null
     private var insertedPartialText = ""
+
+    // Édition pendant la dictée : l'hypothèse du décodeur couvre toute la session depuis son début,
+    // alors que le texte du champ peut avoir été modifié ou le curseur déplacé par l'utilisateur.
+    // [voiceFrozenLength] = nombre de caractères de l'hypothèse déjà « remis » à l'utilisateur (ils
+    // font désormais partie de son texte et ne sont plus jamais touchés ni réinsérés) ;
+    // [voiceLastHypothesis] = dernière hypothèse effectivement appliquée au champ.
+    private var voiceFrozenLength = 0
+    private var voiceLastHypothesis = ""
     private val longPressRunnable = Runnable {
         longPressTriggered = true
         isHoldModeRecording = true
@@ -209,6 +243,7 @@ class ClavierIme : InputMethodService() {
         // personnel est asynchrone ; on la déclenche dès la création du
         // service pour qu'elle soit prête avant la première frappe.
         personalDictionary
+        nextWords
         clipboardRepository
         clipHistoryRepository
         ClipboardEditBridge.onLastClipEdited = { text -> onLastClipEdited(text) } // story 2.6
@@ -228,7 +263,11 @@ class ClavierIme : InputMethodService() {
         keyboardView.heightScale = keyboardHeight.scale
         keyboardView.setOnKeyListener { key -> onKeyPressed(key) }
         keyboardView.setOnCursorMoveListener { steps -> onCursorMoved(steps) }
-        keyboardView.setOnDeleteWordListener { onDeleteWord() }
+        keyboardView.setOnDeleteSwipeListener(object : KeyboardView.OnDeleteSwipeListener {
+            override fun onDeleteSwipeUpdate(words: Int) = this@ClavierIme.onDeleteSwipeUpdate(words)
+            override fun onDeleteSwipeRelease() = this@ClavierIme.onDeleteSwipeRelease()
+            override fun onDeleteSwipeCancel() = this@ClavierIme.onDeleteSwipeCancel()
+        })
 
         recentEmojiBar = RecentEmojiBarView(this)
         recentEmojiBar.visibility = View.GONE
@@ -238,7 +277,15 @@ class ClavierIme : InputMethodService() {
         correctionBar.setOnCorrectListener { onCorrectClicked() }
         correctionBar.voiceButton.setOnTouchListener { _, event -> onVoiceButtonTouch(event) }
         correctionBar.setOnEmojiSuggestionClickListener { onEmojiSuggestionTapped() }
-        correctionBar.setOnClipboardClickListener { showClipboardPanel() }
+        // Le même bouton ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme.
+        correctionBar.setOnClipboardClickListener {
+            if (clipboardPanelVisible()) {
+                hapticFeedback.perform(hapticIntensity)
+                hideClipboardPanel()
+            } else {
+                showClipboardPanel()
+            }
+        }
         correctionBar.setOnClipboardCloseClickListener { hideClipboardPanel() }
         correctionBar.setOnSettingsClickListener { openAppHome() }
         correctionBar.setOnPasteClickListener { onPasteTapped() }
@@ -261,6 +308,9 @@ class ClavierIme : InputMethodService() {
 
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
+            // Fond commun à la barre du haut et au clavier (les vues enfants sont transparentes) :
+            // les animations de fond futures se dessineront dans ce seul drawable.
+            background = KeyboardBackgroundDrawable()
             // Story 1.8 : la bulle d'accents des touches du haut est dessinée par le clavier
             // au-dessus de sa propre zone, par-dessus la barre d'actions.
             clipChildren = false
@@ -326,6 +376,9 @@ class ClavierIme : InputMethodService() {
         hideClipboardPanel(resync = false)
         correctionBar.collapseMenu()
         suggestionsAllowed = SuggestionPolicy.allowsSuggestions(info?.inputType ?: 0)
+        // IME_FLAG_NO_PERSONALIZED_LEARNING : navigation privée, champ confidentiel... rien n'est appris ni proposé.
+        learningAllowed = suggestionsAllowed &&
+            (info?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING == 0
         pasteAllowedInField = SuggestionPolicy.allowsPasteSuggestion(info?.inputType ?: 0)
         fieldType = FieldType.of(info?.inputType ?: 0)
         messagingField = MessagingFieldPolicy.isMessagingField(info?.packageName, info?.inputType ?: 0)
@@ -382,6 +435,8 @@ class ClavierIme : InputMethodService() {
 
     override fun onFinishInputView(finishingInput: Boolean) {
         super.onFinishInputView(finishingInput)
+        nextWords.flush()
+        clearInlineSuggestions()
         dismissMessage()
         if (this::emojiPanel.isInitialized) hideEmojiPanel(resync = false)
         if (this::clipboardPanel.isInitialized) hideClipboardPanel(resync = false)
@@ -391,6 +446,58 @@ class ClavierIme : InputMethodService() {
         if (isRecording) {
             cancelVoiceRecording()
         }
+    }
+
+    // ------------------------------------------------------------------
+    // Auto-remplissage en ligne (gestionnaire de mots de passe : Bitwarden, etc.)
+    // ------------------------------------------------------------------
+
+    /**
+     * Demande au service d'auto-remplissage actif (Bitwarden…) de fournir ses suggestions sous forme
+     * de vues à afficher dans la barre du clavier, à la place des suggestions de frappe. Le service
+     * doit avoir l'auto-remplissage « en ligne » activé dans ses propres réglages.
+     */
+    @RequiresApi(Build.VERSION_CODES.R)
+    override fun onCreateInlineSuggestionsRequest(uiExtras: Bundle): InlineSuggestionsRequest? {
+        val density = resources.displayMetrics.density
+        val height = (INLINE_SUGGESTION_HEIGHT_DP * density).toInt()
+        val styles = UiVersions.newStylesBuilder()
+            .addStyle(InlineSuggestionUi.newStyleBuilder().build())
+            .build()
+        val spec = InlinePresentationSpec.Builder(
+            Size((INLINE_SUGGESTION_MIN_WIDTH_DP * density).toInt(), height),
+            Size((INLINE_SUGGESTION_MAX_WIDTH_DP * density).toInt(), height),
+        ).setStyle(styles).build()
+        return InlineSuggestionsRequest.Builder(listOf(spec))
+            .setMaxSuggestionCount(INLINE_SUGGESTION_MAX_COUNT)
+            .build()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    override fun onInlineSuggestionsResponse(response: InlineSuggestionsResponse): Boolean {
+        val suggestions = response.inlineSuggestions
+        val generation = ++inlineGeneration
+        if (suggestions.isEmpty() || !this::correctionBar.isInitialized) {
+            clearInlineSuggestions()
+            return false
+        }
+        val slots = arrayOfNulls<View>(suggestions.size)
+        val wrap = android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+        suggestions.forEachIndexed { index, suggestion ->
+            suggestion.inflate(this, Size(wrap, wrap), mainExecutor) { view ->
+                // Réponse périodiquement remplacée par une plus récente : on ignore les vues en retard.
+                if (generation != inlineGeneration || !this::correctionBar.isInitialized) return@inflate
+                slots[index] = view
+                correctionBar.setInlineSuggestions(slots.filterNotNull())
+            }
+        }
+        return true
+    }
+
+    /** Retire les suggestions d'auto-remplissage : la barre retrouve ses suggestions habituelles. */
+    private fun clearInlineSuggestions() {
+        inlineGeneration++
+        if (this::correctionBar.isInitialized) correctionBar.setInlineSuggestions(emptyList())
     }
 
     override fun onUpdateSelection(
@@ -427,6 +534,7 @@ class ClavierIme : InputMethodService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        nextWords.flush()
         dismissMessage()
         correctionEngine.close()
         voiceEngine.close()
@@ -543,6 +651,8 @@ class ClavierIme : InputMethodService() {
         val textChanged = result.commit != null || result.deleteBefore > 0 || result.isEnter
         if (textChanged) {
             onUserTyped() // stories 2.2 et 2.4 : la frappe écarte la puce et referme le menu
+            // Un mot vient d'être terminé par une espace (pas une conversion en « . ») ou un retour à la ligne.
+            if ((key.action == KeyAction.Space && result.deleteBefore == 0) || key.action == KeyAction.Enter) learnFromTyping()
             syncAutoCapitalization()
         }
         applyState()
@@ -911,6 +1021,7 @@ class ClavierIme : InputMethodService() {
         // commitText remplace une éventuelle sélection, comme n'importe quelle saisie.
         currentInputConnection?.commitText(emoji, 1)
         keyboardPreferences.recentEmojis = RecentEmojis.add(keyboardPreferences.recentEmojis, emoji)
+        learnFromTyping()
         updateCorrectionBarVisibility()
     }
 
@@ -966,25 +1077,110 @@ class ClavierIme : InputMethodService() {
     }
 
     /**
-     * Story 1.9 : glissement vers la gauche depuis la touche retour arrière. Supprime le mot entier
-     * précédent (espaces/tabulations de fin comprises), ou, s'il n'y a pas de mot immédiatement
-     * avant le curseur (ponctuation, ou aucun texte), un seul caractère pour que le geste ne reste
-     * jamais sans effet.
+     * Story 1.9 : glissement vers la gauche depuis la touche retour arrière. Pendant le geste, rien
+     * n'est supprimé : la zone qui le serait (les [words] mots précédant le curseur de départ, espaces
+     * de fin compris) est sélectionnée, ce qui la surligne et place le curseur à sa gauche. Revenir vers
+     * la droite réduit la zone. La suppression a lieu au relâchement ([onDeleteSwipeRelease]).
+     * S'il n'y a pas de mot immédiatement avant le curseur (ponctuation), un seul caractère est visé
+     * pour que le geste ne reste jamais sans effet.
      */
-    private fun onDeleteWord() {
+    private fun onDeleteSwipeUpdate(words: Int) {
         val ic = currentInputConnection ?: return
+        if (!deleteSwipe.active) {
+            if (!beginDeleteSwipe(ic)) return
+        }
+        val length = deleteSwipeLength(words)
+        if (length == deleteSwipe.length) return
+        deleteSwipe.length = length
+        hapticFeedback.perform(hapticIntensity.cursorMoveFeedback()) // un cran par changement de zone, toujours faible
+        ic.setSelection(deleteSwipe.base - length, deleteSwipe.end)
+    }
+
+    /** Capture le point de départ du glissement ; faux si la position du curseur est inconnue. */
+    private fun beginDeleteSwipe(ic: InputConnection): Boolean {
         clearHighlightIfNeeded()
         pendingAutocorrection = null
-        val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
-        val toDelete = wordToDeleteBeforeCursor(before)
-        if (toDelete.isEmpty()) return
+        val extracted = ic.getExtractedText(ExtractedTextRequest(), 0)
+        val base: Int
+        val end: Int
+        if (extracted != null) {
+            base = extracted.startOffset + minOf(extracted.selectionStart, extracted.selectionEnd)
+            end = extracted.startOffset + maxOf(extracted.selectionStart, extracted.selectionEnd)
+        } else if (lastSelectionStart >= 0 && lastSelectionEnd >= 0) {
+            base = minOf(lastSelectionStart, lastSelectionEnd)
+            end = maxOf(lastSelectionStart, lastSelectionEnd)
+        } else {
+            return false
+        }
+        // Une éventuelle sélection de départ est incluse dans la zone supprimée (comme la touche retour arrière seule).
+        deleteSwipe.active = true
+        deleteSwipe.base = base
+        deleteSwipe.end = end
+        deleteSwipe.length = 0
+        deleteSwipe.before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
+        return true
+    }
+
+    /** Nombre de caractères couverts par [words] mots avant le point de départ (borné au texte connu). */
+    private fun deleteSwipeLength(words: Int): Int {
+        var total = 0
+        repeat(words) {
+            val remaining = deleteSwipe.before.substring(0, deleteSwipe.before.length - total)
+            val piece = wordToDeleteBeforeCursor(remaining)
+            if (piece.isEmpty()) return total
+            total += piece.length
+        }
+        return total
+    }
+
+    private fun onDeleteSwipeRelease() {
+        val ic = currentInputConnection
+        val swipe = deleteSwipe
+        if (!swipe.active || ic == null) {
+            swipe.active = false
+            return
+        }
+        swipe.active = false
+        if (swipe.length == 0) {
+            // Doigt revenu au point de départ : on annule, la sélection d'origine est rétablie.
+            ic.setSelection(swipe.base, swipe.end)
+            syncAutoCapitalization()
+            applyState()
+            return
+        }
         hapticFeedback.perform(hapticIntensity)
         onUserTyped()
-        ic.deleteSurroundingText(toDelete.length, 0)
+        ic.beginBatchEdit()
+        try {
+            ic.setSelection(swipe.end, swipe.end)
+            ic.deleteSurroundingText(swipe.length + (swipe.end - swipe.base), 0)
+        } finally {
+            ic.endBatchEdit()
+        }
         syncAutoCapitalization()
         applyState()
         updateCorrectionBarVisibility()
     }
+
+    private fun onDeleteSwipeCancel() {
+        val swipe = deleteSwipe
+        if (!swipe.active) return
+        swipe.active = false
+        currentInputConnection?.setSelection(swipe.base, swipe.end)
+        syncAutoCapitalization()
+        applyState()
+    }
+
+    /** État du glissement de suppression en cours (offsets absolus dans le champ). */
+    private class DeleteSwipeState {
+        var active = false
+        var base = 0 // début de la sélection de départ (= curseur s'il n'y en avait pas)
+        var end = 0 // fin de la sélection de départ
+        var length = 0 // caractères surlignés à gauche de [base]
+        var before = "" // texte précédant [base] au départ du geste
+    }
+
+    private val deleteSwipe = DeleteSwipeState()
 
     /** Portion de [textBeforeCursor], en partant de la fin, à supprimer pour la story 1.9. */
     private fun wordToDeleteBeforeCursor(textBeforeCursor: String): String {
@@ -1021,10 +1217,11 @@ class ClavierIme : InputMethodService() {
      * avant le curseur. Rien n'est proposé quand le panneau emoji est ouvert, pendant une dictée ou
      * une correction, avec une sélection, ou dans un champ sans suggestions.
      *
-     * Les mots ne sont proposés que pendant la frappe d'un mot (le curseur suit une lettre, et la
-     * lettre suivante, s'il y en a une, n'appartient pas au même mot) : après une espace ou une
-     * ponctuation, il n'y a pas de prédiction du mot suivant (le dictionnaire est fixe, sans
-     * apprentissage). L'emoji, lui, reste proposé après le mot suivi d'une espace (story 1.16).
+     * Pendant la frappe d'un mot (le curseur suit une lettre, et la lettre suivante, s'il y en a une,
+     * n'appartient pas au même mot), les mots sont ceux du dictionnaire (complétions, autocorrection).
+     * Après une espace, ce sont les mots qui suivent le plus souvent ce qui précède, d'après les
+     * habitudes d'écriture apprises sur l'appareil (le dictionnaire reste fixe). L'emoji du dernier
+     * mot reste proposé après lui (story 1.16) ; à défaut, l'emoji qui suit habituellement ce contexte.
      */
     private fun refreshSuggestions(textBeforeCursor: String) {
         if (!this::correctionBar.isInitialized) return
@@ -1035,13 +1232,44 @@ class ClavierIme : InputMethodService() {
         if (input == lastSuggestionInput) return
         lastSuggestionInput = input
 
-        val emoji = if (available) emojiSuggester.suggest(textBeforeCursor, language) else null
+        var emoji = if (available) emojiSuggester.suggest(textBeforeCursor, language) else null
+        var words = if (available) wordSuggestionsFor(textBeforeCursor, language) else emptyList()
+        if (available && words.isEmpty()) {
+            // Aucun mot en cours de frappe : mots (et emoji, si l'emoji du mot précédent n'en propose pas)
+            // qui suivent le plus souvent ce qui précède, d'après les habitudes d'écriture.
+            val prediction = predictNext(textBeforeCursor)
+            words = prediction.words.map { WordSuggestion(it, WordSuggestion.Kind.PREDICTION) }
+            if (emoji == null) emoji = prediction.emoji
+        }
         currentEmojiSuggestion = emoji
         correctionBar.setEmojiSuggestion(emoji)
-
-        val words = if (available) wordSuggestionsFor(textBeforeCursor, language) else emptyList()
         currentWordSuggestions = words
         correctionBar.setWordSuggestions(words)
+    }
+
+    /** Mots et emoji probables après [textBeforeCursor] (qui doit finir par une espace), selon ce que le clavier a appris. */
+    private fun predictNext(textBeforeCursor: String): NextWordModel.Prediction {
+        if (!learningAllowed || textBeforeCursor.isEmpty()) return NextWordModel.Prediction.NONE
+        // Curseur au milieu d'un mot : insérer un mot entier à cet endroit serait trompeur.
+        val after = currentInputConnection?.getTextAfterCursor(1, 0)?.firstOrNull()
+        if (after != null && isWordChar(after)) return NextWordModel.Prediction.NONE
+        return nextWords.model.predict(
+            textBeforeCursor,
+            truncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND,
+            maxWords = SuggestionStripView.WORD_SLOT_COUNT,
+        )
+    }
+
+    /**
+     * Apprend, pour la prédiction du mot suivant, le dernier mot (ou emoji) terminé avant le curseur.
+     * Appelé après une saisie de l'utilisateur uniquement (espace, retour à la ligne, suggestion ou emoji
+     * touchés), jamais pour du texte dicté ou collé, ni dans un champ sans suggestions.
+     */
+    private fun learnFromTyping() {
+        if (!learningAllowed || isRecording || correctionInProgress || hasSelection()) return
+        val before = currentInputConnection?.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString() ?: return
+        val repository = nextWords
+        if (repository.model.learn(before, truncated = before.length >= TEXT_CONTEXT_LOOKBEHIND)) repository.markDirty()
     }
 
     private fun wordSuggestionsFor(textBeforeCursor: String, language: KeyboardLanguage): List<WordSuggestion?> {
@@ -1076,6 +1304,10 @@ class ClavierIme : InputMethodService() {
         if (suggestion !in currentWordSuggestions) return
         if (isRecording || correctionInProgress || hasSelection()) return
         val ic = currentInputConnection ?: return
+        if (suggestion.kind == WordSuggestion.Kind.PREDICTION) {
+            insertPredictedWord(ic, suggestion.text)
+            return
+        }
         val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
         val typed = trailingWord(before)
         if (typed.isEmpty()) return
@@ -1093,6 +1325,20 @@ class ClavierIme : InputMethodService() {
         } else {
             null
         }
+        learnFromTyping() // le mot choisi (complété ou corrigé) est celui qui compte pour la prédiction
+        syncAutoCapitalization()
+        applyState()
+        updateCorrectionBarVisibility()
+    }
+
+    /** Touche sur un mot prédit : il s'ajoute au curseur (après l'espace déjà tapée), suivi d'une espace. */
+    private fun insertPredictedWord(ic: InputConnection, word: String) {
+        hapticFeedback.perform(hapticIntensity)
+        onUserTyped()
+        clearHighlightIfNeeded()
+        pendingAutocorrection = null
+        ic.commitText("$word ", 1)
+        learnFromTyping()
         syncAutoCapitalization()
         applyState()
         updateCorrectionBarVisibility()
@@ -1117,6 +1363,7 @@ class ClavierIme : InputMethodService() {
         val needsSpace = lastChar != null && lastChar.isLetterOrDigit()
         ic.commitText(if (needsSpace) " $emoji" else emoji, 1)
         keyboardPreferences.recentEmojis = RecentEmojis.add(keyboardPreferences.recentEmojis, emoji)
+        learnFromTyping()
         syncAutoCapitalization()
         applyState()
         updateCorrectionBarVisibility()
@@ -1689,8 +1936,13 @@ class ClavierIme : InputMethodService() {
         isRecording = true
         clearSuggestions()
         insertedPartialText = ""
-        correctionBar.voiceState = VoiceBarState.RECORDING
-        serviceScope.launch {
+        voiceFrozenLength = 0
+        voiceLastHypothesis = ""
+        // Le bouton n'affiche « Écoute… » qu'une fois le micro réellement ouvert : tant que le modèle
+        // se charge (premier usage, ou rechargé après libération), il affiche « Chargement… ».
+        correctionBar.voiceState = VoiceBarState.LOADING
+        // UNDISPATCHED : si le modèle est déjà chargé, aucune suspension, donc « Chargement… » n'apparaît pas.
+        voiceStartJob = serviceScope.launch(start = CoroutineStart.UNDISPATCHED) {
             try {
                 voiceEngine.ensureLoaded()
                 val recorder = VoiceRecorder(voiceEngine, serviceScope)
@@ -1705,6 +1957,8 @@ class ClavierIme : InputMethodService() {
                 }
                 voiceRecorder = recorder
                 recorder.start()
+                correctionBar.voiceState = VoiceBarState.RECORDING // le micro capte vraiment, à partir de maintenant
+                voiceStartJob = null
                 // Insertion au fur et à mesure : chaque nouvelle hypothèse remplace
                 // entièrement la précédente (le décodeur streaming peut réviser des
                 // mots déjà affichés), le texte final restera inséré par
@@ -1712,8 +1966,11 @@ class ClavierIme : InputMethodService() {
                 voicePartialJob = serviceScope.launch {
                     recorder.partialText.collect { partial -> applyVoicePartialText(partial) }
                 }
+            } catch (e: CancellationException) {
+                throw e // démarrage annulé par l'utilisateur : l'état a déjà été remis à zéro
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec du démarrage de l'enregistrement vocal", t)
+                voiceStartJob = null
                 isRecording = false
                 correctionBar.voiceState = VoiceBarState.IDLE
                 refreshPasteSuggestion()
@@ -1724,6 +1981,9 @@ class ClavierIme : InputMethodService() {
 
     private fun stopVoiceRecording() {
         val recorder = voiceRecorder ?: run {
+            // Arrêt demandé pendant le chargement : on abandonne le démarrage, rien n'a été enregistré.
+            voiceStartJob?.cancel()
+            voiceStartJob = null
             isRecording = false
             correctionBar.voiceState = VoiceBarState.IDLE
             return
@@ -1755,7 +2015,14 @@ class ClavierIme : InputMethodService() {
 
     /** Utilisé quand le clavier disparaît pendant un enregistrement (décision de sécurité, pas de fuite audio). */
     private fun cancelVoiceRecording() {
-        val recorder = voiceRecorder ?: return
+        val recorder = voiceRecorder ?: run {
+            // Clavier fermé pendant le chargement : on abandonne le démarrage.
+            voiceStartJob?.cancel()
+            voiceStartJob = null
+            isRecording = false
+            correctionBar.voiceState = VoiceBarState.IDLE
+            return
+        }
         voiceRecorder = null
         isRecording = false
         correctionBar.voiceState = VoiceBarState.IDLE
@@ -1775,48 +2042,81 @@ class ClavierIme : InputMethodService() {
     }
 
     /**
-     * Remplace le texte de la dernière hypothèse partielle insérée
-     * (voir [insertedPartialText]) par [finalText] ("null" pour un simple
-     * retrait, sans rien insérer à la place — cas de l'annulation).
+     * Fin de dictée : remplace la dernière hypothèse insérée par [finalText] ("null" pour un simple
+     * retrait, sans rien insérer à la place — cas de l'annulation). Même règle que pendant la dictée :
+     * si l'utilisateur a modifié le texte entre-temps, ce qu'il a fait n'est pas écrasé.
      */
     private fun replaceInsertedPartialText(finalText: String?) {
         val ic = currentInputConnection
-        if (ic == null) {
-            insertedPartialText = ""
-            return
+        if (ic != null) {
+            // Une sélection restante obligerait à insérer par-dessus : on la replie d'abord.
+            if (finalText != null && hasSelection() && lastSelectionEnd >= 0) {
+                ic.setSelection(lastSelectionEnd, lastSelectionEnd)
+            }
+            syncVoiceText(ic, finalText, isFinal = true)
         }
-        ic.beginBatchEdit()
-        if (insertedPartialText.isNotEmpty()) {
-            ic.deleteSurroundingText(insertedPartialText.length, 0)
-        }
-        if (!finalText.isNullOrBlank()) {
-            ic.commitText(finalText, 1)
-        }
-        ic.endBatchEdit()
-        if (!finalText.isNullOrBlank()) onUserTyped() // story 2.4 : texte final inséré par la dictée
         insertedPartialText = ""
+        voiceFrozenLength = 0
+        voiceLastHypothesis = ""
     }
 
     /**
-     * Insère l'hypothèse de transcription courante à la place de la
-     * précédente pendant l'enregistrement. Le décodeur en streaming peut
-     * réviser des mots déjà "affichés" au fil des mots suivants : on
-     * remplace donc toujours l'insertion précédente en bloc plutôt que de
-     * concaténer.
+     * Insère l'hypothèse de transcription courante à la place de la précédente pendant
+     * l'enregistrement. Le décodeur en streaming peut réviser des mots déjà « affichés » au fil des
+     * mots suivants : on remplace donc l'insertion précédente en bloc plutôt que de concaténer.
+     *
+     * Le champ reste modifiable pendant la dictée : voir [syncVoiceText].
      */
     private fun applyVoicePartialText(partial: String) {
-        if (partial == insertedPartialText) return
+        if (partial == voiceLastHypothesis) return
         val ic = currentInputConnection ?: return
+        syncVoiceText(ic, partial, isFinal = false)
+    }
+
+    /**
+     * Met le champ en accord avec l'hypothèse [hypothesis] (null = retrait seul, annulation).
+     *
+     * Le texte inséré par la dictée n'est supprimé que s'il se trouve toujours exactement avant le
+     * curseur. Sinon (curseur déplacé, frappe, suppression ou correction faite par l'utilisateur), ce
+     * qui a déjà été inséré lui appartient : on le « fige » et seule la suite de l'hypothèse, au-delà
+     * de la partie figée, est insérée à l'endroit où se trouve maintenant le curseur. Ainsi la reprise
+     * de la dictée n'efface rien d'imprévu et ne réinsère pas ce que l'utilisateur a supprimé.
+     * Tant qu'une sélection existe (l'utilisateur copie ou remplace du texte), la mise à jour attend.
+     */
+    private fun syncVoiceText(ic: InputConnection, hypothesis: String?, isFinal: Boolean) {
+        if (!isFinal && hasSelection()) return
+
+        val inserted = insertedPartialText
+        var intact = true
+        if (inserted.isNotEmpty()) {
+            val before = ic.getTextBeforeCursor(inserted.length, 0)?.toString() ?: return
+            intact = before == inserted
+        }
+        if (!intact) {
+            voiceFrozenLength = voiceLastHypothesis.length
+            insertedPartialText = ""
+        }
+        if (hypothesis == null) {
+            if (intact && inserted.isNotEmpty()) ic.deleteSurroundingText(inserted.length, 0)
+            return
+        }
+
         ic.beginBatchEdit()
-        if (insertedPartialText.isNotEmpty()) {
-            ic.deleteSurroundingText(insertedPartialText.length, 0)
+        try {
+            if (intact && inserted.isNotEmpty()) ic.deleteSurroundingText(inserted.length, 0)
+            var display = if (hypothesis.length > voiceFrozenLength) hypothesis.substring(voiceFrozenLength) else ""
+            if (voiceFrozenLength > 0 && display.startsWith(" ")) {
+                // Reprise après une modification : pas d'espace en trop si le texte avant le curseur finit déjà par un blanc.
+                val last = ic.getTextBeforeCursor(1, 0)?.lastOrNull()
+                if (last == null || last.isWhitespace()) display = display.trimStart(' ')
+            }
+            if (display.isNotEmpty()) ic.commitText(display, 1)
+            insertedPartialText = display
+            voiceLastHypothesis = hypothesis
+            if (display.isNotEmpty()) onUserTyped() // story 2.4 : du texte a été inséré par la dictée
+        } finally {
+            ic.endBatchEdit()
         }
-        if (partial.isNotEmpty()) {
-            ic.commitText(partial, 1)
-        }
-        ic.endBatchEdit()
-        if (partial.isNotEmpty()) onUserTyped() // story 2.4 : du texte a été inséré par la dictée
-        insertedPartialText = partial
     }
 
     private fun pressEnter() {
@@ -1843,6 +2143,12 @@ class ClavierIme : InputMethodService() {
 
         /** Nombre de caractères avant le curseur récupérés pour la majuscule automatique (1.2) et le dictionnaire local (1.3). */
         private const val TEXT_CONTEXT_LOOKBEHIND = 50
+
+        // Suggestions d'auto-remplissage en ligne : hauteur alignée sur la zone de la barre (36 dp, moins la marge).
+        private const val INLINE_SUGGESTION_HEIGHT_DP = 32f
+        private const val INLINE_SUGGESTION_MIN_WIDTH_DP = 48f
+        private const val INLINE_SUGGESTION_MAX_WIDTH_DP = 320f
+        private const val INLINE_SUGGESTION_MAX_COUNT = 5
 
         /** #5A7FD4 (couleur accent existante du clavier) avec transparence (alpha 0x55). */
         private const val HIGHLIGHT_COLOR = 0x555A7FD4

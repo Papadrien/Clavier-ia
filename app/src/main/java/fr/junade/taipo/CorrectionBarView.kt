@@ -11,6 +11,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.HorizontalScrollView
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -21,7 +22,16 @@ import fr.junade.taipo.dictionary.WordSuggestion
 enum class CorrectionBarState { HIDDEN, IDLE, LOADING, CORRECTING }
 
 /** États du bouton Vocal. */
-enum class VoiceBarState { IDLE, RECORDING, TRANSCRIBING }
+enum class VoiceBarState {
+    IDLE,
+
+    /** Appui reçu, modèle en cours de chargement : le micro n'écoute pas encore. */
+    LOADING,
+
+    /** Le micro capte réellement. */
+    RECORDING,
+    TRANSCRIBING,
+}
 
 /**
  * Barre au-dessus du clavier contenant les boutons Corriger et Vocal.
@@ -74,6 +84,13 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
      * la place de la bande de mots et du bouton Smart Clipboard tant qu'un collage est proposé.
      */
     private val pasteChip = TextView(context)
+
+    /**
+     * Suggestions d'auto-remplissage en ligne (gestionnaire de mots de passe) : des vues fournies par
+     * le service d'auto-remplissage, rangées en ligne et défilables, à la place de la bande de mots.
+     */
+    private val inlineRow = LinearLayout(context)
+    private val inlineScroll = HorizontalScrollView(context)
     private var pasteListener: OnPasteClickListener? = null
 
     /** Story 2.1 : bouton « menu », visible pendant la saisie, qui donne accès au bouton Smart Clipboard. */
@@ -85,6 +102,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     /** Croix de fermeture du panneau Smart Clipboard (à gauche de la barre) : visible seulement tant qu'il est ouvert. */
     private val closeButton = Button(context)
     private var clipboardPanelOpen = false
+    private var clipboardButtonActiveBackground: Boolean? = null
     private var clipboardCloseListener: (() -> Unit)? = null
     private var actionsMenuBackgroundExpanded: Boolean? = null
     private val zoneState = SuggestionZoneState()
@@ -108,7 +126,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     init {
         orientation = HORIZONTAL
         gravity = Gravity.END or Gravity.CENTER_VERTICAL
-        setBackgroundColor(Color.parseColor("#17181B"))
+        // Fond transparent : la barre laisse voir le fond commun du clavier (KeyboardBackgroundDrawable).
         val paddingH = dp(12f).toInt()
         val paddingV = dp(6f).toInt()
         setPadding(paddingH, paddingV, paddingH, paddingV)
@@ -162,6 +180,16 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         pasteChip.setOnClickListener { pasteListener?.onPasteClick() }
         pasteChip.visibility = View.GONE
 
+        inlineRow.orientation = HORIZONTAL
+        inlineRow.gravity = Gravity.CENTER_VERTICAL
+        inlineScroll.isHorizontalScrollBarEnabled = false
+        inlineScroll.overScrollMode = View.OVER_SCROLL_NEVER
+        inlineScroll.addView(
+            inlineRow,
+            FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT),
+        )
+        inlineScroll.visibility = View.GONE
+
         val zone = FrameLayout(context)
         zone.addView(suggestionStrip, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT))
         zone.addView(
@@ -171,6 +199,10 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         zone.addView(
             pasteChip,
             FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT, Gravity.START),
+        )
+        zone.addView(
+            inlineScroll,
+            FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT),
         )
         addView(zone, LayoutParams(0, dp(36f).toInt(), 1f).apply { marginEnd = dp(8f).toInt() })
 
@@ -220,8 +252,9 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     }
 
     /**
-     * Le panneau Smart Clipboard est ouvert (ou refermé) : la croix de fermeture apparaît à gauche de
-     * la barre, et les menus « ··· » (celui de gauche n'a plus d'objet) ainsi que la roue crantée se cachent.
+     * Le panneau Smart Clipboard est ouvert (ou refermé) : le bouton Smart Clipboard reste affiché,
+     * coloré (actif), seul dans la zone de gauche, et un nouvel appui dessus referme le panneau. Les
+     * menus « ··· » (celui de gauche n'a plus d'objet) ainsi que la roue crantée se cachent.
      */
     fun setClipboardPanelOpen(open: Boolean) {
         if (clipboardPanelOpen == open) return
@@ -241,6 +274,26 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             setPadding(side, paddingTop, side, paddingBottom)
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    /**
+     * Affiche les [views] d'auto-remplissage en ligne à la place des suggestions de mots ; une liste
+     * vide retire les suggestions et rend la zone aux suggestions habituelles.
+     */
+    fun setInlineSuggestions(views: List<View>) {
+        inlineRow.removeAllViews()
+        views.forEachIndexed { index, view ->
+            (view.parent as? android.view.ViewGroup)?.removeView(view)
+            inlineRow.addView(
+                view,
+                LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT).apply {
+                    if (index > 0) marginStart = dp(6f).toInt()
+                },
+            )
+        }
+        inlineScroll.scrollTo(0, 0)
+        zoneState.setInlineAvailable(views.isNotEmpty())
+        renderZone()
     }
 
     /** Story 1.16 : propose [emoji] dans le 4e emplacement de la bande de suggestions (null = aucun). */
@@ -324,15 +377,21 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             if (actionsVisible && state != CorrectionBarState.HIDDEN) View.VISIBLE else View.GONE
         actionsMenuButton.visibility =
             if (!clipboardPanelOpen && zoneState.actionsMenuButtonVisible(busy)) View.VISIBLE else View.GONE
-        closeButton.visibility = if (clipboardPanelOpen) View.VISIBLE else View.GONE
+        closeButton.visibility = View.GONE // remplacée par le bouton Smart Clipboard actif, qui referme le panneau
     }
 
     private fun renderZone() {
         renderActionButtons()
-        val words = zoneState.zone == SuggestionZoneState.Zone.WORDS
-        suggestionStrip.visibility = if (words) View.VISIBLE else View.GONE
-        clipboardButton.visibility = if (zoneState.zone == SuggestionZoneState.Zone.CLIPBOARD) View.VISIBLE else View.GONE
-        pasteChip.visibility = if (zoneState.zone == SuggestionZoneState.Zone.PASTE) View.VISIBLE else View.GONE
+        // Panneau ouvert : la zone ne montre que le bouton Smart Clipboard (actif), quel que soit l'état de saisie.
+        val zone = if (clipboardPanelOpen) SuggestionZoneState.Zone.CLIPBOARD else zoneState.zone
+        suggestionStrip.visibility = if (zone == SuggestionZoneState.Zone.WORDS) View.VISIBLE else View.GONE
+        clipboardButton.visibility = if (zone == SuggestionZoneState.Zone.CLIPBOARD) View.VISIBLE else View.GONE
+        pasteChip.visibility = if (zone == SuggestionZoneState.Zone.PASTE) View.VISIBLE else View.GONE
+        inlineScroll.visibility = if (zone == SuggestionZoneState.Zone.INLINE) View.VISIBLE else View.GONE
+        if (clipboardButtonActiveBackground != clipboardPanelOpen) {
+            clipboardButtonActiveBackground = clipboardPanelOpen
+            clipboardButton.background = roundedBackground(if (clipboardPanelOpen) "#5A7FD4" else "#3A3F47")
+        }
         menuButton.visibility =
             if (zoneState.menuButtonVisible && !clipboardPanelOpen) View.VISIBLE else View.GONE
         settingsButton.visibility =
@@ -405,6 +464,12 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
                 voiceButton.text = context.getString(R.string.voice_button_idle)
                 voiceButton.background = roundedBackground("#3A3F47")
                 voiceButton.alpha = 1f
+            }
+
+            VoiceBarState.LOADING -> {
+                voiceButton.text = context.getString(R.string.voice_button_loading)
+                voiceButton.background = roundedBackground("#3A3F47")
+                voiceButton.alpha = 0.6f
             }
 
             VoiceBarState.RECORDING -> {
