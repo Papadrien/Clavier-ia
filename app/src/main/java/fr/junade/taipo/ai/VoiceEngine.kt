@@ -26,7 +26,7 @@ import kotlinx.coroutines.withContext
  * simple pour sherpa-onnx sur Android natif (hors Flutter/React Native) :
  * l'intégration retenue ici n'utilise pas d'.aar mais les bibliothèques natives
  * dans app/src/main/jniLibs/<abi>/ et les sources Kotlin du binding JNI dans
- * com.k2fsa.sherpa.onnx (voir les README de ces deux dossiers).
+ * com.k2fsa.sherpa.onnx, réduites aux 5 fichiers utilisés (voir les README de ces deux dossiers).
  */
 class VoiceEngine(private val appContext: Context) {
 

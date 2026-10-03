@@ -6,6 +6,8 @@ import fr.junade.taipo.dictionary.DatabasePassphraseProvider
 import java.io.File
 import java.security.MessageDigest
 import java.security.SecureRandom
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import javax.crypto.Cipher
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -28,7 +30,8 @@ import kotlinx.coroutines.launch
  * Le chargement se fait hors du thread principal dès la construction : les mots appris pendant ce
  * temps sont conservés (le contenu du disque est fusionné dans le modèle). Les écritures sont
  * regroupées : le fichier est réécrit [SAVE_DELAY_MS] après la dernière modification, ou tout de suite
- * avec [flush].
+ * avec [flush] (en arrière-plan) ou [flushBlocking] (terminé au retour, pour l'arrêt du service : un
+ * `launch` asynchrone pourrait ne pas aboutir si le processus est tué juste après).
  */
 class NextWordRepository(
     context: Context,
@@ -43,8 +46,17 @@ class NextWordRepository(
     val model = NextWordModel()
 
     private val lock = Any()
+
+    // Sérialise les écritures du fichier (sauvegarde d'arrière-plan et flushBlocking) : le snapshot est
+    // pris sous ce verrou, donc l'écriture qui passe en dernier porte toujours l'état le plus récent.
+    // Ordre des verrous : writeLock puis lock, jamais l'inverse.
+    private val writeLock = Any()
     private var saveJob: Job? = null
     private var dirty = false
+
+    // Levé quand le chargement initial est terminé (réussi ou non). Tant qu'il ne l'est pas, on
+    // n'écrit pas : un modèle encore vide écraserait le fichier avant que son contenu soit fusionné.
+    private val loaded = CountDownLatch(1)
 
     init {
         scope.launch(Dispatchers.IO) { load() }
@@ -76,6 +88,19 @@ class NextWordRepository(
         if (pending) scope.launch(Dispatchers.IO) { save() }
     }
 
+    /**
+     * Comme [flush], mais l'écriture est terminée quand la fonction rend la main (fichier de quelques
+     * Ko : écriture directe). Pour `onDestroy` du service, où un `launch` risquerait d'être perdu.
+     * Si une sauvegarde d'arrière-plan est déjà en cours d'écriture, on attend sa fin.
+     */
+    fun flushBlocking() {
+        synchronized(lock) {
+            saveJob?.cancel()
+            saveJob = null
+        }
+        save()
+    }
+
     /** Efface tout ce qui a été appris, en mémoire et sur le disque. */
     fun clear() {
         synchronized(lock) {
@@ -88,35 +113,41 @@ class NextWordRepository(
     }
 
     private fun load() {
-        if (!file.exists()) return
         try {
-            val text = String(decrypt(file.readBytes()), Charsets.UTF_8)
-            model.mergeFrom(NextWordModel.parse(text))
-        } catch (e: Exception) {
-            AppLog.e(TAG, "Modèle de prédiction illisible : réinitialisation", e)
-            runCatching { file.delete() }
-            runCatching { keyProvider.reset() }
+            if (!file.exists()) return
+            try {
+                val text = String(decrypt(file.readBytes()), Charsets.UTF_8)
+                model.mergeFrom(NextWordModel.parse(text))
+            } catch (e: Exception) {
+                AppLog.e(TAG, "Modèle de prédiction illisible : réinitialisation", e)
+                runCatching { file.delete() }
+                runCatching { keyProvider.reset() }
+            }
+        } finally {
+            loaded.countDown()
         }
     }
 
     private fun save() {
-        val snapshot = synchronized(lock) {
-            if (!dirty) return
-            dirty = false
-            model.serialize()
+        // Chargement pas fini (quelques ms en pratique) : on attend un peu, sinon on renonce et les
+        // modifications restent en attente (dirty) pour la prochaine sauvegarde.
+        if (!loaded.await(LOAD_WAIT_MS, TimeUnit.MILLISECONDS)) {
+            AppLog.w(TAG, "Chargement du modèle de prédiction pas terminé : sauvegarde reportée")
+            return
         }
-        try {
-            val encrypted = encrypt(snapshot.toByteArray(Charsets.UTF_8))
-            // Écriture dans un fichier temporaire puis renommage : jamais de fichier à moitié écrit.
-            val temp = File(file.parentFile, "$FILE_NAME.tmp")
-            temp.writeBytes(encrypted)
-            if (!temp.renameTo(file)) {
-                file.delete()
-                check(temp.renameTo(file)) { "Impossible de remplacer le fichier du modèle" }
+        synchronized(writeLock) {
+            val snapshot = synchronized(lock) {
+                if (!dirty) return
+                dirty = false
+                model.serialize()
             }
-        } catch (e: Exception) {
-            synchronized(lock) { dirty = true }
-            AppLog.e(TAG, "Échec de la sauvegarde du modèle de prédiction", e)
+            try {
+                // Fichier temporaire puis renommage : jamais de fichier à moitié écrit.
+                writeAtomically(file, encrypt(snapshot.toByteArray(Charsets.UTF_8)))
+            } catch (e: Exception) {
+                synchronized(lock) { dirty = true }
+                AppLog.e(TAG, "Échec de la sauvegarde du modèle de prédiction", e)
+            }
         }
     }
 
@@ -155,6 +186,7 @@ class NextWordRepository(
         const val KEY_PREFS_NAME = "next_word_key"
         const val KEY_ALIAS = "taipo_next_word_key"
         private const val SAVE_DELAY_MS = 20_000L
+        private const val LOAD_WAIT_MS = 2_000L
         private const val TRANSFORMATION = "AES/GCM/NoPadding"
         private const val GCM_TAG_BITS = 128
         private const val IV_BYTES = 12

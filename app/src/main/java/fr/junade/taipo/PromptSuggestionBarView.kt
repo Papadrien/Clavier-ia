@@ -13,7 +13,7 @@ import fr.junade.taipo.dictionary.WordSuggestion
  * pilule de saisie et les touches. La bande est la même ([SuggestionStripView]) : 3 mots et 1 emoji,
  * emplacements réservés même vides pour que la hauteur du clavier ne change pas en tapant.
  *
- * Vue seule : le contenu vient de `ClavierIme.refreshSuggestions`, les appuis lui sont signalés.
+ * Vue seule : le contenu vient de `TaipoIme.refreshSuggestions`, les appuis lui sont signalés.
  * Même alignement que [PromptBarView] sur la zone des touches en classe de largeur large.
  */
 @SuppressLint("ViewConstructor")

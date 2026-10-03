@@ -51,6 +51,9 @@
     <string name="voice_no_model_selected">Modèle vocal incomplet : ouvrez « Modèle vocal » dans les paramètres et fournissez les 4 fichiers.</string>
     <string name="voice_permission_denied">Permission micro requise : appuyez à nouveau sur Vocal après l\'avoir accordée.</string>
     <string name="voice_error">Échec de la transcription : %1$s</string>
+    <string name="voice_mic_unavailable">Micro indisponible : il est peut-être utilisé par une autre application. Réessayez dans un instant.</string>
+    <string name="voice_mic_lost">Le micro ne répond plus : dictée interrompue.</string>
+    <string name="voice_backlog_overflow">La transcription ne suit plus le rythme de la parole : dictée interrompue, le texte déjà transcrit est conservé.</string>
 
     <string name="emoji_no_recent">Aucun emoji récent pour le moment.</string>
     <string name="emoji_category_recent">Récents</string>

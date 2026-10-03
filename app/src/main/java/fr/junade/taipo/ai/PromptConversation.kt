@@ -23,7 +23,7 @@ data class PromptMessage(
 
 /**
  * Story 5.1, phase 5.1-3 : la conversation du mode prompt (décisions 9, 11 et 14). Elle est portée
- * par `ClavierIme` et vit jusqu'à la fermeture du clavier ; la sortie du mode prompt ne l'efface pas.
+ * par `TaipoIme` et vit jusqu'à la fermeture du clavier ; la sortie du mode prompt ne l'efface pas.
  *
  * - Un seul échange peut être en cours, toujours le dernier.
  * - Un stop fige la réponse partielle déjà reçue : elle reste dans la bulle et dans l'historique

@@ -78,11 +78,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
 
     // Runtime d'inférence locale (voir décision ai-keyboard.md du 23/09/2026).
-    // "latest.release" est la syntaxe officielle documentée par Google
-    // (https://ai.google.dev/edge/litert-lm/android) ; à remplacer par un
-    // numéro de version figé dès le premier build réussi, pour la
-    // reproductibilité du build CI.
-    implementation("com.google.ai.edge.litertlm:litertlm-android:latest.release")
+    // Version figée à 0.17.1 dans gradle/libs.versions.toml (lot 1.2 de la revue) : plus de
+    // "latest.release", pour des builds CI reproductibles. Pour monter de version, modifier
+    // uniquement cette ligne du catalogue, puis rejouer correction, prompt et dictée sur appareil.
+    implementation(libs.litertlm.android)
 
     // Transcription vocale (sherpa-onnx, décision ai-keyboard.md du 23/09/2026).
     // Contrairement à LiteRT-LM, il n'existe pas de coordonnée Maven officielle

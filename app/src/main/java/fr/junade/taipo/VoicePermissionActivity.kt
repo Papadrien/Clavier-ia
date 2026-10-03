@@ -13,7 +13,7 @@ import androidx.core.app.ActivityCompat
  * Une IME (InputMethodService) ne peut pas afficher elle-même une boîte de
  * dialogue de permission runtime : celle-ci doit être rattachée à une
  * Activity. Décision permission micro refusée (23/09/2026) : bouton d'action
- * grisé, un nouveau clic relance cette demande — c'est ClavierIme qui lance
+ * grisé, un nouveau clic relance cette demande — c'est TaipoIme qui lance
  * cette Activity au clic sur le bouton Vocal si la permission n'est pas
  * encore accordée, et qui revérifie l'état au prochain affichage du clavier.
  */

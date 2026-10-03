@@ -71,7 +71,7 @@
             android:taskAffinity="" />
 
         <service
-            android:name=".ClavierIme"
+            android:name=".TaipoIme"
             android:label="@string/ime_name"
             android:permission="android.permission.BIND_INPUT_METHOD"
             android:exported="true">

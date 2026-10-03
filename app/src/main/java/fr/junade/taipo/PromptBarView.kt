@@ -28,7 +28,7 @@ import android.widget.TextView
  * - le bouton rond d'envoi, qui devient un bouton stop pendant la génération (décision 10).
  *
  * Vue seule : elle affiche ce qu'on lui donne et signale les appuis. Le texte du prompt vient de
- * `PromptInputBuffer` (phase 5.1-5), l'envoi (5.1-6) et le stop (5.1-7) sont branchés par `ClavierIme`. Pas de
+ * `PromptInputBuffer` (phase 5.1-5), l'envoi (5.1-6) et le stop (5.1-7) sont branchés par `TaipoIme`. Pas de
  * bouton Vocal : la dictée dans le prompt est hors périmètre de la 5.1 (décision 13).
  *
  * Même hauteur que [CorrectionBarView] (36 dp de contenu, 6 dp de marge verticale) pour que la

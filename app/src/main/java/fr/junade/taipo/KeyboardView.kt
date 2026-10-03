@@ -579,7 +579,7 @@ class KeyboardView(context: Context) : View(context) {
         val paddingV = padding + dp(POPUP_EXTRA_VERTICAL_PADDING_DP)
 
         // Place disponible au-dessus de la vue : la bulle peut recouvrir la barre d'actions qui la
-        // surmonte (le parent ne clippe pas ses enfants, voir ClavierIme), pas au-delà de la fenêtre.
+        // surmonte (le parent ne clippe pas ses enfants, voir TaipoIme), pas au-delà de la fenêtre.
         val headroom = headroomPx()
 
         // La bulle doit tenir dans cet espace : la hauteur des cellules s'adapte à la place

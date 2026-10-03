@@ -5,7 +5,7 @@
   (JNI sherpa-onnx, LiteRT-LM, SQLCipher conservés). Règles larges par prudence, non encore validées sur appareil.
 - **versionCode** : variable `VERSION_CODE`, sinon `GITHUB_RUN_NUMBER` (automatique sur GitHub Actions), sinon 1.
 - **Signature** : seulement si `TAIPO_KEYSTORE_PATH` est défini ; sinon l'APK release n'est pas signé.
-- **Gradle** : `org.gradle.caching=true`. Version de Room unique dans `gradle/libs.versions.toml`.
+- **Gradle** : `org.gradle.caching=true`. Versions de Room (unique) et de `litertlm-android` (figée à 0.17.1) dans `gradle/libs.versions.toml`.
 
 ## Secrets GitHub à créer pour signer (décision D6 : Play App Signing recommandé, clé d'**upload**)
 `TAIPO_KEYSTORE_BASE64` (keystore encodé en base64), `TAIPO_KEYSTORE_PASSWORD`, `TAIPO_KEY_ALIAS`, `TAIPO_KEY_PASSWORD`.

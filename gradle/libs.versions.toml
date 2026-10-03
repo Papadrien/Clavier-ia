@@ -1,13 +1,17 @@
-# Catalogue de versions (lot 2.1 de la revue, B5). Pour l'instant seul Room y figure : le plugin
-# Gradle et les artefacts androidx.room doivent avoir exactement la même version. Les autres
-# dépendances restent déclarées dans app/build.gradle.kts et pourront migrer ici progressivement.
+# Catalogue de versions (lot 2.1 de la revue, B5). Room : le plugin Gradle et les artefacts
+# androidx.room doivent avoir exactement la même version. litertlm : version figée (lot 1.2) pour
+# des builds reproductibles. Les autres dépendances restent déclarées dans app/build.gradle.kts
+# et pourront migrer ici progressivement.
 [versions]
 room = "2.8.4"
+# LiteRT-LM figé à 0.17.1 (compilé avec Kotlin 2.4.0, d'où le surclassement du KGP dans build.gradle.kts).
+litertlm = "0.17.1"
 
 [libraries]
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+litertlm-android = { module = "com.google.ai.edge.litertlm:litertlm-android", version.ref = "litertlm" }
 
 [plugins]
 room = { id = "androidx.room", version.ref = "room" }

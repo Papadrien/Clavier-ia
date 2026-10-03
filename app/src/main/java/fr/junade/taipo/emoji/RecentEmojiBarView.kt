@@ -12,7 +12,7 @@ import android.widget.TextView
 /**
  * Barre horizontale des emojis récents, au-dessus de la barre du haut du clavier dans les champs de
  * messagerie. Elle défile si les emojis dépassent la largeur ; toucher un emoji appelle le
- * listener (l'insertion au curseur est faite par `ClavierIme`). L'ordre affiché n'est mis à jour
+ * listener (l'insertion au curseur est faite par `TaipoIme`). L'ordre affiché n'est mis à jour
  * que par [setEmojis] : toucher un emoji ne réorganise pas la barre sous le doigt.
  */
 class RecentEmojiBarView(context: Context) : HorizontalScrollView(context) {

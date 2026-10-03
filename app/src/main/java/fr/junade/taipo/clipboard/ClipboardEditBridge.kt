@@ -1,7 +1,7 @@
 package fr.junade.taipo.clipboard
 
 /**
- * Story 2.6 : passerelle entre le clavier ([fr.junade.taipo.ClavierIme]) et l'écran de modification
+ * Story 2.6 : passerelle entre le clavier ([fr.junade.taipo.TaipoIme]) et l'écran de modification
  * ([fr.junade.taipo.ClipboardEditActivity]) pour la dernière copie, qui n'existe qu'en mémoire du
  * clavier (un élément épinglé, lui, est relu et réécrit dans la base par son identifiant).
  *
