@@ -173,7 +173,10 @@ class ClipHistoryRepositoryTest {
     @Test
     fun `le plafond de 20 entrees supprime les plus anciennes`() = runBlocking {
         repeat(ClipboardItems.MAX_HISTORY + 5) { repository.record("copie $it", now - 100_000 + it * 1_000L, false) }
-        val history = awaitHistory { it.size == ClipboardItems.MAX_HISTORY }
+        // On attend l'état final, pas seulement la bonne taille : l'historique réémis après la 20e copie a déjà
+        // 20 lignes (« copie 0 » à « copie 19 ») alors que les 5 dernières copies ne sont pas encore reflétées.
+        val newest = "copie ${ClipboardItems.MAX_HISTORY + 4}"
+        val history = awaitHistory { it.size == ClipboardItems.MAX_HISTORY && it.first().text == newest }
         assertEquals(ClipboardItems.MAX_HISTORY, history.size)
         assertEquals("copie ${ClipboardItems.MAX_HISTORY + 4}", history.first().text)
         assertEquals("copie 5", history.last().text)
