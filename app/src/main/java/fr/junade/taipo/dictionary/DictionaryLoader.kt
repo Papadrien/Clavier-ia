@@ -1,7 +1,10 @@
 package fr.junade.taipo.dictionary
 
 import android.content.Context
+import fr.junade.taipo.AppLog
+import fr.junade.taipo.BuildConfig
 import fr.junade.taipo.KeyboardLanguage
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Charge le [Dictionary] correspondant à une [KeyboardLanguage] depuis les
@@ -12,20 +15,37 @@ import fr.junade.taipo.KeyboardLanguage
  * Résultat mis en cache par langue : le fichier n'est lu qu'une fois par
  * processus IME (le dictionnaire est fixe, story 1.3 — pas besoin de
  * recharger tant que l'app n'est pas mise à jour).
+ *
+ * Lot 1.4 de la revue de code : le chargement (lecture + indexation de ~50 000 mots) est lent et ne
+ * doit jamais se faire sur le thread principal. [forLanguage] est bloquant : il est réservé au
+ * préchargement sur un thread d'arrière-plan. Le thread principal utilise [peek], qui ne bloque
+ * jamais (null tant que la langue n'est pas chargée).
  */
 object DictionaryLoader {
 
-    private val cache = mutableMapOf<KeyboardLanguage, Dictionary>()
+    private const val TAG = "DictionaryLoader"
 
-    @Synchronized
+    private val cache = ConcurrentHashMap<KeyboardLanguage, Dictionary>()
+
+    /** Dictionnaire déjà chargé pour [language], ou null. Ne bloque jamais et ne charge rien. */
+    fun peek(language: KeyboardLanguage): Dictionary? = cache[language]
+
+    /** Charge (si besoin) et renvoie le dictionnaire : bloquant, à appeler hors du thread principal. */
     fun forLanguage(context: Context, language: KeyboardLanguage): Dictionary {
         cache[language]?.let { return it }
-        val dictionary = Dictionary.withFrequencies(
-            readAsset(context, assetNameFor(language)),
-            inflectionsFor(language),
-        )
-        cache[language] = dictionary
-        return dictionary
+        synchronized(this) {
+            cache[language]?.let { return it }
+            val startNanos = System.nanoTime()
+            val dictionary = Dictionary.withFrequencies(
+                readAsset(context, assetNameFor(language)),
+                inflectionsFor(language),
+            )
+            cache[language] = dictionary
+            if (BuildConfig.DEBUG) {
+                AppLog.d(TAG, "dictionnaire $language chargé en ${(System.nanoTime() - startNanos) / 1_000_000} ms")
+            }
+            return dictionary
+        }
     }
 
     private fun assetNameFor(language: KeyboardLanguage): String = when (language) {

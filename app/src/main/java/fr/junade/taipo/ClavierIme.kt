@@ -57,6 +57,7 @@ import fr.junade.taipo.clipboard.ClipboardProvider
 import fr.junade.taipo.clipboard.ClipboardPreview
 import fr.junade.taipo.clipboard.ClipboardReader
 import fr.junade.taipo.clipboard.ClipboardSuggestionState
+import fr.junade.taipo.dictionary.Dictionary
 import fr.junade.taipo.dictionary.DictionaryLoader
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.emoji.EmojiPanelView
@@ -79,6 +80,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.abs
 
 class ClavierIme : InputMethodService() {
@@ -125,6 +127,11 @@ class ClavierIme : InputMethodService() {
     // Entrée de la dernière mise à jour des suggestions : évite de tout recalculer quand la même
     // mise à jour est demandée deux fois de suite (touche puis onUpdateSelection).
     private var lastSuggestionInput: SuggestionInput? = null
+
+    // Lot 1.4 : les mots du dictionnaire sont calculés hors du thread principal, « le dernier gagne » :
+    // chaque nouvelle demande annule la précédente, et un résultat périmé n'est jamais affiché.
+    private var suggestionJob: Job? = null
+    private var suggestionSequence = 0
 
     private data class SuggestionInput(val text: String, val language: KeyboardLanguage, val available: Boolean)
 
@@ -296,6 +303,7 @@ class ClavierIme : InputMethodService() {
         nextWords
         clipboardRepository
         clipHistoryRepository
+        preloadDictionaries()
         ClipboardEditBridge.onLastClipEdited = { text -> onLastClipEdited(text) } // story 2.6
         numberRowEnabled = keyboardPreferences.isNumberRowEnabled
         hapticIntensity = keyboardPreferences.hapticIntensity
@@ -553,8 +561,9 @@ class ClavierIme : InputMethodService() {
 
     /**
      * Fermeture du clavier (fenêtre masquée) : la conversation du mode prompt est effacée et la
-     * génération en cours interrompue (décision 14). Hypothèse à confirmer au premier build : un simple
-     * changement de champ, clavier affiché, ne masque pas la fenêtre et garde donc la conversation.
+     * génération en cours interrompue (décision 14). Un simple changement de champ, clavier
+     * affiché, ne masque pas la fenêtre et garde donc la conversation (comportement validé sur appareil
+     * le 03/10/2026).
      */
     override fun onWindowHidden() {
         super.onWindowHidden()
@@ -1844,26 +1853,104 @@ class ClavierIme : InputMethodService() {
         val input = SuggestionInput(textBeforeCursor, language, available)
         if (input == lastSuggestionInput) return
         lastSuggestionInput = input
+        cancelPendingSuggestions()
+        val sequence = suggestionSequence
 
         var emoji = if (available) emojiSuggester.suggest(textBeforeCursor, language) else null
-        var words = if (available) wordSuggestionsFor(textBeforeCursor, language) else emptyList()
-        if (available && words.isEmpty()) {
+        val typed = if (available) typedWordForSuggestions(textBeforeCursor) else ""
+        if (typed.isNotEmpty()) {
+            // Mot en cours de frappe : complétions et autocorrection du dictionnaire, calculées hors du
+            // thread principal. L'emoji s'affiche tout de suite, les mots dès que le calcul est fini.
+            val dictionary = DictionaryLoader.peek(language)
+            if (dictionary == null) {
+                // Dictionnaire pas encore chargé : pas de mots (onDictionariesLoaded relance le calcul).
+                publishSuggestions(emoji, List(Dictionary.SUGGESTION_LIMIT) { null })
+                return
+            }
+            val personalWords = personalDictionary.snapshot()
+            val inPromptMode = promptMode
+            currentWordSuggestions = emptyList() // un appui sur un mot périmé est ignoré
+            publishEmoji(emoji)
+            suggestionJob = serviceScope.launch(Dispatchers.Default) {
+                val started = System.nanoTime()
+                val words = dictionary.suggestionSlotsFor(typed, personalWords = personalWords)
+                if (BuildConfig.DEBUG) {
+                    AppLog.d(TAG, "suggestions de mots en ${(System.nanoTime() - started) / 1_000} µs")
+                }
+                withContext(Dispatchers.Main) {
+                    if (sequence == suggestionSequence && inPromptMode == promptMode) publishWords(words)
+                }
+            }
+            return
+        }
+
+        var words: List<WordSuggestion?> = emptyList()
+        if (available) {
             // Aucun mot en cours de frappe : mots (et emoji, si l'emoji du mot précédent n'en propose pas)
             // qui suivent le plus souvent ce qui précède, d'après les habitudes d'écriture.
             val prediction = predictNext(textBeforeCursor)
             words = prediction.words.map { WordSuggestion(it, WordSuggestion.Kind.PREDICTION) }
             if (emoji == null) emoji = prediction.emoji
         }
+        publishSuggestions(emoji, words)
+    }
+
+    /** Annule le calcul de suggestions en cours : son résultat, même terminé, ne sera pas affiché. */
+    private fun cancelPendingSuggestions() {
+        suggestionJob?.cancel()
+        suggestionJob = null
+        suggestionSequence++
+    }
+
+    private fun publishSuggestions(emoji: String?, words: List<WordSuggestion?>) {
+        publishEmoji(emoji)
+        publishWords(words)
+    }
+
+    private fun publishEmoji(emoji: String?) {
         currentEmojiSuggestion = emoji
-        currentWordSuggestions = words
         if (promptMode) {
             // La barre du haut est remplacée par celle du prompt : la bande s'affiche dans sa propre rangée.
             promptSuggestionBar.setEmoji(emoji)
-            promptSuggestionBar.setWords(words)
         } else {
             correctionBar.setEmojiSuggestion(emoji)
-            correctionBar.setWordSuggestions(words)
         }
+    }
+
+    private fun publishWords(words: List<WordSuggestion?>) {
+        currentWordSuggestions = words
+        if (promptMode) promptSuggestionBar.setWords(words) else correctionBar.setWordSuggestions(words)
+    }
+
+    /**
+     * Charge FR et EN en arrière-plan dès la création du service (lot 1.4) : lecture et indexation
+     * de ~50 000 mots par langue, jamais sur le thread principal.
+     */
+    private fun preloadDictionaries() {
+        serviceScope.launch(Dispatchers.IO) {
+            for (language in KeyboardLanguage.values()) {
+                try {
+                    DictionaryLoader.forLanguage(applicationContext, language)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (t: Throwable) {
+                    AppLog.w(TAG, "préchargement du dictionnaire $language", t)
+                }
+            }
+            withContext(Dispatchers.Main) { onDictionariesLoaded() }
+        }
+    }
+
+    /** Un dictionnaire vient d'être chargé : les suggestions déjà demandées sans lui sont recalculées. */
+    private fun onDictionariesLoaded() {
+        if (!isInputViewShown || !this::correctionBar.isInitialized) return
+        lastSuggestionInput = null
+        val before = if (promptMode) {
+            promptBuffer.textBeforeCursor.takeLast(TEXT_CONTEXT_LOOKBEHIND)
+        } else {
+            currentInputConnection?.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
+        }
+        refreshSuggestions(before)
     }
 
     /** Mots et emoji probables après [textBeforeCursor] (qui doit finir par une espace), selon ce que le clavier a appris. */
@@ -1904,19 +1991,20 @@ class ClavierIme : InputMethodService() {
         if (promptMode) promptBuffer.textAfterCursor.firstOrNull()
         else currentInputConnection?.getTextAfterCursor(1, 0)?.firstOrNull()
 
-    private fun wordSuggestionsFor(textBeforeCursor: String, language: KeyboardLanguage): List<WordSuggestion?> {
+    /** Mot en cours de frappe avant le curseur, ou vide s'il n'y en a pas (ou si le curseur est au milieu d'un mot). */
+    private fun typedWordForSuggestions(textBeforeCursor: String): String {
         val typed = trailingWord(textBeforeCursor)
-        if (typed.isEmpty()) return emptyList()
+        if (typed.isEmpty()) return ""
         // Curseur au milieu d'un mot : compléter le début du mot serait trompeur.
         val after = charAfterCursor()
-        if (after != null && isWordChar(after)) return emptyList()
-        return DictionaryLoader.forLanguage(applicationContext, language)
-            .suggestionSlotsFor(typed, personalWords = personalDictionary.snapshot())
+        if (after != null && isWordChar(after)) return ""
+        return typed
     }
 
     /** Vide la bande de suggestions (panneau emoji, dictée ou correction en cours). */
     private fun clearSuggestions() {
         lastSuggestionInput = null
+        cancelPendingSuggestions()
         currentEmojiSuggestion = null
         currentWordSuggestions = emptyList()
         if (!this::correctionBar.isInitialized) return
@@ -2066,9 +2154,16 @@ class ClavierIme : InputMethodService() {
      * dictionnaire personnel ne sont jamais corrigés et servent aussi de candidats de correction.
      */
     private fun dictionaryCorrectionFor(word: String): String? {
-        val dictionary = DictionaryLoader.forLanguage(applicationContext, controller.state.language)
-        val correction = dictionary.correctionFor(word, personalWords = personalDictionary.snapshot()) ?: return null
-        return if (correction == word) null else correction
+        // Lot 1.4 : jamais d'attente du chargement sur le thread principal. Tant que le dictionnaire de la
+        // langue n'est pas prêt (quelques instants après la création du service), pas d'autocorrection.
+        val dictionary = DictionaryLoader.peek(controller.state.language) ?: return null
+        val started = System.nanoTime()
+        val correction = dictionary.correctionFor(word, personalWords = personalDictionary.snapshot())
+        if (BuildConfig.DEBUG) {
+            AppLog.d(TAG, "autocorrection de \"$word\" en ${(System.nanoTime() - started) / 1_000} µs")
+        }
+        if (correction == null || correction == word) return null
+        return correction
     }
 
     private fun hasSelection(): Boolean {

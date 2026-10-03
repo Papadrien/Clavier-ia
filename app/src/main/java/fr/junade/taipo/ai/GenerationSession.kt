@@ -36,9 +36,9 @@ data class GenerationOutcome(val text: String, val completed: Boolean)
  * principal pour mettre à jour la vue.
  *
  * API LiteRT-LM utilisée en plus de celle de la correction : `Conversation.sendMessageAsync(String)`,
- * supposée renvoyer un `Flow<Message>` émettant des morceaux de réponse successifs (chaque `Message`
- * lu via `toString()`, comme pour `sendMessage`). NON VÉRIFIÉ sur litertlm-android 0.17.1 et non
- * compilé ici : à confirmer au premier build (voir [chunkText] si les morceaux sont cumulatifs).
+ * renvoyant un `Flow<Message>` de morceaux de réponse successifs (chaque `Message` lu via
+ * `toString()`, comme pour `sendMessage`). Validé à l'usage sur appareil (retour d'Adrien,
+ * 03/10/2026, litertlm-android 0.17.1) ; voir [chunkText] si l'API venait à émettre des cumuls.
  */
 class GenerationSession(private val host: LlmEngineHost) {
 
@@ -172,9 +172,10 @@ class GenerationSession(private val host: LlmEngineHost) {
     }
 
     /**
-     * Texte à ajouter à la réponse pour un message reçu du flux. On suppose des morceaux successifs
-     * (deltas). Si le premier build montre des morceaux cumulatifs (chaque message contient toute la
-     * réponse jusque-là), c'est ici qu'il faut ne garder que la partie nouvelle.
+     * Texte à ajouter à la réponse pour un message reçu du flux. Les morceaux sont des deltas
+     * (comportement validé sur appareil le 03/10/2026). Si une future version de LiteRT-LM émettait des
+     * morceaux cumulatifs (chaque message contenant toute la réponse jusque-là), c'est ici qu'il
+     * faudrait ne garder que la partie nouvelle.
      */
     private fun chunkText(message: String): String = message
 

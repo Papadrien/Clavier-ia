@@ -45,6 +45,23 @@ class Dictionary private constructor(
     private val candidateWords: Array<String> = frequencies.keys.toTypedArray()
     private val candidateFrequencies: LongArray = LongArray(candidateWords.size) { frequencies.getValue(candidateWords[it]) }
 
+    // Indices des candidats regroupés par longueur (ordre d'origine conservé dans chaque groupe) : la
+    // recherche par distance d'édition ne parcourt que les longueurs à ±distance du mot tapé, au lieu
+    // des ~50 000 mots (lot 1.4 de la revue de code). Le résultat est inchangé : un candidat dont la
+    // longueur s'écarte de plus que la distance autorisée était déjà écarté.
+    private val indicesByLength: Array<IntArray> = run {
+        val maxLength = candidateWords.maxOfOrNull { it.length } ?: 0
+        val counts = IntArray(maxLength + 1)
+        for (word in candidateWords) counts[word.length]++
+        val groups = Array(maxLength + 1) { IntArray(counts[it]) }
+        val filled = IntArray(maxLength + 1)
+        for (i in candidateWords.indices) {
+            val length = candidateWords[i].length
+            groups[length][filled[length]++] = i
+        }
+        groups
+    }
+
     // Contractions indexées sans leur apostrophe ("jai" -> "j'ai", "dont" -> "don't") : oublier
     // l'apostrophe est l'erreur la plus courante au clavier ; en cas de collision, la plus fréquente gagne.
     private val contractionsWithoutApostrophe: Map<String, String> = HashMap<String, String>().apply {
@@ -175,8 +192,9 @@ class Dictionary private constructor(
         var ambiguous = false
 
         fun consider(candidate: String, frequency: Long) {
-            if (Math.abs(candidate.length - lower.length) > allowedDistance) return
-            val distance = damerauLevenshtein(lower, candidate)
+            // Distance bornée : renvoie allowedDistance + 1 dès que le candidat est trop loin (même
+            // résultat que damerauLevenshtein pour tout candidat retenu, mais sans calculer le reste).
+            val distance = damerauLevenshteinBounded(lower, candidate, allowedDistance)
             if (distance > allowedDistance) return
             val isSwap = distance == 1 && isAdjacentSwap(lower, candidate)
             val better = distance < bestDistance || (
@@ -197,7 +215,11 @@ class Dictionary private constructor(
             }
         }
 
-        for (i in candidateWords.indices) consider(candidateWords[i], candidateFrequencies[i])
+        val minLength = maxOf(0, lower.length - allowedDistance)
+        val maxLength = minOf(indicesByLength.size - 1, lower.length + allowedDistance)
+        for (length in minLength..maxLength) {
+            for (i in indicesByLength[length]) consider(candidateWords[i], candidateFrequencies[i])
+        }
         for (candidate in personal.keys) if (candidate !in frequencies) consider(candidate, personalFrequency)
 
         val correction = best ?: return null
@@ -555,6 +577,53 @@ class Dictionary private constructor(
                 currentRow = recycled
             }
             return previousRow[b.length]
+        }
+
+        /**
+         * Même distance que [damerauLevenshtein] lorsqu'elle vaut au plus [maxDistance] ; sinon renvoie
+         * `maxDistance + 1` (valeur sentinelle « trop loin »), souvent sans avoir rempli toute la matrice.
+         *
+         * Arrêt anticipé : une ligne de la matrice ne dépend que des deux lignes précédentes (la
+         * troisième sert à l'inversion de lettres). Si le minimum de la ligne courante ET celui de la
+         * précédente dépassent [maxDistance], aucune valeur ultérieure ne peut redescendre dessous.
+         */
+        internal fun damerauLevenshteinBounded(a: String, b: String, maxDistance: Int): Int {
+            val tooFar = maxDistance + 1
+            if (a == b) return 0
+            if (Math.abs(a.length - b.length) > maxDistance) return tooFar
+            if (a.isEmpty()) return b.length
+            if (b.isEmpty()) return a.length
+
+            var twoRowsAgo = IntArray(b.length + 1)
+            var previousRow = IntArray(b.length + 1) { it }
+            var currentRow = IntArray(b.length + 1)
+            var previousRowMin = 0
+
+            for (i in 1..a.length) {
+                currentRow[0] = i
+                var rowMin = i
+                for (j in 1..b.length) {
+                    val cost = if (a[i - 1] == b[j - 1]) 0 else 1
+                    var value = minOf(
+                        currentRow[j - 1] + 1,
+                        previousRow[j] + 1,
+                        previousRow[j - 1] + cost,
+                    )
+                    if (i > 1 && j > 1 && a[i - 1] == b[j - 2] && a[i - 2] == b[j - 1]) {
+                        value = minOf(value, twoRowsAgo[j - 2] + 1)
+                    }
+                    currentRow[j] = value
+                    if (value < rowMin) rowMin = value
+                }
+                if (rowMin > maxDistance && previousRowMin > maxDistance) return tooFar
+                previousRowMin = rowMin
+                val recycled = twoRowsAgo
+                twoRowsAgo = previousRow
+                previousRow = currentRow
+                currentRow = recycled
+            }
+            val distance = previousRow[b.length]
+            return if (distance > maxDistance) tooFar else distance
         }
 
         /** Réapplique une majuscule initiale si [original] en avait une (ex. "Bnojour" -> "Bonjour"). */

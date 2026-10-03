@@ -17,8 +17,8 @@ import fr.junade.taipo.AppLog
  *
  * API LiteRT-LM Kotlin vérifiée le 24/09/2026 sur
  * https://github.com/google-ai-edge/LiteRT-LM/blob/main/docs/api/kotlin/getting_started.md
- * (Engine/EngineConfig/ConversationConfig/Conversation.sendMessage). Non testée dans cet
- * environnement (pas d'accès réseau pour compiler) : à vérifier par Adrien lors du premier build.
+ * (Engine/EngineConfig/ConversationConfig/Conversation.sendMessage). Validée à l'usage sur
+ * appareil (retour d'Adrien, 03/10/2026).
  */
 class CorrectionEngine(
     appContext: Context,

@@ -25,6 +25,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
+      - run: ./gradlew :app:dependencies --configuration debugRuntimeClasspath | grep litertlm
+
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
 

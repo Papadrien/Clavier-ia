@@ -26,8 +26,7 @@ import java.io.File
  *    fois : la correction la ferme donc avant de créer la sienne, et la génération la rouvre au prompt
  *    suivant en rejouant l'historique (voir [GenerationSession]). La fermeture du moteur la ferme aussi.
  *
- * Code non compilé dans l'environnement de développement (pas de compilateur Kotlin ni de réseau) :
- * à vérifier par Adrien au premier build.
+ * Compilé et validé à l'usage sur appareil (retour d'Adrien, 03/10/2026).
  */
 class LlmEngineHost(private val appContext: Context) {
 

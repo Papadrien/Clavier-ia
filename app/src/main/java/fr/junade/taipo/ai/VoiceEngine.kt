@@ -19,15 +19,14 @@ import kotlinx.coroutines.withContext
  * API vérifiée le 24/09/2026 sur le code source officiel :
  * https://github.com/k2-fsa/sherpa-onnx/blob/master/sherpa-onnx/kotlin-api/OnlineRecognizer.kt
  * (qui contient un exemple de configuration Nemotron streaming avec
- * exactement les 4 fichiers attendus ici). Non testée dans cet environnement
- * (pas de réseau, pas de JNI natif disponible ici) : à vérifier par Adrien au
- * premier build, une fois le .aar sherpa-onnx ajouté dans app/libs (voir
- * build.gradle.kts).
+ * exactement les 4 fichiers attendus ici). Configuration validée à l'usage sur
+ * appareil (retour d'Adrien, 03/10/2026).
  *
  * Contrairement à LiteRT-LM, il n'existe pas de coordonnée Maven officielle
  * simple pour sherpa-onnx sur Android natif (hors Flutter/React Native) :
- * l'intégration standard documentée par le projet consiste à télécharger un
- * .aar pré-compilé depuis ses releases GitHub et à le placer dans app/libs.
+ * l'intégration retenue ici n'utilise pas d'.aar mais les bibliothèques natives
+ * dans app/src/main/jniLibs/<abi>/ et les sources Kotlin du binding JNI dans
+ * com.k2fsa.sherpa.onnx (voir les README de ces deux dossiers).
  */
 class VoiceEngine(private val appContext: Context) {
 

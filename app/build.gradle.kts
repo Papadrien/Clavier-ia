@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("com.google.devtools.ksp")
-    id("androidx.room")
+    alias(libs.plugins.room)
 }
 
 android {
@@ -13,8 +13,35 @@ android {
         applicationId = "fr.junade.taipo"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
+        // Lot 2.1 : versionCode croissant en CI (VERSION_CODE, sinon le numéro d'exécution GitHub
+        // Actions) ; 1 en local. Play refuse un versionCode déjà publié.
+        versionCode = (System.getenv("VERSION_CODE") ?: System.getenv("GITHUB_RUN_NUMBER"))?.toIntOrNull() ?: 1
         versionName = "1.0.0"
+    }
+
+    // Signature release : lue dans des variables d'environnement (secrets CI), jamais dans le dépôt.
+    // Sans elles (build local), l'APK release n'est simplement pas signé. Voir docs/release.md.
+    val keystorePath = System.getenv("TAIPO_KEYSTORE_PATH")
+    if (keystorePath != null) {
+        signingConfigs {
+            create("release") {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("TAIPO_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("TAIPO_KEY_ALIAS")
+                keyPassword = System.getenv("TAIPO_KEY_PASSWORD")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            // R8 : réduction du code et des ressources. Les règles keep (JNI sherpa-onnx, LiteRT-LM,
+            // SQLCipher) sont dans proguard-rules.pro : à valider sur un APK release installé.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (keystorePath != null) signingConfig = signingConfigs.getByName("release")
+        }
     }
 
     compileOptions {
@@ -69,17 +96,14 @@ dependencies {
     //      dans app/src/main/java/com/k2fsa/sherpa/onnx/ (voir le README dans
     //      ce dossier), copiées depuis sherpa-onnx/kotlin-api du dépôt
     //      officiel. Pas de ligne implementation(...) à ajouter ici pour ça.
-    // Non fait ici (pas d'accès réseau dans cet environnement) : à faire par
-    // Adrien avant que ce module ne compile.
 
     // Dictionnaire personnel (story 1.4) : Room chiffré par SQLCipher.
     // La clé de chiffrement est générée aléatoirement et protégée par
     // l'Android Keystore (voir DatabasePassphraseProvider). Room reste à la
-    // même version que le plugin androidx.room du build.gradle.kts racine.
-    val roomVersion = "2.8.4"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion")
+    // même version que le plugin androidx.room (gradle/libs.versions.toml).
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
     // Fournit SupportOpenHelperFactory (passerelle Room <-> SQLCipher).
     // androidx.sqlite arrive déjà via room-runtime.
     implementation("net.zetetic:sqlcipher-android:4.18.0@aar")

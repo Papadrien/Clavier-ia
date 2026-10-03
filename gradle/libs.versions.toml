@@ -1,0 +1,13 @@
+# Catalogue de versions (lot 2.1 de la revue, B5). Pour l'instant seul Room y figure : le plugin
+# Gradle et les artefacts androidx.room doivent avoir exactement la même version. Les autres
+# dépendances restent déclarées dans app/build.gradle.kts et pourront migrer ici progressivement.
+[versions]
+room = "2.8.4"
+
+[libraries]
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+
+[plugins]
+room = { id = "androidx.room", version.ref = "room" }
