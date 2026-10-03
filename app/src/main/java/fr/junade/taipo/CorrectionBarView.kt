@@ -111,6 +111,10 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     val voiceButton = Button(context)
     private var listener: OnCorrectListener? = null
 
+    /** Story 5.1 : bouton « Générer » (icône), qui bascule la barre en mode prompt ; rangé avec Vocal et Corriger. */
+    private val generateButton = ImageButton(context)
+    private var generateListener: (() -> Unit)? = null
+
     var state: CorrectionBarState = CorrectionBarState.HIDDEN
         set(value) {
             field = value
@@ -206,6 +210,18 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         )
         addView(zone, LayoutParams(0, dp(36f).toInt(), 1f).apply { marginEnd = dp(8f).toInt() })
 
+        // Story 5.1 : « Générer », à gauche de Vocal. Icône seule (40 dp) pour ménager la place de la zone de gauche.
+        styleIconButton(generateButton, R.drawable.ic_generate)
+        generateButton.contentDescription = context.getString(R.string.generate_button_description)
+        generateButton.setOnClickListener {
+            collapseMenu()
+            generateListener?.invoke()
+        }
+        addView(
+            generateButton,
+            LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginEnd = dp(8f).toInt() },
+        )
+
         styleButton(voiceButton, "#3A3F47")
         voiceButton.setOnClickListener { /* geste réel géré via setOnTouchListener côté appelant */ }
         addView(
@@ -244,6 +260,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     /** Touche sur la roue crantée : ouvrir la page d'accueil de l'application. */
     fun setOnSettingsClickListener(listener: () -> Unit) {
         settingsListener = listener
+    }
+
+    /** Touche sur « Générer » : entrer en mode prompt (story 5.1). */
+    fun setOnGenerateClickListener(listener: () -> Unit) {
+        generateListener = listener
     }
 
     /** Touche sur la croix : le panneau Smart Clipboard doit se fermer. */
@@ -373,6 +394,9 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             state == CorrectionBarState.LOADING || state == CorrectionBarState.CORRECTING
         val actionsVisible = zoneState.actionButtonsVisible(busy)
         voiceButton.visibility = if (actionsVisible) View.VISIBLE else View.GONE
+        // « Générer » se range avec Vocal et Corriger, mais disparaît pendant une écoute, une
+        // transcription ou une correction (le moteur est partagé : pas de génération en parallèle).
+        generateButton.visibility = if (actionsVisible && !busy) View.VISIBLE else View.GONE
         correctButton.visibility =
             if (actionsVisible && state != CorrectionBarState.HIDDEN) View.VISIBLE else View.GONE
         actionsMenuButton.visibility =

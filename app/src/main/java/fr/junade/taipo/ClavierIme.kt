@@ -35,11 +35,17 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
 import fr.junade.taipo.ai.ChangedRange
+import fr.junade.taipo.ai.ChatExchange
 import fr.junade.taipo.ai.CorrectedSentenceMemory
 import fr.junade.taipo.ai.CorrectionDiff
 import fr.junade.taipo.ai.CorrectionEngine
 import fr.junade.taipo.ai.CorrectionPlanner
 import fr.junade.taipo.ai.CorrectionSafeguard
+import fr.junade.taipo.ai.FieldContext
+import fr.junade.taipo.ai.GenerationSession
+import fr.junade.taipo.ai.LlmEngineHost
+import fr.junade.taipo.ai.PromptConversation
+import fr.junade.taipo.ai.PromptMessageStatus
 import fr.junade.taipo.ai.ProtectedWords
 import fr.junade.taipo.ai.TextBlock
 import fr.junade.taipo.ai.VoiceEngine
@@ -131,6 +137,48 @@ class ClavierIme : InputMethodService() {
     /** Barre des emojis récents (champs de messagerie), au-dessus de la barre du haut. */
     private lateinit var recentEmojiBar: RecentEmojiBarView
 
+    /** Story 5.1 (phase 5.1-2) : zone de chat du mode prompt, premier enfant de la racine, masquée par défaut. */
+    private lateinit var chatZone: ChatZoneView
+
+    /** Story 5.1 (phase 5.1-4) : barre du haut en mode prompt, qui remplace `correctionBar` tant que le mode est actif. */
+    private lateinit var promptBar: PromptBarView
+
+    /** Vrai tant que le mode prompt est actif (entré par « Générer », quitté par la croix « annuler »). */
+    private var promptMode = false
+
+    /** Phase 5.1-5 : texte du prompt en cours de saisie ; en mode prompt, les frappes vont ici et non dans le champ de l'application. */
+    private val promptBuffer = PromptInputBuffer()
+
+    /**
+     * Rangée de suggestions de mots et d'emoji du mode prompt : la barre du haut, qui porte la bande
+     * habituelle, est remplacée par [promptBar] pendant le mode, la bande s'affiche donc ici.
+     */
+    private lateinit var promptSuggestionBar: PromptSuggestionBarView
+
+    /**
+     * Un prompt a déjà été envoyé : le bouton afficher/masquer le chat existe alors (décisions 5 et 14).
+     * Vrai dès l'envoi du premier prompt (phase 5.1-6), faux de nouveau à la fermeture du clavier.
+     */
+    private var chatAvailable = false
+
+    /** La zone de chat est affichée (bouton afficher/masquer) ; mémorisé d'une entrée à l'autre du mode prompt. */
+    private var chatShown = true
+
+    /**
+     * Phase 5.1-6 : conversation du mode prompt (prompts et réponses, partielles comprises). Portée
+     * par le service pour survivre à la sortie du mode prompt (croix « annuler », décision 14) ; vidée à
+     * la fermeture du clavier ([resetPromptConversation]).
+     */
+    private val promptConversation = PromptConversation()
+
+    // Session de génération créée au premier envoi seulement (elle s'enregistre auprès du moteur partagé).
+    private val generationSessionLazy = lazy { GenerationSession(llmHost) }
+    private val generationSession: GenerationSession get() = generationSessionLazy.value
+    private var generationJob: Job? = null
+
+    /** Décision 18 : chargement du modèle lancé à l'entrée du mode prompt, pendant que l'utilisateur saisit. */
+    private var preloadJob: Job? = null
+
     /** Vrai quand le champ courant est celui d'une messagerie, relu à chaque champ. */
     private var messagingField = false
 
@@ -144,7 +192,9 @@ class ClavierIme : InputMethodService() {
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    private val correctionEngine by lazy { CorrectionEngine(applicationContext) }
+    // Moteur LiteRT-LM unique, partagé par la correction et (épopée 5) la génération par prompt.
+    private val llmHost by lazy { LlmEngineHost(applicationContext) }
+    private val correctionEngine by lazy { CorrectionEngine(applicationContext, llmHost) }
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
     private val keyboardPreferences by lazy { KeyboardPreferences(applicationContext) }
     private val hapticFeedback by lazy { HapticFeedbackPlayer(applicationContext) }
@@ -269,12 +319,17 @@ class ClavierIme : InputMethodService() {
             override fun onDeleteSwipeCancel() = this@ClavierIme.onDeleteSwipeCancel()
         })
 
+        chatZone = ChatZoneView(this)
+        chatZone.visibility = View.GONE
+        chatZone.setOnAddTextClickListener { index -> onAddTextRequested(index) }
+
         recentEmojiBar = RecentEmojiBarView(this)
         recentEmojiBar.visibility = View.GONE
         recentEmojiBar.setOnEmojiClickListener { emoji -> onRecentEmojiBarTapped(emoji) }
 
         correctionBar = CorrectionBarView(this)
         correctionBar.setOnCorrectListener { onCorrectClicked() }
+        correctionBar.setOnGenerateClickListener { enterPromptMode() }
         correctionBar.voiceButton.setOnTouchListener { _, event -> onVoiceButtonTouch(event) }
         correctionBar.setOnEmojiSuggestionClickListener { onEmojiSuggestionTapped() }
         // Le même bouton ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme.
@@ -290,6 +345,31 @@ class ClavierIme : InputMethodService() {
         correctionBar.setOnSettingsClickListener { openAppHome() }
         correctionBar.setOnPasteClickListener { onPasteTapped() }
         correctionBar.setOnWordSuggestionClickListener { suggestion -> onWordSuggestionTapped(suggestion) }
+
+        // Barre du mode prompt (phase 5.1-4) ; stop et croix pendant la génération : phase 5.1-7.
+        promptBar = PromptBarView(this)
+        promptBar.modelLoading = llmHost.isLoading
+        llmHost.setLoadingListener { loading -> mainHandler.post { onModelLoadingChanged(loading) } }
+        promptBar.visibility = View.GONE
+        promptBar.setOnCancelClickListener { onPromptCancelRequested() }
+        promptBar.setOnSendClickListener {
+            hapticFeedback.perform(hapticIntensity)
+            onPromptSendRequested()
+        }
+        promptBar.setOnStopClickListener {
+            hapticFeedback.perform(hapticIntensity)
+            stopGeneration()
+        }
+        promptBar.setOnChatToggleClickListener {
+            chatShown = !chatShown
+            applyPromptModeViews()
+        }
+
+        // Suggestions de mots et d'emoji du prompt : mêmes actions que la bande de la barre du haut.
+        promptSuggestionBar = PromptSuggestionBarView(this)
+        promptSuggestionBar.visibility = View.GONE
+        promptSuggestionBar.setOnWordClickListener { suggestion -> onWordSuggestionTapped(suggestion) }
+        promptSuggestionBar.setOnEmojiClickListener { onEmojiSuggestionTapped() }
 
         emojiPanel = EmojiPanelView(this)
         emojiPanel.visibility = View.GONE
@@ -314,12 +394,28 @@ class ClavierIme : InputMethodService() {
             // Story 1.8 : la bulle d'accents des touches du haut est dessinée par le clavier
             // au-dessus de sa propre zone, par-dessus la barre d'actions.
             clipChildren = false
+            // Phase 5.1-2 : la zone de chat est le premier enfant, au-dessus de la barre d'emojis
+            // récents et de la barre du haut (décisions 3 et 12).
+            addView(
+                chatZone,
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
+            )
             addView(
                 recentEmojiBar,
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
             )
             addView(
                 correctionBar,
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
+            )
+            // Phase 5.1-4 : la barre du mode prompt prend la place de la barre du haut (masquée en dehors du mode).
+            addView(
+                promptBar,
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
+            )
+            // Suggestions du prompt, entre la pilule de saisie et les touches (masquées en dehors du mode).
+            addView(
+                promptSuggestionBar,
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
             )
             // Les panneaux (emoji, Smart Clipboard) recouvrent exactement le clavier (le clavier reste
@@ -357,6 +453,10 @@ class ClavierIme : InputMethodService() {
             )
         }
 
+        // Le plafond de la zone de chat (moitié de la hauteur du clavier) se mesure sur la pile
+        // clavier + panneaux, dernier enfant de la racine.
+        chatZone.heightReference = root.getChildAt(root.childCount - 1)
+        applyPromptModeViews() // la vue est recréée (rotation...) alors que le mode prompt peut être actif
         applyState()
         return root
     }
@@ -446,6 +546,19 @@ class ClavierIme : InputMethodService() {
         if (isRecording) {
             cancelVoiceRecording()
         }
+        // Changement de champ : la génération en cours est interrompue (partiel figé), la conversation reste.
+        stopGeneration()
+        exitPromptMode(resync = false)
+    }
+
+    /**
+     * Fermeture du clavier (fenêtre masquée) : la conversation du mode prompt est effacée et la
+     * génération en cours interrompue (décision 14). Hypothèse à confirmer au premier build : un simple
+     * changement de champ, clavier affiché, ne masque pas la fenêtre et garde donc la conversation.
+     */
+    override fun onWindowHidden() {
+        super.onWindowHidden()
+        resetPromptConversation()
     }
 
     // ------------------------------------------------------------------
@@ -536,7 +649,7 @@ class ClavierIme : InputMethodService() {
         super.onDestroy()
         nextWords.flush()
         dismissMessage()
-        correctionEngine.close()
+        llmHost.close()
         voiceEngine.close()
         mainHandler.removeCallbacks(longPressRunnable)
         mainHandler.removeCallbacks(pasteExpiryRunnable)
@@ -588,6 +701,14 @@ class ClavierIme : InputMethodService() {
     private fun onKeyPressed(key: Key) {
         hapticFeedback.perform(hapticIntensity)
         clearHighlightIfNeeded()
+
+        // Story 5.1 : en mode prompt, tout passe par le tampon du prompt, avec les mêmes traitements que
+        // le champ de l'application (autocorrection et annulation, double espace, apprentissage,
+        // suggestions) ; rien n'est écrit dans le champ de l'application.
+        if (promptMode) {
+            onPromptKeyPressed(key)
+            return
+        }
 
         // Story 1.15 : la touche emoji ouvre le panneau, sans saisir de texte.
         if (key.action == KeyAction.Emoji) {
@@ -1015,6 +1136,14 @@ class ClavierIme : InputMethodService() {
 
     private fun onEmojiSelected(emoji: String) {
         hapticFeedback.perform(hapticIntensity)
+        if (promptMode) {
+            pendingAutocorrection = null
+            promptBuffer.insert(emoji)
+            keyboardPreferences.recentEmojis = RecentEmojis.add(keyboardPreferences.recentEmojis, emoji)
+            learnFromTyping()
+            refreshPromptInput()
+            return
+        }
         onUserTyped()
         clearHighlightIfNeeded()
         pendingAutocorrection = null
@@ -1041,15 +1170,471 @@ class ClavierIme : InputMethodService() {
     private fun refreshRecentEmojiBar() {
         if (!this::recentEmojiBar.isInitialized) return
         val recents = keyboardPreferences.recentEmojis
-        val visible = messagingField && recents.isNotEmpty() &&
+        // Décision 12 : masquée en mode prompt, quelle que soit la règle habituelle.
+        val visible = !promptMode && messagingField && recents.isNotEmpty() &&
             !(this::emojiPanel.isInitialized && emojiPanel.visibility == View.VISIBLE) &&
             !clipboardPanelVisible()
         if (visible) recentEmojiBar.setEmojis(recents)
         recentEmojiBar.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
+    // ------------------------------------------------------------------
+    // Mode prompt (story 5.1, phase 5.1-4 : bascule de la barre, vue seule)
+    // ------------------------------------------------------------------
+
+    /** Touche sur « Générer » : la barre du haut devient la zone de saisie du prompt (décision 1). */
+    private fun enterPromptMode() {
+        if (promptMode || !this::promptBar.isInitialized) return
+        if (isRecording || correctionInProgress || generationBusy()) {
+            showMessage(getString(R.string.ai_action_busy))
+            return
+        }
+        hapticFeedback.perform(hapticIntensity)
+        if (this::emojiPanel.isInitialized) hideEmojiPanel(resync = false)
+        if (this::clipboardPanel.isInitialized) hideClipboardPanel(resync = false)
+        correctionBar.collapseMenu()
+        pendingAutocorrection = null // pas d'annulation d'autocorrection sur du texte du champ pendant le mode
+        promptBuffer.clear()
+        promptMode = true
+        clearSuggestions() // les suggestions du champ de l'application ne valent pas pour le prompt
+        refreshPromptInput()
+        // Conversation retrouvée à la réouverture du mode (décision 14) : bulles reconstruites, défilement en bas.
+        if (!promptConversation.isEmpty) chatZone.showMessages(promptConversation.messages)
+        applyPromptModeViews()
+        syncAutoCapitalization() // majuscule en début de prompt
+        applyState()
+        preloadModel()
+    }
+
+    /**
+     * Décision 18 : charge le modèle actif en arrière-plan dès l'entrée dans le mode prompt, pendant que
+     * l'utilisateur saisit son message. Sans modèle sélectionné, rien à faire (le pop-up viendra à
+     * l'envoi, comme avant). Un échec de chargement est seulement journalisé ici : [onPromptSendRequested]
+     * relance le chargement à l'envoi et affiche alors l'erreur. Si le modèle est déjà chargé, ou si un
+     * préchargement est déjà en cours, rien n'est relancé.
+     */
+    private fun preloadModel() {
+        if (preloadJob?.isActive == true) return
+        val model = modelPreferences.activeModel() ?: return
+        preloadJob = serviceScope.launch {
+            try {
+                llmHost.preload(model)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (t: Throwable) {
+                AppLog.w(TAG, "préchargement du modèle", t)
+            }
+        }
+    }
+
+    /**
+     * Décision 8.7 : le chargement du modèle commence ou se termine (préchargement, chargement à l'envoi
+     * ou rechargement après un changement de modèle). La barre du prompt affiche l'indicateur ; si un
+     * échange attend le moteur sans rien avoir reçu, sa bulle dit « Chargement du modèle… » puis revient à « … ».
+     */
+    private fun onModelLoadingChanged(loading: Boolean) {
+        if (this::promptBar.isInitialized) promptBar.modelLoading = loading
+        if (this::chatZone.isInitialized && promptConversation.isGenerating &&
+            promptConversation.messages.lastOrNull()?.response.isNullOrEmpty()
+        ) {
+            chatZone.setLastResponseText(
+                getString(if (loading) R.string.prompt_loading_model else R.string.prompt_response_pending),
+            )
+        }
+    }
+
+    /**
+     * Exclusion mutuelle correction / dictée / génération : vrai tant qu'une génération occupe le moteur,
+     * y compris le court instant où un stop attend le retour du moteur. Les boutons Corriger et Vocal sont
+     * dans la barre normale, masquée pendant le mode prompt : ce cas ne se présente donc qu'à la sortie
+     * d'un mode prompt dont la génération s'arrête (croix, changement de champ).
+     */
+    private fun generationBusy(): Boolean =
+        promptConversation.isGenerating || generationJob?.isActive == true
+
+    /**
+     * Touche sur la croix « annuler » : si une génération est en cours, elle est interrompue d'abord
+     * (partiel figé dans la bulle et l'historique, décision 11), puis le mode prompt est quitté. La
+     * conversation, elle, est conservée (décision 14).
+     */
+    private fun onPromptCancelRequested() {
+        stopGeneration()
+        exitPromptMode()
+    }
+
+    /** Croix « annuler » (ou fin de saisie) : retour à la barre normale ; la conversation est conservée (décision 14). */
+    private fun exitPromptMode(resync: Boolean = true) {
+        if (!promptMode) return
+        promptMode = false
+        promptBuffer.clear() // la croix « annuler » abandonne le prompt en cours de saisie (pas la conversation)
+        pendingAutocorrection = null
+        deleteSwipe.active = false
+        clearSuggestions() // celles du prompt disparaissent ; la barre normale recalcule les siennes
+        applyPromptModeViews()
+        if (resync) {
+            // La barre normale reprend l'état du champ.
+            syncAutoCapitalization()
+            applyState()
+            updateCorrectionBarVisibility()
+        }
+    }
+
+    /** Redessine le texte du prompt et son curseur dans la pilule. */
+    private fun refreshPromptInput() {
+        if (this::promptBar.isInitialized) promptBar.setInput(promptBuffer.text, promptBuffer.cursor)
+    }
+
+    /**
+     * Une touche pressée en mode prompt : mêmes traitements que dans le champ de l'application, appliqués
+     * au tampon du prompt au lieu de l'InputConnection : annulation d'autocorrection (suppression juste
+     * après une correction), autocorrection du dictionnaire à la fin d'un mot, double espace, apprentissage
+     * et suggestions. Le prompt est un champ de texte libre : ces règles ne dépendent pas du type du champ
+     * de l'application (seul l'apprentissage suit [learningAllowed], pour respecter un mode privé).
+     */
+    private fun onPromptKeyPressed(key: Key) {
+        if (key.action == KeyAction.Emoji) {
+            pendingAutocorrection = null
+            showEmojiPanel()
+            return
+        }
+        // Suppression juste après une autocorrection : on rétablit le mot tapé au lieu d'effacer un caractère.
+        if (key.action == KeyAction.Backspace && undoLastPromptAutocorrection()) {
+            afterPromptEdit()
+            return
+        }
+        pendingAutocorrection = null
+
+        // Le mot qui vient de se terminer est vérifié juste avant que la touche qui le termine soit traitée.
+        val autocorrection = if (isWordBoundaryKey(key)) applyPromptAutocorrection() else null
+
+        // Double espace : l'espace précédente devient « . » (la correction d'un mot, elle, passe avant).
+        val doubleSpaceContext = if (key.action == KeyAction.Space && autocorrection == null &&
+            FieldType.TEXT.doubleSpacePeriod
+        ) {
+            promptBuffer.textBeforeCursor.takeLast(2)
+        } else null
+
+        // Le contrôleur gère aussi Maj, le verrouillage des majuscules et la bascule des symboles.
+        val result = controller.onKey(key, doubleSpaceContext, SystemClock.uptimeMillis())
+        // La suppression précède l'insertion (double espace : on retire l'espace avant d'ajouter ". ").
+        if (result.deleteBefore > 0) {
+            if (key.action == KeyAction.Backspace) promptBuffer.backspace() else promptBuffer.deleteBefore(result.deleteBefore)
+        }
+        result.commit?.let { promptBuffer.insert(it) }
+        val boundary = result.commit
+        if (autocorrection != null && boundary != null) {
+            pendingAutocorrection = AppliedAutocorrection(autocorrection.original, autocorrection.corrected, boundary)
+        }
+        // Un mot vient d'être terminé par une espace (pas une conversion en « . »).
+        if (key.action == KeyAction.Space && result.deleteBefore == 0) learnFromTyping()
+
+        refreshPromptInput()
+        // Un seul recalcul : seule une touche qui change le texte réinitialise le choix manuel de Maj.
+        if (result.commit != null || result.deleteBefore > 0) syncAutoCapitalization()
+        applyState()
+        // Entrée envoie le prompt (la pilule est sur une seule ligne) : décision provisoire, point ouvert 6.2.
+        if (result.isEnter) onPromptSendRequested()
+    }
+
+    /** Après une modification du prompt hors frappe (suggestion touchée, correction annulée) : pilule, majuscule, suggestions, touches. */
+    private fun afterPromptEdit() {
+        refreshPromptInput()
+        syncAutoCapitalization()
+        applyState()
+    }
+
+    /** Autocorrection du dictionnaire sur le mot qui précède le curseur du prompt (même règle que dans le champ). */
+    private fun applyPromptAutocorrection(): AppliedAutocorrection? {
+        val word = trailingWord(promptBuffer.textBeforeCursor.takeLast(TEXT_CONTEXT_LOOKBEHIND))
+        if (word.isEmpty()) return null
+        val correction = dictionaryCorrectionFor(word) ?: return null
+        promptBuffer.deleteBefore(word.length)
+        promptBuffer.insert(correction)
+        return AppliedAutocorrection(original = word, corrected = correction)
+    }
+
+    /**
+     * Rétablit le mot tel que tapé si la dernière action était une autocorrection du prompt (mot corrigé
+     * et séparateur juste avant le curseur). Renvoie faux si rien n'a été annulé.
+     */
+    private fun undoLastPromptAutocorrection(): Boolean {
+        val pending = pendingAutocorrection ?: return false
+        pendingAutocorrection = null
+        val expected = pending.corrected + pending.boundary
+        if (!promptBuffer.textBeforeCursor.endsWith(expected)) return false // le texte ou le curseur a changé entre-temps
+        promptBuffer.deleteBefore(expected.length)
+        promptBuffer.insert(pending.original + pending.boundary)
+        return true
+    }
+
+    /** Touche sur un mot suggéré en mode prompt (mêmes règles que [onWordSuggestionTapped] dans le champ). */
+    private fun onPromptWordSuggestionTapped(suggestion: WordSuggestion) {
+        if (suggestion !in currentWordSuggestions) return
+        if (suggestion.kind == WordSuggestion.Kind.PREDICTION) {
+            hapticFeedback.perform(hapticIntensity)
+            pendingAutocorrection = null
+            promptBuffer.insert("${suggestion.text} ")
+            learnFromTyping()
+            afterPromptEdit()
+            return
+        }
+        val typed = trailingWord(promptBuffer.textBeforeCursor)
+        if (typed.isEmpty()) return
+        hapticFeedback.perform(hapticIntensity)
+        if (suggestion.kind != WordSuggestion.Kind.TYPED) promptBuffer.deleteBefore(typed.length)
+        promptBuffer.insert(if (suggestion.kind == WordSuggestion.Kind.TYPED) " " else "${suggestion.text} ")
+        pendingAutocorrection = if (suggestion.replacesOnSpace) {
+            AppliedAutocorrection(original = typed, corrected = suggestion.text, boundary = " ")
+        } else {
+            null
+        }
+        learnFromTyping() // le mot choisi (complété ou corrigé) est celui qui compte pour la prédiction
+        afterPromptEdit()
+    }
+
+    /** Glissement de suppression en mode prompt : mots visés calculés sur le tampon, suppression au relâchement. */
+    private fun onPromptDeleteSwipeUpdate(words: Int) {
+        if (!deleteSwipe.active) {
+            deleteSwipe.active = true
+            deleteSwipe.base = promptBuffer.cursor
+            deleteSwipe.end = promptBuffer.cursor
+            deleteSwipe.length = 0
+            deleteSwipe.before = promptBuffer.textBeforeCursor.takeLast(TEXT_CONTEXT_LOOKBEHIND)
+        }
+        val length = deleteSwipeLength(words)
+        if (length == deleteSwipe.length) return
+        deleteSwipe.length = length
+        hapticFeedback.perform(hapticIntensity.cursorMoveFeedback()) // un cran par changement de zone
+    }
+
+    private fun onPromptDeleteSwipeRelease() {
+        val swipe = deleteSwipe
+        if (!swipe.active) return
+        swipe.active = false
+        if (swipe.length == 0) return
+        hapticFeedback.perform(hapticIntensity)
+        promptBuffer.deleteBefore(swipe.length)
+        refreshPromptInput()
+        syncAutoCapitalization()
+        applyState()
+    }
+
+    // ------------------------------------------------------------------
+    // Envoi du prompt et réponse progressive (story 5.1, phase 5.1-6)
+    // ------------------------------------------------------------------
+
+    /**
+     * Bouton d'envoi ou touche Entrée : envoie le prompt au modèle (conversation continue, décision 9) et
+     * déploie la zone de chat dès l'envoi (décision 3). Sans effet si le prompt est vide ou si une réponse
+     * est déjà en cours (le stop vient en 5.1-7). Sans modèle sélectionné, le prompt reste dans la saisie.
+     */
+    private fun onPromptSendRequested() {
+        if (!promptMode || promptBuffer.isBlank || promptConversation.isGenerating) return
+        if (isRecording || correctionInProgress) { // ne devrait pas arriver : leurs boutons sont masqués en mode prompt
+            showMessage(getString(R.string.ai_action_busy))
+            return
+        }
+        // Après un stop, l'appel au moteur met un court instant à rendre la main : pas de nouvel envoi avant.
+        if (generationJob?.isActive == true) return
+        val model = modelPreferences.activeModel()
+        if (model == null) {
+            showMessage(getString(R.string.correction_no_model_selected))
+            return
+        }
+        val prompt = promptBuffer.text.trim()
+        val history = promptConversation.history()
+        // Story 5.2 : le texte du champ de l'application, joint seulement s'il a changé depuis ce que le modèle
+        // a déjà reçu (décision 15), tronqué par le début s'il est trop long (décision 16).
+        val captured = currentInputConnection?.let { captureFieldText(it) }
+        val prepared = FieldContext.prepare(captured?.text)
+        val fieldContext = promptConversation.contextToAttach(prepared)
+        // Diagnostic (point ouvert 6.1) : seulement des longueurs, jamais le texte.
+        AppLog.i(
+            TAG,
+            "contexte du champ: capturé=${captured?.text?.length ?: 0} car. préparé=${prepared?.length ?: 0} car. " +
+                "joint=${fieldContext != null} historique=${history.size} échange(s)",
+        )
+        if (!promptConversation.start(prompt, fieldContext, getString(R.string.prompt_field_context_header))) return
+
+        // Le dernier mot du prompt est terminé par l'envoi (comme par Entrée dans le champ).
+        learnFromTyping(terminator = "\n")
+        promptBuffer.clear()
+        pendingAutocorrection = null
+        chatAvailable = true
+        chatShown = true
+        chatZone.showMessages(promptConversation.messages) // prompt de l'utilisateur + bulle de réponse « … »
+        // Le préchargement (décision 18) n'est pas fini : la génération attend le moteur, la bulle l'indique.
+        if (llmHost.isLoading) chatZone.setLastResponseText(getString(R.string.prompt_loading_model))
+        refreshPromptInput()
+        applyPromptModeViews()
+        syncAutoCapitalization() // majuscule en début du prochain prompt
+        applyState()
+        // Ce qui part au modèle : le prompt, précédé du texte du champ s'il y en a un à joindre.
+        launchGeneration(model, history, promptConversation.messages.last().modelPrompt)
+    }
+
+    /**
+     * Lance la génération : la réponse arrive par morceaux (thread d'arrière-plan, on rebascule sur le
+     * thread principal) et s'affiche au fil de l'eau dans la dernière bulle. Le texte du champ de
+     * l'application n'est jamais touché (insertion par « Ajouter le texte » : story 5.3).
+     */
+    private fun launchGeneration(model: AiModel, history: List<ChatExchange>, prompt: String) {
+        generationJob = serviceScope.launch {
+            try {
+                val outcome = generationSession.send(
+                    model = model,
+                    history = history,
+                    prompt = prompt,
+                    onLoading = { mainHandler.post { onGenerationLoading() } },
+                    onChunk = { chunk -> mainHandler.post { onGenerationChunk(chunk) } },
+                )
+                // Texte final du moteur ; réponse partielle conservée si la génération a été interrompue.
+                // Sans effet si un stop ou la croix ont déjà figé l'échange (5.1-7).
+                promptConversation.finish(outcome.text, outcome.completed)
+                promptConversation.messages.lastOrNull()?.let { chatZone.updateLastResponse(it) }
+                applyPromptModeViews() // le bouton rond redevient « envoyer »
+            } catch (e: CancellationException) {
+                throw e // fermeture du clavier : la conversation est déjà vidée
+            } catch (t: Throwable) {
+                AppLog.e(TAG, "Échec de la génération", t)
+                onGenerationFailed(t)
+            }
+        }
+    }
+
+    /**
+     * Story 5.3, bouton « Ajouter le texte » sous la réponse de l'échange [index] (décision 7) : insère la
+     * réponse à la position du curseur de l'application, sans rien remplacer. Une sélection dans le champ
+     * est d'abord repliée à sa fin, pour que le texte sélectionné reste en place. Rien n'est appris de ce
+     * texte, et le mode prompt reste ouvert. Le texte du champ ayant changé, le prompt suivant le renverra au
+     * modèle (décision 15).
+     */
+    private fun onAddTextRequested(index: Int) {
+        val message = promptConversation.messages.getOrNull(index) ?: return
+        if (message.status == PromptMessageStatus.IN_PROGRESS) return
+        val text = message.response.trim()
+        if (text.isEmpty()) return
+        val ic = currentInputConnection
+        if (ic == null) {
+            showMessage(getString(R.string.prompt_add_text_unavailable))
+            return
+        }
+        hapticFeedback.perform(hapticIntensity)
+        clearHighlightIfNeeded() // un surlignage de correction ne vaut plus une fois le texte modifié
+        pendingAutocorrection = null
+        var toInsert = text
+        val selected = ic.getSelectedText(0)?.toString().orEmpty()
+        if (selected.isNotEmpty() || (lastSelectionStart >= 0 && lastSelectionEnd >= 0 && lastSelectionStart != lastSelectionEnd)) {
+            if (lastSelectionStart >= 0 && lastSelectionEnd >= 0) {
+                val end = maxOf(lastSelectionStart, lastSelectionEnd)
+                ic.setSelection(end, end) // le texte sélectionné reste en place, l'ajout vient après
+            } else {
+                toInsert = selected + text // position inconnue : on remet le texte sélectionné, puis l'ajout
+            }
+        }
+        ignoreSelectionUpdatesUntil = SystemClock.uptimeMillis() + SELF_EDIT_GRACE_MS
+        ic.commitText(toInsert, 1)
+    }
+
+    /** Le modèle doit être rechargé depuis le disque : la bulle l'indique en attendant le premier morceau. */
+    private fun onGenerationLoading() {
+        if (!promptConversation.isGenerating) return
+        if (promptConversation.messages.lastOrNull()?.response.isNullOrEmpty()) {
+            chatZone.setLastResponseText(getString(R.string.prompt_loading_model))
+        }
+    }
+
+    /** Un morceau de réponse est arrivé : il s'ajoute à la conversation et à la dernière bulle. */
+    private fun onGenerationChunk(chunk: String) {
+        if (!promptConversation.isGenerating) return // morceau en retard (clavier refermé entre-temps)
+        promptConversation.appendResponse(chunk)
+        promptConversation.messages.lastOrNull()?.let { chatZone.updateLastResponse(it) }
+    }
+
+    /**
+     * Échec du moteur (modèle absent, échec d'inférence). Avec un début de réponse, il est conservé tel
+     * quel dans la bulle. Sans rien reçu, l'échange est retiré et le prompt retourne dans la saisie
+     * (si elle est vide et que le mode prompt est actif) pour pouvoir être renvoyé.
+     */
+    private fun onGenerationFailed(t: Throwable) {
+        // Échec arrivé après un stop ou la croix : l'échange est déjà figé, rien à signaler.
+        if (!promptConversation.isGenerating) return
+        val partial = promptConversation.messages.lastOrNull()?.response.orEmpty()
+        if (partial.isNotBlank()) {
+            promptConversation.interrupt()
+            promptConversation.messages.lastOrNull()?.let { chatZone.updateLastResponse(it) }
+        } else {
+            val restored = promptConversation.discardInProgress()
+            if (promptConversation.isEmpty) chatAvailable = false
+            chatZone.showMessages(promptConversation.messages)
+            if (restored != null && promptMode && promptBuffer.isBlank) {
+                promptBuffer.replaceAll(restored)
+                refreshPromptInput()
+                syncAutoCapitalization()
+            }
+        }
+        applyPromptModeViews() // le bouton rond redevient « envoyer »
+        showMessage(getString(R.string.generation_error, t.message ?: t.javaClass.simpleName))
+    }
+
+    /**
+     * Bouton stop ou croix « annuler » pendant une génération (décisions 10 et 11) : l'appel au moteur est
+     * interrompu, la réponse partielle déjà affichée est figée dans la bulle et dans l'historique, et le
+     * bouton rond redevient « envoyer » sans attendre le retour du moteur. Les morceaux arrivés ensuite
+     * sont ignorés (voir [onGenerationChunk]). La conversation est conservée ; la session de génération
+     * referme sa conversation LiteRT-LM et la rouvre au prompt suivant en rejouant l'historique.
+     * Sans effet s'il n'y a pas de génération en cours.
+     */
+    private fun stopGeneration() {
+        if (!promptConversation.isGenerating) return
+        if (generationSessionLazy.isInitialized()) generationSession.stop()
+        promptConversation.interrupt()
+        promptConversation.messages.lastOrNull()?.let { chatZone.updateLastResponse(it) }
+        applyPromptModeViews()
+    }
+
+    /**
+     * Fermeture du clavier : interrompt la génération, ferme la conversation du moteur et efface la
+     * conversation affichée (décisions 9 et 14).
+     */
+    private fun resetPromptConversation() {
+        if (generationSessionLazy.isInitialized()) generationSession.reset()
+        generationJob?.cancel()
+        generationJob = null
+        promptConversation.clear()
+        chatAvailable = false
+        chatShown = true
+        if (this::chatZone.isInitialized) chatZone.clearBubbles()
+        applyPromptModeViews()
+    }
+
+    /**
+     * Applique l'état du mode prompt aux vues : barre du prompt à la place de la barre du haut, barre
+     * d'emojis récents masquée (décision 12), zone de chat selon le bouton afficher/masquer.
+     */
+    private fun applyPromptModeViews() {
+        if (!this::promptBar.isInitialized || !this::correctionBar.isInitialized) return
+        correctionBar.visibility = if (promptMode) View.GONE else View.VISIBLE
+        promptBar.visibility = if (promptMode) View.VISIBLE else View.GONE
+        if (this::promptSuggestionBar.isInitialized) {
+            promptSuggestionBar.visibility = if (promptMode) View.VISIBLE else View.GONE
+        }
+        refreshRecentEmojiBar()
+        val chatVisible = promptMode && chatAvailable && chatShown
+        if (this::chatZone.isInitialized) chatZone.visibility = if (chatVisible) View.VISIBLE else View.GONE
+        promptBar.setChatToggleVisible(promptMode && chatAvailable)
+        promptBar.setChatShown(chatVisible)
+        promptBar.generating = promptConversation.isGenerating // bouton rond : stop pendant la génération (décision 10)
+    }
+
     private fun onEmojiBackspace() {
         hapticFeedback.perform(hapticIntensity)
+        if (promptMode) {
+            pendingAutocorrection = null
+            promptBuffer.backspace()
+            refreshPromptInput()
+            return
+        }
         onUserTyped()
         clearHighlightIfNeeded()
         pendingAutocorrection = null
@@ -1063,6 +1648,14 @@ class ClavierIme : InputMethodService() {
      * éventuelle sélection et respecte les caractères composés du champ.
      */
     private fun onCursorMoved(steps: Int) {
+        if (promptMode) {
+            hapticFeedback.perform(hapticIntensity.cursorMoveFeedback())
+            promptBuffer.moveCursor(steps)
+            refreshPromptInput()
+            syncAutoCapitalization()
+            applyState()
+            return
+        }
         val ic = currentInputConnection ?: return
         clearHighlightIfNeeded()
         pendingAutocorrection = null
@@ -1085,6 +1678,10 @@ class ClavierIme : InputMethodService() {
      * pour que le geste ne reste jamais sans effet.
      */
     private fun onDeleteSwipeUpdate(words: Int) {
+        if (promptMode) {
+            onPromptDeleteSwipeUpdate(words)
+            return
+        }
         val ic = currentInputConnection ?: return
         if (!deleteSwipe.active) {
             if (!beginDeleteSwipe(ic)) return
@@ -1134,6 +1731,10 @@ class ClavierIme : InputMethodService() {
     }
 
     private fun onDeleteSwipeRelease() {
+        if (promptMode) {
+            onPromptDeleteSwipeRelease()
+            return
+        }
         val ic = currentInputConnection
         val swipe = deleteSwipe
         if (!swipe.active || ic == null) {
@@ -1165,6 +1766,10 @@ class ClavierIme : InputMethodService() {
     private fun onDeleteSwipeCancel() {
         val swipe = deleteSwipe
         if (!swipe.active) return
+        if (promptMode) {
+            swipe.active = false
+            return
+        }
         swipe.active = false
         currentInputConnection?.setSelection(swipe.base, swipe.end)
         syncAutoCapitalization()
@@ -1206,6 +1811,13 @@ class ClavierIme : InputMethodService() {
      * modifié par la correction IA / la saisie vocale).
      */
     private fun syncAutoCapitalization() {
+        if (promptMode) {
+            // En mode prompt, la majuscule et les suggestions suivent le texte du prompt.
+            val before = promptBuffer.textBeforeCursor.takeLast(TEXT_CONTEXT_LOOKBEHIND)
+            controller.applyTextContext(before)
+            refreshSuggestions(before)
+            return
+        }
         val ic = currentInputConnection ?: return
         val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
         controller.applyTextContext(before)
@@ -1226,8 +1838,9 @@ class ClavierIme : InputMethodService() {
     private fun refreshSuggestions(textBeforeCursor: String) {
         if (!this::correctionBar.isInitialized) return
         val language = controller.state.language
-        val available = suggestionsAllowed && !isRecording && !correctionInProgress &&
-            !emojiPanelVisible() && !clipboardPanelVisible() && !hasSelection()
+        // Le prompt est un champ de texte libre : ni le type du champ de l'application ni sa sélection n'y comptent.
+        val available = (promptMode || suggestionsAllowed) && !isRecording && !correctionInProgress &&
+            !emojiPanelVisible() && !clipboardPanelVisible() && (promptMode || !hasSelection())
         val input = SuggestionInput(textBeforeCursor, language, available)
         if (input == lastSuggestionInput) return
         lastSuggestionInput = input
@@ -1242,16 +1855,22 @@ class ClavierIme : InputMethodService() {
             if (emoji == null) emoji = prediction.emoji
         }
         currentEmojiSuggestion = emoji
-        correctionBar.setEmojiSuggestion(emoji)
         currentWordSuggestions = words
-        correctionBar.setWordSuggestions(words)
+        if (promptMode) {
+            // La barre du haut est remplacée par celle du prompt : la bande s'affiche dans sa propre rangée.
+            promptSuggestionBar.setEmoji(emoji)
+            promptSuggestionBar.setWords(words)
+        } else {
+            correctionBar.setEmojiSuggestion(emoji)
+            correctionBar.setWordSuggestions(words)
+        }
     }
 
     /** Mots et emoji probables après [textBeforeCursor] (qui doit finir par une espace), selon ce que le clavier a appris. */
     private fun predictNext(textBeforeCursor: String): NextWordModel.Prediction {
         if (!learningAllowed || textBeforeCursor.isEmpty()) return NextWordModel.Prediction.NONE
         // Curseur au milieu d'un mot : insérer un mot entier à cet endroit serait trompeur.
-        val after = currentInputConnection?.getTextAfterCursor(1, 0)?.firstOrNull()
+        val after = charAfterCursor()
         if (after != null && isWordChar(after)) return NextWordModel.Prediction.NONE
         return nextWords.model.predict(
             textBeforeCursor,
@@ -1265,18 +1884,31 @@ class ClavierIme : InputMethodService() {
      * Appelé après une saisie de l'utilisateur uniquement (espace, retour à la ligne, suggestion ou emoji
      * touchés), jamais pour du texte dicté ou collé, ni dans un champ sans suggestions.
      */
-    private fun learnFromTyping() {
-        if (!learningAllowed || isRecording || correctionInProgress || hasSelection()) return
-        val before = currentInputConnection?.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString() ?: return
+    private fun learnFromTyping(terminator: String = "") {
+        if (!learningAllowed || isRecording || correctionInProgress) return
+        val before: String
+        if (promptMode) {
+            // Mode prompt : on apprend du texte du prompt, jamais de celui du champ de l'application.
+            before = promptBuffer.textBeforeCursor.takeLast(TEXT_CONTEXT_LOOKBEHIND)
+        } else {
+            if (hasSelection()) return
+            before = currentInputConnection?.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString() ?: return
+        }
+        // [terminator] : séparateur à considérer comme tapé après le texte (envoi du prompt sans espace finale).
         val repository = nextWords
-        if (repository.model.learn(before, truncated = before.length >= TEXT_CONTEXT_LOOKBEHIND)) repository.markDirty()
+        if (repository.model.learn(before + terminator, truncated = before.length >= TEXT_CONTEXT_LOOKBEHIND)) repository.markDirty()
     }
+
+    /** Caractère juste après le curseur : dans le prompt en mode prompt, sinon dans le champ de l'application. */
+    private fun charAfterCursor(): Char? =
+        if (promptMode) promptBuffer.textAfterCursor.firstOrNull()
+        else currentInputConnection?.getTextAfterCursor(1, 0)?.firstOrNull()
 
     private fun wordSuggestionsFor(textBeforeCursor: String, language: KeyboardLanguage): List<WordSuggestion?> {
         val typed = trailingWord(textBeforeCursor)
         if (typed.isEmpty()) return emptyList()
         // Curseur au milieu d'un mot : compléter le début du mot serait trompeur.
-        val after = currentInputConnection?.getTextAfterCursor(1, 0)?.firstOrNull()
+        val after = charAfterCursor()
         if (after != null && isWordChar(after)) return emptyList()
         return DictionaryLoader.forLanguage(applicationContext, language)
             .suggestionSlotsFor(typed, personalWords = personalDictionary.snapshot())
@@ -1290,6 +1922,10 @@ class ClavierIme : InputMethodService() {
         if (!this::correctionBar.isInitialized) return
         correctionBar.setEmojiSuggestion(null)
         correctionBar.setWordSuggestions(emptyList())
+        if (this::promptSuggestionBar.isInitialized) {
+            promptSuggestionBar.setEmoji(null)
+            promptSuggestionBar.setWords(emptyList())
+        }
         refreshPasteSuggestion() // dictée, correction ou panneau en cours : la puce disparaît aussi
     }
 
@@ -1301,6 +1937,10 @@ class ClavierIme : InputMethodService() {
      * - complétion : remplace le mot en cours.
      */
     private fun onWordSuggestionTapped(suggestion: WordSuggestion) {
+        if (promptMode) {
+            onPromptWordSuggestionTapped(suggestion)
+            return
+        }
         if (suggestion !in currentWordSuggestions) return
         if (isRecording || correctionInProgress || hasSelection()) return
         val ic = currentInputConnection ?: return
@@ -1353,6 +1993,17 @@ class ClavierIme : InputMethodService() {
      */
     private fun onEmojiSuggestionTapped() {
         val emoji = currentEmojiSuggestion ?: return
+        if (promptMode) {
+            // Même règle que dans le champ : précédé d'une espace si le mot vient d'être tapé sans espace après lui.
+            hapticFeedback.perform(hapticIntensity)
+            pendingAutocorrection = null
+            val needsSpace = promptBuffer.textBeforeCursor.lastOrNull()?.isLetterOrDigit() == true
+            promptBuffer.insert(if (needsSpace) " $emoji" else emoji)
+            keyboardPreferences.recentEmojis = RecentEmojis.add(keyboardPreferences.recentEmojis, emoji)
+            learnFromTyping()
+            afterPromptEdit()
+            return
+        }
         if (isRecording || correctionInProgress || hasSelection()) return
         val ic = currentInputConnection ?: return
         hapticFeedback.perform(hapticIntensity)
@@ -1401,17 +2052,23 @@ class ClavierIme : InputMethodService() {
         val word = trailingWord(before)
         if (word.isEmpty()) return null
 
-        val dictionary = DictionaryLoader.forLanguage(applicationContext, controller.state.language)
-        // Story 1.4 : les mots du dictionnaire personnel ne sont jamais
-        // corrigés et servent aussi de candidats de correction.
-        val correction = dictionary.correctionFor(word, personalWords = personalDictionary.snapshot()) ?: return null
-        if (correction == word) return null
+        val correction = dictionaryCorrectionFor(word) ?: return null
 
         ic.beginBatchEdit()
         ic.deleteSurroundingText(word.length, 0)
         ic.commitText(correction, 1)
         ic.endBatchEdit()
         return AppliedAutocorrection(original = word, corrected = correction)
+    }
+
+    /**
+     * Correction du dictionnaire pour [word], ou null s'il n'y en a pas. Story 1.4 : les mots du
+     * dictionnaire personnel ne sont jamais corrigés et servent aussi de candidats de correction.
+     */
+    private fun dictionaryCorrectionFor(word: String): String? {
+        val dictionary = DictionaryLoader.forLanguage(applicationContext, controller.state.language)
+        val correction = dictionary.correctionFor(word, personalWords = personalDictionary.snapshot()) ?: return null
+        return if (correction == word) null else correction
     }
 
     private fun hasSelection(): Boolean {
@@ -1455,6 +2112,10 @@ class ClavierIme : InputMethodService() {
 
     private fun onCorrectClicked() {
         if (correctionInProgress) return
+        if (promptConversation.isGenerating) { // le moteur est pris par la génération
+            showMessage(getString(R.string.generation_busy))
+            return
+        }
         clearHighlightIfNeeded()
         val ic = currentInputConnection ?: return
 
@@ -1919,6 +2580,10 @@ class ClavierIme : InputMethodService() {
 
     private fun startVoiceRecording() {
         if (isRecording) return
+        if (generationBusy()) {
+            showMessage(getString(R.string.generation_busy))
+            return
+        }
 
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             showMessage(getString(R.string.voice_permission_denied))
