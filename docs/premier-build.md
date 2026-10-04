@@ -142,3 +142,52 @@ pendant la correction (« texte modifié »), surlignage retiré à la frappe / 
 sans `ExtractedText`, modèle absent, génération en cours (« moteur occupé »), échec du moteur, correction puis
 suppression immédiate (autocorrection non annulée à tort), « Ajouter le texte » avec et sans sélection.
 
+## Découpage de TaipoIme — étape 5 : SuggestionController (lot 2.3, 03/10/2026)
+
+La bande de suggestions est sortie de `TaipoIme` (1 611 → 1430 lignes) sans changement de comportement :
+- `SuggestionController` : mise à jour des suggestions (`refresh`), calcul des mots du dictionnaire hors du thread
+  principal avec « le dernier gagne » (lot 1.4), prédiction du mot suivant, emoji suggéré, apprentissage
+  (`learnFromTyping`), préchargement des dictionnaires, correction du dictionnaire pour l'autocorrection
+  (`dictionaryCorrectionFor`). Il possède `suggestionsAllowed`, `learningAllowed`, les suggestions courantes et le
+  dépôt du modèle appris (`nextWords`). L'IME lui parle via `SuggestionController.Host`.
+- `suggestion/WordText` : `isWordChar` et `trailingWord`, partagés avec l'autocorrection et le glissement de
+  suppression ; testés en JVM (`WordTextTest`).
+- `TEXT_CONTEXT_LOOKBEHIND` devient une constante de niveau fichier (`SuggestionController.kt`, visibilité module).
+- Restent dans l'IME, volontairement : le routage des touches (champ et mode prompt), les touches sur un mot ou
+  un emoji suggéré, l'application et l'annulation de l'autocorrection (elles écrivent dans le champ ou le prompt,
+  et manipulent `pendingAutocorrection`). L'IME garde des méthodes fines (`refreshSuggestions`,
+  `clearSuggestions`, `learnFromTyping`, `dictionaryCorrectionFor`) qui délèguent au contrôleur : les appels
+  existants n'ont pas changé.
+
+Non compilé ni exécuté ici. Smoke test manuel : complétions pendant la frappe (3 emplacements), autocorrection au
+Espace puis annulation par Suppression, mot tapé conservé (entre guillemets), prédiction du mot suivant après une
+espace, emoji suggéré (et touché), mêmes comportements en mode prompt, aucune suggestion dans un champ mot de
+passe / e-mail / URL, rien d'appris en mode privé, bande vidée pendant dictée / correction / panneau emoji, première
+frappe juste après le démarrage (dictionnaire pas encore chargé : pas de plantage, mots dès que prêt).
+
+## Découpage de TaipoIme — étape 6 : ImeViewComposer (lot 2.3 terminé, 03/10/2026)
+
+La construction de la vue (`onCreateInputView`) est sortie de `TaipoIme` (1347 lignes au total, contre 2 039 avant
+le découpage) : `ImeViewComposer.compose()` crée le clavier, la barre du haut, la barre des emojis récents et le
+panneau emoji, câble leurs écouteurs, et les assemble avec la zone de chat, la barre et les suggestions du mode
+prompt et le panneau Smart Clipboard. Sans changement de comportement ni d'ordre de construction.
+
+- Chaque écouteur de vue renvoie vers `ImeViewComposer.Host` ; l'IME y relie ses méthodes existantes
+  (`onKeyPressed`, `onCursorMoved`, glissement de suppression, emoji, mot suggéré, vocal, Corriger, réglages).
+- Le mode prompt et le presse-papiers fournissent leurs propres vues (`createViews`, `createPanel`) : ils sont
+  passés directement au composer.
+- Dans l'IME, `keyboardView`, `correctionBar`, `emojiPanel` et `recentEmojiBar` deviennent des propriétés qui
+  lisent le composer ; les anciens tests `isInitialized` deviennent `viewComposer.isComposed` (vrai dès la
+  première création des vues, qui sont recréées par exemple à la rotation).
+- `onViewsCreated` rappelle `applyState()` à la fin, comme avant.
+
+Lot 2.3 : les six contrôleurs sont extraits (`VoiceController`, `ClipboardController`, `PromptModeController`,
+`CorrectionAiController`, `SuggestionController`, `ImeViewComposer`). Il reste dans l'IME le routage des touches,
+l'autocorrection, le glissement de suppression, le panneau emoji et le cycle de vie du service.
+
+Non compilé ni exécuté ici ; les erreurs de compilation éventuelles viennent de ces extractions (types inférés des
+`Host` anonymes, imports, visibilités). Smoke test manuel complet de la 2.3 : frappe (lettres, maj, symboles,
+rangée de chiffres), accents longs, glissement sur la barre espace, glissement de suppression, panneau emoji,
+presse-papiers (puce, panneau, épinglés), correction IA, mode prompt, dictée, rotation de l'écran (la vue est
+recréée, y compris avec le mode prompt actif), changement de champ, auto-remplissage en ligne.
+
