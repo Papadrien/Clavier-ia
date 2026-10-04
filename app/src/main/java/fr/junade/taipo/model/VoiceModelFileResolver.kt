@@ -43,7 +43,7 @@ object VoiceModelFileResolver {
         destination
     }
 
-    /** Sous-dossier de `filesDir` du modèle vocal : exclu des sauvegardes, voir `res/xml/*backup*.xml`. */
+    /** Sous-dossier de `filesDir` du modèle vocal : exclu des sauvegardes, voir les fichiers backup_rules.xml et data_extraction_rules.xml dans res/xml. */
     const val DIRECTORY_NAME = "voice-model"
 
     fun localFileFor(context: Context, file: VoiceModelFile): File =

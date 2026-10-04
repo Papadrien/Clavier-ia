@@ -2,7 +2,7 @@
 <!-- PALETTE CLAIRE (thème clair, prévu pour la V2 : ébauche rapide, à retravailler).
      La palette sombre, seule utilisée en V1, est dans values-night/colors.xml. Voir KeyboardTheme. -->
 <resources>
-    <color name="ic_launcher_background">#1E1E1E</color>
+    <color name="ic_launcher_background">#0A140A</color>
 
     <!-- Couleur d'accent commune : identique dans les deux palettes. -->
     <color name="accent">#5A7FD4</color>
