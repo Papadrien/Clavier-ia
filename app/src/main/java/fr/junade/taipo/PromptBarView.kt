@@ -2,14 +2,12 @@ package fr.junade.taipo
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.annotation.ColorRes
 import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
-import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -31,6 +29,11 @@ import android.widget.TextView
  * `PromptInputBuffer` (phase 5.1-5), l'envoi (5.1-6) et le stop (5.1-7) sont branchés par `TaipoIme`. Pas de
  * bouton Vocal : la dictée dans le prompt est hors périmètre de la 5.1 (décision 13).
  *
+ * Charte Taipo (lot 12) : envoi en violet (face `#8C00FF`, ombre `#6800AB`), stop et bouton de chat en secondaire
+ * (`#2B2B2B`, ombre `#191919`, violet quand le chat est affiché), pilule de saisie `#2B2B2B` (à plat, sans ombre : ce
+ * n'est pas un bouton), icônes VectorDrawable, Open Sans. Les fonds « face + ombre » sont créés une fois et posés
+ * seulement quand l'état change (le rendu du bouton d'envoi est rappelé à chaque frappe).
+ *
  * Même hauteur que [CorrectionBarView] (36 dp de contenu, 6 dp de marge verticale) pour que la
  * barre ne saute pas à la bascule, et même alignement sur la zone des touches en classe large.
  */
@@ -39,10 +42,16 @@ class PromptBarView(context: Context) : LinearLayout(context) {
 
     private val chatToggleButton = ImageButton(context)
     private val pill = LinearLayout(context)
-    private val cancelButton = TextView(context)
+    private val cancelButton = ImageView(context)
     private val inputView = TextView(context)
     private val sendButton = ImageButton(context)
     private val sendSpinner = ProgressBar(context)
+
+    private val style = BarStyle(context)
+    private val sendBackground = style.roundBackground(SEND_COLOR)
+    private val stopBackground = style.roundBackground(STOP_COLOR)
+    private val chatShownBackground = style.pillBackground(ACCENT_COLOR)
+    private val chatHiddenBackground = style.pillBackground(BUTTON_COLOR)
 
     private var cancelListener: (() -> Unit)? = null
     private var sendListener: (() -> Unit)? = null
@@ -80,45 +89,48 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         // Fond transparent : la barre laisse voir le fond commun du clavier (KeyboardBackgroundDrawable).
-        val paddingH = dp(12f).toInt()
-        val paddingV = dp(6f).toInt()
+        val barHeight = dimen(R.dimen.taipo_bar_height).toInt()
+        val gap = dimen(R.dimen.taipo_bar_gap).toInt()
+        val paddingH = dimen(R.dimen.taipo_bar_padding_horizontal).toInt()
+        val paddingV = dimen(R.dimen.taipo_bar_padding_vertical).toInt()
         setPadding(paddingH, paddingV, paddingH, paddingV)
 
         // Bouton afficher/masquer le chat : caché tant qu'aucun prompt n'a été envoyé.
-        chatToggleButton.setImageResource(R.drawable.ic_chat)
-        chatToggleButton.imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
-        chatToggleButton.scaleType = ImageView.ScaleType.CENTER_INSIDE
-        chatToggleButton.setPadding(dp(8f).toInt(), dp(8f).toInt(), dp(8f).toInt(), dp(8f).toInt())
+        style.styleBarIconButton(chatToggleButton, R.drawable.ic_chat)
         chatToggleButton.contentDescription = context.getString(R.string.prompt_chat_toggle_description)
         chatToggleButton.setOnClickListener { chatToggleListener?.invoke() }
         chatToggleButton.visibility = View.GONE
         addView(
             chatToggleButton,
-            LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginEnd = dp(8f).toInt() },
+            LayoutParams(dimen(R.dimen.taipo_bar_icon_button_width).toInt(), barHeight).apply { marginEnd = gap },
         )
 
         // Pilule de saisie : croix « annuler » à gauche, texte du prompt (ou invite) au centre.
         pill.orientation = HORIZONTAL
         pill.gravity = Gravity.CENTER_VERTICAL
-        pill.background = roundedBackground(PILL_COLOR)
+        pill.background = GradientDrawable().apply {
+            cornerRadius = dimen(R.dimen.taipo_button_corner_radius)
+            setColor(context.themeColor(PILL_COLOR))
+        }
 
-        cancelButton.text = "\u2715"
-        cancelButton.setTextColor(context.themeColor(R.color.text_primary))
-        cancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
-        cancelButton.gravity = Gravity.CENTER
+        cancelButton.setImageResource(R.drawable.ic_close)
+        cancelButton.imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
+        cancelButton.scaleType = ImageView.ScaleType.CENTER_INSIDE
         cancelButton.contentDescription = context.getString(R.string.prompt_cancel_description)
         cancelButton.setOnClickListener { cancelListener?.invoke() }
-        pill.addView(cancelButton, LayoutParams(dp(40f).toInt(), LayoutParams.MATCH_PARENT))
+        val cancelWidth = dimen(R.dimen.taipo_bar_icon_button_width).toInt()
+        pill.addView(cancelButton, LayoutParams(cancelWidth, LayoutParams.MATCH_PARENT))
 
         inputView.setTextColor(context.themeColor(R.color.text_primary))
         inputView.setHintTextColor(context.themeColor(HINT_COLOR))
         inputView.hint = context.getString(R.string.prompt_hint)
-        inputView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+        inputView.setTextSizeRes(R.dimen.taipo_prompt_text_size)
+        inputView.useTaipoFont()
         inputView.gravity = Gravity.CENTER_VERTICAL
         inputView.isSingleLine = true
         // Le texte est découpé à la main autour du curseur (voir renderInput) : la fin seule est tronquée.
         inputView.ellipsize = TextUtils.TruncateAt.END
-        inputView.setPadding(0, 0, dp(14f).toInt(), 0)
+        inputView.setPadding(0, 0, dimen(R.dimen.taipo_prompt_input_padding_end).toInt(), 0)
         pill.addView(inputView, LayoutParams(0, LayoutParams.MATCH_PARENT, 1f))
         // La largeur n'est connue qu'après la mise en page : on redessine alors le texte autour du curseur.
         inputView.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
@@ -126,25 +138,29 @@ class PromptBarView(context: Context) : LinearLayout(context) {
             if (width != renderedInputWidth) renderInput()
         }
 
-        addView(pill, LayoutParams(0, dp(36f).toInt(), 1f).apply { marginEnd = dp(8f).toInt() })
+        addView(pill, LayoutParams(0, barHeight, 1f).apply { marginEnd = gap })
 
         // Bouton rond : envoyer au repos, stop pendant la génération.
+        sendButton.imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
         sendButton.scaleType = ImageView.ScaleType.CENTER_INSIDE
-        val padding = dp(8f).toInt()
-        sendButton.setPadding(padding, padding, padding, padding)
+        // L'icône se centre sur la face du bouton rond, au-dessus de l'épaisseur d'ombre.
+        val shadow = dimen(R.dimen.taipo_key_shadow_height).toInt()
+        sendButton.setPadding(0, 0, 0, shadow)
         sendButton.setOnClickListener {
             if (generating) stopListener?.invoke() else sendListener?.invoke()
         }
+        val roundSize = dimen(R.dimen.taipo_bar_round_button_size).toInt()
         val sendHolder = FrameLayout(context)
-        sendHolder.addView(sendButton, FrameLayout.LayoutParams(dp(36f).toInt(), dp(36f).toInt()))
+        sendHolder.addView(sendButton, FrameLayout.LayoutParams(roundSize, roundSize))
+        val spinnerSize = dimen(R.dimen.taipo_bar_spinner_size).toInt()
         sendSpinner.isIndeterminate = true
         sendSpinner.indeterminateTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
         sendSpinner.visibility = View.GONE
         sendHolder.addView(
             sendSpinner,
-            FrameLayout.LayoutParams(dp(20f).toInt(), dp(20f).toInt(), Gravity.CENTER),
+            FrameLayout.LayoutParams(spinnerSize, spinnerSize, Gravity.CENTER).apply { bottomMargin = shadow },
         )
-        addView(sendHolder, LayoutParams(dp(36f).toInt(), dp(36f).toInt()))
+        addView(sendHolder, LayoutParams(roundSize, roundSize))
 
         setChatShown(false)
         renderSendButton()
@@ -221,14 +237,14 @@ class PromptBarView(context: Context) : LinearLayout(context) {
     fun setChatShown(shown: Boolean) {
         if (chatShown == shown) return
         chatShown = shown
-        chatToggleButton.background = roundedBackground(if (shown) ACCENT_COLOR else BUTTON_COLOR)
+        chatToggleButton.background = if (shown) chatShownBackground else chatHiddenBackground
     }
 
     /** Même alignement que [CorrectionBarView] : sur la zone centrée des touches en classe large. */
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val available = MeasureSpec.getSize(widthMeasureSpec).toFloat()
         val content = KeyboardWidth.forAvailableWidth(available, resources.displayMetrics.density)
-        val side = dp(12f).toInt() + content.leftPx.toInt()
+        val side = dimen(R.dimen.taipo_bar_padding_horizontal).toInt() + content.leftPx.toInt()
         if (paddingLeft != side || paddingRight != side) {
             setPadding(side, paddingTop, side, paddingBottom)
         }
@@ -238,7 +254,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
     private fun renderSendButton() {
         if (generating) {
             sendButton.setImageResource(R.drawable.ic_stop)
-            sendButton.background = roundedBackground(STOP_COLOR)
+            sendButton.background = stopBackground
             sendButton.contentDescription = context.getString(R.string.prompt_stop_description)
             sendButton.isEnabled = true
             sendButton.alpha = 1f
@@ -247,7 +263,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
             // Modèle en chargement : la roue remplace l'icône d'envoi (l'envoi reste possible, il attendra).
             if (modelLoading) sendButton.setImageDrawable(null) else sendButton.setImageResource(R.drawable.ic_send)
             sendSpinner.visibility = if (modelLoading) View.VISIBLE else View.GONE
-            sendButton.background = roundedBackground(SEND_COLOR)
+            sendButton.background = sendBackground
             sendButton.contentDescription = context.getString(R.string.prompt_send_description)
             // Un prompt vide ne s'envoie pas : le bouton est grisé.
             sendButton.isEnabled = !inputBlank
@@ -255,22 +271,13 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         }
     }
 
-    private fun roundedBackground(@ColorRes colorRes: Int): GradientDrawable = GradientDrawable().apply {
-        cornerRadius = dp(18f)
-        setColor(context.themeColor(colorRes))
-    }
-
-    private fun dp(value: Float): Float = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics,
-    )
-
     private companion object {
         val BUTTON_COLOR = R.color.surface_button
         val ACCENT_COLOR = R.color.accent
         val PILL_COLOR = R.color.surface_pill
         val HINT_COLOR = R.color.text_hint
         val SEND_COLOR = R.color.action_send
-        val STOP_COLOR = R.color.action_danger
+        val STOP_COLOR = R.color.surface_button
         const val CARET = "|"
         const val BEFORE_CURSOR_SHARE = 0.7f
     }

@@ -1,9 +1,10 @@
 package fr.junade.taipo.clipboard
 
+import fr.junade.taipo.useTaipoFont
+import fr.junade.taipo.TaipoType
 import fr.junade.taipo.themeColor
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.text.TextUtils
 import android.util.TypedValue
@@ -86,6 +87,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         emptyMessage.text = context.getString(R.string.clipboard_empty)
         emptyMessage.setTextColor(context.themeColor(R.color.clip_text_muted))
         emptyMessage.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+        emptyMessage.useTaipoFont()
         emptyMessage.gravity = Gravity.CENTER
         listArea.addView(emptyMessage, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
         content.addView(listArea, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f))
@@ -176,7 +178,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
             pill.text = label
             pill.setTextColor(context.themeColor(R.color.text_primary))
             pill.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
-            pill.setTypeface(pill.typeface, Typeface.BOLD)
+            pill.useTaipoFont(TaipoType.Weight.BOLD)
             pill.maxLines = 1
             pill.ellipsize = TextUtils.TruncateAt.END
             pill.setPadding(dp(8f), dp(2f), dp(8f), dp(2f))
@@ -194,6 +196,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         text.text = ClipboardPreview.forCard(item.text, item.sensitive)
         text.setTextColor(context.themeColor(R.color.text_primary))
         text.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+        text.useTaipoFont()
         text.maxLines = CARD_MAX_LINES
         text.ellipsize = TextUtils.TruncateAt.END
         column.addView(text, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
@@ -296,6 +299,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         confirmQuestion.text = context.getString(R.string.clipboard_delete_confirm_message)
         confirmQuestion.setTextColor(context.themeColor(R.color.text_primary))
         confirmQuestion.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+        confirmQuestion.useTaipoFont()
         confirmQuestion.setPadding(dp(18f), dp(16f), dp(18f), dp(8f))
         val cancelEntry = TextView(context)
         styleEntry(cancelEntry, context.getString(R.string.clipboard_delete_confirm_cancel))
@@ -338,7 +342,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         entry.text = label
         entry.setTextColor(context.themeColor(R.color.text_primary))
         entry.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
-        entry.setTypeface(entry.typeface, Typeface.BOLD)
+        entry.useTaipoFont(TaipoType.Weight.BOLD)
         entry.gravity = Gravity.CENTER_VERTICAL
         entry.setPadding(dp(18f), 0, dp(18f), 0)
     }

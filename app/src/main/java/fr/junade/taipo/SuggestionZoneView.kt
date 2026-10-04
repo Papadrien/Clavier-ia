@@ -2,7 +2,6 @@ package fr.junade.taipo
 
 import android.content.Context
 import android.text.TextUtils
-import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -43,17 +42,20 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
 
     init {
         // Bouton Smart Clipboard : icône « coller » à la place du texte.
-        style.styleIconButton(clipboardButton, R.drawable.ic_paste)
+        style.styleBarIconButton(clipboardButton, R.drawable.ic_paste)
         clipboardButton.contentDescription = context.getString(R.string.clipboard_button)
         clipboardButton.setOnClickListener { clipboardListener?.onClipboardClick() }
 
         pasteChip.setTextColor(context.themeColor(R.color.text_primary))
-        pasteChip.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+        pasteChip.setTextSizeRes(R.dimen.taipo_suggestion_chip_text_size)
+        pasteChip.useTaipoFont()
         pasteChip.gravity = Gravity.CENTER_VERTICAL
         pasteChip.maxLines = 1
         pasteChip.ellipsize = TextUtils.TruncateAt.END
-        pasteChip.setPadding(style.dp(14f).toInt(), 0, style.dp(14f).toInt(), 0)
-        pasteChip.background = style.roundedBackground(R.color.surface_button)
+        val chipPadding = dimen(R.dimen.taipo_suggestion_chip_padding).toInt()
+        // Le texte se centre sur la face du fond : marge basse = épaisseur d'ombre.
+        pasteChip.setPadding(chipPadding, 0, chipPadding, dimen(R.dimen.taipo_key_shadow_height).toInt())
+        pasteChip.background = style.pillBackground(R.color.surface_button)
         pasteChip.setOnClickListener { pasteListener?.onPasteClick() }
         pasteChip.visibility = View.GONE
 
@@ -68,9 +70,10 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
         inlineScroll.visibility = View.GONE
 
         addView(suggestionStrip, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+        val iconButtonWidth = dimen(R.dimen.taipo_suggestion_icon_button_width).toInt()
         addView(
             clipboardButton,
-            LayoutParams(style.dp(48f).toInt(), LayoutParams.MATCH_PARENT, Gravity.START),
+            LayoutParams(iconButtonWidth, LayoutParams.MATCH_PARENT, Gravity.START),
         )
         addView(
             pasteChip,
@@ -137,7 +140,7 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.MATCH_PARENT,
                 ).apply {
-                    if (index > 0) marginStart = style.dp(6f).toInt()
+                    if (index > 0) marginStart = dimen(R.dimen.taipo_suggestion_chip_gap).toInt()
                 },
             )
         }
@@ -153,7 +156,7 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
         if (clipboardButtonActiveBackground != clipboardPanelOpen) {
             clipboardButtonActiveBackground = clipboardPanelOpen
             clipboardButton.background =
-                style.roundedBackground(if (clipboardPanelOpen) R.color.accent else R.color.surface_button)
+                style.pillBackground(if (clipboardPanelOpen) R.color.accent else R.color.surface_button)
         }
     }
 }

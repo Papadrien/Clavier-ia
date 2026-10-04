@@ -549,6 +549,7 @@ class TaipoIme : InputMethodService() {
         messageDialog = dialog
         try {
             dialog.show()
+            dialog.window?.decorView?.applyTaipoFontToTree()
         } catch (t: Throwable) {
             messageDialog = null
             AppLog.e(TAG, "Impossible d'afficher le pop-up", t)

@@ -17,6 +17,7 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
 
         findViewById<View>(R.id.button_enable).setOnClickListener {

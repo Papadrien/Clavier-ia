@@ -1,9 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Charte Taipo (lot 09) : icône au trait de 2 sur une grille de 24, extrémités et angles arrondis, blanc de la charte. Taille : taipo_icon_size. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
+    android:width="@dimen/taipo_icon_size"
+    android:height="@dimen/taipo_icon_size"
     android:viewportWidth="24"
     android:viewportHeight="24">
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M2.01,21L23,12 2.01,3 2,10l15,2 -15,2z" />
+        android:pathData="M21,3 L3,10.5 L10.5,13.5 L13.5,21 Z"
+        android:strokeColor="@color/taipo_text"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M21,3 L10.5,13.5"
+        android:strokeColor="@color/taipo_text"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
 </vector>

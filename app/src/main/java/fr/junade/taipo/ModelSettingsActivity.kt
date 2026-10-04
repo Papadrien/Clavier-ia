@@ -71,6 +71,7 @@ class ModelSettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_model_settings)
+        findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
         preferences = ModelPreferences(this)
         promptPreferences = CorrectionPromptPreferences(this)

@@ -2,7 +2,6 @@ package fr.junade.taipo
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.TypedValue
 import android.widget.LinearLayout
 import fr.junade.taipo.dictionary.WordSuggestion
 
@@ -24,9 +23,9 @@ class PromptSuggestionBarView(context: Context) : LinearLayout(context) {
     init {
         orientation = HORIZONTAL
         // Fond transparent : la rangée laisse voir le fond commun du clavier (KeyboardBackgroundDrawable).
-        val paddingH = dp(12f).toInt()
-        setPadding(paddingH, 0, paddingH, dp(6f).toInt())
-        addView(strip, LayoutParams(0, dp(36f).toInt(), 1f))
+        val paddingH = dimen(R.dimen.taipo_bar_padding_horizontal).toInt()
+        setPadding(paddingH, 0, paddingH, dimen(R.dimen.taipo_bar_padding_vertical).toInt())
+        addView(strip, LayoutParams(0, dimen(R.dimen.taipo_bar_height).toInt(), 1f))
     }
 
     fun setWords(words: List<WordSuggestion?>) = strip.setWords(words)
@@ -42,14 +41,10 @@ class PromptSuggestionBarView(context: Context) : LinearLayout(context) {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val available = MeasureSpec.getSize(widthMeasureSpec).toFloat()
         val content = KeyboardWidth.forAvailableWidth(available, resources.displayMetrics.density)
-        val side = dp(12f).toInt() + content.leftPx.toInt()
+        val side = dimen(R.dimen.taipo_bar_padding_horizontal).toInt() + content.leftPx.toInt()
         if (paddingLeft != side || paddingRight != side) {
             setPadding(side, paddingTop, side, paddingBottom)
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
-
-    private fun dp(value: Float): Float = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics,
-    )
 }

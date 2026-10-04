@@ -21,6 +21,7 @@ class KeyboardSettingsActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_keyboard_settings)
+        findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
         val preferences = KeyboardPreferences(this)
 

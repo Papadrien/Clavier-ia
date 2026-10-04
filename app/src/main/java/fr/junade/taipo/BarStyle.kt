@@ -2,53 +2,81 @@ package fr.junade.taipo
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Typeface
-import android.graphics.drawable.GradientDrawable
-import android.util.TypedValue
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.annotation.ColorRes
 
 /**
- * Style commun des boutons de la barre du haut (lot 4.2) : fond arrondi, texte ou icône claire, boutons
- * compacts. Sorti de [CorrectionBarView] sans changement de rendu.
+ * Style commun des boutons de la barre du haut (lot 4.2) : fonds « face + ombre » de la charte Taipo (lots 08, 10 et 11),
+ * texte ou icône blanche. Sorti de [CorrectionBarView].
  */
 internal class BarStyle(private val context: Context) {
 
-    fun dp(value: Float): Float = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, value, context.resources.displayMetrics,
+    /**
+     * Fond rond de la charte (lot 08) : face [faceRes] sur une ombre de la couleur associée, qui s'enfonce à l'appui.
+     * Réservé aux boutons ronds secondaires de la barre (réglages, générer, vocal).
+     */
+    fun roundBackground(@ColorRes faceRes: Int): RoundKeyDrawable = RoundKeyDrawable(
+        faceColor = context.themeColor(faceRes),
+        shadowColor = context.themeColor(shadowFor(faceRes)),
+        shadowHeight = context.dimen(R.dimen.taipo_key_shadow_height),
+        pressedShadowHeight = context.dimen(R.dimen.taipo_key_shadow_pressed_height),
     )
 
-    fun roundedBackground(@ColorRes colorRes: Int): GradientDrawable = GradientDrawable().apply {
-        cornerRadius = dp(18f)
-        setColor(context.themeColor(colorRes))
+    @ColorRes
+    private fun shadowFor(@ColorRes faceRes: Int): Int = when (faceRes) {
+        R.color.accent, R.color.action_send -> R.color.taipo_purple_shadow
+        R.color.action_danger -> R.color.action_danger_shadow
+        else -> R.color.taipo_key_secondary_shadow
     }
 
-    /** Boutons compacts : sans la largeur et la hauteur minimales par défaut des boutons Material. */
-    fun compact(button: Button, paddingDp: Float) {
-        button.minWidth = 0
-        button.minimumWidth = 0
-        button.minHeight = 0
-        button.minimumHeight = 0
-        button.setPadding(dp(paddingDp).toInt(), 0, dp(paddingDp).toInt(), 0)
+    /**
+     * Fond rectangulaire arrondi de la charte (lot 10) : face [faceRes] sur une ombre de la couleur associée, qui
+     * s'enfonce à l'appui. Rayon : [R.dimen.taipo_button_corner_radius]. Boutons à texte ou à icône de la barre du haut, bande de suggestions.
+     */
+    fun pillBackground(@ColorRes faceRes: Int): PillKeyDrawable = PillKeyDrawable(
+        faceColor = context.themeColor(faceRes),
+        shadowColor = context.themeColor(shadowFor(faceRes)),
+        cornerRadius = context.dimen(R.dimen.taipo_button_corner_radius),
+        shadowHeight = context.dimen(R.dimen.taipo_key_shadow_height),
+        pressedShadowHeight = context.dimen(R.dimen.taipo_key_shadow_pressed_height),
+    )
+
+    /**
+     * Bouton rond à icône blanche (lots 08 et 09) : l'icône garde sa taille ([R.dimen.taipo_icon_size]) et se centre sur
+     * la face, au-dessus de l'épaisseur d'ombre (marge basse = ombre au repos).
+     */
+    fun styleRoundIconButton(button: ImageButton, iconRes: Int, @ColorRes faceRes: Int = R.color.surface_button) {
+        applyIcon(button, iconRes)
+        button.background = roundBackground(faceRes)
+        button.setPadding(0, 0, 0, context.dimen(R.dimen.taipo_key_shadow_height).toInt())
     }
 
-    /** Bouton à icône blanche centrée, sur le même fond arrondi que les autres boutons de la barre. */
-    fun styleIconButton(button: ImageButton, iconRes: Int) {
+    private fun applyIcon(button: ImageButton, iconRes: Int) {
         button.setImageResource(iconRes)
         button.imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
         button.scaleType = ImageView.ScaleType.CENTER_INSIDE
-        button.background = roundedBackground(R.color.surface_button)
-        val padding = dp(8f).toInt()
-        button.setPadding(padding, padding, padding, padding)
     }
 
+    /**
+     * Bouton à icône blanche de la barre du haut (lot 10), sur un fond [pillBackground] : l'icône garde sa taille et se
+     * centre sur la face, au-dessus de l'épaisseur d'ombre.
+     */
+    fun styleBarIconButton(button: ImageButton, iconRes: Int, @ColorRes faceRes: Int = R.color.surface_button) {
+        applyIcon(button, iconRes)
+        button.background = pillBackground(faceRes)
+        button.setPadding(0, 0, 0, context.dimen(R.dimen.taipo_key_shadow_height).toInt())
+    }
+
+    /** Bouton à texte de la barre du haut (lot 10) : Open Sans gras, fond [pillBackground] ; le texte se centre sur la face. */
     fun styleButton(button: Button, @ColorRes backgroundColor: Int) {
         button.setTextColor(context.themeColor(R.color.text_primary))
-        button.setTypeface(button.typeface, Typeface.BOLD)
+        button.useTaipoFont(TaipoType.Weight.BOLD)
+        button.setTextSizeRes(R.dimen.taipo_bar_button_text_size)
         button.isAllCaps = false
-        button.background = roundedBackground(backgroundColor)
-        button.setPadding(dp(16f).toInt(), 0, dp(16f).toInt(), 0)
+        button.background = pillBackground(backgroundColor)
+        val padding = context.dimen(R.dimen.taipo_bar_text_button_padding).toInt()
+        button.setPadding(padding, 0, padding, context.dimen(R.dimen.taipo_key_shadow_height).toInt())
     }
 }

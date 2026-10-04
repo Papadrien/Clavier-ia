@@ -101,7 +101,14 @@ class ImeViewComposer(
         correctionBar = CorrectionBarView(context)
         correctionBar.setOnCorrectListener { host.onCorrectClicked() }
         correctionBar.setOnGenerateClickListener { prompt.enter() }
-        correctionBar.voiceButton.setOnTouchListener { _, event -> host.onVoiceTouch(event) }
+        correctionBar.voiceButton.setOnTouchListener { view, event ->
+            // Rendu seul (lot 08) : l'écouteur consomme l'événement, la vue ne passerait pas à « pressée » sans cela.
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> view.isPressed = true
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> view.isPressed = false
+            }
+            host.onVoiceTouch(event)
+        }
         correctionBar.setOnEmojiSuggestionClickListener { host.onEmojiSuggestionClicked() }
         // Le même bouton ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme.
         correctionBar.setOnClipboardClickListener { clipboard.onPanelButtonClicked() }

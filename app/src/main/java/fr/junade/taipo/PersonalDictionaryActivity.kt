@@ -40,6 +40,7 @@ class PersonalDictionaryActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_personal_dictionary)
+        findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
         repository = PersonalDictionaryProvider.repository(this)
 
@@ -114,11 +115,13 @@ class PersonalDictionaryActivity : Activity() {
                     text = getString(R.string.personal_dictionary_empty)
                     textSize = 15f
                     setPadding(0, dp(8), 0, dp(8))
+                    applyTaipoFontToTree()
                 },
             )
             return
         }
         words.forEach { list.addView(buildRow(it)) }
+        list.applyTaipoFontToTree()
     }
 
     private fun buildRow(word: String): LinearLayout {

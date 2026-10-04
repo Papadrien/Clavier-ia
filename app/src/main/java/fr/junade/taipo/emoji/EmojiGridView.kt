@@ -1,5 +1,6 @@
 package fr.junade.taipo.emoji
 
+import fr.junade.taipo.useTaipoFont
 import fr.junade.taipo.themeColor
 import fr.junade.taipo.R
 import android.annotation.SuppressLint
@@ -60,10 +61,12 @@ class EmojiGridView(context: Context) : View(context) {
     private val headerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = context.themeColor(R.color.key_hint)
         textSize = sp(13f)
+        useTaipoFont(context)
     }
     private val messagePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = context.themeColor(R.color.key_hint)
         textSize = sp(14f)
+        useTaipoFont(context)
     }
     private val pressedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_popup) }
     private val pressedRect = RectF()

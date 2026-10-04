@@ -1,44 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- PALETTE CLAIRE (thème clair, prévu pour la V2 : ébauche rapide, à retravailler).
-     La palette sombre, seule utilisée en V1, est dans values-night/colors.xml. Voir KeyboardTheme. -->
+<!-- CHARTE TAIPO (refonte graphique, lot 01).
+     Une seule charte, sombre : values/colors.xml et values-night/colors.xml sont strictement identiques
+     (hors ic_launcher_background, propre à values/). Le thème clair est prévu pour la V2 (voir KeyboardTheme).
+     Ne modifier une valeur que dans la section « Charte » ; la section « Rôles » ne fait que nommer l'usage. -->
 <resources>
+
+    <!-- Fond de l'icône du lanceur (hors charte du clavier). -->
     <color name="ic_launcher_background">#0A140A</color>
 
-    <!-- Couleur d'accent commune : identique dans les deux palettes. -->
-    <color name="accent">#5A7FD4</color>
+    <!-- ===== Charte (valeurs de la plaquette) ===== -->
+    <color name="taipo_background">#0E0E0E</color>
+    <color name="taipo_purple">#8C00FF</color>
+    <color name="taipo_purple_shadow">#6800AB</color>
+    <color name="taipo_key">#43384C</color>
+    <color name="taipo_key_shadow">#27212D</color>
+    <color name="taipo_key_secondary">#2B2B2B</color>
+    <color name="taipo_key_secondary_shadow">#191919</color>
+    <color name="taipo_text">#FFFFFF</color>
+    <!-- PROVISOIRE : gris clair de la barre centrale de la touche espace, à caler sur la plaquette (valeur posée au lot 06, non relevée sur la plaquette). -->
+    <color name="taipo_space_bar">#BDBDBD</color>
+    <!-- Hors plaquette : blanc atténué pour les textes secondaires (indices, hints). À valider (lot 20). -->
+    <color name="taipo_text_muted">#99FFFFFF</color>
 
-    <!-- Texte principal et icônes. -->
-    <color name="text_primary">#202124</color>
+    <!-- ===== Rôles (noms utilisés par le code, inchangés) ===== -->
+    <color name="accent">@color/taipo_purple</color>
+    <color name="text_primary">@color/taipo_text</color>
 
-    <!-- Clavier (KeyboardView). -->
-    <color name="keyboard_background">#FFE8EAED</color>
-    <color name="key_normal">#FFFFFF</color>
-    <color name="key_functional">#D3D6DB</color>
-    <color name="key_pressed">#BFC3CA</color>
-    <color name="key_enter">#80CBC4</color>
-    <color name="key_label">#3C4043</color>
-    <color name="key_popup">#F1F3F4</color>
-    <color name="key_popup_selection">#80CBC4</color>
-    <color name="key_hint">#70757A</color>
+    <!-- Clavier (KeyboardView). key_pressed : face d'une touche à bascule active (Maj, symboles) ; l'état pressé,
+         lui, n'a pas de couleur propre (la touche s'enfonce, lot 05). -->
+    <color name="keyboard_background">@color/taipo_background</color>
+    <color name="key_normal">@color/taipo_key</color>
+    <color name="key_functional">@color/taipo_key_secondary</color>
+    <color name="key_pressed">@color/taipo_key_shadow</color>
+    <color name="key_enter">@color/taipo_purple</color>
+    <!-- Ombres (épaisseur inférieure) des touches, lot 04. -->
+    <color name="key_normal_shadow">@color/taipo_key_shadow</color>
+    <color name="key_functional_shadow">@color/taipo_key_secondary_shadow</color>
+    <color name="key_enter_shadow">@color/taipo_purple_shadow</color>
+    <color name="key_label">@color/taipo_text</color>
+    <color name="key_popup">@color/taipo_key</color>
+    <color name="key_popup_selection">@color/taipo_purple</color>
+    <color name="key_hint">@color/taipo_text_muted</color>
+    <!-- Barre centrale de la touche espace (lot 06). -->
+    <color name="key_space_bar">@color/taipo_space_bar</color>
 
     <!-- Barre du haut, prompt, bande de suggestions, zone de chat. -->
-    <color name="surface_button">#DADCE0</color>
-    <color name="surface_pill">#FFFFFF</color>
-    <color name="text_hint">#80868B</color>
-    <color name="action_send">#2FA37A</color>
+    <color name="surface_button">@color/taipo_key_secondary</color>
+    <color name="surface_pill">@color/taipo_key_secondary</color>
+    <color name="text_hint">@color/taipo_text_muted</color>
+    <color name="action_send">@color/taipo_purple</color>
+    <!-- Rouge de danger : hors charte, conservé pour les actions destructives. -->
     <color name="action_danger">#C0392B</color>
+    <!-- Ombre du rouge de danger (même rapport que les autres couples face / ombre) : bouton Vocal en écoute. -->
+    <color name="action_danger_shadow">#7A241B</color>
 
     <!-- Smart Clipboard. -->
-    <color name="clip_text_muted">#5F6368</color>
-    <color name="clip_item">#FFFFFF</color>
-    <color name="clip_item_pinned">#E3EAF8</color>
-    <color name="clip_pin_badge">#7FA0E0</color>
-    <color name="clip_dialog">#FFFFFF</color>
-    <color name="clip_danger_text">#C5221F</color>
-    <color name="scrim">#66000000</color>
+    <color name="clip_text_muted">@color/taipo_text_muted</color>
+    <color name="clip_item">@color/taipo_key_secondary</color>
+    <color name="clip_item_pinned">@color/taipo_key</color>
+    <color name="clip_pin_badge">@color/taipo_purple</color>
+    <color name="clip_dialog">@color/taipo_key_secondary</color>
+    <color name="clip_danger_text">#FF8A80</color>
+    <color name="scrim">#99000000</color>
 
-    <!-- Écrans de réglages. -->
-    <color name="settings_card">#F0F0F0</color>
-    <color name="settings_divider">#D0D0D0</color>
-    <color name="settings_warning_text">#B23C00</color>
+    <!-- Écrans de réglages. settings_warning_text : orange d'avertissement, hors charte, conservé. -->
+    <color name="settings_card">@color/taipo_key_secondary</color>
+    <color name="settings_divider">@color/taipo_key_shadow</color>
+    <color name="settings_warning_text">#FFB38A</color>
 </resources>

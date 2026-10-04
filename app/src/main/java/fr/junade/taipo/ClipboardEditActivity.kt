@@ -131,7 +131,7 @@ class ClipboardEditActivity : Activity() {
             },
         )
         title.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 18f)
-        title.setTypeface(title.typeface, android.graphics.Typeface.BOLD)
+        title.useTaipoFont(TaipoType.Weight.BOLD)
         root.addView(title, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
 
         input = EditText(this)
@@ -167,6 +167,7 @@ class ClipboardEditActivity : Activity() {
         root.addView(buttons, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
 
         setContentView(root)
+        findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
     }
 
     /** « Enregistrer » n'est actif que pour un texte non vide, avant le chargement il ne l'est pas. */

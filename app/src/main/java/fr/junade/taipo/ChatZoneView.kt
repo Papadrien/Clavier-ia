@@ -2,7 +2,6 @@ package fr.junade.taipo
 
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
-import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
@@ -25,15 +24,26 @@ import fr.junade.taipo.ai.PromptMessageStatus
  * bulles depuis `PromptConversation` (envoi d'un prompt, échange retiré, fermeture du clavier) ;
  * [updateLastResponse] met à jour la seule dernière bulle de réponse au fil du flux. Le défilement
  * suit le bas de la conversation tant que l'utilisateur ne l'a pas remontée à la main.
+ *
+ * Charte Taipo (lot 13) : bulle de l'utilisateur violette (`#8C00FF`), bulle du modèle `#2B2B2B`, texte blanc en
+ * Open Sans, à plat (les ombres sont réservées aux boutons) ; le bouton « Ajouter le texte » est un bouton secondaire
+ * (`#2B2B2B`, ombre `#191919`). Les textes d'attente (« … », chargement du modèle, génération interrompue) sont atténués.
  */
 class ChatZoneView(context: Context) : ScrollView(context) {
+
+    private val style = BarStyle(context)
 
     /** Vue dont la hauteur sert de référence au plafond (la moitié de sa hauteur). */
     var heightReference: View? = null
 
     private val column = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
-        setPadding(dp(12), dp(8), dp(12), dp(8))
+        setPadding(
+            dimen(R.dimen.taipo_chat_padding_horizontal).toInt(),
+            dimen(R.dimen.taipo_chat_padding_vertical).toInt(),
+            dimen(R.dimen.taipo_chat_padding_horizontal).toInt(),
+            dimen(R.dimen.taipo_chat_padding_vertical).toInt(),
+        )
     }
 
     /** Dernière bulle de réponse du modèle, celle que le flux complète ; null si la zone est vide. */
@@ -86,7 +96,7 @@ class ChatZoneView(context: Context) : ScrollView(context) {
         clearBubbles()
         messages.forEachIndexed { index, message ->
             addPromptBubble(message.prompt)
-            lastResponseBubble = addResponseBubble(displayText(message))
+            lastResponseBubble = addBubble(displayText(message), fromUser = false, placeholder = message.response.isEmpty())
             lastAddTextButton = addAddTextButton(index, canAddText(message))
         }
         scrollToLatest()
@@ -94,7 +104,7 @@ class ChatZoneView(context: Context) : ScrollView(context) {
 
     /** Met à jour la dernière bulle de réponse (morceau reçu, fin de génération). Sans effet si la zone est vide. */
     fun updateLastResponse(message: PromptMessage) {
-        setLastResponseText(displayText(message))
+        setBubbleText(displayText(message), placeholder = message.response.isEmpty())
         lastAddTextButton?.visibility = if (canAddText(message)) View.VISIBLE else View.GONE
     }
 
@@ -102,9 +112,12 @@ class ChatZoneView(context: Context) : ScrollView(context) {
     private fun canAddText(message: PromptMessage): Boolean =
         message.status != PromptMessageStatus.IN_PROGRESS && message.response.isNotBlank()
 
-    /** Remplace le texte de la dernière bulle de réponse (par exemple par l'état « chargement du modèle »). */
-    fun setLastResponseText(text: String) {
+    /** Remplace le texte de la dernière bulle de réponse par un texte d'attente (par exemple « chargement du modèle »). */
+    fun setLastResponseText(text: String) = setBubbleText(text, placeholder = true)
+
+    private fun setBubbleText(text: String, placeholder: Boolean) {
         val bubble = lastResponseBubble ?: return
+        bubble.setTextColor(context.themeColor(if (placeholder) PLACEHOLDER_TEXT_COLOR else TEXT_COLOR))
         if (bubble.text.toString() == text) return
         bubble.text = text
     }
@@ -118,7 +131,7 @@ class ChatZoneView(context: Context) : ScrollView(context) {
     /** L'utilisateur remonte la conversation : on ne le ramène plus en bas tant qu'il n'y est pas revenu. */
     override fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) {
         super.onScrollChanged(l, t, oldl, oldt)
-        followLatest = t + height >= column.height - dp(12)
+        followLatest = t + height >= column.height - dimen(R.dimen.taipo_chat_follow_threshold).toInt()
     }
 
     /** Texte d'une bulle de réponse : le texte reçu ; sinon « … » pendant la génération, un message à la fin. */
@@ -152,16 +165,22 @@ class ChatZoneView(context: Context) : ScrollView(context) {
         super.onMeasure(widthMeasureSpec, spec)
     }
 
-    private fun addBubble(text: String, fromUser: Boolean): TextView {
+    private fun addBubble(text: String, fromUser: Boolean, placeholder: Boolean = false): TextView {
         val bubble = TextView(context).apply {
             this.text = text
-            setTextColor(context.themeColor(R.color.text_primary))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, TEXT_SIZE_SP)
-            setPadding(dp(12), dp(8), dp(12), dp(8))
+            setTextColor(context.themeColor(if (placeholder) PLACEHOLDER_TEXT_COLOR else TEXT_COLOR))
+            setTextSizeRes(R.dimen.taipo_chat_bubble_text_size)
+            useTaipoFont()
+            setPadding(
+                dimen(R.dimen.taipo_chat_bubble_padding_horizontal).toInt(),
+                dimen(R.dimen.taipo_chat_bubble_padding_vertical).toInt(),
+                dimen(R.dimen.taipo_chat_bubble_padding_horizontal).toInt(),
+                dimen(R.dimen.taipo_chat_bubble_padding_vertical).toInt(),
+            )
             // Largeur plafonnée pour que la bulle ne touche pas le bord opposé.
             maxWidth = (resources.displayMetrics.widthPixels * MAX_WIDTH_RATIO).toInt()
             background = GradientDrawable().apply {
-                cornerRadius = dp(16).toFloat()
+                cornerRadius = dimen(R.dimen.taipo_chat_bubble_corner_radius).toInt().toFloat()
                 setColor(context.themeColor(if (fromUser) USER_COLOR else MODEL_COLOR))
             }
             setTextIsSelectable(false)
@@ -173,7 +192,7 @@ class ChatZoneView(context: Context) : ScrollView(context) {
                 LinearLayout.LayoutParams.WRAP_CONTENT,
             ).apply {
                 gravity = if (fromUser) Gravity.END else Gravity.START
-                topMargin = dp(if (column.childCount == 0) 0 else 6)
+                topMargin = if (column.childCount == 0) 0 else dimen(R.dimen.taipo_chat_bubble_gap).toInt()
             },
         )
         return bubble
@@ -183,16 +202,19 @@ class ChatZoneView(context: Context) : ScrollView(context) {
     private fun addAddTextButton(index: Int, visible: Boolean): TextView {
         val button = TextView(context).apply {
             text = context.getString(R.string.prompt_add_text)
-            setTextColor(context.themeColor(R.color.text_primary))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
+            setTextColor(context.themeColor(TEXT_COLOR))
+            setTextSizeRes(R.dimen.taipo_chat_action_text_size)
+            useTaipoFont(TaipoType.Weight.MEDIUM)
             gravity = Gravity.CENTER
-            minHeight = dp(36)
-            setPadding(dp(14), dp(6), dp(14), dp(6))
-            background = GradientDrawable().apply {
-                cornerRadius = dp(18).toFloat()
-                setColor(context.themeColor(BUTTON_COLOR))
-                setStroke(dp(1), context.themeColor(USER_COLOR))
-            }
+            minHeight = dimen(R.dimen.taipo_chat_action_min_height).toInt()
+            // Fond « face + ombre » : le texte se centre sur la face (marge basse = épaisseur d'ombre).
+            setPadding(
+                dimen(R.dimen.taipo_chat_action_padding_horizontal).toInt(),
+                dimen(R.dimen.taipo_chat_action_padding_vertical).toInt(),
+                dimen(R.dimen.taipo_chat_action_padding_horizontal).toInt(),
+                dimen(R.dimen.taipo_chat_action_padding_vertical).toInt() + dimen(R.dimen.taipo_key_shadow_height).toInt(),
+            )
+            background = style.pillBackground(BUTTON_COLOR)
             visibility = if (visible) View.VISIBLE else View.GONE
             setOnClickListener { addTextListener?.invoke(index) }
         }
@@ -203,20 +225,18 @@ class ChatZoneView(context: Context) : ScrollView(context) {
                 LinearLayout.LayoutParams.WRAP_CONTENT,
             ).apply {
                 gravity = Gravity.START
-                topMargin = dp(4)
+                topMargin = dimen(R.dimen.taipo_chat_action_margin_top).toInt()
             },
         )
         return button
     }
 
-    private fun dp(value: Int): Int =
-        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value.toFloat(), resources.displayMetrics).toInt()
-
     private companion object {
-        const val TEXT_SIZE_SP = 15f
         const val MAX_WIDTH_RATIO = 0.8f
         val USER_COLOR = R.color.accent
         val MODEL_COLOR = R.color.surface_button
-        val BUTTON_COLOR = R.color.surface_pill
+        val BUTTON_COLOR = R.color.surface_button
+        val TEXT_COLOR = R.color.text_primary
+        val PLACEHOLDER_TEXT_COLOR = R.color.text_hint
     }
 }

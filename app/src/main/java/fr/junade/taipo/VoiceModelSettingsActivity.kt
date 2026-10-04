@@ -40,6 +40,7 @@ class VoiceModelSettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_voice_model_settings)
+        findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
         preferences = VoiceModelPreferences(this)
 
@@ -63,7 +64,7 @@ class VoiceModelSettingsActivity : ComponentActivity() {
         val title = TextView(this).apply {
             text = "${file.label} — ${file.filenameHint}"
             textSize = 15f
-            setTypeface(typeface, android.graphics.Typeface.BOLD)
+            useTaipoFont(TaipoType.Weight.BOLD)
         }
         row.addView(title)
 
@@ -82,6 +83,7 @@ class VoiceModelSettingsActivity : ComponentActivity() {
         button.setOnClickListener { openFilePickerFor(file) }
         row.addView(button)
 
+        row.applyTaipoFontToTree()
         return row
     }
 

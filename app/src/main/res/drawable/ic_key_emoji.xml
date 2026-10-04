@@ -6,7 +6,19 @@
     android:viewportWidth="24"
     android:viewportHeight="24">
     <path
-        android:pathData="M20,15 a2,2 0 0 1 -2,2 H8 L4,21 V5 a2,2 0 0 1 2,-2 H18 a2,2 0 0 1 2,2 Z"
+        android:pathData="M3,12 a9,9 0 1 0 18,0 a9,9 0 1 0 -18,0 Z"
+        android:strokeColor="@color/taipo_text"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="@color/taipo_text"
+        android:pathData="M7.9,10 a1.1,1.1 0 1 0 2.2,0 a1.1,1.1 0 1 0 -2.2,0 Z" />
+    <path
+        android:fillColor="@color/taipo_text"
+        android:pathData="M13.9,10 a1.1,1.1 0 1 0 2.2,0 a1.1,1.1 0 1 0 -2.2,0 Z" />
+    <path
+        android:pathData="M8,14.5 A4.5,4.5 0 0 0 16,14.5"
         android:strokeColor="@color/taipo_text"
         android:strokeWidth="2"
         android:strokeLineCap="round"

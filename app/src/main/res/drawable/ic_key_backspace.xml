@@ -6,7 +6,13 @@
     android:viewportWidth="24"
     android:viewportHeight="24">
     <path
-        android:pathData="M20,15 a2,2 0 0 1 -2,2 H8 L4,21 V5 a2,2 0 0 1 2,-2 H18 a2,2 0 0 1 2,2 Z"
+        android:pathData="M9.5,5 H19 a2,2 0 0 1 2,2 V17 a2,2 0 0 1 -2,2 H9.5 L3,12 Z"
+        android:strokeColor="@color/taipo_text"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M12.5,9.5 L17.5,14.5 M17.5,9.5 L12.5,14.5"
         android:strokeColor="@color/taipo_text"
         android:strokeWidth="2"
         android:strokeLineCap="round"

@@ -2,7 +2,6 @@ package fr.junade.taipo
 
 import android.content.Context
 import android.app.Activity
-import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -102,7 +101,7 @@ class ClipboardLabelActivity : Activity() {
         title = TextView(this)
         title.text = getString(R.string.clipboard_label_title_add)
         title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-        title.setTypeface(title.typeface, Typeface.BOLD)
+        title.useTaipoFont(TaipoType.Weight.BOLD)
         root.addView(title, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
 
         input = EditText(this)
@@ -145,6 +144,7 @@ class ClipboardLabelActivity : Activity() {
         root.addView(buttons, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
 
         setContentView(root)
+        findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
     }
 
     /** « Enregistrer » n'est actif que pour une étiquette non vide, et pas avant le chargement. */

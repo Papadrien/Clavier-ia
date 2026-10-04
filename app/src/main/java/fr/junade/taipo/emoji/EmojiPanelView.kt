@@ -1,5 +1,6 @@
 package fr.junade.taipo.emoji
 
+import fr.junade.taipo.useTaipoFont
 import fr.junade.taipo.themeColor
 import android.annotation.SuppressLint
 import android.content.Context
@@ -162,6 +163,7 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
         text = label
         setTextColor(context.themeColor(R.color.text_primary))
         setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp)
+        useTaipoFont()
         gravity = Gravity.CENTER
         background = keyBackground(pressed = false)
     }

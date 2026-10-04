@@ -2,10 +2,7 @@ package fr.junade.taipo
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Typeface
-import android.graphics.drawable.GradientDrawable
 import android.text.TextUtils
-import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
@@ -20,6 +17,10 @@ import fr.junade.taipo.dictionary.WordSuggestion
  * refuser la correction, est entre guillemets ; les simples suggestions sont en poids normal. Un
  * emplacement sans mot reste réservé (invisible), comme l'emplacement emoji quand aucun emoji
  * n'est proposé, pour que la bande ne change pas de taille.
+ *
+ * Charte Taipo (lot 11) : texte blanc sur le fond du clavier ; le mot de l'autocorrection (action importante) est en
+ * gras sur une pastille violette ; l'emplacement emoji est un bouton secondaire. Les fonds « face + ombre » sont créés
+ * une fois ([BarStyle.pillBackground]) et simplement posés ou retirés, sans allocation à chaque frappe.
  */
 @SuppressLint("ViewConstructor")
 class SuggestionStripView(context: Context) : LinearLayout(context) {
@@ -33,7 +34,9 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         fun onWordClick(suggestion: WordSuggestion)
     }
 
+    private val style = BarStyle(context)
     private val wordSlots = List(WORD_SLOT_COUNT) { TextView(context) }
+    private val wordHighlights = List(WORD_SLOT_COUNT) { style.pillBackground(R.color.accent) }
     private val emojiSlot = TextView(context)
     private var emojiListener: OnEmojiClickListener? = null
     private var wordListener: OnWordClickListener? = null
@@ -50,28 +53,32 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
 
+        val slotPadding = dimen(R.dimen.taipo_suggestion_slot_padding).toInt()
+        val slotGap = dimen(R.dimen.taipo_suggestion_slot_gap).toInt()
+        // Le texte se centre sur la face des fonds : marge basse = épaisseur d'ombre, aussi sur les emplacements sans fond.
+        val shadow = dimen(R.dimen.taipo_key_shadow_height).toInt()
         wordSlots.forEachIndexed { index, slot ->
             slot.setTextColor(context.themeColor(R.color.text_primary))
-            slot.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+            slot.setTextSizeRes(R.dimen.taipo_suggestion_text_size)
+            slot.useTaipoFont()
             slot.gravity = Gravity.CENTER
             slot.maxLines = 1
             slot.ellipsize = TextUtils.TruncateAt.END
-            slot.setPadding(dp(4f).toInt(), 0, dp(4f).toInt(), 0)
+            slot.setPadding(slotPadding, 0, slotPadding, shadow)
             slot.visibility = View.INVISIBLE
             slot.setOnClickListener { words.getOrNull(index)?.let { wordListener?.onWordClick(it) } }
-            addView(slot, LayoutParams(0, LayoutParams.MATCH_PARENT, 1f))
+            addView(slot, LayoutParams(0, LayoutParams.MATCH_PARENT, 1f).apply { if (index > 0) marginStart = slotGap })
         }
 
-        emojiSlot.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22f)
+        emojiSlot.setTextSizeRes(R.dimen.taipo_suggestion_emoji_text_size)
         emojiSlot.gravity = Gravity.CENTER
         emojiSlot.maxLines = 1
-        emojiSlot.background = GradientDrawable().apply {
-            cornerRadius = dp(18f)
-            setColor(context.themeColor(R.color.surface_button))
-        }
+        emojiSlot.background = style.pillBackground(R.color.surface_button)
+        emojiSlot.setPadding(0, 0, 0, shadow)
         emojiSlot.visibility = View.INVISIBLE
         emojiSlot.setOnClickListener { emoji?.let { emojiListener?.onEmojiClick(it) } }
-        addView(emojiSlot, LayoutParams(dp(48f).toInt(), LayoutParams.MATCH_PARENT))
+        val emojiWidth = dimen(R.dimen.taipo_suggestion_emoji_slot_width).toInt()
+        addView(emojiSlot, LayoutParams(emojiWidth, LayoutParams.MATCH_PARENT).apply { marginStart = slotGap })
     }
 
     fun setOnEmojiClickListener(listener: OnEmojiClickListener) {
@@ -105,14 +112,11 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
                 suggestion.kind == WordSuggestion.Kind.TYPED -> "\u201C${suggestion.text}\u201D"
                 else -> suggestion.text
             }
-            slot.setTypeface(null, if (suggestion?.replacesOnSpace == true) Typeface.BOLD else Typeface.NORMAL)
+            slot.useTaipoFont(if (suggestion?.replacesOnSpace == true) TaipoType.Weight.BOLD else TaipoType.Weight.REGULAR)
+            slot.background = if (suggestion?.replacesOnSpace == true) wordHighlights[index] else null
             slot.visibility = if (suggestion == null) View.INVISIBLE else View.VISIBLE
         }
     }
-
-    private fun dp(value: Float): Float = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics,
-    )
 
     companion object {
         const val WORD_SLOT_COUNT = 3

@@ -58,19 +58,19 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private var settingsListener: (() -> Unit)? = null
 
     /** Story 2.1 : bouton « menu », visible pendant la saisie, qui donne accès au bouton Smart Clipboard. */
-    private val menuButton = Button(context)
+    private val menuButton = ImageButton(context)
 
     /** Menu de droite : range les boutons Vocal et Corriger pendant les suggestions de mots. */
-    private val actionsMenuButton = Button(context)
+    private val actionsMenuButton = ImageButton(context)
 
     /** Croix de fermeture du panneau Smart Clipboard (à gauche de la barre) : visible seulement tant qu'il est ouvert. */
-    private val closeButton = Button(context)
+    private val closeButton = ImageButton(context)
     private var clipboardPanelOpen = false
     private var clipboardCloseListener: (() -> Unit)? = null
     private var actionsMenuBackgroundExpanded: Boolean? = null
     private val zoneState = SuggestionZoneState()
     private var menuBackgroundExpanded: Boolean? = null
-    val voiceButton = Button(context)
+    val voiceButton = ImageButton(context)
     private var listener: OnCorrectListener? = null
 
     /** Story 5.1 : bouton « Générer » (icône), qui bascule la barre en mode prompt ; rangé avec Vocal et Corriger. */
@@ -93,25 +93,24 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         orientation = HORIZONTAL
         gravity = Gravity.END or Gravity.CENTER_VERTICAL
         // Fond transparent : la barre laisse voir le fond commun du clavier (KeyboardBackgroundDrawable).
-        val paddingH = dp(12f).toInt()
-        val paddingV = dp(6f).toInt()
+        val barHeight = dimen(R.dimen.taipo_bar_height).toInt()
+        val iconButtonWidth = dimen(R.dimen.taipo_bar_icon_button_width).toInt()
+        val gap = dimen(R.dimen.taipo_bar_gap).toInt()
+        val paddingH = dimen(R.dimen.taipo_bar_padding_horizontal).toInt()
+        val paddingV = dimen(R.dimen.taipo_bar_padding_vertical).toInt()
         setPadding(paddingH, paddingV, paddingH, paddingV)
 
         // Croix de fermeture du panneau Smart Clipboard, à l'extrémité gauche de la barre.
-        style.styleButton(closeButton, R.color.surface_button)
-        style.compact(closeButton, paddingDp = 0f)
-        closeButton.text = "\u2715"
+        style.styleBarIconButton(closeButton, R.drawable.ic_close)
         closeButton.contentDescription = context.getString(R.string.clipboard_panel_close_description)
         closeButton.setOnClickListener { clipboardCloseListener?.invoke() }
         closeButton.visibility = View.GONE
         addView(
             closeButton,
-            LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginEnd = dp(8f).toInt() },
+            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
         )
 
-        style.styleButton(menuButton, R.color.surface_button)
-        style.compact(menuButton, paddingDp = 0f)
-        menuButton.text = "\u00B7\u00B7\u00B7"
+        style.styleBarIconButton(menuButton, R.drawable.ic_more)
         menuButton.contentDescription = context.getString(R.string.clipboard_menu_description)
         menuButton.setOnClickListener {
             zoneState.toggleMenu()
@@ -119,22 +118,22 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         }
         addView(
             menuButton,
-            LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginEnd = dp(8f).toInt() },
+            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
         )
 
         // Bouton « roue crantée » entre le menu « ··· » et le bouton Smart Clipboard.
-        style.styleIconButton(settingsButton, R.drawable.ic_settings)
+        style.styleRoundIconButton(settingsButton, R.drawable.ic_settings)
         settingsButton.contentDescription = context.getString(R.string.settings_button_description)
         settingsButton.setOnClickListener { settingsListener?.invoke() }
         addView(
             settingsButton,
-            LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginEnd = dp(8f).toInt() },
+            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
         )
 
-        addView(zoneView, LayoutParams(0, dp(36f).toInt(), 1f).apply { marginEnd = dp(8f).toInt() })
+        addView(zoneView, LayoutParams(0, barHeight, 1f).apply { marginEnd = gap })
 
         // Story 5.1 : « Générer », à gauche de Vocal. Icône seule (40 dp) pour ménager la place de la zone de gauche.
-        style.styleIconButton(generateButton, R.drawable.ic_generate)
+        style.styleRoundIconButton(generateButton, R.drawable.ic_generate)
         generateButton.contentDescription = context.getString(R.string.generate_button_description)
         generateButton.setOnClickListener {
             collapseMenu()
@@ -142,14 +141,16 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         }
         addView(
             generateButton,
-            LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginEnd = dp(8f).toInt() },
+            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
         )
 
-        style.styleButton(voiceButton, R.color.surface_button)
+        // Lot 08 : Vocal devient un bouton rond à icône micro ; son état (écoute, chargement…) passe par la couleur,
+        // la transparence et la description d'accessibilité, plus par le texte.
+        style.styleRoundIconButton(voiceButton, R.drawable.ic_mic)
         voiceButton.setOnClickListener { /* geste réel géré via setOnTouchListener côté appelant */ }
         addView(
             voiceButton,
-            LayoutParams(LayoutParams.WRAP_CONTENT, dp(36f).toInt()).apply { marginEnd = dp(8f).toInt() },
+            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
         )
 
         style.styleButton(correctButton, R.color.accent)
@@ -159,12 +160,10 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
                 listener?.onCorrectClicked()
             }
         }
-        addView(correctButton, LayoutParams(LayoutParams.WRAP_CONTENT, dp(36f).toInt()))
+        addView(correctButton, LayoutParams(LayoutParams.WRAP_CONTENT, barHeight))
 
         // Menu de droite : pendant les suggestions de mots, il range derrière lui Vocal et Corriger.
-        style.styleButton(actionsMenuButton, R.color.surface_button)
-        style.compact(actionsMenuButton, paddingDp = 0f)
-        actionsMenuButton.text = "\u00B7\u00B7\u00B7"
+        style.styleBarIconButton(actionsMenuButton, R.drawable.ic_more)
         actionsMenuButton.contentDescription = context.getString(R.string.actions_menu_description)
         actionsMenuButton.setOnClickListener {
             zoneState.toggleActionsMenu()
@@ -172,7 +171,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         }
         addView(
             actionsMenuButton,
-            LayoutParams(dp(40f).toInt(), dp(36f).toInt()).apply { marginStart = dp(8f).toInt() },
+            LayoutParams(iconButtonWidth, barHeight).apply { marginStart = gap },
         )
 
         renderCorrect()
@@ -213,7 +212,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val available = MeasureSpec.getSize(widthMeasureSpec).toFloat()
         val content = KeyboardWidth.forAvailableWidth(available, resources.displayMetrics.density)
-        val side = dp(12f).toInt() + content.leftPx.toInt()
+        val side = dimen(R.dimen.taipo_bar_padding_horizontal).toInt() + content.leftPx.toInt()
         if (paddingLeft != side || paddingRight != side) {
             setPadding(side, paddingTop, side, paddingBottom)
         }
@@ -308,12 +307,12 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         settingsButton.visibility = if (visible.settingsButton) View.VISIBLE else View.GONE
         if (menuBackgroundExpanded != zoneState.menuExpanded) {
             menuBackgroundExpanded = zoneState.menuExpanded
-            menuButton.background = style.roundedBackground(if (zoneState.menuExpanded) R.color.accent else R.color.surface_button)
+            menuButton.background = style.pillBackground(if (zoneState.menuExpanded) R.color.accent else R.color.surface_button)
         }
         if (actionsMenuBackgroundExpanded != zoneState.actionsExpanded) {
             actionsMenuBackgroundExpanded = zoneState.actionsExpanded
             actionsMenuButton.background =
-                style.roundedBackground(if (zoneState.actionsExpanded) R.color.accent else R.color.surface_button)
+                style.pillBackground(if (zoneState.actionsExpanded) R.color.accent else R.color.surface_button)
         }
     }
 
@@ -328,11 +327,9 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
 
     private fun renderVoice() {
         val appearance = BarVisibility.voiceAppearance(voiceState)
-        voiceButton.text = context.getString(appearance.label)
-        voiceButton.background = style.roundedBackground(appearance.background)
+        voiceButton.contentDescription = context.getString(appearance.label)
+        voiceButton.background = style.roundBackground(appearance.background)
         voiceButton.alpha = appearance.alpha
         renderActionButtons()
     }
-
-    private fun dp(value: Float): Float = style.dp(value)
 }

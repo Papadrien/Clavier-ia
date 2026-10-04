@@ -8,10 +8,10 @@ import androidx.annotation.ColorRes
 /**
  * Thème du clavier et des écrans de l'application (lot 3.1 de la revue de code).
  *
- * Décision du 04/10/2026 : **en V1, le thème est toujours sombre**, quel que soit le thème du système. Le
- * thème clair existe déjà (palette de `res/values/colors.xml`, rapide à retravailler) mais n'est pas proposé :
- * il est prévu pour la V2. La palette sombre est dans `res/values-night/colors.xml` (c'est ce qui dit au système
- * que ces valeurs sont celles d'un thème sombre).
+ * Décision du 04/10/2026 : **en V1, le thème est toujours sombre**, quel que soit le thème du système.
+ * Refonte graphique (lot 01) : la charte Taipo est unique et sombre ; `res/values/colors.xml` et
+ * `res/values-night/colors.xml` portent les mêmes valeurs. Le thème clair est prévu pour la V2 : il suffira
+ * alors de lui donner sa propre palette dans `res/values/colors.xml`.
  *
  * Mécanisme : la couleur choisie est résolue avec une configuration où le mode nuit est forcé ([mode]), au lieu
  * de suivre celui de l'appareil. Pour passer à la V2 (suivre le système, ou un réglage), il suffit de changer
