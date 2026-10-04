@@ -191,3 +191,10 @@ rangée de chiffres), accents longs, glissement sur la barre espace, glissement 
 presse-papiers (puce, panneau, épinglés), correction IA, mode prompt, dictée, rotation de l'écran (la vue est
 recréée, y compris avec le mode prompt actif), changement de champ, auto-remplissage en ligne.
 
+### Correctifs de compilation du lot 2.3 (04/10/2026)
+- `ImeViewComposer` : imports de `EmojiPanelView` et `RecentEmojiBarView` (package `emoji`) oubliés.
+- `TaipoIme` : « Type checking has run into a recursive problem » : les contrôleurs `by lazy` se référencent
+  entre eux (le composer lit `prompt` et `clipboard`, dont les `Host` lisent le composer) et leur type était inféré
+  depuis le corps du `lazy`. Les types sont maintenant explicites (`prompt`, `clipboard`, `voice`, `correction`,
+  `suggestions`, `viewComposer`, `nextWords`). À garder explicites si un nouveau contrôleur est ajouté.
+

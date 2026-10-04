@@ -6,6 +6,8 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import fr.junade.taipo.dictionary.WordSuggestion
+import fr.junade.taipo.emoji.EmojiPanelView
+import fr.junade.taipo.emoji.RecentEmojiBarView
 
 /**
  * Construction de la vue du clavier (`onCreateInputView`) : clavier, barre du haut, barre des emojis récents,

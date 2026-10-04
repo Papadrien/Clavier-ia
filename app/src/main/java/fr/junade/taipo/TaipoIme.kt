@@ -35,6 +35,7 @@ import fr.junade.taipo.emoji.EmojiText
 import fr.junade.taipo.emoji.MessagingFieldPolicy
 import fr.junade.taipo.emoji.RecentEmojiBarView
 import fr.junade.taipo.emoji.RecentEmojis
+import fr.junade.taipo.suggestion.NextWordRepository
 import fr.junade.taipo.suggestion.SuggestionPolicy
 import fr.junade.taipo.suggestion.WordText
 import fr.junade.taipo.dictionary.PersonalDictionaryProvider
@@ -55,7 +56,7 @@ class TaipoIme : InputMethodService() {
     private val emojiPanel: EmojiPanelView get() = viewComposer.emojiPanel
 
     // Smart Clipboard (puce de collage, panneau, épinglés) : voir ClipboardController (lot 2.3 de la revue).
-    private val clipboard by lazy {
+    private val clipboard: ClipboardController by lazy {
         ClipboardController(
             this,
             serviceScope,
@@ -94,7 +95,7 @@ class TaipoIme : InputMethodService() {
 
     // Suggestions de mots et d'emoji, prédiction du mot suivant, apprentissage local : voir
     // SuggestionController (lot 2.3 de la revue).
-    private val suggestions by lazy {
+    private val suggestions: SuggestionController by lazy {
         SuggestionController(
             this,
             serviceScope,
@@ -129,7 +130,7 @@ class TaipoIme : InputMethodService() {
         )
     }
 
-    private val nextWords get() = suggestions.nextWords
+    private val nextWords: NextWordRepository get() = suggestions.nextWords
     private val currentWordSuggestions: List<WordSuggestion?> get() = suggestions.currentWordSuggestions
     private val currentEmojiSuggestion: String? get() = suggestions.currentEmojiSuggestion
 
@@ -140,7 +141,7 @@ class TaipoIme : InputMethodService() {
     private val recentEmojiBar: RecentEmojiBarView get() = viewComposer.recentEmojiBar
 
     // Mode prompt (conversation, génération, zone de chat) : voir PromptModeController (lot 2.3 de la revue).
-    private val prompt by lazy {
+    private val prompt: PromptModeController by lazy {
         PromptModeController(
             this,
             serviceScope,
@@ -210,7 +211,7 @@ class TaipoIme : InputMethodService() {
     private val personalDictionary by lazy { PersonalDictionaryProvider.repository(applicationContext) }
 
     // Correction IA : voir CorrectionAiController (lot 2.3 de la revue).
-    private val correction by lazy {
+    private val correction: CorrectionAiController by lazy {
         CorrectionAiController(
             this,
             serviceScope,
@@ -234,7 +235,7 @@ class TaipoIme : InputMethodService() {
         )
     }
 
-    private val voice by lazy {
+    private val voice: VoiceController by lazy {
         VoiceController(
             this,
             serviceScope,
@@ -263,7 +264,7 @@ class TaipoIme : InputMethodService() {
     }
 
     // Construction de la vue du clavier : voir ImeViewComposer (lot 2.3 de la revue).
-    private val viewComposer by lazy {
+    private val viewComposer: ImeViewComposer by lazy {
         ImeViewComposer(
             this,
             prompt,
