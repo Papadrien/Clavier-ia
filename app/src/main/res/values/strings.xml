@@ -11,11 +11,15 @@
     <string name="model_settings_title">Modèle IA</string>
     <string name="model_settings_description">Prototype : aucun téléchargement. Choisissez un modèle dans la liste, puis fournissez vous-même le fichier .litertlm correspondant depuis le stockage du téléphone.</string>
     <string name="model_settings_spinner_label">Modèle</string>
-    <string name="model_settings_model_info">Modèle technique : %1$s\n\nFormat attendu : fichier %2$s (LiteRT-LM)\n\n%3$s\n\nDépôt Hugging Face de référence : %4$s\n\nAucun checksum de référence n\'est vérifié dans ce prototype : seule la taille du fichier est comparée à titre indicatif.</string>
+    <string name="model_settings_model_info">Modèle technique : %1$s\n\nFormat attendu : fichier %2$s (LiteRT-LM)\n\n%3$s\n\nDépôt Hugging Face de référence : %4$s\n\nAucune empreinte de référence n\'est embarquée dans ce prototype : la taille du fichier est comparée à titre indicatif, et son empreinte SHA-256 est affichée pour que vous puissiez la comparer à celle du dépôt.</string>
     <string name="model_settings_pick_file">Choisir le fichier .litertlm</string>
     <string name="model_settings_current_file">Fichier actuel : %1$s</string>
     <string name="model_settings_no_file">Aucun fichier fourni pour ce modèle.</string>
     <string name="model_settings_forget_file">Oublier ce fichier</string>
+    <string name="model_settings_checksum_running">Empreinte SHA-256 : calcul en cours… %1$s</string>
+    <string name="model_settings_checksum_progress">%1$d %%</string>
+    <string name="model_settings_checksum_value">Empreinte SHA-256 :\n%1$s</string>
+    <string name="model_settings_checksum_missing">Empreinte SHA-256 non calculée : choisissez de nouveau le fichier pour la calculer.</string>
     <string name="model_settings_file_saved">Fichier enregistré pour le modèle %1$s</string>
 
     <string name="correction_prompt_title">Prompt de correction (test)</string>

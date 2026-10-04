@@ -27,3 +27,6 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.0")
     }
 }
+
+// Lot 4.1 (B8) : tâches ktlint / detekt à la demande (rien n'est résolu tant qu'on ne les lance pas).
+apply(from = "gradle/quality.gradle.kts")

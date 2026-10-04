@@ -198,3 +198,168 @@ recréée, y compris avec le mode prompt actif), changement de champ, auto-rempl
   depuis le corps du `lazy`. Les types sont maintenant explicites (`prompt`, `clipboard`, `voice`, `correction`,
   `suggestions`, `viewComposer`, `nextWords`). À garder explicites si un nouveau contrôleur est ajouté.
 
+## Thème : couleurs en ressources (lot 3.1, 04/10/2026) — première moitié
+
+**Recomptage** : 54 occurrences de couleurs hexadécimales en dur dans 11 fichiers de code (`KeyboardView`,
+`CorrectionBarView`, `PromptBarView`, `ChatZoneView`, `ClipboardPanelView`, `SuggestionStripView`, `EmojiGridView`,
+`EmojiTabsView`, `EmojiPanelView`, `KeyboardBackgroundDrawable`, `CorrectionAiController`), plus l'accent dans
+`themes.xml` et 3 couleurs dans `activity_model_settings.xml`. (Le plan en annonçait 33 dans 10 fichiers.)
+
+**Fait** : toutes ces couleurs sont dans `res/values/colors.xml`, avec des noms sémantiques (`accent`, `key_*`,
+`surface_*`, `clip_*`, `settings_*`...). Aucun changement visuel : les valeurs sont celles d'avant.
+- Les vues lisent `context.getColor(R.color.…)` ; les helpers `roundedBackground` / `styleButton` prennent un id de
+  ressource ; `KeyboardBackgroundDrawable` reçoit sa couleur du composer ; le surlignage de correction dérive de
+  `accent` avec une transparence (`HIGHLIGHT_ALPHA`).
+- Non traités, volontairement : les `Color.WHITE` (texte et icônes, ~16 usages) et les icônes vectorielles blanches.
+  Ce ne sont pas des teintes à choisir : ils suivront la palette quand le thème sera décidé.
+
+**Reste (décision à prendre)** : faut-il que le clavier suive le thème système ? Aujourd'hui il est toujours
+sombre, alors que les écrans de réglages sont en `Material.Light`. Si oui : ajouter `values-night/colors.xml` (ou une
+palette claire dans `values/`, sombre dans `values-night/`), passer les `Color.WHITE` en ressources et basculer les
+thèmes des activités en DayNight. Si non : documenter « clavier sombre uniquement » et passer au lot suivant.
+
+Non compilé ici. Vérification manuelle : l'apparence du clavier, de la barre du haut, du prompt, de la zone de chat,
+du presse-papiers (carte normale / épinglée, confirmation de suppression) et des réglages est identique à avant.
+
+## Thème : sombre en V1, clair prévu en V2 (lot 3.1 terminé, 04/10/2026)
+
+**Décision (Adrien, 04/10/2026)** : le thème par défaut est **toujours sombre** en V1, quel que soit le thème du système.
+Le thème clair est prévu (ébauche rapide faite, à retravailler en V2) mais n'est pas proposé.
+
+**Fait**
+- `values-night/colors.xml` contient la palette **sombre** (les valeurs d'origine) : c'est la déclaration, côté système,
+  que ces couleurs sont celles du thème sombre. `values/colors.xml` contient l'ébauche de palette **claire**.
+- `KeyboardTheme` (nouveau) : `mode = DARK` (V1). Les couleurs sont résolues avec le mode nuit forcé
+  (`context.themeColor(R.color.…)`), indépendamment du thème de l'appareil ; les activités reçoivent un contexte au même
+  thème (`attachBaseContext`) pour que `@color/…` et leur thème suivent. Passer en V2 = changer `KeyboardTheme.mode`.
+- Thèmes des écrans passés de `Material.Light` à `Material` (sombre), avec `forceDarkAllowed=false` : le système n'a pas à
+  réassombrir un thème déjà sombre. Nouvelles couleurs : `text_primary` (remplace les `Color.WHITE`, ~16 usages) et les
+  trois couleurs de réglages ont une valeur sombre.
+- Icônes (paramètres, collage, générer, chat) : teintées par `text_primary` au lieu du blanc fixe des vecteurs.
+
+**Changement visible en V1** : les écrans de réglages (qui étaient en thème clair) deviennent sombres, comme le clavier.
+Le clavier lui-même est inchangé.
+
+**Limites connues de l'ébauche claire (V2)** : texte sombre aussi sur les boutons colorés (accent, envoi, danger),
+icônes d'envoi/stop/chat à revoir sur fond coloré, contrastes non vérifiés, pas de réglage utilisateur, icône du
+lanceur inchangée.
+
+Non compilé ici. Vérification manuelle (appareil en thème **clair** puis en thème **sombre**, le rendu doit être identique) :
+clavier, barre du haut, prompt, zone de chat, presse-papiers (carte normale / épinglée, confirmation de suppression),
+panneau emoji, pop-up d'information, tous les écrans de réglages, fenêtres de modification du presse-papiers.
+
+
+## Tests : androidTest, intégrité des dictionnaires (lot 3.3, 04/10/2026)
+
+Non compilé ni exécuté ici (pas de compilateur dans l'environnement de revue). À lancer à la main :
+`./gradlew testDebugUnitTest` puis, appareil branché, `./gradlew connectedDebugAndroidTest`.
+
+**Tests JVM — `DictionaryAssetsIntegrityTest`** (`@ParameterizedTest`, fr + en) : relit `fr.txt` / `en.txt` en
+format strict (`parseFrequencyLines` est tolérant et masquerait une ligne abîmée) : « mot fréquence » partout,
+fréquences > 0, tri décroissant, aucun doublon, minuscules / NFC / lettres + `'` + `-`, lettres isolées
+autorisées seulement (fr : a à y ; en : a i), taille plancher 45 000 mots, mots courants présents,
+le chargeur ne perd aucune ligne, `SOURCES.txt` cite les deux fichiers. Les règles reprennent l'état constaté
+des fichiers (vérifié par script sur les fichiers actuels : 0 anomalie).
+
+**Tests instrumentés (`app/src/androidTest`, JUnit 4)** :
+- `ClipboardDatabaseTest` : migration 1 → 2 (base v1 reconstruite avec le DDL figé de `pinned_clips` ; Room valide
+  le schéma migré contre les entités à l'ouverture), conservation des épinglés, table `clip_history` utilisable,
+  base neuve en v2, persistance, **fichier chiffré** (pas d'en-tête « SQLite format 3 », marqueur absent du
+  fichier et du WAL après relecture préalable), mauvaise clé refusée.
+- `PersonalDictionaryDatabaseTest` : SQL réel de `insertBounded` (ajout, doublon, plafond), persistance,
+  chiffrement du fichier, mauvaise clé.
+- `DatabasePassphraseProviderTest` : Keystore réel (clé de 64 caractères hexadécimaux, stable, pas en clair dans les
+  préférences, `reset` régénère). Préparation de la migration de clé du lot 3.4 (S1).
+- Les tests utilisent des **noms de base, préférences et alias de test** : les vraies données de l'appareil ne
+  sont jamais ouvertes ni supprimées. Pour cela, `ClipboardDatabase.create` et `PersonalDictionaryDatabase.create`
+  ont reçu un 3ᵉ paramètre `name` (défaut = nom actuel, aucun changement de comportement).
+
+Écart avec le plan : la migration est testée **sans** `MigrationTestHelper` (donc sans `app/schemas/*/1.json`) ;
+le DDL v1 est figé dans le test. Les schémas restent à committer (case ouverte du lot 1.1).
+
+À valider au premier lancement :
+- [ ] `./gradlew testDebugUnitTest` vert (20 nouveaux cas : 8 contrôles × fr/en + lettres isolées + mots courants, chacun fr/en).
+- [ ] `./gradlew connectedDebugAndroidTest` vert sur le Pixel 9 (arm64). Versions `androidx.test:runner:1.7.0`
+      et `androidx.test.ext:junit:1.3.0` non vérifiées depuis ici : les ajuster si Gradle ne les résout pas.
+- [ ] Si `le_fichier_est_chiffre_sur_le_disque` échoue : lire le message (en-tête en clair ou marqueur en clair).
+
+## Sécurité (lot 3.4, 04/10/2026)
+
+Voir `docs/securite.md` : HKDF + migration du fichier « mot suivant » (S1), exclusions de sauvegarde des modèles
+et décision D5 (S2), empreinte SHA-256 à la sélection d'un modèle (S3). Non compilé ni exécuté ici.
+
+## Activity Result API (lot 3.5, U3, 04/10/2026)
+
+`ModelSettingsActivity` et `VoiceModelSettingsActivity` n'utilisent plus `startActivityForResult` /
+`onActivityResult` : elles héritent de `ComponentActivity` (nouvelle dépendance `androidx.activity:activity`,
+version `activity = "1.10.1"` dans `gradle/libs.versions.toml`) et enregistrent un
+`registerForActivityResult(OpenDocument())` par modèle / par fichier, dans `onCreate` et dans un ordre fixe
+(le résultat retrouve donc son modèle même si le processus est tué pendant que le sélecteur est ouvert).
+Les codes de requête ont disparu ; les `Cursor` sont fermés par `use { }`. Aucun changement de comportement.
+Non compilé ici (pas de compilateur) :
+
+- [ ] `./gradlew assembleDebug testDebugUnitTest` (si la version 1.10.1 pose problème de résolution, la monter dans le catalogue).
+- [ ] Sur l'appareil : choisir un fichier modèle IA (empreinte SHA-256 calculée, avertissements), annuler un sélecteur
+      (rien ne change), choisir les 4 fichiers du modèle vocal, rouvrir l'écran (noms conservés).
+
+## Performance mesurée (lot 3.6, 04/10/2026)
+
+Sections de trace, variante `benchmark`, module `:macrobenchmark` (chargé à la demande) et profil de démarrage :
+voir `docs/performance.md`. Non compilé ici.
+
+- [ ] `./gradlew assembleDebug testDebugUnitTest` (le build normal ne charge pas le module macrobenchmark).
+
+## ABI x86_64 en debug, ktlint et detekt (lot 4.1, 04/10/2026)
+
+- **B7 / D7** : `ndk.abiFilters` = arm64-v8a pour tous les builds, plus x86_64 en debug (émulateur). Release et benchmark
+  restent en arm64 seulement (les bibliothèques sherpa-onnx n'existent qu'en arm64 dans le dépôt). Voir
+  `app/src/debug/jniLibs/README.md`.
+- **B8** : tâches `ktlintCheck`, `ktlintFormat`, `ktlintBaseline`, `detekt`, `detektBaseline`, `qualityCheck` (sans plugin,
+  à la demande). Voir `docs/qualite.md`. Non exécuté ici.
+
+- [ ] `./gradlew assembleDebug assembleRelease testDebugUnitTest` (le débogage doit toujours tourner sur le Pixel 9 : l'ABI arm64 y est conservé).
+- [ ] `./gradlew ktlintBaseline detektBaseline` puis `qualityCheck`.
+
+## Découpage de CorrectionBarView (lot 4.2, 04/10/2026)
+
+`CorrectionBarView` (524 → 338 lignes) sans changement de comportement ni d'API publique :
+
+- `BarStates.kt` : les enums `CorrectionBarState` et `VoiceBarState`.
+- `BarStyle.kt` : style commun des boutons (fond arrondi, compact, icône).
+- `BarVisibility.kt` : règles d'affichage pures (boutons d'action, zone de gauche, apparence de Corriger et de Vocal),
+  testées dans `BarVisibilityTest` (12 cas, pas encore exécutés).
+- `SuggestionZoneView.kt` : la zone de gauche (bande de mots, bouton Smart Clipboard, puce de collage,
+  suggestions d'auto-remplissage en ligne).
+
+`PromptBarView` garde ses propres copies de `roundedBackground` et `dp` : à rapprocher de `BarStyle` à la prochaine
+story qui le touche. Non compilé ici.
+
+- [ ] `./gradlew assembleDebug testDebugUnitTest`.
+- [ ] Sur l'appareil, barre du haut : champ vide (bouton presse-papiers + roue crantée), saisie (mots, menu « ··· » gauche
+      et droite), puce de collage, panneau presse-papiers ouvert (bouton coloré qui referme), suggestions d'auto-remplissage,
+      dictée (bouton rouge, Générer masqué), correction IA (bouton grisé « Correction… »).
+
+## README et références documentaires (lot 4.3, 04/10/2026)
+
+- Le document `ai-keyboard.md`, cité dans des commentaires mais absent du dépôt, est remplacé par
+  `docs/decisions-techniques.md` (extrait des décisions du 23/09 utiles au code) ; les 5 références
+  (`app/build.gradle.kts` x2, `VoiceModelFile.kt`, `LlmEngineHost.kt`, `jniLibs/README.md`) pointent maintenant dessus.
+- README : titre et introduction à jour (Taipo, IA locale), section Technique complétée (IA, dictée sherpa-onnx sans `.aar`,
+  ABI), CI complétée (étapes à ajouter), index de la documentation.
+- Le workflow `.github/workflows/android.yml` n'étant pas dans l'archive, sa description du README reste celle du dépôt réel
+  (non vérifiable ici).
+
+- [ ] Relire le README une fois ; ajouter l'étape `qualityCheck` au workflow (voir `docs/qualite.md`).
+
+## Module :core et langue de l'interface (lot 4.4, 04/10/2026)
+
+- **A5** : nouveau module JVM `:core` (dictionnaire, suggestions, `KeyboardLanguage`) et ses 10 fichiers de tests ; mêmes
+  packages, `writeAtomically` et `NextWordCrypto` rendus publics. `PersonalDictionaryRepository` reste dans `:app` (Room).
+  Détail dans `docs/modules.md`. Le plan demandait d'attendre la fin de 2.3 : les six contrôleurs sont extraits.
+- **U4 / D4** : interface 100 % française assumée et documentée (`docs/modules.md`), aucun code modifié.
+- Non compilé ici (pas de compilateur Kotlin).
+
+- [ ] `./gradlew assembleDebug assembleRelease testDebugUnitTest` (vérifier que les tests de `:core` s'exécutent bien).
+- [ ] Un build release : confirmer que R8 garde tout ce qui vient de `:core` (aucune règle keep n'est censée être nécessaire).
+- [ ] Réactiver / relancer le clavier sur le Pixel 9 : frappe, suggestions, autocorrection, mot suivant, emoji.
+

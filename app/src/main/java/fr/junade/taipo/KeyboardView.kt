@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.os.Handler
@@ -86,19 +85,19 @@ class KeyboardView(context: Context) : View(context) {
     // fond quasi noir, touches "principales" (lettres/chiffres/espace) gris moyen,
     // touches "accessoires" (fonction + ponctuation rapide) gris très foncé,
     // et un accent turquoise réservé à la touche Entrée.
-    private val normalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#2E2E2E") }
-    private val functionalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#141414") }
-    private val pressedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#4A4A4A") }
-    private val activePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#4A4A4A") }
-    private val enterPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#80CBC4") }
+    private val normalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_normal) }
+    private val functionalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_functional) }
+    private val pressedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_pressed) }
+    private val activePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_pressed) }
+    private val enterPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_enter) }
     private val spaceBarPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#4A4A4A")
+        color = context.themeColor(R.color.key_pressed)
         strokeWidth = 6f
         strokeCap = Paint.Cap.ROUND
     }
 
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.WHITE
+        color = context.themeColor(R.color.text_primary)
         textAlign = Paint.Align.CENTER
     }
 
@@ -106,18 +105,18 @@ class KeyboardView(context: Context) : View(context) {
 
     // Icône de la touche emoji (story 1.15).
     private val iconStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#E0E0E0")
+        color = context.themeColor(R.color.key_label)
         style = Paint.Style.STROKE
         strokeCap = Paint.Cap.ROUND
     }
-    private val iconFillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#E0E0E0") }
+    private val iconFillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_label) }
     private val iconRect = RectF()
 
     // Appui long : bulle de symboles (grille) affichée au-dessus de la touche.
-    private val popupPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#3A3A3A") }
-    private val popupSelectionPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#26A69A") }
+    private val popupPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_popup) }
+    private val popupSelectionPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_popup_selection) }
     private val popupTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.WHITE
+        color = context.themeColor(R.color.text_primary)
         textAlign = Paint.Align.CENTER
         isFakeBoldText = true
     }
@@ -141,7 +140,7 @@ class KeyboardView(context: Context) : View(context) {
     private var longPressCommitted = false
 
     private val hintPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#9E9E9E")
+        color = context.themeColor(R.color.key_hint)
         textAlign = Paint.Align.CENTER
     }
 
@@ -151,9 +150,9 @@ class KeyboardView(context: Context) : View(context) {
     // entrée, bascule) ont déjà leur propre retour visuel (fond éclairci). Disparaît dès qu'une
     // bulle d'accents (1.8) s'affiche par-dessus, ou au relâchement/annulation.
     private var previewKey: Key? = null
-    private val previewPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#3A3A3A") }
+    private val previewPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_popup) }
     private val previewTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.WHITE
+        color = context.themeColor(R.color.text_primary)
         textAlign = Paint.Align.CENTER
     }
     private val previewRect = RectF()

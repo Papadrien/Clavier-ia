@@ -154,7 +154,9 @@ class SuggestionController(
             publishEmoji(emoji)
             suggestionJob = scope.launch(Dispatchers.Default) {
                 val started = System.nanoTime()
-                val words = dictionary.suggestionSlotsFor(typed, personalWords = personalWords)
+                val words = traced(Sections.SUGGESTIONS) {
+                    dictionary.suggestionSlotsFor(typed, personalWords = personalWords)
+                }
                 if (BuildConfig.DEBUG) {
                     AppLog.d(TAG, "suggestions de mots en ${(System.nanoTime() - started) / 1_000} µs")
                 }
@@ -296,7 +298,9 @@ class SuggestionController(
         // langue n'est pas prêt (quelques instants après la création du service), pas d'autocorrection.
         val dictionary = DictionaryLoader.peek(host.language()) ?: return null
         val started = System.nanoTime()
-        val correction = dictionary.correctionFor(word, personalWords = host.personalWords())
+        val correction = traced(Sections.AUTOCORRECTION) {
+            dictionary.correctionFor(word, personalWords = host.personalWords())
+        }
         if (BuildConfig.DEBUG) {
             AppLog.d(TAG, "autocorrection de \"$word\" en ${(System.nanoTime() - started) / 1_000} µs")
         }

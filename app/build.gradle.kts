@@ -17,6 +17,17 @@ android {
         // Actions) ; 1 en local. Play refuse un versionCode déjà publié.
         versionCode = (System.getenv("VERSION_CODE") ?: System.getenv("GITHUB_RUN_NUMBER"))?.toIntOrNull() ?: 1
         versionName = "1.0.0"
+
+        // Lot 4.1 (B7, décision D7) : les bibliothèques natives de la dictée (sherpa-onnx) n'existent que pour
+        // arm64-v8a. La release (et la variante benchmark) ne contient donc que cet ABI ; la variante debug
+        // ajoute x86_64 pour l'émulateur (voir app/src/debug/jniLibs/README.md : sans les .so sherpa x86_64,
+        // tout fonctionne sauf la dictée, qui échoue proprement).
+        ndk {
+            abiFilters += listOf("arm64-v8a")
+        }
+
+        // Lot 3.3 : tests instrumentés (Room + SQLCipher + Keystore réels), JUnit 4 côté appareil.
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     // Signature release : lue dans des variables d'environnement (secrets CI), jamais dans le dépôt.
@@ -34,6 +45,12 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            ndk {
+                abiFilters += listOf("arm64-v8a", "x86_64")
+            }
+        }
+
         release {
             // R8 : réduction du code et des ressources. Les règles keep (JNI sherpa-onnx, LiteRT-LM,
             // SQLCipher) sont dans proguard-rules.pro : à valider sur un APK release installé.
@@ -41,6 +58,15 @@ android {
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             if (keystorePath != null) signingConfig = signingConfigs.getByName("release")
+        }
+
+        // Lot 3.6 (P5) : variante pour les macrobenchmarks et la génération du profil de démarrage. Même
+        // code que la release (R8 compris, c'est ce qui est mesuré), mais signée avec la clé debug, donc
+        // installable sans secrets ; n'est jamais publiée. Voir docs/performance.md.
+        create("benchmark") {
+            initWith(getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
         }
     }
 
@@ -70,20 +96,30 @@ room {
 }
 
 dependencies {
+    // Lot 4.4 (A5) : logique pure JVM (dictionnaire, suggestions, langue du clavier), voir docs/modules.md.
+    implementation(project(":core"))
+
     implementation("androidx.core:core-ktx:1.18.0")
+
+    // Lot 3.5 (U3) : Activity Result API (ComponentActivity) pour les sélecteurs de fichier des écrans modèle.
+    implementation(libs.androidx.activity)
+
+    // Lot 3.6 (P5) : installe le profil de démarrage (src/main/baseline-prof.txt, voir docs/performance.md)
+    // même hors Play Store. Sans fichier de profil, ne fait rien.
+    implementation(libs.androidx.profileinstaller)
 
     // Suggestions d'auto-remplissage « en ligne » (gestionnaire de mots de passe) affichées dans la
     // barre du clavier : la bibliothèque fournit le style que les services d'auto-remplissage exigent.
     implementation("androidx.autofill:autofill:1.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
 
-    // Runtime d'inférence locale (voir décision ai-keyboard.md du 23/09/2026).
+    // Runtime d'inférence locale (décision du 23/09/2026 : docs/decisions-techniques.md).
     // Version figée à 0.17.1 dans gradle/libs.versions.toml (lot 1.2 de la revue) : plus de
     // "latest.release", pour des builds CI reproductibles. Pour monter de version, modifier
     // uniquement cette ligne du catalogue, puis rejouer correction, prompt et dictée sur appareil.
     implementation(libs.litertlm.android)
 
-    // Transcription vocale (sherpa-onnx, décision ai-keyboard.md du 23/09/2026).
+    // Transcription vocale (sherpa-onnx, décision du 23/09/2026 : docs/decisions-techniques.md).
     // Contrairement à LiteRT-LM, il n'existe pas de coordonnée Maven officielle
     // simple pour un projet Android natif (hors Flutter/React Native/Dart), et
     // le tar.bz2 des releases GitHub (sherpa-onnx-vX.Y.Z-android.tar.bz2)
@@ -107,8 +143,16 @@ dependencies {
     // androidx.sqlite arrive déjà via room-runtime.
     implementation("net.zetetic:sqlcipher-android:4.18.0@aar")
 
+    // junit-jupiter embarque junit-jupiter-params (@ParameterizedTest, lot 3.3).
     testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
+
+    // Tests instrumentés (src/androidTest, lot 3.3) : `./gradlew connectedDebugAndroidTest` sur appareil.
+    // JUnit 5 n'est pas pris en charge côté appareil : ces tests sont en JUnit 4. Versions à confirmer
+    // au premier build (non résolues depuis l'environnement de revue).
+    androidTestImplementation("androidx.test:runner:1.7.0")
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation("junit:junit:4.13.2")
 }
 
 tasks.withType<Test>().configureEach {

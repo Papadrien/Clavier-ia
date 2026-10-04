@@ -8,12 +8,6 @@ enum class LayoutId {
     PAD,
 }
 
-/** Langue active du clavier (décision 1.1 : AZERTY pour le français, QWERTY pour l'anglais). */
-enum class KeyboardLanguage {
-    FR,
-    EN,
-}
-
 data class Key(
     val id: String,
     val label: String,

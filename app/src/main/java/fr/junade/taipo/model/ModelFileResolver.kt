@@ -48,6 +48,9 @@ object ModelFileResolver {
         destination
     }
 
+    /** Sous-dossier de `filesDir` des modèles (plusieurs Go) : exclu des sauvegardes, voir `res/xml/*backup*.xml`. */
+    const val DIRECTORY_NAME = "models"
+
     fun localFileFor(context: Context, model: AiModel): File =
-        File(File(context.filesDir, "models"), "${model.id}.litertlm")
+        File(File(context.filesDir, DIRECTORY_NAME), "${model.id}.litertlm")
 }

@@ -2,8 +2,8 @@ package fr.junade.taipo
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.annotation.ColorRes
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -86,6 +86,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
 
         // Bouton afficher/masquer le chat : caché tant qu'aucun prompt n'a été envoyé.
         chatToggleButton.setImageResource(R.drawable.ic_chat)
+        chatToggleButton.imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
         chatToggleButton.scaleType = ImageView.ScaleType.CENTER_INSIDE
         chatToggleButton.setPadding(dp(8f).toInt(), dp(8f).toInt(), dp(8f).toInt(), dp(8f).toInt())
         chatToggleButton.contentDescription = context.getString(R.string.prompt_chat_toggle_description)
@@ -102,15 +103,15 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         pill.background = roundedBackground(PILL_COLOR)
 
         cancelButton.text = "\u2715"
-        cancelButton.setTextColor(Color.WHITE)
+        cancelButton.setTextColor(context.themeColor(R.color.text_primary))
         cancelButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
         cancelButton.gravity = Gravity.CENTER
         cancelButton.contentDescription = context.getString(R.string.prompt_cancel_description)
         cancelButton.setOnClickListener { cancelListener?.invoke() }
         pill.addView(cancelButton, LayoutParams(dp(40f).toInt(), LayoutParams.MATCH_PARENT))
 
-        inputView.setTextColor(Color.WHITE)
-        inputView.setHintTextColor(Color.parseColor(HINT_COLOR))
+        inputView.setTextColor(context.themeColor(R.color.text_primary))
+        inputView.setHintTextColor(context.themeColor(HINT_COLOR))
         inputView.hint = context.getString(R.string.prompt_hint)
         inputView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
         inputView.gravity = Gravity.CENTER_VERTICAL
@@ -137,7 +138,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         val sendHolder = FrameLayout(context)
         sendHolder.addView(sendButton, FrameLayout.LayoutParams(dp(36f).toInt(), dp(36f).toInt()))
         sendSpinner.isIndeterminate = true
-        sendSpinner.indeterminateTintList = ColorStateList.valueOf(Color.WHITE)
+        sendSpinner.indeterminateTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
         sendSpinner.visibility = View.GONE
         sendHolder.addView(
             sendSpinner,
@@ -203,7 +204,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         }
         val display = SpannableStringBuilder(before).append(CARET).append(after)
         display.setSpan(
-            ForegroundColorSpan(Color.parseColor(ACCENT_COLOR)),
+            ForegroundColorSpan(context.themeColor(ACCENT_COLOR)),
             before.length,
             before.length + CARET.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
@@ -254,9 +255,9 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         }
     }
 
-    private fun roundedBackground(colorHex: String): GradientDrawable = GradientDrawable().apply {
+    private fun roundedBackground(@ColorRes colorRes: Int): GradientDrawable = GradientDrawable().apply {
         cornerRadius = dp(18f)
-        setColor(Color.parseColor(colorHex))
+        setColor(context.themeColor(colorRes))
     }
 
     private fun dp(value: Float): Float = TypedValue.applyDimension(
@@ -264,12 +265,12 @@ class PromptBarView(context: Context) : LinearLayout(context) {
     )
 
     private companion object {
-        const val BUTTON_COLOR = "#3A3F47"
-        const val ACCENT_COLOR = "#5A7FD4"
-        const val PILL_COLOR = "#2A2D33"
-        const val HINT_COLOR = "#8A9099"
-        const val SEND_COLOR = "#2FA37A"
-        const val STOP_COLOR = "#C0392B"
+        val BUTTON_COLOR = R.color.surface_button
+        val ACCENT_COLOR = R.color.accent
+        val PILL_COLOR = R.color.surface_pill
+        val HINT_COLOR = R.color.text_hint
+        val SEND_COLOR = R.color.action_send
+        val STOP_COLOR = R.color.action_danger
         const val CARET = "|"
         const val BEFORE_CURSOR_SHARE = 0.7f
     }

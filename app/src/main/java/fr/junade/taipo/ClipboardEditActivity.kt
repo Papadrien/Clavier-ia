@@ -1,5 +1,6 @@
 package fr.junade.taipo
 
+import android.content.Context
 import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
@@ -40,6 +41,11 @@ import kotlinx.coroutines.withTimeoutOrNull
  * Annuler ou retour : rien n'est modifié.
  */
 class ClipboardEditActivity : Activity() {
+
+    // Thème de la V1 : toujours sombre (voir KeyboardTheme).
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(KeyboardTheme.wrap(newBase))
+    }
 
     private val scope = MainScope()
     private lateinit var repository: PinnedClipRepository

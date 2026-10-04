@@ -2,7 +2,6 @@ package fr.junade.taipo
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.text.TextUtils
@@ -52,7 +51,7 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         gravity = Gravity.CENTER_VERTICAL
 
         wordSlots.forEachIndexed { index, slot ->
-            slot.setTextColor(Color.WHITE)
+            slot.setTextColor(context.themeColor(R.color.text_primary))
             slot.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
             slot.gravity = Gravity.CENTER
             slot.maxLines = 1
@@ -68,7 +67,7 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         emojiSlot.maxLines = 1
         emojiSlot.background = GradientDrawable().apply {
             cornerRadius = dp(18f)
-            setColor(Color.parseColor("#3A3F47"))
+            setColor(context.themeColor(R.color.surface_button))
         }
         emojiSlot.visibility = View.INVISIBLE
         emojiSlot.setOnClickListener { emoji?.let { emojiListener?.onEmojiClick(it) } }

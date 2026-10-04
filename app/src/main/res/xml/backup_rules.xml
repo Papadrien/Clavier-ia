@@ -18,4 +18,9 @@
     <exclude domain="file" path="next_word_model.enc" />
     <exclude domain="file" path="next_word_model.enc.tmp" />
     <exclude domain="sharedpref" path="next_word_key.xml" />
+    <!-- Lot 3.4 (S2) : modèles IA copiés depuis le stockage de l'utilisateur (plusieurs Go). La sauvegarde
+         automatique est plafonnée (25 Mo) : sans cette exclusion, elle serait désactivée pour toute l'app,
+         et le transfert d'appareil copierait les modèles. L'utilisateur les re-sélectionne après restauration. -->
+    <exclude domain="file" path="models/" />
+    <exclude domain="file" path="voice-model/" />
 </full-backup-content>

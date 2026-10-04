@@ -377,10 +377,13 @@ class CorrectionAiController(
         }
     }
 
+    /** Couleur d'accent du clavier avec transparence. */
+    private fun highlightColor(): Int = (context.themeColor(R.color.accent) and 0x00FFFFFF) or HIGHLIGHT_ALPHA
+
     private fun highlighted(text: String, ranges: List<ChangedRange>, shift: Int = 0) = SpannableString(text).apply {
         ranges.forEach {
             setSpan(
-                BackgroundColorSpan(HIGHLIGHT_COLOR),
+                BackgroundColorSpan(highlightColor()),
                 it.start + shift,
                 it.endExclusive + shift,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
@@ -532,8 +535,8 @@ class CorrectionAiController(
         private const val TAG = "CorrectionAiController"
         private const val MAX_ACCESSIBLE_CHARS = 10_000
 
-        /** #5A7FD4 (couleur accent existante du clavier) avec transparence (alpha 0x55). */
-        private const val HIGHLIGHT_COLOR = 0x555A7FD4
+        /** Transparence (alpha 0x55) appliquée à la couleur d'accent pour le surlignage des mots corrigés. */
+        private const val HIGHLIGHT_ALPHA = 0x55000000
 
         /** Délai pendant lequel les mises à jour de sélection sont considérées comme l'écho de nos propres modifications. */
         private const val SELF_EDIT_GRACE_MS = 500L

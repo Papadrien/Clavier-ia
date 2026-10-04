@@ -1,5 +1,6 @@
 package fr.junade.taipo
 
+import android.content.Context
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +8,11 @@ import android.provider.Settings
 import android.view.View
 
 class MainActivity : Activity() {
+
+    // Thème de la V1 : toujours sombre (voir KeyboardTheme).
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(KeyboardTheme.wrap(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

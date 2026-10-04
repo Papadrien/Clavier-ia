@@ -43,8 +43,11 @@ object VoiceModelFileResolver {
         destination
     }
 
+    /** Sous-dossier de `filesDir` du modèle vocal : exclu des sauvegardes, voir `res/xml/*backup*.xml`. */
+    const val DIRECTORY_NAME = "voice-model"
+
     fun localFileFor(context: Context, file: VoiceModelFile): File =
-        File(File(context.filesDir, "voice-model"), file.id + extensionFor(file))
+        File(File(context.filesDir, DIRECTORY_NAME), file.id + extensionFor(file))
 
     private fun extensionFor(file: VoiceModelFile): String =
         if (file == VoiceModelFile.TOKENS) ".txt" else ".onnx"

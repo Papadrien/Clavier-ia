@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:textSize="14sp"
             android:lineSpacingMultiplier="1.2"
-            android:background="#F0F0F0"
+            android:background="@color/settings_card"
             android:padding="12dp"
             android:layout_marginBottom="16dp" />
 
@@ -67,7 +67,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:textColor="#B23C00"
+            android:textColor="@color/settings_warning_text"
+            android:lineSpacingMultiplier="1.2"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/text_checksum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textIsSelectable="true"
             android:lineSpacingMultiplier="1.2"
             android:layout_marginTop="8dp" />
 
@@ -83,7 +92,7 @@
             android:layout_height="1dp"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="20dp"
-            android:background="#D0D0D0" />
+            android:background="@color/settings_divider" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -108,7 +117,7 @@
             android:minLines="6"
             android:gravity="top|start"
             android:inputType="textMultiLine"
-            android:background="#F0F0F0"
+            android:background="@color/settings_card"
             android:padding="12dp"
             android:textSize="14sp"
             android:layout_marginBottom="12dp" />

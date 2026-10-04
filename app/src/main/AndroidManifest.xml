@@ -4,7 +4,18 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!--
+        Lot 3.4 (S2) : sauvegarde déclarée explicitement. Elle reste activée (réglages du clavier), mais tout ce
+        qui est chiffré avec une clé Keystore, ainsi que les modèles IA, est exclu : voir res/xml/backup_rules.xml
+        et data_extraction_rules.xml (testé par BackupRulesTest).
+
+        Direct boot (décision D5) : le clavier n'est volontairement PAS directBootAware. Avant le premier
+        déverrouillage après un redémarrage, Android affiche son clavier système ; Taipo reprend ensuite.
+        Raison : ses données (dictionnaire personnel, presse-papiers, mot suivant, modèles) sont dans le
+        stockage protégé par les identifiants, indisponible avant déverrouillage. Voir docs/securite.md.
+    -->
     <application
+        android:allowBackup="true"
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
         android:supportsRtl="true"

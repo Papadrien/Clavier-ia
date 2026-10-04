@@ -31,8 +31,7 @@ app/src/main/jniLibs/
     libonnxruntime.so
 ```
 
-Le dossier `arm64-v8a` cible le Pixel 9 (voir décision ai-keyboard.md du
-23/09/2026). Si un jour d'autres ABI sont nécessaires (ex. `x86_64` pour
+Le dossier `arm64-v8a` cible le Pixel 9 (voir `docs/decisions-techniques.md`). Si un jour d'autres ABI sont nécessaires (ex. `x86_64` pour
 l'émulateur), créer les sous-dossiers correspondants de la même façon.
 
 ## L'autre moitié : les sources Kotlin

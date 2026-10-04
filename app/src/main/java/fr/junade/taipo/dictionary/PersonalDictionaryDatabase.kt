@@ -26,11 +26,12 @@ abstract class PersonalDictionaryDatabase : RoomDatabase() {
          * Construit la base chiffrée avec [passphrase]. La bibliothèque native
          * SQLCipher doit être chargée avant toute ouverture. Attention :
          * [SupportOpenHelperFactory] efface le tableau [passphrase] après
-         * usage, ne pas le réutiliser.
+         * usage, ne pas le réutiliser. [name] ne sert qu'aux tests instrumentés (lot 3.3), pour ne
+         * jamais toucher à la vraie base de l'appareil.
          */
-        fun create(context: Context, passphrase: ByteArray): PersonalDictionaryDatabase {
+        fun create(context: Context, passphrase: ByteArray, name: String = NAME): PersonalDictionaryDatabase {
             System.loadLibrary("sqlcipher")
-            return Room.databaseBuilder(context.applicationContext, PersonalDictionaryDatabase::class.java, NAME)
+            return Room.databaseBuilder(context.applicationContext, PersonalDictionaryDatabase::class.java, name)
                 .openHelperFactory(SupportOpenHelperFactory(passphrase))
                 .build()
         }

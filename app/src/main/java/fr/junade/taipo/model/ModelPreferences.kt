@@ -32,6 +32,19 @@ class ModelPreferences(context: Context) {
 
     fun savedFileSizeFor(model: AiModel): Long = prefs.getLong(fileSizeKey(model), -1L)
 
+    /** Empreinte SHA-256 (hexadécimal) du fichier choisi, ou null (pas encore calculée, ou fichier changé). */
+    fun savedSha256For(model: AiModel): String? = prefs.getString(sha256Key(model), null)
+
+    /**
+     * Enregistre l'empreinte calculée pour [uri], seulement si c'est toujours le fichier associé à
+     * [model] (l'utilisateur a pu en choisir un autre pendant le calcul). Retourne vrai si enregistrée.
+     */
+    fun assignSha256(model: AiModel, uri: Uri, sha256: String): Boolean {
+        if (savedUriFor(model) != uri) return false
+        prefs.edit().putString(sha256Key(model), sha256).apply()
+        return true
+    }
+
     /**
      * Associe [uri] au [model] : prend une permission de lecture persistante
      * (indispensable pour pouvoir relire le fichier après redémarrage de
@@ -50,6 +63,7 @@ class ModelPreferences(context: Context) {
             .putString(uriKey(model), uri.toString())
             .putString(fileNameKey(model), fileName)
             .putLong(fileSizeKey(model), fileSize)
+            .remove(sha256Key(model)) // l'empreinte de l'ancien fichier ne vaut plus
             .apply()
     }
 
@@ -66,12 +80,14 @@ class ModelPreferences(context: Context) {
             .remove(uriKey(model))
             .remove(fileNameKey(model))
             .remove(fileSizeKey(model))
+            .remove(sha256Key(model))
             .apply()
     }
 
     private fun uriKey(model: AiModel) = "uri_${model.id}"
     private fun fileNameKey(model: AiModel) = "name_${model.id}"
     private fun fileSizeKey(model: AiModel) = "size_${model.id}"
+    private fun sha256Key(model: AiModel) = "sha256_${model.id}"
 
     companion object {
         private const val PREFS_NAME = "ai_model_prefs"

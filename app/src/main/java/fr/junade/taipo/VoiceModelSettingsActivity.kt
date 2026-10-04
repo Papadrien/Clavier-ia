@@ -1,8 +1,9 @@
 package fr.junade.taipo
 
-import android.app.Activity
-import android.content.Intent
-import android.database.Cursor
+import android.content.Context
+import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
@@ -19,16 +20,35 @@ import fr.junade.taipo.model.VoiceModelPreferences
  * prototype : chaque fichier est fourni manuellement par l'utilisateur via le
  * sélecteur de fichiers du téléphone.
  */
-class VoiceModelSettingsActivity : Activity() {
+class VoiceModelSettingsActivity : ComponentActivity() {
+
+    // Thème de la V1 : toujours sombre (voir KeyboardTheme).
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(KeyboardTheme.wrap(newBase))
+    }
 
     private lateinit var preferences: VoiceModelPreferences
     private val statusViews = mutableMapOf<VoiceModelFile, TextView>()
+
+    /**
+     * Lot 3.5 (U3) : un sélecteur de fichier par fichier du modèle (Activity Result API), enregistrés dans
+     * `onCreate` dans un ordre fixe pour que le résultat retrouve son fichier même après un redémarrage
+     * du processus.
+     */
+    private val filePickers = mutableMapOf<VoiceModelFile, ActivityResultLauncher<Array<String>>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_voice_model_settings)
         applySystemBarInsets()
         preferences = VoiceModelPreferences(this)
+
+        VoiceModelFile.all().forEach { file ->
+            filePickers[file] = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+                // Annulation du sélecteur : uri == null, rien à faire.
+                if (uri != null) onFilePicked(file, uri)
+            }
+        }
 
         val container = findViewById<LinearLayout>(R.id.voice_model_file_list)
         VoiceModelFile.all().forEach { file -> container.addView(buildRow(file)) }
@@ -75,20 +95,10 @@ class VoiceModelSettingsActivity : Activity() {
     }
 
     private fun openFilePickerFor(file: VoiceModelFile) {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "*/*"
-        }
-        startActivityForResult(intent, file.requestCode())
+        filePickers.getValue(file).launch(arrayOf("*/*"))
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != Activity.RESULT_OK) return
-        val uri = data?.data ?: return
-        val file = VoiceModelFile.all().firstOrNull { it.requestCode() == requestCode } ?: return
-
+    private fun onFilePicked(file: VoiceModelFile, uri: Uri) {
         val fileName = queryDisplayName(uri)
         preferences.assignUri(file, uri, fileName)
         statusViews[file]?.text = statusText(file)
@@ -96,24 +106,15 @@ class VoiceModelSettingsActivity : Activity() {
 
     private fun queryDisplayName(uri: Uri): String? {
         var name: String? = null
-        var cursor: Cursor? = null
-        try {
-            cursor = contentResolver.query(uri, null, null, null, null)
-            cursor?.let {
-                if (it.moveToFirst()) {
-                    val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                    if (nameIndex >= 0) name = it.getString(nameIndex)
-                }
+        contentResolver.query(uri, null, null, null, null)?.use {
+            if (it.moveToFirst()) {
+                val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (nameIndex >= 0) name = it.getString(nameIndex)
             }
-        } finally {
-            cursor?.close()
         }
         return name
     }
 
     private fun dp(value: Int): Int =
         (value * resources.displayMetrics.density).toInt()
-
-    /** Code de requête stable pour distinguer les 4 sélecteurs de fichier (onActivityResult). */
-    private fun VoiceModelFile.requestCode(): Int = VoiceModelFile.all().indexOf(this) + 1
 }

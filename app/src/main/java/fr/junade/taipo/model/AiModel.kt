@@ -21,6 +21,13 @@ enum class AiModel(
     val approxSizeBytesMin: Long,
     val approxSizeBytesMax: Long,
     val fileHint: String,
+    /**
+     * Empreinte SHA-256 de référence du fichier attendu, ou null tant qu'elle n'est pas relevée (lot 3.4,
+     * S3). À copier depuis la page du fichier sur Hugging Face (« Copy SHA256 ») : jamais à deviner.
+     * Plusieurs variantes existent pour certains modèles (voir [fileHint]) : ne renseigner que si une
+     * seule variante est supportée, sinon la comparaison signalerait à tort les autres.
+     */
+    val sha256: String? = null,
 ) {
     ULTRA_LEGER(
         id = "ultra_leger",
@@ -79,10 +86,10 @@ enum class AiModel(
  * s'écarte franchement de ce qui est attendu pour ce modèle, ou `null` si la
  * taille semble plausible.
  *
- * Vérification indicative uniquement : ce prototype n'embarque pas de checksum
- * de référence (contrairement à ce qui est prévu pour la V1), donc rien ne
- * garantit que le fichier est le bon modèle - seulement que sa taille est
- * cohérente avec ce qui est attendu.
+ * Vérification indicative uniquement : sans empreinte de référence ([AiModel.sha256], null
+ * pour l'instant), rien ne garantit que le fichier est le bon modèle - seulement que sa taille
+ * est cohérente avec ce qui est attendu. L'empreinte réelle est calculée à la sélection
+ * ([sha256Hex]) et affichée pour comparaison manuelle.
  */
 fun AiModel.sizeWarning(actualSizeBytes: Long): String? {
     if (actualSizeBytes <= 0) return "Impossible de lire la taille du fichier sélectionné."

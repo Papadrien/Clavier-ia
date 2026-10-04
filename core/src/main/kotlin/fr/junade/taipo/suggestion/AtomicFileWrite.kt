@@ -11,7 +11,7 @@ import java.io.File
  * Appel synchrone : quand la fonction rend la main, le fichier est écrit (ou une exception a été levée).
  * Les appels concurrents sur la même cible doivent être sérialisés par l'appelant (fichier temporaire commun).
  */
-internal fun writeAtomically(target: File, bytes: ByteArray) {
+fun writeAtomically(target: File, bytes: ByteArray) {
     val temp = File(target.parentFile, "${target.name}.tmp")
     temp.writeBytes(bytes)
     if (!temp.renameTo(target)) {

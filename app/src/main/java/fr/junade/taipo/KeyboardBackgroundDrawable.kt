@@ -12,9 +12,9 @@ import android.graphics.drawable.Drawable
  * d'arrière-plan se dessinent ici, une seule fois, et passent donc derrière la barre et le clavier
  * sans raccord visible (appeler [invalidateSelf] à chaque image de l'animation).
  */
-class KeyboardBackgroundDrawable : Drawable() {
+class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
 
-    private val paint = Paint().apply { color = COLOR }
+    private val paint = Paint().apply { color = backgroundColor }
 
     override fun draw(canvas: Canvas) {
         canvas.drawRect(bounds, paint)
@@ -32,9 +32,4 @@ class KeyboardBackgroundDrawable : Drawable() {
 
     @Deprecated("Deprecated in Java")
     override fun getOpacity(): Int = PixelFormat.OPAQUE
-
-    companion object {
-        /** Couleur de base du fond (noir, comme le clavier système de référence en thème sombre). */
-        const val COLOR = 0xFF000000.toInt()
-    }
 }

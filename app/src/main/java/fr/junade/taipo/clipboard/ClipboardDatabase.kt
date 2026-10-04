@@ -51,10 +51,13 @@ abstract class ClipboardDatabase : RoomDatabase() {
             }
         }
 
-        /** Construit la base chiffrée avec [passphrase] (effacée par SQLCipher après usage). */
-        fun create(context: Context, passphrase: ByteArray): ClipboardDatabase {
+        /**
+         * Construit la base chiffrée avec [passphrase] (effacée par SQLCipher après usage). [name] ne
+         * sert qu'aux tests instrumentés (lot 3.3), pour ne jamais toucher à la vraie base de l'appareil.
+         */
+        fun create(context: Context, passphrase: ByteArray, name: String = NAME): ClipboardDatabase {
             System.loadLibrary("sqlcipher")
-            return Room.databaseBuilder(context.applicationContext, ClipboardDatabase::class.java, NAME)
+            return Room.databaseBuilder(context.applicationContext, ClipboardDatabase::class.java, name)
                 .openHelperFactory(SupportOpenHelperFactory(passphrase))
                 .addMigrations(MIGRATION_1_2)
                 .build()

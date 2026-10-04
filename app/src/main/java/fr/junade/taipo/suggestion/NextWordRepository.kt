@@ -4,13 +4,8 @@ import android.content.Context
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.dictionary.DatabasePassphraseProvider
 import java.io.File
-import java.security.MessageDigest
-import java.security.SecureRandom
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
-import javax.crypto.Cipher
-import javax.crypto.spec.GCMParameterSpec
-import javax.crypto.spec.SecretKeySpec
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +17,8 @@ import kotlinx.coroutines.launch
  * Point d'accès unique au modèle de prédiction du mot suivant ([NextWordModel]) et à sa sauvegarde.
  *
  * Ce que le clavier apprend des habitudes d'écriture reste sur l'appareil, dans un fichier chiffré
- * en AES-256-GCM. La clé vient de l'Android Keystore (même mécanisme que le dictionnaire personnel
+ * en AES-256-GCM ([NextWordCrypto] : clé dérivée par HKDF, format versionné, ancien format relu puis
+ * migré). Le secret vient de l'Android Keystore (même mécanisme que le dictionnaire personnel
  * et l'historique du presse-papiers, avec une clé propre) ; le fichier et la clé sont exclus des
  * sauvegardes. Si le fichier est illisible (clé perdue, corruption), il est supprimé et le modèle
  * repart de zéro : ce ne sont que des statistiques de frappe.
@@ -113,11 +109,18 @@ class NextWordRepository(
     }
 
     private fun load() {
+        var rewriteAsCurrentFormat = false
         try {
             if (!file.exists()) return
             try {
-                val text = String(decrypt(file.readBytes()), Charsets.UTF_8)
-                model.mergeFrom(NextWordModel.parse(text))
+                val decrypted = withSecret { NextWordCrypto.decrypt(it, file.readBytes()) }
+                model.mergeFrom(NextWordModel.parse(String(decrypted.plain, Charsets.UTF_8)))
+                if (decrypted.legacyFormat) {
+                    // Lot 3.4 (S1) : fichier au format historique (clé SHA-256). Même clé Keystore, donc rien
+                    // n'est perdu : on le réécrit tout de suite au format actuel (HKDF), sans attendre un apprentissage.
+                    synchronized(lock) { dirty = true }
+                    rewriteAsCurrentFormat = true
+                }
             } catch (e: Exception) {
                 AppLog.e(TAG, "Modèle de prédiction illisible : réinitialisation", e)
                 runCatching { file.delete() }
@@ -126,6 +129,7 @@ class NextWordRepository(
         } finally {
             loaded.countDown()
         }
+        if (rewriteAsCurrentFormat) flush()
     }
 
     private fun save() {
@@ -143,7 +147,7 @@ class NextWordRepository(
             }
             try {
                 // Fichier temporaire puis renommage : jamais de fichier à moitié écrit.
-                writeAtomically(file, encrypt(snapshot.toByteArray(Charsets.UTF_8)))
+                writeAtomically(file, withSecret { NextWordCrypto.encrypt(it, snapshot.toByteArray(Charsets.UTF_8)) })
             } catch (e: Exception) {
                 synchronized(lock) { dirty = true }
                 AppLog.e(TAG, "Échec de la sauvegarde du modèle de prédiction", e)
@@ -151,33 +155,14 @@ class NextWordRepository(
         }
     }
 
-    /** Clé AES-256 dérivée de la clé protégée par le Keystore. */
-    private fun aesKey(): SecretKeySpec {
+    /** Donne le secret du Keystore à [block] et l'efface ensuite (le fournisseur rend toujours une copie). */
+    private inline fun <T> withSecret(block: (ByteArray) -> T): T {
         val secret = keyProvider.getOrCreate()
         try {
-            return SecretKeySpec(MessageDigest.getInstance("SHA-256").digest(secret), "AES")
+            return block(secret)
         } finally {
             secret.fill(0)
         }
-    }
-
-    /** Format du fichier : IV (12 octets) suivi du texte chiffré et de son étiquette d'authentification. */
-    private fun encrypt(plain: ByteArray): ByteArray {
-        val iv = ByteArray(IV_BYTES).also { SecureRandom().nextBytes(it) }
-        val cipher = Cipher.getInstance(TRANSFORMATION)
-        cipher.init(Cipher.ENCRYPT_MODE, aesKey(), GCMParameterSpec(GCM_TAG_BITS, iv))
-        return iv + cipher.doFinal(plain)
-    }
-
-    private fun decrypt(stored: ByteArray): ByteArray {
-        require(stored.size > IV_BYTES) { "Fichier du modèle trop court" }
-        val cipher = Cipher.getInstance(TRANSFORMATION)
-        cipher.init(
-            Cipher.DECRYPT_MODE,
-            aesKey(),
-            GCMParameterSpec(GCM_TAG_BITS, stored.copyOfRange(0, IV_BYTES)),
-        )
-        return cipher.doFinal(stored, IV_BYTES, stored.size - IV_BYTES)
     }
 
     companion object {
@@ -187,9 +172,6 @@ class NextWordRepository(
         const val KEY_ALIAS = "taipo_next_word_key"
         private const val SAVE_DELAY_MS = 20_000L
         private const val LOAD_WAIT_MS = 2_000L
-        private const val TRANSFORMATION = "AES/GCM/NoPadding"
-        private const val GCM_TAG_BITS = 128
-        private const val IV_BYTES = 12
     }
 }
 

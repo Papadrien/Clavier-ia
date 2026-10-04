@@ -1,8 +1,8 @@
 package fr.junade.taipo.emoji
 
+import fr.junade.taipo.themeColor
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
@@ -160,14 +160,14 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
 
     private fun makeKey(label: String, textSizeSp: Float): TextView = TextView(context).apply {
         text = label
-        setTextColor(Color.WHITE)
+        setTextColor(context.themeColor(R.color.text_primary))
         setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp)
         gravity = Gravity.CENTER
         background = keyBackground(pressed = false)
     }
 
     private fun keyBackground(pressed: Boolean) = GradientDrawable().apply {
-        setColor(Color.parseColor(if (pressed) "#4A4A4A" else "#141414"))
+        setColor(context.themeColor(if (pressed) R.color.key_pressed else R.color.key_functional))
         cornerRadius = dp(8f).toFloat()
     }
 

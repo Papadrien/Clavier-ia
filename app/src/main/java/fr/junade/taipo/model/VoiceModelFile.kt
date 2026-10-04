@@ -3,7 +3,7 @@ package fr.junade.taipo.model
 /**
  * Les 4 fichiers attendus pour charger le modèle de transcription vocale
  * (Nemotron 3.5 ASR Streaming, export sherpa-onnx multilingue fr/en — voir
- * décision ai-keyboard.md du 23/09/2026, PR sherpa-onnx #3732/#3734,
+ * docs/decisions-techniques.md, PR sherpa-onnx #3732/#3734,
  * release v1.13.5). Pas de téléchargement dans ce prototype : l'utilisateur
  * fournit les 4 fichiers lui-même via le sélecteur de fichiers du téléphone.
  *

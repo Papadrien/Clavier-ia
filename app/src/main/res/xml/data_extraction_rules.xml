@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Sauvegarde cloud et transfert d'appareil (Android 12+). Voir backup_rules.xml.
+    Sauvegarde cloud et transfert d'appareil (Android 12+). Voir backup_rules.xml (dont l'exclusion des
+    dossiers de modèles, lot 3.4).
 -->
 <data-extraction-rules>
     <cloud-backup>
@@ -17,6 +18,8 @@
         <exclude domain="file" path="next_word_model.enc" />
         <exclude domain="file" path="next_word_model.enc.tmp" />
         <exclude domain="sharedpref" path="next_word_key.xml" />
+        <exclude domain="file" path="models/" />
+        <exclude domain="file" path="voice-model/" />
     </cloud-backup>
     <device-transfer>
         <exclude domain="database" path="personal_dictionary.db" />
@@ -32,5 +35,7 @@
         <exclude domain="file" path="next_word_model.enc" />
         <exclude domain="file" path="next_word_model.enc.tmp" />
         <exclude domain="sharedpref" path="next_word_key.xml" />
+        <exclude domain="file" path="models/" />
+        <exclude domain="file" path="voice-model/" />
     </device-transfer>
 </data-extraction-rules>

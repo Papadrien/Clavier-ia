@@ -4,6 +4,13 @@
 # et pourront migrer ici progressivement.
 [versions]
 room = "2.8.4"
+# Activity Result API (lot 3.5) : ComponentActivity + registerForActivityResult.
+activity = "1.10.1"
+# Profil de démarrage (lot 3.6).
+profileinstaller = "1.4.1"
+# Module macrobenchmark (lot 3.6) : benchmark-macro-junit4, UI Automator.
+benchmark = "1.4.1"
+uiautomator = "2.3.0"
 # LiteRT-LM figé à 0.17.1 (compilé avec Kotlin 2.4.0, d'où le surclassement du KGP dans build.gradle.kts).
 litertlm = "0.17.1"
 
@@ -11,6 +18,10 @@ litertlm = "0.17.1"
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-activity = { module = "androidx.activity:activity", version.ref = "activity" }
+androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
+androidx-benchmark-macro = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
+androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
 litertlm-android = { module = "com.google.ai.edge.litertlm:litertlm-android", version.ref = "litertlm" }
 
 [plugins]

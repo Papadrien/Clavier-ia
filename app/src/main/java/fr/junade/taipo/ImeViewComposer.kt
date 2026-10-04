@@ -122,7 +122,7 @@ class ImeViewComposer(
             orientation = LinearLayout.VERTICAL
             // Fond commun à la barre du haut et au clavier (les vues enfants sont transparentes) :
             // les animations de fond futures se dessineront dans ce seul drawable.
-            background = KeyboardBackgroundDrawable()
+            background = KeyboardBackgroundDrawable(context.themeColor(R.color.keyboard_background))
             // Story 1.8 : la bulle d'accents des touches du haut est dessinée par le clavier
             // au-dessus de sa propre zone, par-dessus la barre d'actions.
             clipChildren = false

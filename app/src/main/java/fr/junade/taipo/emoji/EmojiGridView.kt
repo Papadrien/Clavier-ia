@@ -1,9 +1,10 @@
 package fr.junade.taipo.emoji
 
+import fr.junade.taipo.themeColor
+import fr.junade.taipo.R
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.TypedValue
@@ -57,14 +58,14 @@ class EmojiGridView(context: Context) : View(context) {
 
     private val emojiPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { textAlign = Paint.Align.CENTER }
     private val headerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#9E9E9E")
+        color = context.themeColor(R.color.key_hint)
         textSize = sp(13f)
     }
     private val messagePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#9E9E9E")
+        color = context.themeColor(R.color.key_hint)
         textSize = sp(14f)
     }
-    private val pressedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#3A3A3A") }
+    private val pressedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_popup) }
     private val pressedRect = RectF()
 
     private var drawCanvas: Canvas? = null

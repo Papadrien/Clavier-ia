@@ -1,5 +1,6 @@
 package fr.junade.taipo
 
+import android.content.Context
 import android.app.Activity
 import android.os.Bundle
 import android.widget.CompoundButton
@@ -11,6 +12,11 @@ import android.widget.RadioGroup
  * hauteur du clavier (story 1.12).
  */
 class KeyboardSettingsActivity : Activity() {
+
+    // Thème de la V1 : toujours sombre (voir KeyboardTheme).
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(KeyboardTheme.wrap(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

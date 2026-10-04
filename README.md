@@ -1,6 +1,9 @@
-# Clavier-ia
+# Taipo
 
-Clavier Android natif minimal en français (AZERTY) : on tape simplement sur les touches pour écrire.
+Clavier Android natif (`fr.junade.taipo`, Kotlin, `InputMethodService` + vues dessinées à la main, AZERTY / QWERTY) avec
+des actions d'**IA entièrement locale** : correction du texte, génération par prompt et saisie vocale, sans connexion
+Internet (aucune permission `INTERNET`) ni donnée envoyée. Les modèles tournent sur l'appareil. Ce document décrit ce qui
+est réellement présent dans le code ; le backlog produit est tenu à part.
 
 - Lettres AZERTY (avec touche Maj, une seule lettre en majuscule)
 - Chiffres et symboles (bascule `123` / `ABC`) ; **rangée de chiffres** optionnelle au-dessus des lettres (Paramètres du clavier) ; si elle est désactivée, les chiffres restent accessibles via `123` ou par **appui long** sur les touches de la rangée du haut (1 à 0)
@@ -19,7 +22,7 @@ Clavier Android natif minimal en français (AZERTY) : on tape simplement sur les
 - **Smart Clipboard, bouton d'accès** (story 2.1) : dans la barre du haut « avant saisie » (champ vide), un bouton **Presse-papiers** (icône « coller ») est visible à gauche, précédé d'une **roue crantée** qui ouvre la page d'accueil de l'application (cachée dès qu'il y a du texte et tant que le panneau est ouvert). Dès qu'il y a du texte, il est caché et la barre montre les suggestions de mots ; il reste accessible par le bouton **menu** (`···`, à gauche de la barre, visible seulement quand le champ contient du texte ou qu'un collage est proposé), et la frappe ramène aux suggestions de mots. Tant que la bande de mots est affichée, les boutons **Vocal** et **Corriger** sont rangés derrière un second menu `···`, à l'extrémité droite de la barre : l'ouvrir les affiche à la place de la bande (un seul menu est ouvert à la fois, la frappe referme les deux). Ils restent visibles pendant une écoute, une transcription ou une correction. Le bouton ouvre pour l'instant un panneau vide (coquille) sans bouton « ABC » : une croix ✕, à l'extrémité gauche de la barre du haut (les menus `···` et la roue crantée étant masqués), le referme et ramène aux touches ; le contenu du presse-papiers arrive avec les stories 2.2 et suivantes
 - **Smart Clipboard, historique** (story 2.9) : les copies faites pendant que le clavier est actif (et la dernière copie relue à l'ouverture d'un champ) sont gardées **1 h après la copie**, dans la base Room chiffrée du presse-papiers (table `clip_history`, première migration Room v1 → v2). Plafond : 20 copies de 10 000 caractères au plus ; recopier un texte déjà présent le remonte en tête, sans doublon ; un contenu signalé sensible est stocké comme les autres (base chiffrée), mais son aperçu reste masqué et il ne peut pas être épinglé (story 2.10 : est sensible une copie signalée par l'application source, Android 13+, ou dont le texte entier est un numéro de carte bancaire — 13 à 19 chiffres, premier chiffre 2 à 6, clé de Luhn valide ; pas de détection de mot de passe par le contenu ; les éléments déjà épinglés ne sont pas masqués rétroactivement). Le panneau montre les copies récentes (de la plus récente à la plus ancienne), puis les éléments épinglés ; un texte déjà épinglé n'apparaît que comme carte épinglée. Chaque copie récente offre « Épingler », « Modifier » et « Supprimer ». La purge des copies expirées se fait au démarrage de la base, à chaque copie et à l'ouverture du panneau. **Navigation privée** (story 2.11) : aucun traitement spécifique, le presse-papiers fonctionne comme en usage normal ; les copies sensibles restent persistées (1 h) car la base est chiffrée
 - Touches **effacer** (⌫, répétition maintenue) et **entrée** (⏎)
-- Typé en Kotlin, `InputMethodService` + vue custom, sans aucune dépendance UI externe.
+- Typé en Kotlin, `InputMethodService` + vues custom, sans bibliothèque d'interface externe (AndroidX `core`, `activity` et `autofill` seulement).
 
 ## Pourquoi pas un clavier existant ?
 
@@ -34,15 +37,28 @@ une implémentation propre a été préférée.
 - **Gradle** 9.6.0 (wrapper inclus)
 - **minSdk** 26, **compileSdk** 37.1, **targetSdk** 37
 - **Room** 2.8.4 (KSP 2.3.11, schémas exportés dans `app/schemas/`, à commiter) + **SQLCipher** 4.18.0 ; clé aléatoire protégée par l'Android Keystore, base et clé exclues des sauvegardes
-- **JUnit** Jupiter 6 / JUnit Platform 6.1.3 pour les tests unitaires
+- **IA locale (texte)** : LiteRT-LM (`litertlm-android` figé à 0.17.1 dans `gradle/libs.versions.toml`), modèles Gemma `.litertlm` fournis par l'utilisateur via le sélecteur de fichiers (écran « Modèle IA », empreinte SHA-256 calculée à la sélection) ; actions Corriger et Générer
+- **Dictée** : Nemotron 3.5 ASR Streaming via **sherpa-onnx**. Pas de `.aar` : les 4 bibliothèques natives (`.so`, arm64-v8a) vont dans `app/src/main/jniLibs/arm64-v8a/` et 5 sources Kotlin du binding JNI sont dans `app/src/main/java/com/k2fsa/sherpa/onnx/` (voir les README de ces deux dossiers) ; les 4 fichiers du modèle se choisissent dans l'écran « Modèle vocal »
+- **ABI** : arm64-v8a pour tous les builds, plus x86_64 en debug pour l'émulateur (`app/src/debug/jniLibs/README.md`)
+- **JUnit** Jupiter 6 / JUnit Platform 6.1.3 pour les tests unitaires ; tests instrumentés (`androidTest`, Room + SQLCipher réels) à lancer sur appareil
 - Tests ciblés sur la logique pure : layouts (`KeyboardLayout`), largeur responsive (`KeyboardWidth`), contrôleur de saisie (`KeyboardController`), dictionnaires, dépôt du dictionnaire personnel (DAO en mémoire)
+
+## Thème
+
+**V1 : le thème est toujours sombre**, quel que soit le thème du système (décision du 04/10/2026). Un thème clair
+existe déjà sous forme d'ébauche, mais il n'est pas proposé : il est prévu pour la V2. La palette sombre est dans
+`app/src/main/res/values-night/colors.xml` (seule utilisée), la claire dans `values/colors.xml`. Le choix est centralisé
+dans `KeyboardTheme.mode` : passer à la V2 (suivre le système ou un réglage) ne touchera pas aux vues.
 
 ## Construction
 
 ```bash
 ./gradlew assembleDebug          # APK debug
 ./gradlew assembleRelease        # APK release (non signé)
-./gradlew testDebugUnitTest      # tests unitaires
+./gradlew testDebugUnitTest      # tests unitaires (modules :app et :core)
+./gradlew :core:test             # tests du module JVM pur seulement
+./gradlew :macrobenchmark:connectedBenchmarkAndroidTest -Ptaipo.benchmark=true   # macrobenchmarks sur appareil (voir docs/performance.md)
+./gradlew qualityCheck           # ktlint + detekt (voir docs/qualite.md)
 ```
 
 ## CI (GitHub Actions)
@@ -52,3 +68,16 @@ une implémentation propre a été préférée.
 - **push sur `develop`** : tests unitaires + APK **debug** (artefact `apk-debug`)
 - **push sur `main`** : tests unitaires + APK **release** (artefact `apk-release`)
 - les tests unitaires sont lancés à chaque build
+- le workflow n'est pas dans l'archive de travail (fichier caché) : il est décrit ici d'après le dépôt réel. À y ajouter : `./gradlew qualityCheck` (voir `docs/qualite.md`) et la préparation de la signature release (voir `docs/release.md`)
+
+## Documentation
+
+| Fichier | Contenu |
+|---|---|
+| `docs/decisions-techniques.md` | Décisions techniques à l'origine des choix visibles dans le code (moteur IA, modèles, voix, ABI) |
+| `docs/premier-build.md` | Journal des lots de la revue de code et cases à cocher de validation sur appareil |
+| `docs/release.md` | Build release : R8, versionCode, signature, secrets CI, checklist avant diffusion |
+| `docs/securite.md` | Chiffrement des données, sauvegardes, direct boot |
+| `docs/performance.md` | Sections de trace, macrobenchmarks, profil de démarrage |
+| `docs/qualite.md` | ktlint et detekt, baselines |
+| `docs/modules.md` | Modules `:app` / `:core`, contenu et tests de `:core`, langue de l'interface (UI en français assumée) |

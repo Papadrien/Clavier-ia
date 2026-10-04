@@ -11,7 +11,7 @@ package fr.junade.taipo.dictionary
  * clavier (un nom propre reste le même en français et en anglais).
  *
  * Objet pur (aucune dépendance Android) : la persistance est faite ailleurs
- * (voir [PersonalDictionaryRepository]), pour rester testable en JVM simple.
+ * (voir `PersonalDictionaryRepository`, module app), pour rester testable en JVM simple.
  */
 object PersonalDictionary {
 

@@ -335,6 +335,11 @@ class TaipoIme : InputMethodService() {
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
+        // Lot 3.6 : section de trace pour mesurer l'ouverture du clavier (le `return` reste local à la fonction).
+        traced(Sections.START_INPUT_VIEW) { startInputView(info) }
+    }
+
+    private fun startInputView(info: EditorInfo?) {
         if (!viewComposer.isComposed) return
         // onCurrentInputMethodSubtypeChanged() ne se déclenche que sur un
         // *changement* de subtype : on resynchronise ici explicitement au cas

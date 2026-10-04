@@ -16,7 +16,7 @@ import java.io.File
  * Détient l'unique moteur LiteRT-LM du clavier, partagé par la correction ([CorrectionEngine]) et la
  * génération par prompt ([GenerationSession], épopée 5). Un seul modèle est chargé à la fois : si le
  * modèle demandé change, l'ancien moteur est fermé avant de charger le nouveau (RAM observée ~4 Go
- * pour un modèle chargé, cf. décisions ai-keyboard.md du 23/09/2026).
+ * pour un modèle chargé, cf. docs/decisions-techniques.md).
  *
  * Deux garde-fous communs aux deux usages :
  *  - [inferenceLock] : une seule inférence à la fois. Chaque usage le prend avant d'appeler le moteur

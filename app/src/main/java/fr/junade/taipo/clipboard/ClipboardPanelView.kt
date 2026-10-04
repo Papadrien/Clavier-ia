@@ -1,8 +1,8 @@
 package fr.junade.taipo.clipboard
 
+import fr.junade.taipo.themeColor
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.text.TextUtils
@@ -84,7 +84,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         listArea.addView(scroll, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
 
         emptyMessage.text = context.getString(R.string.clipboard_empty)
-        emptyMessage.setTextColor(Color.parseColor("#9AA0A6"))
+        emptyMessage.setTextColor(context.themeColor(R.color.clip_text_muted))
         emptyMessage.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
         emptyMessage.gravity = Gravity.CENTER
         listArea.addView(emptyMessage, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
@@ -163,7 +163,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         frame.minimumHeight = dp(64f)
         frame.background = GradientDrawable().apply {
             cornerRadius = dp(10f).toFloat()
-            setColor(Color.parseColor(if (item.pinned) "#22304A" else "#1E2025"))
+            setColor(context.themeColor(if (item.pinned) R.color.clip_item_pinned else R.color.clip_item))
         }
         // Story 2.7 : l'étiquette (pill) est au-dessus du texte, dans la carte, sans le chevaucher ;
         // la marge de droite laisse la place de l'épingle.
@@ -174,7 +174,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         if (label != null) {
             val pill = TextView(context)
             pill.text = label
-            pill.setTextColor(Color.WHITE)
+            pill.setTextColor(context.themeColor(R.color.text_primary))
             pill.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
             pill.setTypeface(pill.typeface, Typeface.BOLD)
             pill.maxLines = 1
@@ -182,7 +182,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
             pill.setPadding(dp(8f), dp(2f), dp(8f), dp(2f))
             pill.background = GradientDrawable().apply {
                 cornerRadius = dp(10f).toFloat()
-                setColor(Color.parseColor("#3F5F9E"))
+                setColor(context.themeColor(R.color.clip_pin_badge))
             }
             column.addView(
                 pill,
@@ -192,7 +192,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         }
         val text = TextView(context)
         text.text = ClipboardPreview.forCard(item.text, item.sensitive)
-        text.setTextColor(Color.WHITE)
+        text.setTextColor(context.themeColor(R.color.text_primary))
         text.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
         text.maxLines = CARD_MAX_LINES
         text.ellipsize = TextUtils.TruncateAt.END
@@ -258,7 +258,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
      * visible.
      */
     private fun buildMenu() {
-        scrim.setBackgroundColor(Color.parseColor("#99000000"))
+        scrim.setBackgroundColor(context.themeColor(R.color.scrim))
         scrim.visibility = View.GONE
         scrim.setOnClickListener { closeMenu() }
 
@@ -294,7 +294,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         menuBox.addView(deleteEntry, entryParams())
 
         confirmQuestion.text = context.getString(R.string.clipboard_delete_confirm_message)
-        confirmQuestion.setTextColor(Color.WHITE)
+        confirmQuestion.setTextColor(context.themeColor(R.color.text_primary))
         confirmQuestion.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
         confirmQuestion.setPadding(dp(18f), dp(16f), dp(18f), dp(8f))
         val cancelEntry = TextView(context)
@@ -304,7 +304,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         val confirmEntry = TextView(context)
         styleEntry(confirmEntry, context.getString(R.string.clipboard_delete_confirm_ok))
         confirmEntry.gravity = Gravity.CENTER
-        confirmEntry.setTextColor(Color.parseColor("#FF8A80"))
+        confirmEntry.setTextColor(context.themeColor(R.color.clip_danger_text))
         confirmEntry.setOnClickListener {
             val item = menuItem
             val forLabel = confirmingLabelDeletion
@@ -330,13 +330,13 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         box.isClickable = true // un toucher dans la boîte ne referme pas le menu
         box.background = GradientDrawable().apply {
             cornerRadius = dp(12f).toFloat()
-            setColor(Color.parseColor("#2B2F36"))
+            setColor(context.themeColor(R.color.clip_dialog))
         }
     }
 
     private fun styleEntry(entry: TextView, label: String) {
         entry.text = label
-        entry.setTextColor(Color.WHITE)
+        entry.setTextColor(context.themeColor(R.color.text_primary))
         entry.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
         entry.setTypeface(entry.typeface, Typeface.BOLD)
         entry.gravity = Gravity.CENTER_VERTICAL

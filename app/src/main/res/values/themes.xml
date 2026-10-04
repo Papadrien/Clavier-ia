@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Thème de la V1 : sombre, quel que soit le thème du système (voir KeyboardTheme). La palette claire
+         est prévue pour la V2. forceDarkAllowed=false : le système n'a pas à réassombrir un thème déjà sombre. -->
+
     <!-- Pas de barre d'action framework : chaque écran affiche déjà son propre titre dans la page,
          et la barre d'action se superposait au contenu en mode bord à bord. -->
-    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:colorAccent">#5A7FD4</item>
+    <style name="AppTheme" parent="android:Theme.Material.NoActionBar">
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:forceDarkAllowed">false</item>
     </style>
 
     <!-- Story 2.6 : fenêtre de modification d'un élément du presse-papiers. -->
-    <style name="EditDialogTheme" parent="android:Theme.Material.Light.Dialog.NoActionBar">
-        <item name="android:colorAccent">#5A7FD4</item>
+    <style name="EditDialogTheme" parent="android:Theme.Material.Dialog.NoActionBar">
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:forceDarkAllowed">false</item>
     </style>
 
     <!-- Pop-up d'information du clavier (remplace les toasts). -->
-    <style name="MessageDialogTheme" parent="android:Theme.Material.Light.Dialog.Alert">
-        <item name="android:colorAccent">#5A7FD4</item>
+    <style name="MessageDialogTheme" parent="android:Theme.Material.Dialog.Alert">
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:forceDarkAllowed">false</item>
     </style>
 </resources>

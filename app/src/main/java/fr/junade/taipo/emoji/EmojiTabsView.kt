@@ -1,9 +1,10 @@
 package fr.junade.taipo.emoji
 
+import fr.junade.taipo.themeColor
+import fr.junade.taipo.R
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
@@ -30,8 +31,8 @@ class EmojiTabsView(context: Context) : View(context) {
         }
 
     private val iconPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { textAlign = Paint.Align.CENTER }
-    private val indicatorPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.parseColor("#80CBC4") }
-    private val dividerPaint = Paint().apply { color = Color.parseColor("#2E2E2E") }
+    private val indicatorPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_enter) }
+    private val dividerPaint = Paint().apply { color = context.themeColor(R.color.key_normal) }
 
     fun setTabs(newIcons: List<String>) {
         icons = newIcons

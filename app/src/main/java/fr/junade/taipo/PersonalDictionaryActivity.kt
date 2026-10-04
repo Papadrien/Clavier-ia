@@ -1,5 +1,6 @@
 package fr.junade.taipo
 
+import android.content.Context
 import android.app.Activity
 import android.os.Bundle
 import android.view.Gravity
@@ -24,6 +25,11 @@ import kotlinx.coroutines.launch
  * prochaine fin de mot tapée. La liste affichée suit le flux du dépôt.
  */
 class PersonalDictionaryActivity : Activity() {
+
+    // Thème de la V1 : toujours sombre (voir KeyboardTheme).
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(KeyboardTheme.wrap(newBase))
+    }
 
     private lateinit var repository: PersonalDictionaryRepository
     private val scope = MainScope()

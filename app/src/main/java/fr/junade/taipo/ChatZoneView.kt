@@ -1,7 +1,6 @@
 package fr.junade.taipo
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.TypedValue
 import android.view.Gravity
@@ -156,14 +155,14 @@ class ChatZoneView(context: Context) : ScrollView(context) {
     private fun addBubble(text: String, fromUser: Boolean): TextView {
         val bubble = TextView(context).apply {
             this.text = text
-            setTextColor(Color.WHITE)
+            setTextColor(context.themeColor(R.color.text_primary))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, TEXT_SIZE_SP)
             setPadding(dp(12), dp(8), dp(12), dp(8))
             // Largeur plafonnée pour que la bulle ne touche pas le bord opposé.
             maxWidth = (resources.displayMetrics.widthPixels * MAX_WIDTH_RATIO).toInt()
             background = GradientDrawable().apply {
                 cornerRadius = dp(16).toFloat()
-                setColor(Color.parseColor(if (fromUser) USER_COLOR else MODEL_COLOR))
+                setColor(context.themeColor(if (fromUser) USER_COLOR else MODEL_COLOR))
             }
             setTextIsSelectable(false)
         }
@@ -184,15 +183,15 @@ class ChatZoneView(context: Context) : ScrollView(context) {
     private fun addAddTextButton(index: Int, visible: Boolean): TextView {
         val button = TextView(context).apply {
             text = context.getString(R.string.prompt_add_text)
-            setTextColor(Color.WHITE)
+            setTextColor(context.themeColor(R.color.text_primary))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
             gravity = Gravity.CENTER
             minHeight = dp(36)
             setPadding(dp(14), dp(6), dp(14), dp(6))
             background = GradientDrawable().apply {
                 cornerRadius = dp(18).toFloat()
-                setColor(Color.parseColor(BUTTON_COLOR))
-                setStroke(dp(1), Color.parseColor(USER_COLOR))
+                setColor(context.themeColor(BUTTON_COLOR))
+                setStroke(dp(1), context.themeColor(USER_COLOR))
             }
             visibility = if (visible) View.VISIBLE else View.GONE
             setOnClickListener { addTextListener?.invoke(index) }
@@ -216,8 +215,8 @@ class ChatZoneView(context: Context) : ScrollView(context) {
     private companion object {
         const val TEXT_SIZE_SP = 15f
         const val MAX_WIDTH_RATIO = 0.8f
-        const val USER_COLOR = "#5A7FD4"
-        const val MODEL_COLOR = "#3A3F47"
-        const val BUTTON_COLOR = "#2A2D33"
+        val USER_COLOR = R.color.accent
+        val MODEL_COLOR = R.color.surface_button
+        val BUTTON_COLOR = R.color.surface_pill
     }
 }
