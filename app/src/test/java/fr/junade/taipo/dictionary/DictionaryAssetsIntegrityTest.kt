@@ -46,7 +46,7 @@ class DictionaryAssetsIntegrityTest {
             val lineNumber = index + 1
             val parts = line.split(' ')
             if (parts.size != 2 || parts[0].isEmpty()) {
-                fail("$language.txt ligne $lineNumber : format « mot fréquence » attendu, trouvé « $line »")
+                fail<Nothing>("$language.txt ligne $lineNumber : format « mot fréquence » attendu, trouvé « $line »")
             }
             val frequency = parts[1].toLongOrNull()
                 ?: fail("$language.txt ligne $lineNumber : fréquence non numérique dans « $line »")
