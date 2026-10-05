@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- CHARTE TAIPO (refonte graphique, lot 01).
-     Une seule charte, sombre : values/colors.xml et values-night/colors.xml sont strictement identiques
-     (hors ic_launcher_background, propre à values/). Le thème clair est prévu pour la V2 (voir KeyboardTheme).
+     Une seule charte, sombre : values/colors.xml et values-night/colors.xml sont strictement identiques. Le thème clair est prévu pour la V2 (voir KeyboardTheme).
      Ne modifier une valeur que dans la section « Charte » ; la section « Rôles » ne fait que nommer l'usage. -->
 <resources>
 
@@ -14,14 +13,18 @@
     <color name="taipo_key_secondary">#2B2B2B</color>
     <color name="taipo_key_secondary_shadow">#191919</color>
     <color name="taipo_text">#FFFFFF</color>
-    <!-- PROVISOIRE : gris clair de la barre centrale de la touche espace, à caler sur la plaquette (valeur posée au lot 06, non relevée sur la plaquette). -->
+    <!-- PROVISOIRE : gris clair de la barre centrale de la touche espace, à caler sur la plaquette (valeur posée au lot 06, non relevée sur la plaquette).
+         Lot 20 : contraste de 5,9:1 avec la touche (3:1 exigé pour un élément graphique), la valeur provisoire n'a donc rien d'urgent. -->
     <color name="taipo_space_bar">#BDBDBD</color>
-    <!-- Hors plaquette : blanc atténué pour les textes secondaires (indices, hints). À valider (lot 20). -->
+    <!-- Hors plaquette : blanc atténué pour les textes secondaires (indices, hints). Validé au lot 20 : contraste de 5,1:1 au minimum
+         (sur une touche normale), AA exige 4,5:1 ; AccessibilityContrastTest en garde la valeur. -->
     <color name="taipo_text_muted">#99FFFFFF</color>
 
     <!-- ===== Rôles (noms utilisés par le code, inchangés) ===== -->
     <color name="accent">@color/taipo_purple</color>
     <color name="text_primary">@color/taipo_text</color>
+    <!-- Fond de l'icône du lanceur (lot 18) : le vert foncé #0A140A de l'ancienne direction artistique est remplacé par le fond Taipo. -->
+    <color name="ic_launcher_background">@color/taipo_background</color>
 
     <!-- Clavier (KeyboardView). key_pressed : face d'une touche à bascule active (Maj, symboles) ; l'état pressé,
          lui, n'a pas de couleur propre (la touche s'enfonce, lot 05). -->
@@ -51,11 +54,24 @@
     <!-- Ombre du rouge de danger (même rapport que les autres couples face / ombre) : bouton Vocal en écoute. -->
     <color name="action_danger_shadow">#7A241B</color>
 
+    <!-- Panneau emoji (lot 14). La sélection (onglet actif) est violette ; la touche pressée dans la grille reprend la
+         couleur des touches normales ; les touches ABC / retour arrière sont des touches secondaires (key_functional). -->
+    <color name="emoji_tab_selected">@color/taipo_purple</color>
+    <color name="emoji_tab_selected_shadow">@color/taipo_purple_shadow</color>
+    <color name="emoji_tab_divider">@color/taipo_key_shadow</color>
+    <color name="emoji_cell_pressed">@color/taipo_key</color>
+    <color name="emoji_header_text">@color/taipo_text_muted</color>
+
     <!-- Smart Clipboard. -->
     <color name="clip_text_muted">@color/taipo_text_muted</color>
     <color name="clip_item">@color/taipo_key_secondary</color>
     <color name="clip_item_pinned">@color/taipo_key</color>
     <color name="clip_pin_badge">@color/taipo_purple</color>
+    <!-- Lot 15 : ombres des cartes (face + ombre, comme les touches) et action principale du menu (violet). -->
+    <color name="clip_item_shadow">@color/taipo_key_secondary_shadow</color>
+    <color name="clip_item_pinned_shadow">@color/taipo_key_shadow</color>
+    <color name="clip_action_primary">@color/taipo_purple</color>
+    <color name="clip_action_primary_shadow">@color/taipo_purple_shadow</color>
     <color name="clip_dialog">@color/taipo_key_secondary</color>
     <color name="clip_danger_text">#FF8A80</color>
     <color name="scrim">#99000000</color>
@@ -64,4 +80,23 @@
     <color name="settings_card">@color/taipo_key_secondary</color>
     <color name="settings_divider">@color/taipo_key_shadow</color>
     <color name="settings_warning_text">#FFB38A</color>
+    <!-- Lot 16 : boutons des écrans de réglages (face + ombre, comme les touches). Principal = violet, secondaire = gris. -->
+    <color name="button_primary">@color/taipo_purple</color>
+    <color name="button_primary_shadow">@color/taipo_purple_shadow</color>
+    <color name="button_secondary">@color/taipo_key_secondary</color>
+    <color name="button_secondary_shadow">@color/taipo_key_secondary_shadow</color>
+
+    <!-- ===== Dialogues et contrôles Android (lot 17) : rôles, aucune nouvelle valeur hors charte ===== -->
+    <color name="dialog_background">@color/taipo_key_secondary</color>
+    <!-- Champs de saisie : fond plus sombre que la carte ou le dialogue qui le porte, trait au repos et au focus. -->
+    <color name="input_background">@color/taipo_key_secondary_shadow</color>
+    <color name="input_stroke">@color/taipo_key</color>
+    <color name="input_stroke_focused">@color/taipo_purple</color>
+    <!-- Commutateur, boutons radio : coché = violet, non coché = blanc atténué ; pastille toujours blanche. -->
+    <color name="control_checked">@color/taipo_purple</color>
+    <color name="control_unchecked">@color/taipo_text_muted</color>
+    <color name="switch_track_off">@color/taipo_key</color>
+    <color name="switch_thumb">@color/taipo_text</color>
+    <!-- Ligne appuyée d'une liste déroulante ouverte. -->
+    <color name="popup_item_pressed">@color/taipo_key</color>
 </resources>

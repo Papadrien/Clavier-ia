@@ -1,20 +1,24 @@
 package fr.junade.taipo.emoji
 
-import fr.junade.taipo.useTaipoFont
-import fr.junade.taipo.themeColor
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.drawable.GradientDrawable
+import android.content.res.ColorStateList
 import android.os.Handler
 import android.os.Looper
-import android.util.TypedValue
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import fr.junade.taipo.KeyboardWidth
+import fr.junade.taipo.PillKeyDrawable
 import fr.junade.taipo.R
+import fr.junade.taipo.dimen
+import fr.junade.taipo.announceAsButton
+import fr.junade.taipo.setFixedTextSizeRes
+import fr.junade.taipo.themeColor
+import fr.junade.taipo.useTaipoFont
 
 /**
  * Story 1.15 : panneau emoji, qui remplace les touches quand on appuie sur le bouton emoji (à
@@ -24,6 +28,11 @@ import fr.junade.taipo.R
  *
  * La hauteur totale est fixée par l'appelant (celle du clavier remplacé) : le clavier ne change donc
  * pas de taille en basculant. La marge basse (zone système) est conservée sous la rangée du bas.
+ *
+ * Lot 14 (refonte graphique) : le fond est celui de tout le clavier (#0E0E0E, KeyboardBackgroundDrawable) ;
+ * « ABC » et retour arrière sont des touches secondaires (#2B2B2B) à ombre, comme celles du clavier (même
+ * rayon, mêmes marges, même enfoncement à l'appui) ; l'onglet de la catégorie courante est violet
+ * ([EmojiTabsView]). Les emojis restent des glyphes de texte, aucune image. Comportement inchangé.
  */
 @SuppressLint("ViewConstructor")
 class EmojiPanelView(context: Context) : LinearLayout(context) {
@@ -40,8 +49,8 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
     private val grid = EmojiGridView(context)
     private val bottomBar = LinearLayout(context)
     private val bottomSpacer = View(context)
-    private val abcKey = makeKey("ABC", 18f)
-    private val backspaceKey = makeKey("\u232B", 24f)
+    private val abcKey = makeTextKey("ABC")
+    private val backspaceKey = makeIconKey(R.drawable.ic_key_backspace)
 
     private var closeListener: OnCloseListener? = null
     private var backspaceListener: OnBackspaceListener? = null
@@ -59,16 +68,16 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
 
     init {
         orientation = VERTICAL
-        // Fond transparent : le panneau laisse voir le fond commun du clavier (KeyboardBackgroundDrawable).
+        // Fond transparent : le panneau laisse voir le fond commun du clavier (KeyboardBackgroundDrawable, #0E0E0E).
 
-        addView(tabs, LayoutParams(LayoutParams.MATCH_PARENT, dp(36f)))
+        addView(tabs, LayoutParams(LayoutParams.MATCH_PARENT, dimen(R.dimen.taipo_emoji_tabs_height).toInt()))
         addView(grid, LayoutParams(LayoutParams.MATCH_PARENT, 0, 1f))
 
         bottomBar.orientation = HORIZONTAL
         bottomBar.addView(abcKey, keyParams(1.4f))
         bottomBar.addView(View(context), LayoutParams(0, LayoutParams.MATCH_PARENT, 7f))
         bottomBar.addView(backspaceKey, keyParams(1.6f))
-        addView(bottomBar, LayoutParams(LayoutParams.MATCH_PARENT, dp(44f)))
+        addView(bottomBar, LayoutParams(LayoutParams.MATCH_PARENT, dimen(R.dimen.taipo_emoji_bottom_bar_height).toInt()))
         addView(bottomSpacer, LayoutParams(LayoutParams.MATCH_PARENT, 0))
 
         tabs.setOnTabSelectedListener { index ->
@@ -79,6 +88,7 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
 
         setupTapKey(abcKey) { closeListener?.onClose() }
         setupBackspaceKey()
+        setupAccessibility()
     }
 
     fun setOnEmojiSelectedListener(listener: EmojiGridView.OnEmojiSelectedListener) {
@@ -121,7 +131,7 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
             sections += EmojiSection(category.id, titleFor(category.id), category.emojis)
         }
         sectionIds = sections.map { it.id }
-        tabs.setTabs(sectionIds.map { it.tabIcon })
+        tabs.setTabs(sectionIds.map { it.tabIcon }, sections.map { it.title })
         grid.setSections(sections)
         val start = if (recents.isEmpty()) 1 else 0
         val index = start.coerceAtMost(sections.lastIndex)
@@ -159,26 +169,47 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
 
     // --- Touches de la rangée du bas ------------------------------------------------------------
 
-    private fun makeKey(label: String, textSizeSp: Float): TextView = TextView(context).apply {
+    /** Touche secondaire à libellé (Open Sans, blanc), sur une face #2B2B2B à ombre. */
+    private fun makeTextKey(label: String): TextView = TextView(context).apply {
         text = label
         setTextColor(context.themeColor(R.color.text_primary))
-        setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeSp)
+        setFixedTextSizeRes(R.dimen.taipo_emoji_key_text_size)
         useTaipoFont()
         gravity = Gravity.CENTER
-        background = keyBackground(pressed = false)
+        styleKey(this)
     }
 
-    private fun keyBackground(pressed: Boolean) = GradientDrawable().apply {
-        setColor(context.themeColor(if (pressed) R.color.key_pressed else R.color.key_functional))
-        cornerRadius = dp(8f).toFloat()
+    /** Touche secondaire à icône blanche (l'icône du clavier, lot 09), sur une face #2B2B2B à ombre. */
+    private fun makeIconKey(iconRes: Int): ImageView = ImageView(context).apply {
+        setImageResource(iconRes)
+        imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
+        scaleType = ImageView.ScaleType.CENTER_INSIDE
+        styleKey(this)
+    }
+
+    /**
+     * Fond « face + ombre » des touches secondaires (même géométrie que le clavier) ; le contenu se centre sur
+     * la face, au-dessus de l'épaisseur d'ombre (marge basse = ombre au repos). L'enfoncement à l'appui suit
+     * l'état `pressed` de la vue ([setKeyPressed]).
+     */
+    private fun styleKey(key: View) {
+        val shadow = dimen(R.dimen.taipo_key_shadow_height)
+        key.background = PillKeyDrawable(
+            faceColor = context.themeColor(R.color.key_functional),
+            shadowColor = context.themeColor(R.color.key_functional_shadow),
+            cornerRadius = dimen(R.dimen.taipo_key_corner_radius),
+            shadowHeight = shadow,
+            pressedShadowHeight = dimen(R.dimen.taipo_key_shadow_pressed_height),
+        )
+        key.setPadding(0, 0, 0, shadow.toInt())
     }
 
     private fun setKeyPressed(key: View, pressed: Boolean) {
-        key.background = keyBackground(pressed)
+        key.isPressed = pressed
     }
 
     private fun keyParams(weight: Float) = LayoutParams(0, LayoutParams.MATCH_PARENT, weight).apply {
-        val margin = dp(3f)
+        val margin = dimen(R.dimen.taipo_key_inset).toInt()
         setMargins(margin, margin, margin, margin)
     }
 
@@ -226,6 +257,20 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
         }
     }
 
+    /**
+     * Lot 20 : les deux touches du bas gèrent leurs gestes par un écouteur tactile, qui consomme tout : sans écouteur de clic,
+     * TalkBack ne peut pas les activer (double appui). Le clic n'est jamais déclenché par un toucher ordinaire (l'écouteur
+     * tactile le consomme avant), seulement par l'accessibilité, sans double saisie.
+     */
+    private fun setupAccessibility() {
+        abcKey.contentDescription = context.getString(R.string.a11y_emoji_back_to_keyboard)
+        abcKey.announceAsButton()
+        abcKey.setOnClickListener { closeListener?.onClose() }
+        backspaceKey.contentDescription = context.getString(R.string.a11y_key_backspace)
+        backspaceKey.announceAsButton()
+        backspaceKey.setOnClickListener { backspaceListener?.onBackspace() }
+    }
+
     private fun setHeight(view: View, heightPx: Int) {
         val params = view.layoutParams ?: return
         if (params.height != heightPx) {
@@ -234,7 +279,6 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
         }
     }
 
-    private fun dp(value: Float): Int = (value * resources.displayMetrics.density).toInt()
 
     companion object {
         /** Hauteur de la rangée d'onglets et de la rangée du bas, par rapport à une rangée de touches. */

@@ -164,4 +164,48 @@
     <string name="clipboard_label_error">Échec de l\'enregistrement de l\'étiquette : %1$s</string>
     <string name="clipboard_label_delete_error">Échec de la suppression de l\'étiquette : %1$s</string>
     <string name="clipboard_delete_error">Échec de la suppression : %1$s</string>
+
+    <!-- ===== Accessibilité (lot 20) : noms parlés par TalkBack des touches dessinées au Canvas, états et actions ===== -->
+    <string name="a11y_keyboard_description">Clavier Taipo</string>
+    <string name="a11y_key_shift">Majuscule</string>
+    <string name="a11y_key_caps_lock">Verrouillage des majuscules</string>
+    <string name="a11y_key_backspace">Effacer</string>
+    <string name="a11y_key_enter">Entrée</string>
+    <string name="a11y_key_space">Espace</string>
+    <string name="a11y_key_emoji">Emoji</string>
+    <string name="a11y_key_to_symbols">Chiffres et symboles</string>
+    <string name="a11y_key_to_letters">Lettres</string>
+    <string name="a11y_state_on">Activé</string>
+    <string name="a11y_state_off">Désactivé</string>
+    <!-- Actions proposées dans le menu d\'actions de TalkBack pour une touche à appui long : %1$s = nom parlé du caractère. -->
+    <string name="a11y_action_insert">Saisir %1$s</string>
+    <!-- Noms parlés des signes de ponctuation et symboles (sinon, TalkBack lit le caractère tel quel). -->
+    <string name="a11y_char_comma">Virgule</string>
+    <string name="a11y_char_period">Point</string>
+    <string name="a11y_char_apostrophe">Apostrophe</string>
+    <string name="a11y_char_quote">Guillemet</string>
+    <string name="a11y_char_at">Arobase</string>
+    <string name="a11y_char_slash">Barre oblique</string>
+    <string name="a11y_char_plus">Plus</string>
+    <string name="a11y_char_minus">Tiret</string>
+    <string name="a11y_char_equal">Égal</string>
+    <string name="a11y_char_underscore">Tiret bas</string>
+    <string name="a11y_char_asterisk">Astérisque</string>
+    <string name="a11y_char_hash">Dièse</string>
+    <string name="a11y_char_dollar">Dollar</string>
+    <string name="a11y_char_euro">Euro</string>
+    <string name="a11y_char_percent">Pour cent</string>
+    <string name="a11y_char_ampersand">Esperluette</string>
+    <string name="a11y_char_exclamation">Point d\'exclamation</string>
+    <string name="a11y_char_question">Point d\'interrogation</string>
+    <string name="a11y_char_colon">Deux-points</string>
+    <string name="a11y_char_semicolon">Point-virgule</string>
+    <string name="a11y_char_left_paren">Parenthèse ouvrante</string>
+    <string name="a11y_char_right_paren">Parenthèse fermante</string>
+    <string name="a11y_char_middle_dot">Point médian</string>
+    <!-- Panneau emoji, barre du haut, presse-papiers. -->
+    <string name="a11y_emoji_back_to_keyboard">Retour au clavier</string>
+    <string name="a11y_suggestion_replaces_on_space">Remplacera le mot à l\'espace</string>
+    <string name="a11y_clipboard_action_paste">Coller</string>
+    <string name="a11y_clipboard_action_menu">Ouvrir le menu de l\'élément</string>
 </resources>

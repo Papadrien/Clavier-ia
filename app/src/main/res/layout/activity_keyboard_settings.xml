@@ -7,39 +7,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="@dimen/taipo_settings_screen_padding">
 
         <TextView
+            style="@style/TaipoText.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/keyboard_settings_title"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="@dimen/taipo_settings_gap_lg" />
 
         <Switch
             android:id="@+id/switch_number_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
             android:text="@string/keyboard_settings_number_row" />
 
         <TextView
+            style="@style/TaipoText.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/keyboard_settings_number_row_description"
-            android:textSize="14sp"
-            android:lineSpacingMultiplier="1.2"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
 
         <TextView
+            style="@style/TaipoText.Section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/keyboard_settings_haptic_title"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
 
         <RadioGroup
             android:id="@+id/radio_group_haptic"
@@ -51,40 +47,35 @@
                 android:id="@+id/radio_haptic_off"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:text="@string/keyboard_settings_haptic_off" />
 
             <RadioButton
                 android:id="@+id/radio_haptic_light"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:text="@string/keyboard_settings_haptic_light" />
 
             <RadioButton
                 android:id="@+id/radio_haptic_medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:text="@string/keyboard_settings_haptic_medium" />
 
             <RadioButton
                 android:id="@+id/radio_haptic_strong"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:text="@string/keyboard_settings_haptic_strong" />
 
         </RadioGroup>
 
         <TextView
+            style="@style/TaipoText.Section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/keyboard_settings_height_title"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
 
         <RadioGroup
             android:id="@+id/radio_group_height"
@@ -96,46 +87,40 @@
                 android:id="@+id/radio_height_compact"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:text="@string/keyboard_settings_height_compact" />
 
             <RadioButton
                 android:id="@+id/radio_height_small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:text="@string/keyboard_settings_height_small" />
 
             <RadioButton
                 android:id="@+id/radio_height_normal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:text="@string/keyboard_settings_height_normal" />
 
             <RadioButton
                 android:id="@+id/radio_height_large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:text="@string/keyboard_settings_height_large" />
 
             <RadioButton
                 android:id="@+id/radio_height_extra_large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:text="@string/keyboard_settings_height_extra_large" />
 
         </RadioGroup>
 
         <TextView
+            style="@style/TaipoText.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/keyboard_settings_height_description"
-            android:textSize="14sp"
-            android:lineSpacingMultiplier="1.2"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
 
     </LinearLayout>
 </ScrollView>

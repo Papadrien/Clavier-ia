@@ -1,0 +1,62 @@
+# Non-régression de la refonte graphique (lot 22)
+
+Ajouté le 05/10/2026. **Rien n'a été exécuté** depuis l'environnement de développement (ni compilateur, ni appareil) :
+les tests ci-dessous sont à lancer une fois. Seules les vérifications de ressources ont été rejouées à part, par un script
+équivalent, sur l'archive : elles passeraient (aucune référence manquante, aucune image raster, palette de nuit cohérente).
+
+## Lancer
+
+```
+./gradlew :core:test :app:testDebugUnitTest      # JVM : tous les tests existants + les 2 nouveaux
+./gradlew :app:connectedDebugAndroidTest         # appareil (Pixel 9) : Room/SQLCipher + KeyboardView
+```
+
+## Nouveaux tests du lot
+
+| Fichier | Rôle |
+| --- | --- |
+| `app/src/test/.../KeyboardCatalogRegressionTest.kt` | Toutes les combinaisons disposition × langue × rangée de chiffres × type de champ : identifiants uniques, libellés = caractère saisi, Entrée / Effacer / Espace / Maj / bascule / emoji présents où il faut, bulles sans doublon. |
+| `app/src/test/.../RefonteResourcesRegressionTest.kt` | Règles du plan : aucune image raster dans `drawable*`, Open Sans (3 graisses + fichiers), toute ressource référencée (XML et Kotlin) existe, palette de nuit ⊆ palette de jour, dimensions valides. |
+| `app/src/androidTest/.../KeyboardViewRegressionTest.kt` | Sur appareil : toutes les dispositions se dessinent (Maj et verrouillage compris), zones tactiles sans chevauchement, un appui saisit chaque touche, couleurs de la charte réellement dessinées, touche pressée visible puis rétablie, glissements espace et retour arrière, appui long (accents, bulle du point), annulation, deux doigts. |
+
+## Couverture automatisée de la liste du plan
+
+| Point du plan | Tests |
+| --- | --- |
+| Lettres, chiffres, ponctuation | `KeyboardLayoutTest`, `KeyboardControllerTest`, `KeyCharsTest`, `KeyboardCatalogRegressionTest`, `KeyboardViewRegressionTest` |
+| Espace, double espace | `KeyboardControllerTest` |
+| Swipe espace / swipe retour arrière | `SpaceSwipeTrackerTest`, `BackspaceSwipeTrackerTest`, `KeyboardViewRegressionTest` |
+| Retour arrière, Entrée | `KeyboardControllerTest`, `KeyboardViewRegressionTest` |
+| Maj, majuscules, verrouillage | `KeyboardControllerTest`, `KeyboardViewRegressionTest` (rendu) |
+| Caractères spéciaux, accents, popup | `KeyboardLayoutTest`, `PopupPlacementTest`, `KeyboardViewRegressionTest` |
+| Emoji | `EmojiCatalogTest`, `EmojiGridLayoutTest`, `EmojiTextTest`, `RecentEmojisTest`, `MessagingFieldPolicyTest` |
+| Correction | `CorrectionDiffTest`, `CorrectionPromptTest`, `CorrectionSafeguardTest`, `SentenceCorrectionTest`, `ProtectedWordsTest` |
+| Génération, chat | `PromptConversationTest`, `PromptInputBufferTest`, `ChatTranscriptTest` |
+| Dictionnaire | tests `core/…/dictionary`, `DictionaryAssetsIntegrityTest`, `PersonalDictionaryRepositoryTest`, `PersonalDictionaryDatabaseTest` (appareil) |
+| Clipboard | `Clip*Test`, `ClipboardItemsTest`, `SensitiveContentDetectorTest`, `ClipboardDatabaseTest` (appareil) |
+| Modèles | `AiModelTest`, `Sha256Test` |
+
+**Sans test automatisé** (à passer à la main) : le bouton microphone et la dictée (`VoiceEngine`, `VoiceController`), le stop
+d'une génération, les messages d'erreur de l'IA, les préférences (`KeyboardPreferences`, réglages), l'aspect des écrans
+(captures non comparées automatiquement).
+
+## Recette manuelle sur le Pixel 9 (clavier de la refonte)
+
+À faire en clair puis avec la police à 130 %, en portrait puis en paysage.
+
+1. **Clavier** : taper une phrase avec lettres, chiffres (rangée activée puis désactivée : appui long), ponctuation, apostrophe ; Maj une fois, deux fois (verrouillage), retour ; symboles puis ABC.
+2. **Espace** : appui (espace saisi), double espace (point), glisser (curseur), pas d'espace saisi après un glissement.
+3. **Retour arrière** : appui, appui maintenu (répétition), glisser vers la gauche (mots surlignés, suppression au relâchement).
+4. **Accents** : appui long sur e, a, o, u, c, puis sur le point ; choisir un accent en glissant ; relâcher sans bouger.
+5. **Entrée** : action du champ (envoyer, rechercher, retour à la ligne) ; champs e-mail, URL, nombre, téléphone (touches adaptées).
+6. **Emoji** : ouvrir, changer d'onglet, saisir, récents, revenir au clavier.
+7. **Microphone** : dicter une phrase, vérifier le texte inséré, stopper.
+8. **IA** : correction, génération (puis stop en cours), chat, erreur provoquée (modèle absent ou supprimé).
+9. **Données** : mot ajouté au dictionnaire personnel (suggéré ensuite), élément du presse-papiers copié, épinglé, collé ; réglage modifié puis app relancée ; changement de modèle.
+10. **Visuel** : touche pressée enfoncée puis relevée, barre grise de l'espace, Entrée ronde violette, aucune touche rognée.
+
+## Reste à faire
+
+- [ ] `./gradlew :core:test :app:testDebugUnitTest` vert.
+- [ ] `./gradlew :app:connectedDebugAndroidTest` vert sur le Pixel 9 (si un test de rendu échoue, noter lequel : certains reposent sur des détails du dessin non vérifiés).
+- [ ] Recette manuelle ci-dessus.

@@ -68,6 +68,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private var clipboardPanelOpen = false
     private var clipboardCloseListener: (() -> Unit)? = null
     private var actionsMenuBackgroundExpanded: Boolean? = null
+
+    // Lot 21 : fonds des boutons à bascule et du bouton vocal créés une fois (un Drawable par état), jamais recréés.
+    private val menuBackgrounds = style.toggleBackgrounds()
+    private val actionsMenuBackgrounds = style.toggleBackgrounds()
+    private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
     private val zoneState = SuggestionZoneState()
     private var menuBackgroundExpanded: Boolean? = null
     val voiceButton = ImageButton(context)
@@ -147,7 +152,9 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         // Lot 08 : Vocal devient un bouton rond à icône micro ; son état (écoute, chargement…) passe par la couleur,
         // la transparence et la description d'accessibilité, plus par le texte.
         style.styleRoundIconButton(voiceButton, R.drawable.ic_mic)
-        voiceButton.setOnClickListener { /* geste réel géré via setOnTouchListener côté appelant */ }
+        // Le geste réel passe par setOnTouchListener (côté appelant, qui consomme tout toucher) ; le clic, lui, n'est déclenché
+        // que par l'accessibilité (TalkBack, double appui) : l'appelant le relie à la bascule d'écoute (lot 20).
+        voiceButton.setOnClickListener { }
         addView(
             voiceButton,
             LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
@@ -173,6 +180,9 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             actionsMenuButton,
             LayoutParams(iconButtonWidth, barHeight).apply { marginStart = gap },
         )
+
+        // Lot 20 : zone tactile des boutons étendue à 48 dp (36 dp dessinés), sans changer le rendu.
+        expandChildTouchTargets()
 
         renderCorrect()
         renderVoice()
@@ -307,12 +317,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         settingsButton.visibility = if (visible.settingsButton) View.VISIBLE else View.GONE
         if (menuBackgroundExpanded != zoneState.menuExpanded) {
             menuBackgroundExpanded = zoneState.menuExpanded
-            menuButton.background = style.pillBackground(if (zoneState.menuExpanded) R.color.accent else R.color.surface_button)
+            menuButton.background = menuBackgrounds.get(zoneState.menuExpanded)
         }
         if (actionsMenuBackgroundExpanded != zoneState.actionsExpanded) {
             actionsMenuBackgroundExpanded = zoneState.actionsExpanded
-            actionsMenuButton.background =
-                style.pillBackground(if (zoneState.actionsExpanded) R.color.accent else R.color.surface_button)
+            actionsMenuButton.background = actionsMenuBackgrounds.get(zoneState.actionsExpanded)
         }
     }
 
@@ -328,7 +337,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private fun renderVoice() {
         val appearance = BarVisibility.voiceAppearance(voiceState)
         voiceButton.contentDescription = context.getString(appearance.label)
-        voiceButton.background = style.roundBackground(appearance.background)
+        voiceButton.background = voiceBackgrounds.getOrPut(appearance.background) { style.roundBackground(appearance.background) }
         voiceButton.alpha = appearance.alpha
         renderActionButtons()
     }

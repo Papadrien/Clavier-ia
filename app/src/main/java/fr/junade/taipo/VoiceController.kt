@@ -104,6 +104,19 @@ class VoiceController(
         mainHandler.removeCallbacks(longPressRunnable)
     }
 
+    /**
+     * Lot 20 : activation du bouton Vocal par TalkBack (double appui), qui ne produit aucun toucher : bascule l'écoute marche /
+     * arrêt, comme un appui bref. L'appui long (écoute tant que maintenu) reste réservé au toucher.
+     */
+    fun onAccessibilityClick() {
+        if (isRecording) {
+            stopRecording()
+        } else {
+            isHoldModeRecording = false
+            startRecording()
+        }
+    }
+
     fun onButtonTouch(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {

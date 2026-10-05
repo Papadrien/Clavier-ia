@@ -116,4 +116,48 @@ class EmojiGridLayoutTest {
         assertEquals(1, EmojiGridLayout.columnsFor(10f, 115f))
         assertEquals(1, EmojiGridLayout.columnsFor(500f, 0f))
     }
+
+    @Test
+    fun `locate donne la section et le rang de l emoji (lot 20)`() {
+        val l = layout()
+        // Section A : corps à partir de y = 22 ; rangée 1, colonne 2 -> rang 6.
+        val ref = l.locate(25f, 22f + 10f + 3f)!!
+        assertEquals(1, ref.section)
+        assertEquals(6, ref.index)
+        assertEquals("a6", ref.emoji)
+        assertEquals(20f, ref.left)
+        assertEquals(32f, ref.top)
+    }
+
+    @Test
+    fun `locate et hitTest concordent`() {
+        val l = layout()
+        val hit = l.hitTest(5f, 25f)!!
+        val ref = l.locate(5f, 25f)!!
+        assertEquals(hit.emoji, ref.emoji)
+        assertEquals(hit.left, ref.left)
+        assertEquals(hit.top, ref.top)
+        assertNull(l.locate(5f, 1f)) // en-tête
+    }
+
+    @Test
+    fun `forEachVisible transmet la section et le rang a cellAt`() {
+        val l = layout()
+        val seen = mutableListOf<Triple<Int, Int, String>>()
+        l.forEachVisible(
+            0f,
+            68f,
+            object : EmojiGridLayout.Visitor {
+                override fun header(section: Int, y: Float) = Unit
+                override fun message(section: Int, y: Float) = Unit
+                override fun cell(emoji: String, x: Float, y: Float) = Unit
+                override fun cellAt(section: Int, index: Int, emoji: String, x: Float, y: Float) {
+                    seen += Triple(section, index, emoji)
+                }
+            },
+        )
+        assertEquals(13, seen.size)
+        assertEquals(Triple(1, 0, "a0"), seen.first())
+        assertEquals(Triple(2, 3, "b3"), seen.last())
+    }
 }

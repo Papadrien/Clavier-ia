@@ -6,6 +6,9 @@
 room = "2.8.4"
 # Activity Result API (lot 3.5) : ComponentActivity + registerForActivityResult.
 activity = "1.10.1"
+# ExploreByTouchHelper (lot 20 de la refonte graphique) : arbre d'accessibilité virtuel des vues dessinées au Canvas
+# (touches du clavier, onglets et grille d'emojis). Version 1.1.0, la dernière stable ancienne et éprouvée.
+customview = "1.1.0"
 # Profil de démarrage (lot 3.6).
 profileinstaller = "1.4.1"
 # Module macrobenchmark (lot 3.6) : benchmark-macro-junit4, UI Automator.
@@ -19,6 +22,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activity" }
+androidx-customview = { module = "androidx.customview:customview", version.ref = "customview" }
 androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
 androidx-benchmark-macro = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
 androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }

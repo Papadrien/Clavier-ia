@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pastille du commutateur (lot 17) : cercle blanc inscrit dans la hauteur de la piste (marge = taipo_switch_thumb_inset). -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="@dimen/taipo_switch_thumb_inset"
+    android:insetTop="@dimen/taipo_switch_thumb_inset"
+    android:insetRight="@dimen/taipo_switch_thumb_inset"
+    android:insetBottom="@dimen/taipo_switch_thumb_inset">
+    <shape android:shape="oval">
+        <solid android:color="@color/switch_thumb" />
+        <size android:width="@dimen/taipo_switch_thumb_size" android:height="@dimen/taipo_switch_thumb_size" />
+    </shape>
+</inset>

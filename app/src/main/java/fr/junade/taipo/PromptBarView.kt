@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.view.ViewCompat
 
 /**
  * Story 5.1, phase 5.1-4 : la barre du haut en mode prompt (décision 8), qui prend la place de
@@ -118,13 +119,14 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         cancelButton.scaleType = ImageView.ScaleType.CENTER_INSIDE
         cancelButton.contentDescription = context.getString(R.string.prompt_cancel_description)
         cancelButton.setOnClickListener { cancelListener?.invoke() }
+        cancelButton.announceAsButton()
         val cancelWidth = dimen(R.dimen.taipo_bar_icon_button_width).toInt()
         pill.addView(cancelButton, LayoutParams(cancelWidth, LayoutParams.MATCH_PARENT))
 
         inputView.setTextColor(context.themeColor(R.color.text_primary))
         inputView.setHintTextColor(context.themeColor(HINT_COLOR))
         inputView.hint = context.getString(R.string.prompt_hint)
-        inputView.setTextSizeRes(R.dimen.taipo_prompt_text_size)
+        inputView.setFixedTextSizeRes(R.dimen.taipo_prompt_text_size)
         inputView.useTaipoFont()
         inputView.gravity = Gravity.CENTER_VERTICAL
         inputView.isSingleLine = true
@@ -139,6 +141,8 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         }
 
         addView(pill, LayoutParams(0, barHeight, 1f).apply { marginEnd = gap })
+        // Lot 20 : zone tactile des boutons étendue à 48 dp (36 dp dessinés), sans changer le rendu.
+        expandChildTouchTargets()
 
         // Bouton rond : envoyer au repos, stop pendant la génération.
         sendButton.imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
@@ -156,6 +160,8 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         sendSpinner.isIndeterminate = true
         sendSpinner.indeterminateTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
         sendSpinner.visibility = View.GONE
+        // Lot 20 : la roue est décorative ; le chargement est annoncé par l'état du bouton d'envoi (voir renderSendButton).
+        sendSpinner.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
         sendHolder.addView(
             sendSpinner,
             FrameLayout.LayoutParams(spinnerSize, spinnerSize, Gravity.CENTER).apply { bottomMargin = shadow },
@@ -203,6 +209,8 @@ class PromptBarView(context: Context) : LinearLayout(context) {
     private fun renderInput() {
         val width = inputView.width - inputView.paddingLeft - inputView.paddingRight
         renderedInputWidth = inputView.width
+        // Lot 20 : TalkBack lit le prompt tel que tapé (sans le trait du curseur ni l'ellipse du début) ; vide, il lit l'invite.
+        inputView.contentDescription = inputText.ifEmpty { null }
         if (inputText.isEmpty()) {
             inputView.text = "" // l'invite (hint) s'affiche
             return
@@ -256,6 +264,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
             sendButton.setImageResource(R.drawable.ic_stop)
             sendButton.background = stopBackground
             sendButton.contentDescription = context.getString(R.string.prompt_stop_description)
+            ViewCompat.setStateDescription(sendButton, null)
             sendButton.isEnabled = true
             sendButton.alpha = 1f
             sendSpinner.visibility = View.GONE
@@ -265,6 +274,8 @@ class PromptBarView(context: Context) : LinearLayout(context) {
             sendSpinner.visibility = if (modelLoading) View.VISIBLE else View.GONE
             sendButton.background = sendBackground
             sendButton.contentDescription = context.getString(R.string.prompt_send_description)
+            // Lot 20 : pendant le chargement du modèle, le bouton le dit (la roue visuelle est masquée à TalkBack).
+            ViewCompat.setStateDescription(sendButton, if (modelLoading) context.getString(R.string.prompt_loading_model) else null)
             // Un prompt vide ne s'envoie pas : le bouton est grisé.
             sendButton.isEnabled = !inputBlank
             sendButton.alpha = if (inputBlank) 0.4f else 1f

@@ -79,5 +79,6 @@ dans `KeyboardTheme.mode` : passer à la V2 (suivre le système ou un réglage) 
 | `docs/release.md` | Build release : R8, versionCode, signature, secrets CI, checklist avant diffusion |
 | `docs/securite.md` | Chiffrement des données, sauvegardes, direct boot |
 | `docs/performance.md` | Sections de trace, macrobenchmarks, profil de démarrage |
+| `docs/accessibilite.md` | Audit d'accessibilité (lot 20) : contrastes, zones tactiles, TalkBack, police |
 | `docs/qualite.md` | ktlint et detekt, baselines |
 | `docs/modules.md` | Modules `:app` / `:core`, contenu et tests de `:core`, langue de l'interface (UI en français assumée) |

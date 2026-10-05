@@ -7,23 +7,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="@dimen/taipo_settings_screen_padding">
 
         <TextView
+            style="@style/TaipoText.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/voice_model_title"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
 
         <TextView
+            style="@style/TaipoText.Body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/voice_model_description"
-            android:textSize="15sp"
-            android:lineSpacingMultiplier="1.2"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="@dimen/taipo_settings_gap_xl" />
 
         <LinearLayout
             android:id="@+id/voice_model_file_list"

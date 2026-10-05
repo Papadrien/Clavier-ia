@@ -104,6 +104,10 @@ dependencies {
     // Lot 3.5 (U3) : Activity Result API (ComponentActivity) pour les sélecteurs de fichier des écrans modèle.
     implementation(libs.androidx.activity)
 
+    // Lot 20 (accessibilité) : ExploreByTouchHelper, pour exposer à TalkBack les touches du clavier et la grille d'emojis,
+    // dessinées au Canvas (aucune vue enfant). Pas de dépendance transitive garantie : déclarée explicitement.
+    implementation(libs.androidx.customview)
+
     // Lot 3.6 (P5) : installe le profil de démarrage (src/main/baseline-prof.txt, voir docs/performance.md)
     // même hors Play Store. Sans fichier de profil, ne fait rien.
     implementation(libs.androidx.profileinstaller)

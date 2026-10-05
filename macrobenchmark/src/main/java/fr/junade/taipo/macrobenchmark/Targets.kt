@@ -19,6 +19,7 @@ object Sections {
     const val DICTIONARY_LOAD = "Taipo.dictionaryLoad"
     const val SUGGESTIONS = "Taipo.suggestions"
     const val AUTOCORRECTION = "Taipo.autocorrection"
+    const val EMOJI_CATALOG = "Taipo.emojiCatalog"
 }
 
 private const val UI_TIMEOUT_MS = 5_000L

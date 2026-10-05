@@ -2,6 +2,8 @@ package fr.junade.taipo
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
+import android.text.TextUtils
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -44,6 +46,15 @@ internal class BarStyle(private val context: Context) {
     )
 
     /**
+     * Lot 21 : fonds « au repos » / « actif » (violet) d'un bouton à bascule (menu, Smart Clipboard), créés à la demande puis
+     * réutilisés : un changement d'état pose un fond existant au lieu d'en allouer un nouveau. Un jeu par bouton (un
+     * Drawable n'appartient qu'à une seule vue).
+     */
+    fun toggleBackgrounds(): ToggleBackgrounds = ToggleBackgrounds { active ->
+        pillBackground(if (active) R.color.accent else R.color.surface_button)
+    }
+
+    /**
      * Bouton rond à icône blanche (lots 08 et 09) : l'icône garde sa taille ([R.dimen.taipo_icon_size]) et se centre sur
      * la face, au-dessus de l'épaisseur d'ombre (marge basse = ombre au repos).
      */
@@ -73,10 +84,22 @@ internal class BarStyle(private val context: Context) {
     fun styleButton(button: Button, @ColorRes backgroundColor: Int) {
         button.setTextColor(context.themeColor(R.color.text_primary))
         button.useTaipoFont(TaipoType.Weight.BOLD)
-        button.setTextSizeRes(R.dimen.taipo_bar_button_text_size)
+        button.setFixedTextSizeRes(R.dimen.taipo_bar_button_text_size)
         button.isAllCaps = false
+        button.maxLines = 1
+        button.ellipsize = TextUtils.TruncateAt.END
+        button.maxWidth = context.dimen(R.dimen.taipo_bar_text_button_max_width).toInt()
         button.background = pillBackground(backgroundColor)
         val padding = context.dimen(R.dimen.taipo_bar_text_button_padding).toInt()
         button.setPadding(padding, 0, padding, context.dimen(R.dimen.taipo_key_shadow_height).toInt())
     }
+}
+
+/** Lot 21 : les deux fonds d'un bouton à bascule, construits au premier besoin par [create] (`true` = actif), puis gardés. */
+internal class ToggleBackgrounds(private val create: (active: Boolean) -> Drawable) {
+    private var rest: Drawable? = null
+    private var active: Drawable? = null
+
+    fun get(isActive: Boolean): Drawable =
+        if (isActive) active ?: create(true).also { active = it } else rest ?: create(false).also { rest = it }
 }

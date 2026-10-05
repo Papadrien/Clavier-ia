@@ -30,6 +30,7 @@ import fr.junade.taipo.ai.CorrectionEngine
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.ai.ProtectedWords
 import fr.junade.taipo.dictionary.WordSuggestion
+import fr.junade.taipo.emoji.EmojiCatalog
 import fr.junade.taipo.emoji.EmojiPanelView
 import fr.junade.taipo.emoji.EmojiText
 import fr.junade.taipo.emoji.MessagingFieldPolicy
@@ -43,6 +44,7 @@ import fr.junade.taipo.model.ModelPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 class TaipoIme : InputMethodService() {
@@ -279,6 +281,7 @@ class TaipoIme : InputMethodService() {
                 override fun onRecentEmojiClicked(emoji: String) = onRecentEmojiBarTapped(emoji)
                 override fun onCorrectClicked() = correction.onCorrectClicked()
                 override fun onVoiceTouch(event: MotionEvent): Boolean = voice.onButtonTouch(event)
+                override fun onVoiceClick() = voice.onAccessibilityClick()
                 override fun onEmojiSuggestionClicked() = onEmojiSuggestionTapped()
                 override fun onWordSuggestionClicked(suggestion: WordSuggestion) = onWordSuggestionTapped(suggestion)
                 override fun openAppHome() = this@TaipoIme.openAppHome()
@@ -320,9 +323,21 @@ class TaipoIme : InputMethodService() {
         nextWords // l'ouverture du modèle appris est asynchrone : on la déclenche dès la création
         clipboard.start() // bases du presse-papiers + retour de l'écran de modification (story 2.6)
         suggestions.preloadDictionaries()
+        preloadEmojiCatalog()
         numberRowEnabled = keyboardPreferences.isNumberRowEnabled
         hapticIntensity = keyboardPreferences.hapticIntensity
         keyboardHeight = keyboardPreferences.keyboardHeight
+    }
+
+    /**
+     * Lot 21 : le catalogue d'emojis (lecture + `hasGlyph` pour chaque emoji) est préparé en tâche de fond : sans cela, la
+     * première ouverture du panneau Emoji le faisait sur le fil principal (saccade visible). En cas d'échec ici, le
+     * panneau retentera au moment de l'ouverture, comme avant.
+     */
+    private fun preloadEmojiCatalog() {
+        serviceScope.launch(Dispatchers.Default) {
+            runCatching { EmojiCatalog.load(applicationContext) }
+        }
     }
 
     /**

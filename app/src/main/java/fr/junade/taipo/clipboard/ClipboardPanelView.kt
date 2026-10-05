@@ -1,13 +1,9 @@
 package fr.junade.taipo.clipboard
 
-import fr.junade.taipo.useTaipoFont
-import fr.junade.taipo.TaipoType
-import fr.junade.taipo.themeColor
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.text.TextUtils
-import android.util.TypedValue
 import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.View
@@ -15,8 +11,17 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 import fr.junade.taipo.KeyboardWidth
+import fr.junade.taipo.PillKeyDrawable
 import fr.junade.taipo.R
+import fr.junade.taipo.TaipoType
+import fr.junade.taipo.announceAsButton
+import fr.junade.taipo.dimen
+import fr.junade.taipo.setTextSizeRes
+import fr.junade.taipo.themeColor
+import fr.junade.taipo.useTaipoFont
 
 /**
  * Stories 2.1 et 2.5 à 2.8 : panneau Smart Clipboard, qui remplace les touches quand on appuie sur le
@@ -39,6 +44,12 @@ import fr.junade.taipo.R
  *
  * La hauteur est fixée par l'appelant (celle du clavier remplacé) : le clavier ne change pas de
  * taille en basculant.
+ *
+ * Lot 15 (refonte graphique) : le fond est celui de tout le clavier (#0E0E0E) ; les cartes sont des
+ * « face + ombre » (#2B2B2B, ou #43384C pour une carte épinglée) qui s'enfoncent à l'appui, comme les
+ * touches ; l'action principale du menu (« Épingler ») est un bouton violet (#8C00FF) ; l'étiquette est
+ * une pastille violette. Open Sans partout. Aucune logique modifiée (base, historique, chiffrement,
+ * contenu sensible, sélection).
  */
 @SuppressLint("ViewConstructor")
 class ClipboardPanelView(context: Context) : FrameLayout(context) {
@@ -72,7 +83,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
     private var deleteListener: OnItemListener? = null
 
     init {
-        // Fond transparent : le panneau laisse voir le fond commun du clavier (KeyboardBackgroundDrawable).
+        // Fond transparent : le panneau laisse voir le fond commun du clavier (KeyboardBackgroundDrawable, #0E0E0E).
 
         content.orientation = LinearLayout.VERTICAL
         addView(content, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
@@ -80,13 +91,14 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         val listArea = FrameLayout(context)
         val scroll = ScrollView(context)
         list.orientation = LinearLayout.VERTICAL
-        list.setPadding(dp(4f), dp(4f), dp(4f), dp(4f))
+        val listPadding = dimen(R.dimen.taipo_clip_list_padding).toInt()
+        list.setPadding(listPadding, listPadding, listPadding, listPadding)
         scroll.addView(list, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
         listArea.addView(scroll, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
 
         emptyMessage.text = context.getString(R.string.clipboard_empty)
         emptyMessage.setTextColor(context.themeColor(R.color.clip_text_muted))
-        emptyMessage.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+        emptyMessage.setTextSizeRes(R.dimen.taipo_clip_empty_text_size)
         emptyMessage.useTaipoFont()
         emptyMessage.gravity = Gravity.CENTER
         listArea.addView(emptyMessage, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
@@ -146,7 +158,10 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
                 row.addView(
                     view,
                     LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f)
-                        .apply { setMargins(dp(4f), dp(4f), dp(4f), dp(4f)) },
+                        .apply {
+                            val margin = dimen(R.dimen.taipo_clip_card_margin).toInt()
+                            setMargins(margin, margin, margin, margin)
+                        },
                 )
             }
             list.addView(row, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
@@ -162,40 +177,51 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
 
     private fun card(item: ClipboardItems.Item): View {
         val frame = FrameLayout(context)
-        frame.minimumHeight = dp(64f)
-        frame.background = GradientDrawable().apply {
-            cornerRadius = dp(10f).toFloat()
-            setColor(context.themeColor(if (item.pinned) R.color.clip_item_pinned else R.color.clip_item))
-        }
+        frame.minimumHeight = dimen(R.dimen.taipo_clip_card_min_height).toInt()
+        // Face + ombre, comme les touches : l'ombre est sous la face (marge basse de la carte), la carte
+        // s'enfonce à l'appui (la vue cliquable relaie l'état « pressed » au fond).
+        val shadow = dimen(R.dimen.taipo_key_shadow_height)
+        frame.background = PillKeyDrawable(
+            faceColor = context.themeColor(if (item.pinned) R.color.clip_item_pinned else R.color.clip_item),
+            shadowColor = context.themeColor(if (item.pinned) R.color.clip_item_pinned_shadow else R.color.clip_item_shadow),
+            cornerRadius = dimen(R.dimen.taipo_clip_card_corner_radius),
+            shadowHeight = shadow,
+            pressedShadowHeight = dimen(R.dimen.taipo_key_shadow_pressed_height),
+        )
         // Story 2.7 : l'étiquette (pill) est au-dessus du texte, dans la carte, sans le chevaucher ;
         // la marge de droite laisse la place de l'épingle.
         val column = LinearLayout(context)
         column.orientation = LinearLayout.VERTICAL
-        column.setPadding(dp(12f), dp(10f), dp(if (item.pinned) 28f else 12f), dp(10f))
+        val paddingHorizontal = dimen(R.dimen.taipo_clip_card_padding_horizontal).toInt()
+        val paddingVertical = dimen(R.dimen.taipo_clip_card_padding_vertical).toInt()
+        val paddingEnd = if (item.pinned) dimen(R.dimen.taipo_clip_card_padding_end_pinned).toInt() else paddingHorizontal
+        column.setPadding(paddingHorizontal, paddingVertical, paddingEnd, paddingVertical + shadow.toInt())
         val label = item.label
         if (label != null) {
             val pill = TextView(context)
             pill.text = label
             pill.setTextColor(context.themeColor(R.color.text_primary))
-            pill.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
+            pill.setTextSizeRes(R.dimen.taipo_clip_label_text_size)
             pill.useTaipoFont(TaipoType.Weight.BOLD)
             pill.maxLines = 1
             pill.ellipsize = TextUtils.TruncateAt.END
-            pill.setPadding(dp(8f), dp(2f), dp(8f), dp(2f))
+            val pillHorizontal = dimen(R.dimen.taipo_clip_label_padding_horizontal).toInt()
+            val pillVertical = dimen(R.dimen.taipo_clip_label_padding_vertical).toInt()
+            pill.setPadding(pillHorizontal, pillVertical, pillHorizontal, pillVertical)
             pill.background = GradientDrawable().apply {
-                cornerRadius = dp(10f).toFloat()
+                cornerRadius = dimen(R.dimen.taipo_clip_label_corner_radius)
                 setColor(context.themeColor(R.color.clip_pin_badge))
             }
             column.addView(
                 pill,
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-                    .apply { bottomMargin = dp(6f) },
+                    .apply { bottomMargin = dimen(R.dimen.taipo_clip_label_margin_bottom).toInt() },
             )
         }
         val text = TextView(context)
         text.text = ClipboardPreview.forCard(item.text, item.sensitive)
         text.setTextColor(context.themeColor(R.color.text_primary))
-        text.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+        text.setTextSizeRes(R.dimen.taipo_clip_card_text_size)
         text.useTaipoFont()
         text.maxLines = CARD_MAX_LINES
         text.ellipsize = TextUtils.TruncateAt.END
@@ -204,10 +230,10 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         if (item.pinned) {
             val pin = TextView(context)
             pin.text = "\uD83D\uDCCC"
-            pin.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+            pin.setTextSizeRes(R.dimen.taipo_clip_pin_text_size)
             pin.contentDescription = context.getString(R.string.clipboard_pinned_description)
             frame.addView(pin, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.TOP or Gravity.END).apply {
-                setMargins(0, dp(6f), dp(8f), 0)
+                setMargins(0, dimen(R.dimen.taipo_clip_pin_margin_top).toInt(), dimen(R.dimen.taipo_clip_pin_margin_end).toInt(), 0)
             })
         }
         frame.contentDescription = if (item.sensitive) {
@@ -223,6 +249,14 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
             openMenu(item)
             true
         }
+        // Lot 20 : TalkBack annonce un bouton et nomme ses deux actions (coller ; menu de l'appui long), au lieu de « activer ».
+        frame.announceAsButton()
+        ViewCompat.replaceAccessibilityAction(
+            frame, AccessibilityActionCompat.ACTION_CLICK, context.getString(R.string.a11y_clipboard_action_paste), null,
+        )
+        ViewCompat.replaceAccessibilityAction(
+            frame, AccessibilityActionCompat.ACTION_LONG_CLICK, context.getString(R.string.a11y_clipboard_action_menu), null,
+        )
         return frame
     }
 
@@ -289,8 +323,19 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         }
         styleEntry(deleteLabelEntry, context.getString(R.string.clipboard_menu_label_delete))
         deleteLabelEntry.setOnClickListener { askDeleteConfirmation(forLabel = true) }
-        val entryParams = { LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(48f)) }
-        menuBox.addView(pinEntry, entryParams())
+        stylePrimaryEntry(pinEntry)
+        val entryHeight = dimen(R.dimen.taipo_clip_entry_height).toInt()
+        val entryParams = { LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, entryHeight) }
+        // L'action principale (« Épingler ») est un bouton violet : sa boîte de 48 dp garde des marges autour de la face.
+        val primaryParams = entryParams().apply {
+            setMargins(
+                dimen(R.dimen.taipo_clip_primary_margin_horizontal).toInt(),
+                dimen(R.dimen.taipo_clip_primary_margin_vertical).toInt(),
+                dimen(R.dimen.taipo_clip_primary_margin_horizontal).toInt(),
+                dimen(R.dimen.taipo_clip_primary_margin_vertical).toInt(),
+            )
+        }
+        menuBox.addView(pinEntry, primaryParams)
         menuBox.addView(editEntry, entryParams())
         menuBox.addView(labelEntry, entryParams())
         menuBox.addView(deleteLabelEntry, entryParams())
@@ -298,9 +343,15 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
 
         confirmQuestion.text = context.getString(R.string.clipboard_delete_confirm_message)
         confirmQuestion.setTextColor(context.themeColor(R.color.text_primary))
-        confirmQuestion.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+        confirmQuestion.setTextSizeRes(R.dimen.taipo_clip_entry_text_size)
         confirmQuestion.useTaipoFont()
-        confirmQuestion.setPadding(dp(18f), dp(16f), dp(18f), dp(8f))
+        val entryPadding = dimen(R.dimen.taipo_clip_entry_padding_horizontal).toInt()
+        confirmQuestion.setPadding(
+            entryPadding,
+            dimen(R.dimen.taipo_clip_confirm_padding_top).toInt(),
+            entryPadding,
+            dimen(R.dimen.taipo_clip_confirm_padding_bottom).toInt(),
+        )
         val cancelEntry = TextView(context)
         styleEntry(cancelEntry, context.getString(R.string.clipboard_delete_confirm_cancel))
         cancelEntry.gravity = Gravity.CENTER
@@ -317,15 +368,15 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         }
         val buttons = LinearLayout(context)
         buttons.orientation = LinearLayout.HORIZONTAL
-        buttons.addView(cancelEntry, LinearLayout.LayoutParams(0, dp(48f), 1f))
-        buttons.addView(confirmEntry, LinearLayout.LayoutParams(0, dp(48f), 1f))
+        buttons.addView(cancelEntry, LinearLayout.LayoutParams(0, entryHeight, 1f))
+        buttons.addView(confirmEntry, LinearLayout.LayoutParams(0, entryHeight, 1f))
         confirmBox.addView(confirmQuestion, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
         confirmBox.addView(buttons, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
         confirmBox.visibility = View.GONE
 
         // Une seule boîte est visible à la fois : elles partagent la même place au centre du voile.
-        scrim.addView(menuBox, LayoutParams(dp(220f), LayoutParams.WRAP_CONTENT, Gravity.CENTER))
-        scrim.addView(confirmBox, LayoutParams(dp(260f), LayoutParams.WRAP_CONTENT, Gravity.CENTER))
+        scrim.addView(menuBox, LayoutParams(dimen(R.dimen.taipo_clip_menu_width).toInt(), LayoutParams.WRAP_CONTENT, Gravity.CENTER))
+        scrim.addView(confirmBox, LayoutParams(dimen(R.dimen.taipo_clip_confirm_width).toInt(), LayoutParams.WRAP_CONTENT, Gravity.CENTER))
         addView(scrim, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
     }
 
@@ -333,7 +384,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         box.orientation = LinearLayout.VERTICAL
         box.isClickable = true // un toucher dans la boîte ne referme pas le menu
         box.background = GradientDrawable().apply {
-            cornerRadius = dp(12f).toFloat()
+            cornerRadius = dimen(R.dimen.taipo_clip_dialog_corner_radius)
             setColor(context.themeColor(R.color.clip_dialog))
         }
     }
@@ -341,10 +392,28 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
     private fun styleEntry(entry: TextView, label: String) {
         entry.text = label
         entry.setTextColor(context.themeColor(R.color.text_primary))
-        entry.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+        entry.setTextSizeRes(R.dimen.taipo_clip_entry_text_size)
         entry.useTaipoFont(TaipoType.Weight.BOLD)
         entry.gravity = Gravity.CENTER_VERTICAL
-        entry.setPadding(dp(18f), 0, dp(18f), 0)
+        val padding = dimen(R.dimen.taipo_clip_entry_padding_horizontal).toInt()
+        entry.setPadding(padding, 0, padding, 0)
+    }
+
+    /**
+     * Action principale du menu : bouton violet « face + ombre » (même géométrie que les touches, enfoncé à
+     * l'appui), texte blanc centré sur la face, au-dessus de l'épaisseur d'ombre.
+     */
+    private fun stylePrimaryEntry(entry: TextView) {
+        val shadow = dimen(R.dimen.taipo_key_shadow_height)
+        entry.gravity = Gravity.CENTER
+        entry.setPadding(0, 0, 0, shadow.toInt())
+        entry.background = PillKeyDrawable(
+            faceColor = context.themeColor(R.color.clip_action_primary),
+            shadowColor = context.themeColor(R.color.clip_action_primary_shadow),
+            cornerRadius = dimen(R.dimen.taipo_key_corner_radius),
+            shadowHeight = shadow,
+            pressedShadowHeight = dimen(R.dimen.taipo_key_shadow_pressed_height),
+        )
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -362,8 +431,6 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
             view.layoutParams = params
         }
     }
-
-    private fun dp(value: Float): Int = (value * resources.displayMetrics.density).toInt()
 
     companion object {
         private const val COLUMNS = 2

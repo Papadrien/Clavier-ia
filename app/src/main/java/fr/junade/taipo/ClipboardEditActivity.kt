@@ -7,11 +7,13 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.InputType
 import android.text.TextWatcher
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import fr.junade.taipo.clipboard.ClipboardEditBridge
@@ -120,7 +122,12 @@ class ClipboardEditActivity : Activity() {
     private fun buildUi() {
         val root = LinearLayout(this)
         root.orientation = LinearLayout.VERTICAL
-        root.setPadding(dp(20f), dp(18f), dp(20f), dp(12f))
+        root.setPadding(
+            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_horizontal),
+            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_vertical),
+            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_horizontal),
+            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_bottom),
+        )
 
         val title = TextView(this)
         title.text = getString(
@@ -130,7 +137,7 @@ class ClipboardEditActivity : Activity() {
                 else -> R.string.clipboard_edit_title_last
             },
         )
-        title.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 18f)
+        title.setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.taipo_dialog_title_text_size))
         title.useTaipoFont(TaipoType.Weight.BOLD)
         root.addView(title, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
 
@@ -146,27 +153,36 @@ class ClipboardEditActivity : Activity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
             override fun afterTextChanged(s: Editable?) = updateSaveState()
         })
-        root.addView(input, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+        root.addView(
+            input,
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                .apply { topMargin = resources.getDimensionPixelSize(R.dimen.taipo_dialog_gap) },
+        )
 
         counter = TextView(this)
         counter.gravity = Gravity.END
-        counter.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 12f)
+        counter.setTextAppearance(R.style.TaipoText_Small) // légende : 12sp, blanc atténué (lot 17)
         root.addView(counter, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
 
         val buttons = LinearLayout(this)
         buttons.orientation = LinearLayout.HORIZONTAL
         buttons.gravity = Gravity.END
-        val cancel = Button(this)
+        val cancel = Button(this, null, 0, R.style.TaipoButton_Secondary)
         cancel.text = getString(R.string.clipboard_edit_cancel)
         cancel.setOnClickListener { finish() }
-        saveButton = Button(this)
+        saveButton = Button(this, null, 0, R.style.TaipoButton_Primary)
         saveButton.text = getString(R.string.clipboard_edit_save)
         saveButton.setOnClickListener { save() }
+        val gap = resources.getDimensionPixelSize(R.dimen.taipo_dialog_gap)
         buttons.addView(cancel)
-        buttons.addView(saveButton)
-        root.addView(buttons, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+        buttons.addView(saveButton, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { marginStart = gap })
+        root.addView(
+            buttons,
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = gap },
+        )
 
-        setContentView(root)
+        // Lot 19 : la fenêtre peut être plus basse que son contenu (clavier ouvert, paysage, petit téléphone) : elle défile.
+        setContentView(ScrollView(this).apply { addView(root) })
         findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
     }
 
@@ -216,7 +232,6 @@ class ClipboardEditActivity : Activity() {
 
     private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 
-    private fun dp(value: Float): Int = (value * resources.displayMetrics.density).toInt()
 
     companion object {
         /** Identifiant de l'élément épinglé à modifier ; absent pour la dernière copie. */

@@ -7,7 +7,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
-import android.view.Gravity
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -58,27 +57,31 @@ class VoiceModelSettingsActivity : ComponentActivity() {
     private fun buildRow(file: VoiceModelFile): LinearLayout {
         val row = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(0, 0, 0, dp(20))
+            setPadding(0, 0, 0, resources.getDimensionPixelSize(R.dimen.taipo_settings_gap_xl))
         }
 
         val title = TextView(this).apply {
             text = "${file.label} — ${file.filenameHint}"
-            textSize = 15f
+            setTextAppearance(R.style.TaipoText_Body)
             useTaipoFont(TaipoType.Weight.BOLD)
         }
         row.addView(title)
 
         val status = TextView(this).apply {
             text = statusText(file)
-            textSize = 14f
-            setPadding(0, dp(4), 0, dp(8))
+            setTextAppearance(R.style.TaipoText_Caption)
+            setPadding(
+                0,
+                resources.getDimensionPixelSize(R.dimen.taipo_settings_gap_xs),
+                0,
+                resources.getDimensionPixelSize(R.dimen.taipo_settings_gap_sm),
+            )
         }
         statusViews[file] = status
         row.addView(status)
 
-        val button = Button(this).apply {
+        val button = Button(this, null, 0, R.style.TaipoButton_Primary).apply {
             text = getString(R.string.voice_model_pick_file)
-            gravity = Gravity.CENTER
         }
         button.setOnClickListener { openFilePickerFor(file) }
         row.addView(button)
@@ -116,7 +119,4 @@ class VoiceModelSettingsActivity : ComponentActivity() {
         }
         return name
     }
-
-    private fun dp(value: Int): Int =
-        (value * resources.displayMetrics.density).toInt()
 }

@@ -7,108 +7,102 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="@dimen/taipo_settings_screen_padding">
 
         <TextView
+            style="@style/TaipoText.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/model_settings_title"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
 
         <TextView
+            style="@style/TaipoText.Body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/model_settings_description"
-            android:textSize="15sp"
-            android:lineSpacingMultiplier="1.2"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="@dimen/taipo_settings_gap_xl" />
 
         <TextView
+            style="@style/TaipoText.Label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/model_settings_spinner_label"
-            android:textStyle="bold"
-            android:layout_marginBottom="6dp" />
+            android:layout_marginBottom="@dimen/taipo_settings_label_gap" />
 
         <Spinner
             android:id="@+id/spinner_model"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="@dimen/taipo_settings_gap_lg" />
 
         <TextView
+            style="@style/TaipoText.Info"
             android:id="@+id/text_model_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:lineSpacingMultiplier="1.2"
-            android:background="@color/settings_card"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp" />
+            android:background="@drawable/bg_settings_card"
+            android:padding="@dimen/taipo_settings_card_padding"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_lg" />
 
         <Button
+            style="@style/TaipoButton.Primary"
             android:id="@+id/button_pick_file"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/model_settings_pick_file" />
 
         <TextView
+            style="@style/TaipoText.Info"
             android:id="@+id/text_current_file"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:lineSpacingMultiplier="1.2"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="@dimen/taipo_settings_gap_md" />
 
         <TextView
+            style="@style/TaipoText.Info"
             android:id="@+id/text_size_warning"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
             android:textColor="@color/settings_warning_text"
-            android:lineSpacingMultiplier="1.2"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm" />
 
         <TextView
+            style="@style/TaipoText.Small"
             android:id="@+id/text_checksum"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
             android:textIsSelectable="true"
-            android:lineSpacingMultiplier="1.2"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm" />
 
         <Button
+            style="@style/TaipoButton.Secondary"
             android:id="@+id/button_forget_file"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/taipo_settings_gap_lg"
             android:text="@string/model_settings_forget_file" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="20dp"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_xl"
             android:background="@color/settings_divider" />
 
         <TextView
+            style="@style/TaipoText.Section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/correction_prompt_title"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
 
         <TextView
+            style="@style/TaipoText.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/correction_prompt_description"
-            android:textSize="14sp"
-            android:lineSpacingMultiplier="1.2"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="@dimen/taipo_settings_gap_md" />
 
         <EditText
             android:id="@+id/edit_correction_prompt"
@@ -117,31 +111,30 @@
             android:minLines="6"
             android:gravity="top|start"
             android:inputType="textMultiLine"
-            android:background="@color/settings_card"
-            android:padding="12dp"
-            android:textSize="14sp"
-            android:layout_marginBottom="12dp" />
+            android:textSize="@dimen/taipo_settings_text_caption"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_md" />
 
         <Button
+            style="@style/TaipoButton.Primary"
             android:id="@+id/button_save_prompt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/correction_prompt_save" />
 
         <Button
+            style="@style/TaipoButton.Secondary"
             android:id="@+id/button_reset_prompt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
             android:text="@string/correction_prompt_reset" />
 
         <TextView
+            style="@style/TaipoText.Status"
             android:id="@+id/text_prompt_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textStyle="italic"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm" />
 
     </LinearLayout>
 </ScrollView>

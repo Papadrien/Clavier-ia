@@ -15,6 +15,7 @@ object Sections {
     const val DICTIONARY_LOAD = "Taipo.dictionaryLoad"
     const val SUGGESTIONS = "Taipo.suggestions"
     const val AUTOCORRECTION = "Taipo.autocorrection"
+    const val EMOJI_CATALOG = "Taipo.emojiCatalog" // lot 21 : lecture + filtrage par la police du catalogue d'emojis
 }
 
 inline fun <T> traced(name: String, block: () -> T): T {

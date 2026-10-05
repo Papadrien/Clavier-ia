@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Liste déroulante fermée (lot 17) : le fond d'un champ de saisie plus la flèche à droite. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/bg_input" />
+    <item
+        android:gravity="end|center_vertical"
+        android:end="@dimen/taipo_spinner_arrow_margin"
+        android:drawable="@drawable/ic_spinner_arrow" />
+</layer-list>

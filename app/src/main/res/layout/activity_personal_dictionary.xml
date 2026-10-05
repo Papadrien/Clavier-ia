@@ -3,23 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="@dimen/taipo_settings_screen_padding">
 
     <TextView
+        style="@style/TaipoText.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/personal_dictionary_title"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
 
     <TextView
+        style="@style/TaipoText.Body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/personal_dictionary_description"
-        android:textSize="15sp"
-        android:lineSpacingMultiplier="1.2"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="@dimen/taipo_settings_gap_lg" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,21 +37,21 @@
             android:singleLine="true" />
 
         <Button
+            style="@style/TaipoButton.Primary"
             android:id="@+id/personal_dictionary_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/taipo_settings_gap_sm"
             android:text="@string/personal_dictionary_add" />
     </LinearLayout>
 
     <TextView
+        style="@style/TaipoText.Label"
         android:id="@+id/personal_dictionary_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="4dp"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+        android:layout_marginTop="@dimen/taipo_settings_gap_lg"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_xs" />
 
     <ScrollView
         android:layout_width="match_parent"

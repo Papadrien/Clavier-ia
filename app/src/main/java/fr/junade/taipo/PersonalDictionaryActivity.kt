@@ -113,8 +113,9 @@ class PersonalDictionaryActivity : Activity() {
             list.addView(
                 TextView(this).apply {
                     text = getString(R.string.personal_dictionary_empty)
-                    textSize = 15f
-                    setPadding(0, dp(8), 0, dp(8))
+                    setTextAppearance(R.style.TaipoText_Body)
+                    val padding = resources.getDimensionPixelSize(R.dimen.taipo_settings_gap_sm)
+                    setPadding(0, padding, 0, padding)
                     applyTaipoFontToTree()
                 },
             )
@@ -132,12 +133,12 @@ class PersonalDictionaryActivity : Activity() {
         row.addView(
             TextView(this).apply {
                 text = word
-                textSize = 16f
+                setTextAppearance(R.style.TaipoText_Lead)
             },
             LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f),
         )
         row.addView(
-            Button(this).apply {
+            Button(this, null, 0, R.style.TaipoButton_Secondary).apply {
                 text = getString(R.string.personal_dictionary_remove)
                 setOnClickListener { removeWord(word) }
             },
@@ -146,6 +147,4 @@ class PersonalDictionaryActivity : Activity() {
     }
 
     private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-
-    private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
 }

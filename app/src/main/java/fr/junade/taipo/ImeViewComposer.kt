@@ -46,6 +46,9 @@ class ImeViewComposer(
 
         fun onVoiceTouch(event: MotionEvent): Boolean
 
+        /** Lot 20 : activation du bouton Vocal par l'accessibilité (TalkBack, double appui) : bascule l'écoute. */
+        fun onVoiceClick()
+
         fun onEmojiSuggestionClicked()
 
         fun onWordSuggestionClicked(suggestion: WordSuggestion)
@@ -109,6 +112,8 @@ class ImeViewComposer(
             }
             host.onVoiceTouch(event)
         }
+        // Lot 20 : l'écouteur tactile ci-dessus consomme tout toucher, le clic n'arrive donc que de l'accessibilité.
+        correctionBar.voiceButton.setOnClickListener { host.onVoiceClick() }
         correctionBar.setOnEmojiSuggestionClickListener { host.onEmojiSuggestionClicked() }
         // Le même bouton ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme.
         correctionBar.setOnClipboardClickListener { clipboard.onPanelButtonClicked() }

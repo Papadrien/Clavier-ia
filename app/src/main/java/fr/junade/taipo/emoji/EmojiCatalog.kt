@@ -2,6 +2,8 @@ package fr.junade.taipo.emoji
 
 import android.content.Context
 import android.graphics.Paint
+import fr.junade.taipo.Sections
+import fr.junade.taipo.traced
 
 /**
  * Catégories du panneau emoji (story 1.15), dans l'ordre d'affichage. [fileKey] est l'identifiant
@@ -74,15 +76,22 @@ object EmojiCatalog {
 
     private var cached: List<EmojiCategory>? = null
 
-    /** Catalogue filtré selon la police de l'appareil, lu une seule fois par processus. */
+    /**
+     * Catalogue filtré selon la police de l'appareil, lu une seule fois par processus. Le filtrage (`hasGlyph` pour chaque
+     * emoji, plusieurs milliers) est le travail le plus lourd du panneau : lot 21, le service le lance en tâche de fond à
+     * sa création (voir `TaipoIme.onCreate`) pour que la première ouverture du panneau ne le fasse pas sur le fil principal.
+     * Si le panneau s'ouvre avant la fin, il attend le même chargement (méthode synchronisée) : jamais pire qu'avant.
+     */
     @Synchronized
     fun load(context: Context): List<EmojiCategory> {
         cached?.let { return it }
-        val text = context.assets.open(ASSET_PATH).bufferedReader(Charsets.UTF_8).use { it.readText() }
-        val paint = Paint()
-        val filtered = parse(text)
-            .map { category -> category.copy(emojis = category.emojis.filter { paint.hasGlyph(it) }) }
-            .filter { it.emojis.isNotEmpty() }
+        val filtered = traced(Sections.EMOJI_CATALOG) {
+            val text = context.assets.open(ASSET_PATH).bufferedReader(Charsets.UTF_8).use { it.readText() }
+            val paint = Paint()
+            parse(text)
+                .map { category -> category.copy(emojis = category.emojis.filter { paint.hasGlyph(it) }) }
+                .filter { it.emojis.isNotEmpty() }
+        }
         cached = filtered
         return filtered
     }

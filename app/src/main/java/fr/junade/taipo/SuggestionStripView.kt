@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.ViewCompat
 import fr.junade.taipo.dictionary.WordSuggestion
 
 /**
@@ -59,7 +60,7 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         val shadow = dimen(R.dimen.taipo_key_shadow_height).toInt()
         wordSlots.forEachIndexed { index, slot ->
             slot.setTextColor(context.themeColor(R.color.text_primary))
-            slot.setTextSizeRes(R.dimen.taipo_suggestion_text_size)
+            slot.setFixedTextSizeRes(R.dimen.taipo_suggestion_text_size)
             slot.useTaipoFont()
             slot.gravity = Gravity.CENTER
             slot.maxLines = 1
@@ -67,16 +68,18 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
             slot.setPadding(slotPadding, 0, slotPadding, shadow)
             slot.visibility = View.INVISIBLE
             slot.setOnClickListener { words.getOrNull(index)?.let { wordListener?.onWordClick(it) } }
+            slot.announceAsButton() // lot 20
             addView(slot, LayoutParams(0, LayoutParams.MATCH_PARENT, 1f).apply { if (index > 0) marginStart = slotGap })
         }
 
-        emojiSlot.setTextSizeRes(R.dimen.taipo_suggestion_emoji_text_size)
+        emojiSlot.setFixedTextSizeRes(R.dimen.taipo_suggestion_emoji_text_size)
         emojiSlot.gravity = Gravity.CENTER
         emojiSlot.maxLines = 1
         emojiSlot.background = style.pillBackground(R.color.surface_button)
         emojiSlot.setPadding(0, 0, 0, shadow)
         emojiSlot.visibility = View.INVISIBLE
         emojiSlot.setOnClickListener { emoji?.let { emojiListener?.onEmojiClick(it) } }
+        emojiSlot.announceAsButton() // lot 20
         val emojiWidth = dimen(R.dimen.taipo_suggestion_emoji_slot_width).toInt()
         addView(emojiSlot, LayoutParams(emojiWidth, LayoutParams.MATCH_PARENT).apply { marginStart = slotGap })
     }
@@ -115,6 +118,12 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
             slot.useTaipoFont(if (suggestion?.replacesOnSpace == true) TaipoType.Weight.BOLD else TaipoType.Weight.REGULAR)
             slot.background = if (suggestion?.replacesOnSpace == true) wordHighlights[index] else null
             slot.visibility = if (suggestion == null) View.INVISIBLE else View.VISIBLE
+            // Lot 20 : TalkBack lit le mot sans les guillemets du mot tapé, et dit lequel remplacera le mot à l'espace.
+            slot.contentDescription = suggestion?.text
+            ViewCompat.setStateDescription(
+                slot,
+                if (suggestion?.replacesOnSpace == true) context.getString(R.string.a11y_suggestion_replaces_on_space) else null,
+            )
         }
     }
 

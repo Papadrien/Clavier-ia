@@ -39,6 +39,7 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
     private var clipboardListener: CorrectionBarView.OnClipboardClickListener? = null
     private var pasteListener: CorrectionBarView.OnPasteClickListener? = null
     private var clipboardButtonActiveBackground: Boolean? = null
+    private val clipboardButtonBackgrounds = style.toggleBackgrounds() // lot 21 : un Drawable par état, jamais recréé
 
     init {
         // Bouton Smart Clipboard : icône « coller » à la place du texte.
@@ -47,7 +48,7 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
         clipboardButton.setOnClickListener { clipboardListener?.onClipboardClick() }
 
         pasteChip.setTextColor(context.themeColor(R.color.text_primary))
-        pasteChip.setTextSizeRes(R.dimen.taipo_suggestion_chip_text_size)
+        pasteChip.setFixedTextSizeRes(R.dimen.taipo_suggestion_chip_text_size)
         pasteChip.useTaipoFont()
         pasteChip.gravity = Gravity.CENTER_VERTICAL
         pasteChip.maxLines = 1
@@ -57,6 +58,7 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
         pasteChip.setPadding(chipPadding, 0, chipPadding, dimen(R.dimen.taipo_key_shadow_height).toInt())
         pasteChip.background = style.pillBackground(R.color.surface_button)
         pasteChip.setOnClickListener { pasteListener?.onPasteClick() }
+        pasteChip.announceAsButton() // lot 20
         pasteChip.visibility = View.GONE
 
         inlineRow.orientation = LinearLayout.HORIZONTAL
@@ -155,8 +157,7 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
         inlineScroll.visibility = if (visibility.inline) View.VISIBLE else View.GONE
         if (clipboardButtonActiveBackground != clipboardPanelOpen) {
             clipboardButtonActiveBackground = clipboardPanelOpen
-            clipboardButton.background =
-                style.pillBackground(if (clipboardPanelOpen) R.color.accent else R.color.surface_button)
+            clipboardButton.background = clipboardButtonBackgrounds.get(clipboardPanelOpen)
         }
     }
 }

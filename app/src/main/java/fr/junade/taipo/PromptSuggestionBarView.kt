@@ -26,6 +26,8 @@ class PromptSuggestionBarView(context: Context) : LinearLayout(context) {
         val paddingH = dimen(R.dimen.taipo_bar_padding_horizontal).toInt()
         setPadding(paddingH, 0, paddingH, dimen(R.dimen.taipo_bar_padding_vertical).toInt())
         addView(strip, LayoutParams(0, dimen(R.dimen.taipo_bar_height).toInt(), 1f))
+        // Lot 20 : zone tactile des emplacements étendue à 48 dp (36 dp dessinés), sans changer le rendu.
+        expandChildTouchTargets()
     }
 
     fun setWords(words: List<WordSuggestion?>) = strip.setWords(words)

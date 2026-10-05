@@ -2,6 +2,7 @@ package fr.junade.taipo
 
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.InsetDrawable
 import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
@@ -200,23 +201,27 @@ class ChatZoneView(context: Context) : ScrollView(context) {
 
     /** Bouton sous une bulle de réponse (à gauche) ; [index] est le rang de l'échange. Caché tant qu'il n'y a rien à ajouter. */
     private fun addAddTextButton(index: Int, visible: Boolean): TextView {
+        // Lot 20 : zone tactile de 48 dp pour une face de 36 dp : la vue déborde de [touchInset] au-dessus et au-dessous de la
+        // face (fond inséré, marges négatives), le rendu et l'espacement du chat ne changent pas.
+        val touchInset = dimen(R.dimen.taipo_touch_slop).toInt()
         val button = TextView(context).apply {
             text = context.getString(R.string.prompt_add_text)
             setTextColor(context.themeColor(TEXT_COLOR))
             setTextSizeRes(R.dimen.taipo_chat_action_text_size)
             useTaipoFont(TaipoType.Weight.MEDIUM)
             gravity = Gravity.CENTER
-            minHeight = dimen(R.dimen.taipo_chat_action_min_height).toInt()
+            minHeight = dimen(R.dimen.taipo_chat_action_min_height).toInt() + 2 * touchInset
             // Fond « face + ombre » : le texte se centre sur la face (marge basse = épaisseur d'ombre).
             setPadding(
                 dimen(R.dimen.taipo_chat_action_padding_horizontal).toInt(),
-                dimen(R.dimen.taipo_chat_action_padding_vertical).toInt(),
+                dimen(R.dimen.taipo_chat_action_padding_vertical).toInt() + touchInset,
                 dimen(R.dimen.taipo_chat_action_padding_horizontal).toInt(),
-                dimen(R.dimen.taipo_chat_action_padding_vertical).toInt() + dimen(R.dimen.taipo_key_shadow_height).toInt(),
+                dimen(R.dimen.taipo_chat_action_padding_vertical).toInt() + dimen(R.dimen.taipo_key_shadow_height).toInt() + touchInset,
             )
-            background = style.pillBackground(BUTTON_COLOR)
+            background = InsetDrawable(style.pillBackground(BUTTON_COLOR), 0, touchInset, 0, touchInset)
             visibility = if (visible) View.VISIBLE else View.GONE
             setOnClickListener { addTextListener?.invoke(index) }
+            announceAsButton()
         }
         column.addView(
             button,
@@ -225,7 +230,8 @@ class ChatZoneView(context: Context) : ScrollView(context) {
                 LinearLayout.LayoutParams.WRAP_CONTENT,
             ).apply {
                 gravity = Gravity.START
-                topMargin = dimen(R.dimen.taipo_chat_action_margin_top).toInt()
+                topMargin = dimen(R.dimen.taipo_chat_action_margin_top).toInt() - touchInset
+                bottomMargin = -touchInset
             },
         )
         return button

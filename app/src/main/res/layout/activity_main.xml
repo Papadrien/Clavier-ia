@@ -1,66 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Lot 19 : l'écran défile (paysage, petit téléphone, polices agrandies : le contenu dépasse la hauteur de l'écran). -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:padding="24dp">
+    android:padding="@dimen/taipo_settings_screen_padding">
 
     <TextView
+        style="@style/TaipoText.Display"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/main_title"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_md"
         android:contentDescription="@null" />
 
     <TextView
+        style="@style/TaipoText.Lead"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/main_description"
-        android:textSize="16sp"
-        android:lineSpacingMultiplier="1.2"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="@dimen/taipo_settings_gap_xxl" />
 
     <Button
+        style="@style/TaipoButton.Primary"
         android:id="@+id/button_enable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/button_enable" />
 
     <Button
+        style="@style/TaipoButton.Primary"
         android:id="@+id/button_select"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/button_select" />
 
     <Button
+        style="@style/TaipoButton.Secondary"
         android:id="@+id/button_keyboard_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/taipo_settings_gap_md"
         android:text="@string/button_keyboard_settings" />
 
     <Button
+        style="@style/TaipoButton.Secondary"
         android:id="@+id/button_model_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/taipo_settings_gap_md"
         android:text="@string/button_model_settings" />
 
     <Button
+        style="@style/TaipoButton.Secondary"
         android:id="@+id/button_voice_model_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/taipo_settings_gap_md"
         android:text="@string/button_voice_model_settings" />
 
     <Button
+        style="@style/TaipoButton.Secondary"
         android:id="@+id/button_personal_dictionary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/taipo_settings_gap_md"
         android:text="@string/button_personal_dictionary" />
 
 </LinearLayout>
+
+</ScrollView>

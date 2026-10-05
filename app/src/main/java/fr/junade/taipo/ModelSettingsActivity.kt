@@ -112,11 +112,12 @@ class ModelSettingsActivity : ComponentActivity() {
                 if (uri != null) onModelFilePicked(model, uri)
             }
         }
+        // Lot 17 : lignes aux couleurs de la charte (valeur affichée et liste ouverte).
         spinner.adapter = ArrayAdapter(
             this,
-            android.R.layout.simple_spinner_dropdown_item,
+            R.layout.spinner_item,
             models.map { it.displayName },
-        )
+        ).also { it.setDropDownViewResource(R.layout.spinner_dropdown_item) }
 
         val activeModel = preferences.activeModel()
         val initialIndex = activeModel?.let { models.indexOf(it) }?.takeIf { it >= 0 } ?: 0

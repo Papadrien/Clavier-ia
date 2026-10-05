@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.os.Handler
@@ -14,6 +15,7 @@ import android.view.View
 import android.view.ViewConfiguration
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import kotlin.math.roundToInt
 
 @SuppressLint("ViewConstructor")
@@ -49,9 +51,23 @@ class KeyboardView(context: Context) : View(context) {
     private var deleteSwipeWords = 0
     private var pressedKey: Key? = null
 
+    // Lot 20 : arbre d'accessibilité virtuel (TalkBack), voir KeyboardAccessibility. Les zones des touches sont mises en cache
+    // et recalculées après un changement de disposition, de hauteur, de taille ou d'orientation.
+    private var slotCache: List<KeySlot>? = null
+    private val accessibility = KeyboardAccessibility(this)
+
+    init {
+        ViewCompat.setAccessibilityDelegate(this, accessibility)
+        contentDescription = context.getString(R.string.a11y_keyboard_description)
+        // Rendu : pas de surlignage de focus par défaut (vue focalisable pour l'accessibilité, jamais pour la saisie).
+        defaultFocusHighlightEnabled = false
+    }
+
     var layout: KeyboardLayout = Keyboards.letters
         set(value) {
             field = value
+            slotCache = null
+            accessibility.invalidateRoot()
             invalidate()
             requestLayout()
         }
@@ -61,6 +77,7 @@ class KeyboardView(context: Context) : View(context) {
         set(value) {
             if (field == value) return
             field = value
+            slotCache = null
             requestLayout()
             invalidate()
         }
@@ -74,6 +91,7 @@ class KeyboardView(context: Context) : View(context) {
     var isShifted: Boolean = false
         set(value) {
             field = value
+            accessibility.invalidateRoot()
             invalidate()
         }
 
@@ -81,12 +99,13 @@ class KeyboardView(context: Context) : View(context) {
     var isCapsLock: Boolean = false
         set(value) {
             field = value
+            accessibility.invalidateRoot()
             invalidate()
         }
 
     // Charte Taipo (lot 04) : chaque touche = une face + une ombre (épaisseur inférieure), voir drawKey.
-    // Touches normales et spéciales (lettres, chiffres, espace, Maj, retour arrière, ABC/123) : violet-gris ;
-    // touches secondaires (virgule, point, emoji, pavé numérique) : gris ; Entrée : violet d'accent.
+    // Lettres, chiffres, symboles et espace : gris ; virgule, point, emoji, Maj, retour arrière et ABC/123 : violet-gris ;
+    // Entrée : violet d'accent (voir keyStyle).
     private val normalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_normal) }
     private val secondaryPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_functional) }
     private val activePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_pressed) }
@@ -107,6 +126,49 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     private val keyRect = RectF()
+
+    /**
+     * Lot 21 : dimensions de la charte lues **une fois** (construction, changement de configuration ou de taille), puis
+     * réutilisées au dessin. Avant, chaque touche relisait 4 à 7 dimensions dans les ressources à chaque dessin
+     * (de l'ordre de 150 accès par dessin du clavier). Seul le contenu change avec la configuration (orientation, classe de largeur,
+     * échelle de police) : [refreshDimens] est appelée à ces moments.
+     */
+    private class DrawDimens(context: Context) {
+        val keyInset = context.dimen(R.dimen.taipo_key_inset)
+        val keyCornerRadius = context.dimen(R.dimen.taipo_key_corner_radius)
+        val keyShadowHeight = context.dimen(R.dimen.taipo_key_shadow_height)
+        val keyShadowPressedHeight = context.dimen(R.dimen.taipo_key_shadow_pressed_height)
+        val spaceBarLength = context.dimen(R.dimen.taipo_space_bar_length)
+        val iconSize = context.dimen(R.dimen.taipo_icon_size)
+        val keyTextSize = context.dimen(R.dimen.taipo_key_text_size)
+        val keyTextSizeLarge = context.dimen(R.dimen.taipo_key_text_size_large)
+        val hintTextSize = context.dimen(R.dimen.taipo_key_hint_text_size)
+        val hintMarginEnd = context.dimen(R.dimen.taipo_key_hint_margin_end)
+        val hintMarginTop = context.dimen(R.dimen.taipo_key_hint_margin_top)
+        val popupCornerRadius = context.dimen(R.dimen.taipo_popup_corner_radius)
+        val popupTextSize = context.dimen(R.dimen.taipo_popup_text_size)
+        val popupSelectionInset = context.dimen(R.dimen.taipo_popup_selection_inset)
+        val previewMaxWidth = context.dimen(R.dimen.taipo_preview_max_width)
+        val previewGap = context.dimen(R.dimen.taipo_preview_gap)
+        val previewTextSize = context.dimen(R.dimen.taipo_preview_text_size)
+    }
+
+    private var dims = DrawDimens(context)
+
+    private fun refreshDimens() {
+        dims = DrawDimens(context)
+        spaceBarPaint.strokeWidth = context.dimen(R.dimen.taipo_space_bar_thickness)
+        contentCache = null
+    }
+
+    // Lot 21 : zone des touches (un objet par appel avant) mise en cache ; invalidée quand la largeur ou la densité change.
+    private var contentCache: KeyboardWidth? = null
+
+    // Lot 21 : tampons réutilisés au dessin (aucune chaîne ni RectF créés par frame) : un caractère à dessiner sans passer
+    // par String, et l'emprise d'une touche pour les bulles.
+    private val charBuffer = CharArray(1)
+    private val boundsScratch = RectF()
+    private var lastKeyTextSize = -1f
 
     // Icônes des touches (lot 09) : VectorDrawable de la charte, teintés une fois, redimensionnés au dessin (aucune
     // allocation dans onDraw). Remplacent les glyphes de police (Maj, Effacer) et les tracés Canvas (Entrée, Emoji).
@@ -229,9 +291,11 @@ class KeyboardView(context: Context) : View(context) {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        refreshDimens()
         val landscape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
         if (landscape == isLandscape) return
         isLandscape = landscape
+        slotCache = null
         // Une bulle ouverte pendant la rotation serait mal positionnée : on la ferme.
         previewKey = null
         dismissPopup()
@@ -241,12 +305,60 @@ class KeyboardView(context: Context) : View(context) {
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        slotCache = null
+        refreshDimens() // lot 21 : dépliage d'un pliable, multi-fenêtre : les dimensions et la zone des touches sont relues
         // Story 1.14 : largeur modifiée (dépliage d'un pliable, multi-fenêtre) ; une bulle ouverte
         // serait mal positionnée, on la ferme.
         if (oldw != 0 && w != oldw) {
             previewKey = null
             dismissPopup()
         }
+    }
+
+    /** Lot 20 : l'exploration au doigt de TalkBack arrive en événements de survol, relayés à l'arbre virtuel. */
+    override fun dispatchHoverEvent(event: MotionEvent): Boolean =
+        accessibility.dispatchHoverEvent(event) || super.dispatchHoverEvent(event)
+
+    /**
+     * Lot 20 : les touches de la disposition courante et leur zone tactile (coordonnées de la vue, mêmes que [keyAt]), dans
+     * l'ordre de lecture. Mis en cache ; l'identifiant virtuel d'une touche pour TalkBack est son rang dans cette liste.
+     */
+    internal fun keySlots(): List<KeySlot> {
+        slotCache?.let { return it }
+        val rows = layout.rows
+        if (rows.isEmpty()) return emptyList()
+        val rowHeight = usableHeightPx() / rows.size.toFloat()
+        val content = keyboardWidth()
+        val slots = ArrayList<KeySlot>()
+        rows.forEachIndexed { rowIndex, row ->
+            val totalWeight = row.fold(0f) { acc, key -> acc + key.weight }
+            var left = content.leftPx
+            row.forEach { key ->
+                val keyWidth = content.widthPx * key.weight / totalWeight
+                slots += KeySlot(
+                    key,
+                    Rect(
+                        left.roundToInt(),
+                        (rowIndex * rowHeight).roundToInt(),
+                        (left + keyWidth).roundToInt(),
+                        ((rowIndex + 1) * rowHeight).roundToInt(),
+                    ),
+                )
+                left += keyWidth
+            }
+        }
+        slotCache = slots
+        return slots
+    }
+
+    /** Lot 20 : saisie d'une touche demandée par TalkBack (double appui), sans geste tactile. */
+    internal fun activateKey(key: Key) {
+        keyListener?.onKey(key)
+    }
+
+    /** Lot 20 : saisie d'un caractère de l'appui long demandée par TalkBack (action « Saisir é »), comme le choix dans la bulle. */
+    internal fun typeSymbol(symbol: Char) {
+        keyListener?.onKey(Key("popup_$symbol", symbol.toString(), KeyAction.TypeChar(symbol)))
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -258,7 +370,7 @@ class KeyboardView(context: Context) : View(context) {
     override fun onDraw(canvas: Canvas) {
         // Pas de fond propre : le clavier est transparent et laisse voir le fond commun posé sur la
         // racine de l'IME (KeyboardBackgroundDrawable), partagé avec la barre du haut.
-        val inset = insetPx()
+        val inset = dims.keyInset
         val usableHeight = usableHeightPx()
         val rowHeight = usableHeight / layout.rows.size.toFloat()
         val content = keyboardWidth()
@@ -301,9 +413,9 @@ class KeyboardView(context: Context) : View(context) {
         // visible fait [taipo_key_shadow_height]. Pressée, la touche s'enfonce : l'ombre visible se réduit à
         // [taipo_key_shadow_pressed_height] et la face descend de la différence (sa taille ne change pas).
         // L'emprise de référence (zones tactiles, dimensions) ne change pas ; le contenu suit la face.
-        val radius = cornerRadiusPx()
-        val restShadow = minOf(dimen(R.dimen.taipo_key_shadow_height), keyRect.height() * MAX_SHADOW_RATIO)
-        val shownShadow = if (key == pressedKey) minOf(dimen(R.dimen.taipo_key_shadow_pressed_height), restShadow) else restShadow
+        val radius = dims.keyCornerRadius
+        val restShadow = minOf(dims.keyShadowHeight, keyRect.height() * MAX_SHADOW_RATIO)
+        val shownShadow = if (key == pressedKey) minOf(dims.keyShadowPressedHeight, restShadow) else restShadow
         keyRect.top += restShadow - shownShadow
         if (style == KeyStyle.ACCENT) {
             // Lot 07 : Entrée est une touche ronde (la zone tactile reste le rectangle de la touche).
@@ -319,7 +431,7 @@ class KeyboardView(context: Context) : View(context) {
                 val cx = keyRect.centerX()
                 val cy = keyRect.centerY()
                 canvas.drawLine(
-                    cx - spaceBarLengthPx(), cy, cx + spaceBarLengthPx(), cy, spaceBarPaint,
+                    cx - dims.spaceBarLength, cy, cx + dims.spaceBarLength, cy, spaceBarPaint,
                 )
             }
 
@@ -331,16 +443,27 @@ class KeyboardView(context: Context) : View(context) {
 
             KeyAction.Backspace -> drawKeyIcon(canvas, backspaceIcon)
 
-            else -> {
-                val label = displayLabel(key)
-                if (label.isNotEmpty()) {
-                    autoSizeTextPaint(key)
-                    val baseline = keyRect.centerY() - (textPaint.ascent() + textPaint.descent()) / 2f
-                    canvas.drawText(label, keyRect.centerX(), baseline, textPaint)
-                }
-                key.longPressChar?.let { drawLongPressHint(canvas, it) }
+            else -> drawKeyLabel(canvas, key)
+        }
+    }
+
+    /**
+     * Libellé de la touche et indice d'appui long. Lot 21 : une lettre en majuscule (Maj actif) est dessinée depuis un
+     * tampon de caractère, sans créer de String.
+     */
+    private fun drawKeyLabel(canvas: Canvas, key: Key) {
+        val upper = shiftedChar(key)
+        val label = if (upper == NO_CHAR) displayLabel(key) else ""
+        if (upper != NO_CHAR || label.isNotEmpty()) {
+            autoSizeTextPaint(key)
+            val baseline = keyRect.centerY() - (textPaint.ascent() + textPaint.descent()) / 2f
+            if (upper != NO_CHAR) {
+                drawChar(canvas, upper, keyRect.centerX(), baseline, textPaint)
+            } else {
+                canvas.drawText(label, keyRect.centerX(), baseline, textPaint)
             }
         }
+        key.longPressChar?.let { drawLongPressHint(canvas, it) }
     }
 
     /**
@@ -364,7 +487,7 @@ class KeyboardView(context: Context) : View(context) {
 
     /** Lot 09 : icône centrée sur la face de la touche, à [R.dimen.taipo_icon_size] (réduite sur les touches basses). */
     private fun drawKeyIcon(canvas: Canvas, icon: Drawable) {
-        val half = minOf(dimen(R.dimen.taipo_icon_size), keyRect.height() * KEY_ICON_MAX_RATIO) / 2f
+        val half = minOf(dims.iconSize, keyRect.height() * KEY_ICON_MAX_RATIO) / 2f
         val cx = keyRect.centerX()
         val cy = keyRect.centerY()
         icon.setBounds(
@@ -375,25 +498,37 @@ class KeyboardView(context: Context) : View(context) {
 
     /** Petit indice du chiffre accessible par appui long, en haut à droite de la touche. */
     private fun drawLongPressHint(canvas: Canvas, char: Char) {
-        hintPaint.textSize = dimen(R.dimen.taipo_key_hint_text_size)
-        canvas.drawText(
-            char.toString(),
-            keyRect.right - dimen(R.dimen.taipo_key_hint_margin_end),
-            keyRect.top + dimen(R.dimen.taipo_key_hint_margin_top) - hintPaint.ascent(),
+        if (hintPaint.textSize != dims.hintTextSize) hintPaint.textSize = dims.hintTextSize
+        drawChar(
+            canvas,
+            char,
+            keyRect.right - dims.hintMarginEnd,
+            keyRect.top + dims.hintMarginTop - hintPaint.ascent(),
             hintPaint,
         )
     }
 
     private fun autoSizeTextPaint(key: Key) {
-        val defaultSize = dimen(R.dimen.taipo_key_text_size)
-        val bigSize = dimen(R.dimen.taipo_key_text_size_large)
-        if (key.id == "toggle") {
-            textPaint.textSize = bigSize
-        } else {
-            textPaint.textSize = defaultSize
-        }
+        val base = if (key.id == "toggle") dims.keyTextSizeLarge else dims.keyTextSize
         // Rangées basses (paysage, hauteur réduite) : le texte ne doit pas déborder de la touche.
-        textPaint.textSize = textPaint.textSize.coerceAtMost(keyRect.height() * 0.62f)
+        // Lot 21 : la taille n'est reposée sur le Paint que si elle change (la plupart des touches ont la même).
+        val size = base.coerceAtMost(keyRect.height() * 0.62f)
+        if (size != lastKeyTextSize) {
+            lastKeyTextSize = size
+            textPaint.textSize = size
+        }
+    }
+
+    /** Lot 21 : la majuscule à dessiner à la place du libellé (Maj actif sur une lettre), ou [NO_CHAR]. Sans allocation. */
+    private fun shiftedChar(key: Key): Char {
+        val action = key.action
+        return if (action is KeyAction.TypeChar && isShifted && action.char.isLetter()) action.char.uppercaseChar() else NO_CHAR
+    }
+
+    /** Lot 21 : dessine un caractère par le tampon [charBuffer] (aucune String créée, contrairement à `Char.toString()`). */
+    private fun drawChar(canvas: Canvas, char: Char, x: Float, y: Float, paint: Paint) {
+        charBuffer[0] = char
+        canvas.drawText(charBuffer, 0, 1, x, y, paint)
     }
 
     private fun displayLabel(key: Key): String = when (val action = key.action) {
@@ -407,15 +542,18 @@ class KeyboardView(context: Context) : View(context) {
         KeyAction.Emoji -> "" // icône dessinée par drawEmojiIcon
     }
 
-    /** Famille de couleurs d'une touche (charte Taipo). Un seul endroit à modifier pour reclasser une touche. */
+    /**
+     * Famille de couleurs d'une touche (charte Taipo). Un seul endroit à modifier pour reclasser une touche.
+     * Demande du 05/10/2026 : lettres, chiffres, symboles et espace en gris (SECONDARY) ; virgule, point, « @ », « / » et
+     * emoji en violet-gris (NORMAL) ; Maj, retour arrière et 123 / ABC restent violet-gris ; Entrée reste violette.
+     */
     private enum class KeyStyle { NORMAL, SECONDARY, ACCENT }
 
-    private fun keyStyle(key: Key): KeyStyle = when {
-        key.action is KeyAction.Enter -> KeyStyle.ACCENT
-        // Lot 06 : l'espace a toujours la couleur des touches normales, même sur le pavé numérique (où il est « secondary »).
-        key.action is KeyAction.Space -> KeyStyle.NORMAL
-        key.secondary || key.action is KeyAction.Emoji -> KeyStyle.SECONDARY
-        else -> KeyStyle.NORMAL
+    private fun keyStyle(key: Key): KeyStyle = when (key.action) {
+        KeyAction.Enter -> KeyStyle.ACCENT
+        KeyAction.Shift, KeyAction.Backspace, KeyAction.ToggleLayout, KeyAction.Emoji -> KeyStyle.NORMAL
+        KeyAction.Space -> KeyStyle.SECONDARY
+        is KeyAction.TypeChar -> if (key.secondary) KeyStyle.NORMAL else KeyStyle.SECONDARY
     }
 
     // Multi-touch : en frappe rapide, le doigt suivant se pose avant que le précédent soit levé.
@@ -597,7 +735,9 @@ class KeyboardView(context: Context) : View(context) {
             row.forEach { key ->
                 val keyWidth = content.widthPx * key.weight / totalWeight
                 if (key == target) {
-                    return RectF(left, rowIndex * rowHeight, left + keyWidth, (rowIndex + 1) * rowHeight)
+                    // Lot 21 : RectF réutilisé (appelé à chaque dessin de la bulle d'agrandissement) ; les appelants ne le gardent pas.
+                    boundsScratch.set(left, rowIndex * rowHeight, left + keyWidth, (rowIndex + 1) * rowHeight)
+                    return boundsScratch
                 }
                 left += keyWidth
             }
@@ -710,12 +850,12 @@ class KeyboardView(context: Context) : View(context) {
 
     private fun drawPopup(canvas: Canvas) {
         val key = popupKey ?: return
-        val radius = dimen(R.dimen.taipo_popup_corner_radius)
+        val radius = dims.popupCornerRadius
         canvas.drawRoundRect(popupRect, radius, radius, popupPaint)
 
-        popupTextPaint.textSize = dimen(R.dimen.taipo_popup_text_size)
+        if (popupTextPaint.textSize != dims.popupTextSize) popupTextPaint.textSize = dims.popupTextSize
         val baselineOffset = -(popupTextPaint.ascent() + popupTextPaint.descent()) / 2f
-        val selectionInset = dimen(R.dimen.taipo_popup_selection_inset)
+        val selectionInset = dims.popupSelectionInset
 
         key.popup.forEachIndexed { rowIndex, row ->
             row.forEachIndexed { colIndex, symbol ->
@@ -725,25 +865,23 @@ class KeyboardView(context: Context) : View(context) {
                     val selectionRadius = minOf(popupCellWidth, popupCellHeight) / 2f - selectionInset
                     canvas.drawCircle(cx, cy, selectionRadius, popupSelectionPaint)
                 }
-                canvas.drawText(popupLabel(symbol), cx, cy + baselineOffset, popupTextPaint)
+                val shown = if (isShifted && symbol.isLetter()) symbol.uppercaseChar() else symbol
+                drawChar(canvas, shown, cx, cy + baselineOffset, popupTextPaint)
             }
         }
     }
-
-    /** Comme sur les touches, les lettres de la bulle passent en majuscule quand Maj est actif. */
-    private fun popupLabel(symbol: Char): String =
-        if (isShifted && symbol.isLetter()) symbol.uppercaseChar().toString() else symbol.toString()
 
     /** Story 1.10 : bulle d'agrandissement affichée au-dessus de la touche de caractère pressée. */
     private fun drawPreview(canvas: Canvas) {
         val key = previewKey ?: return
         val bounds = keyBounds(key) ?: return
-        val label = displayLabel(key)
-        if (label.isEmpty()) return
+        val upper = shiftedChar(key)
+        val label = if (upper == NO_CHAR) displayLabel(key) else ""
+        if (upper == NO_CHAR && label.isEmpty()) return
 
-        val previewWidth = (bounds.width() * 1.6f).coerceAtMost(dimen(R.dimen.taipo_preview_max_width)) * PREVIEW_SCALE
+        val previewWidth = (bounds.width() * 1.6f).coerceAtMost(dims.previewMaxWidth) * PREVIEW_SCALE
         val previewHeight = bounds.height() * 1.8f * PREVIEW_SCALE
-        val gap = dimen(R.dimen.taipo_preview_gap)
+        val gap = dims.previewGap
         // Place disponible au-dessus de la vue : comme la bulle d'accents (1.8), la bulle peut
         // recouvrir la barre d'actions qui la surmonte, pas au-delà de la fenêtre.
         val headroom = headroomPx()
@@ -755,11 +893,16 @@ class KeyboardView(context: Context) : View(context) {
         val previewTop = (previewBottom - previewHeight).coerceAtLeast(-headroom)
 
         previewRect.set(left, previewTop, left + previewWidth, previewBottom)
-        canvas.drawRoundRect(previewRect, cornerRadiusPx(), cornerRadiusPx(), previewPaint)
+        canvas.drawRoundRect(previewRect, dims.keyCornerRadius, dims.keyCornerRadius, previewPaint)
 
-        previewTextPaint.textSize = dimen(R.dimen.taipo_preview_text_size) * PREVIEW_SCALE
+        val previewTextSize = dims.previewTextSize * PREVIEW_SCALE
+        if (previewTextPaint.textSize != previewTextSize) previewTextPaint.textSize = previewTextSize
         val baseline = previewRect.centerY() - (previewTextPaint.ascent() + previewTextPaint.descent()) / 2f
-        canvas.drawText(label, previewRect.centerX(), baseline, previewTextPaint)
+        if (upper != NO_CHAR) {
+            drawChar(canvas, upper, previewRect.centerX(), baseline, previewTextPaint)
+        } else {
+            canvas.drawText(label, previewRect.centerX(), baseline, previewTextPaint)
+        }
     }
 
     private fun keyAt(x: Float, y: Float): Key? {
@@ -820,13 +963,15 @@ class KeyboardView(context: Context) : View(context) {
     private fun bottomMarginPx(): Float = dp(metrics().bottomMarginDp)
     private fun usableHeightPx(): Float = (height - bottomMarginPx()).coerceAtLeast(0f)
 
-    private fun insetPx(): Float = dimen(R.dimen.taipo_key_inset)
-    private fun cornerRadiusPx(): Float = dimen(R.dimen.taipo_key_corner_radius)
-    private fun spaceBarLengthPx(): Float = dimen(R.dimen.taipo_space_bar_length)
-
     /** Story 1.14 : zone horizontale des touches (plein écran en Compact, plafonnée et centrée en large). */
     private fun keyboardWidth(): KeyboardWidth =
-        KeyboardWidth.forAvailableWidth(width.toFloat(), resources.displayMetrics.density)
+        contentCache ?: KeyboardWidth.forAvailableWidth(width.toFloat(), resources.displayMetrics.density)
+            .also { contentCache = it }
 
     private fun dp(value: Float): Float = value * resources.displayMetrics.density
+
+    private companion object {
+        /** Lot 21 : « pas de caractère » (voir [shiftedChar]). */
+        const val NO_CHAR = '\u0000'
+    }
 }

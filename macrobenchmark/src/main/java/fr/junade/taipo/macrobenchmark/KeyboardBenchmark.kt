@@ -40,6 +40,7 @@ class KeyboardBenchmark {
             TraceSectionMetric(Sections.DICTIONARY_LOAD, TraceSectionMetric.Mode.Sum),
             TraceSectionMetric(Sections.SUGGESTIONS, TraceSectionMetric.Mode.Sum),
             TraceSectionMetric(Sections.AUTOCORRECTION, TraceSectionMetric.Mode.Sum),
+            TraceSectionMetric(Sections.EMOJI_CATALOG, TraceSectionMetric.Mode.Sum),
         ),
         compilationMode = mode,
         startupMode = StartupMode.COLD,

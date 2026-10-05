@@ -11,6 +11,9 @@ data class EmojiSection(
 /** Emoji touché, avec le coin haut-gauche de sa cellule (coordonnées du contenu). */
 data class EmojiHit(val emoji: String, val left: Float, val top: Float)
 
+/** Lot 20 : cellule d'emoji avec sa place dans la grille (section et rang dans la section), pour l'arbre d'accessibilité. */
+data class EmojiCellRef(val section: Int, val index: Int, val emoji: String, val left: Float, val top: Float)
+
 /**
  * Story 1.15 : disposition verticale continue du panneau emoji, comme sur Gboard. Chaque section
  * commence par un en-tête (son titre), suivi de ses emojis en grille de [columns] colonnes de
@@ -29,6 +32,12 @@ class EmojiGridLayout(
         fun header(section: Int, y: Float)
         fun message(section: Int, y: Float)
         fun cell(emoji: String, x: Float, y: Float)
+
+        /**
+         * Lot 20 : comme [cell], avec la section et le rang de l'emoji dans sa section. Par défaut, délègue à [cell] : les
+         * visiteurs existants n'ont rien à changer.
+         */
+        fun cellAt(section: Int, index: Int, emoji: String, x: Float, y: Float) = cell(emoji, x, y)
     }
 
     private val tops = FloatArray(sections.size)
@@ -70,7 +79,10 @@ class EmojiGridLayout(
     }
 
     /** Emoji situé au point (x, y) du contenu, ou null (en-tête, message, cellule vide, hors grille). */
-    fun hitTest(x: Float, y: Float): EmojiHit? {
+    fun hitTest(x: Float, y: Float): EmojiHit? = locate(x, y)?.let { EmojiHit(it.emoji, it.left, it.top) }
+
+    /** Comme [hitTest], avec la section et le rang de l'emoji dans sa section (lot 20). */
+    fun locate(x: Float, y: Float): EmojiCellRef? {
         if (x < 0f || y < 0f || y >= contentHeight) return null
         val sectionIndex = sectionAt(y)
         if (sectionIndex < 0) return null
@@ -80,8 +92,9 @@ class EmojiGridLayout(
         val col = (x / cellSize).toInt()
         if (col >= columns) return null
         val row = ((y - bodyTop) / cellSize).toInt()
-        val emoji = section.emojis.getOrNull(row * columns + col) ?: return null
-        return EmojiHit(emoji, col * cellSize, bodyTop + row * cellSize)
+        val index = row * columns + col
+        val emoji = section.emojis.getOrNull(index) ?: return null
+        return EmojiCellRef(sectionIndex, index, emoji, col * cellSize, bodyTop + row * cellSize)
     }
 
     /** Parcourt les éléments qui touchent la zone [top, bottom) du contenu. */
@@ -107,7 +120,7 @@ class EmojiGridLayout(
                     val first = row * columns
                     val end = minOf(first + columns, section.emojis.size)
                     for (k in first until end) {
-                        visitor.cell(section.emojis[k], (k - first) * cellSize, y)
+                        visitor.cellAt(i, k, section.emojis[k], (k - first) * cellSize, y)
                     }
                     row++
                 }
