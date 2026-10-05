@@ -254,11 +254,11 @@ panneau emoji, pop-up d'information, tous les écrans de réglages, fenêtres de
 Non compilé ni exécuté ici (pas de compilateur dans l'environnement de revue). À lancer à la main :
 `./gradlew testDebugUnitTest` puis, appareil branché, `./gradlew connectedDebugAndroidTest`.
 
-**Tests JVM — `DictionaryAssetsIntegrityTest`** (`@ParameterizedTest`, fr + en) : relit `fr.txt` / `en.txt` en
+**Tests JVM — `DictionaryAssetsIntegrityTest`** (`@ParameterizedTest`, fr + fr_50k + en) : relit `fr.txt` (liste complète), `fr_50k.txt` (secours) et `en.txt` en
 format strict (`parseFrequencyLines` est tolérant et masquerait une ligne abîmée) : « mot fréquence » partout,
 fréquences > 0, tri décroissant, aucun doublon, minuscules / NFC / lettres + `'` + `-`, lettres isolées
 autorisées seulement (fr : a à y ; en : a i), taille plancher 45 000 mots, mots courants présents,
-le chargeur ne perd aucune ligne, `SOURCES.txt` cite les deux fichiers. Les règles reprennent l'état constaté
+le chargeur ne perd aucune ligne, `SOURCES.txt` cite les trois fichiers ; `fr.txt` dépasse 700 000 mots et contient la liste de secours. Les règles reprennent l'état constaté
 des fichiers (vérifié par script sur les fichiers actuels : 0 anomalie).
 
 **Tests instrumentés (`app/src/androidTest`, JUnit 4)** :

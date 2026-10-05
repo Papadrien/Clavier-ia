@@ -131,22 +131,39 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
         }
     }
 
-    /** Remplace les suggestions d'auto-remplissage en ligne par [views] (liste vide : les retire). */
+    /**
+     * Remplace les suggestions d'auto-remplissage en ligne par [views] (liste vide : les retire).
+     *
+     * Les vues déjà affichées ne sont ni détachées ni redimensionnées : le système fixe leur taille
+     * (LayoutParams) quand le service d'auto-remplissage a rendu leur contenu, et une vue détachée puis
+     * rattachée, ou dotée de nouveaux LayoutParams « WRAP_CONTENT », se retrouve sans largeur (invisible).
+     * Chaque nouvelle vue est insérée à son rang ; une largeur déjà fixée par le système est conservée.
+     */
     fun setInlineViews(views: List<View>) {
-        inlineRow.removeAllViews()
-        views.forEachIndexed { index, view ->
-            (view.parent as? ViewGroup)?.removeView(view)
-            inlineRow.addView(
-                view,
-                LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                ).apply {
-                    if (index > 0) marginStart = dimen(R.dimen.taipo_suggestion_chip_gap).toInt()
-                },
-            )
+        val gap = dimen(R.dimen.taipo_suggestion_chip_gap).toInt()
+        for (i in inlineRow.childCount - 1 downTo 0) {
+            if (inlineRow.getChildAt(i) !in views) inlineRow.removeViewAt(i)
         }
-        inlineScroll.scrollTo(0, 0)
+        views.forEachIndexed { index, view ->
+            val margin = if (index > 0) gap else 0
+            if (view.parent === inlineRow) {
+                (view.layoutParams as? LinearLayout.LayoutParams)?.let { params ->
+                    if (params.marginStart != margin) {
+                        params.marginStart = margin
+                        view.layoutParams = params
+                    }
+                }
+            } else {
+                (view.parent as? ViewGroup)?.removeView(view)
+                val width = view.layoutParams?.width?.takeIf { it > 0 } ?: LinearLayout.LayoutParams.WRAP_CONTENT
+                inlineRow.addView(
+                    view,
+                    minOf(index, inlineRow.childCount),
+                    LinearLayout.LayoutParams(width, LinearLayout.LayoutParams.MATCH_PARENT).apply { marginStart = margin },
+                )
+            }
+        }
+        if (views.isEmpty()) inlineScroll.scrollTo(0, 0)
     }
 
     /** Montre le contenu décidé par [visibility] ; le bouton Smart Clipboard est coloré tant que le panneau est ouvert. */

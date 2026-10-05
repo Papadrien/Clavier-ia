@@ -313,6 +313,9 @@ class TaipoIme : InputMethodService() {
     /** Numéro de la dernière réponse d'auto-remplissage en ligne : les vues d'une réponse périmée sont ignorées. */
     private var inlineGeneration = 0
 
+    // Réponse d'auto-remplissage reçue avant la construction de la vue (InlineSuggestionsResponse, API 30+ : typée Any pour rester chargeable sous l'API 26).
+    private var pendingInlineResponse: Any? = null
+
 
     override fun onCreate() {
         super.onCreate()
@@ -393,6 +396,7 @@ class TaipoIme : InputMethodService() {
         )
         refreshRecentEmojiBar()
         updateCorrectionBarVisibility()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) applyPendingInlineResponse()
     }
 
     override fun onCurrentInputMethodSubtypeChanged(newSubtype: InputMethodSubtype?) {
@@ -472,6 +476,7 @@ class TaipoIme : InputMethodService() {
             Size((INLINE_SUGGESTION_MIN_WIDTH_DP * density).toInt(), height),
             Size((INLINE_SUGGESTION_MAX_WIDTH_DP * density).toInt(), height),
         ).setStyle(styles).build()
+        AppLog.d(TAG, "autofill en ligne : demande envoyée au système (hauteur ${height}px)")
         return InlineSuggestionsRequest.Builder(listOf(spec))
             .setMaxSuggestionCount(INLINE_SUGGESTION_MAX_COUNT)
             .build()
@@ -479,28 +484,68 @@ class TaipoIme : InputMethodService() {
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onInlineSuggestionsResponse(response: InlineSuggestionsResponse): Boolean {
+        AppLog.d(
+            TAG,
+            "autofill en ligne : réponse de ${response.inlineSuggestions.size} suggestion(s), vue du clavier prête=${viewComposer.isComposed}",
+        )
+        if (!viewComposer.isComposed) {
+            // Première ouverture : la réponse peut arriver avant la construction de la vue du clavier. Elle est
+            // gardée et appliquée à l'ouverture du champ (le système ne la renvoie pas de lui-même).
+            pendingInlineResponse = response
+            return response.inlineSuggestions.isNotEmpty()
+        }
+        pendingInlineResponse = null
+        return showInlineSuggestions(response)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun showInlineSuggestions(response: InlineSuggestionsResponse): Boolean {
         val suggestions = response.inlineSuggestions
         val generation = ++inlineGeneration
-        if (suggestions.isEmpty() || !viewComposer.isComposed) {
+        if (suggestions.isEmpty()) {
             clearInlineSuggestions()
             return false
         }
         val slots = arrayOfNulls<View>(suggestions.size)
         val wrap = android.view.ViewGroup.LayoutParams.WRAP_CONTENT
         suggestions.forEachIndexed { index, suggestion ->
-            suggestion.inflate(this, Size(wrap, wrap), mainExecutor) { view ->
-                // Réponse périodiquement remplacée par une plus récente : on ignore les vues en retard.
-                if (generation != inlineGeneration || !viewComposer.isComposed) return@inflate
-                slots[index] = view
-                correctionBar.setInlineSuggestions(slots.filterNotNull())
+            try {
+                suggestion.inflate(this, Size(wrap, wrap), mainExecutor) { view ->
+                    // Réponse périodiquement remplacée par une plus récente : on ignore les vues en retard.
+                    if (generation != inlineGeneration || !viewComposer.isComposed) return@inflate
+                    if (view == null) {
+                        AppLog.w(TAG, "autofill en ligne : vue $index non rendue par le service d'auto-remplissage")
+                        return@inflate
+                    }
+                    slots[index] = view
+                    correctionBar.setInlineSuggestions(slots.filterNotNull())
+                    if (BuildConfig.DEBUG) {
+                        mainHandler.postDelayed(
+                            { AppLog.d(TAG, "autofill en ligne : vue $index ${view.width}x${view.height} px, affichée=${view.isShown}") },
+                            INLINE_LAYOUT_LOG_DELAY_MS,
+                        )
+                    }
+                }
+            } catch (e: IllegalArgumentException) {
+                AppLog.e(TAG, "autofill en ligne : taille refusée pour la suggestion $index", e)
             }
         }
         return true
     }
 
+    /** Applique la réponse d'auto-remplissage arrivée avant la construction de la vue du clavier, s'il y en a une. */
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun applyPendingInlineResponse() {
+        val pending = pendingInlineResponse as? InlineSuggestionsResponse ?: return
+        pendingInlineResponse = null
+        AppLog.d(TAG, "autofill en ligne : application de la réponse reçue avant la vue du clavier")
+        showInlineSuggestions(pending)
+    }
+
     /** Retire les suggestions d'auto-remplissage : la barre retrouve ses suggestions habituelles. */
     private fun clearInlineSuggestions() {
         inlineGeneration++
+        pendingInlineResponse = null
         if (viewComposer.isComposed) correctionBar.setInlineSuggestions(emptyList())
     }
 
@@ -1365,5 +1410,6 @@ class TaipoIme : InputMethodService() {
         private const val INLINE_SUGGESTION_MIN_WIDTH_DP = 48f
         private const val INLINE_SUGGESTION_MAX_WIDTH_DP = 320f
         private const val INLINE_SUGGESTION_MAX_COUNT = 5
+        private const val INLINE_LAYOUT_LOG_DELAY_MS = 500L
     }
 }

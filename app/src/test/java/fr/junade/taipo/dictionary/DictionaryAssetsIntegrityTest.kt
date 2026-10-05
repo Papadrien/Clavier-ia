@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.ValueSource
 
 /**
- * Lot 3.3 (T3) de la revue : intégrité des listes de mots `fr.txt` / `en.txt`.
+ * Lot 3.3 (T3) de la revue : intégrité des listes de mots `fr.txt` (complète), `fr_50k.txt` (secours) et `en.txt`.
  *
  * `Dictionary.parseFrequencyLines` est volontairement tolérant (une ligne sans fréquence valide compte
  * pour 1, une ligne vide est ignorée) : une liste abîmée par un mauvais export ou un mauvais éditeur
@@ -54,22 +54,44 @@ class DictionaryAssetsIntegrityTest {
         }
 
     @ParameterizedTest(name = "{0}.txt : format strict, une ligne « mot fréquence »")
-    @ValueSource(strings = ["fr", "en"])
+    @ValueSource(strings = ["fr", "fr_50k", "en"])
     fun `chaque ligne est un mot suivi d'une frequence`(language: String) {
         // strictEntries échoue avec le numéro de ligne fautif ; ici on vérifie aussi qu'il y a du contenu.
         assertTrue(strictEntries(language).isNotEmpty())
     }
 
     @ParameterizedTest(name = "{0}.txt : taille plancher")
-    @ValueSource(strings = ["fr", "en"])
+    @ValueSource(strings = ["fr", "fr_50k", "en"])
     fun `la liste garde une taille plancher`(language: String) {
         val size = strictEntries(language).size
-        // Constaté : fr 49 468 mots, en 48 658 mots. Un fichier tronqué tomberait bien en dessous.
+        // Constaté : fr_50k 49 468 mots, en 48 658 mots. Un fichier tronqué tomberait bien en dessous.
         assertTrue(size >= 45_000, "$language.txt : $size mots seulement (plancher : 45 000)")
     }
 
+    @Test
+    fun `la liste francaise complete est bien la liste complete`() {
+        // Constaté : fr 766 833 mots (liste complète nettoyée), fr_50k 49 468 mots (secours).
+        val full = strictEntries("fr").size
+        val backup = strictEntries("fr_50k").size
+        assertTrue(full >= 700_000, "fr.txt : $full mots seulement (plancher : 700 000)")
+        assertTrue(backup in 45_000..60_000, "fr_50k.txt : $backup mots (attendu : une liste d'environ 50 000)")
+    }
+
+    @Test
+    fun `la liste de secours est incluse dans la liste complete`() {
+        val full = strictEntries("fr").map { it.word }.toSet()
+        val backup = strictEntries("fr_50k").map { it.word }
+        val missing = backup.filterNot { it in full }
+        // Constaté : 8 entrées du 50k écartées du fichier complet, ce sont des débris d'encodage du corpus
+        // (« être » lu « ãªtre »). Tolérance : 0,1 % des mots du secours.
+        assertTrue(
+            missing.size <= backup.size / 1000,
+            "fr.txt ne contient pas ${missing.size} mots de fr_50k.txt : ${missing.take(10)}",
+        )
+    }
+
     @ParameterizedTest(name = "{0}.txt : fréquences strictement positives")
-    @ValueSource(strings = ["fr", "en"])
+    @ValueSource(strings = ["fr", "fr_50k", "en"])
     fun `les frequences sont strictement positives`(language: String) {
         strictEntries(language).forEach {
             assertTrue(it.frequency > 0, "$language.txt ligne ${it.lineNumber} : fréquence ${it.frequency} pour « ${it.word} »")
@@ -77,7 +99,7 @@ class DictionaryAssetsIntegrityTest {
     }
 
     @ParameterizedTest(name = "{0}.txt : triée par fréquence décroissante")
-    @ValueSource(strings = ["fr", "en"])
+    @ValueSource(strings = ["fr", "fr_50k", "en"])
     fun `la liste est triee par frequence decroissante`(language: String) {
         // Des égalités sont possibles (fréquences identiques) ; une remontée de fréquence ne l'est pas.
         strictEntries(language).zipWithNext().forEach { (previous, next) ->
@@ -90,7 +112,7 @@ class DictionaryAssetsIntegrityTest {
     }
 
     @ParameterizedTest(name = "{0}.txt : pas de doublon")
-    @ValueSource(strings = ["fr", "en"])
+    @ValueSource(strings = ["fr", "fr_50k", "en"])
     fun `aucun mot n'apparait deux fois`(language: String) {
         val firstLineOf = HashMap<String, Int>()
         strictEntries(language).forEach { entry ->
@@ -103,7 +125,7 @@ class DictionaryAssetsIntegrityTest {
     }
 
     @ParameterizedTest(name = "{0}.txt : mots en minuscules, NFC, lettres + apostrophe + trait d'union")
-    @ValueSource(strings = ["fr", "en"])
+    @ValueSource(strings = ["fr", "fr_50k", "en"])
     fun `les mots sont normalises`(language: String) {
         strictEntries(language).forEach { entry ->
             val word = entry.word
@@ -119,7 +141,7 @@ class DictionaryAssetsIntegrityTest {
     }
 
     @ParameterizedTest(name = "{0}.txt : lettres isolées autorisées uniquement")
-    @CsvSource(delimiter = '|', quoteCharacter = '"', value = ["fr|a,à,y", "en|a,i"])
+    @CsvSource(delimiter = '|', quoteCharacter = '"', value = ["fr|a,à,y", "fr_50k|a,à,y", "en|a,i"])
     fun `seules les lettres isolees legitimes sont presentes`(language: String, allowed: String) {
         // SOURCES.txt : « lettres isolées sauf a / à / y (fr) et a / i (en) ».
         val singles = strictEntries(language).map { it.word }.filter { it.length == 1 }.toSet()
@@ -133,6 +155,7 @@ class DictionaryAssetsIntegrityTest {
         quoteCharacter = '"',
         value = [
             "fr|de,je,est,pas,le,que,la,vous,tu,un,être,ça,où,j'ai,c'est",
+            "fr_50k|de,je,est,pas,le,que,la,vous,tu,un,être,ça,où,j'ai,c'est",
             "en|you,i,the,to,a,it,it's,and,that,don't",
         ],
     )
@@ -143,7 +166,7 @@ class DictionaryAssetsIntegrityTest {
     }
 
     @ParameterizedTest(name = "{0}.txt : le chargeur lit autant de mots que le fichier en contient")
-    @ValueSource(strings = ["fr", "en"])
+    @ValueSource(strings = ["fr", "fr_50k", "en"])
     fun `le chargeur ne perd aucune ligne`(language: String) {
         val strict = strictEntries(language)
         val parsed = Dictionary.parseFrequencyLines(rawLines(language).asSequence())
@@ -154,7 +177,7 @@ class DictionaryAssetsIntegrityTest {
     }
 
     @ParameterizedTest(name = "SOURCES.txt mentionne {0}.txt")
-    @ValueSource(strings = ["fr", "en"])
+    @ValueSource(strings = ["fr", "fr_50k", "en"])
     fun `la provenance de chaque liste est documentee`(language: String) {
         val sources = assetFile("SOURCES.txt").readText(Charsets.UTF_8)
         assertTrue(sources.contains("$language.txt"), "SOURCES.txt ne mentionne pas $language.txt")

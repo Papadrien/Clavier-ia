@@ -212,7 +212,7 @@ class SuggestionController(
 
     /**
      * Charge FR et EN en arrière-plan dès la création du service (lot 1.4) : lecture et indexation
-     * de ~50 000 mots par langue, jamais sur le thread principal.
+     * (liste française complète, ~50 000 mots en anglais), jamais sur le thread principal.
      */
     fun preloadDictionaries() {
         scope.launch(Dispatchers.IO) {

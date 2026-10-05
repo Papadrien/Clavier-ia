@@ -24,3 +24,19 @@ Limites connues des listes, compensées par le code (Dictionary / InflectionRule
   quand la forme accentuée est au moins 10 fois plus fréquente ; « a »/« à », « ou »/« où », « la »/« là »
   restent intacts. Une meilleure solution à terme : un lexique français complet avec formes fléchies.
 
+
+=== Liste française complète (fr.txt) et liste de secours (fr_50k.txt) — 05/10/2026 ===
+fr.txt : liste française COMPLÈTE de la même source (FrequencyWords, OpenSubtitles2018, fr_full.txt,
+834 768 lignes), nettoyée comme décrit plus haut : 766 833 mots. Retirés : fragments d'élision (l', j'...),
+abréviations avec point, entrées avec chiffres, caractères non latins ou en début/fin de mot, lettres isolées
+sauf a / à / y, débris en majuscules. Les 90 contractions écrites à la main (j'ai, c'est, qu'il, l'homme...)
+sont rajoutées (fréquence = max entre l'ancienne valeur et celle du corpus) et leurs formes sans apostrophe
+(jai, cest, quil...) retirées, comme pour la liste de 50 000 mots.
+fr_50k.txt : l'ancienne liste française de ~50 000 mots (49 468), conservée telle quelle en SECOURS : le
+chargeur (DictionaryLoader) bascule dessus si fr.txt ne peut pas être chargé (mémoire, fichier illisible) ;
+pour l'utiliser en permanence, changer FR_ASSET dans DictionaryLoader.
+Seuils appliqués au chargement de fr.txt (voir DictionaryLoader) : mots vus au moins 5 fois seulement
+(~242 000 mots retenus, le reste étant surtout des fautes de frappe du corpus), et mots de fréquence >= 100
+seuls proposés en correction ou en complétion (~50 000 mots, comme avant). Mesure sur 16 000 fautes de frappe
+aléatoires : 12,7 % tombent sur un mot valide en gardant toute la liste, 6,0 % avec le seuil 5, 2,5 % avec
+la liste de 50 000 mots.

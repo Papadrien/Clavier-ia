@@ -6,6 +6,7 @@ import fr.junade.taipo.AppLog
 import fr.junade.taipo.model.AiModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.withLock
@@ -112,7 +113,7 @@ class GenerationSession(private val host: LlmEngineHost) {
                     }
                 }
             } catch (e: kotlinx.coroutines.CancellationException) {
-                closeConversation()
+                closeConversationOffMain()
                 throw e
             } catch (e: Exception) {
                 failure = e
@@ -126,7 +127,9 @@ class GenerationSession(private val host: LlmEngineHost) {
             } else {
                 // Tour interrompu ou en échec : on ne sait pas ce que le moteur en a retenu, donc on
                 // referme. Le prompt suivant rouvrira avec l'historique de l'appelant.
-                closeConversation()
+                // Hors du thread principal : close() peut attendre l'arrêt de la génération native, ce qui
+                // gelait le clavier après un stop.
+                closeConversationOffMain()
             }
             // Diagnostic : jamais le texte lui-même, seulement les longueurs et la durée.
             AppLog.i(
@@ -155,6 +158,15 @@ class GenerationSession(private val host: LlmEngineHost) {
     fun reset() {
         stop()
         closeConversation()
+    }
+
+    /**
+     * Comme [closeConversation], mais sur un thread d'arrière-plan et sans être annulable : [send] reprend
+     * sur le thread principal après la génération, et `Conversation.close()` peut bloquer tant que le
+     * moteur natif n'a pas fini de s'arrêter.
+     */
+    private suspend fun closeConversationOffMain() {
+        withContext(NonCancellable + Dispatchers.Default) { closeConversation() }
     }
 
     private fun closeConversation() {

@@ -20,6 +20,7 @@ import java.text.Normalizer
 class Dictionary private constructor(
     frequencies: Map<String, Long>,
     private val inflections: InflectionRules,
+    candidateMinFrequency: Long,
 ) {
 
     /**
@@ -36,13 +37,22 @@ class Dictionary private constructor(
             extraWords.forEach { put(it.lowercase(), 1L) }
         },
         inflections,
+        0L,
     )
 
     // minuscule -> fréquence (nombre d'occurrences dans le corpus source).
     private val frequencies: Map<String, Long> = frequencies
 
-    // Copies en tableaux parallèles : parcours des candidats plus rapide que sur la Map (50 000 mots).
-    private val candidateWords: Array<String> = frequencies.keys.toTypedArray()
+    // Candidats de correction et de complétion : les mots de fréquence >= candidateMinFrequency. Avec une liste
+    // complète (~250 000 mots et plus), les mots rares valident un mot tapé (ils ne sont pas « corrigés ») mais ne
+    // sont jamais proposés : la recherche par distance d'édition reste aussi rapide qu'avec 50 000 mots, et les
+    // suggestions ne se remplissent pas de fautes du corpus. 0 = tous les mots sont candidats.
+    // Copies en tableaux parallèles : parcours des candidats plus rapide que sur la Map.
+    private val candidateWords: Array<String> = if (candidateMinFrequency <= 0L) {
+        frequencies.keys.toTypedArray()
+    } else {
+        frequencies.entries.asSequence().filter { it.value >= candidateMinFrequency }.map { it.key }.toList().toTypedArray()
+    }
     private val candidateFrequencies: LongArray = LongArray(candidateWords.size) { frequencies.getValue(candidateWords[it]) }
 
     // Indices des candidats regroupés par longueur (ordre d'origine conservé dans chaque groupe) : la
@@ -176,6 +186,15 @@ class Dictionary private constructor(
         // Pluriel, féminin ou conjugaison régulière d'un mot connu : correct, absent des listes.
         if (isInflectedForm(lower)) return null
 
+        // Élision (« t'inscrire », « l'ordinateur ») ou possessif anglais (« today's ») : seul le mot
+        // collé à l'apostrophe est examiné, la partie élidée est conservée telle quelle. Sans cela, la
+        // recherche par distance d'édition retirait « t' » (« t'inscrire » -> « inscrire »).
+        apostropheCorrection(word, lower, maxDistance, personalWords)?.let { return it.value }
+
+        // Accent oublié sur un mot personnel (« Nae » pour « Naé ») : la forme enregistrée est la
+        // correction évidente, avant toute recherche par distance d'édition.
+        personalAccentRestoration(word, lower, personal)?.let { return it }
+
         // Apostrophe oubliée : correction directe, sans passer par la distance d'édition (où un mot
         // voisin plus fréquent, comme "est" pour "cest", l'emporterait à tort sur "c'est").
         contractionsWithoutApostrophe[lower]?.let { return applyOriginalCasing(word, it) }
@@ -189,17 +208,24 @@ class Dictionary private constructor(
         var bestDistance = allowedDistance + 1
         var bestFrequency = -1L
         var bestIsSwap = false
+        var bestIsPersonal = false
         var ambiguous = false
 
-        fun consider(candidate: String, frequency: Long) {
+        fun consider(candidate: String, frequency: Long, isPersonal: Boolean = false) {
             // Distance bornée : renvoie allowedDistance + 1 dès que le candidat est trop loin (même
             // résultat que damerauLevenshtein pour tout candidat retenu, mais sans calculer le reste).
             val distance = damerauLevenshteinBounded(lower, candidate, allowedDistance)
             if (distance > allowedDistance) return
             val isSwap = distance == 1 && isAdjacentSwap(lower, candidate)
+            // À distance égale : mot personnel (ajouté volontairement) > inversion de deux lettres >
+            // fréquence. Sans la première règle, « nae » donnait « ane » (inversion) et non « naé ».
             val better = distance < bestDistance || (
                 distance == bestDistance && (
-                    (isSwap && !bestIsSwap) || (isSwap == bestIsSwap && frequency > bestFrequency)
+                    (isPersonal && !bestIsPersonal) || (
+                        isPersonal == bestIsPersonal && (
+                            (isSwap && !bestIsSwap) || (isSwap == bestIsSwap && frequency > bestFrequency)
+                            )
+                        )
                     )
                 )
             when {
@@ -207,10 +233,12 @@ class Dictionary private constructor(
                     bestDistance = distance
                     bestFrequency = frequency
                     bestIsSwap = isSwap
+                    bestIsPersonal = isPersonal
                     best = candidate
                     ambiguous = false
                 }
-                distance == bestDistance && isSwap == bestIsSwap && frequency == bestFrequency && candidate != best ->
+                distance == bestDistance && isPersonal == bestIsPersonal && isSwap == bestIsSwap &&
+                    frequency == bestFrequency && candidate != best ->
                     ambiguous = true
             }
         }
@@ -220,7 +248,7 @@ class Dictionary private constructor(
         for (length in minLength..maxLength) {
             for (i in indicesByLength[length]) consider(candidateWords[i], candidateFrequencies[i])
         }
-        for (candidate in personal.keys) if (candidate !in frequencies) consider(candidate, personalFrequency)
+        for (candidate in personal.keys) if (candidate !in frequencies) consider(candidate, personalFrequency, isPersonal = true)
 
         val correction = best ?: return null
         if (bestDistance > allowedDistance || ambiguous) return null
@@ -314,7 +342,8 @@ class Dictionary private constructor(
         }
         // Après une élision (« l'Ta »), les mots personnels sont proposés avec leur élision (« l'Taipo »).
         val apostrophe = typed.lastIndexOf('\'')
-        if (apostrophe > 0 && apostrophe < typed.length - 1) {
+        val hasElision = apostrophe > 0 && apostrophe < typed.length - 1
+        if (hasElision) {
             val elision = typed.substring(0, apostrophe + 1)
             val stem = typed.substring(apostrophe + 1)
             val stemLower = stem.lowercase()
@@ -328,8 +357,25 @@ class Dictionary private constructor(
         if (result.size < limit) {
             for (word in topCompletions(lower, limit + 1)) offer(applyOriginalCasing(typed, word), word)
         }
+        // Après une élision française (« t'insc »), mots du dictionnaire qui complètent le mot collé à
+        // l'apostrophe (« t'inscrire »), à condition qu'il commence par une voyelle ou un h (« l'ordi »
+        // oui, « l'cheval » non). Les contractions du dictionnaire (« j'ai ») restent proposées avant.
+        if (hasElision && result.size < limit) {
+            val elision = typed.substring(0, apostrophe + 1)
+            val stem = typed.substring(apostrophe + 1)
+            if (elision.dropLast(1).lowercase() in ELISIONS && canFollowElision(stem)) {
+                for (word in topCompletions(stem.lowercase(), limit + 1)) {
+                    offer(elision + applyOriginalCasing(stem, word), elision.lowercase() + word)
+                }
+            }
+        }
         return result
     }
+
+    /** Vrai si [stem] commence par une voyelle (accentuée ou non) ou un h : seuls ces mots s'élident. */
+    private fun canFollowElision(stem: String): Boolean = stem.firstOrNull()?.lowercaseChar()?.let {
+        it in "aeiouyhàâäéèêëîïôöùûüœæ"
+    } == true
 
     /**
      * Vrai si [lower] (minuscules) est un mot personnel collé à une élision (« l'Taipo », « qu'Adrien »,
@@ -342,6 +388,48 @@ class Dictionary private constructor(
         if (after.length >= MIN_WORD_LENGTH_FOR_CORRECTION && after in personal) return true
         val first = lower.indexOf('\'')
         return lower.substring(first + 1) == "s" && lower.substring(0, first) in personal
+    }
+
+    /** Résultat de [apostropheCorrection] : [value] null = mot à laisser tel quel. */
+    private class ApostropheResult(val value: String?)
+
+    /**
+     * Traitement d'un mot qui contient une apostrophe et n'est pas dans les listes. Renvoie null si le
+     * mot n'a pas cette forme (la recherche normale s'applique), sinon un [ApostropheResult] :
+     * - élision française (« t'inscrire ») : seul le mot qui suit l'apostrophe est corrigé
+     *   (« t'inscrir » -> « t'inscrire ») ; valeur null si ce mot est correct ;
+     * - possessif/clitique anglais (« today's ») dont la base est un mot connu : valeur null.
+     */
+    private fun apostropheCorrection(
+        word: String,
+        lower: String,
+        maxDistance: Int,
+        personalWords: Collection<String>,
+    ): ApostropheResult? {
+        val apostrophe = lower.indexOf('\'')
+        if (apostrophe <= 0 || apostrophe >= lower.length - 1) return null
+        val head = lower.substring(0, apostrophe)
+        val tail = lower.substring(apostrophe + 1)
+        if (head in ELISIONS) {
+            // Le reste du mot est examiné seul : correct (listes, forme régulière, mot personnel) ou corrigé.
+            val stem = word.substring(apostrophe + 1)
+            val corrected = correctionFor(stem, maxDistance, personalWords) ?: return ApostropheResult(null)
+            return ApostropheResult(word.substring(0, apostrophe + 1) + corrected)
+        }
+        if (tail in ENGLISH_CLITICS && (head in frequencies || isInflectedForm(head))) return ApostropheResult(null)
+        return null
+    }
+
+    /** Forme enregistrée d'un mot personnel qui ne diffère de [word] que par les accents, ou null. */
+    private fun personalAccentRestoration(word: String, lower: String, personal: Map<String, String>): String? {
+        val folded = foldAccents(lower)
+        var found: String? = null
+        for ((key, stored) in personal) {
+            if (key == lower || foldAccents(key) != folded) continue
+            if (found != null) return null // plusieurs formes possibles : ambiguïté
+            found = stored
+        }
+        return found?.let { personalDisplay(word, it) }
     }
 
     /** Mot personnel tel qu'affiché : casse enregistrée si elle est particulière, sinon casse tapée. */
@@ -433,6 +521,14 @@ class Dictionary private constructor(
     companion object {
         private const val MIN_WORD_LENGTH_FOR_CORRECTION = 2
 
+        /** Élisions françaises (partie avant l'apostrophe, minuscules) : « l'ami », « qu'il », « jusqu'à ». */
+        private val ELISIONS = setOf(
+            "l", "d", "j", "t", "m", "s", "n", "c", "qu", "jusqu", "lorsqu", "puisqu", "quoiqu", "quelqu", "presqu",
+        )
+
+        /** Terminaisons anglaises après l'apostrophe : « today's », « they're », « we'll ». */
+        private val ENGLISH_CLITICS = setOf("s", "t", "re", "ve", "ll", "d", "m")
+
         /** Story 1.17 : nombre d'emplacements de mots de la bande de suggestions. */
         const val SUGGESTION_LIMIT = 3
 
@@ -475,25 +571,32 @@ class Dictionary private constructor(
         /**
          * Dictionnaire avec fréquences (mot -> nombre d'occurrences). Les mots sont mis en
          * minuscules ; si deux formes ne diffèrent que par la casse, la plus fréquente est gardée.
+         * [candidateMinFrequency] : seuls les mots au moins aussi fréquents peuvent être proposés comme
+         * correction ou complétion ; tous les mots de [entries] restent valides (jamais corrigés).
          */
         fun withFrequencies(
             entries: Map<String, Long>,
             inflections: InflectionRules = InflectionRules.NONE,
+            candidateMinFrequency: Long = 0L,
         ): Dictionary {
+            // Liste déjà en minuscules (cas des listes de l'application) : pas de copie, ce qui évite de
+            // doubler la mémoire avec une liste complète de plusieurs centaines de milliers de mots.
+            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency)
             val merged = HashMap<String, Long>(entries.size)
             entries.forEach { (word, count) ->
                 val key = word.lowercase()
                 val previous = merged[key]
                 if (previous == null || count > previous) merged[key] = count
             }
-            return Dictionary(merged, inflections)
+            return Dictionary(merged, inflections, candidateMinFrequency)
         }
 
         /**
          * Lit des lignes « mot fréquence » (séparées par un espace). Une ligne sans fréquence
          * valide (mot seul, ou fréquence non numérique) compte pour 1 ; les lignes vides sont ignorées.
+         * Les mots de fréquence inférieure à [minFrequency] sont écartés dès la lecture (pas de pic mémoire).
          */
-        fun parseFrequencyLines(lines: Sequence<String>): Map<String, Long> {
+        fun parseFrequencyLines(lines: Sequence<String>, minFrequency: Long = 0L): Map<String, Long> {
             val result = HashMap<String, Long>()
             for (line in lines) {
                 val trimmed = line.trim()
@@ -514,7 +617,7 @@ class Dictionary private constructor(
                     word = trimmed
                     count = 1L
                 }
-                if (word.isNotEmpty()) result[word] = maxOf(result[word] ?: 0L, count)
+                if (word.isNotEmpty() && count >= minFrequency) result[word] = maxOf(result[word] ?: 0L, count)
             }
             return result
         }

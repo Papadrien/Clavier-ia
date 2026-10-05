@@ -16,8 +16,9 @@ import fr.junade.taipo.dictionary.WordSuggestion
  * ([setWords]) sont remplis d'après le mot en cours de frappe. Seul le mot qui va remplacer le mot
  * tapé à l'espace (autocorrection) est en gras, au centre ; le mot tapé, proposé à côté pour
  * refuser la correction, est entre guillemets ; les simples suggestions sont en poids normal. Un
- * emplacement sans mot reste réservé (invisible), comme l'emplacement emoji quand aucun emoji
- * n'est proposé, pour que la bande ne change pas de taille.
+ * emplacement sans mot, comme l'emplacement emoji quand aucun emoji n'est proposé, est retiré de la
+ * bande (GONE) : les mots proposés se partagent toute la largeur disponible de la barre. La hauteur,
+ * elle, ne change pas (MATCH_PARENT).
  *
  * Charte Taipo (lot 11) : texte blanc sur le fond du clavier ; le mot de l'autocorrection (action importante) est en
  * gras sur une pastille violette ; l'emplacement emoji est un bouton secondaire. Les fonds « face + ombre » sont créés
@@ -39,6 +40,7 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
     private val wordSlots = List(WORD_SLOT_COUNT) { TextView(context) }
     private val wordHighlights = List(WORD_SLOT_COUNT) { style.pillBackground(R.color.accent) }
     private val emojiSlot = TextView(context)
+    private val slotGap = dimen(R.dimen.taipo_suggestion_slot_gap).toInt()
     private var emojiListener: OnEmojiClickListener? = null
     private var wordListener: OnWordClickListener? = null
 
@@ -55,7 +57,6 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         gravity = Gravity.CENTER_VERTICAL
 
         val slotPadding = dimen(R.dimen.taipo_suggestion_slot_padding).toInt()
-        val slotGap = dimen(R.dimen.taipo_suggestion_slot_gap).toInt()
         // Le texte se centre sur la face des fonds : marge basse = épaisseur d'ombre, aussi sur les emplacements sans fond.
         val shadow = dimen(R.dimen.taipo_key_shadow_height).toInt()
         wordSlots.forEachIndexed { index, slot ->
@@ -66,10 +67,10 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
             slot.maxLines = 1
             slot.ellipsize = TextUtils.TruncateAt.END
             slot.setPadding(slotPadding, 0, slotPadding, shadow)
-            slot.visibility = View.INVISIBLE
+            slot.visibility = View.GONE
             slot.setOnClickListener { words.getOrNull(index)?.let { wordListener?.onWordClick(it) } }
             slot.announceAsButton() // lot 20
-            addView(slot, LayoutParams(0, LayoutParams.MATCH_PARENT, 1f).apply { if (index > 0) marginStart = slotGap })
+            addView(slot, LayoutParams(0, LayoutParams.MATCH_PARENT, 1f))
         }
 
         emojiSlot.setFixedTextSizeRes(R.dimen.taipo_suggestion_emoji_text_size)
@@ -77,11 +78,11 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         emojiSlot.maxLines = 1
         emojiSlot.background = style.pillBackground(R.color.surface_button)
         emojiSlot.setPadding(0, 0, 0, shadow)
-        emojiSlot.visibility = View.INVISIBLE
+        emojiSlot.visibility = View.GONE
         emojiSlot.setOnClickListener { emoji?.let { emojiListener?.onEmojiClick(it) } }
         emojiSlot.announceAsButton() // lot 20
         val emojiWidth = dimen(R.dimen.taipo_suggestion_emoji_slot_width).toInt()
-        addView(emojiSlot, LayoutParams(emojiWidth, LayoutParams.MATCH_PARENT).apply { marginStart = slotGap })
+        addView(emojiSlot, LayoutParams(emojiWidth, LayoutParams.MATCH_PARENT))
     }
 
     fun setOnEmojiClickListener(listener: OnEmojiClickListener) {
@@ -97,7 +98,8 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         if (emoji == newEmoji) return
         emoji = newEmoji
         emojiSlot.text = newEmoji.orEmpty()
-        emojiSlot.visibility = if (newEmoji == null) View.INVISIBLE else View.VISIBLE
+        emojiSlot.visibility = if (newEmoji == null) View.GONE else View.VISIBLE
+        updateGaps()
     }
 
     /**
@@ -117,13 +119,33 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
             }
             slot.useTaipoFont(if (suggestion?.replacesOnSpace == true) TaipoType.Weight.BOLD else TaipoType.Weight.REGULAR)
             slot.background = if (suggestion?.replacesOnSpace == true) wordHighlights[index] else null
-            slot.visibility = if (suggestion == null) View.INVISIBLE else View.VISIBLE
+            slot.visibility = if (suggestion == null) View.GONE else View.VISIBLE
             // Lot 20 : TalkBack lit le mot sans les guillemets du mot tapé, et dit lequel remplacera le mot à l'espace.
             slot.contentDescription = suggestion?.text
             ViewCompat.setStateDescription(
                 slot,
                 if (suggestion?.replacesOnSpace == true) context.getString(R.string.a11y_suggestion_replaces_on_space) else null,
             )
+        }
+        updateGaps()
+    }
+
+    /**
+     * Espace de [slotGap] entre deux éléments visibles seulement : les emplacements retirés ne laissent ni
+     * marge ni trou, et le premier élément visible est collé au bord gauche de la bande.
+     */
+    private fun updateGaps() {
+        var first = true
+        val visible = wordSlots + emojiSlot
+        for (view in visible) {
+            if (view.visibility != View.VISIBLE) continue
+            val params = view.layoutParams as LayoutParams
+            val margin = if (first) 0 else slotGap
+            if (params.marginStart != margin) {
+                params.marginStart = margin
+                view.layoutParams = params
+            }
+            first = false
         }
     }
 

@@ -3,6 +3,7 @@ package fr.junade.taipo
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -64,6 +65,14 @@ class PromptBarView(context: Context) : LinearLayout(context) {
     private var inputCursor = 0
     private var renderedInputWidth = -1
     private var chatShown: Boolean? = null
+    private var caretVisible = true
+    private val blinkRunnable = object : Runnable {
+        override fun run() {
+            caretVisible = !caretVisible
+            renderInput()
+            postDelayed(this, CARET_BLINK_MS)
+        }
+    }
 
     /** Vrai pendant la génération : le bouton rond est alors un bouton stop. */
     var generating: Boolean = false
@@ -82,7 +91,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         set(value) {
             if (field == value) return
             field = value
-            inputView.hint = context.getString(if (value) R.string.prompt_loading_model else R.string.prompt_hint)
+            renderInput()
             renderSendButton()
         }
 
@@ -124,8 +133,6 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         pill.addView(cancelButton, LayoutParams(cancelWidth, LayoutParams.MATCH_PARENT))
 
         inputView.setTextColor(context.themeColor(R.color.text_primary))
-        inputView.setHintTextColor(context.themeColor(HINT_COLOR))
-        inputView.hint = context.getString(R.string.prompt_hint)
         inputView.setFixedTextSizeRes(R.dimen.taipo_prompt_text_size)
         inputView.useTaipoFont()
         inputView.gravity = Gravity.CENTER_VERTICAL
@@ -202,19 +209,52 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         inputText = text
         inputCursor = cursor.coerceIn(0, text.length)
         inputBlank = text.isBlank()
-        renderInput()
+        restartBlink()
         renderSendButton()
     }
+
+    /** Le curseur est plein à chaque frappe ou déplacement, puis clignote tant que la barre est affichée. */
+    private fun restartBlink() {
+        removeCallbacks(blinkRunnable)
+        caretVisible = true
+        renderInput()
+        if (isAttachedToWindow) postDelayed(blinkRunnable, CARET_BLINK_MS)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        restartBlink()
+    }
+
+    override fun onDetachedFromWindow() {
+        removeCallbacks(blinkRunnable)
+        super.onDetachedFromWindow()
+    }
+
+    private fun caretSpan(): ForegroundColorSpan =
+        ForegroundColorSpan(if (caretVisible) context.themeColor(ACCENT_COLOR) else Color.TRANSPARENT)
 
     private fun renderInput() {
         val width = inputView.width - inputView.paddingLeft - inputView.paddingRight
         renderedInputWidth = inputView.width
-        // Lot 20 : TalkBack lit le prompt tel que tapé (sans le trait du curseur ni l'ellipse du début) ; vide, il lit l'invite.
-        inputView.contentDescription = inputText.ifEmpty { null }
         if (inputText.isEmpty()) {
-            inputView.text = "" // l'invite (hint) s'affiche
+            // Saisie vide : le curseur est dessiné devant l'invite, pour montrer que la frappe arrive dans ce champ.
+            val hint = context.getString(if (modelLoading) R.string.prompt_loading_model else R.string.prompt_hint)
+            // Lot 20 : TalkBack lit l'invite, sans le trait du curseur.
+            inputView.contentDescription = hint
+            val empty = SpannableStringBuilder(CARET).append(hint)
+            empty.setSpan(caretSpan(), 0, CARET.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            empty.setSpan(
+                ForegroundColorSpan(context.themeColor(HINT_COLOR)),
+                CARET.length,
+                empty.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+            inputView.text = empty
             return
         }
+        // Lot 20 : TalkBack lit le prompt tel que tapé (sans le trait du curseur ni l'ellipse du début).
+        inputView.contentDescription = inputText
         var before = inputText.substring(0, inputCursor)
         val after = inputText.substring(inputCursor)
         if (width > 0) {
@@ -227,12 +267,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
             }
         }
         val display = SpannableStringBuilder(before).append(CARET).append(after)
-        display.setSpan(
-            ForegroundColorSpan(context.themeColor(ACCENT_COLOR)),
-            before.length,
-            before.length + CARET.length,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-        )
+        display.setSpan(caretSpan(), before.length, before.length + CARET.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         inputView.text = display
     }
 
@@ -291,5 +326,6 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         val STOP_COLOR = R.color.surface_button
         const val CARET = "|"
         const val BEFORE_CURSOR_SHARE = 0.7f
+        const val CARET_BLINK_MS = 530L
     }
 }
