@@ -54,7 +54,8 @@ l'autocorrection avec le champ normal : il sera extrait avec `SuggestionControll
 
 Non compilé ni exécuté ici. Smoke test manuel : entrer/sortir du mode prompt, saisie avec suggestions et
 autocorrection dans le prompt, envoi (bouton et Entrée), réponse en streaming, stop, croix pendant une génération,
-bouton afficher/masquer le chat, « Ajouter le texte » (avec et sans sélection), changement de champ (conversation
+bouton afficher/masquer le chat, « Ajouter le texte » (avec et sans sélection), toucher le champ de l'application
+pendant le mode prompt (le mode se ferme, génération interrompue, conversation conservée), changement de champ (conversation
 conservée), fermeture du clavier (conversation effacée), échec du moteur (prompt rendu à la saisie), modèle absent.
 
 ## Robustesse de la capture vocale (lot 2.5, 03/10/2026)

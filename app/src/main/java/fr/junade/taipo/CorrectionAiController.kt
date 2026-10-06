@@ -107,6 +107,9 @@ class CorrectionAiController(
         ignoreSelectionUpdatesUntil = SystemClock.uptimeMillis() + SELF_EDIT_GRACE_MS
     }
 
+    /** Vrai si une mise à jour de sélection reçue maintenant est l'écho d'une modification faite par le clavier lui-même. */
+    fun isSelfEditEcho(): Boolean = SystemClock.uptimeMillis() < ignoreSelectionUpdatesUntil
+
     /**
      * Le champ a signalé une nouvelle sélection. Si le curseur a bougé ailleurs que là où la correction
      * l'a laissé (tap, texte ajouté par une autre fonction), le surlignage disparaît.

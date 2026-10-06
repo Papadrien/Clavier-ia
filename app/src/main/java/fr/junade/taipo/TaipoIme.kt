@@ -569,6 +569,12 @@ class TaipoIme : InputMethodService() {
         candidatesEnd: Int,
     ) {
         super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd, candidatesStart, candidatesEnd)
+        // Mode prompt : un tap de l'utilisateur dans le champ de l'application (curseur ou sélection déplacés,
+        // hors écho de nos propres insertions comme « Ajouter le texte ») ferme le mode et lui rend le champ.
+        val selectionMoved = newSelStart != oldSelStart || newSelEnd != oldSelEnd
+        if (viewComposer.isComposed && prompt.active && selectionMoved && !correction.isSelfEditEcho()) {
+            prompt.onFieldTapped()
+        }
         correction.onSelectionUpdated(newSelStart, newSelEnd)
         if (!correctionInProgress && viewComposer.isComposed) {
             updateCorrectionBarVisibility()

@@ -6,10 +6,13 @@ import com.google.ai.edge.litertlm.Conversation
 import com.google.ai.edge.litertlm.ConversationConfig
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.model.AiModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -51,13 +54,16 @@ class GenerationSession(
     private val systemPrompt: () -> String = { GenerationPrompt.SYSTEM },
 ) {
 
-    private var conversation: Conversation? = null
+    @Volatile private var conversation: Conversation? = null
 
     /** Nombre d'échanges (prompt + réponse) que la conversation ouverte a déjà traités. */
     private var exchangesInConversation = 0
 
     @Volatile private var stopRequested = false
     @Volatile private var generationJob: Job? = null
+
+    /** Portée des arrêts natifs : ils ne doivent bloquer ni le thread principal ni la coroutine d'envoi. */
+    private val stopScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     init {
         // La correction ou la fermeture du moteur ferment la conversation : on l'oublie ici.
@@ -109,6 +115,7 @@ class GenerationSession(
                     coroutineScope {
                         val job = launch {
                             active.sendMessageAsync(userTurn).collect { message ->
+                                if (stopRequested) return@collect // morceau arrivé après le stop : ignoré
                                 val chunk = chunkText(message.toString())
                                 if (chunk.isNotEmpty()) {
                                     received.append(chunk)
@@ -118,12 +125,15 @@ class GenerationSession(
                             }
                         }
                         generationJob = job
-                        if (stopRequested) job.cancel() // stop arrivé entre le test précédent et le lancement
+                        if (stopRequested) requestNativeStop(active, job) // stop arrivé entre le test précédent et le lancement
                         job.join()
                     }
                 }
             } catch (e: kotlinx.coroutines.CancellationException) {
-                closeConversationOffMain()
+                // Coroutine appelante annulée (fermeture du clavier) : le flux Kotlin est coupé, mais la
+                // génération native tourne encore. On l'arrête puis on lui laisse le temps de finir.
+                stopNative(active)
+                closeConversationOffMain(waitForNative = true)
                 throw e
             } catch (e: Exception) {
                 failure = e
@@ -139,7 +149,7 @@ class GenerationSession(
                 // referme. Le prompt suivant rouvrira avec l'historique de l'appelant.
                 // Hors du thread principal : close() peut attendre l'arrêt de la génération native, ce qui
                 // gelait le clavier après un stop.
-                closeConversationOffMain()
+                closeConversationOffMain(waitForNative = stopRequested)
             }
             // Diagnostic : jamais le texte lui-même, seulement les longueurs et la durée.
             AppLog.i(
@@ -161,13 +171,43 @@ class GenerationSession(
      */
     fun stop() {
         stopRequested = true
-        generationJob?.cancel()
+        val job = generationJob ?: return
+        val running = conversation ?: return
+        requestNativeStop(running, job)
     }
 
-    /** Ferme la conversation et oublie son état (fermeture du clavier, décision 14). */
+    /**
+     * Ferme la conversation et oublie son état (fermeture du clavier, décision 14). Si une génération est
+     * en cours, c'est [send] qui referme la conversation une fois la génération native réellement arrêtée :
+     * la fermer ici, tout de suite, ferait planter le moteur (SIGSEGV dans `callback_thread`).
+     */
     fun reset() {
         stop()
-        closeConversation()
+        if (generationJob == null) closeConversation()
+    }
+
+    /**
+     * Arrête la génération native de [target] (`cancelProcess`), sans toucher au flux Kotlin : [send] se
+     * termine quand le moteur a lui-même fini d'appeler ses rappels. Si le moteur ne rend pas la main dans
+     * [NATIVE_STOP_TIMEOUT_MS], le flux est coupé de force pour ne pas garder le verrou d'inférence.
+     */
+    private fun requestNativeStop(target: Conversation, job: Job) {
+        stopScope.launch {
+            stopNative(target)
+            delay(NATIVE_STOP_TIMEOUT_MS)
+            if (job.isActive) {
+                AppLog.w(TAG, "le moteur n'a pas rendu la main après le stop : flux coupé de force")
+                job.cancel()
+            }
+        }
+    }
+
+    private fun stopNative(target: Conversation) {
+        try {
+            target.cancelProcess()
+        } catch (e: Exception) {
+            AppLog.w(TAG, "arrêt de la génération native", e)
+        }
     }
 
     /**
@@ -175,8 +215,13 @@ class GenerationSession(
      * sur le thread principal après la génération, et `Conversation.close()` peut bloquer tant que le
      * moteur natif n'a pas fini de s'arrêter.
      */
-    private suspend fun closeConversationOffMain() {
-        withContext(NonCancellable + Dispatchers.Default) { closeConversation() }
+    private suspend fun closeConversationOffMain(waitForNative: Boolean = false) {
+        withContext(NonCancellable + Dispatchers.Default) {
+            // Après un stop, le fil natif des rappels peut encore remonter sa pile quelques instants : fermer
+            // la conversation à ce moment-là provoquait le SIGSEGV observé le 06/10/2026.
+            if (waitForNative) delay(NATIVE_GRACE_MS)
+            closeConversation()
+        }
     }
 
     private fun closeConversation() {
@@ -203,5 +248,11 @@ class GenerationSession(
 
     private companion object {
         private const val TAG = "GenerationSession"
+
+        /** Délai laissé au moteur pour finir sa génération après `cancelProcess`, avant de couper le flux de force. */
+        private const val NATIVE_STOP_TIMEOUT_MS = 5_000L
+
+        /** Pause entre la fin du flux (après un stop) et la fermeture de la conversation native. */
+        private const val NATIVE_GRACE_MS = 500L
     }
 }

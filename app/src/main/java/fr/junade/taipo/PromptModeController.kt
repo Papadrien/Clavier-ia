@@ -297,6 +297,16 @@ class PromptModeController(
         exit()
     }
 
+    /**
+     * L'utilisateur a touché le champ de l'application (le curseur ou la sélection y a bougé) alors que le mode
+     * prompt est ouvert : il reprend la main sur le champ, le mode se ferme comme avec la croix (génération en
+     * cours interrompue, partiel figé, conversation conservée). Sans effet hors du mode prompt.
+     */
+    fun onFieldTapped() {
+        if (!active) return
+        onCancelRequested()
+    }
+
     /** Croix « annuler » (ou fin de saisie) : retour à la barre normale ; la conversation est conservée (décision 14). */
     fun exit(resync: Boolean = true) {
         if (!active) return
