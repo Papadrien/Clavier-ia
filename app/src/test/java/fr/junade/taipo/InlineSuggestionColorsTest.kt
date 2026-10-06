@@ -10,7 +10,7 @@ class InlineSuggestionColorsTest {
     private val darkSubtitle = 0x99FFFFFF.toInt()
 
     @Test
-    fun `theme sombre : fond sombre et textes de la palette du clavier`() {
+    fun `theme sombre, fond sombre et textes de la palette du clavier`() {
         val colors = InlineSuggestionColors.forMode(KeyboardTheme.Mode.DARK, darkTitle, darkSubtitle)
         assertEquals(R.drawable.bg_inline_chip_dark, colors.chipBackground)
         assertEquals(darkTitle, colors.title)
@@ -18,7 +18,7 @@ class InlineSuggestionColorsTest {
     }
 
     @Test
-    fun `theme clair : fond clair et textes sombres`() {
+    fun `theme clair, fond clair et textes sombres`() {
         val colors = InlineSuggestionColors.forMode(KeyboardTheme.Mode.LIGHT, darkTitle, darkSubtitle)
         assertEquals(R.drawable.bg_inline_chip_light, colors.chipBackground)
         // Les textes du thème sombre (blancs) ne doivent pas être repris sur le fond clair.
