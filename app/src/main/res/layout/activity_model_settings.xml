@@ -83,58 +83,5 @@
             android:layout_marginTop="@dimen/taipo_settings_gap_lg"
             android:text="@string/model_settings_forget_file" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/taipo_settings_divider_thickness"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_xl"
-            android:background="@color/settings_divider" />
-
-        <TextView
-            style="@style/TaipoText.Section"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/correction_prompt_title"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
-
-        <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/correction_prompt_description"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_md" />
-
-        <EditText
-            android:id="@+id/edit_correction_prompt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minLines="6"
-            android:gravity="top|start"
-            android:inputType="textMultiLine"
-            android:textSize="@dimen/taipo_settings_text_caption"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_md" />
-
-        <Button
-            style="@style/TaipoButton.Primary"
-            android:id="@+id/button_save_prompt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/correction_prompt_save" />
-
-        <Button
-            style="@style/TaipoButton.Secondary"
-            android:id="@+id/button_reset_prompt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
-            android:text="@string/correction_prompt_reset" />
-
-        <TextView
-            style="@style/TaipoText.Status"
-            android:id="@+id/text_prompt_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_sm" />
-
     </LinearLayout>
 </ScrollView>

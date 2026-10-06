@@ -210,4 +210,34 @@ class PromptInputBufferTest {
         assertEquals("abc", buffer.text)
         assertEquals(3, buffer.cursor)
     }
+
+    @Test
+    fun `setCursor place le curseur au milieu du texte`() {
+        val buffer = buffer("abcd")
+        assertTrue(buffer.setCursor(2))
+        assertEquals(2, buffer.cursor)
+        buffer.insert("X")
+        assertEquals("abXcd", buffer.text)
+    }
+
+    @Test
+    fun `setCursor sans changement renvoie faux et borne la position au texte`() {
+        val buffer = buffer("abc")
+        assertFalse(buffer.setCursor(3))
+        assertFalse(buffer.setCursor(99))
+        assertTrue(buffer.setCursor(-5))
+        assertEquals(0, buffer.cursor)
+    }
+
+    @Test
+    fun `setCursor ne coupe ni une paire de substitution ni un emoji compose`() {
+        val buffer = buffer("a$grin" + "b$womanTech" + "c")
+        // Au milieu de la paire de substitution de 😀 (index 2) : on se ramène à une limite de caractère.
+        buffer.setCursor(2)
+        assertTrue(buffer.cursor == 1 || buffer.cursor == 3)
+        // Au milieu de la séquence ZWJ 👩‍💻 : jamais à l'intérieur.
+        val start = 1 + grin.length + 1
+        buffer.setCursor(start + 2)
+        assertTrue(buffer.cursor == start || buffer.cursor == start + womanTech.length)
+    }
 }

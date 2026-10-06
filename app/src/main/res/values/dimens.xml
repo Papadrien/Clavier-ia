@@ -83,8 +83,11 @@
     <!-- Bouton rond d'envoi / stop et sa roue de chargement. -->
     <dimen name="taipo_bar_round_button_size">36dp</dimen>
     <dimen name="taipo_bar_spinner_size">20dp</dimen>
+    <!-- Épaisseur du trait de la roue de chargement posée en icône d'un bouton (bouton Vocal). -->
+    <dimen name="taipo_bar_spinner_stroke">2dp</dimen>
     <!-- Pilule de saisie du prompt. -->
     <dimen name="taipo_prompt_text_size">15sp</dimen>
+    <dimen name="taipo_prompt_input_padding_start">14dp</dimen>
     <dimen name="taipo_prompt_input_padding_end">14dp</dimen>
 
     <!-- ===== Suggestions ===== -->

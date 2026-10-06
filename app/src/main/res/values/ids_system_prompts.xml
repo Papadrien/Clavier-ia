@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Identifiants des champs de la page « Prompts système » (un par section, pour que leur état survive à la rotation). -->
+    <item name="edit_system_prompt_correction" type="id" />
+    <item name="edit_system_prompt_generation" type="id" />
+</resources>

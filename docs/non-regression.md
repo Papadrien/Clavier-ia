@@ -25,18 +25,19 @@ les tests ci-dessous sont à lancer une fois. Seules les vérifications de resso
 | --- | --- |
 | Lettres, chiffres, ponctuation | `KeyboardLayoutTest`, `KeyboardControllerTest`, `KeyCharsTest`, `KeyboardCatalogRegressionTest`, `KeyboardViewRegressionTest` |
 | Espace, double espace | `KeyboardControllerTest` |
-| Swipe espace / swipe retour arrière | `SpaceSwipeTrackerTest`, `BackspaceSwipeTrackerTest`, `KeyboardViewRegressionTest` |
+| Swipe espace / swipe retour arrière | `SpaceSwipeTrackerTest`, `CursorStepsTest`, `BackspaceSwipeTrackerTest`, `KeyboardViewRegressionTest` |
 | Retour arrière, Entrée | `KeyboardControllerTest`, `KeyboardViewRegressionTest` |
 | Maj, majuscules, verrouillage | `KeyboardControllerTest`, `KeyboardViewRegressionTest` (rendu) |
 | Caractères spéciaux, accents, popup | `KeyboardLayoutTest`, `PopupPlacementTest`, `KeyboardViewRegressionTest` |
 | Emoji | `EmojiCatalogTest`, `EmojiGridLayoutTest`, `EmojiTextTest`, `RecentEmojisTest`, `MessagingFieldPolicyTest` |
 | Correction | `CorrectionDiffTest`, `CorrectionPromptTest`, `CorrectionSafeguardTest`, `SentenceCorrectionTest`, `ProtectedWordsTest` |
-| Génération, chat | `PromptConversationTest`, `PromptInputBufferTest`, `ChatTranscriptTest` |
+| Génération, chat | `PromptConversationTest`, `PromptInputBufferTest`, `PromptBufferVoiceFieldTest`, `PromptCaretMapTest`, `GenerationPromptTest`, `SystemPromptEditTest`, `ChatTranscriptTest` |
 | Dictionnaire | tests `core/…/dictionary`, `DictionaryAssetsIntegrityTest`, `PersonalDictionaryRepositoryTest`, `PersonalDictionaryDatabaseTest` (appareil) |
 | Clipboard | `Clip*Test`, `ClipboardItemsTest`, `SensitiveContentDetectorTest`, `ClipboardDatabaseTest` (appareil) |
 | Modèles | `AiModelTest`, `Sha256Test` |
+| Suggestions d'auto-remplissage (Bitwarden…) | `InlineSuggestionColorsTest` (couleurs selon le thème) ; l'aspect réel se vérifie à la main avec un gestionnaire de mots de passe |
 
-**Sans test automatisé** (à passer à la main) : le bouton microphone et la dictée (`VoiceEngine`, `VoiceController`), le stop
+**Sans test automatisé** (à passer à la main) : le bouton microphone et la dictée (`VoiceEngine`, `VoiceController`, y compris le micro de la barre du prompt : appui bref, appui long, sortie du mode pendant l'écoute), le stop
 d'une génération, les messages d'erreur de l'IA, les préférences (`KeyboardPreferences`, réglages), l'aspect des écrans
 (captures non comparées automatiquement).
 

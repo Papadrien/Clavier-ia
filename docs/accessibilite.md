@@ -56,10 +56,10 @@ d'accessibilité virtuel (`ExploreByTouchHelper`, nouvelle dépendance `androidx
   (« Saisir é »…), car le glissement de la bulle est impossible en exploration. Le geste tactile ne change pas.
 - **Panneau emoji** : onglets (nom de la catégorie, état sélectionné), emojis visibles (boutons), message « aucun récent »,
   défilement par les actions de TalkBack, touches « Retour au clavier » et « Effacer ».
-- **Barres** : rôle « bouton » pour les emplacements de suggestion, la puce de collage, les emojis récents, la croix du prompt ;
+- **Barres** : rôle « bouton » pour les emplacements de suggestion, la puce de collage, les emojis récents, la croix du prompt (désormais à droite du bouton d'envoi) ;
   le mot de l'autocorrection annonce « Remplacera le mot à l'espace » ; les guillemets du mot tapé ne sont plus lus ; le prompt
   est lu tel que tapé (sans le trait de curseur) ; le bouton d'envoi annonce « Chargement du modèle… » (la roue est masquée).
-- **Vocal** : le double appui de TalkBack bascule l'écoute (nouveau `VoiceController.onAccessibilityClick`) ; avant, l'écouteur
+- **Vocal** (barre normale et micro de la barre du prompt, même branchement) : le double appui de TalkBack bascule l'écoute (nouveau `VoiceController.onAccessibilityClick`) ; avant, l'écouteur
   tactile consommait tout et le bouton était inactivable. L'écoute tant que maintenu reste un geste tactile.
 - **Cartes du presse-papiers** : rôle « bouton », actions nommées « Coller » (clic) et « Ouvrir le menu de l'élément » (appui long).
 

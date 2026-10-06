@@ -1,7 +1,9 @@
 package fr.junade.taipo.ai
 
 import android.os.SystemClock
+import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.Conversation
+import com.google.ai.edge.litertlm.ConversationConfig
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.model.AiModel
 import kotlinx.coroutines.Dispatchers
@@ -16,8 +18,10 @@ import kotlinx.coroutines.withContext
 data class GenerationOutcome(val text: String, val completed: Boolean)
 
 /**
- * Génération par prompt (épopée 5) : conversation continue avec le modèle, sans prompt système
- * (décision 12.1), réponse reçue en flux, interruptible. Pas d'interface : la vue et l'historique
+ * Génération par prompt (épopée 5) : conversation continue avec le modèle, guidée par le prompt système
+ * [GenerationPrompt.SYSTEM] par défaut, modifiable dans la page « Prompts système » (réponses courtes, texte brut ; il
+ * remplace la décision 12.1 depuis le 05/10/2026),
+ * réponse reçue en flux, interruptible. Pas d'interface : la vue et l'historique
  * affiché sont des phases ultérieures (voir le découpage de la 5.1 dans le contexte épopée 5).
  *
  * Fonctionnement :
@@ -41,7 +45,11 @@ data class GenerationOutcome(val text: String, val completed: Boolean)
  * `toString()`, comme pour `sendMessage`). Validé à l'usage sur appareil (retour d'Adrien,
  * 03/10/2026, litertlm-android 0.17.1) ; voir [chunkText] si l'API venait à émettre des cumuls.
  */
-class GenerationSession(private val host: LlmEngineHost) {
+class GenerationSession(
+    private val host: LlmEngineHost,
+    /** Prompt système, lu à chaque ouverture de conversation : une modification s'applique à la conversation suivante. */
+    private val systemPrompt: () -> String = { GenerationPrompt.SYSTEM },
+) {
 
     private var conversation: Conversation? = null
 
@@ -85,7 +93,9 @@ class GenerationSession(private val host: LlmEngineHost) {
                 userTurn = prompt
             } else {
                 closeConversation()
-                active = engine.createConversation()
+                active = engine.createConversation(
+                    ConversationConfig(systemInstruction = Contents.of(systemPrompt())),
+                )
                 conversation = active
                 userTurn = ChatTranscript.build(history, prompt)
             }

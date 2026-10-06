@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Une section de la page « Prompts système » : titre, description, champ du prompt, boutons, état. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/TaipoText.Section"
+        android:id="@+id/text_system_prompt_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+    <TextView
+        style="@style/TaipoText.Caption"
+        android:id="@+id/text_system_prompt_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_md" />
+
+    <EditText
+        android:id="@+id/edit_system_prompt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minLines="6"
+        android:gravity="top|start"
+        android:inputType="textMultiLine"
+        android:textSize="@dimen/taipo_settings_text_caption"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_md" />
+
+    <Button
+        style="@style/TaipoButton.Primary"
+        android:id="@+id/button_save_system_prompt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/system_prompt_save" />
+
+    <Button
+        style="@style/TaipoButton.Secondary"
+        android:id="@+id/button_show_default_system_prompt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+        android:text="@string/system_prompt_show_default" />
+
+    <Button
+        style="@style/TaipoButton.Secondary"
+        android:id="@+id/button_reset_system_prompt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+        android:text="@string/system_prompt_reset" />
+
+    <TextView
+        style="@style/TaipoText.Status"
+        android:id="@+id/text_system_prompt_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_sm" />
+
+</LinearLayout>

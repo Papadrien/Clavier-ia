@@ -69,6 +69,12 @@ class VoiceController(
 
         /** Replie la sélection restante à sa fin, pour insérer sans la remplacer. */
         fun collapseSelectionBeforeInsert()
+
+        /** Le mode prompt est actif : la dictée s'insère alors dans la saisie du prompt, pas dans le champ de l'application. */
+        fun promptActive(): Boolean
+
+        /** Accès à la saisie du prompt, pour la dictée lancée depuis le mode prompt. */
+        fun promptVoiceField(): VoiceField
     }
 
     private val voiceEngine by lazy { VoiceEngine(context.applicationContext) }
@@ -81,6 +87,10 @@ class VoiceController(
     private var isHoldModeRecording = false
     private var longPressTriggered = false
 
+    // Cible de l'écoute en cours, fixée au démarrage : une dictée lancée dans le mode prompt écrit dans la saisie du prompt
+    // jusqu'à son terme, même si le mode est quitté entre-temps (l'écoute est alors annulée par l'IME).
+    private var recordingInPrompt = false
+
     private var voicePartialJob: Job? = null
 
     // Démarrage en cours (chargement du modèle puis ouverture du micro) : annulable tant que
@@ -88,8 +98,9 @@ class VoiceController(
     private var voiceStartJob: Job? = null
 
     private val textSync = VoiceTextSync(
-        hasSelection = { host.hasSelection() },
-        onTextInserted = { host.onUserTyped() },
+        // La saisie du prompt n'a pas de sélection ; la sélection du champ de l'application ne la concerne pas.
+        hasSelection = { !recordingInPrompt && host.hasSelection() },
+        onTextInserted = { if (!recordingInPrompt) host.onUserTyped() },
     )
 
     private val longPressRunnable = Runnable {
@@ -177,6 +188,7 @@ class VoiceController(
         }
 
         host.clearHighlight()
+        recordingInPrompt = host.promptActive()
         isRecording = true
         host.clearSuggestions()
         textSync.reset()
@@ -314,20 +326,24 @@ class VoiceController(
      * n'est pas écrasé (voir [VoiceTextSync]).
      */
     private fun replaceInsertedPartialText(finalText: String?) {
-        val ic = host.inputConnection()
-        if (ic != null) {
-            // Une sélection restante obligerait à insérer par-dessus : on la replie d'abord.
-            if (finalText != null) host.collapseSelectionBeforeInsert()
-            textSync.finish(InputConnectionVoiceField(ic), finalText)
+        val field = currentField()
+        if (field != null) {
+            // Une sélection restante obligerait à insérer par-dessus : on la replie d'abord (champ de l'application seulement).
+            if (finalText != null && !recordingInPrompt) host.collapseSelectionBeforeInsert()
+            textSync.finish(field, finalText)
         }
         textSync.reset()
     }
 
     /** Insère l'hypothèse courante à la place de la précédente pendant l'enregistrement. */
     private fun applyPartialText(partial: String) {
-        val ic = host.inputConnection() ?: return
-        textSync.applyPartial(InputConnectionVoiceField(ic), partial)
+        val field = currentField() ?: return
+        textSync.applyPartial(field, partial)
     }
+
+    /** Là où la dictée en cours écrit : la saisie du prompt, ou le champ de l'application (null s'il n'est pas accessible). */
+    private fun currentField(): VoiceField? =
+        if (recordingInPrompt) host.promptVoiceField() else host.inputConnection()?.let { InputConnectionVoiceField(it) }
 
     private class InputConnectionVoiceField(private val ic: InputConnection) : VoiceField {
         override fun textBeforeCursor(length: Int): String? = ic.getTextBeforeCursor(length, 0)?.toString()

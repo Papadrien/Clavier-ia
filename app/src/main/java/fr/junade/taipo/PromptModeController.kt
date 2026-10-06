@@ -4,10 +4,12 @@ import android.content.Context
 import android.os.Handler
 import fr.junade.taipo.ai.ChatExchange
 import fr.junade.taipo.ai.FieldContext
+import fr.junade.taipo.ai.GenerationPromptPreferences
 import fr.junade.taipo.ai.GenerationSession
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.ai.PromptConversation
 import fr.junade.taipo.ai.PromptMessageStatus
+import fr.junade.taipo.ai.VoiceField
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.model.AiModel
 import android.view.View
@@ -41,7 +43,13 @@ class PromptModeController(
 
         fun haptic()
 
+        /** Le curseur du prompt a été déplacé d'une touche dans le texte : resynchroniser majuscule auto et suggestions. */
+        fun onPromptCursorMoved()
+
         fun isRecording(): Boolean
+
+        /** Une dictée est en cours : elle est annulée (la saisie du prompt disparaît avec le mode). */
+        fun cancelVoice()
 
         fun isCorrectionInProgress(): Boolean
 
@@ -112,6 +120,12 @@ class PromptModeController(
     val buffer = PromptInputBuffer()
 
     /**
+     * Dictée dans le prompt : la transcription s'insère dans [buffer] et la pilule est redessinée. Inerte une fois
+     * le mode quitté (voir [PromptBufferVoiceField]).
+     */
+    val voiceField: VoiceField = PromptBufferVoiceField(buffer, isActive = { active }, onChanged = { refreshInput() })
+
+    /**
      * Un prompt a déjà été envoyé : le bouton afficher/masquer le chat existe alors (décisions 5 et 14).
      * Vrai dès l'envoi du premier prompt (phase 5.1-6), faux de nouveau à la fermeture du clavier.
      */
@@ -128,7 +142,10 @@ class PromptModeController(
     private val conversation = PromptConversation()
 
     // Session de génération créée au premier envoi seulement (elle s'enregistre auprès du moteur partagé).
-    private val generationSessionLazy = lazy { GenerationSession(llmHost) }
+    private val generationSessionLazy = lazy {
+        val promptPreferences = GenerationPromptPreferences(context)
+        GenerationSession(llmHost, systemPrompt = { promptPreferences.get() })
+    }
     private val generationSession: GenerationSession get() = generationSessionLazy.value
     private var generationJob: Job? = null
 
@@ -157,6 +174,12 @@ class PromptModeController(
             host.haptic()
             stopGeneration()
         }
+        promptBar.setOnCursorTapListener { position ->
+            if (active && buffer.setCursor(position)) {
+                refreshInput()
+                host.onPromptCursorMoved()
+            }
+        }
         promptBar.setOnChatToggleClickListener {
             chatShown = !chatShown
             applyViews()
@@ -167,6 +190,11 @@ class PromptModeController(
         suggestionBar.visibility = View.GONE
         suggestionBar.setOnWordClickListener { suggestion -> host.onWordSuggestionTapped(suggestion) }
         suggestionBar.setOnEmojiClickListener { host.onEmojiSuggestionTapped() }
+    }
+
+    /** État du bouton micro de la barre du prompt (écoute, chargement…), suivi depuis la dictée. */
+    fun setVoiceState(state: VoiceBarState) {
+        if (this::promptBar.isInitialized) promptBar.voiceState = state
     }
 
     fun setSuggestionEmoji(emoji: String?) {
@@ -273,6 +301,7 @@ class PromptModeController(
     fun exit(resync: Boolean = true) {
         if (!active) return
         active = false
+        host.cancelVoice() // dictée en cours dans le prompt : annulée, rien ne doit atterrir dans le champ de l'application
         buffer.clear() // la croix « annuler » abandonne le prompt en cours de saisie (pas la conversation)
         host.clearPendingAutocorrection()
         host.cancelDeleteSwipe()

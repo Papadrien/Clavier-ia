@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/container_system_prompts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/taipo_settings_screen_padding">
+
+        <TextView
+            style="@style/TaipoText.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/system_prompts_title"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+        <TextView
+            style="@style/TaipoText.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/system_prompts_description"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_xl" />
+
+        <!-- Les sections (une par prompt) sont ajoutées ici par SystemPromptsActivity. -->
+
+    </LinearLayout>
+</ScrollView>

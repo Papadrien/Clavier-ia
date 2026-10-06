@@ -28,7 +28,13 @@ internal data class ZoneContentVisibility(
 internal data class CorrectAppearance(@StringRes val label: Int, val enabled: Boolean, val alpha: Float)
 
 /** Apparence du bouton Vocal. */
-internal data class VoiceAppearance(@StringRes val label: Int, @ColorRes val background: Int, val alpha: Float)
+internal data class VoiceAppearance(
+    @StringRes val label: Int,
+    @ColorRes val background: Int,
+    val alpha: Float,
+    /** Le modèle se charge : une roue animée remplace l'icône micro. */
+    val loading: Boolean = false,
+)
 
 internal object BarVisibility {
 
@@ -83,7 +89,7 @@ internal object BarVisibility {
 
     fun voiceAppearance(state: VoiceBarState): VoiceAppearance = when (state) {
         VoiceBarState.IDLE -> VoiceAppearance(R.string.voice_button_idle, R.color.surface_button, 1f)
-        VoiceBarState.LOADING -> VoiceAppearance(R.string.voice_button_loading, R.color.surface_button, 0.6f)
+        VoiceBarState.LOADING -> VoiceAppearance(R.string.voice_button_loading, R.color.surface_button, 0.6f, loading = true)
         VoiceBarState.RECORDING -> VoiceAppearance(R.string.voice_button_recording, R.color.action_danger, 1f)
         VoiceBarState.TRANSCRIBING -> VoiceAppearance(R.string.voice_button_transcribing, R.color.surface_button, 0.6f)
     }

@@ -32,6 +32,9 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.button_model_settings).setOnClickListener {
             startActivity(Intent(this, ModelSettingsActivity::class.java))
         }
+        findViewById<View>(R.id.button_system_prompts).setOnClickListener {
+            startActivity(Intent(this, SystemPromptsActivity::class.java))
+        }
         findViewById<View>(R.id.button_voice_model_settings).setOnClickListener {
             startActivity(Intent(this, VoiceModelSettingsActivity::class.java))
         }

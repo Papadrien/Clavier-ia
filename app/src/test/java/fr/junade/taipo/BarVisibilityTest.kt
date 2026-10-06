@@ -132,6 +132,11 @@ class BarVisibilityTest {
         for (state in listOf(VoiceBarState.IDLE, VoiceBarState.LOADING, VoiceBarState.TRANSCRIBING)) {
             assertEquals(R.color.surface_button, BarVisibility.voiceAppearance(state).background)
         }
+        // Seul le chargement du modèle remplace l'icône micro par une roue animée.
+        assertEquals(true, BarVisibility.voiceAppearance(VoiceBarState.LOADING).loading)
+        listOf(VoiceBarState.IDLE, VoiceBarState.RECORDING, VoiceBarState.TRANSCRIBING).forEach { state ->
+            assertEquals(false, BarVisibility.voiceAppearance(state).loading)
+        }
         assertEquals(1f, BarVisibility.voiceAppearance(VoiceBarState.IDLE).alpha)
         assertEquals(0.6f, BarVisibility.voiceAppearance(VoiceBarState.LOADING).alpha)
         assertEquals(0.6f, BarVisibility.voiceAppearance(VoiceBarState.TRANSCRIBING).alpha)

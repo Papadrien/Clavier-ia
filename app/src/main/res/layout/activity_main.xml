@@ -59,6 +59,14 @@
 
     <Button
         style="@style/TaipoButton.Secondary"
+        android:id="@+id/button_system_prompts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_md"
+        android:text="@string/button_system_prompts" />
+
+    <Button
+        style="@style/TaipoButton.Secondary"
         android:id="@+id/button_voice_model_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

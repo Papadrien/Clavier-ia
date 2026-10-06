@@ -10,7 +10,9 @@ import android.text.Spanned
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -18,22 +20,26 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.ViewCompat
+import kotlin.math.abs
 
 /**
  * Story 5.1, phase 5.1-4 : la barre du haut en mode prompt (décision 8), qui prend la place de
  * [CorrectionBarView] tant que le mode est actif. De gauche à droite :
  *
  * - le bouton afficher/masquer la zone de chat, visible une fois le premier prompt envoyé (décision 5) ;
- * - la pilule de saisie, avec la croix « annuler » à gauche, dedans, qui quitte le mode prompt ;
- * - le bouton rond d'envoi, qui devient un bouton stop pendant la génération (décision 10).
+ * - le bouton micro (dictée dans le prompt), à gauche de la pilule de saisie ;
+ * - la pilule de saisie ;
+ * - le bouton rond d'envoi, qui devient un bouton stop pendant la génération (décision 10) ;
+ * - la croix « annuler », à droite du bouton d'envoi, qui quitte le mode prompt.
  *
  * Vue seule : elle affiche ce qu'on lui donne et signale les appuis. Le texte du prompt vient de
- * `PromptInputBuffer` (phase 5.1-5), l'envoi (5.1-6) et le stop (5.1-7) sont branchés par `TaipoIme`. Pas de
- * bouton Vocal : la dictée dans le prompt est hors périmètre de la 5.1 (décision 13).
+ * `PromptInputBuffer` (phase 5.1-5), l'envoi (5.1-6) et le stop (5.1-7) sont branchés par `TaipoIme`. Le geste du
+ * bouton micro (appui bref, appui long) est branché par `ImeViewComposer` sur la même dictée que le bouton Vocal de la
+ * barre normale ; la transcription s'insère dans le tampon du prompt (`PromptBufferVoiceField`).
  *
- * Charte Taipo (lot 12) : envoi en violet (face `#8C00FF`, ombre `#6800AB`), stop et bouton de chat en secondaire
- * (`#2B2B2B`, ombre `#191919`, violet quand le chat est affiché), pilule de saisie `#2B2B2B` (à plat, sans ombre : ce
- * n'est pas un bouton), icônes VectorDrawable, Open Sans. Les fonds « face + ombre » sont créés une fois et posés
+ * Charte Taipo (lot 12) : envoi en violet (face `#8C00FF`, ombre `#6800AB`), stop, micro, croix et bouton de chat en
+ * secondaire (`#2B2B2B`, ombre `#191919`, violet quand le chat est affiché, rouge pendant l'écoute), pilule de saisie
+ * `#2B2B2B` (à plat, sans ombre : ce n'est pas un bouton), icônes VectorDrawable, Open Sans. Les fonds « face + ombre » sont créés une fois et posés
  * seulement quand l'état change (le rendu du bouton d'envoi est rappelé à chaque frappe).
  *
  * Même hauteur que [CorrectionBarView] (36 dp de contenu, 6 dp de marge verticale) pour que la
@@ -43,8 +49,11 @@ import androidx.core.view.ViewCompat
 class PromptBarView(context: Context) : LinearLayout(context) {
 
     private val chatToggleButton = ImageButton(context)
+
+    /** Bouton micro à gauche de la pilule : le geste (appui bref / long) est branché de l'extérieur, comme pour Vocal. */
+    val voiceButton = ImageButton(context)
     private val pill = LinearLayout(context)
-    private val cancelButton = ImageView(context)
+    private val cancelButton = ImageButton(context)
     private val inputView = TextView(context)
     private val sendButton = ImageButton(context)
     private val sendSpinner = ProgressBar(context)
@@ -54,6 +63,8 @@ class PromptBarView(context: Context) : LinearLayout(context) {
     private val stopBackground = style.roundBackground(STOP_COLOR)
     private val chatShownBackground = style.pillBackground(ACCENT_COLOR)
     private val chatHiddenBackground = style.pillBackground(BUTTON_COLOR)
+    private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
+    private val voiceSpinner = LoadingSpinnerDrawable(context)
 
     private var cancelListener: (() -> Unit)? = null
     private var sendListener: (() -> Unit)? = null
@@ -64,6 +75,14 @@ class PromptBarView(context: Context) : LinearLayout(context) {
     private var inputText = ""
     private var inputCursor = 0
     private var renderedInputWidth = -1
+
+    // Forme du texte affiché, pour retrouver la position dans le prompt d'une touche (voir PromptCaretMap).
+    private var renderedBeforeLength = 0
+    private var renderedEllipsized = false
+    private var cursorTapListener: ((Int) -> Unit)? = null
+    private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
+    private var tapDownX = 0f
+    private var tapDownY = 0f
     private var chatShown: Boolean? = null
     private var caretVisible = true
     private val blinkRunnable = object : Runnable {
@@ -80,6 +99,14 @@ class PromptBarView(context: Context) : LinearLayout(context) {
             if (field == value) return
             field = value
             renderSendButton()
+        }
+
+    /** État de la dictée (écoute, chargement, transcription) : même rendu que le bouton Vocal de la barre normale. */
+    var voiceState: VoiceBarState = VoiceBarState.IDLE
+        set(value) {
+            if (field == value) return
+            field = value
+            renderVoice()
         }
 
     /**
@@ -115,22 +142,21 @@ class PromptBarView(context: Context) : LinearLayout(context) {
             LayoutParams(dimen(R.dimen.taipo_bar_icon_button_width).toInt(), barHeight).apply { marginEnd = gap },
         )
 
-        // Pilule de saisie : croix « annuler » à gauche, texte du prompt (ou invite) au centre.
+        // Bouton micro (dictée dans le prompt) : à gauche de la pilule. Le geste réel passe par un écouteur tactile posé par
+        // l'appelant ; le clic n'est déclenché que par l'accessibilité (TalkBack), comme pour le bouton Vocal.
+        style.styleRoundIconButton(voiceButton, R.drawable.ic_mic)
+        addView(
+            voiceButton,
+            LayoutParams(dimen(R.dimen.taipo_bar_icon_button_width).toInt(), barHeight).apply { marginEnd = gap },
+        )
+
+        // Pilule de saisie : texte du prompt (ou invite). La croix « annuler » n'est plus dedans : elle est à droite du bouton d'envoi.
         pill.orientation = HORIZONTAL
         pill.gravity = Gravity.CENTER_VERTICAL
         pill.background = GradientDrawable().apply {
             cornerRadius = dimen(R.dimen.taipo_button_corner_radius)
             setColor(context.themeColor(PILL_COLOR))
         }
-
-        cancelButton.setImageResource(R.drawable.ic_close)
-        cancelButton.imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
-        cancelButton.scaleType = ImageView.ScaleType.CENTER_INSIDE
-        cancelButton.contentDescription = context.getString(R.string.prompt_cancel_description)
-        cancelButton.setOnClickListener { cancelListener?.invoke() }
-        cancelButton.announceAsButton()
-        val cancelWidth = dimen(R.dimen.taipo_bar_icon_button_width).toInt()
-        pill.addView(cancelButton, LayoutParams(cancelWidth, LayoutParams.MATCH_PARENT))
 
         inputView.setTextColor(context.themeColor(R.color.text_primary))
         inputView.setFixedTextSizeRes(R.dimen.taipo_prompt_text_size)
@@ -139,8 +165,30 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         inputView.isSingleLine = true
         // Le texte est découpé à la main autour du curseur (voir renderInput) : la fin seule est tronquée.
         inputView.ellipsize = TextUtils.TruncateAt.END
-        inputView.setPadding(0, 0, dimen(R.dimen.taipo_prompt_input_padding_end).toInt(), 0)
+        inputView.setPadding(
+            dimen(R.dimen.taipo_prompt_input_padding_start).toInt(),
+            0,
+            dimen(R.dimen.taipo_prompt_input_padding_end).toInt(),
+            0,
+        )
         pill.addView(inputView, LayoutParams(0, LayoutParams.MATCH_PARENT, 1f))
+        // Toucher le texte place le curseur à cet endroit (le texte est un TextView dessiné à la main, pas un vrai champ :
+        // le geste est donc géré ici).
+        inputView.setOnTouchListener { view, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    tapDownX = event.x
+                    tapDownY = event.y
+                }
+                MotionEvent.ACTION_UP -> {
+                    if (abs(event.x - tapDownX) <= touchSlop && abs(event.y - tapDownY) <= touchSlop) {
+                        view.performClick()
+                        onInputTapped(event.x)
+                    }
+                }
+            }
+            true
+        }
         // La largeur n'est connue qu'après la mise en page : on redessine alors le texte autour du curseur.
         inputView.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
             val width = right - left
@@ -173,10 +221,20 @@ class PromptBarView(context: Context) : LinearLayout(context) {
             sendSpinner,
             FrameLayout.LayoutParams(spinnerSize, spinnerSize, Gravity.CENTER).apply { bottomMargin = shadow },
         )
-        addView(sendHolder, LayoutParams(roundSize, roundSize))
+        addView(sendHolder, LayoutParams(roundSize, roundSize).apply { marginEnd = gap })
+
+        // Croix « annuler » : à droite du bouton d'envoi, hors de la pilule. Bouton secondaire, comme le bouton de chat.
+        style.styleBarIconButton(cancelButton, R.drawable.ic_close)
+        cancelButton.contentDescription = context.getString(R.string.prompt_cancel_description)
+        cancelButton.setOnClickListener { cancelListener?.invoke() }
+        addView(
+            cancelButton,
+            LayoutParams(dimen(R.dimen.taipo_bar_icon_button_width).toInt(), barHeight),
+        )
 
         setChatShown(false)
         renderSendButton()
+        renderVoice()
     }
 
     /** Touche sur la croix « annuler » : quitter le mode prompt (la conversation est conservée, décision 14). */
@@ -192,6 +250,27 @@ class PromptBarView(context: Context) : LinearLayout(context) {
     /** Touche sur le bouton stop (pendant la génération). */
     fun setOnStopClickListener(listener: () -> Unit) {
         stopListener = listener
+    }
+
+    /** Touche dans le texte du prompt : reçoit la position visée dans le prompt (en caractères UTF-16). */
+    fun setOnCursorTapListener(listener: (Int) -> Unit) {
+        cursorTapListener = listener
+    }
+
+    private fun onInputTapped(x: Float) {
+        if (inputText.isEmpty()) return
+        val layout = inputView.layout ?: return
+        val displayOffset = layout.getOffsetForHorizontal(0, (x - inputView.totalPaddingLeft + inputView.scrollX).coerceAtLeast(0f))
+        cursorTapListener?.invoke(
+            PromptCaretMap.textOffset(
+                displayOffset = displayOffset,
+                displayedBeforeLength = renderedBeforeLength,
+                ellipsized = renderedEllipsized,
+                caretLength = CARET.length,
+                cursor = inputCursor,
+                textLength = inputText.length,
+            ),
+        )
     }
 
     /** Touche sur le bouton afficher/masquer la zone de chat. */
@@ -237,6 +316,8 @@ class PromptBarView(context: Context) : LinearLayout(context) {
     private fun renderInput() {
         val width = inputView.width - inputView.paddingLeft - inputView.paddingRight
         renderedInputWidth = inputView.width
+        renderedBeforeLength = 0
+        renderedEllipsized = false
         if (inputText.isEmpty()) {
             // Saisie vide : le curseur est dessiné devant l'invite, pour montrer que la frappe arrive dans ce champ.
             val hint = context.getString(if (modelLoading) R.string.prompt_loading_model else R.string.prompt_hint)
@@ -264,8 +345,10 @@ class PromptBarView(context: Context) : LinearLayout(context) {
                 var tail = before.substring(before.length - maxOf(fitting - 1, 0))
                 if (tail.isNotEmpty() && Character.isLowSurrogate(tail[0])) tail = tail.substring(1)
                 before = "\u2026$tail"
+                renderedEllipsized = true
             }
         }
+        renderedBeforeLength = before.length
         val display = SpannableStringBuilder(before).append(CARET).append(after)
         display.setSpan(caretSpan(), before.length, before.length + CARET.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         inputView.text = display
@@ -292,6 +375,14 @@ class PromptBarView(context: Context) : LinearLayout(context) {
             setPadding(side, paddingTop, side, paddingBottom)
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    private fun renderVoice() {
+        val appearance = BarVisibility.voiceAppearance(voiceState)
+        voiceButton.contentDescription = context.getString(appearance.label)
+        voiceButton.background = voiceBackgrounds.getOrPut(appearance.background) { style.roundBackground(appearance.background) }
+        voiceButton.alpha = appearance.alpha
+        voiceButton.showMicOrSpinner(appearance.loading, voiceSpinner)
     }
 
     private fun renderSendButton() {

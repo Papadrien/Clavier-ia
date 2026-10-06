@@ -22,13 +22,21 @@
     <string name="model_settings_checksum_missing">Empreinte SHA-256 non calculée : choisissez de nouveau le fichier pour la calculer.</string>
     <string name="model_settings_file_saved">Fichier enregistré pour le modèle %1$s</string>
 
-    <string name="correction_prompt_title">Prompt de correction (test)</string>
-    <string name="correction_prompt_description">Instruction système envoyée au modèle pour l\'action "Corriger". Le prompt par défaut interdit de changer un mot qui n\'est pas une faute d\'orthographe/grammaire - ce qui empêche aussi de corriger un mot mal retranscrit par la saisie vocale. Modifiez-le ici pour tester d\'autres formulations, sans avoir à recompiler.</string>
-    <string name="correction_prompt_save">Enregistrer ce prompt</string>
-    <string name="correction_prompt_reset">Réinitialiser au prompt par défaut</string>
-    <string name="correction_prompt_saved">Prompt de correction enregistré.</string>
-    <string name="correction_prompt_status_custom">Prompt personnalisé actif.</string>
-    <string name="correction_prompt_status_default">Prompt par défaut du prototype.</string>
+    <string name="button_system_prompts">Prompts système</string>
+    <string name="system_prompts_title">Prompts système</string>
+    <string name="system_prompts_description">Consignes envoyées au modèle IA avant chaque demande. Chaque champ affiche le prompt actuellement utilisé : modifiez-le puis enregistrez, ou revenez au prompt par défaut. Une modification s\'applique à la prochaine utilisation (pour le mode prompt, à la prochaine conversation).</string>
+    <string name="system_prompt_correction_title">Correction</string>
+    <string name="system_prompt_correction_description">Consigne envoyée au modèle pour l\'action « Corriger ».</string>
+    <string name="system_prompt_generation_title">Mode prompt (chat)</string>
+    <string name="system_prompt_generation_description">Consigne envoyée au modèle pour les conversations du mode prompt : longueur et format des réponses.</string>
+    <string name="system_prompt_save">Enregistrer ce prompt</string>
+    <string name="system_prompt_show_default">Afficher le prompt par défaut</string>
+    <string name="system_prompt_reset">Réinitialiser au prompt par défaut</string>
+    <string name="system_prompt_saved">Prompt enregistré.</string>
+    <string name="system_prompt_default_shown">Prompt par défaut affiché : enregistrez-le pour l\'appliquer.</string>
+    <string name="system_prompt_reset_done">Prompt par défaut rétabli.</string>
+    <string name="system_prompt_status_custom">Prompt personnalisé actif.</string>
+    <string name="system_prompt_status_default">Prompt par défaut actif.</string>
 
     <string name="correction_button_idle">Corriger</string>
     <string name="correction_button_loading">Chargement du modèle…</string>

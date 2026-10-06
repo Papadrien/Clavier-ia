@@ -73,6 +73,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private val menuBackgrounds = style.toggleBackgrounds()
     private val actionsMenuBackgrounds = style.toggleBackgrounds()
     private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
+    private val voiceSpinner = LoadingSpinnerDrawable(context)
     private val zoneState = SuggestionZoneState()
     private var menuBackgroundExpanded: Boolean? = null
     val voiceButton = ImageButton(context)
@@ -339,6 +340,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         voiceButton.contentDescription = context.getString(appearance.label)
         voiceButton.background = voiceBackgrounds.getOrPut(appearance.background) { style.roundBackground(appearance.background) }
         voiceButton.alpha = appearance.alpha
+        voiceButton.showMicOrSpinner(appearance.loading, voiceSpinner)
         renderActionButtons()
     }
 }

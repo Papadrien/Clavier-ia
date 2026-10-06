@@ -71,6 +71,25 @@ class PromptInputBuffer {
         }
     }
 
+    /**
+     * Place le curseur à [position] (touche dans le texte), ramenée dans le texte puis à la limite de « caractère » la
+     * plus proche : jamais au milieu d'une paire de substitution ou d'un emoji composé. Faux si le curseur n'a pas bougé.
+     */
+    fun setCursor(position: Int): Boolean {
+        val target = position.coerceIn(0, text.length)
+        // Même découpage à rebours que le retour arrière : on trouve la limite juste avant [target] et celle juste après.
+        var after = text.length
+        var before = text.length
+        while (before > target) {
+            after = before
+            before -= EmojiText.lastClusterLength(Prefix(text, before)).coerceAtLeast(1)
+        }
+        val snapped = if (before == target || after - target >= target - before) before else after
+        if (snapped == cursor) return false
+        cursor = snapped
+        return true
+    }
+
     /** Remplace tout le texte (par exemple pour restaurer un prompt après une erreur) ; curseur à la fin. */
     fun replaceAll(value: String) {
         text = value

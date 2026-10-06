@@ -41,6 +41,11 @@
         <activity
             android:name=".ModelSettingsActivity"
             android:label="@string/model_settings_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".SystemPromptsActivity"
+            android:label="@string/system_prompts_title"
             android:windowSoftInputMode="adjustResize"
             android:exported="false" />
 

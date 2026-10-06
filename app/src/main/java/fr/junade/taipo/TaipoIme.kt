@@ -24,11 +24,11 @@ import android.util.Size
 import android.widget.inline.InlinePresentationSpec
 import androidx.annotation.RequiresApi
 import androidx.autofill.inline.UiVersions
-import androidx.autofill.inline.v1.InlineSuggestionUi
 import android.widget.Toast
 import fr.junade.taipo.ai.CorrectionEngine
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.ai.ProtectedWords
+import fr.junade.taipo.ai.VoiceField
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.emoji.EmojiCatalog
 import fr.junade.taipo.emoji.EmojiPanelView
@@ -152,7 +152,15 @@ class TaipoIme : InputMethodService() {
             object : PromptModeController.Host {
                 override fun showMessage(message: String) = this@TaipoIme.showMessage(message)
                 override fun haptic() = hapticFeedback.perform(hapticIntensity)
+                override fun onPromptCursorMoved() {
+                    hapticFeedback.perform(hapticIntensity.cursorMoveFeedback())
+                    syncAutoCapitalization()
+                    applyState()
+                }
                 override fun isRecording(): Boolean = voice.isRecording
+                override fun cancelVoice() {
+                    if (voice.isRecording) voice.cancelRecording()
+                }
                 override fun isCorrectionInProgress(): Boolean = correctionInProgress
                 override fun barReady(): Boolean = viewComposer.isComposed
                 override fun setNormalBarVisible(visible: Boolean) {
@@ -253,8 +261,11 @@ class TaipoIme : InputMethodService() {
                 override fun onUserTyped() = this@TaipoIme.onUserTyped()
                 override fun setVoiceBarState(state: VoiceBarState) {
                     correctionBar.voiceState = state
+                    prompt.setVoiceState(state) // le bouton micro de la barre du prompt suit le même état
                 }
                 override fun inputConnection() = currentInputConnection
+                override fun promptActive(): Boolean = prompt.active
+                override fun promptVoiceField(): VoiceField = prompt.voiceField
                 override fun hasSelection(): Boolean = this@TaipoIme.hasSelection()
                 override fun collapseSelectionBeforeInsert() {
                     if (hasSelection() && lastSelectionEnd >= 0) {
@@ -470,7 +481,7 @@ class TaipoIme : InputMethodService() {
         val density = resources.displayMetrics.density
         val height = (INLINE_SUGGESTION_HEIGHT_DP * density).toInt()
         val styles = UiVersions.newStylesBuilder()
-            .addStyle(InlineSuggestionUi.newStyleBuilder().build())
+            .addStyle(buildInlineSuggestionStyle(this))
             .build()
         val spec = InlinePresentationSpec.Builder(
             Size((INLINE_SUGGESTION_MIN_WIDTH_DP * density).toInt(), height),
@@ -1010,16 +1021,32 @@ class TaipoIme : InputMethodService() {
             return
         }
         val ic = currentInputConnection ?: return
+        // Début ou fin du texte : une touche directionnelle que le champ ne peut plus absorber déplace le focus et le curseur
+        // quitte le champ. On n'envoie donc que les pas qui restent dans le texte (voir CursorSteps).
+        val allowed = abs(allowedCursorSteps(ic, steps))
+        if (allowed == 0) return
         clearHighlightIfNeeded()
         pendingAutocorrection = null
         val keyCode = if (steps < 0) KeyEvent.KEYCODE_DPAD_LEFT else KeyEvent.KEYCODE_DPAD_RIGHT
         hapticFeedback.perform(hapticIntensity.cursorMoveFeedback()) // toujours faible, absent si désactivé
-        repeat(abs(steps)) {
+        repeat(allowed) {
             ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, keyCode))
             ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, keyCode))
         }
         syncAutoCapitalization()
         applyState()
+    }
+
+    /**
+     * Pas de curseur réellement possibles dans le champ de l'application pour [steps] demandés. Si le champ ne dit rien
+     * de son texte (réponse nulle), on garde le comportement d'origine : tous les pas.
+     */
+    private fun allowedCursorSteps(ic: InputConnection, steps: Int): Int {
+        val limit = CursorSteps.fetchLimit(steps)
+        val before = ic.getTextBeforeCursor(limit, 0)
+        val after = ic.getTextAfterCursor(limit, 0)
+        if (before == null || after == null) return steps
+        return CursorSteps.allowed(steps, before, after, hasSelection())
     }
 
     /**

@@ -104,7 +104,7 @@ class ImeViewComposer(
         correctionBar = CorrectionBarView(context)
         correctionBar.setOnCorrectListener { host.onCorrectClicked() }
         correctionBar.setOnGenerateClickListener { prompt.enter() }
-        correctionBar.voiceButton.setOnTouchListener { view, event ->
+        val voiceTouchListener = View.OnTouchListener { view, event ->
             // Rendu seul (lot 08) : l'écouteur consomme l'événement, la vue ne passerait pas à « pressée » sans cela.
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> view.isPressed = true
@@ -113,7 +113,11 @@ class ImeViewComposer(
             host.onVoiceTouch(event)
         }
         // Lot 20 : l'écouteur tactile ci-dessus consomme tout toucher, le clic n'arrive donc que de l'accessibilité.
+        correctionBar.voiceButton.setOnTouchListener(voiceTouchListener)
         correctionBar.voiceButton.setOnClickListener { host.onVoiceClick() }
+        // Le bouton micro de la barre du prompt déclenche la même dictée (appui bref : marche/arrêt, appui long : tant que maintenu).
+        prompt.promptBar.voiceButton.setOnTouchListener(voiceTouchListener)
+        prompt.promptBar.voiceButton.setOnClickListener { host.onVoiceClick() }
         correctionBar.setOnEmojiSuggestionClickListener { host.onEmojiSuggestionClicked() }
         // Le même bouton ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme.
         correctionBar.setOnClipboardClickListener { clipboard.onPanelButtonClicked() }

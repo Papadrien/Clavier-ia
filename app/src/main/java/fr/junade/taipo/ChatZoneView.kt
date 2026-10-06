@@ -2,6 +2,7 @@ package fr.junade.taipo
 
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
+import android.graphics.Rect
 import android.graphics.drawable.InsetDrawable
 import android.view.Gravity
 import android.view.View
@@ -63,6 +64,11 @@ class ChatZoneView(context: Context) : ScrollView(context) {
         // Fond transparent : la zone laisse voir le fond commun du clavier (KeyboardBackgroundDrawable).
         isVerticalScrollBarEnabled = false
         overScrollMode = OVER_SCROLL_NEVER
+        // La racine du clavier ne coupe pas ses enfants (clipChildren = false, pour la bulle d'accents des touches) :
+        // la zone de chat se coupe donc elle-même, pour que la conversation défilée ne soit jamais dessinée en dehors
+        // d'elle, ni sous la barre du prompt ni au-dessus.
+        clipChildren = true
+        clipToPadding = true
         addView(column, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT))
         // Le contenu grandit avec le flux : une fois la mise en page faite, on reste calé en bas.
         column.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
@@ -141,6 +147,12 @@ class ChatZoneView(context: Context) : ScrollView(context) {
         message.status == PromptMessageStatus.IN_PROGRESS -> context.getString(R.string.prompt_response_pending)
         message.status == PromptMessageStatus.INTERRUPTED -> context.getString(R.string.prompt_response_interrupted)
         else -> context.getString(R.string.prompt_response_empty)
+    }
+
+    /** Coupe tout ce que dessine la zone (bulles défilées comprises) à ses propres limites. */
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        clipBounds = Rect(0, 0, w, h)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

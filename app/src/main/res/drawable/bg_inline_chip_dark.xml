@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Fond des suggestions d'auto-remplissage (Bitwarden…) en thème sombre : pastille de la couleur des boutons secondaires
+    (taipo_key_secondary). Dessin lu par le service d'auto-remplissage, hors de la configuration du clavier : la couleur est
+    donc écrite en dur ici au lieu d'être lue dans les ressources de couleur du thème.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#2B2B2B" />
+    <corners android:radius="16dp" />
+</shape>
