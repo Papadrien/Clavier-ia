@@ -65,8 +65,15 @@ class RefonteResourcesRegressionTest {
     @Test
     fun `aucune image raster dans les drawables`() {
         val raster = setOf("png", "jpg", "jpeg", "webp", "gif", "bmp")
+        // Exception documentée (lot UX 1) : le logo de marque est une illustration raster (dégradés et textures des
+        // touches) fournie par le design, non vectorisable sans perte ; c'est la seule image autorisée.
+        val allowed = setOf("taipo_logo_horizontal")
         val found = res.listFiles { f -> f.isDirectory && f.name.startsWith("drawable") }.orEmpty()
-            .flatMap { it.walkTopDown().filter { f -> f.isFile && f.extension.lowercase() in raster }.toList() }
+            .flatMap {
+                it.walkTopDown()
+                    .filter { f -> f.isFile && f.extension.lowercase() in raster && f.nameWithoutExtension !in allowed }
+                    .toList()
+            }
         assertTrue(found.isEmpty(), "Images raster interdites par le plan de refonte : ${found.map { it.name }}")
     }
 

@@ -44,8 +44,23 @@ android {
         }
     }
 
+    // Signature debug FIXE (clé versionnée dans le dépôt : app/debug.keystore, mot de passe public « android »,
+    // sans valeur de sécurité). Sans elle, chaque runner CI génère sa propre clé debug : deux APK debug de
+    // builds différents ont des signatures différentes et Android refuse la mise à jour par-dessus
+    // (INSTALL_FAILED_UPDATE_INCOMPATIBLE). Avec cette clé, tous les APK debug (CI et local) se mettent à jour.
+    // La variante benchmark réutilise cette même signature (voir plus bas).
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         getByName("debug") {
+            signingConfig = signingConfigs.getByName("debug")
             ndk {
                 abiFilters += listOf("arm64-v8a", "x86_64")
             }

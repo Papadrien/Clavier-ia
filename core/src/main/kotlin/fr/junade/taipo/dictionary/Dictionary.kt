@@ -115,6 +115,9 @@ class Dictionary private constructor(
     /** Vrai si [word] figure dans le dictionnaire (comparaison insensible à la casse). */
     fun contains(word: String): Boolean = word.lowercase() in frequencies
 
+    /** Fréquence de [word] dans les listes (insensible à la casse), 0 s'il n'y figure pas. */
+    fun frequencyOf(word: String): Long = frequencies[word.lowercase()] ?: 0L
+
     /**
      * Correction suggérée pour [word] si celui-ci ne figure pas dans le
      * dictionnaire, en cherchant le mot le plus proche à une distance

@@ -25,8 +25,8 @@ class HapticIntensityTest {
     }
 
     @Test
-    fun `la duree de l'impulsion est de 9 ms`() {
-        assertEquals(9L, HapticIntensity.CLICK_DURATION_MS)
+    fun `la duree de l'impulsion est de 8 ms`() {
+        assertEquals(8L, HapticIntensity.CLICK_DURATION_MS)
     }
 
     @Test

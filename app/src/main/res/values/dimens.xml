@@ -182,6 +182,17 @@
     <!-- ===== Écrans de paramètres (lot 16) ===== -->
     <!-- Marge de page et échelle d'espacements verticaux des écrans (xs à xxl) ; label_gap : entre un libellé et son champ. -->
     <dimen name="taipo_settings_screen_padding">24dp</dimen>
+    <!-- Logo horizontal de l'accueil (lot UX 1) : largeur maximale ; le logo se redimensionne dessous. -->
+    <dimen name="taipo_home_logo_max_width">280dp</dimen>
+    <!-- Étapes de l'accueil (lot UX 2) : pastille numérotée / cochée, contour, taille de la coche, opacité d'une étape verrouillée. -->
+    <dimen name="taipo_step_badge_size">32dp</dimen>
+    <dimen name="taipo_step_badge_stroke">2dp</dimen>
+    <dimen name="taipo_step_badge_check_size">20dp</dimen>
+    <item name="taipo_step_locked_alpha" type="dimen" format="float">0.6</item>
+    <!-- Pastille de statut d'un modèle sur l'accueil (lot UX 4) : rayon des coins et marges internes. -->
+    <dimen name="taipo_status_badge_corner_radius">12dp</dimen>
+    <dimen name="taipo_status_badge_padding_horizontal">10dp</dimen>
+    <dimen name="taipo_status_badge_padding_vertical">4dp</dimen>
     <dimen name="taipo_settings_gap_xs">4dp</dimen>
     <dimen name="taipo_settings_label_gap">6dp</dimen>
     <dimen name="taipo_settings_gap_sm">8dp</dimen>

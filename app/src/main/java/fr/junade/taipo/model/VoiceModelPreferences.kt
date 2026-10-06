@@ -25,6 +25,9 @@ class VoiceModelPreferences(context: Context) {
 
     fun isComplete(): Boolean = VoiceModelFile.all().all { savedUriFor(it) != null }
 
+    /** Nombre de fichiers du modèle vocal déjà associés (sur [VoiceModelFile.all]) : sert au statut de l'accueil. */
+    fun providedCount(): Int = VoiceModelFile.all().count { savedUriFor(it) != null }
+
     fun assignUri(file: VoiceModelFile, uri: Uri, fileName: String?) {
         try {
             resolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)

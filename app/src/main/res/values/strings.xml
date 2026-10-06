@@ -2,9 +2,9 @@
 <resources>
     <string name="app_name">Taipo</string>
     <string name="ime_name">Taipo</string>
-    <string name="main_title">Taipo</string>
-    <string name="main_description">Clavier Android minimal, bilingue français (AZERTY) / anglais (QWERTY) selon la langue active.\n\nPour l&#8217;utiliser :\n1. Appuyez sur «&#160;Activer le clavier&#160;»\n2. Activez «&#160;Taipo&#160;»\n3. Appuyez sur «&#160;Choisir la méthode de saisie&#160;» puis sélectionnez «&#160;Taipo&#160;».</string>
-    <string name="button_enable">Activer le clavier</string>
+    <string name="main_title">Clavier IA 100% local</string>
+    <string name="main_description">Bilingue français (AZERTY) / anglais (QWERTY) selon la langue active.</string>
+    <string name="button_enable">Ouvrir les réglages</string>
     <string name="button_select">Choisir la méthode de saisie</string>
     <string name="button_model_settings">Modèle IA</string>
 
@@ -216,4 +216,27 @@
     <string name="a11y_suggestion_replaces_on_space">Remplacera le mot à l\'espace</string>
     <string name="a11y_clipboard_action_paste">Coller</string>
     <string name="a11y_clipboard_action_menu">Ouvrir le menu de l\'élément</string>
+    <!-- Étapes de l'accueil (lot UX 2) -->
+    <string name="onboarding_step1_title">Activer le clavier</string>
+    <string name="onboarding_step1_title_done">Clavier activé</string>
+    <string name="onboarding_step1_hint">Autorisez Taipo dans les réglages Android.</string>
+    <string name="onboarding_step2_title">Choisir Taipo</string>
+    <string name="onboarding_step2_title_done">Taipo est sélectionné</string>
+    <string name="onboarding_step2_hint">Sélectionnez Taipo comme méthode de saisie.</string>
+    <string name="onboarding_step2_hint_locked">Disponible une fois le clavier activé.</string>
+    <string name="onboarding_step3_title">Essayer</string>
+    <string name="onboarding_step3_hint">Touchez le champ et tapez quelques mots.</string>
+    <string name="onboarding_step3_hint_locked">Disponible une fois Taipo sélectionné.</string>
+    <string name="onboarding_try_hint">Écrivez ici pour tester</string>
+    <!-- Réglages de l'accueil (lot UX 3) -->
+    <string name="home_section_keyboard">Clavier</string>
+    <string name="home_section_ai">Intelligence artificielle</string>
+    <string name="home_row_keyboard_settings_subtitle">Rangée de chiffres, retour haptique, hauteur</string>
+    <string name="home_row_personal_dictionary_subtitle">Ajouter ou supprimer des mots</string>
+    <string name="home_row_model_settings_subtitle">Correction et génération de texte</string>
+    <string name="home_row_voice_model_subtitle">Dictée vocale</string>
+    <string name="home_status_ready">Prêt</string>
+    <string name="home_status_missing">À fournir</string>
+    <string name="home_status_incomplete">%1$d/%2$d fichiers</string>
+    <string name="home_row_system_prompts_subtitle">Instructions données à l\'IA</string>
 </resources>

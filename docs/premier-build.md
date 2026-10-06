@@ -364,3 +364,25 @@ story qui le touche. Non compilé ici.
 - [ ] Un build release : confirmer que R8 garde tout ce qui vient de `:core` (aucune règle keep n'est censée être nécessaire).
 - [ ] Réactiver / relancer le clavier sur le Pixel 9 : frappe, suggestions, autocorrection, mot suivant, emoji.
 
+## Autocorrection tenant compte des mots voisins (06/10/2026)
+
+`core/.../dictionary/FrenchContextCorrector` (logique pure, testée en JVM : `FrenchContextCorrectorTest`), appelé par
+`SuggestionController.autocorrectionFor` après la correction du dictionnaire, en français seulement, dans le champ
+comme dans le prompt (`applyDictionaryAutocorrection`, `applyPromptAutocorrection`). Le dictionnaire ne voit qu'un mot
+à la fois ; « a »/« à » et « manger »/« mangé » sont des mots corrects, seul le voisinage les départage.
+
+- **a / à** : début de phrase (« a demain »), après aller/venir/penser/parler... (« je vais a Paris »), « jusqu'a »,
+  et devant un infinitif après « chose », « rien », « j'ai »... (« quelque chose a manger »). Ce dernier cas a besoin du
+  mot suivant : le « a » est revu quand ce mot est tapé (correction à rebours). Un nom sujet (« le chat a manger »)
+  reste inchangé : ambigu.
+- **Participe / infinitif** : infinitif après un auxiliaire (« il a manger » -> « mangé », « elle est partir » ->
+  « partie ») ; participe en -é après un verbe qui appelle l'infinitif (« il faut mangé » -> « manger »), sauf noms en -é
+  (« à côté », « le marché »...). Les formes doivent exister dans les listes de fréquence (seuil `MIN_FREQUENCY`).
+- **Une seule annulation** : la correction (mot courant + mot revu à rebours) est un seul `AppliedAutocorrection` ;
+  retour arrière juste après la rétablit en entier, et le mot rétabli n'est pas recorrigé à rebours au mot suivant.
+- **Non couvert** : accord du participe (« elles sont parti »), noms sujets, autres homophones (ou/où, la/là, sur/sûr).
+  La correction IA (bouton Corriger) reste le recours pour ces cas.
+
+Non compilé ni exécuté ici. Smoke test manuel : « a demain », « je vais a Paris », « quelque chose a manger »,
+« j'ai a faire », « il a manger », « il faut mangé », « à côté », « il a mangé » (inchangés), retour arrière après
+chaque correction, même chose dans le prompt.

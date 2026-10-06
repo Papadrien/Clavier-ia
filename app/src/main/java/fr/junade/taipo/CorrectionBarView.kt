@@ -60,7 +60,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     /** Story 2.1 : bouton « menu », visible pendant la saisie, qui donne accès au bouton Smart Clipboard. */
     private val menuButton = ImageButton(context)
 
-    /** Menu de droite : range les boutons Vocal et Corriger pendant les suggestions de mots. */
+    /** Menu de droite : range les boutons Vocal et Générer pendant les suggestions de mots (Corriger reste visible à sa gauche). */
     private val actionsMenuButton = ImageButton(context)
 
     /** Croix de fermeture du panneau Smart Clipboard (à gauche de la barre) : visible seulement tant qu'il est ouvert. */
@@ -79,7 +79,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     val voiceButton = ImageButton(context)
     private var listener: OnCorrectListener? = null
 
-    /** Story 5.1 : bouton « Générer » (icône), qui bascule la barre en mode prompt ; rangé avec Vocal et Corriger. */
+    /** Story 5.1 : bouton « Générer » (icône), qui bascule la barre en mode prompt ; rangé avec Vocal derrière le menu de droite. */
     private val generateButton = ImageButton(context)
     private var generateListener: (() -> Unit)? = null
 
@@ -170,7 +170,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         }
         addView(correctButton, LayoutParams(LayoutParams.WRAP_CONTENT, barHeight))
 
-        // Menu de droite : pendant les suggestions de mots, il range derrière lui Vocal et Corriger.
+        // Menu de droite : pendant les suggestions de mots, il range derrière lui Vocal et Générer (Corriger reste visible à sa gauche).
         style.styleBarIconButton(actionsMenuButton, R.drawable.ic_more)
         actionsMenuButton.contentDescription = context.getString(R.string.actions_menu_description)
         actionsMenuButton.setOnClickListener {

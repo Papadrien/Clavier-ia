@@ -15,4 +15,11 @@ object WordText {
         while (start > 0 && isWordChar(textBeforeCursor[start - 1])) start--
         return textBeforeCursor.substring(start)
     }
+
+    /** Début du texte après le curseur qui prolonge le mot du curseur : lettres/apostrophes/traits d'union contigus. */
+    fun leadingWord(textAfterCursor: String): String {
+        var end = 0
+        while (end < textAfterCursor.length && isWordChar(textAfterCursor[end])) end++
+        return textAfterCursor.substring(0, end)
+    }
 }

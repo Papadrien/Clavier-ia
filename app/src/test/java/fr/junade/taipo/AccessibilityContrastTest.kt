@@ -116,6 +116,7 @@ class AccessibilityContrastTest {
         assertText("clip_danger_text", "clip_dialog")
         assertText("settings_warning_text", "settings_card")
         assertText("settings_warning_text", "taipo_background")
+        assertText("settings_warning_text", "input_background") // pastille « à fournir » de l'accueil (lot UX 4)
     }
 
     @Test

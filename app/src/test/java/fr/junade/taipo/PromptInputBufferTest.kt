@@ -33,6 +33,24 @@ class PromptInputBufferTest {
     }
 
     @Test
+    fun `deleteAfter supprime apres le curseur sans le deplacer`() {
+        val buffer = buffer("bonjour le monde")
+        buffer.setCursor(7)
+        assertEquals(3, buffer.deleteAfter(3))
+        assertEquals("bonjour monde", buffer.text)
+        assertEquals(7, buffer.cursor)
+    }
+
+    @Test
+    fun `deleteAfter est borne a la fin du texte`() {
+        val buffer = buffer("bonjour")
+        buffer.setCursor(4)
+        assertEquals(3, buffer.deleteAfter(10))
+        assertEquals("bonj", buffer.text)
+        assertEquals(0, buffer.deleteAfter(1))
+    }
+
+    @Test
     fun `insert au milieu du texte`() {
         val buffer = buffer("bonjour")
         buffer.moveCursor(-4)

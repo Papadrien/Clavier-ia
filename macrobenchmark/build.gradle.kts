@@ -25,6 +25,17 @@ android {
     targetProjectPath = ":app"
     experimentalProperties["android.experimental.self-instrumenting"] = true
 
+    // Même clé debug fixe que :app (app/debug.keystore) : l'APK de test et l'app ciblée doivent partager la
+    // même signature pour que l'instrumentation fonctionne.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = rootProject.file("app/debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         // Cible la variante « benchmark » de :app (même nom).
         create("benchmark") {

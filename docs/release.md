@@ -33,3 +33,15 @@
 ## À essayer séparément
 - `org.gradle.configuration-cache=true` : non activé (le Kotlin surclassé en 2.4.0 dans le build racine et
   KSP/Room peuvent poser problème) ; à tester seul, build propre puis build suivant.
+
+## Mises à jour sans réinstaller (debug et release)
+- **Debug** : signé avec `app/debug.keystore` (versionné, mot de passe public `android`, sans valeur de sécurité),
+  identique en local et en CI. Les APK debug se mettent donc à jour par-dessus. Ne jamais supprimer ni régénérer
+  ce fichier : changer la clé impose une dernière réinstallation sur chaque appareil.
+- **Release** : mise à jour possible tant que la clé (secrets `TAIPO_KEYSTORE_*`) reste la même et que le
+  `versionCode` augmente (numéro d'exécution GitHub Actions). Si les secrets sont absents, l'APK n'est pas signé
+  donc non installable.
+- **Passer de debug à release (ou l'inverse)** : signatures différentes, donc désinstallation obligatoire
+  (même identifiant `fr.junade.taipo`). Les données (dictionnaire chiffré par Keystore) sont perdues dans ce cas.
+- **Build local vs CI** : en local `versionCode` = 1 ; installer un APK local par-dessus un APK CI est un
+  « downgrade » refusé hors adb (`adb install -r -d` l'autorise en debug).

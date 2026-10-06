@@ -22,12 +22,18 @@ class BarVisibilityTest {
     }
 
     @Test
-    fun `pendant les suggestions de mots Vocal Generer et Corriger sont ranges derriere le menu de droite`() {
+    fun `pendant les suggestions de mots Vocal et Generer sont ranges derriere le menu de droite, Corriger reste visible`() {
         val visible = BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.IDLE, zoneWithText(), false)
         assertFalse(visible.voice)
         assertFalse(visible.generate)
-        assertFalse(visible.correct)
+        assertTrue(visible.correct)
         assertTrue(visible.actionsMenu)
+    }
+
+    @Test
+    fun `pendant les suggestions de mots Corriger reste cache tant que son etat est HIDDEN`() {
+        val visible = BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.HIDDEN, zoneWithText(), false)
+        assertFalse(visible.correct)
     }
 
     @Test

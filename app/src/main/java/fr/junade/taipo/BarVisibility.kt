@@ -44,8 +44,9 @@ internal object BarVisibility {
             correction == CorrectionBarState.LOADING || correction == CorrectionBarState.CORRECTING
 
     /**
-     * Vocal et Corriger sont rangés derrière le menu de droite tant que la bande de mots est affichée,
-     * sauf pendant une écoute, une transcription ou une correction. « Générer » se range avec eux mais
+     * Vocal et « Générer » sont rangés derrière le menu de droite tant que la bande de mots est affichée,
+     * sauf pendant une écoute, une transcription ou une correction. Corriger, lui, reste visible (à gauche du
+     * menu « ··· ») pendant les suggestions de mots, dès que du texte permet de corriger. « Générer »
      * disparaît quand [isBusy] (le moteur est partagé : pas de génération en parallèle).
      */
     fun actionButtons(
@@ -59,7 +60,8 @@ internal object BarVisibility {
         return ActionButtonsVisibility(
             voice = actionsVisible,
             generate = actionsVisible && !busy,
-            correct = actionsVisible && correction != CorrectionBarState.HIDDEN,
+            correct = (actionsVisible || zoneState.zone == SuggestionZoneState.Zone.WORDS) &&
+                correction != CorrectionBarState.HIDDEN,
             actionsMenu = !clipboardPanelOpen && zoneState.actionsMenuButtonVisible(busy),
         )
     }

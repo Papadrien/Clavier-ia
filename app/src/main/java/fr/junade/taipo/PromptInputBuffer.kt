@@ -58,6 +58,18 @@ class PromptInputBuffer {
         return length
     }
 
+    /**
+     * Supprime jusqu'à [count] caractères UTF-16 après le curseur, qui ne bouge pas (remplacement d'un mot entier
+     * ou d'une espace déjà présente : les longueurs viennent de mots ou d'espaces, donc de limites valides).
+     * Renvoie le nombre de caractères réellement supprimés.
+     */
+    fun deleteAfter(count: Int): Int {
+        val length = count.coerceIn(0, text.length - cursor)
+        if (length == 0) return 0
+        text = text.substring(0, cursor) + text.substring(cursor + length)
+        return length
+    }
+
     /** Déplace le curseur de [steps] « caractères » (négatif : vers la gauche), borné au texte. */
     fun moveCursor(steps: Int) {
         var remaining = steps

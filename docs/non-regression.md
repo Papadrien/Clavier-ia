@@ -16,7 +16,7 @@ les tests ci-dessous sont à lancer une fois. Seules les vérifications de resso
 | Fichier | Rôle |
 | --- | --- |
 | `app/src/test/.../KeyboardCatalogRegressionTest.kt` | Toutes les combinaisons disposition × langue × rangée de chiffres × type de champ : identifiants uniques, libellés = caractère saisi, Entrée / Effacer / Espace / Maj / bascule / emoji présents où il faut, bulles sans doublon. |
-| `app/src/test/.../RefonteResourcesRegressionTest.kt` | Règles du plan : aucune image raster dans `drawable*`, Open Sans (3 graisses + fichiers), toute ressource référencée (XML et Kotlin) existe, palette de nuit ⊆ palette de jour, dimensions valides. |
+| `app/src/test/.../RefonteResourcesRegressionTest.kt` | Règles du plan : aucune image raster dans `drawable*` (seule exception : le logo `taipo_logo_horizontal`), Open Sans (3 graisses + fichiers), toute ressource référencée (XML et Kotlin) existe, palette de nuit ⊆ palette de jour, dimensions valides. |
 | `app/src/androidTest/.../KeyboardViewRegressionTest.kt` | Sur appareil : toutes les dispositions se dessinent (Maj et verrouillage compris), zones tactiles sans chevauchement, un appui saisit chaque touche, couleurs de la charte réellement dessinées, touche pressée visible puis rétablie, glissements espace et retour arrière, appui long (accents, bulle du point), annulation, deux doigts. |
 
 ## Couverture automatisée de la liste du plan
@@ -47,6 +47,8 @@ d'une génération, les messages d'erreur de l'IA, les préférences (`KeyboardP
 
 1. **Clavier** : taper une phrase avec lettres, chiffres (rangée activée puis désactivée : appui long), ponctuation, apostrophe ; Maj une fois, deux fois (verrouillage), retour ; symboles puis ABC.
 2. **Espace** : appui (espace saisi), double espace (point), glisser (curseur), pas d'espace saisi après un glissement.
+   Autocorrection contextuelle (français) : « a demain » -> « à demain », « quelque chose a manger » -> « à manger », « il a manger » -> « il a mangé », « il faut mangé » -> « manger » ; « il a mangé » et « à côté » inchangés ; retour arrière juste après annule toute la correction.
+   Curseur placé dans un mot (tap) : la barre propose des corrections du mot entier ; en toucher une remplace le mot entier. Mot corrigé (espace ou suggestion) alors qu'une espace suit déjà : pas de double espace. Mêmes vérifications dans le prompt.
 3. **Retour arrière** : appui, appui maintenu (répétition), glisser vers la gauche (mots surlignés, suppression au relâchement).
 4. **Accents** : appui long sur e, a, o, u, c, puis sur le point ; choisir un accent en glissant ; relâcher sans bouger.
 5. **Entrée** : action du champ (envoyer, rechercher, retour à la ligne) ; champs e-mail, URL, nombre, téléphone (touches adaptées).

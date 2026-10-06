@@ -17,7 +17,8 @@ package fr.junade.taipo
  *
  * - Deux menus « ··· » : celui de gauche (ci-dessus) donne accès au bouton Smart Clipboard ; celui de
  *   droite n'existe que pendant les suggestions de mots et range derrière lui les boutons Vocal et
- *   Corriger ([actionButtonsVisible], [toggleActionsMenu]). Un seul est ouvert à la fois ; la frappe
+ *   Générer ([actionButtonsVisible], [toggleActionsMenu]) ; Corriger, lui, reste visible à côté du menu
+ *   (voir [BarVisibility.actionButtons]). Un seul est ouvert à la fois ; la frappe
  *   referme les deux.
  *
  * - Suggestions d'auto-remplissage en ligne (gestionnaire de mots de passe, identifiants) : tant

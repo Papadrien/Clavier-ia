@@ -38,6 +38,21 @@ class WordTextTest {
     }
 
     @Test
+    fun `le mot apres le curseur prolonge le mot du curseur`() {
+        assertEquals("jour", WordText.leadingWord("jour le monde"))
+        assertEquals("ami", WordText.leadingWord("ami."))
+        assertEquals("être", WordText.leadingWord("être content"))
+        assertEquals("jour", WordText.leadingWord("jour"))
+    }
+
+    @Test
+    fun `aucun mot apres le curseur devant une espace une ponctuation ou la fin du texte`() {
+        assertEquals("", WordText.leadingWord(" monde"))
+        assertEquals("", WordText.leadingWord(".monde"))
+        assertEquals("", WordText.leadingWord(""))
+    }
+
+    @Test
     fun `un texte sans separateur est un seul mot`() {
         assertEquals("bonjour", WordText.trailingWord("bonjour"))
     }

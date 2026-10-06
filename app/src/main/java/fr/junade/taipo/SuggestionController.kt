@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.inputmethod.InputConnection
 import fr.junade.taipo.dictionary.Dictionary
 import fr.junade.taipo.dictionary.DictionaryLoader
+import fr.junade.taipo.dictionary.FrenchContextCorrector
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.suggestion.EmojiSuggesterLoader
 import fr.junade.taipo.suggestion.NextWordModel
@@ -18,6 +19,12 @@ import kotlinx.coroutines.withContext
 
 /** Nombre de caractères avant le curseur récupérés pour la majuscule automatique (1.2) et le dictionnaire local (1.3). */
 internal const val TEXT_CONTEXT_LOOKBEHIND = 50
+
+/**
+ * Correction à appliquer à la fin du texte avant le curseur : supprimer [deleteCount] caractères avant le curseur,
+ * puis insérer [insert]. Peut couvrir plus que le mot qui vient d'être tapé (le mot précédent est revu à rebours).
+ */
+class AutocorrectionEdit(val deleteCount: Int, val insert: String)
 
 /**
  * Bande de suggestions (stories 1.16 et 1.17) : mots du dictionnaire pendant la frappe d'un mot, mots
@@ -45,7 +52,7 @@ class SuggestionController(
 
         fun promptTextBeforeCursor(): String
 
-        fun promptCharAfterCursor(): Char?
+        fun promptTextAfterCursor(): String
 
         fun barReady(): Boolean
 
@@ -107,7 +114,13 @@ class SuggestionController(
     private var suggestionJob: Job? = null
     private var suggestionSequence = 0
 
-    private data class SuggestionInput(val text: String, val language: KeyboardLanguage, val available: Boolean)
+    private data class SuggestionInput(
+        val text: String,
+        val language: KeyboardLanguage,
+        val available: Boolean,
+        /** Suite du mot après le curseur (curseur placé dans un mot) : changer de position dans le mot relance le calcul. */
+        val wordAfter: String,
+    )
 
     /** Oublie la dernière entrée : la prochaine demande recalcule tout (nouveau champ). */
     fun invalidate() {
@@ -132,14 +145,15 @@ class SuggestionController(
         val promptActive = host.promptActive()
         val available = (promptActive || suggestionsAllowed) && !host.isRecording() && !host.isCorrectionInProgress() &&
             !host.isEmojiPanelVisible() && !host.isClipboardPanelVisible() && (promptActive || !host.hasSelection())
-        val input = SuggestionInput(textBeforeCursor, language, available)
+        val wordAfter = if (available) wordAfterCursor() else ""
+        val input = SuggestionInput(textBeforeCursor, language, available, wordAfter)
         if (input == lastSuggestionInput) return
         lastSuggestionInput = input
         cancelPendingSuggestions()
         val sequence = suggestionSequence
 
         var emoji = if (available) emojiSuggester.suggest(textBeforeCursor, language) else null
-        val typed = if (available) typedWordForSuggestions(textBeforeCursor) else ""
+        val typed = if (available) typedWordForSuggestions(textBeforeCursor, wordAfter) else ""
         if (typed.isNotEmpty()) {
             // Mot en cours de frappe : complétions et autocorrection du dictionnaire, calculées hors du
             // thread principal. L'emoji s'affiche tout de suite, les mots dès que le calcul est fini.
@@ -171,7 +185,7 @@ class SuggestionController(
         if (available) {
             // Aucun mot en cours de frappe : mots (et emoji, si l'emoji du mot précédent n'en propose pas)
             // qui suivent le plus souvent ce qui précède, d'après les habitudes d'écriture.
-            val prediction = predictNext(textBeforeCursor)
+            val prediction = predictNext(textBeforeCursor, wordAfter)
             words = prediction.words.map { WordSuggestion(it, WordSuggestion.Kind.PREDICTION) }
             if (emoji == null) emoji = prediction.emoji
         }
@@ -242,11 +256,10 @@ class SuggestionController(
     }
 
     /** Mots et emoji probables après [textBeforeCursor] (qui doit finir par une espace), selon ce que le clavier a appris. */
-    private fun predictNext(textBeforeCursor: String): NextWordModel.Prediction {
+    private fun predictNext(textBeforeCursor: String, wordAfter: String): NextWordModel.Prediction {
         if (!learningAllowed || textBeforeCursor.isEmpty()) return NextWordModel.Prediction.NONE
         // Curseur au milieu d'un mot : insérer un mot entier à cet endroit serait trompeur.
-        val after = charAfterCursor()
-        if (after != null && WordText.isWordChar(after)) return NextWordModel.Prediction.NONE
+        if (wordAfter.isNotEmpty()) return NextWordModel.Prediction.NONE
         return nextWords.model.predict(
             textBeforeCursor,
             truncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND,
@@ -274,19 +287,50 @@ class SuggestionController(
         if (repository.model.learn(before + terminator, truncated = before.length >= TEXT_CONTEXT_LOOKBEHIND)) repository.markDirty()
     }
 
-    /** Caractère juste après le curseur : dans le prompt en mode prompt, sinon dans le champ de l'application. */
-    private fun charAfterCursor(): Char? =
-        if (host.promptActive()) host.promptCharAfterCursor()
-        else host.inputConnection()?.getTextAfterCursor(1, 0)?.firstOrNull()
+    /** Texte juste après le curseur : dans le prompt en mode prompt, sinon dans le champ de l'application. */
+    private fun textAfterCursor(): String =
+        if (host.promptActive()) host.promptTextAfterCursor().take(TEXT_CONTEXT_LOOKBEHIND)
+        else host.inputConnection()?.getTextAfterCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
 
-    /** Mot en cours de frappe avant le curseur, ou vide s'il n'y en a pas (ou si le curseur est au milieu d'un mot). */
-    private fun typedWordForSuggestions(textBeforeCursor: String): String {
-        val typed = WordText.trailingWord(textBeforeCursor)
-        if (typed.isEmpty()) return ""
-        // Curseur au milieu d'un mot : compléter le début du mot serait trompeur.
-        val after = charAfterCursor()
-        if (after != null && WordText.isWordChar(after)) return ""
-        return typed
+    /** Suite du mot après le curseur (vide si le curseur est en fin de mot ou hors d'un mot). */
+    private fun wordAfterCursor(): String = WordText.leadingWord(textAfterCursor())
+
+    /**
+     * Mot entier qui touche le curseur : ce qui le précède et ce qui le suit. Curseur en fin de mot, c'est le mot
+     * en cours de frappe ; curseur placé dans un mot (tap), c'est le mot complet, pour proposer ses corrections.
+     * Vide si le curseur n'est contre aucun mot.
+     */
+    private fun typedWordForSuggestions(textBeforeCursor: String, wordAfter: String): String =
+        WordText.trailingWord(textBeforeCursor) + wordAfter
+
+    /**
+     * Autocorrection de la fin de [textBeforeCursor] au moment où un mot se termine : correction du dictionnaire pour
+     * le mot qui vient d'être tapé, puis, en français, correction tenant compte des mots voisins (« a » / « à »,
+     * infinitif / participe passé : voir [FrenchContextCorrector]). Renvoie null s'il n'y a rien à changer.
+     * [allowRetro] : autorise la révision du mot précédent (désactivée juste après une annulation de l'utilisateur).
+     */
+    fun autocorrectionFor(textBeforeCursor: String, allowRetro: Boolean): AutocorrectionEdit? {
+        val word = WordText.trailingWord(textBeforeCursor)
+        if (word.isEmpty()) return null
+        val dictionaryFix = dictionaryCorrectionFor(word)
+        var result = if (dictionaryFix != null) textBeforeCursor.dropLast(word.length) + dictionaryFix else textBeforeCursor
+        if (host.language() == KeyboardLanguage.FR) {
+            val dictionary = DictionaryLoader.peek(KeyboardLanguage.FR)
+            if (dictionary != null) {
+                val contextual = FrenchContextCorrector.correct(
+                    text = result,
+                    textMayBeTruncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND,
+                    allowRetro = allowRetro,
+                    frequencyOf = dictionary::frequencyOf,
+                )
+                if (contextual != null) result = contextual
+            }
+        }
+        if (result == textBeforeCursor) return null
+        var common = 0
+        val limit = minOf(result.length, textBeforeCursor.length)
+        while (common < limit && result[common] == textBeforeCursor[common]) common++
+        return AutocorrectionEdit(deleteCount = textBeforeCursor.length - common, insert = result.substring(common))
     }
 
     /**
