@@ -16,6 +16,8 @@ benchmark = "1.4.1"
 uiautomator = "2.3.0"
 # LiteRT-LM figé à 0.17.1 (compilé avec Kotlin 2.4.0, d'où le surclassement du KGP dans build.gradle.kts).
 litertlm = "0.17.1"
+# SymSpellKt (MIT) : uniquement pour le banc d'essai debug de l'autocorrection (app/src/debug), absent de la release.
+symspellkt = "3.4.0"
 
 [libraries]
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
@@ -27,6 +29,7 @@ androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstall
 androidx-benchmark-macro = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
 androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
 litertlm-android = { module = "com.google.ai.edge.litertlm:litertlm-android", version.ref = "litertlm" }
+symspellkt = { module = "com.darkrockstudios:symspellkt", version.ref = "symspellkt" }
 
 [plugins]
 room = { id = "androidx.room", version.ref = "room" }

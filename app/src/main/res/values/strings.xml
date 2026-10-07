@@ -14,6 +14,9 @@
     <string name="model_settings_model_info">Modèle technique : %1$s\n\nFormat attendu : fichier %2$s (LiteRT-LM)\n\n%3$s\n\nDépôt Hugging Face de référence : %4$s\n\nAucune empreinte de référence n\'est embarquée dans ce prototype : la taille du fichier est comparée à titre indicatif, et son empreinte SHA-256 est affichée pour que vous puissiez la comparer à celle du dépôt.</string>
     <string name="model_settings_pick_file">Choisir le fichier .litertlm</string>
     <string name="model_settings_current_file">Fichier actuel : %1$s</string>
+    <string name="model_settings_copy_size">Copie interne : %1$s</string>
+    <string name="model_settings_copy_none">Copie interne : pas encore créée (elle l\'est au premier chargement du modèle).</string>
+    <string name="model_settings_space_freed">%1$s libérés</string>
     <string name="model_settings_no_file">Aucun fichier fourni pour ce modèle.</string>
     <string name="model_settings_forget_file">Oublier ce fichier</string>
     <string name="model_settings_checksum_running">Empreinte SHA-256 : calcul en cours… %1$s</string>

@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
+import android.text.format.Formatter
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -14,7 +15,9 @@ import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.model.AiModel
+import fr.junade.taipo.model.ModelFileResolver
 import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.checksumWarning
 import fr.junade.taipo.model.sha256HexOrNull
@@ -111,8 +114,7 @@ class ModelSettingsActivity : ComponentActivity() {
         }
 
         buttonForgetFile.setOnClickListener {
-            preferences.clear(displayedModel)
-            refreshInfo()
+            forgetFile(displayedModel)
         }
 
         refreshInfo()
@@ -124,15 +126,62 @@ class ModelSettingsActivity : ComponentActivity() {
         filePickers.getValue(model).launch(arrayOf("*/*"))
     }
 
+    /**
+     * « Oublier ce fichier » : ferme le moteur s'il porte ce modèle, puis supprime la référence au fichier,
+     * la copie interne (plusieurs Go) et le cache XNNPACK. Le travail disque se fait hors du thread principal.
+     */
+    private fun forgetFile(model: AiModel) {
+        checksumRuns.remove(model) // annule un calcul d'empreinte en cours
+        buttonForgetFile.isEnabled = false
+        val appContext = applicationContext
+        val modelPreferences = preferences
+        Thread({
+            val freed = try {
+                LlmEngineHost.releaseModelEverywhere(model)
+                modelPreferences.clearAndDeleteCopy(model)
+            } catch (e: Exception) {
+                AppLog.w(TAG, "Suppression de la copie du modèle impossible", e)
+                0L
+            }
+            runOnUiThread {
+                if (isDestroyed) return@runOnUiThread
+                buttonForgetFile.isEnabled = true
+                refreshInfo()
+                if (freed > 0) {
+                    Toast.makeText(
+                        this,
+                        getString(R.string.model_settings_space_freed, Formatter.formatFileSize(appContext, freed)),
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+            }
+        }, "taipo-model-forget").start()
+    }
+
     private fun onModelFilePicked(model: AiModel, uri: Uri) {
         val (fileName, fileSize) = queryNameAndSize(uri)
-        preferences.assignUri(model, uri, fileName, fileSize)
+        checksumRuns.remove(model) // le calcul d'empreinte de l'ancien fichier n'a plus lieu d'être
 
-        if (model == displayedModel) {
-            refreshInfo()
-        }
-        Toast.makeText(this, getString(R.string.model_settings_file_saved, model.displayName), Toast.LENGTH_SHORT).show()
-        startChecksum(model, uri, fileSize)
+        // Avant de mémoriser le nouveau fichier : fermer le moteur et supprimer l'ancienne copie interne,
+        // pour qu'une copie périmée ne soit jamais réutilisée (même taille ≠ même fichier).
+        val modelPreferences = preferences
+        Thread({
+            try {
+                LlmEngineHost.releaseModelEverywhere(model)
+                ModelFileResolver.deleteLocalCopy(applicationContext, model)
+            } catch (e: Exception) {
+                AppLog.w(TAG, "Suppression de l'ancienne copie du modèle impossible", e)
+            }
+            runOnUiThread {
+                if (isDestroyed) return@runOnUiThread
+                modelPreferences.assignUri(model, uri, fileName, fileSize)
+                if (model == displayedModel) {
+                    refreshInfo()
+                }
+                Toast.makeText(this, getString(R.string.model_settings_file_saved, model.displayName), Toast.LENGTH_SHORT).show()
+                startChecksum(model, uri, fileSize)
+            }
+        }, "taipo-model-replace").start()
     }
 
     /**
@@ -207,7 +256,13 @@ class ModelSettingsActivity : ComponentActivity() {
         val fileName = preferences.savedFileNameFor(model)
         val fileSize = preferences.savedFileSizeFor(model)
         if (fileName != null) {
-            textCurrentFile.text = getString(R.string.model_settings_current_file, fileName)
+            val copySize = ModelFileResolver.localCopySize(this, model)
+            textCurrentFile.text = getString(R.string.model_settings_current_file, fileName) + "\n" +
+                if (copySize > 0) {
+                    getString(R.string.model_settings_copy_size, Formatter.formatFileSize(this, copySize))
+                } else {
+                    getString(R.string.model_settings_copy_none)
+                }
             buttonForgetFile.visibility = View.VISIBLE
 
             val sha256 = preferences.savedSha256For(model)

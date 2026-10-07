@@ -67,7 +67,17 @@ class ModelPreferences(context: Context) {
             .apply()
     }
 
-    /** Oublie le fichier associé à [model] (ex. si l'utilisateur veut recommencer). */
+    /**
+     * Oublie le fichier associé à [model] (ex. si l'utilisateur veut recommencer) : référence SAF,
+     * préférences, mais aussi la copie interne et le cache XNNPACK. Le moteur doit être fermé avant
+     * (voir [LlmEngineHost.releaseModel]). Retourne le nombre d'octets libérés.
+     */
+    fun clearAndDeleteCopy(model: AiModel): Long {
+        clear(model)
+        return ModelFileResolver.deleteLocalCopy(appContext, model)
+    }
+
+    /** Oublie seulement la référence au fichier (permission + préférences), sans toucher à la copie interne. */
     fun clear(model: AiModel) {
         savedUriFor(model)?.let { uri ->
             try {

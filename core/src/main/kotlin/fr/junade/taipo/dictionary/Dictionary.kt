@@ -21,6 +21,7 @@ class Dictionary private constructor(
     frequencies: Map<String, Long>,
     private val inflections: InflectionRules,
     candidateMinFrequency: Long,
+    private val proximity: KeyProximity = KeyProximity.NONE,
 ) {
 
     /**
@@ -145,6 +146,10 @@ class Dictionary private constructor(
      * Formes régulières : un pluriel/féminin/conjugaison régulier d'un mot connu (voir
      * [InflectionRules]) est considéré comme correct et n'est pas modifié (« durées »).
      *
+     * Proximité des touches ([KeyProximity]) : à distance d'édition égale, le candidat dont la différence est la
+     * plus plausible au clavier (touche voisine, lettre effleurée en trop) l'emporte, avant l'inversion de lettres
+     * et la fréquence (« cgat » -> « chat », g et h étant voisines). Sans proximité, comportement inchangé.
+     *
      * Longueur : les mots de 4 lettres ou moins ne sont corrigés qu'à distance 1 (à distance 2, la
      * moitié du mot serait changée, ex. « teh » -> « t'en »). À distance égale, une inversion de
      * deux lettres voisines (« teh » -> « the ») l'emporte sur les autres candidats.
@@ -212,6 +217,7 @@ class Dictionary private constructor(
         var bestFrequency = -1L
         var bestIsSwap = false
         var bestIsPersonal = false
+        var bestCost = Int.MAX_VALUE
         var ambiguous = false
 
         fun consider(candidate: String, frequency: Long, isPersonal: Boolean = false) {
@@ -220,13 +226,20 @@ class Dictionary private constructor(
             val distance = damerauLevenshteinBounded(lower, candidate, allowedDistance)
             if (distance > allowedDistance) return
             val isSwap = distance == 1 && isAdjacentSwap(lower, candidate)
-            // À distance égale : mot personnel (ajouté volontairement) > inversion de deux lettres >
+            // Coût pondéré par la proximité des touches (0 si elle est désactivée : sans effet).
+            val cost = proximity.editCost(lower, candidate)
+            // À distance égale : mot personnel (ajouté volontairement) > faute plausible au clavier (touche
+            // voisine, lettre effleurée, inversion : coût pondéré le plus bas) > inversion de deux lettres >
             // fréquence. Sans la première règle, « nae » donnait « ane » (inversion) et non « naé ».
             val better = distance < bestDistance || (
                 distance == bestDistance && (
                     (isPersonal && !bestIsPersonal) || (
                         isPersonal == bestIsPersonal && (
-                            (isSwap && !bestIsSwap) || (isSwap == bestIsSwap && frequency > bestFrequency)
+                            cost < bestCost || (
+                                cost == bestCost && (
+                                    (isSwap && !bestIsSwap) || (isSwap == bestIsSwap && frequency > bestFrequency)
+                                    )
+                                )
                             )
                         )
                     )
@@ -237,11 +250,12 @@ class Dictionary private constructor(
                     bestFrequency = frequency
                     bestIsSwap = isSwap
                     bestIsPersonal = isPersonal
+                    bestCost = cost
                     best = candidate
                     ambiguous = false
                 }
                 distance == bestDistance && isPersonal == bestIsPersonal && isSwap == bestIsSwap &&
-                    frequency == bestFrequency && candidate != best ->
+                    cost == bestCost && frequency == bestFrequency && candidate != best ->
                     ambiguous = true
             }
         }
@@ -576,22 +590,24 @@ class Dictionary private constructor(
          * minuscules ; si deux formes ne diffèrent que par la casse, la plus fréquente est gardée.
          * [candidateMinFrequency] : seuls les mots au moins aussi fréquents peuvent être proposés comme
          * correction ou complétion ; tous les mots de [entries] restent valides (jamais corrigés).
+         * [proximity] : proximité des touches du clavier, pour départager les candidats à distance égale.
          */
         fun withFrequencies(
             entries: Map<String, Long>,
             inflections: InflectionRules = InflectionRules.NONE,
             candidateMinFrequency: Long = 0L,
+            proximity: KeyProximity = KeyProximity.NONE,
         ): Dictionary {
             // Liste déjà en minuscules (cas des listes de l'application) : pas de copie, ce qui évite de
             // doubler la mémoire avec une liste complète de plusieurs centaines de milliers de mots.
-            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency)
+            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity)
             val merged = HashMap<String, Long>(entries.size)
             entries.forEach { (word, count) ->
                 val key = word.lowercase()
                 val previous = merged[key]
                 if (previous == null || count > previous) merged[key] = count
             }
-            return Dictionary(merged, inflections, candidateMinFrequency)
+            return Dictionary(merged, inflections, candidateMinFrequency, proximity)
         }
 
         /**

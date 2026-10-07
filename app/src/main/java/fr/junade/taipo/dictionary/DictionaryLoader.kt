@@ -108,6 +108,8 @@ object DictionaryLoader {
             readAsset(context, source.asset, source.minFrequency),
             inflectionsFor(language),
             source.candidateMinFrequency,
+            // Proximité des touches de la disposition de la langue : départage les corrections à distance égale.
+            KeyProximityFactory.forLanguage(language),
         )
 
     /** Formes régulières (pluriels, etc.) absentes des listes de fréquence : voir [InflectionRules]. */

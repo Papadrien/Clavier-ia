@@ -9,8 +9,11 @@ import fr.junade.taipo.model.ModelFileResolver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.util.Collections
+import java.util.WeakHashMap
 
 /**
  * Détient l'unique moteur LiteRT-LM du clavier, partagé par la correction ([CorrectionEngine]) et la
@@ -112,6 +115,23 @@ class LlmEngineHost(private val appContext: Context) {
         inferenceLock.withLock { ensureLoaded(model) { } }
     }
 
+    init {
+        synchronized(liveHosts) { liveHosts.add(this) }
+    }
+
+    /**
+     * Ferme le moteur s'il porte [model], en attendant la fin d'une inférence en cours. À appeler hors du
+     * thread principal, avant de supprimer le fichier du modèle (sinon le fichier supprimé resterait
+     * utilisé en mémoire).
+     */
+    fun releaseModel(model: AiModel) {
+        runBlocking {
+            inferenceLock.withLock {
+                if (loadedModel == model) close()
+            }
+        }
+    }
+
     /** Libère le moteur chargé (et la conversation de génération ouverte). À appeler quand l'IME est détruit. */
     fun close() {
         releaseOpenConversation()
@@ -119,5 +139,16 @@ class LlmEngineHost(private val appContext: Context) {
         engine = null
         loadedModel = null
         loadedFile = null
+    }
+
+    companion object {
+        /** Hôtes vivants du processus (en pratique celui de l'IME) : l'écran de réglages peut ainsi fermer le moteur. */
+        private val liveHosts = Collections.newSetFromMap(WeakHashMap<LlmEngineHost, Boolean>())
+
+        /** Ferme, dans tout le processus, les moteurs qui portent [model]. À appeler hors du thread principal. */
+        fun releaseModelEverywhere(model: AiModel) {
+            val hosts = synchronized(liveHosts) { liveHosts.toList() }
+            hosts.forEach { it.releaseModel(model) }
+        }
     }
 }
