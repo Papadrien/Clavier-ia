@@ -3,10 +3,10 @@ package fr.junade.taipo
 enum class LayoutId {
     LETTERS,
 
-    /** Page 1 des symboles (~ ` | • √ π ...) : premier panneau affiché à la bascule depuis les lettres. */
+    /** Page des symboles (~ ` | • √ π ...) : second panneau, atteint depuis la page des chiffres (touche « ?123 » → retour). */
     SYMBOLS,
 
-    /** Page 2 des symboles : chiffres, @ # € _ & - + ( ) / , ponctuation. */
+    /** Page des chiffres, @ # € _ & - + ( ) / et ponctuation : premier panneau affiché à la bascule depuis les lettres. */
     SYMBOLS_2,
 
     /** Story 1.18 : pavé numérique des champs numériques et téléphone (aucune bascule vers les lettres). */
@@ -191,7 +191,7 @@ object Keyboards {
         }
     }
 
-    /** Page 1 des symboles : premier panneau affiché quand on quitte les lettres. */
+    /** Page des symboles (~ ` | • √ π ...) : second panneau, atteint depuis la page des chiffres [symbolsMore]. */
     val symbols = KeyboardLayout(
         id = LayoutId.SYMBOLS,
         rows = listOf(
@@ -202,7 +202,7 @@ object Keyboards {
         ),
     )
 
-    /** Page 2 des symboles : chiffres, @ # € _ & - + ( ) /, ponctuation courante. */
+    /** Page des chiffres, @ # € _ & - + ( ) /, ponctuation courante : premier panneau affiché quand on quitte les lettres. */
     val symbolsMore = KeyboardLayout(
         id = LayoutId.SYMBOLS_2,
         rows = listOf(

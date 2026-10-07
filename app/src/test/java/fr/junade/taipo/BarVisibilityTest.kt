@@ -148,6 +148,10 @@ class BarVisibilityTest {
             val busy = BarVisibility.correctAppearance(state)!!
             assertFalse(busy.enabled)
             assertEquals(0.6f, busy.alpha)
+            assertTrue(busy.loading, "une roue remplace l'icône pendant $state")
+        }
+        for (state in listOf(CorrectionBarState.IDLE, CorrectionBarState.UNDO)) {
+            assertFalse(BarVisibility.correctAppearance(state)!!.loading)
         }
     }
 

@@ -90,7 +90,7 @@ internal class KeySpeech(private val context: Context) {
         KeyAction.Space -> context.getString(R.string.a11y_key_space)
         KeyAction.Emoji -> context.getString(R.string.a11y_key_emoji)
         KeyAction.SymbolPage ->
-            context.getString(if (layoutId == LayoutId.SYMBOLS) R.string.a11y_key_symbols_next else R.string.a11y_key_symbols_previous)
+            context.getString(if (layoutId == LayoutId.SYMBOLS_2) R.string.a11y_key_symbols_next else R.string.a11y_key_symbols_previous)
         KeyAction.ToggleLayout ->
             context.getString(if (layoutId == LayoutId.LETTERS) R.string.a11y_key_to_symbols else R.string.a11y_key_to_letters)
     }

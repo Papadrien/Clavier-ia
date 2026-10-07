@@ -25,7 +25,13 @@ internal data class ZoneContentVisibility(
 )
 
 /** Apparence du bouton Corriger (état [CorrectionBarState.HIDDEN] : aucun changement d'apparence). */
-internal data class CorrectAppearance(@StringRes val label: Int, val enabled: Boolean, val alpha: Float)
+internal data class CorrectAppearance(
+    @StringRes val label: Int,
+    val enabled: Boolean,
+    val alpha: Float,
+    /** Chargement du modèle ou correction en cours : une roue animée remplace l'icône du bouton. */
+    val loading: Boolean = false,
+)
 
 /** Apparence du bouton Vocal. */
 internal data class VoiceAppearance(
@@ -85,8 +91,8 @@ internal object BarVisibility {
     fun correctAppearance(state: CorrectionBarState): CorrectAppearance? = when (state) {
         CorrectionBarState.HIDDEN -> null
         CorrectionBarState.IDLE -> CorrectAppearance(R.string.correction_button_idle, enabled = true, alpha = 1f)
-        CorrectionBarState.LOADING -> CorrectAppearance(R.string.correction_button_loading, enabled = false, alpha = 0.6f)
-        CorrectionBarState.CORRECTING -> CorrectAppearance(R.string.correction_button_correcting, enabled = false, alpha = 0.6f)
+        CorrectionBarState.LOADING -> CorrectAppearance(R.string.correction_button_loading, enabled = false, alpha = 0.6f, loading = true)
+        CorrectionBarState.CORRECTING -> CorrectAppearance(R.string.correction_button_correcting, enabled = false, alpha = 0.6f, loading = true)
         CorrectionBarState.UNDO -> CorrectAppearance(R.string.correction_button_undo, enabled = true, alpha = 1f)
     }
 

@@ -107,9 +107,9 @@ class KeyboardControllerTest {
         assertEquals(LayoutId.LETTERS, controller.state.activeLayout)
 
         controller.onKey(key("toggle"))
-        assertEquals(LayoutId.SYMBOLS, controller.state.activeLayout)
+        assertEquals(LayoutId.SYMBOLS_2, controller.state.activeLayout)
 
-        val result = controller.onKey(key("toggle", Keyboards.symbols))
+        val result = controller.onKey(key("toggle", Keyboards.symbolsMore))
         assertEquals(LayoutId.LETTERS, result.newState.activeLayout)
     }
 
@@ -117,19 +117,20 @@ class KeyboardControllerTest {
     fun `la touche de page alterne entre les deux pages de symboles et ABC revient aux lettres`() {
         val controller = KeyboardController()
         controller.onKey(key("toggle"))
-        assertEquals(LayoutId.SYMBOLS, controller.state.activeLayout)
-
-        controller.onKey(key("symbol_page", Keyboards.symbols))
+        // La première page affichée est celle des chiffres (SYMBOLS_2), la seconde celle de ~ ` | • √ π.
         assertEquals(LayoutId.SYMBOLS_2, controller.state.activeLayout)
+
         controller.onKey(key("symbol_page", Keyboards.symbolsMore))
         assertEquals(LayoutId.SYMBOLS, controller.state.activeLayout)
-
         controller.onKey(key("symbol_page", Keyboards.symbols))
-        controller.onKey(key("toggle", Keyboards.symbolsMore))
+        assertEquals(LayoutId.SYMBOLS_2, controller.state.activeLayout)
+
+        controller.onKey(key("symbol_page", Keyboards.symbolsMore))
+        controller.onKey(key("toggle", Keyboards.symbols))
         assertEquals(LayoutId.LETTERS, controller.state.activeLayout)
-        // Un nouvel accès aux symboles recommence par la première page.
+        // Un nouvel accès aux symboles recommence par la première page (les chiffres).
         controller.onKey(key("toggle"))
-        assertEquals(LayoutId.SYMBOLS, controller.state.activeLayout)
+        assertEquals(LayoutId.SYMBOLS_2, controller.state.activeLayout)
     }
 
     @Test

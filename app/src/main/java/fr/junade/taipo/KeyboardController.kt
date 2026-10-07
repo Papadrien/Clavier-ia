@@ -132,8 +132,8 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
 
             KeyAction.ToggleLayout -> {
                 state = state.copy(
-                    // Depuis les lettres : première page de symboles ; depuis l'une des deux pages : lettres.
-                    activeLayout = if (state.activeLayout == LayoutId.LETTERS) LayoutId.SYMBOLS else LayoutId.LETTERS,
+                    // Depuis les lettres : première page (chiffres, SYMBOLS_2) ; depuis l'une des deux pages : lettres.
+                    activeLayout = if (state.activeLayout == LayoutId.LETTERS) LayoutId.SYMBOLS_2 else LayoutId.LETTERS,
                     isShifted = state.isCapsLock,
                 )
                 KeyPressResult(newState = state)

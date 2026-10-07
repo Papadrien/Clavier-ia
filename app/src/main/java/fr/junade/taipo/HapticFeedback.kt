@@ -30,8 +30,8 @@ enum class HapticIntensity(val storageKey: String, private val amplitude: Int) {
     fun cursorMoveFeedback(): HapticIntensity = if (this == OFF) OFF else LIGHT
 
     companion object {
-        /** Durée de l'impulsion, identique pour tous les niveaux (l'ancien niveau fort durait 10 ms, puis 9 ms, puis 8 ms). */
-        const val CLICK_DURATION_MS = 7L
+        /** Durée de l'impulsion, identique pour tous les niveaux (l'ancien niveau fort durait 10 ms, puis 9, 8 et 7 ms). */
+        const val CLICK_DURATION_MS = 6L
 
         val DEFAULT = MEDIUM
 

@@ -73,6 +73,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private val actionsMenuBackgrounds = style.toggleBackgrounds()
     private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
     private val voiceSpinner = LoadingSpinnerDrawable(context)
+    private val correctSpinner = LoadingSpinnerDrawable(context)
     private val zoneState = SuggestionZoneState()
     private var menuBackgroundExpanded: Boolean? = null
     val voiceButton = ImageButton(context)
@@ -339,15 +340,23 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     }
 
     private fun renderCorrect() {
-        BarVisibility.correctAppearance(state)?.let { appearance ->
-            correctButton.isEnabled = appearance.enabled
-            correctButton.alpha = appearance.alpha
-            correctButton.contentDescription = context.getString(appearance.label)
+        val appearance = BarVisibility.correctAppearance(state)
+        appearance?.let {
+            correctButton.isEnabled = it.enabled
+            correctButton.alpha = it.alpha
+            correctButton.contentDescription = context.getString(it.label)
         }
-        val showsUndo = state == CorrectionBarState.UNDO
-        if (showsUndo != correctShowsUndoIcon) {
-            correctShowsUndoIcon = showsUndo
-            correctButton.setImageResource(if (showsUndo) R.drawable.ic_undo else R.drawable.ic_spellcheck)
+        if (appearance?.loading == true) {
+            // Chargement du modèle ou correction : roue animée à la place de l'icône (le bouton reste désactivé).
+            if (correctButton.drawable !== correctSpinner) correctButton.setImageDrawable(correctSpinner)
+            correctSpinner.start()
+        } else {
+            correctSpinner.stop()
+            val showsUndo = state == CorrectionBarState.UNDO
+            if (showsUndo != correctShowsUndoIcon || correctButton.drawable === correctSpinner) {
+                correctShowsUndoIcon = showsUndo
+                correctButton.setImageResource(if (showsUndo) R.drawable.ic_undo else R.drawable.ic_spellcheck)
+            }
         }
         renderActionButtons()
     }
