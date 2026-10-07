@@ -71,12 +71,13 @@ class SuggestionZoneState {
         get() = fieldHasText || pasteAvailable
 
     /**
-     * Le bouton « réglages » (roue crantée, accès à l'accueil de l'application) n'est affiché que
-     * hors saisie : champ vide, bouton Smart Clipboard ou puce de collage. Il est caché dès que le
-     * champ contient du texte, même si le menu de gauche a rouvert le bouton Smart Clipboard.
+     * Le bouton « réglages » (roue crantée, accès à l'accueil de l'application) est affiché hors saisie :
+     * champ vide, bouton Smart Clipboard ou puce de collage. Pendant la saisie il est caché, sauf quand le menu
+     * de gauche est ouvert : la zone montre alors le bouton Smart Clipboard, comme hors saisie, et la roue
+     * crantée réapparaît avec lui.
      */
     val settingsButtonVisible: Boolean
-        get() = !fieldHasText
+        get() = !fieldHasText || menuExpanded
 
     /**
      * Les boutons Vocal et Corriger sont rangés derrière le menu de droite tant que la bande de mots

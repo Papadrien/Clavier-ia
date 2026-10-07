@@ -8,6 +8,9 @@ sealed interface KeyAction {
     data object Space : KeyAction
     data object ToggleLayout : KeyAction
 
+    /** Bascule entre les deux pages du clavier de symboles (touche à la place de Maj). */
+    data object SymbolPage : KeyAction
+
     /** Story 1.15 : ouvre le panneau emoji (aucun texte saisi par la touche elle-même). */
     data object Emoji : KeyAction
 }

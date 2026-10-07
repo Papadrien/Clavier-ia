@@ -13,6 +13,7 @@ import fr.junade.taipo.ai.CorrectionDiff
 import fr.junade.taipo.ai.CorrectionEngine
 import fr.junade.taipo.ai.CorrectionPlanner
 import fr.junade.taipo.ai.CorrectionSafeguard
+import fr.junade.taipo.ai.SpanLocator
 import fr.junade.taipo.ai.TextBlock
 import fr.junade.taipo.model.AiModel
 import kotlinx.coroutines.CoroutineScope
@@ -63,6 +64,27 @@ class CorrectionAiController(
 
         /** L'autocorrection du dictionnaire ne peut plus être annulée à la suppression. */
         fun clearPendingAutocorrection()
+    }
+
+    /**
+     * Annulation de la dernière correction : [currentText] est ce que le champ contient maintenant à la place de
+     * [previousText] (texte d'avant la correction). [absStart] : offset absolu probable de [currentText], -1 si inconnu.
+     */
+    private class UndoRecord(val currentText: String, val previousText: String, val absStart: Int)
+
+    private var undoRecord: UndoRecord? = null
+
+    /** Vrai juste après une correction appliquée : le bouton Corriger devient Annuler. */
+    val canUndo: Boolean get() = undoRecord != null
+
+    /**
+     * L'annulation n'est plus proposée (saisie, action de la barre du haut, autre champ). [notify] : met la barre à jour
+     * (le bouton redevient Corriger) ; faux quand l'appelant le fait lui-même ou que le champ est quitté.
+     */
+    fun dropUndo(notify: Boolean = true) {
+        if (undoRecord == null) return
+        undoRecord = null
+        if (notify) host.updateCorrectionBarVisibility()
     }
 
     /** Une correction est en cours (modèle au travail) : lu par l'IME pour suspendre suggestions, collage, etc. */
@@ -248,8 +270,11 @@ class CorrectionAiController(
             host.showMessage(context.getString(R.string.correction_no_change))
             return
         }
-        // La sélection a pu changer pendant que le modèle travaillait : on ne remplace que si elle est identique.
-        if (ic.getSelectedText(0)?.toString() != selected) {
+        // La sélection a pu changer pendant que le modèle travaillait : on ne remplace que si elle est identique. La
+        // saisie a pu être redémarrée entre-temps : on lit la connexion courante, pas celle captée au clic.
+        val liveIc = host.inputConnection() ?: ic
+        if (liveIc.getSelectedText(0)?.toString() != selected) {
+            AppLog.w(TAG, "correction annulée : la sélection a changé")
             host.showMessage(context.getString(R.string.correction_text_changed))
             return
         }
@@ -261,7 +286,8 @@ class CorrectionAiController(
 
         clearHighlightState()
         markSelfEdit()
-        ic.commitText(highlighted(newText, ranges), 1) // remplace la sélection ; le curseur se place après le texte corrigé
+        liveIc.commitText(highlighted(newText, ranges), 1) // remplace la sélection ; le curseur se place après le texte corrigé
+        undoRecord = UndoRecord(currentText = newText, previousText = selected, absStart = absSelectionStart)
         if (ranges.isEmpty()) return // uniquement des suppressions : rien à surligner
 
         correctionHighlightActive = true
@@ -361,22 +387,48 @@ class CorrectionAiController(
         }
         val newSpan = replacement.toString()
 
-        // Ces phrases sont désormais corrigées, qu'elles aient changé ou non. Une zone rejetée par le
-        // garde-fou n'est pas mémorisée : elle sera renvoyée au modèle à la prochaine correction.
-        correctedBlocks.filterNotNull().forEach { correctedSentences.remember(it) }
+        // Une zone rejetée par le garde-fou n'est pas mémorisée : elle sera renvoyée au modèle à la prochaine correction.
+        fun rememberCorrected() = correctedBlocks.filterNotNull().forEach { correctedSentences.remember(it) }
 
         if (newSpan == oldSpan) {
+            rememberCorrected() // phrases désormais corrigées, même sans changement
             clearHighlightState()
             return
         }
 
         clearHighlightState()
-        markSelfEdit()
 
-        if (captured.startOffset >= 0) {
-            replaceKnownSpan(ic, captured, spanStart, spanEnd, oldSpan, newSpan, ranges)
+        // Pendant que le modèle travaillait (parfois plus de 10 s), l'application a pu redémarrer la saisie : la connexion
+        // captée au clic est alors périmée, et la comparer au texte donnait un faux « le texte a changé ». On repart de la
+        // connexion courante et d'une nouvelle capture, où l'on retrouve la zone par son texte (même si l'utilisateur a tapé
+        // avant ou après, ou déplacé le curseur). Seul un texte réellement modifié annule la correction.
+        val liveIc = host.inputConnection() ?: ic
+        val fresh = captureFieldText(liveIc)
+        val expectedIndex = if (fresh != null && captured.startOffset >= 0 && fresh.startOffset >= 0) {
+            captured.startOffset + spanStart - fresh.startOffset
         } else {
-            replaceWholeText(ic, captured, spanStart, spanEnd, newSpan, ranges)
+            spanStart
+        }
+        val index = if (fresh != null) SpanLocator.find(fresh.text, oldSpan, expectedIndex) else -1
+        if (fresh == null || index < 0) {
+            AppLog.w(TAG, "correction annulée : zone introuvable dans le champ (capture=${fresh != null})")
+            host.showMessage(context.getString(R.string.correction_text_changed))
+            return
+        }
+
+        markSelfEdit()
+        val applied = if (fresh.startOffset >= 0) {
+            replaceKnownSpan(liveIc, fresh, index, index + oldSpan.length, oldSpan, newSpan, ranges)
+        } else {
+            replaceWholeText(liveIc, fresh, index, index + oldSpan.length, newSpan, ranges)
+        }
+        if (applied) {
+            rememberCorrected()
+            undoRecord = UndoRecord(
+                currentText = newSpan,
+                previousText = oldSpan,
+                absStart = if (fresh.startOffset >= 0) fresh.startOffset + index else -1,
+            )
         }
     }
 
@@ -403,7 +455,8 @@ class CorrectionAiController(
         oldSpan: String,
         newSpan: String,
         ranges: List<ChangedRange>,
-    ) {
+        @androidx.annotation.StringRes failureMessage: Int = R.string.correction_text_changed,
+    ): Boolean {
         val absStart = captured.startOffset + spanStart
         val absEnd = captured.startOffset + spanEnd
         val selStart = captured.startOffset + captured.beforeCursor
@@ -435,10 +488,11 @@ class CorrectionAiController(
         }
 
         if (!applied) {
-            host.showMessage(context.getString(R.string.correction_text_changed))
-            return
+            AppLog.w(TAG, "correction annulée : le texte de la zone ne correspond plus au curseur")
+            host.showMessage(context.getString(failureMessage))
+            return false
         }
-        if (ranges.isEmpty()) return // uniquement des suppressions : rien à surligner
+        if (ranges.isEmpty()) return true // uniquement des suppressions : rien à surligner
 
         correctionHighlightText = newSpan.substring(ranges.first().start, ranges.last().endExclusive)
         correctionZoneEnd = absStart + ranges.last().endExclusive
@@ -447,6 +501,7 @@ class CorrectionAiController(
         lastSelectionStart = correctionSelectionStart
         lastSelectionEnd = correctionSelectionEnd
         correctionHighlightActive = true
+        return true
     }
 
     /** Position inconnue (l'app ne fournit pas ExtractedText) : remplace tout le texte accessible autour du curseur. */
@@ -457,7 +512,8 @@ class CorrectionAiController(
         spanEnd: Int,
         newSpan: String,
         ranges: List<ChangedRange>,
-    ) {
+        @androidx.annotation.StringRes failureMessage: Int = R.string.correction_text_changed,
+    ): Boolean {
         val newFull = captured.text.substring(0, spanStart) + newSpan + captured.text.substring(spanEnd)
         val beforeExpected = captured.text.substring(0, captured.beforeCursor)
         val afterExpected = captured.text.substring(captured.text.length - captured.afterCursor)
@@ -477,14 +533,16 @@ class CorrectionAiController(
         }
 
         if (!applied) {
-            host.showMessage(context.getString(R.string.correction_text_changed))
-            return
+            AppLog.w(TAG, "correction annulée : le texte autour du curseur ne correspond plus")
+            host.showMessage(context.getString(failureMessage))
+            return false
         }
-        if (ranges.isEmpty()) return
+        if (ranges.isEmpty()) return true
 
         correctionHighlightText = newFull
         correctionZoneEnd = -1
         correctionHighlightActive = true
+        return true
     }
 
     /**
@@ -520,9 +578,40 @@ class CorrectionAiController(
         }
     }
 
-    /** Appelée avant toute action de l'utilisateur (touche, Corriger, Vocal) : le surlignage disparaît. */
+    /** Appelée avant toute action de l'utilisateur (touche, Corriger, Vocal) : le surlignage disparaît, et l'annulation aussi. */
     fun clearHighlightIfNeeded() {
         removeCorrectionHighlight()
+        dropUndo()
+    }
+
+    /** Bouton Annuler : remet, à la place du texte corrigé, le texte d'avant la correction IA. */
+    fun onUndoClicked() {
+        val record = undoRecord ?: return
+        if (inProgress) return
+        undoRecord = null
+        clearHighlightState()
+        val ic = host.inputConnection()
+        val fresh = ic?.let { captureFieldText(it) }
+        val expectedIndex = if (fresh != null && record.absStart >= 0 && fresh.startOffset >= 0) {
+            record.absStart - fresh.startOffset
+        } else {
+            0
+        }
+        val index = if (fresh != null) SpanLocator.find(fresh.text, record.currentText, expectedIndex) else -1
+        if (ic == null || fresh == null || index < 0) {
+            AppLog.w(TAG, "annulation impossible : texte corrigé introuvable dans le champ (capture=${fresh != null})")
+            host.showMessage(context.getString(R.string.correction_undo_failed))
+            host.updateCorrectionBarVisibility()
+            return
+        }
+        markSelfEdit()
+        val end = index + record.currentText.length
+        if (fresh.startOffset >= 0) {
+            replaceKnownSpan(ic, fresh, index, end, record.currentText, record.previousText, emptyList(), R.string.correction_undo_failed)
+        } else {
+            replaceWholeText(ic, fresh, index, end, record.previousText, emptyList(), R.string.correction_undo_failed)
+        }
+        host.updateCorrectionBarVisibility()
     }
 
     fun clearHighlightState() {

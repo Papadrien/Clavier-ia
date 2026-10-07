@@ -303,7 +303,7 @@ class SuggestionZoneStateActionsTest {
     }
 
     @Test
-    fun `la roue crantee est visible hors saisie et cachee des qu il y a du texte`() {
+    fun `la roue crantee est visible hors saisie ou menu de gauche ouvert, cachee sinon pendant la saisie`() {
         val state = SuggestionZoneState()
         assertTrue(state.settingsButtonVisible) // champ vide : bouton Smart Clipboard
         state.setPasteAvailable(true)
@@ -312,7 +312,12 @@ class SuggestionZoneStateActionsTest {
         state.onFieldTextChanged(true)
         assertFalse(state.settingsButtonVisible) // saisie : bande de mots
         state.toggleMenu()
-        assertFalse(state.settingsButtonVisible) // menu de gauche ouvert pendant la saisie
+        assertTrue(state.settingsButtonVisible) // menu de gauche ouvert pendant la saisie
+        state.toggleMenu()
+        assertFalse(state.settingsButtonVisible) // menu refermé : retour à la bande de mots
+        state.toggleMenu()
+        state.onTyping()
+        assertFalse(state.settingsButtonVisible) // la frappe referme le menu
         state.onFieldTextChanged(false)
         assertTrue(state.settingsButtonVisible)
     }

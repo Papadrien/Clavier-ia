@@ -23,7 +23,7 @@ class KeyboardFieldLayoutTest {
     @Test
     fun `texte et mot de passe gardent la virgule`() {
         for (type in listOf(FieldType.TEXT, FieldType.PASSWORD)) {
-            for (language in languages) for (numberRow in booleans) for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS)) {
+            for (language in languages) for (numberRow in booleans) for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS_2)) {
                 val layout = Keyboards.layoutOf(id, language, numberRow, type)
                 assertTrue(layout.hasKey("comma"), "$type $language $id")
                 assertFalse(layout.hasKey("email_at") || layout.hasKey("url_slash"))
@@ -43,7 +43,7 @@ class KeyboardFieldLayoutTest {
 
     @Test
     fun `e-mail remplace la virgule par arobase sur lettres et symboles`() {
-        for (language in languages) for (numberRow in booleans) for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS)) {
+        for (language in languages) for (numberRow in booleans) for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS_2)) {
             val layout = Keyboards.layoutOf(id, language, numberRow, FieldType.EMAIL)
             assertFalse(layout.hasKey("comma"), "$language $id : la virgule doit disparaître")
             assertTrue(layout.hasKey("email_at"), "$language $id")
@@ -69,7 +69,7 @@ class KeyboardFieldLayoutTest {
 
     @Test
     fun `URL remplace la virgule par une barre oblique`() {
-        for (language in languages) for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS)) {
+        for (language in languages) for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS_2)) {
             val layout = Keyboards.layoutOf(id, language, false, FieldType.URL)
             assertFalse(layout.hasKey("comma"))
             val slash = layout.rows.flatten().first { it.id == "url_slash" }
@@ -96,7 +96,7 @@ class KeyboardFieldLayoutTest {
 
     @Test
     fun `champ numerique, pave quel que soit le layout demande`() {
-        for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS)) for (language in languages) for (numberRow in booleans) {
+        for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS_2)) for (language in languages) for (numberRow in booleans) {
             val pad = Keyboards.layoutOf(id, language, numberRow, FieldType.NUMBER)
             assertEquals(LayoutId.PAD, pad.id)
             assertEquals(4, pad.rows.size)

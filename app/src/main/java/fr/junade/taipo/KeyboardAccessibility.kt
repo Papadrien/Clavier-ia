@@ -41,6 +41,30 @@ internal object KeyChars {
         '(' -> R.string.a11y_char_left_paren
         ')' -> R.string.a11y_char_right_paren
         '\u00B7' -> R.string.a11y_char_middle_dot
+        '~' -> R.string.a11y_char_tilde
+        '`' -> R.string.a11y_char_grave
+        '|' -> R.string.a11y_char_pipe
+        '\u2022' -> R.string.a11y_char_bullet
+        '\u221A' -> R.string.a11y_char_sqrt
+        '\u00F7' -> R.string.a11y_char_divide
+        '\u00D7' -> R.string.a11y_char_multiply
+        '\u00A7' -> R.string.a11y_char_section
+        '\u00A3' -> R.string.a11y_char_pound
+        '\u00A5' -> R.string.a11y_char_yen
+        '\u00A2' -> R.string.a11y_char_cent
+        '^' -> R.string.a11y_char_caret
+        '\u00B0' -> R.string.a11y_char_degree
+        '{' -> R.string.a11y_char_left_brace
+        '}' -> R.string.a11y_char_right_brace
+        '\\' -> R.string.a11y_char_backslash
+        '\u00A9' -> R.string.a11y_char_copyright
+        '\u00AE' -> R.string.a11y_char_registered
+        '\u2122' -> R.string.a11y_char_trademark
+        '\u2713' -> R.string.a11y_char_check
+        '[' -> R.string.a11y_char_left_bracket
+        ']' -> R.string.a11y_char_right_bracket
+        '<' -> R.string.a11y_char_less
+        '>' -> R.string.a11y_char_greater
         else -> null
     }
 
@@ -58,12 +82,15 @@ internal class KeySlot(val key: Key, val bounds: android.graphics.Rect)
 internal class KeySpeech(private val context: Context) {
 
     fun describe(key: Key, layoutId: LayoutId, shifted: Boolean, capsLock: Boolean): String = when (val action = key.action) {
-        is KeyAction.TypeChar -> charName(if (shifted && action.char.isLetter()) action.char.uppercaseChar() else action.char)
+        is KeyAction.TypeChar ->
+            charName(if (shifted && layoutId == LayoutId.LETTERS && action.char.isLetter()) action.char.uppercaseChar() else action.char)
         KeyAction.Shift -> context.getString(if (capsLock) R.string.a11y_key_caps_lock else R.string.a11y_key_shift)
         KeyAction.Backspace -> context.getString(R.string.a11y_key_backspace)
         KeyAction.Enter -> context.getString(R.string.a11y_key_enter)
         KeyAction.Space -> context.getString(R.string.a11y_key_space)
         KeyAction.Emoji -> context.getString(R.string.a11y_key_emoji)
+        KeyAction.SymbolPage ->
+            context.getString(if (layoutId == LayoutId.SYMBOLS) R.string.a11y_key_symbols_next else R.string.a11y_key_symbols_previous)
         KeyAction.ToggleLayout ->
             context.getString(if (layoutId == LayoutId.LETTERS) R.string.a11y_key_to_symbols else R.string.a11y_key_to_letters)
     }

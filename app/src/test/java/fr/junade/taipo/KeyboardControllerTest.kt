@@ -113,6 +113,39 @@ class KeyboardControllerTest {
     }
 
     @Test
+    fun `la touche de page alterne entre les deux pages de symboles et ABC revient aux lettres`() {
+        val controller = KeyboardController()
+        controller.onKey(key("toggle"))
+        assertEquals(LayoutId.SYMBOLS, controller.state.activeLayout)
+
+        controller.onKey(key("symbol_page", Keyboards.symbols))
+        assertEquals(LayoutId.SYMBOLS_2, controller.state.activeLayout)
+        controller.onKey(key("symbol_page", Keyboards.symbolsMore))
+        assertEquals(LayoutId.SYMBOLS, controller.state.activeLayout)
+
+        controller.onKey(key("symbol_page", Keyboards.symbols))
+        controller.onKey(key("toggle", Keyboards.symbolsMore))
+        assertEquals(LayoutId.LETTERS, controller.state.activeLayout)
+        // Un nouvel accès aux symboles recommence par la première page.
+        controller.onKey(key("toggle"))
+        assertEquals(LayoutId.SYMBOLS, controller.state.activeLayout)
+    }
+
+    @Test
+    fun `la touche de page ne saisit rien`() {
+        val controller = KeyboardController(KeyboardState(activeLayout = LayoutId.SYMBOLS))
+        val result = controller.onKey(key("symbol_page", Keyboards.symbols))
+        assertNull(result.commit)
+        assertEquals(0, result.deleteBefore)
+    }
+
+    @Test
+    fun `pi et delta ne passent pas en majuscule sur les pages de symboles`() {
+        val controller = KeyboardController(KeyboardState(activeLayout = LayoutId.SYMBOLS, isShifted = true))
+        assertEquals("π", controller.onKey(key("symbol_π", Keyboards.symbols)).commit)
+    }
+
+    @Test
     fun `les ponctuations sont tappables directement`() {
         val controller = KeyboardController()
         assertEquals(",", controller.onKey(key("comma")).commit)

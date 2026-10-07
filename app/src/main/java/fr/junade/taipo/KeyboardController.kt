@@ -84,7 +84,12 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
         if (key.action != KeyAction.Shift) lastShiftTapAt = null
         return when (val action = key.action) {
             is KeyAction.TypeChar -> {
-                val c = if (state.isShifted && action.char.isLetter()) action.char.uppercaseChar() else action.char
+                // Maj ne vaut que sur les lettres : sur les pages de symboles, π et Δ restent tels quels.
+                val c = if (state.isShifted && state.activeLayout == LayoutId.LETTERS && action.char.isLetter()) {
+                    action.char.uppercaseChar()
+                } else {
+                    action.char
+                }
                 state = state.copy(isShifted = state.isCapsLock)
                 KeyPressResult(commit = c.toString(), newState = state)
             }
@@ -127,7 +132,21 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
 
             KeyAction.ToggleLayout -> {
                 state = state.copy(
+                    // Depuis les lettres : première page de symboles ; depuis l'une des deux pages : lettres.
                     activeLayout = if (state.activeLayout == LayoutId.LETTERS) LayoutId.SYMBOLS else LayoutId.LETTERS,
+                    isShifted = state.isCapsLock,
+                )
+                KeyPressResult(newState = state)
+            }
+
+            // Bascule entre les deux pages de symboles (sans effet sur les lettres).
+            KeyAction.SymbolPage -> {
+                state = state.copy(
+                    activeLayout = when (state.activeLayout) {
+                        LayoutId.SYMBOLS -> LayoutId.SYMBOLS_2
+                        LayoutId.SYMBOLS_2 -> LayoutId.SYMBOLS
+                        else -> state.activeLayout
+                    },
                     isShifted = state.isCapsLock,
                 )
                 KeyPressResult(newState = state)

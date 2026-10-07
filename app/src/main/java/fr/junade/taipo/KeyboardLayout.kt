@@ -2,11 +2,19 @@ package fr.junade.taipo
 
 enum class LayoutId {
     LETTERS,
+
+    /** Page 1 des symboles (~ ` | • √ π ...) : premier panneau affiché à la bascule depuis les lettres. */
     SYMBOLS,
+
+    /** Page 2 des symboles : chiffres, @ # € _ & - + ( ) / , ponctuation. */
+    SYMBOLS_2,
 
     /** Story 1.18 : pavé numérique des champs numériques et téléphone (aucune bascule vers les lettres). */
     PAD,
 }
+
+/** Vrai pour les deux pages du clavier de symboles. */
+val LayoutId.isSymbols: Boolean get() = this == LayoutId.SYMBOLS || this == LayoutId.SYMBOLS_2
 
 data class Key(
     val id: String,
@@ -44,6 +52,13 @@ object Keyboards {
 
     private val toggleLetters = Key("toggle", "123", KeyAction.ToggleLayout, 1.4f)
     private val toggleSymbols = Key("toggle", "ABC", KeyAction.ToggleLayout, 1.4f)
+
+    /**
+     * Touches de bascule entre les deux pages de symboles, à la place de Maj (même largeur que Maj sur
+     * l'AZERTY : 1,4 + 7 touches + Effacer 1,6 = 10 unités). Elles affichent la page vers laquelle elles mènent.
+     */
+    private val toPageTwo = Key("symbol_page", "?123", KeyAction.SymbolPage, 1.4f)
+    private val toPageOne = Key("symbol_page", "=\\<", KeyAction.SymbolPage, 1.4f)
     /**
      * Largeur des touches Maj/Effacer : elle est choisie pour que la largeur d'une lettre reste la
      * même sur toutes les rangées (10 unités par rangée). Sur l'AZERTY, la rangée du bas contient
@@ -167,23 +182,33 @@ object Keyboards {
     /** Disposition QWERTY (anglais) : rangée de chiffres désactivée, chiffres en appui long. */
     val lettersEn = lettersEnBase.withTopRowLongPressDigits()
 
+    /** Rangée du bas de la page 1 : « < » et « > » remplacent la virgule et le point, l'emoji reste à sa place. */
+    private val symbolsBottomRow = listOf(toggleSymbols) + punctuationRow.map { key ->
+        when (key.id) {
+            "comma" -> Key("less", "<", KeyAction.TypeChar('<'), secondary = true)
+            "period" -> Key("greater", ">", KeyAction.TypeChar('>'), secondary = true)
+            else -> key
+        }
+    }
+
+    /** Page 1 des symboles : premier panneau affiché quand on quitte les lettres. */
     val symbols = KeyboardLayout(
         id = LayoutId.SYMBOLS,
         rows = listOf(
-            "0123456789".map(::digit),
-            "&é\"'(-è_çà".map(::symbol),
-            listOf(
-                Key("rparen", ")", KeyAction.TypeChar(')')),
-                Key("equal", "=", KeyAction.TypeChar('=')),
-                Key("at", "@", KeyAction.TypeChar('@')),
-                Key("plus", "+", KeyAction.TypeChar('+')),
-                Key("asterisk", "*", KeyAction.TypeChar('*')),
-                Key("hash", "#", KeyAction.TypeChar('#')),
-                Key("dollar", "$", KeyAction.TypeChar('$')),
-                Key("percent", "%", KeyAction.TypeChar('%')),
-                Key("euro", "€", KeyAction.TypeChar('€'), 0.8f),
-                Key("backspace", "⌫", KeyAction.Backspace, 1.6f),
-            ),
+            "~`|•√π÷×§Δ".map(::symbol),
+            "£¥\$¢^°={}\\".map(::symbol),
+            listOf(toPageTwo) + "%©®™✓[]".map(::symbol) + listOf(backspace),
+            symbolsBottomRow,
+        ),
+    )
+
+    /** Page 2 des symboles : chiffres, @ # € _ & - + ( ) /, ponctuation courante. */
+    val symbolsMore = KeyboardLayout(
+        id = LayoutId.SYMBOLS_2,
+        rows = listOf(
+            "1234567890".map(::digit),
+            "@#€_&-+()/".map(::symbol),
+            listOf(toPageOne) + "*\"':;!?".map(::symbol) + listOf(backspace),
             listOf(toggleSymbols) + punctuationRow,
         ),
     )
@@ -256,6 +281,7 @@ object Keyboards {
             KeyboardLanguage.FR -> if (numberRow) lettersWithNumberRow else letters
         }
         LayoutId.SYMBOLS, LayoutId.PAD -> symbols
+        LayoutId.SYMBOLS_2 -> symbolsMore
     }
 
     /**

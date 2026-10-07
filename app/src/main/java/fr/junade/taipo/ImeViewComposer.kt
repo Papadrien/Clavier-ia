@@ -44,6 +44,12 @@ class ImeViewComposer(
 
         fun onCorrectClicked()
 
+        /** Bouton Annuler (le bouton Corriger juste après une correction IA). */
+        fun onUndoClicked()
+
+        /** Action de la barre du haut (Vocal, Générer, suggestion, presse-papiers, collage…) : l'annulation n'est plus proposée. */
+        fun onTopBarAction()
+
         fun onVoiceTouch(event: MotionEvent): Boolean
 
         /** Lot 20 : activation du bouton Vocal par l'accessibilité (TalkBack, double appui) : bascule l'écoute. */
@@ -103,28 +109,56 @@ class ImeViewComposer(
 
         correctionBar = CorrectionBarView(context)
         correctionBar.setOnCorrectListener { host.onCorrectClicked() }
-        correctionBar.setOnGenerateClickListener { prompt.enter() }
+        correctionBar.setOnUndoListener { host.onUndoClicked() }
+        correctionBar.setOnGenerateClickListener {
+            host.onTopBarAction()
+            prompt.enter()
+        }
         val voiceTouchListener = View.OnTouchListener { view, event ->
             // Rendu seul (lot 08) : l'écouteur consomme l'événement, la vue ne passerait pas à « pressée » sans cela.
             when (event.actionMasked) {
-                MotionEvent.ACTION_DOWN -> view.isPressed = true
+                MotionEvent.ACTION_DOWN -> {
+                    view.isPressed = true
+                    host.onTopBarAction()
+                }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> view.isPressed = false
             }
             host.onVoiceTouch(event)
         }
         // Lot 20 : l'écouteur tactile ci-dessus consomme tout toucher, le clic n'arrive donc que de l'accessibilité.
         correctionBar.voiceButton.setOnTouchListener(voiceTouchListener)
-        correctionBar.voiceButton.setOnClickListener { host.onVoiceClick() }
+        correctionBar.voiceButton.setOnClickListener {
+            host.onTopBarAction()
+            host.onVoiceClick()
+        }
         // Le bouton micro de la barre du prompt déclenche la même dictée (appui bref : marche/arrêt, appui long : tant que maintenu).
         prompt.promptBar.voiceButton.setOnTouchListener(voiceTouchListener)
         prompt.promptBar.voiceButton.setOnClickListener { host.onVoiceClick() }
-        correctionBar.setOnEmojiSuggestionClickListener { host.onEmojiSuggestionClicked() }
+        correctionBar.setOnEmojiSuggestionClickListener {
+            host.onTopBarAction()
+            host.onEmojiSuggestionClicked()
+        }
         // Le même bouton ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme.
-        correctionBar.setOnClipboardClickListener { clipboard.onPanelButtonClicked() }
-        correctionBar.setOnClipboardCloseClickListener { clipboard.hidePanel() }
-        correctionBar.setOnSettingsClickListener { host.openAppHome() }
-        correctionBar.setOnPasteClickListener { clipboard.onPasteTapped() }
-        correctionBar.setOnWordSuggestionClickListener { suggestion -> host.onWordSuggestionClicked(suggestion) }
+        correctionBar.setOnClipboardClickListener {
+            host.onTopBarAction()
+            clipboard.onPanelButtonClicked()
+        }
+        correctionBar.setOnClipboardCloseClickListener {
+            host.onTopBarAction()
+            clipboard.hidePanel()
+        }
+        correctionBar.setOnSettingsClickListener {
+            host.onTopBarAction()
+            host.openAppHome()
+        }
+        correctionBar.setOnPasteClickListener {
+            host.onTopBarAction()
+            clipboard.onPasteTapped()
+        }
+        correctionBar.setOnWordSuggestionClickListener { suggestion ->
+            host.onTopBarAction()
+            host.onWordSuggestionClicked(suggestion)
+        }
 
         emojiPanel = EmojiPanelView(context)
         emojiPanel.visibility = View.GONE

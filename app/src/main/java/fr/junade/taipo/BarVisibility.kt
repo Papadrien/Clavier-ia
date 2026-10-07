@@ -87,6 +87,7 @@ internal object BarVisibility {
         CorrectionBarState.IDLE -> CorrectAppearance(R.string.correction_button_idle, enabled = true, alpha = 1f)
         CorrectionBarState.LOADING -> CorrectAppearance(R.string.correction_button_loading, enabled = false, alpha = 0.6f)
         CorrectionBarState.CORRECTING -> CorrectAppearance(R.string.correction_button_correcting, enabled = false, alpha = 0.6f)
+        CorrectionBarState.UNDO -> CorrectAppearance(R.string.correction_button_undo, enabled = true, alpha = 1f)
     }
 
     fun voiceAppearance(state: VoiceBarState): VoiceAppearance = when (state) {

@@ -124,6 +124,7 @@ class KeyboardViewRegressionTest {
                 }
             }
             add("symboles" to Keyboards.layoutOf(LayoutId.SYMBOLS))
+            add("symboles 2" to Keyboards.layoutOf(LayoutId.SYMBOLS_2))
             for (field in FieldType.entries) add("champ/$field" to Keyboards.layoutOf(LayoutId.LETTERS, fieldType = field))
         }
 

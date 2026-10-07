@@ -101,6 +101,17 @@ class PromptBarView(context: Context) : LinearLayout(context) {
             renderSendButton()
         }
 
+    /**
+     * Vrai entre l'appui sur stop et le retour du moteur : une roue de chargement remplace l'icône et l'envoi est
+     * impossible (le moteur n'a pas encore rendu la main), avant que le bouton redevienne « envoyer ».
+     */
+    var stopping: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            renderSendButton()
+        }
+
     /** État de la dictée (écoute, chargement, transcription) : même rendu que le bouton Vocal de la barre normale. */
     var voiceState: VoiceBarState = VoiceBarState.IDLE
         set(value) {
@@ -386,7 +397,15 @@ class PromptBarView(context: Context) : LinearLayout(context) {
     }
 
     private fun renderSendButton() {
-        if (generating) {
+        if (stopping) {
+            sendButton.setImageDrawable(null)
+            sendButton.background = stopBackground
+            sendButton.contentDescription = context.getString(R.string.prompt_stopping_description)
+            ViewCompat.setStateDescription(sendButton, context.getString(R.string.prompt_stopping_description))
+            sendButton.isEnabled = false
+            sendButton.alpha = 0.6f
+            sendSpinner.visibility = View.VISIBLE
+        } else if (generating) {
             sendButton.setImageResource(R.drawable.ic_stop)
             sendButton.background = stopBackground
             sendButton.contentDescription = context.getString(R.string.prompt_stop_description)

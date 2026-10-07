@@ -15,10 +15,19 @@ class BarVisibilityTest {
     fun `occupe pendant une ecoute une transcription ou une correction, pas au repos`() {
         assertFalse(BarVisibility.isBusy(VoiceBarState.IDLE, CorrectionBarState.IDLE))
         assertFalse(BarVisibility.isBusy(VoiceBarState.IDLE, CorrectionBarState.HIDDEN))
+        assertFalse(BarVisibility.isBusy(VoiceBarState.IDLE, CorrectionBarState.UNDO))
         assertTrue(BarVisibility.isBusy(VoiceBarState.RECORDING, CorrectionBarState.IDLE))
         assertTrue(BarVisibility.isBusy(VoiceBarState.LOADING, CorrectionBarState.IDLE))
         assertTrue(BarVisibility.isBusy(VoiceBarState.IDLE, CorrectionBarState.LOADING))
         assertTrue(BarVisibility.isBusy(VoiceBarState.IDLE, CorrectionBarState.CORRECTING))
+    }
+
+    @Test
+    fun `apres une correction le bouton Annuler prend la place de Corriger et reste visible`() {
+        val visible = BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.UNDO, zoneWithText(), false)
+        assertTrue(visible.correct)
+        assertFalse(visible.generate)
+        assertFalse(visible.voice)
     }
 
     @Test
@@ -76,6 +85,15 @@ class BarVisibilityTest {
     }
 
     @Test
+    fun `menu de gauche ouvert pendant la saisie montre le bouton Smart Clipboard et la roue crantee`() {
+        val visible = BarVisibility.zoneContent(zoneWithText().apply { toggleMenu() }, false)
+        assertTrue(visible.clipboardButton)
+        assertFalse(visible.words)
+        assertTrue(visible.menuButton)
+        assertTrue(visible.settingsButton)
+    }
+
+    @Test
     fun `zone avant saisie montre le bouton Smart Clipboard et la roue crantee`() {
         val visible = BarVisibility.zoneContent(SuggestionZoneState(), false)
         assertTrue(visible.clipboardButton)
@@ -117,6 +135,10 @@ class BarVisibilityTest {
 
     @Test
     fun `apparence de Corriger selon l etat`() {
+        val undo = BarVisibility.correctAppearance(CorrectionBarState.UNDO)!!
+        assertEquals(R.string.correction_button_undo, undo.label)
+        assertTrue(undo.enabled)
+        assertEquals(1f, undo.alpha)
         assertNull(BarVisibility.correctAppearance(CorrectionBarState.HIDDEN))
         val idle = BarVisibility.correctAppearance(CorrectionBarState.IDLE)!!
         assertEquals(R.string.correction_button_idle, idle.label)

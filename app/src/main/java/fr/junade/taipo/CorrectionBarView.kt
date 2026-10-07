@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.Gravity
 import android.view.View
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import fr.junade.taipo.dictionary.WordSuggestion
@@ -45,7 +44,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     }
 
     private val style = BarStyle(context)
-    private val correctButton = Button(context)
+    private val correctButton = ImageButton(context)
 
     /**
      * Zone de gauche : bande de mots, bouton Smart Clipboard, puce de collage ou suggestions
@@ -53,7 +52,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
      */
     private val zoneView = SuggestionZoneView(context, style)
 
-    /** Roue crantée : ouvre la page d'accueil de l'application, visible hors saisie seulement. */
+    /** Roue crantée : ouvre la page d'accueil de l'application, visible hors saisie, ou quand le menu « ··· » de gauche est ouvert. */
     private val settingsButton = ImageButton(context)
     private var settingsListener: (() -> Unit)? = null
 
@@ -78,6 +77,8 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private var menuBackgroundExpanded: Boolean? = null
     val voiceButton = ImageButton(context)
     private var listener: OnCorrectListener? = null
+    private var undoListener: (() -> Unit)? = null
+    private var correctShowsUndoIcon = false
 
     /** Story 5.1 : bouton « Générer » (icône), qui bascule la barre en mode prompt ; rangé avec Vocal derrière le menu de droite. */
     private val generateButton = ImageButton(context)
@@ -116,7 +117,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
         )
 
-        style.styleBarIconButton(menuButton, R.drawable.ic_more)
+        style.styleBarIconButton(menuButton, R.drawable.ic_keyboard_right)
         menuButton.contentDescription = context.getString(R.string.clipboard_menu_description)
         menuButton.setOnClickListener {
             zoneState.toggleMenu()
@@ -139,7 +140,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         addView(zoneView, LayoutParams(0, barHeight, 1f).apply { marginEnd = gap })
 
         // Story 5.1 : « Générer », à gauche de Vocal. Icône seule (40 dp) pour ménager la place de la zone de gauche.
-        style.styleRoundIconButton(generateButton, R.drawable.ic_generate)
+        style.styleRoundIconButton(generateButton, R.drawable.ic_rate_review)
         generateButton.contentDescription = context.getString(R.string.generate_button_description)
         generateButton.setOnClickListener {
             collapseMenu()
@@ -161,17 +162,23 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
         )
 
-        style.styleButton(correctButton, R.color.accent)
+        // Icône seule, grise comme Vocal ; l'état (chargement, correction…) passe par la transparence et la description d'accessibilité.
+        style.styleRoundIconButton(correctButton, R.drawable.ic_spellcheck)
         correctButton.setOnClickListener {
-            if (state == CorrectionBarState.IDLE) {
-                collapseMenu()
-                listener?.onCorrectClicked()
+            when (state) {
+                CorrectionBarState.IDLE -> {
+                    collapseMenu()
+                    listener?.onCorrectClicked()
+                }
+                // Après une correction : le même bouton rétablit le texte d'avant.
+                CorrectionBarState.UNDO -> undoListener?.invoke()
+                else -> Unit
             }
         }
-        addView(correctButton, LayoutParams(LayoutParams.WRAP_CONTENT, barHeight))
+        addView(correctButton, LayoutParams(iconButtonWidth, barHeight))
 
         // Menu de droite : pendant les suggestions de mots, il range derrière lui Vocal et Générer (Corriger reste visible à sa gauche).
-        style.styleBarIconButton(actionsMenuButton, R.drawable.ic_more)
+        style.styleBarIconButton(actionsMenuButton, R.drawable.ic_robot)
         actionsMenuButton.contentDescription = context.getString(R.string.actions_menu_description)
         actionsMenuButton.setOnClickListener {
             zoneState.toggleActionsMenu()
@@ -262,6 +269,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         this.listener = listener
     }
 
+    /** Touche sur « Annuler » (le bouton Corriger après une correction) : rétablir le texte d'avant la correction. */
+    fun setOnUndoListener(listener: () -> Unit) {
+        undoListener = listener
+    }
+
     fun setOnClipboardClickListener(listener: OnClipboardClickListener) {
         zoneView.setOnClipboardClickListener(listener)
     }
@@ -330,7 +342,12 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         BarVisibility.correctAppearance(state)?.let { appearance ->
             correctButton.isEnabled = appearance.enabled
             correctButton.alpha = appearance.alpha
-            correctButton.text = context.getString(appearance.label)
+            correctButton.contentDescription = context.getString(appearance.label)
+        }
+        val showsUndo = state == CorrectionBarState.UNDO
+        if (showsUndo != correctShowsUndoIcon) {
+            correctShowsUndoIcon = showsUndo
+            correctButton.setImageResource(if (showsUndo) R.drawable.ic_undo else R.drawable.ic_spellcheck)
         }
         renderActionButtons()
     }

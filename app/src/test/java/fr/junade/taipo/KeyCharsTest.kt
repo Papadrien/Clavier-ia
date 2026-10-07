@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 /** Lot 20 : chaque signe affiché sur une touche ou dans une bulle d'appui long a un nom que TalkBack peut prononcer. */
 class KeyCharsTest {
 
-    private val allLayouts = listOf(Keyboards.letters, Keyboards.lettersEn, Keyboards.symbols)
+    private val allLayouts = listOf(Keyboards.letters, Keyboards.lettersEn, Keyboards.symbols, Keyboards.symbolsMore)
 
     private fun typedChars(): Set<Char> = allLayouts.flatMap { it.rows.flatten() }.flatMap { key ->
         val own = (key.action as? KeyAction.TypeChar)?.char

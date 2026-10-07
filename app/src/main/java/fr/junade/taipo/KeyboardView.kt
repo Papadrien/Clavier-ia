@@ -72,6 +72,20 @@ class KeyboardView(context: Context) : View(context) {
             requestLayout()
         }
 
+    /**
+     * Nombre de rangées sur lequel se règle la hauteur de la vue : elle ne descend jamais sous ce nombre de rangées de
+     * référence, même si la disposition affichée en compte moins (symboles à 4 rangées sous des lettres à 5 avec la
+     * rangée de chiffres). Les rangées s'étirent alors : la hauteur du clavier ne change pas d'une disposition à l'autre.
+     */
+    var minRowCount: Int = 0
+        set(value) {
+            if (field == value) return
+            field = value
+            slotCache = null
+            requestLayout()
+            invalidate()
+        }
+
     /** Story 1.12 : coefficient appliqué à la hauteur des rangées (1 = hauteur de référence). */
     var heightScale: Float = KeyboardHeight.DEFAULT.scale
         set(value) {
@@ -399,7 +413,7 @@ class KeyboardView(context: Context) : View(context) {
         // L'état pressé ne change pas la couleur : il enfonce la touche (voir ci-dessous).
         val face = when {
             key.action is KeyAction.Shift && isShifted -> activePaint
-            key.action is KeyAction.ToggleLayout && layout.id == LayoutId.SYMBOLS -> activePaint
+            key.action is KeyAction.ToggleLayout && layout.id.isSymbols -> activePaint
             style == KeyStyle.ACCENT -> enterPaint
             style == KeyStyle.SECONDARY -> secondaryPaint
             else -> normalPaint
@@ -509,7 +523,11 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     private fun autoSizeTextPaint(key: Key) {
-        val base = if (key.id == "toggle") dims.keyTextSizeLarge else dims.keyTextSize
+        val base = when (key.id) {
+            "toggle" -> dims.keyTextSizeLarge
+            "symbol_page" -> dims.keyTextSize * SYMBOL_PAGE_TEXT_RATIO // « ?123 » et « =\< » : 4 signes sur une touche étroite
+            else -> dims.keyTextSize
+        }
         // Rangées basses (paysage, hauteur réduite) : le texte ne doit pas déborder de la touche.
         // Lot 21 : la taille n'est reposée sur le Paint que si elle change (la plupart des touches ont la même).
         val size = base.coerceAtMost(keyRect.height() * 0.62f)
@@ -522,7 +540,11 @@ class KeyboardView(context: Context) : View(context) {
     /** Lot 21 : la majuscule à dessiner à la place du libellé (Maj actif sur une lettre), ou [NO_CHAR]. Sans allocation. */
     private fun shiftedChar(key: Key): Char {
         val action = key.action
-        return if (action is KeyAction.TypeChar && isShifted && action.char.isLetter()) action.char.uppercaseChar() else NO_CHAR
+        return if (action is KeyAction.TypeChar && isShifted && layout.id == LayoutId.LETTERS && action.char.isLetter()) {
+            action.char.uppercaseChar()
+        } else {
+            NO_CHAR
+        }
     }
 
     /** Lot 21 : dessine un caractère par le tampon [charBuffer] (aucune String créée, contrairement à `Char.toString()`). */
@@ -533,12 +555,13 @@ class KeyboardView(context: Context) : View(context) {
 
     private fun displayLabel(key: Key): String = when (val action = key.action) {
         is KeyAction.TypeChar ->
-            if (isShifted && action.char.isLetter()) action.char.uppercaseChar().toString() else key.label
+            if (isShifted && layout.id == LayoutId.LETTERS && action.char.isLetter()) action.char.uppercaseChar().toString() else key.label
 
         // Icônes VectorDrawable (lot 09), dessinées par drawKeyIcon.
         KeyAction.Shift, KeyAction.Backspace, KeyAction.Enter -> ""
         KeyAction.Space -> ""
         KeyAction.ToggleLayout -> if (layout.id == LayoutId.LETTERS) "123" else "ABC"
+        KeyAction.SymbolPage -> key.label // « ?123 » (page 1) ou « =\< » (page 2)
         KeyAction.Emoji -> "" // icône dessinée par drawEmojiIcon
     }
 
@@ -551,7 +574,7 @@ class KeyboardView(context: Context) : View(context) {
 
     private fun keyStyle(key: Key): KeyStyle = when (key.action) {
         KeyAction.Enter -> KeyStyle.ACCENT
-        KeyAction.Shift, KeyAction.Backspace, KeyAction.ToggleLayout, KeyAction.Emoji -> KeyStyle.NORMAL
+        KeyAction.Shift, KeyAction.Backspace, KeyAction.ToggleLayout, KeyAction.SymbolPage, KeyAction.Emoji -> KeyStyle.NORMAL
         KeyAction.Space -> KeyStyle.SECONDARY
         is KeyAction.TypeChar -> if (key.secondary) KeyStyle.NORMAL else KeyStyle.SECONDARY
     }
@@ -717,9 +740,13 @@ class KeyboardView(context: Context) : View(context) {
     private fun scheduleLongPress(key: Key?) {
         cancelKeyLongPress()
         if (key != null && (key.popup.isNotEmpty() || key.longPressChar != null)) {
-            repeatHandler.postDelayed(longPressRunnable, ViewConfiguration.getLongPressTimeout().toLong())
+            repeatHandler.postDelayed(longPressRunnable, longPressDelayMs())
         }
     }
+
+    /** Délai système d'appui long (réglable dans l'accessibilité), réduit de 20 % pour que les accents et chiffres s'affichent plus vite. */
+    private fun longPressDelayMs(): Long =
+        (ViewConfiguration.getLongPressTimeout() * LONG_PRESS_DELAY_RATIO).toLong()
 
     private fun cancelKeyLongPress() {
         repeatHandler.removeCallbacks(longPressRunnable)
@@ -959,7 +986,7 @@ class KeyboardView(context: Context) : View(context) {
     fun bottomInsetPx(): Int = bottomMarginPx().toInt()
 
     private fun rowsHeightPx(): Float =
-        dp(metrics().rowsHeightDp(layout.rows.size, heightScale))
+        dp(metrics().rowsHeightDp(maxOf(layout.rows.size, minRowCount), heightScale))
     private fun bottomMarginPx(): Float = dp(metrics().bottomMarginDp)
     private fun usableHeightPx(): Float = (height - bottomMarginPx()).coerceAtLeast(0f)
 
@@ -973,5 +1000,11 @@ class KeyboardView(context: Context) : View(context) {
     private companion object {
         /** Lot 21 : « pas de caractère » (voir [shiftedChar]). */
         const val NO_CHAR = '\u0000'
+
+        /** Taille du libellé des touches de bascule entre les pages de symboles, par rapport à une touche normale. */
+        const val SYMBOL_PAGE_TEXT_RATIO = 0.75f
+
+        /** Part du délai système d'appui long utilisée pour les touches à pop-up ou à chiffre (−20 %). */
+        const val LONG_PRESS_DELAY_RATIO = 0.8f
     }
 }

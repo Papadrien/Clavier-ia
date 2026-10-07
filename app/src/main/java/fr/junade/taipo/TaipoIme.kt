@@ -291,6 +291,8 @@ class TaipoIme : InputMethodService() {
                 override fun onDeleteSwipeCancel() = this@TaipoIme.onDeleteSwipeCancel()
                 override fun onRecentEmojiClicked(emoji: String) = onRecentEmojiBarTapped(emoji)
                 override fun onCorrectClicked() = correction.onCorrectClicked()
+                override fun onUndoClicked() = correction.onUndoClicked()
+                override fun onTopBarAction() = correction.dropUndo()
                 override fun onVoiceTouch(event: MotionEvent): Boolean = voice.onButtonTouch(event)
                 override fun onVoiceClick() = voice.onAccessibilityClick()
                 override fun onEmojiSuggestionClicked() = onEmojiSuggestionTapped()
@@ -365,6 +367,8 @@ class TaipoIme : InputMethodService() {
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
         // Lot 3.6 : section de trace pour mesurer l'ouverture du clavier (le `return` reste local à la fonction).
+        // Même champ relancé par l'application (restarting) : l'annulation reste possible, le texte est retrouvé par son contenu.
+        if (!restarting) correction.dropUndo(notify = false)
         traced(Sections.START_INPUT_VIEW) { startInputView(info) }
     }
 
@@ -447,6 +451,7 @@ class TaipoIme : InputMethodService() {
         if (viewComposer.isComposed) hideEmojiPanel(resync = false)
         clipboard.hidePanel(resync = false)
         correction.clearHighlightState()
+        if (finishingInput) correction.dropUndo(notify = false)
         clipboard.stopListening()
         if (isRecording) {
             voice.cancelRecording()
@@ -1455,7 +1460,11 @@ class TaipoIme : InputMethodService() {
                     !ic.getSelectedText(0).isNullOrEmpty() // tout le texte peut être sélectionné
                 )
         correctionBar.setFieldHasText(hasText)
-        correctionBar.state = if (hasText) CorrectionBarState.IDLE else CorrectionBarState.HIDDEN
+        correctionBar.state = when {
+            !hasText -> CorrectionBarState.HIDDEN
+            correction.canUndo -> CorrectionBarState.UNDO // juste après une correction : le bouton annule
+            else -> CorrectionBarState.IDLE
+        }
     }
 
     private fun pressEnter() {
@@ -1471,6 +1480,10 @@ class TaipoIme : InputMethodService() {
     }
 
     private fun applyState() {
+        // Hauteur constante : les pages de symboles (4 rangées) prennent la hauteur du clavier de lettres affiché,
+        // qui compte une rangée de plus avec la rangée de chiffres. Évite de faire défiler l'application dessous.
+        keyboardView.minRowCount =
+            Keyboards.layoutOf(LayoutId.LETTERS, controller.state.language, numberRowEnabled, fieldType).rows.size
         keyboardView.layout = Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled, fieldType)
         keyboardView.isShifted = controller.state.isShifted
         keyboardView.isCapsLock = controller.state.isCapsLock

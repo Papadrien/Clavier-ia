@@ -278,6 +278,9 @@ class PromptModeController(
         }
     }
 
+    /** Un stop a été demandé et le moteur n'a pas encore rendu la main : la barre montre une roue à la place du bouton. */
+    private var stopping = false
+
     /**
      * Exclusion mutuelle correction / dictée / génération : vrai tant qu'une génération occupe le moteur,
      * y compris le court instant où un stop attend le retour du moteur. Les boutons Corriger et Vocal sont
@@ -390,7 +393,8 @@ class PromptModeController(
      * l'application n'est jamais touché (insertion par « Ajouter le texte » : story 5.3).
      */
     private fun launchGeneration(model: AiModel, history: List<ChatExchange>, prompt: String) {
-        generationJob = scope.launch {
+        stopping = false
+        val job = scope.launch {
             try {
                 val outcome = generationSession.send(
                     model = model,
@@ -409,6 +413,14 @@ class PromptModeController(
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de la génération", t)
                 onGenerationFailed(t)
+            }
+        }
+        generationJob = job
+        // Fin de l'appel au moteur (terminé, arrêté, en échec ou annulé) : la roue d'arrêt laisse place au bouton « envoyer ».
+        job.invokeOnCompletion {
+            mainHandler.post {
+                if (generationJob === job || generationJob == null) stopping = false
+                applyViews()
             }
         }
     }
@@ -483,6 +495,9 @@ class PromptModeController(
         if (generationSessionLazy.isInitialized()) generationSession.stop()
         conversation.interrupt()
         conversation.messages.lastOrNull()?.let { chatZone.updateLastResponse(it) }
+        // Le moteur met un court instant à rendre la main : une roue de chargement tient lieu de bouton jusque-là
+        // (voir launchGeneration, qui l'ôte à la fin de l'appel), puis « envoyer » réapparaît.
+        stopping = generationJob?.isActive == true
         applyViews()
     }
 
@@ -494,6 +509,7 @@ class PromptModeController(
         if (generationSessionLazy.isInitialized()) generationSession.reset()
         generationJob?.cancel()
         generationJob = null
+        stopping = false
         conversation.clear()
         chatAvailable = false
         chatShown = true
@@ -517,6 +533,7 @@ class PromptModeController(
         if (this::chatZone.isInitialized) chatZone.visibility = if (chatVisible) View.VISIBLE else View.GONE
         promptBar.setChatToggleVisible(active && chatAvailable)
         promptBar.setChatShown(chatVisible)
+        promptBar.stopping = stopping && !conversation.isGenerating && generationJob?.isActive == true
         promptBar.generating = conversation.isGenerating // bouton rond : stop pendant la génération (décision 10)
     }
 

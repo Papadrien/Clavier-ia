@@ -41,6 +41,8 @@
     <string name="correction_button_idle">Corriger</string>
     <string name="correction_button_loading">Chargement du modèle…</string>
     <string name="correction_button_correcting">Correction…</string>
+    <string name="correction_button_undo">Annuler la correction</string>
+    <string name="correction_undo_failed">Annulation impossible : le texte a changé depuis la correction.</string>
     <string name="correction_no_model_selected">Aucun modèle sélectionné : ouvrez « Modèle IA » dans les paramètres.</string>
     <string name="correction_nothing_new">Rien de nouveau à corriger.</string>
     <string name="correction_no_change">Aucune correction appliquée : texte inchangé ou réponse du modèle refusée.</string>
@@ -120,6 +122,7 @@
     <string name="prompt_cancel_description">Quitter le mode prompt</string>
     <string name="prompt_send_description">Envoyer le prompt</string>
     <string name="prompt_stop_description">Arrêter la génération</string>
+    <string name="prompt_stopping_description">Arrêt de la génération en cours…</string>
     <string name="prompt_chat_toggle_description">Afficher ou masquer la conversation</string>
     <string name="prompt_response_pending">…</string>
     <string name="prompt_loading_model">Chargement du modèle…</string>
@@ -183,6 +186,8 @@
     <string name="a11y_key_emoji">Emoji</string>
     <string name="a11y_key_to_symbols">Chiffres et symboles</string>
     <string name="a11y_key_to_letters">Lettres</string>
+    <string name="a11y_key_symbols_next">Symboles, page suivante</string>
+    <string name="a11y_key_symbols_previous">Symboles, page précédente</string>
     <string name="a11y_state_on">Activé</string>
     <string name="a11y_state_off">Désactivé</string>
     <!-- Actions proposées dans le menu d\'actions de TalkBack pour une touche à appui long : %1$s = nom parlé du caractère. -->
@@ -211,6 +216,30 @@
     <string name="a11y_char_left_paren">Parenthèse ouvrante</string>
     <string name="a11y_char_right_paren">Parenthèse fermante</string>
     <string name="a11y_char_middle_dot">Point médian</string>
+    <string name="a11y_char_tilde">Tilde</string>
+    <string name="a11y_char_grave">Accent grave</string>
+    <string name="a11y_char_pipe">Barre verticale</string>
+    <string name="a11y_char_bullet">Puce</string>
+    <string name="a11y_char_sqrt">Racine carrée</string>
+    <string name="a11y_char_divide">Divisé par</string>
+    <string name="a11y_char_multiply">Multiplié par</string>
+    <string name="a11y_char_section">Paragraphe</string>
+    <string name="a11y_char_pound">Livre</string>
+    <string name="a11y_char_yen">Yen</string>
+    <string name="a11y_char_cent">Cent</string>
+    <string name="a11y_char_caret">Accent circonflexe</string>
+    <string name="a11y_char_degree">Degré</string>
+    <string name="a11y_char_left_brace">Accolade ouvrante</string>
+    <string name="a11y_char_right_brace">Accolade fermante</string>
+    <string name="a11y_char_backslash">Barre oblique inverse</string>
+    <string name="a11y_char_copyright">Copyright</string>
+    <string name="a11y_char_registered">Marque déposée</string>
+    <string name="a11y_char_trademark">Marque commerciale</string>
+    <string name="a11y_char_check">Coche</string>
+    <string name="a11y_char_left_bracket">Crochet ouvrant</string>
+    <string name="a11y_char_right_bracket">Crochet fermant</string>
+    <string name="a11y_char_less">Inférieur à</string>
+    <string name="a11y_char_greater">Supérieur à</string>
     <!-- Panneau emoji, barre du haut, presse-papiers. -->
     <string name="a11y_emoji_back_to_keyboard">Retour au clavier</string>
     <string name="a11y_suggestion_replaces_on_space">Remplacera le mot à l\'espace</string>

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 
 class KeyboardLayoutTest {
 
-    private val layouts = listOf(Keyboards.letters, Keyboards.lettersEn, Keyboards.symbols)
+    private val layouts = listOf(Keyboards.letters, Keyboards.lettersEn, Keyboards.symbols, Keyboards.symbolsMore)
 
     @Test
     fun `chaque layout a 4 rangees`() {
@@ -62,35 +62,68 @@ class KeyboardLayoutTest {
         assertTrue(allKeys.count { it.action == KeyAction.Space } == 1)
     }
 
-    @Test
-    fun `le clavier symboles a les chiffres 0 a 9`() {
-        val digits = Keyboards.symbols.rows.flatten()
-            .mapNotNull { (it.action as? KeyAction.TypeChar)?.char }
-            .filter { it.isDigit() }
+    private fun symbolChars(layout: KeyboardLayout) =
+        layout.rows.flatten().mapNotNull { (it.action as? KeyAction.TypeChar)?.char }
 
-        assertEquals(('0'..'9').toList(), digits)
+    @Test
+    fun `la page 2 des symboles a les chiffres 1 a 0 en premiere rangee`() {
+        assertEquals("1234567890".toList(), symbolChars(Keyboards.symbolsMore).take(10))
+        assertEquals(10, Keyboards.symbolsMore.rows.first().size)
     }
 
     @Test
-    fun `le clavier symboles a la ponctuation et les touches effacer entree bascule`() {
-        assertActionPresent(Keyboards.symbols, KeyAction.Backspace)
-        assertActionPresent(Keyboards.symbols, KeyAction.Enter)
-        assertActionPresent(Keyboards.symbols, KeyAction.ToggleLayout)
+    fun `la page 1 des symboles correspond a la premiere capture`() {
+        val rows = Keyboards.symbols.rows.map { row -> row.mapNotNull { (it.action as? KeyAction.TypeChar)?.char }.joinToString("") }
+        assertEquals("~`|•√π÷×§Δ", rows[0])
+        assertEquals("£¥\$¢^°={}\\", rows[1])
+        assertEquals("%©®™✓[]", rows[2])
+        assertEquals("<>", rows[3])
+        assertEquals(LayoutId.SYMBOLS, Keyboards.symbols.id)
+    }
 
-        val chars = Keyboards.symbols.rows.flatten()
-            .mapNotNull { (it.action as? KeyAction.TypeChar)?.char }
-        listOf(',', '.', '\'', '(', ')', '&', 'é', 'è', 'à', 'ç').forEach { c ->
-            assertTrue(c in chars, "Le caractère $c doit être présent sur le clavier symboles")
+    @Test
+    fun `la page 2 des symboles correspond a la seconde capture`() {
+        val rows = Keyboards.symbolsMore.rows.map { row -> row.mapNotNull { (it.action as? KeyAction.TypeChar)?.char }.joinToString("") }
+        assertEquals("1234567890", rows[0])
+        assertEquals("@#€_&-+()/", rows[1])
+        assertEquals("*\"':;!?", rows[2])
+        assertEquals(",.", rows[3])
+        assertEquals(LayoutId.SYMBOLS_2, Keyboards.symbolsMore.id)
+    }
+
+    @Test
+    fun `les pages de symboles ont effacer entree et bascule vers les lettres`() {
+        listOf(Keyboards.symbols, Keyboards.symbolsMore).forEach { layout ->
+            assertActionPresent(layout, KeyAction.Backspace)
+            assertActionPresent(layout, KeyAction.Enter)
+            assertActionPresent(layout, KeyAction.ToggleLayout)
+            assertTrue(layout.rows.flatten().none { it.action == KeyAction.Shift })
         }
     }
 
     @Test
-    fun `le clavier symboles contient les accents et symboles speciaux`() {
-        val chars = Keyboards.symbols.rows.flatten()
-            .mapNotNull { (it.action as? KeyAction.TypeChar)?.char }
+    fun `la touche de bascule des pages est a la place de maj et mene a l autre page`() {
+        listOf(Keyboards.symbols to "?123", Keyboards.symbolsMore to "=\\<").forEach { (layout, label) ->
+            val first = layout.rows[2].first()
+            assertEquals(KeyAction.SymbolPage, first.action)
+            assertEquals(label, first.label)
+            assertEquals(1.4f, first.weight)
+            assertEquals(1, layout.rows.flatten().count { it.action == KeyAction.SymbolPage })
+        }
+    }
 
-        listOf('@', '+', '*', '#', '$', '%', '€', '=', '_', '-').forEach { c ->
-            assertTrue(c in chars, "Le caractère $c doit être présent sur le clavier symboles")
+    @Test
+    fun `les pages de symboles gardent 10 unites par rangee`() {
+        listOf(Keyboards.symbols, Keyboards.symbolsMore).forEach { layout ->
+            layout.rows.forEach { assertEquals(10f, it.sumOf { k -> k.weight.toDouble() }.toFloat(), 0.001f) }
+        }
+    }
+
+    @Test
+    fun `le clavier symboles contient les symboles courants sur les deux pages`() {
+        val chars = symbolChars(Keyboards.symbols) + symbolChars(Keyboards.symbolsMore)
+        listOf('@', '+', '*', '#', '$', '%', '€', '=', '_', '-', ',', '.', '\'', '(', ')', '&').forEach { c ->
+            assertTrue(c in chars, "Le caractère $c doit être présent sur les pages de symboles")
         }
     }
 
@@ -134,6 +167,8 @@ class KeyboardLayoutTest {
     fun `layoutOf ignore la langue pour le clavier symboles`() {
         assertEquals(Keyboards.symbols, Keyboards.layoutOf(LayoutId.SYMBOLS, KeyboardLanguage.FR))
         assertEquals(Keyboards.symbols, Keyboards.layoutOf(LayoutId.SYMBOLS, KeyboardLanguage.EN))
+        assertEquals(Keyboards.symbolsMore, Keyboards.layoutOf(LayoutId.SYMBOLS_2, KeyboardLanguage.FR))
+        assertEquals(Keyboards.symbolsMore, Keyboards.layoutOf(LayoutId.SYMBOLS_2, KeyboardLanguage.EN))
     }
 
     // Story 1.5 : rangée de chiffres activable.
@@ -198,6 +233,10 @@ class KeyboardLayoutTest {
                 Keyboards.symbols,
                 Keyboards.layoutOf(LayoutId.SYMBOLS, language, numberRow = true),
             )
+            assertEquals(
+                Keyboards.symbolsMore,
+                Keyboards.layoutOf(LayoutId.SYMBOLS_2, language, numberRow = true),
+            )
         }
     }
 
@@ -244,7 +283,7 @@ class KeyboardLayoutTest {
         languages.forEach { language ->
             val layout = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow = false)
             assertActionPresent(layout, KeyAction.ToggleLayout)
-            val digits = Keyboards.layoutOf(LayoutId.SYMBOLS, language).rows.flatten()
+            val digits = Keyboards.layoutOf(LayoutId.SYMBOLS_2, language).rows.flatten()
                 .mapNotNull { (it.action as? KeyAction.TypeChar)?.char }.filter { it.isDigit() }
             assertEquals("0123456789".toList().sorted(), digits.sorted())
         }
@@ -281,7 +320,7 @@ class KeyboardLayoutTest {
 
     @Test
     fun `la rangee du bas n a plus ni point d exclamation ni point d interrogation`() {
-        listOf(Keyboards.letters, Keyboards.lettersEn, Keyboards.symbols).forEach { layout ->
+        listOf(Keyboards.letters, Keyboards.lettersEn, Keyboards.symbolsMore).forEach { layout ->
             val bottom = layout.rows.last().mapNotNull { (it.action as? KeyAction.TypeChar)?.char }
             assertEquals(listOf(',', '.'), bottom)
             assertEquals(10f, layout.rows.last().sumOf { it.weight.toDouble() }.toFloat(), 0.001f)
@@ -440,7 +479,7 @@ class KeyboardLayoutTest {
 
     @Test
     fun `le bouton emoji est a gauche de la barre espace et a droite de la virgule`() {
-        listOf(Keyboards.letters, Keyboards.lettersEn, Keyboards.symbols).forEach { layout ->
+        listOf(Keyboards.letters, Keyboards.lettersEn, Keyboards.symbolsMore).forEach { layout ->
             val row = layout.rows.last()
             val ids = row.map { it.id }
             val emoji = ids.indexOf("emoji")
@@ -449,6 +488,14 @@ class KeyboardLayoutTest {
             assertEquals("space", ids[emoji + 1], "la barre espace doit suivre le bouton emoji")
             assertEquals(KeyAction.Emoji, row[emoji].action)
         }
+    }
+
+    @Test
+    fun `sur la page 1 des symboles l emoji est entre inferieur et superieur et la barre espace`() {
+        val row = Keyboards.symbols.rows.last()
+        assertEquals(listOf("toggle", "less", "emoji", "space", "greater", "enter"), row.map { it.id })
+        assertEquals(KeyAction.Emoji, row.first { it.id == "emoji" }.action)
+        assertEquals(10f, row.sumOf { it.weight.toDouble() }.toFloat(), 0.001f)
     }
 
     @Test
