@@ -49,7 +49,8 @@ class KeyboardControllerTest {
         val controller = KeyboardController()
         controller.onKey(key("shift"))
 
-        val result = controller.onKey(key("digit_3", Keyboards.symbols))
+        // Les chiffres ne sont plus sur la page des symboles : ils sont dans la rangée de chiffres du clavier de lettres.
+        val result = controller.onKey(key("digit_3", Keyboards.layoutOf(LayoutId.LETTERS, numberRow = true)))
         assertEquals("3", result.commit)
         assertFalse(result.newState.isShifted)
     }
