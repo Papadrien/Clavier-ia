@@ -524,7 +524,8 @@ class KeyboardView(context: Context) : View(context) {
 
     private fun autoSizeTextPaint(key: Key) {
         val base = when (key.id) {
-            "toggle" -> dims.keyTextSizeLarge
+            // « ?123 » (page des lettres) : police réduite de 30 % ; « ABC » garde la taille large.
+            "toggle" -> if (layout.id == LayoutId.LETTERS) dims.keyTextSizeLarge * TOGGLE_123_TEXT_RATIO else dims.keyTextSizeLarge
             "symbol_page" -> dims.keyTextSize * SYMBOL_PAGE_TEXT_RATIO // « ?123 » et « =\< » : 4 signes sur une touche étroite
             else -> dims.keyTextSize
         }
@@ -560,7 +561,7 @@ class KeyboardView(context: Context) : View(context) {
         // Icônes VectorDrawable (lot 09), dessinées par drawKeyIcon.
         KeyAction.Shift, KeyAction.Backspace, KeyAction.Enter -> ""
         KeyAction.Space -> ""
-        KeyAction.ToggleLayout -> if (layout.id == LayoutId.LETTERS) "123" else "ABC"
+        KeyAction.ToggleLayout -> if (layout.id == LayoutId.LETTERS) "?123" else "ABC"
         KeyAction.SymbolPage -> key.label // « ?123 » (page 1) ou « =\< » (page 2)
         KeyAction.Emoji -> "" // icône dessinée par drawEmojiIcon
     }
@@ -1003,6 +1004,7 @@ class KeyboardView(context: Context) : View(context) {
 
         /** Taille du libellé des touches de bascule entre les pages de symboles, par rapport à une touche normale. */
         const val SYMBOL_PAGE_TEXT_RATIO = 0.75f
+        const val TOGGLE_123_TEXT_RATIO = 0.7f
 
         /** Part du délai système d'appui long utilisée pour les touches à pop-up ou à chiffre (−20 %). */
         const val LONG_PRESS_DELAY_RATIO = 0.8f

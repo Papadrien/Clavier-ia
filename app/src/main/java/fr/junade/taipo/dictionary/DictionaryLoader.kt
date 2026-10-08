@@ -4,7 +4,6 @@ import android.content.Context
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.Sections
 import fr.junade.taipo.traced
-import fr.junade.taipo.BuildConfig
 import fr.junade.taipo.KeyboardLanguage
 import java.util.concurrent.ConcurrentHashMap
 
@@ -67,12 +66,8 @@ object DictionaryLoader {
         cache[language]?.let { return it }
         synchronized(this) {
             cache[language]?.let { return it }
-            val startNanos = System.nanoTime()
             val dictionary = traced(Sections.DICTIONARY_LOAD) { loadWithBackup(context, language) }
             cache[language] = dictionary
-            if (BuildConfig.DEBUG) {
-                AppLog.d(TAG, "dictionnaire $language chargé en ${(System.nanoTime() - startNanos) / 1_000_000} ms")
-            }
             return dictionary
         }
     }

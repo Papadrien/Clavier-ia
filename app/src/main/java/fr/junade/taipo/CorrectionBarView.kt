@@ -97,6 +97,9 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             renderVoice()
         }
 
+    /** Vocal est le dernier bouton visible (saisie non en cours) : la barre se cale sur le bord droit des touches. */
+    private var voiceAnchoredRight = false
+
     init {
         orientation = HORIZONTAL
         gravity = Gravity.END or Gravity.CENTER_VERTICAL
@@ -232,8 +235,10 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         val available = MeasureSpec.getSize(widthMeasureSpec).toFloat()
         val content = KeyboardWidth.forAvailableWidth(available, resources.displayMetrics.density)
         val side = dimen(R.dimen.taipo_bar_padding_horizontal).toInt() + content.leftPx.toInt()
-        if (paddingLeft != side || paddingRight != side) {
-            setPadding(side, paddingTop, side, paddingBottom)
+        val endInset = if (voiceAnchoredRight) dimen(R.dimen.taipo_key_inset).toInt() else dimen(R.dimen.taipo_bar_padding_horizontal).toInt()
+        val sideEnd = endInset + content.leftPx.toInt()
+        if (paddingLeft != side || paddingRight != sideEnd) {
+            setPadding(side, paddingTop, sideEnd, paddingBottom)
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
@@ -321,6 +326,28 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         correctButton.visibility = if (visible.correct) View.VISIBLE else View.GONE
         actionsMenuButton.visibility = if (visible.actionsMenu) View.VISIBLE else View.GONE
         closeButton.visibility = View.GONE // remplacée par le bouton Smart Clipboard actif, qui referme le panneau
+        anchorTrailingButtonsRight()
+    }
+
+    /**
+     * Saisie non en cours (ni Corriger ni menu de droite) : Vocal est le dernier bouton visible. Il se cale alors sur le bord
+     * droit des touches (inset de touche) au lieu de garder l'espace inter-boutons et la marge de la barre.
+     */
+    private fun anchorTrailingButtonsRight() {
+        val voiceIsLast = voiceButton.visibility == View.VISIBLE &&
+            correctButton.visibility != View.VISIBLE &&
+            actionsMenuButton.visibility != View.VISIBLE
+        val gap = dimen(R.dimen.taipo_bar_gap).toInt()
+        val params = voiceButton.layoutParams as LayoutParams
+        val endMargin = if (voiceIsLast) 0 else gap
+        if (params.marginEnd != endMargin) {
+            params.marginEnd = endMargin
+            voiceButton.layoutParams = params
+        }
+        if (voiceAnchoredRight != voiceIsLast) {
+            voiceAnchoredRight = voiceIsLast
+            requestLayout() // onMeasure recalcule la marge droite de la barre
+        }
     }
 
     private fun renderZone() {

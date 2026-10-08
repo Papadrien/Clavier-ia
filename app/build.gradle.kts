@@ -132,10 +132,6 @@ dependencies {
     implementation("androidx.autofill:autofill:1.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
 
-    // Banc d'essai de l'autocorrection (app/src/debug, icône « Taipo Bench ») : compare le moteur actuel à SymSpellKt.
-    // debugImplementation : la bibliothèque n'entre ni dans la release ni dans la variante benchmark.
-    debugImplementation(libs.symspellkt)
-
     // Runtime d'inférence locale (décision du 23/09/2026 : docs/decisions-techniques.md).
     // Version figée à 0.17.1 dans gradle/libs.versions.toml (lot 1.2 de la revue) : plus de
     // "latest.release", pour des builds CI reproductibles. Pour monter de version, modifier

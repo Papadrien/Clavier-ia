@@ -45,8 +45,7 @@ class KeyProximity private constructor(
      *   touches) : 2 ; autre lettre en trop : 4 ;
      * - lettre manquante dans le mot tapé : [DEFAULT_MISSING_LETTER_COST] par défaut (réglable, voir [fromRows]) :
      *   2 par défaut, comme une touche voisine : oublier une lettre est aussi plausible que glisser sur la touche
-     *   d'à côté, et à coût égal la fréquence départage. Mesuré sur le banc d'essai (Pixel 9, 955 fautes) : 2 donne
-     *   91,1 % de bonnes corrections, 3 donne 89,7 % et 4 donne 88,1 % ;
+     *   d'à côté, et à coût égal la fréquence départage (valeur retenue après mesure : 2 corrige mieux que 3 ou 4) ;
      * - inversion de deux lettres voisines : 2.
      *
      * Sert uniquement à départager des candidats déjà à la même distance d'édition ; renvoie 0 si la

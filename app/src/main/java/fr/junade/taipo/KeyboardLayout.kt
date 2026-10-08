@@ -50,7 +50,7 @@ data class KeyboardLayout(
 
 object Keyboards {
 
-    private val toggleLetters = Key("toggle", "123", KeyAction.ToggleLayout, 1.4f)
+    private val toggleLetters = Key("toggle", "?123", KeyAction.ToggleLayout, 1.4f)
     private val toggleSymbols = Key("toggle", "ABC", KeyAction.ToggleLayout, 1.4f)
 
     /**

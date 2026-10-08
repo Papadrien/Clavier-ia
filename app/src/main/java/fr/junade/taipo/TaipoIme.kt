@@ -831,16 +831,25 @@ class TaipoIme : InputMethodService() {
         applyState()
     }
 
-    /** La barre n'est visible que dans un champ de messagerie, avec des récents, sans panneau ouvert. */
+    /**
+     * La barre n'est affichée que dans un champ de messagerie, avec des récents, hors mode prompt. Quand un panneau (emoji,
+     * Smart Clipboard) la masque, elle reste INVISIBLE et garde sa place : la hauteur du clavier ne varie pas, donc l'application
+     * n'a pas à rescroller (sinon le dernier message ou le curseur passe sous la barre). GONE seulement hors messagerie / mode prompt.
+     */
     private fun refreshRecentEmojiBar() {
         if (!viewComposer.isComposed) return
         val recents = keyboardPreferences.recentEmojis
         // Décision 12 : masquée en mode prompt, quelle que soit la règle habituelle.
-        val visible = !prompt.active && messagingField && recents.isNotEmpty() &&
+        val reserved = !prompt.active && messagingField && recents.isNotEmpty()
+        val visible = reserved &&
             !(viewComposer.isComposed && emojiPanel.visibility == View.VISIBLE) &&
             !clipboard.isPanelVisible
         if (visible) recentEmojiBar.setEmojis(recents)
-        recentEmojiBar.visibility = if (visible) View.VISIBLE else View.GONE
+        recentEmojiBar.visibility = when {
+            visible -> View.VISIBLE
+            reserved -> View.INVISIBLE
+            else -> View.GONE
+        }
     }
 
     // ------------------------------------------------------------------
