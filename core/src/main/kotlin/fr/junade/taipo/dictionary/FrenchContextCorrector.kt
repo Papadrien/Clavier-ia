@@ -12,6 +12,10 @@ package fr.junade.taipo.dictionary
  * - **participe passé / infinitif** : un infinitif juste après un auxiliaire devient un participe (« il a manger »
  *   -> « il a mangé ») ; un participe en -é juste après un verbe ou une préposition qui appelle l'infinitif
  *   devient un infinitif (« il faut mangé » -> « il faut manger »).
+ * - **accent oublié d'un participe** : après un auxiliaire, un mot en -e dont la forme en -é est un participe courant
+ *   reçoit son accent (« il a parle » -> « il a parlé »). Le dictionnaire seul ne peut pas trancher : « parle » et
+ *   « parlé » sont deux mots corrects. Les mots dont la forme en -é est très rare (« j'ai envie », « il est calme »)
+ *   ne sont jamais touchés.
  *
  * Non couvert : l'accord du participe (« elles sont parti »), les noms sujets (« le chat a manger » reste inchangé,
  * ce peut être « à » comme « a mangé »). Logique pure (sans Android), testée en JVM.
@@ -169,6 +173,25 @@ object FrenchContextCorrector {
             }
         }
 
+        // Accent oublié d'un participe juste après un auxiliaire : « il a parle » -> « il a parlé ». Deux garde-fous :
+        // la forme en -é doit être un vrai mot (fréquence minimale) et ne pas être très rare face à la forme en -e
+        // (« envie », « calme », « compte » sont des noms ou des adjectifs, pas des participes sans accent).
+        if (word.length >= 4 && word.endsWith("e")) {
+            val accented = word.dropLast(1) + "é"
+            val accentedFrequency = frequencyOf(accented)
+            if (accentedFrequency >= MIN_FREQUENCY &&
+                accentedFrequency * ACCENTED_SHARE_DIVISOR >= frequencyOf(word) &&
+                accented !in NOUN_LIKE_PARTICIPLES
+            ) {
+                val gender = auxiliaryAgreement(tokens, last)
+                if (gender != null) {
+                    val feminine = accented + "e"
+                    val form = if (gender == FEMININE && frequencyOf(feminine) >= MIN_FREQUENCY) feminine else accented
+                    return replaceToken(text, token, withOriginalCase(token.raw, form))
+                }
+            }
+        }
+
         // Participe en -é après un verbe qui appelle l'infinitif : « il faut mangé » -> « il faut manger ».
         if (word.endsWith("é") && word.length >= 4 && word !in NOUN_LIKE_PARTICIPLES && followsInfinitiveTrigger(tokens, last)) {
             val infinitive = word.dropLast(1) + "er"
@@ -242,6 +265,12 @@ object FrenchContextCorrector {
     // ------------------------------------------------------------------
     // Données
     // ------------------------------------------------------------------
+
+    /**
+     * Une forme en -é n'est un participe sans accent probable que si elle représente au moins 1/11 des occurrences de la
+     * forme en -e : « pensé » (24 %), « aimé » (11 %) oui ; « calmé » (2 %), « comptes » (4 %), « placé » (6,5 %) non.
+     */
+    private const val ACCENTED_SHARE_DIVISOR = 11L
 
     private const val MASCULINE = 0
     private const val FEMININE = 1

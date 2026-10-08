@@ -146,4 +146,53 @@ class FrenchContextCorrectorTest {
         assertNull(correct(""))
         assertNull(correct("il a manger "))
     }
+
+    // --- accent oublié d'un participe après un auxiliaire ---
+
+    /** Fréquences réalistes (ordre de grandeur des listes) : le rapport -é / -e décide, pas la seule présence. */
+    private val accentFrequencies = mapOf(
+        "parle" to 120_000L, "parlé" to 89_000L,
+        "pense" to 240_000L, "pensé" to 57_000L,
+        "calme" to 44_000L, "calmé" to 1_000L,
+        "envie" to 100_000L, "envié" to 200L,
+        "reste" to 150_000L, "resté" to 12_000L,
+        "arrive" to 150_000L, "arrivé" to 90_000L, "arrivée" to 20_000L,
+    )
+
+    private fun correctAccent(text: String): String? =
+        FrenchContextCorrector.correct(text, false, true) { accentFrequencies[it] ?: 0L }
+
+    @Test
+    fun `le participe oublie son accent apres un auxiliaire`() {
+        assertEquals("il a parlé", correctAccent("il a parle"))
+        assertEquals("j'ai pensé", correctAccent("j'ai pense"))
+        assertEquals("nous avons parlé", correctAccent("nous avons parle"))
+        assertEquals("il a bien parlé", correctAccent("il a bien parle"))
+        assertEquals("il a Parlé", correctAccent("il a Parle"))
+    }
+
+    @Test
+    fun `le participe oublie son accent avec etre et s'accorde avec elle`() {
+        assertEquals("il est arrivé", correctAccent("il est arrive"))
+        assertEquals("elle est arrivée", correctAccent("elle est arrive"))
+    }
+
+    @Test
+    fun `les noms et adjectifs en e ne deviennent jamais des participes`() {
+        // Forme en -é trop rare face à la forme en -e, ou pas assez fréquente pour être un vrai mot.
+        assertNull(correctAccent("j'ai envie"))
+        assertNull(correctAccent("il est calme"))
+        assertNull(correctAccent("il a reste"))
+    }
+
+    @Test
+    fun `sans auxiliaire clair l'accent d'un mot en e n'est pas ajoute`() {
+        assertNull(correctAccent("il parle"))
+        assertNull(correctAccent("le chat parle"))
+        assertNull(correctAccent("parle"))
+        // « il y a » : « a » est le verbe, mais « il y a pense » n'est pas un passé composé.
+        assertNull(correctAccent("il y a pense"))
+        // « c'est » n'est pas l'auxiliaire d'un passé composé.
+        assertNull(correctAccent("c'est arrive"))
+    }
 }

@@ -8,6 +8,7 @@ import android.util.Log
 import fr.junade.taipo.BuildConfig
 import fr.junade.taipo.KeyboardLanguage
 import fr.junade.taipo.dictionary.Dictionary
+import fr.junade.taipo.dictionary.FrenchContextCorrector
 import fr.junade.taipo.dictionary.InflectionRules
 import fr.junade.taipo.dictionary.KeyProximity
 import fr.junade.taipo.dictionary.KeyProximityFactory
@@ -110,9 +111,10 @@ object SpellBench {
             deltaAKb = memory("après construction de A1", say) - baseKb
             val missing = KeyProximity.DEFAULT_MISSING_LETTER_COST
             rows += bench("A1 actuel + proximité (lettre manquante $missing)", { a1.correctionFor(it) }, workload, say)
+            contextBench(a1, entries, say)
 
-            // Variantes du coût d'une lettre manquante : 2 (autant qu'une touche voisine) et 4 (ancien réglage).
-            for (cost in listOf(2, 4)) {
+            // Autres réglages du coût d'une lettre manquante (2 = autant qu'une touche voisine, 4 = ancien réglage).
+            for (cost in listOf(2, 3, 4)) {
                 if (cost == missing) continue
                 val variant = Dictionary.withFrequencies(
                     entries, InflectionRules.FRENCH, CANDIDATE_MIN_FREQUENCY,
@@ -240,6 +242,55 @@ object SpellBench {
             p95GibberishUs = percentileUs(gibberishNs, 0.95),
             maxUs = maxNs / 1000.0,
         )
+    }
+
+    /**
+     * Accent oublié d'un participe après un auxiliaire (« il a parle » -> « il a parlé »), corrigé par
+     * [FrenchContextCorrector] et non par le dictionnaire seul (« parle » est un mot correct). Mesure aussi les
+     * phrases justes qui ne doivent surtout pas changer (« j'ai envie », « il est calme »).
+     */
+    private fun contextBench(dictionary: Dictionary, entries: Map<String, Long>, say: (String) -> Unit) {
+        say("--- Accent oublié après un auxiliaire (correcteur de contexte) ---")
+        val random = Random(99)
+        val letters = Regex("[a-zàâäéèêëîïôöùûüçœæÿ]+")
+        val participles = entries.entries.asSequence()
+            .filter { it.value >= CANDIDATE_MIN_FREQUENCY && it.key.length >= 5 && it.key.endsWith("é") && letters.matches(it.key) }
+            .map { it.key }
+            .filter { (it.dropLast(1) + "e") in entries }
+            .toList()
+            .shuffled(random)
+            .take(200)
+        val auxiliaries = listOf("il a", "j'ai", "tu as", "nous avons", "ils ont", "vous avez", "il a bien", "il est")
+        var ok = 0
+        var unchanged = 0
+        var wrong = 0
+        for (participle in participles) {
+            val auxiliary = auxiliaries[random.nextInt(auxiliaries.size)]
+            val typed = "$auxiliary ${participle.dropLast(1)}e"
+            val expected = "$auxiliary $participle"
+            val result = FrenchContextCorrector.correct(typed, false, true, dictionary::frequencyOf) ?: typed
+            when (result) {
+                expected -> ok++
+                typed -> unchanged++
+                else -> wrong++
+            }
+        }
+        val total = participles.size
+        say(
+            String.format(
+                Locale.ROOT,
+                "  participes sans accent (%d) : corrigés %.1f %% | inchangés %.1f %% | mauvaise correction %.1f %%",
+                total, percent(ok, total), percent(unchanged, total), percent(wrong, total),
+            ),
+        )
+        val legitimate = listOf(
+            "j'ai envie", "j'ai peine", "il a peur", "tu as raison", "il est calme", "elle est grave", "il est sale",
+            "elle est calme", "vous avez chance",
+        )
+        val changed = legitimate.filter {
+            FrenchContextCorrector.correct(it, false, true, dictionary::frequencyOf) != null
+        }
+        say("  phrases justes changées à tort : ${changed.size} sur ${legitimate.size}${if (changed.isEmpty()) "" else " : $changed"}")
     }
 
     private fun percent(part: Int, total: Int): Double = if (total == 0) 0.0 else 100.0 * part / total

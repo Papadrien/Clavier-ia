@@ -44,8 +44,9 @@ class KeyProximity private constructor(
      * - lettre en trop dans le mot tapé, doublée ou voisine d'une lettre adjacente (doigt qui effleure deux
      *   touches) : 2 ; autre lettre en trop : 4 ;
      * - lettre manquante dans le mot tapé : [DEFAULT_MISSING_LETTER_COST] par défaut (réglable, voir [fromRows]) :
-     *   entre une touche voisine (2) et une erreur quelconque (4), car oublier une lettre est plus fréquent qu'une
-     *   erreur sans rapport mais moins que de glisser sur la touche d'à côté ;
+     *   2 par défaut, comme une touche voisine : oublier une lettre est aussi plausible que glisser sur la touche
+     *   d'à côté, et à coût égal la fréquence départage. Mesuré sur le banc d'essai (Pixel 9, 955 fautes) : 2 donne
+     *   91,1 % de bonnes corrections, 3 donne 89,7 % et 4 donne 88,1 % ;
      * - inversion de deux lettres voisines : 2.
      *
      * Sert uniquement à départager des candidats déjà à la même distance d'édition ; renvoie 0 si la
@@ -108,7 +109,7 @@ class KeyProximity private constructor(
         val NONE = KeyProximity(emptyMap(), COST_NORMAL)
 
         /** Coût d'une lettre manquante (échelle de [editCost]) : 2 = aussi probable qu'une touche voisine, 4 = erreur quelconque. */
-        const val DEFAULT_MISSING_LETTER_COST = 3
+        const val DEFAULT_MISSING_LETTER_COST = 2
 
         /**
          * Construit la proximité à partir de [rows] (de haut en bas, chaque rangée de gauche à droite). La
