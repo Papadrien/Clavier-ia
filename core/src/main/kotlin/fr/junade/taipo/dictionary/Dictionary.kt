@@ -22,6 +22,7 @@ class Dictionary private constructor(
     private val inflections: InflectionRules,
     candidateMinFrequency: Long,
     private val proximity: KeyProximity = KeyProximity.NONE,
+    private val letterPrefilter: Boolean = true,
 ) {
 
     /**
@@ -55,6 +56,10 @@ class Dictionary private constructor(
         frequencies.entries.asSequence().filter { it.value >= candidateMinFrequency }.map { it.key }.toList().toTypedArray()
     }
     private val candidateFrequencies: LongArray = LongArray(candidateWords.size) { frequencies.getValue(candidateWords[it]) }
+
+    // Masque des lettres de chaque candidat (voir [letterMask]) : pré-filtre bon marché de la recherche par distance
+    // d'édition. 8 octets par candidat (~400 Ko pour 50 000 mots).
+    private val candidateMasks: LongArray = LongArray(candidateWords.size) { letterMask(candidateWords[it]) }
 
     // Indices des candidats regroupés par longueur (ordre d'origine conservé dans chaque groupe) : la
     // recherche par distance d'édition ne parcourt que les longueurs à ±distance du mot tapé, au lieu
@@ -262,8 +267,23 @@ class Dictionary private constructor(
 
         val minLength = maxOf(0, lower.length - allowedDistance)
         val maxLength = minOf(indicesByLength.size - 1, lower.length + allowedDistance)
+        // Pré-filtre : à distance d'édition d au plus, le mot tapé et le candidat ne diffèrent que d'au plus d lettres
+        // (chaque insertion, suppression ou substitution change l'ensemble des lettres d'au plus une lettre de
+        // chaque côté ; une inversion ne le change pas). Un candidat qui en diffère de plus est trop loin : il était
+        // déjà écarté par la distance bornée, le résultat est donc strictement identique, sans calculer la distance.
+        val typedMask = letterMask(lower)
         for (length in minLength..maxLength) {
-            for (i in indicesByLength[length]) consider(candidateWords[i], candidateFrequencies[i])
+            for (i in indicesByLength[length]) {
+                if (letterPrefilter) {
+                    val mask = candidateMasks[i]
+                    if ((typedMask and mask.inv()).countOneBits() > allowedDistance ||
+                        (mask and typedMask.inv()).countOneBits() > allowedDistance
+                    ) {
+                        continue
+                    }
+                }
+                consider(candidateWords[i], candidateFrequencies[i])
+            }
         }
         for (candidate in personal.keys) if (candidate !in frequencies) consider(candidate, personalFrequency, isPersonal = true)
 
@@ -591,23 +611,26 @@ class Dictionary private constructor(
          * [candidateMinFrequency] : seuls les mots au moins aussi fréquents peuvent être proposés comme
          * correction ou complétion ; tous les mots de [entries] restent valides (jamais corrigés).
          * [proximity] : proximité des touches du clavier, pour départager les candidats à distance égale.
+         * [letterPrefilter] : pré-filtre par les lettres de la recherche par distance d'édition (résultat identique,
+         * beaucoup plus rapide) ; désactivable uniquement pour mesurer ou comparer.
          */
         fun withFrequencies(
             entries: Map<String, Long>,
             inflections: InflectionRules = InflectionRules.NONE,
             candidateMinFrequency: Long = 0L,
             proximity: KeyProximity = KeyProximity.NONE,
+            letterPrefilter: Boolean = true,
         ): Dictionary {
             // Liste déjà en minuscules (cas des listes de l'application) : pas de copie, ce qui évite de
             // doubler la mémoire avec une liste complète de plusieurs centaines de milliers de mots.
-            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity)
+            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter)
             val merged = HashMap<String, Long>(entries.size)
             entries.forEach { (word, count) ->
                 val key = word.lowercase()
                 val previous = merged[key]
                 if (previous == null || count > previous) merged[key] = count
             }
-            return Dictionary(merged, inflections, candidateMinFrequency, proximity)
+            return Dictionary(merged, inflections, candidateMinFrequency, proximity, letterPrefilter)
         }
 
         /**
@@ -663,6 +686,26 @@ class Dictionary private constructor(
                 System.arraycopy(currentRow, 0, previousRow, 0, currentRow.size)
             }
             return previousRow[b.length]
+        }
+
+        /**
+         * Masque de 64 bits des lettres de [word] : une lettre = un bit (a-z : 0 à 25, apostrophe : 26, trait d'union :
+         * 27, autres caractères, accentués compris : 28 à 63 par repli). Deux caractères qui partagent un bit sont
+         * simplement confondus : le masque ne peut que moins distinguer deux mots, jamais plus, donc le pré-filtre
+         * reste exact.
+         */
+        internal fun letterMask(word: String): Long {
+            var mask = 0L
+            for (c in word) {
+                val bit = when {
+                    c in 'a'..'z' -> c - 'a'
+                    c == '\'' -> 26
+                    c == '-' -> 27
+                    else -> 28 + c.code % 36
+                }
+                mask = mask or (1L shl bit)
+            }
+            return mask
         }
 
         /**

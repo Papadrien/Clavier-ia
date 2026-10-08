@@ -14,19 +14,27 @@ import fr.junade.taipo.Keyboards
  */
 object KeyProximityFactory {
 
-    fun forLanguage(language: KeyboardLanguage): KeyProximity = fromLayout(
+    fun forLanguage(
+        language: KeyboardLanguage,
+        missingLetterCost: Int = KeyProximity.DEFAULT_MISSING_LETTER_COST,
+    ): KeyProximity = fromLayout(
         when (language) {
             KeyboardLanguage.FR -> Keyboards.letters
             KeyboardLanguage.EN -> Keyboards.lettersEn
         },
+        missingLetterCost,
     )
 
-    internal fun fromLayout(layout: KeyboardLayout): KeyProximity = KeyProximity.fromRows(
+    internal fun fromLayout(
+        layout: KeyboardLayout,
+        missingLetterCost: Int = KeyProximity.DEFAULT_MISSING_LETTER_COST,
+    ): KeyProximity = KeyProximity.fromRows(
         layout.rows.map { row ->
             row.map { key ->
                 val char = (key.action as? KeyAction.TypeChar)?.char?.takeIf { it.isLetter() || it == '\'' }
                 KeyProximity.KeyBox(char, key.weight)
             }
         },
+        missingLetterCost,
     )
 }

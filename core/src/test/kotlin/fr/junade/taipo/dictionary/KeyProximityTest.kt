@@ -72,8 +72,15 @@ class KeyProximityTest {
 
     @Test
     fun `une lettre manquante et une inversion`() {
-        assertEquals(4, azerty.editCost("cht", "chat"))
+        assertEquals(KeyProximity.DEFAULT_MISSING_LETTER_COST, azerty.editCost("cht", "chat"))
         assertEquals(2, azerty.editCost("teh", "the"))
+    }
+
+    @Test
+    fun `le cout d une lettre manquante est reglable`() {
+        val rows = listOf(letters("azertyuiop"), letters("qsdfghjklm"))
+        assertEquals(2, KeyProximity.fromRows(rows, missingLetterCost = 2).editCost("cht", "chat"))
+        assertEquals(4, KeyProximity.fromRows(rows, missingLetterCost = 4).editCost("cht", "chat"))
     }
 
     private val tie = mapOf("chat" to 1L, "ceat" to 1L)

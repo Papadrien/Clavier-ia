@@ -16,7 +16,10 @@ package fr.junade.taipo.dictionary
  * Classe pure (aucune dépendance Android) : le module de l'application construit les rangées à partir des
  * dispositions réelles (voir KeyProximityFactory).
  */
-class KeyProximity private constructor(private val neighbors: Map<Char, Set<Char>>) {
+class KeyProximity private constructor(
+    private val neighbors: Map<Char, Set<Char>>,
+    private val missingLetterCost: Int,
+) {
 
     /** Une touche d'une rangée : [char] est null pour une touche sans caractère (Maj, Effacer...). */
     class KeyBox(val char: Char?, val weight: Float)
@@ -40,7 +43,9 @@ class KeyProximity private constructor(private val neighbors: Map<Char, Set<Char
      * - substitution par une touche voisine (ou même lettre sans l'accent) : 2 ; autre substitution : 4 ;
      * - lettre en trop dans le mot tapé, doublée ou voisine d'une lettre adjacente (doigt qui effleure deux
      *   touches) : 2 ; autre lettre en trop : 4 ;
-     * - lettre manquante : 4 ;
+     * - lettre manquante dans le mot tapé : [DEFAULT_MISSING_LETTER_COST] par défaut (réglable, voir [fromRows]) :
+     *   entre une touche voisine (2) et une erreur quelconque (4), car oublier une lettre est plus fréquent qu'une
+     *   erreur sans rapport mais moins que de glisser sur la touche d'à côté ;
      * - inversion de deux lettres voisines : 2.
      *
      * Sert uniquement à départager des candidats déjà à la même distance d'édition ; renvoie 0 si la
@@ -48,11 +53,11 @@ class KeyProximity private constructor(private val neighbors: Map<Char, Set<Char
      */
     fun editCost(typed: String, candidate: String): Int {
         if (!isEnabled || typed == candidate) return 0
-        if (typed.isEmpty()) return candidate.length * COST_NORMAL
+        if (typed.isEmpty()) return candidate.length * missingLetterCost
         if (candidate.isEmpty()) return typed.length * COST_NORMAL
 
         var twoRowsAgo = IntArray(candidate.length + 1)
-        var previousRow = IntArray(candidate.length + 1) { it * COST_NORMAL }
+        var previousRow = IntArray(candidate.length + 1) { it * missingLetterCost }
         var currentRow = IntArray(candidate.length + 1)
 
         for (i in 1..typed.length) {
@@ -66,7 +71,7 @@ class KeyProximity private constructor(private val neighbors: Map<Char, Set<Char
                     else -> COST_NORMAL
                 }
                 var value = minOf(
-                    currentRow[j - 1] + COST_NORMAL, // lettre manquante dans le mot tapé
+                    currentRow[j - 1] + missingLetterCost, // lettre manquante dans le mot tapé
                     previousRow[j] + extraCost(typed, i - 1), // lettre en trop dans le mot tapé
                     previousRow[j - 1] + substitution,
                 )
@@ -100,7 +105,10 @@ class KeyProximity private constructor(private val neighbors: Map<Char, Set<Char
         private const val COST_NORMAL = 4
 
         /** Aucune proximité connue : [Dictionary] se comporte exactement comme avant (départage par fréquence). */
-        val NONE = KeyProximity(emptyMap())
+        val NONE = KeyProximity(emptyMap(), COST_NORMAL)
+
+        /** Coût d'une lettre manquante (échelle de [editCost]) : 2 = aussi probable qu'une touche voisine, 4 = erreur quelconque. */
+        const val DEFAULT_MISSING_LETTER_COST = 3
 
         /**
          * Construit la proximité à partir de [rows] (de haut en bas, chaque rangée de gauche à droite). La
@@ -108,7 +116,10 @@ class KeyProximity private constructor(private val neighbors: Map<Char, Set<Char
          * largeur du clavier. Deux touches de caractère sont voisines si elles sont sur la même rangée ou sur
          * deux rangées contiguës et se touchent ou se recouvrent horizontalement.
          */
-        fun fromRows(rows: List<List<KeyBox>>): KeyProximity {
+        fun fromRows(
+            rows: List<List<KeyBox>>,
+            missingLetterCost: Int = DEFAULT_MISSING_LETTER_COST,
+        ): KeyProximity {
             class Placed(val char: Char, val row: Int, val start: Float, val end: Float)
 
             val placed = ArrayList<Placed>()
@@ -133,7 +144,7 @@ class KeyProximity private constructor(private val neighbors: Map<Char, Set<Char
                     if (overlap >= -TOUCH_TOLERANCE) result.getOrPut(a.char) { HashSet() }.add(b.char)
                 }
             }
-            return KeyProximity(result)
+            return KeyProximity(result, missingLetterCost)
         }
 
         private const val TOUCH_TOLERANCE = 0.01f

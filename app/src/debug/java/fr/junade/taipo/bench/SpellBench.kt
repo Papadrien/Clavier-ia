@@ -18,8 +18,10 @@ import kotlin.random.Random
  * Banc d'essai de l'autocorrection française (debug uniquement) : compare, sur la même liste de mots et les mêmes
  * fautes générées (graine fixe, donc reproductible) :
  *
- * - A1 : moteur actuel de Taipo avec la proximité des touches ;
+ * - A1 : moteur actuel de Taipo (pré-filtre par les lettres + proximité des touches), avec trois réglages du coût
+ *   d'une lettre manquante ;
  * - A0 : moteur actuel sans proximité (pour voir ce qu'elle apporte) ;
+ * - « sans pré-filtre » : A1 avec l'ancien parcours complet des candidats (mêmes corrections, pour la latence) ;
  * - B  : SymSpellKt brut (voir [SymSpellEngine]).
  *
  * Mesure la mémoire (PSS, tas Java, natif), le temps de construction, la latence d'une correction
@@ -106,10 +108,27 @@ object SpellBench {
             val a1 = Dictionary.withFrequencies(entries, InflectionRules.FRENCH, CANDIDATE_MIN_FREQUENCY, proximity)
             say("A1 construit en ${millis(buildStart)} ms")
             deltaAKb = memory("après construction de A1", say) - baseKb
-            rows += bench("A1 actuel + proximité", { a1.correctionFor(it) }, workload, say)
+            val missing = KeyProximity.DEFAULT_MISSING_LETTER_COST
+            rows += bench("A1 actuel + proximité (lettre manquante $missing)", { a1.correctionFor(it) }, workload, say)
+
+            // Variantes du coût d'une lettre manquante : 2 (autant qu'une touche voisine) et 4 (ancien réglage).
+            for (cost in listOf(2, 4)) {
+                if (cost == missing) continue
+                val variant = Dictionary.withFrequencies(
+                    entries, InflectionRules.FRENCH, CANDIDATE_MIN_FREQUENCY,
+                    KeyProximityFactory.forLanguage(KeyboardLanguage.FR, cost),
+                )
+                rows += bench("A1 variante : lettre manquante $cost", { variant.correctionFor(it) }, workload, say)
+            }
 
             val a0 = Dictionary.withFrequencies(entries, InflectionRules.FRENCH, CANDIDATE_MIN_FREQUENCY)
             rows += bench("A0 actuel sans proximité", { a0.correctionFor(it) }, workload, say)
+
+            // Même moteur que A1 sans le pré-filtre par les lettres (ancien parcours) : mêmes corrections, plus lent.
+            val full = Dictionary.withFrequencies(
+                entries, InflectionRules.FRENCH, CANDIDATE_MIN_FREQUENCY, proximity, letterPrefilter = false,
+            )
+            rows += bench("A1 sans pré-filtre (ancien parcours)", { full.correctionFor(it) }, workload, say)
         }
 
         val base2Kb = memory("base après libération de A", say)
