@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Épopée 8 (story 8.1) : écran « Modèle IA » avec téléchargement. Les lignes (une par modèle) sont ajoutées par
+     ModelDownloadActivity à partir de item_model_download. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/model_download_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/taipo_settings_screen_padding">
+
+        <TextView
+            style="@style/TaipoText.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/model_download_title"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+        <TextView
+            style="@style/TaipoText.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/model_download_description"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_xl" />
+
+        <LinearLayout
+            android:id="@+id/models_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <!-- Story 8.15 : modèle vocal (dictée), une ligne ajoutée par ModelDownloadActivity à partir de item_model_download. -->
+        <TextView
+            style="@style/TaipoText.Title"
+            android:id="@+id/voice_section_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/model_download_voice_section_title"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xl"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+        <TextView
+            style="@style/TaipoText.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/model_download_voice_description"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_xl" />
+
+        <LinearLayout
+            android:id="@+id/voice_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+</ScrollView>

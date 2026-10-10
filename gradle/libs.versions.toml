@@ -16,6 +16,8 @@ benchmark = "1.4.1"
 uiautomator = "2.3.0"
 # LiteRT-LM figé à 0.17.1 (compilé avec Kotlin 2.4.0, d'où le surclassement du KGP dans build.gradle.kts).
 litertlm = "0.17.1"
+# Téléchargement des modèles (épopée 8) : WorkManager, travail au premier plan. À confirmer au premier build.
+work = "2.10.0"
 
 [libraries]
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
@@ -26,6 +28,7 @@ androidx-customview = { module = "androidx.customview:customview", version.ref =
 androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
 androidx-benchmark-macro = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
 androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 litertlm-android = { module = "com.google.ai.edge.litertlm:litertlm-android", version.ref = "litertlm" }
 
 [plugins]

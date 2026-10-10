@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Une section des conditions d'utilisation : titre et texte posés par TermsActivity. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_settings_card"
+    android:padding="@dimen/taipo_settings_card_padding"
+    android:layout_marginBottom="@dimen/taipo_settings_gap_md">
+
+    <TextView
+        style="@style/TaipoText.Lead"
+        android:id="@+id/terms_section_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold" />
+
+    <TextView
+        style="@style/TaipoText.Info"
+        android:id="@+id/terms_section_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+        android:textIsSelectable="true" />
+</LinearLayout>

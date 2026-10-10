@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ligne d'un modèle sur l'écran « Modèle IA » (story 8.1). Textes, barre de progression et boutons sont posés
+     par ModelDownloadActivity selon le statut (ModelRowStatus). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_settings_card"
+    android:padding="@dimen/taipo_settings_card_padding"
+    android:layout_marginBottom="@dimen/taipo_settings_gap_md">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            style="@style/TaipoText.Lead"
+            android:id="@+id/model_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold" />
+
+        <TextView
+            style="@style/TaipoText.Small"
+            android:id="@+id/model_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/taipo_settings_gap_sm"
+            android:paddingStart="@dimen/taipo_status_badge_padding_horizontal"
+            android:paddingEnd="@dimen/taipo_status_badge_padding_horizontal"
+            android:paddingTop="@dimen/taipo_status_badge_padding_vertical"
+            android:paddingBottom="@dimen/taipo_status_badge_padding_vertical"
+            android:maxLines="1"
+            android:textStyle="bold"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        style="@style/TaipoText.Caption"
+        android:id="@+id/model_technical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+
+    <TextView
+        style="@style/TaipoText.Caption"
+        android:id="@+id/model_license"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+
+    <TextView
+        style="@style/TaipoText.Info"
+        android:id="@+id/model_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_sm" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:id="@+id/model_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+        android:max="100"
+        android:visibility="gone" />
+
+    <Button
+        style="@style/TaipoButton.Primary"
+        android:id="@+id/model_primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_md"
+        android:visibility="gone" />
+
+    <Button
+        style="@style/TaipoButton.Secondary"
+        android:id="@+id/model_secondary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+        android:visibility="gone" />
+
+    <Button
+        style="@style/TaipoButton.Secondary"
+        android:id="@+id/model_tertiary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+        android:visibility="gone" />
+</LinearLayout>

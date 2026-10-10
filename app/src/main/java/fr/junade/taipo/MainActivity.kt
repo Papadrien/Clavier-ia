@@ -66,13 +66,29 @@ class MainActivity : Activity() {
         }
         bindRow(R.id.button_keyboard_settings, R.string.button_keyboard_settings, R.string.home_row_keyboard_settings_subtitle, KeyboardSettingsActivity::class.java)
         bindRow(R.id.button_personal_dictionary, R.string.button_personal_dictionary, R.string.home_row_personal_dictionary_subtitle, PersonalDictionaryActivity::class.java)
+        bindRow(R.id.button_model_download, R.string.button_model_download, R.string.home_row_model_download_subtitle, ModelDownloadActivity::class.java)
         bindRow(R.id.button_model_settings, R.string.button_model_settings, R.string.home_row_model_settings_subtitle, ModelSettingsActivity::class.java)
-        bindRow(R.id.button_voice_model_settings, R.string.button_voice_model_settings, R.string.home_row_voice_model_subtitle, VoiceModelSettingsActivity::class.java)
+        // Story 8.12 : le chargement d'un modèle à la main est réservé au debug (la variante benchmark n'est pas debug).
+        val localModelVisible = LocalModelAccess.isVisible(BuildConfig.DEBUG)
+        findViewById<View>(R.id.button_model_settings).visibility = if (localModelVisible) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.divider_model_settings).visibility = if (localModelVisible) View.VISIBLE else View.GONE
+        // Story 8.15 : le modèle vocal se télécharge depuis la section « Modèle vocal » de l'écran « Modèle IA ».
+        bindRow(R.id.button_voice_model_settings, R.string.button_voice_model_settings, R.string.home_row_voice_model_subtitle, ModelDownloadActivity::class.java)
+        findViewById<View>(R.id.button_voice_model_settings).setOnClickListener {
+            startActivity(ModelScreenRedirect.voiceIntent(this))
+        }
+        // Le chargement des fichiers vocaux à la main est réservé au debug, comme celui du modèle de texte (8.12).
+        bindRow(R.id.button_voice_model_local, R.string.button_voice_model_local, R.string.home_row_voice_model_local_subtitle, VoiceModelSettingsActivity::class.java)
+        findViewById<View>(R.id.button_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.divider_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE
         bindRow(R.id.button_system_prompts, R.string.button_system_prompts, R.string.home_row_system_prompts_subtitle, SystemPromptsActivity::class.java)
+        bindRow(R.id.button_terms, R.string.button_terms, R.string.home_row_terms_subtitle, TermsActivity::class.java)
+        bindRow(R.id.button_licenses, R.string.button_licenses, R.string.home_row_licenses_subtitle, LicensesActivity::class.java)
 
         // Titres de groupe annoncés comme des titres par TalkBack (navigation par titres).
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_keyboard), true)
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_ai), true)
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.section_about), true)
     }
 
     // L'état des étapes vient d'Android (réglages système, sélecteur) : on le relit au retour sur l'écran et quand le
@@ -93,20 +109,46 @@ class MainActivity : Activity() {
      * l'écran, puisque les fichiers se choisissent dans les sous-pages.
      */
     private fun renderModelStatuses() {
+        // Ligne « Modèle IA » (téléchargement, épopée 8) : statut et sous-titre du modèle actif, qu'il soit
+        // téléchargé ou fourni à la main (écran « Modèle IA local »).
         val textPreferences = ModelPreferences(this)
         val activeModel = textPreferences.activeModel()
-        val textStatus = ModelStatus.forTextModel(activeModel != null && textPreferences.savedUriFor(activeModel) != null)
-        renderRowStatus(R.id.button_model_settings, textStatus, getString(statusLabel(textStatus)))
+        val activeInstalled = activeModel != null && textPreferences.isInstalled(activeModel)
+        // Story 8.14 : modèle actif utilisable mais dont le fichier a une nouvelle version au catalogue.
+        val updateAvailable = activeInstalled && activeModel != null && textPreferences.updateAvailable(activeModel)
+        val textStatus = if (updateAvailable) ModelStatus.INCOMPLETE else ModelStatus.forTextModel(activeInstalled)
+        val textLabel = getString(
+            when {
+                updateAvailable -> R.string.home_status_update
+                textStatus == ModelStatus.READY -> R.string.home_status_ready
+                else -> R.string.home_status_to_download
+            },
+        )
+        renderRowStatus(R.id.button_model_download, textStatus, textLabel)
+        findViewById<View>(R.id.button_model_download).findViewById<TextView>(R.id.row_subtitle).text =
+            if (activeModel != null && activeInstalled) {
+                getString(R.string.model_download_technical_line, activeModel.displayName, activeModel.technicalName)
+            } else {
+                getString(R.string.home_row_model_download_subtitle)
+            }
 
+        val voicePreferences = VoiceModelPreferences(this)
         val voiceFiles = VoiceModelFile.all().size
-        val voiceProvided = VoiceModelPreferences(this).providedCount()
+        val voiceProvided = voicePreferences.providedCount()
         val voiceStatus = ModelStatus.forVoiceModel(voiceProvided, voiceFiles)
-        val voiceLabel = if (voiceStatus == ModelStatus.INCOMPLETE) {
-            getString(R.string.home_status_incomplete, voiceProvided, voiceFiles)
-        } else {
-            getString(statusLabel(voiceStatus))
+        // Story 8.14 appliquée au modèle vocal : un fichier téléchargé a une nouvelle version au catalogue.
+        val voiceUpdate = voiceStatus == ModelStatus.READY && voicePreferences.updateAvailable()
+        val voiceLabel = when {
+            voiceUpdate -> getString(R.string.home_status_update)
+            voiceStatus == ModelStatus.INCOMPLETE -> getString(R.string.home_status_incomplete, voiceProvided, voiceFiles)
+            voiceStatus == ModelStatus.MISSING -> getString(R.string.home_status_to_download)
+            else -> getString(statusLabel(voiceStatus))
         }
-        renderRowStatus(R.id.button_voice_model_settings, voiceStatus, voiceLabel)
+        renderRowStatus(
+            R.id.button_voice_model_settings,
+            if (voiceUpdate) ModelStatus.INCOMPLETE else voiceStatus,
+            voiceLabel,
+        )
     }
 
     @StringRes

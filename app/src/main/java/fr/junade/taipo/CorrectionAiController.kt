@@ -13,6 +13,8 @@ import fr.junade.taipo.ai.CorrectionDiff
 import fr.junade.taipo.ai.CorrectionEngine
 import fr.junade.taipo.ai.CorrectionPlanner
 import fr.junade.taipo.ai.CorrectionSafeguard
+import fr.junade.taipo.ai.InferenceFailureClassifier
+import fr.junade.taipo.ai.messageRes
 import fr.junade.taipo.ai.SpanLocator
 import fr.junade.taipo.ai.TextBlock
 import fr.junade.taipo.model.AiModel
@@ -170,7 +172,7 @@ class CorrectionAiController(
 
         val model = host.activeModel()
         if (model == null) {
-            host.showMessage(context.getString(R.string.correction_no_model_selected))
+            ModelScreenRedirect.open(context)
             return
         }
 
@@ -203,7 +205,7 @@ class CorrectionAiController(
         if (selected.isBlank()) return
         val model = host.activeModel()
         if (model == null) {
-            host.showMessage(context.getString(R.string.correction_no_model_selected))
+            ModelScreenRedirect.open(context)
             return
         }
         val leading = selected.length - selected.trimStart().length
@@ -315,8 +317,9 @@ class CorrectionAiController(
             try {
                 work()
             } catch (t: Throwable) {
-                AppLog.e(TAG, "Échec de la correction IA", t)
-                host.showMessage(context.getString(R.string.correction_error, t.message ?: t.javaClass.simpleName))
+                val cause = InferenceFailureClassifier.classify(t)
+                AppLog.e(TAG, "Échec de la correction IA ($cause)", t) // détail technique : debug uniquement
+                host.showMessage(context.getString(cause.messageRes()))
             } finally {
                 inProgress = false
                 host.updateCorrectionBarVisibility()

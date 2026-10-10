@@ -3,10 +3,10 @@ package fr.junade.taipo.model
 /**
  * Les 4 modèles IA prévus pour le clavier (Ultra-léger / Léger / Équilibré / Performant).
  *
- * Pour ce prototype, aucun téléchargement n'est implémenté : l'utilisateur doit
- * récupérer lui-même le fichier .litertlm correspondant (typiquement sur Hugging
- * Face, dépôt indiqué par [huggingFaceRepo]) et le fournir via le sélecteur de
- * fichiers du téléphone.
+ * Deux façons d'obtenir un modèle : le téléchargement dans l'app (épopée 8, seulement les modèles qui ont une
+ * [downloadUrl] : Gemma 3 et Gemma 4) ou le fichier .litertlm fourni à la main via le sélecteur de fichiers
+ * du téléphone (écran « Modèle IA local », dépôt indiqué par [huggingFaceRepo]). Dans les deux cas le fichier
+ * est stocké dans `filesDir/models/<id>.litertlm`.
  *
  * Tailles et dépôts vérifiés le 24/09/2026 sur Hugging Face / ai.google.dev :
  * les valeurs exactes dépendent de la variante de quantification choisie par
@@ -28,6 +28,14 @@ enum class AiModel(
      * seule variante est supportée, sinon la comparaison signalerait à tort les autres.
      */
     val sha256: String? = null,
+    /**
+     * Épopée 8 (8.8) : URL de téléchargement HTTPS, ou null si le modèle n'est pas (encore) téléchargeable
+     * dans l'app (aucun pour l'instant : les 4 en ont une). Gemma 4 : source provisoire Hugging Face (`litert-community`) ; Gemma 3 :
+     * serveur d'Adrien (Worker Cloudflare devant R2). Avant la publication, tout passe sur son serveur (URL versionnée et immuable).
+     */
+    val downloadUrl: String? = null,
+    /** Taille de téléchargement habituelle, pour l'affichage et le contrôle d'espace avant d'avoir le `Content-Length`. */
+    val approxDownloadBytes: Long? = null,
 ) {
     ULTRA_LEGER(
         id = "ultra_leger",
@@ -37,6 +45,9 @@ enum class AiModel(
         approxSizeBytesMin = 250_000_000L,
         approxSizeBytesMax = 350_000_000L,
         fileHint = "Fichier attendu : gemma3-270m-it-q8.litertlm (~300 Mo).",
+        sha256 = "757e9119fa5bd667a2774fb470ac4afcd3190a21c677f8e69a5d6bc908abdd63",
+        downloadUrl = "https://taipo-worker.junade-models.workers.dev/gemma3-270m-it-q8.litertlm",
+        approxDownloadBytes = 300_000_000L,
     ),
     LEGER(
         id = "leger",
@@ -47,7 +58,10 @@ enum class AiModel(
         approxSizeBytesMax = 1_100_000_000L,
         fileHint = "Plusieurs variantes existent (int4 ≈ 580–660 Mo, q8 ≈ 1 Go). " +
             "Prendre une variante générique (_q8_ ou _q4_), pas une variante liée à un " +
-            "SoC précis (_qualcomm_, _mediatek_…).",
+            "SoC précis (_qualcomm_, _mediatek_…). Fichier hébergé : gemma3-1b-it-int4.litertlm.",
+        sha256 = "1325ae366d31950f137c9c357b9fa89448b176d76998180c08ceaca78bba98be",
+        downloadUrl = "https://taipo-worker.junade-models.workers.dev/gemma3-1b-it-int4.litertlm",
+        approxDownloadBytes = 600_000_000L,
     ),
     EQUILIBRE(
         id = "equilibre",
@@ -59,6 +73,9 @@ enum class AiModel(
         fileHint = "Fichier attendu : gemma-4-E2B-it.litertlm (~2,6 Go). Éviter les " +
             "variantes *-web.litertlm (plus petites, réservées au web) et celles liées " +
             "à un SoC précis.",
+        sha256 = "181938105e0eefd105961417e8da75903eacda102c4fce9ce90f50b97139a63c",
+        downloadUrl = "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm",
+        approxDownloadBytes = 2_600_000_000L,
     ),
     PERFORMANT(
         id = "performant",
@@ -68,7 +85,13 @@ enum class AiModel(
         approxSizeBytesMin = 3_300_000_000L,
         approxSizeBytesMax = 3_900_000_000L,
         fileHint = "Fichier attendu : gemma-4-E4B-it.litertlm (~3,65 Go).",
+        sha256 = "0b2a8980ce155fd97673d8e820b4d29d9c7d99b8fa6806f425d969b145bd52e0",
+        downloadUrl = "https://huggingface.co/litert-community/gemma-4-E4B-it-litert-lm/resolve/main/gemma-4-E4B-it.litertlm",
+        approxDownloadBytes = 3_650_000_000L,
     );
+
+    /** Vrai si l'app sait télécharger ce modèle (URL connue). */
+    val hasDownloadUrl: Boolean get() = downloadUrl != null
 
     companion object {
         /** Extension de fichier attendue pour tous les modèles (format LiteRT-LM). */

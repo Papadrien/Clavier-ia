@@ -7,11 +7,11 @@ import android.net.Uri
 
 /**
  * Persiste, pour chaque [AiModel], le fichier local choisi par l'utilisateur
- * (URI SAF, avec prise de permission persistante) ainsi que le modèle
- * actuellement actif.
+ * (URI SAF, avec prise de permission persistante) ou le modèle téléchargé dans l'app
+ * (épopée 8), ainsi que le modèle actuellement actif.
  *
- * Pas de téléchargement dans ce prototype : uniquement des fichiers fournis
- * manuellement par l'utilisateur via le sélecteur de fichiers du système.
+ * Un modèle a une seule origine à la fois : fichier fourni (URI SAF) ou téléchargé. Le dernier installé
+ * remplace l'autre (story 8.12).
  */
 class ModelPreferences(context: Context) {
 
@@ -23,6 +23,49 @@ class ModelPreferences(context: Context) {
 
     fun setActiveModel(model: AiModel) {
         prefs.edit().putString(KEY_ACTIVE_MODEL, model.id).apply()
+    }
+
+    /** Oublie le modèle actif (story 8.13 : le dernier modèle installé vient d'être supprimé, 8.5 s'applique alors). */
+    fun clearActiveModel() {
+        prefs.edit().remove(KEY_ACTIVE_MODEL).apply()
+    }
+
+    /**
+     * Story 8.14 : vrai si le modèle installé est un téléchargement dont l'empreinte diffère de celle du catalogue.
+     * Le modèle reste utilisable : rien n'est modifié tant que l'utilisateur ne lance pas la mise à jour.
+     */
+    fun updateAvailable(model: AiModel): Boolean =
+        isInstalled(model) && ModelUpdate.isAvailable(isDownloaded(model), savedSha256For(model), model.sha256)
+
+    /** Vrai si le modèle a été téléchargé dans l'app (le fichier est alors directement dans `models/`). */
+    fun isDownloaded(model: AiModel): Boolean = prefs.getLong(downloadedSizeKey(model), -1L) > 0
+
+    /** Taille en octets du fichier téléchargé, contrôlée à chaque chargement du moteur (story 8.9), ou -1. */
+    fun downloadedSizeFor(model: AiModel): Long = prefs.getLong(downloadedSizeKey(model), -1L)
+
+    /**
+     * Enregistre un modèle téléchargé et vérifié. Remplace un éventuel fichier fourni à la main : la référence
+     * SAF est oubliée (le fichier de `models/` est désormais celui du téléchargement).
+     */
+    fun assignDownloaded(model: AiModel, sizeBytes: Long, sha256: String) {
+        clear(model)
+        prefs.edit()
+            .putLong(downloadedSizeKey(model), sizeBytes)
+            .putString(sha256Key(model), sha256)
+            .apply()
+    }
+
+    /**
+     * Un modèle est installé si son téléchargement est enregistré ET que le fichier est bien là, à la taille
+     * enregistrée (après une restauration sur un autre appareil, les préférences peuvent subsister sans le
+     * fichier), ou si un fichier a été fourni à la main.
+     */
+    fun isInstalled(model: AiModel): Boolean {
+        if (isDownloaded(model)) {
+            val file = ModelFileResolver.localFileFor(appContext, model)
+            return file.isFile && file.length() == downloadedSizeFor(model)
+        }
+        return savedUriFor(model) != null
     }
 
     fun savedUriFor(model: AiModel): Uri? =
@@ -64,6 +107,7 @@ class ModelPreferences(context: Context) {
             .putString(fileNameKey(model), fileName)
             .putLong(fileSizeKey(model), fileSize)
             .remove(sha256Key(model)) // l'empreinte de l'ancien fichier ne vaut plus
+            .remove(downloadedSizeKey(model)) // le fichier fourni remplace un éventuel téléchargement
             .apply()
     }
 
@@ -91,6 +135,7 @@ class ModelPreferences(context: Context) {
             .remove(fileNameKey(model))
             .remove(fileSizeKey(model))
             .remove(sha256Key(model))
+            .remove(downloadedSizeKey(model))
             .apply()
     }
 
@@ -98,6 +143,7 @@ class ModelPreferences(context: Context) {
     private fun fileNameKey(model: AiModel) = "name_${model.id}"
     private fun fileSizeKey(model: AiModel) = "size_${model.id}"
     private fun sha256Key(model: AiModel) = "sha256_${model.id}"
+    private fun downloadedSizeKey(model: AiModel) = "downloaded_size_${model.id}"
 
     companion object {
         private const val PREFS_NAME = "ai_model_prefs"

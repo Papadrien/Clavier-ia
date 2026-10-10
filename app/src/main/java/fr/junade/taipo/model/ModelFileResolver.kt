@@ -14,13 +14,30 @@ import java.security.MessageDigest
  * [ModelPreferences]) est donc copié une seule fois dans le stockage interne
  * de l'app. Les appels suivants réutilisent la copie si sa taille (et son empreinte SHA-256, quand
  * elle est connue) correspond toujours à celle du fichier choisi.
+ *
+ * Un modèle téléchargé dans l'app (épopée 8) n'a pas d'URI : son fichier est déjà dans `models/`, il est
+ * renvoyé tel quel après contrôle de sa taille.
  */
 object ModelFileResolver {
 
     suspend fun resolve(context: Context, model: AiModel): File = withContext(Dispatchers.IO) {
         val prefs = ModelPreferences(context)
+
+        // Modèle téléchargé (épopée 8) : le fichier est déjà dans models/, on ne le recopie jamais (story 8.9).
+        // Sa taille est recontrôlée à chaque chargement du moteur.
+        if (prefs.isDownloaded(model)) {
+            val downloaded = localFileFor(context, model)
+            if (downloaded.isFile && downloaded.length() == prefs.downloadedSizeFor(model)) {
+                return@withContext downloaded
+            }
+            throw ModelFileException(
+                "Le fichier du modèle ${model.displayName} est introuvable ou incomplet. " +
+                    "Retéléchargez-le depuis l'écran Modèle IA.",
+            )
+        }
+
         val sourceUri = prefs.savedUriFor(model)
-            ?: throw IllegalStateException(
+            ?: throw ModelFileException(
                 "Aucun fichier fourni pour le modèle ${model.displayName}. " +
                     "Sélectionnez-le d'abord dans les paramètres du modèle IA.",
             )
@@ -37,7 +54,7 @@ object ModelFileResolver {
         destination.parentFile?.mkdirs()
         val tempFile = File(destination.parentFile, "${destination.name}.tmp")
         val input = context.contentResolver.openInputStream(sourceUri)
-            ?: throw IllegalStateException(
+            ?: throw ModelFileException(
                 "Impossible d'ouvrir le fichier sélectionné pour ${model.displayName} (permission perdue ? à re-sélectionner).",
             )
         // L'empreinte de la copie est calculée pendant la copie (sans relecture) et gardée à côté,
@@ -57,7 +74,7 @@ object ModelFileResolver {
         }
 
         if (!tempFile.renameTo(destination)) {
-            throw IllegalStateException("Impossible de finaliser la copie du modèle ${model.displayName}.")
+            throw ModelFileException("Impossible de finaliser la copie du modèle ${model.displayName}.")
         }
         sha256MarkerFor(destination).writeText(digest.digest().joinToString("") { "%02x".format(it) })
         destination
@@ -91,6 +108,19 @@ object ModelFileResolver {
                 val size = file.length()
                 if (file.delete()) freed += size
             }
+        }
+        return freed
+    }
+
+    /**
+     * Supprime seulement le cache XNNPACK du modèle (story 8.14) : à faire quand le fichier du modèle est remplacé par
+     * une nouvelle version, pour qu'un cache construit sur l'ancien contenu ne soit pas réutilisé. Retourne les octets libérés.
+     */
+    fun deleteInferenceCache(context: Context, model: AiModel): Long {
+        var freed = 0L
+        xnnpackCacheFiles(context, model).forEach { file ->
+            val size = file.length()
+            if (file.delete()) freed += size
         }
         return freed
     }

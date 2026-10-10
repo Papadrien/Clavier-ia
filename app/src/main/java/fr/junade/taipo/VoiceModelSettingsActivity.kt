@@ -10,14 +10,15 @@ import android.provider.OpenableColumns
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import fr.junade.taipo.ai.VoiceEngine
 import fr.junade.taipo.model.VoiceModelFile
 import fr.junade.taipo.model.VoiceModelPreferences
 
 /**
- * Écran de sélection des 4 fichiers du modèle vocal (encoder/decoder/joiner/
- * tokens.txt). Comme pour les modèles de texte, pas de téléchargement dans ce
- * prototype : chaque fichier est fourni manuellement par l'utilisateur via le
- * sélecteur de fichiers du téléphone.
+ * Écran « Modèle vocal local » (debug seulement, story 8.15) : sélection à la main des 4 fichiers du modèle vocal
+ * (encoder/decoder/joiner/tokens.txt) via le sélecteur de fichiers du téléphone. En version publiée, le modèle vocal se
+ * télécharge depuis l'écran « Modèle IA » ([ModelDownloadActivity]) ; cet écran n'est plus accessible depuis l'accueil.
+ * Un fichier choisi ici remplace le fichier téléchargé correspondant, et inversement (le dernier installé gagne).
  */
 class VoiceModelSettingsActivity : ComponentActivity() {
 
@@ -107,6 +108,8 @@ class VoiceModelSettingsActivity : ComponentActivity() {
         val fileName = queryDisplayName(uri)
         preferences.assignUri(file, uri, fileName)
         statusViews[file]?.text = statusText(file)
+        // Le fichier précédent est supprimé : un moteur de dictée qui l'aurait chargé est fermé, il rechargera le nouveau.
+        Thread({ VoiceEngine.releaseEverywhere() }, "taipo-voice-engine-release").start()
     }
 
     private fun queryDisplayName(uri: Uri): String? {

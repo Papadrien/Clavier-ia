@@ -6,9 +6,9 @@
     <string name="main_description">Bilingue français (AZERTY) / anglais (QWERTY) selon la langue active.</string>
     <string name="button_enable">Ouvrir les réglages</string>
     <string name="button_select">Choisir la méthode de saisie</string>
-    <string name="button_model_settings">Modèle IA</string>
+    <string name="button_model_settings">Modèle IA local</string>
 
-    <string name="model_settings_title">Modèle IA</string>
+    <string name="model_settings_title">Modèle IA local</string>
     <string name="model_settings_description">Prototype : aucun téléchargement. Choisissez un modèle dans la liste, puis fournissez vous-même le fichier .litertlm correspondant depuis le stockage du téléphone.</string>
     <string name="model_settings_spinner_label">Modèle</string>
     <string name="model_settings_model_info">Modèle technique : %1$s\n\nFormat attendu : fichier %2$s (LiteRT-LM)\n\n%3$s\n\nDépôt Hugging Face de référence : %4$s\n\nAucune empreinte de référence n\'est embarquée dans ce prototype : la taille du fichier est comparée à titre indicatif, et son empreinte SHA-256 est affichée pour que vous puissiez la comparer à celle du dépôt.</string>
@@ -46,17 +46,15 @@
     <string name="correction_button_correcting">Correction…</string>
     <string name="correction_button_undo">Annuler la correction</string>
     <string name="correction_undo_failed">Annulation impossible : le texte a changé depuis la correction.</string>
-    <string name="correction_no_model_selected">Aucun modèle sélectionné : ouvrez « Modèle IA » dans les paramètres.</string>
     <string name="correction_nothing_new">Rien de nouveau à corriger.</string>
     <string name="correction_no_change">Aucune correction appliquée : texte inchangé ou réponse du modèle refusée.</string>
     <string name="message_dialog_ok">OK</string>
     <string name="correction_partial">Une partie du texte n\'a pas été corrigée (réponse incomplète du modèle).</string>
     <string name="correction_text_changed">Le texte a changé pendant la correction : correction annulée.</string>
-    <string name="correction_error">Échec de la correction : %1$s</string>
 
     <string name="button_voice_model_settings">Modèle vocal</string>
     <string name="voice_model_title">Modèle vocal</string>
-    <string name="voice_model_description">Prototype : aucun téléchargement. Fournissez les 4 fichiers du modèle de transcription vocale (Nemotron 3.5 ASR Streaming, export sherpa-onnx) depuis le stockage du téléphone.</string>
+    <string name="voice_model_description">Debug : fournissez à la main les 4 fichiers du modèle de transcription vocale (Nemotron 3.5 ASR Streaming, export sherpa-onnx) depuis le stockage du téléphone. En version publiée, le modèle vocal se télécharge depuis l\'écran « Modèle IA ».</string>
     <string name="voice_model_pick_file">Choisir le fichier</string>
     <string name="voice_model_current_file">Fichier actuel : %1$s</string>
     <string name="voice_model_no_file">Aucun fichier fourni.</string>
@@ -65,7 +63,6 @@
     <string name="voice_button_loading">Chargement…</string>
     <string name="voice_button_recording">Écoute…</string>
     <string name="voice_button_transcribing">Transcription…</string>
-    <string name="voice_no_model_selected">Modèle vocal incomplet : ouvrez « Modèle vocal » dans les paramètres et fournissez les 4 fichiers.</string>
     <string name="voice_permission_denied">Permission micro requise : appuyez à nouveau sur Vocal après l\'avoir accordée.</string>
     <string name="voice_error">Échec de la transcription : %1$s</string>
     <string name="voice_mic_unavailable">Micro indisponible : il est peut-être utilisé par une autre application. Réessayez dans un instant.</string>
@@ -136,7 +133,12 @@
     <string name="prompt_add_text_unavailable">Impossible d\'ajouter le texte : aucun champ de saisie n\'est actif.</string>
     <string name="ai_action_busy">Une action IA est déjà en cours.</string>
     <string name="generation_busy">Génération en cours : arrêtez-la ou attendez la fin.</string>
-    <string name="generation_error">Échec de la génération : %1$s</string>
+    <!-- Story 8.6 : une phrase par cause d'échec de l'IA, jamais le message brut d'une exception. -->
+    <string name="inference_error_model_file">Le fichier du modèle IA est introuvable ou illisible. Ouvrez « Modèle IA » pour le télécharger à nouveau.</string>
+    <string name="inference_error_memory">Mémoire insuffisante pour ce modèle. Fermez d\'autres applications ou choisissez un modèle plus léger dans « Modèle IA ».</string>
+    <string name="inference_error_incompatible">Ce modèle n\'a pas pu être chargé : il est peut-être incompatible ou corrompu. Téléchargez-le à nouveau ou choisissez-en un autre dans « Modèle IA ».</string>
+    <string name="inference_error_text_too_long">Le texte est trop long pour ce modèle. Raccourcissez-le ou sélectionnez une partie plus courte.</string>
+    <string name="inference_error_unexpected">Une erreur inattendue est survenue. Réessayez.</string>
     <string name="clipboard_empty">Rien à coller pour le moment.</string>
     <string name="clipboard_panel_close_description">Fermer le presse-papiers</string>
     <string name="clipboard_paste_description">Coller : %1$s</string>
@@ -265,10 +267,128 @@
     <string name="home_section_ai">Intelligence artificielle</string>
     <string name="home_row_keyboard_settings_subtitle">Rangée de chiffres, retour haptique, hauteur</string>
     <string name="home_row_personal_dictionary_subtitle">Ajouter ou supprimer des mots</string>
-    <string name="home_row_model_settings_subtitle">Correction et génération de texte</string>
-    <string name="home_row_voice_model_subtitle">Dictée vocale</string>
+    <string name="home_row_model_settings_subtitle">Fournir soi-même un fichier de modèle</string>
+    <string name="home_row_voice_model_subtitle">Télécharger le modèle de dictée</string>
     <string name="home_status_ready">Prêt</string>
     <string name="home_status_missing">À fournir</string>
     <string name="home_status_incomplete">%1$d/%2$d fichiers</string>
     <string name="home_row_system_prompts_subtitle">Instructions données à l\'IA</string>
+
+    <!-- Épopée 8 : écran « Modèle IA » avec téléchargement. -->
+    <string name="button_model_download">Modèle IA</string>
+    <string name="home_row_model_download_subtitle">Télécharger et choisir le modèle de correction et de génération</string>
+    <string name="home_status_to_download">À télécharger</string>
+    <string name="model_download_title">Modèle IA</string>
+    <string name="model_download_description">Téléchargez un modèle pour activer la correction et la génération de texte. Le modèle est ensuite utilisé sur votre appareil, sans connexion. Le téléchargement se fait en Wi-Fi par défaut.</string>
+    <string name="model_download_technical_line">%1$s · %2$s</string>
+    <string name="model_download_badge_active">Actif</string>
+    <string name="model_download_badge_installed">Installé</string>
+    <string name="model_download_badge_recommended">Recommandé</string>
+    <string name="model_download_status_unavailable">Bientôt disponible en téléchargement.</string>
+    <string name="model_download_status_not_installed">Non installé.</string>
+    <string name="model_download_status_debug_unverified">Non installé. Debug : empreinte SHA-256 non figée, elle sera relevée dans logcat (tag ModelDownloadWorker).</string>
+    <string name="model_download_status_downloading">Téléchargement…</string>
+    <string name="model_download_status_downloading_percent">Téléchargement… %1$d %%</string>
+    <string name="model_download_status_verifying">Vérification…</string>
+    <string name="model_download_status_installed">Installé.</string>
+    <string name="model_download_status_local_file">Fichier local (debug), non vérifié par le catalogue.</string>
+    <string name="model_download_status_installed_active">Installé, modèle actif.</string>
+    <string name="model_download_action_download">Télécharger</string>
+    <string name="model_download_action_retry">Réessayer</string>
+    <string name="model_download_action_cancel">Annuler</string>
+    <string name="model_download_action_use">Utiliser ce modèle</string>
+    <string name="model_download_failed_network">Téléchargement interrompu : connexion perdue ou Wi-Fi quitté.</string>
+    <string name="model_download_failed_server">Le serveur n\'a pas renvoyé le fichier attendu. Réessayez plus tard.</string>
+    <string name="model_download_failed_no_space">Espace insuffisant sur l\'appareil pour ce modèle.</string>
+    <string name="model_download_failed_corrupted">Le fichier reçu est incomplet ou ne correspond pas au modèle attendu.</string>
+    <string name="model_download_failed_other">Le téléchargement a échoué. Réessayez.</string>
+    <string name="model_download_toast_no_connection">Aucune connexion : connectez-vous au Wi-Fi pour télécharger le modèle.</string>
+    <string name="model_download_toast_not_available">Ce modèle n\'est pas encore téléchargeable.</string>
+    <string name="model_download_toast_no_space">Modèle trop volumineux pour l\'espace disponible : %1$s nécessaires, %2$s libres.</string>
+    <string name="model_download_mobile_title">Télécharger en données mobiles ?</string>
+    <string name="model_download_mobile_message">Vous n\'êtes pas en Wi-Fi. Le modèle %1$s pèse environ %2$s : le téléchargement consommera une grande partie de votre forfait.</string>
+    <string name="model_download_mobile_confirm">Télécharger</string>
+    <string name="model_download_mobile_cancel">Annuler</string>
+    <string name="model_download_channel_name">Téléchargement des modèles</string>
+    <string name="model_download_notification_title">Téléchargement du modèle %1$s</string>
+    <string name="model_download_cancel">Annuler</string>
+
+    <!-- Story 8.11 : licences et mentions légales des modèles. -->
+    <string name="home_section_about">À propos</string>
+    <string name="button_licenses">Licences</string>
+    <string name="licenses_title">Licences</string>
+    <string name="home_row_licenses_subtitle">Conditions et licences des modèles IA</string>
+    <string name="licenses_description">Les modèles IA de Taipo sont des modèles Gemma de Google, distribués sous des licences différentes selon leur version. Ils sont utilisés sur votre appareil et ne sont pas modifiés par Taipo.</string>
+    <string name="licenses_gemma3_title">Gemma 3 : conditions d\'utilisation Gemma</string>
+    <string name="licenses_gemma3_models">Modèles concernés : Ultra-léger (Gemma 3 270M) et Léger (Gemma 3 1B).</string>
+    <string name="licenses_gemma3_notice">Gemma is provided under and subject to the Gemma Terms of Use found at ai.google.dev/gemma/terms</string>
+    <string name="licenses_gemma3_restrictions">Restrictions d\'usage : ces modèles ne doivent pas être utilisés pour un usage interdit par la politique d\'usage interdit de Gemma (Prohibited Use Policy). En téléchargeant ou en utilisant un modèle Gemma 3 dans Taipo, vous vous engagez à respecter ces conditions.</string>
+    <string name="licenses_link_gemma_terms">Lire les Gemma Terms of Use</string>
+    <string name="licenses_link_gemma_policy">Lire la Prohibited Use Policy</string>
+    <string name="licenses_gemma4_title">Gemma 4 : licence Apache 2.0</string>
+    <string name="licenses_gemma4_models">Modèles concernés : Équilibré (Gemma 4 E2B) et Performant (Gemma 4 E4B). Licence Apache, version 2.0 : le texte complet est conservé ci-dessous.</string>
+    <string name="licenses_link_apache">Lire la licence Apache 2.0 en ligne</string>
+    <string name="licenses_apache_show">Afficher le texte complet de la licence</string>
+    <string name="licenses_apache_hide">Masquer le texte de la licence</string>
+    <string name="licenses_apache_unreadable">Le texte de la licence n\'a pas pu être chargé. Il est disponible sur www.apache.org/licenses/LICENSE-2.0.</string>
+    <string name="licenses_no_browser">Aucun navigateur disponible pour ouvrir ce lien.</string>
+    <string name="model_download_license_gemma">Licence : conditions d\'utilisation Gemma</string>
+    <string name="model_download_license_apache">Licence : Apache 2.0</string>
+    <string name="model_license_dialog_title">Licence du modèle %1$s</string>
+    <string name="model_license_dialog_message">Ce modèle (%1$s) est distribué par Google sous les Gemma Terms of Use. Son usage est soumis à ces conditions et à la Prohibited Use Policy, qui interdisent certains usages. Elles sont reprises dans les conditions d\'utilisation de Taipo. En continuant, vous reconnaissez les avoir lues et vous engagez à les respecter.</string>
+    <string name="model_license_dialog_accept">Accepter et télécharger</string>
+    <string name="model_license_dialog_cancel">Annuler</string>
+
+    <!-- Conditions d'utilisation (suite de la story 8.11) : restrictions d'usage Gemma reprises dans les conditions de l'app. -->
+    <string name="button_terms">Conditions d\'utilisation</string>
+    <string name="home_row_terms_subtitle">Règles d\'usage de Taipo et de l\'IA</string>
+    <string name="terms_title">Conditions d\'utilisation</string>
+    <string name="terms_updated">Dernière mise à jour : 10 octobre 2026</string>
+    <string name="terms_section_1_title">1. Objet</string>
+    <string name="terms_section_1_body">Taipo est un clavier Android qui propose des fonctions d\'intelligence artificielle (correction, génération de texte, saisie vocale) exécutées sur votre appareil. En activant ou en utilisant Taipo, vous acceptez les présentes conditions.</string>
+    <string name="terms_section_2_title">2. Vos données</string>
+    <string name="terms_section_2_body">Le texte que vous saisissez, copiez ou dictez reste sur votre appareil : Taipo ne l\'envoie à aucun serveur. L\'accès à Internet sert uniquement à télécharger le fichier d\'un modèle IA, à votre demande.</string>
+    <string name="terms_section_3_title">3. Modèles IA et licences</string>
+    <string name="terms_section_3_body">Les modèles de correction et de génération sont des modèles Gemma de Google. Gemma 3 (Ultra-léger et Léger) est fourni selon les Gemma Terms of Use ; Gemma 4 (Équilibré et Performant) est fourni sous licence Apache 2.0. Les textes et les liens figurent dans l\'écran « Licences ».</string>
+    <string name="terms_section_4_title">4. Restrictions d\'usage</string>
+    <string name="terms_section_4_body">Vous vous engagez à ne pas utiliser les fonctions d\'IA de Taipo pour les usages interdits par la politique d\'usage interdit de Gemma (Gemma Prohibited Use Policy, ai.google.dev/gemma/prohibited_use_policy), qui fait partie des présentes conditions. Google peut mettre cette politique à jour : la version en ligne fait foi. Si vous transmettez un modèle Gemma 3 à un tiers, vous devez lui imposer ces mêmes restrictions et l\'informer qu\'il y est soumis. Dans tous les cas, vous vous engagez à respecter la loi applicable.</string>
+    <string name="terms_section_5_title">5. Résultats de l\'IA</string>
+    <string name="terms_section_5_body">Un modèle IA peut produire des textes inexacts, incomplets ou inadaptés. Relisez toujours un texte généré ou corrigé avant de l\'envoyer : vous restez responsable de ce que vous écrivez et envoyez avec Taipo.</string>
+    <string name="terms_section_6_title">6. Absence de garantie</string>
+    <string name="terms_section_6_body">Taipo et les modèles IA sont fournis « en l\'état », sans garantie de résultat, dans les limites permises par la loi. Les droits que la loi vous reconnaît ne sont pas affectés.</string>
+    <string name="terms_section_7_title">7. Modifications</string>
+    <string name="terms_section_7_body">Ces conditions peuvent évoluer avec les versions de Taipo ; la date de dernière mise à jour figure en haut de cet écran.</string>
+    <string name="terms_link_policy">Lire la Prohibited Use Policy</string>
+    <string name="terms_link_licenses">Voir les licences des modèles</string>
+    <string name="model_license_dialog_link_terms">Lire les conditions d\'utilisation de Taipo</string>
+
+    <!-- Story 8.13 : suppression d'un modèle installé. -->
+    <string name="model_download_action_delete">Supprimer</string>
+    <string name="model_download_status_deleting">Suppression…</string>
+    <string name="model_delete_title">Supprimer le modèle %1$s ?</string>
+    <string name="model_delete_message">Le fichier (%1$s) sera supprimé de votre appareil. Vous pourrez le télécharger de nouveau plus tard.</string>
+    <string name="model_delete_message_last">Le fichier (%1$s) sera supprimé de votre appareil. C\'est votre dernier modèle : Corriger et Générer ne fonctionneront plus tant que vous n\'en aurez pas installé un autre.</string>
+    <string name="model_delete_message_active">Le fichier (%1$s) sera supprimé de votre appareil. Taipo utilisera ensuite le modèle %2$s.</string>
+    <string name="model_delete_confirm">Supprimer</string>
+    <string name="model_delete_cancel">Annuler</string>
+    <string name="model_delete_done">%1$s libérés</string>
+    <string name="model_delete_failed">Suppression impossible. Réessayez.</string>
+
+    <!-- Story 8.14 : mise à jour d'un modèle verrouillé. -->
+    <string name="model_download_status_update_available">Mise à jour disponible. Le modèle installé reste utilisable en attendant.</string>
+    <string name="model_download_action_update">Mettre à jour</string>
+    <string name="home_status_update">Mise à jour</string>
+
+    <!-- Story 8.15 : téléchargement du modèle vocal (section de l'écran « Modèle IA »). -->
+    <string name="model_download_voice_section_title">Modèle vocal</string>
+    <string name="model_download_voice_description">Nécessaire pour la dictée (bouton Vocal). Le modèle est téléchargé en plusieurs fichiers, puis la transcription se fait sur votre appareil, sans connexion.</string>
+    <string name="model_download_voice_name">Modèle vocal</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_status_debug_unverified">Non installé. Debug : empreintes SHA-256 non figées, elles seront relevées dans logcat (tag VoiceModelDownloadWorker).</string>
+    <string name="model_download_voice_notification_title">Téléchargement du modèle vocal</string>
+    <string name="model_download_voice_mobile_message">Vous n\'êtes pas en Wi-Fi. Le modèle vocal pèse environ %1$s : le téléchargement consommera une partie de votre forfait.</string>
+    <string name="model_delete_voice_title">Supprimer le modèle vocal ?</string>
+    <string name="model_delete_voice_message">Les fichiers (%1$s) seront supprimés de votre appareil. La dictée vocale ne fonctionnera plus tant que vous n\'aurez pas retéléchargé le modèle.</string>
+    <string name="button_voice_model_local">Modèle vocal local</string>
+    <string name="home_row_voice_model_local_subtitle">Fournir soi-même les fichiers du modèle vocal</string>
 </resources>

@@ -151,6 +151,9 @@ dependencies {
     //      ce dossier), copiées depuis sherpa-onnx/kotlin-api du dépôt
     //      officiel. Pas de ligne implementation(...) à ajouter ici pour ça.
 
+    // Épopée 8 : téléchargement des modèles IA en arrière-plan (WorkManager, service au premier plan dataSync).
+    implementation(libs.androidx.work.runtime.ktx)
+
     // Dictionnaire personnel (story 1.4) : Room chiffré par SQLCipher.
     // La clé de chiffrement est générée aléatoirement et protégée par
     // l'Android Keystore (voir DatabasePassphraseProvider). Room reste à la

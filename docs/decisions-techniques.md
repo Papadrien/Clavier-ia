@@ -13,9 +13,10 @@ le backlog produit : seulement ce qui explique des choix visibles dans le code.
   Le rechargement après que le système a tué le processus du clavier est une limitation connue, avec indicateur de chargement.
 
 ## Modèles (4 niveaux, fichiers `.litertlm`)
-Ultra-léger = Gemma 3 270M, Léger = Gemma 3 1B, Équilibré = Gemma 4 E2B, Performant = Gemma 4 E4B. Dans le prototype,
-l'utilisateur fournit lui-même le fichier par le sélecteur de fichiers ; le téléchargement (avec SHA-256 embarqué par
-modèle) est prévu plus tard. Voir `AiModel.kt`.
+Ultra-léger = Gemma 3 270M, Léger = Gemma 3 1B, Équilibré = Gemma 4 E2B, Performant = Gemma 4 E4B. Deux origines :
+le fichier fourni à la main (écran « Modèle IA local ») ou le téléchargement dans l'app (épopée 8, commencée avec
+Gemma 4 ; WorkManager + service au premier plan, SHA-256 embarqué par modèle). Voir `AiModel.kt` et
+`docs/telechargement-modeles.md`.
 
 ## Transcription vocale
 - **Nemotron 3.5 ASR Streaming** via **sherpa-onnx** (`OnlineRecognizer` / `OnlineStream`), export ONNX multilingue
@@ -25,5 +26,5 @@ modèle) est prévu plus tard. Voir `AiModel.kt`.
 - Les `.so` fournis ciblent **arm64-v8a** (Pixel 9) ; l'émulateur x86_64 est possible en debug (voir `app/src/debug/jniLibs/README.md`).
 
 ## Données et sécurité
-- Room + SQLCipher pour les données de l'utilisateur ; clé aléatoire protégée par l'Android Keystore ; aucune permission
-  Internet (voir `docs/securite.md`). Les modèles IA ne sont pas chiffrés.
+- Room + SQLCipher pour les données de l'utilisateur ; clé aléatoire protégée par l'Android Keystore ; la permission
+  Internet ne sert qu'au téléchargement des modèles (voir `docs/securite.md` et `docs/telechargement-modeles.md`). Les modèles IA ne sont pas chiffrés.

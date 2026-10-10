@@ -52,8 +52,9 @@ police agrandie (sous-titres sur plusieurs lignes), TalkBack (navigation par tit
 - Logique pure dans `ModelStatus` (testée : `ModelStatusTest`). Modèle IA : prêt si le **modèle actif** (celui du menu
   déroulant) a un fichier associé, sinon à fournir. Modèle vocal : prêt si les 4 fichiers sont associés, incomplet si
   1 à 3, sinon à fournir (`VoiceModelPreferences.providedCount`).
+- Story 8.15 : la ligne « Modèle vocal » ouvre la section « Modèle vocal » de l'écran « Modèle IA » (téléchargement) et affiche *À télécharger* / *N/4 fichiers* / *Prêt* / *Mise à jour* ; en debug seulement, une ligne « Modèle vocal local » (sous la précédente) ouvre l'ancien écran de choix des 4 fichiers à la main.
 - Relu à chaque `onResume` : le statut se met à jour au retour des sous-pages.
-- Pas de statut « en cours » ni « à télécharger » : il n'y a pas de téléchargement dans cette version. Le calcul
+- Épopée 8 : la ligne « Modèle IA » (écran de téléchargement) affiche *Prêt* / *À télécharger* selon le modèle actif (téléchargé ou fourni à la main) et son nom en sous-titre ; l'ancien écran s'appelle « Modèle IA local » et n'a plus de pastille. Le détail d'un téléchargement (pourcentage, échec) est sur l'écran « Modèle IA », pas à l'accueil. Le calcul
   d'empreinte SHA-256 se fait dans `ModelSettingsActivity` et n'est pas exposé à l'accueil. Le statut dit « fichier
   associé », pas « fichier vérifié » (la taille et l'empreinte restent signalées dans la sous-page).
 

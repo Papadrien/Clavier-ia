@@ -40,6 +40,7 @@ import fr.junade.taipo.suggestion.NextWordRepository
 import fr.junade.taipo.suggestion.SuggestionPolicy
 import fr.junade.taipo.suggestion.WordText
 import fr.junade.taipo.dictionary.PersonalDictionaryProvider
+import fr.junade.taipo.model.ModelAvailability
 import fr.junade.taipo.model.ModelPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -182,7 +183,7 @@ class TaipoIme : InputMethodService() {
                 override fun syncAutoCapitalization() = this@TaipoIme.syncAutoCapitalization()
                 override fun applyState() = this@TaipoIme.applyState()
                 override fun updateCorrectionBarVisibility() = this@TaipoIme.updateCorrectionBarVisibility()
-                override fun activeModel() = modelPreferences.activeModel()
+                override fun activeModel() = ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled)
                 override fun capturedFieldText(): String? = currentInputConnection?.let { correction.captureFieldText(it) }?.text
                 override fun learnFromTyping(terminator: String) = this@TaipoIme.learnFromTyping(terminator)
                 override fun insertGeneratedText(text: String): Boolean = this@TaipoIme.insertGeneratedText(text)
@@ -230,7 +231,7 @@ class TaipoIme : InputMethodService() {
                 override fun showMessage(message: String) = this@TaipoIme.showMessage(message)
                 override fun inputConnection() = currentInputConnection
                 override fun generationBusy(): Boolean = prompt.isGenerating // le moteur est pris par la génération
-                override fun activeModel() = modelPreferences.activeModel()
+                override fun activeModel() = ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled)
                 override fun protectedWords(text: String): List<String> = protectedWordsIn(text)
                 override fun setCorrectionBarState(state: CorrectionBarState) {
                     correctionBar.state = state

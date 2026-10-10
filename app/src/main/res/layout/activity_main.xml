@@ -243,6 +243,20 @@
         android:layout_marginBottom="@dimen/taipo_settings_gap_sm">
 
         <include
+            android:id="@+id/button_model_download"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Story 8.12 : ce séparateur et la ligne « Modèle IA local » ne sont visibles qu'en build debug (MainActivity). -->
+        <View
+            android:id="@+id/divider_model_settings"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
             android:id="@+id/button_model_settings"
             layout="@layout/view_settings_row"
             android:layout_width="match_parent"
@@ -260,6 +274,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <!-- Story 8.15 : ce séparateur et la ligne « Modèle vocal local » ne sont visibles qu'en build debug (MainActivity). -->
+        <View
+            android:id="@+id/divider_voice_model_local"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
+            android:id="@+id/button_voice_model_local"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/taipo_settings_divider_thickness"
@@ -268,6 +296,41 @@
 
         <include
             android:id="@+id/button_system_prompts"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <TextView
+        style="@style/TaipoText.Section"
+        android:id="@+id/section_about"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/home_section_about"
+        android:layout_marginTop="@dimen/taipo_settings_gap_xl"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_settings_card"
+        android:clipToOutline="true">
+
+        <include
+            android:id="@+id/button_terms"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
+            android:id="@+id/button_licenses"
             layout="@layout/view_settings_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

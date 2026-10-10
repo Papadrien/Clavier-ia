@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!--
+        Épopée 8 : téléchargement des modèles IA. INTERNET sert UNIQUEMENT à ce téléchargement (HTTPS, un fichier de
+        modèle) ; aucun texte saisi, copié ou dicté n'est envoyé. Un téléchargement de plusieurs Go reste actif écran
+        éteint : service au premier plan de type dataSync (WorkManager) avec notification (Android 13+ : permission
+        POST_NOTIFICATIONS demandée au premier téléchargement, le téléchargement marche aussi si elle est refusée).
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!--
         Lot 3.4 (S2) : sauvegarde déclarée explicitement. Elle reste activée (réglages du clavier), mais tout ce
@@ -36,6 +49,21 @@
         <activity
             android:name=".KeyboardSettingsActivity"
             android:label="@string/keyboard_settings_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".ModelDownloadActivity"
+            android:label="@string/model_download_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".TermsActivity"
+            android:label="@string/terms_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".LicensesActivity"
+            android:label="@string/licenses_title"
             android:exported="false" />
 
         <activity
@@ -86,6 +114,12 @@
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:excludeFromRecents="true"
             android:taskAffinity="" />
+
+        <!-- Le service de WorkManager déclare ici son type de service au premier plan (obligatoire dès Android 14). -->
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="dataSync"
+            tools:node="merge" />
 
         <service
             android:name=".TaipoIme"

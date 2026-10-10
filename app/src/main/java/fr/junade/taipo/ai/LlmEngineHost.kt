@@ -6,6 +6,8 @@ import com.google.ai.edge.litertlm.Engine
 import com.google.ai.edge.litertlm.EngineConfig
 import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.model.ModelFileResolver
+import fr.junade.taipo.model.ModelLoadException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -95,6 +97,11 @@ class LlmEngineHost(private val appContext: Context) {
             withContext(Dispatchers.Default) {
                 newEngine.initialize()
             }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            // Fichier présent mais refusé par le moteur : modèle incompatible ou corrompu (story 8.6).
+            throw ModelLoadException("Le moteur n'a pas pu charger le modèle ${model.displayName}.", e)
         } finally {
             isLoading = false
             loadingListener?.invoke(false)

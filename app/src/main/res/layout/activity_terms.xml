@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Conditions d'utilisation : les sections (titre + texte, voir item_terms_section) sont ajoutées par TermsActivity
+     à partir de TermsContent. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/taipo_settings_screen_padding">
+
+        <TextView
+            style="@style/TaipoText.Title"
+            android:id="@+id/terms_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/terms_title" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_xl"
+            android:text="@string/terms_updated" />
+
+        <LinearLayout
+            android:id="@+id/terms_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <Button
+            style="@style/TaipoButton.Secondary"
+            android:id="@+id/terms_link_policy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/terms_link_policy" />
+
+        <Button
+            style="@style/TaipoButton.Secondary"
+            android:id="@+id/terms_link_licenses"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+            android:text="@string/terms_link_licenses" />
+    </LinearLayout>
+</ScrollView>

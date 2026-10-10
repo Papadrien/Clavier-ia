@@ -4,8 +4,9 @@ package fr.junade.taipo.model
  * Lot UX 4 : statut d'un modèle affiché sur la ligne correspondante de l'accueil. Logique pure (sans vue), testée en
  * JVM ; la lecture des préférences est dans `MainActivity`.
  *
- * Pas de téléchargement dans cette version (l'utilisateur fournit les fichiers lui-même) : les statuts décrivent donc
- * « fichier(s) fourni(s) ou non », pas un état de téléchargement.
+ * Ces statuts décrivent « fichier(s) présent(s) ou non » (téléchargé ou fourni à la main). L'état d'un
+ * téléchargement en cours (pourcentage, vérification, échec) est dans `model.download.DownloadState` et
+ * `ModelRowStatus`, pour l'écran « Modèle IA ».
  */
 enum class ModelStatus {
     /** Tous les fichiers nécessaires sont associés au modèle. */

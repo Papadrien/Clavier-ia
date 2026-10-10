@@ -46,6 +46,19 @@ l'hygiène (dérivation standard, séparation par usage, format versionné), pas
 - Non fait, volontairement : vérifier l'empreinte pendant la copie interne du modèle (`ModelFileResolver`). C'est
   le chemin qui charge l'IA ; à faire avec un compilateur sous la main.
 
+## S4 — Téléchargement des modèles (épopée 8)
+
+- **Permission `INTERNET` ajoutée** (elle était absente jusque-là). Elle ne sert qu'à `ModelDownloadWorker`, qui fait un
+  GET HTTPS d'un fichier de modèle : aucun texte saisi, copié ou dicté n'est envoyé, aucun autre code réseau. Le
+  message de confidentialité (« 100 % local ») reste vrai pour l'usage, mais « aucune permission Internet » ne l'est
+  plus : à reporter dans la fiche Play (déclaration de sécurité des données) et dans la politique de confidentialité.
+- HTTPS obligatoire, y compris après redirection (contrôlé sur l'URL finale). Pas de reprise (Range) : V2.
+- Fichier écrit dans `<id>.litertlm.tmp`, SHA-256 calculé pendant le flux, comparé à `AiModel.sha256`, puis rename
+  atomique. Sans empreinte de référence, le téléchargement n'est permis qu'en debug (relever l'empreinte).
+- La taille du fichier installé est recontrôlée à chaque chargement du moteur (`ModelFileResolver.resolve`).
+- Permissions liées : `ACCESS_NETWORK_STATE` (Wi-Fi ou données mobiles), `FOREGROUND_SERVICE` +
+  `FOREGROUND_SERVICE_DATA_SYNC`, `POST_NOTIFICATIONS` (Android 13+, refusable sans bloquer le téléchargement).
+
 ## À valider sur l'appareil
 - [ ] `./gradlew testDebugUnitTest` (nouveaux : `NextWordCryptoTest`, `Sha256Test`, `BackupRulesTest`).
 - [ ] Migration réelle : installer la version précédente, taper des phrases (apprentissage), mettre à jour par-dessus :

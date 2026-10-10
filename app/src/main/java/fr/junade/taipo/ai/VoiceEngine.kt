@@ -10,6 +10,8 @@ import fr.junade.taipo.model.VoiceModelFile
 import fr.junade.taipo.model.VoiceModelFileResolver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.Collections
+import java.util.WeakHashMap
 
 /**
  * Enveloppe autour de sherpa-onnx (`OnlineRecognizer`) pour la transcription
@@ -30,7 +32,12 @@ import kotlinx.coroutines.withContext
  */
 class VoiceEngine(private val appContext: Context) {
 
+    @Volatile
     private var recognizer: OnlineRecognizer? = null
+
+    init {
+        synchronized(liveEngines) { liveEngines.add(this) }
+    }
 
     suspend fun ensureLoaded(): OnlineRecognizer {
         recognizer?.let { return it }
@@ -79,5 +86,19 @@ class VoiceEngine(private val appContext: Context) {
     fun close() {
         recognizer?.release()
         recognizer = null
+    }
+
+    companion object {
+        private val liveEngines = Collections.newSetFromMap(WeakHashMap<VoiceEngine, Boolean>())
+
+        /**
+         * Ferme, dans tout le processus, les moteurs de dictée (story 8.15) : à appeler avant de supprimer ou de
+         * remplacer les fichiers du modèle vocal, pour qu'aucun moteur ne garde l'ancien modèle en mémoire. Le
+         * moteur se recharge au prochain appui sur Vocal. À appeler hors du thread principal.
+         */
+        fun releaseEverywhere() {
+            val engines = synchronized(liveEngines) { liveEngines.toList() }
+            engines.forEach { it.close() }
+        }
     }
 }

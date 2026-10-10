@@ -183,7 +183,9 @@ class VoiceController(
             return
         }
         if (!voiceModelPreferences.isComplete()) {
-            host.showMessage(context.getString(R.string.voice_no_model_selected))
+            // Modèle vocal absent ou incomplet : on ouvre directement la section « Modèle vocal » de l'écran
+            // « Modèle IA » (nouvelle tâche : le clavier est un service), au lieu d'un message (stories 8.5 et 8.15).
+            ModelScreenRedirect.openVoice(context)
             return
         }
 

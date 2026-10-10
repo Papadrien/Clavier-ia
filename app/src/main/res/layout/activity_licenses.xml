@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Story 8.11 : écran « Licences » (accessible depuis l'accueil). Le texte Apache 2.0 est chargé depuis
+     assets/licenses/apache-2.0.txt par LicensesActivity et masqué tant que l'utilisateur ne le déplie pas. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/taipo_settings_screen_padding">
+
+        <TextView
+            style="@style/TaipoText.Title"
+            android:id="@+id/licenses_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/licenses_title"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+        <TextView
+            style="@style/TaipoText.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/licenses_description"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_xl" />
+
+        <!-- Gemma 3 : Gemma Terms of Use -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_settings_card"
+            android:padding="@dimen/taipo_settings_card_padding"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_md">
+
+            <TextView
+                style="@style/TaipoText.Lead"
+                android:id="@+id/licenses_gemma3_heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/licenses_gemma3_title"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+                android:text="@string/licenses_gemma3_models" />
+
+            <TextView
+                style="@style/TaipoText.Info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+                android:text="@string/licenses_gemma3_notice"
+                android:textIsSelectable="true" />
+
+            <TextView
+                style="@style/TaipoText.Info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+                android:text="@string/licenses_gemma3_restrictions" />
+
+            <Button
+                style="@style/TaipoButton.Secondary"
+                android:id="@+id/licenses_link_gemma_terms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_md"
+                android:text="@string/licenses_link_gemma_terms" />
+
+            <Button
+                style="@style/TaipoButton.Secondary"
+                android:id="@+id/licenses_link_gemma_policy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+                android:text="@string/licenses_link_gemma_policy" />
+        </LinearLayout>
+
+        <!-- Gemma 4 : Apache 2.0 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_settings_card"
+            android:padding="@dimen/taipo_settings_card_padding">
+
+            <TextView
+                style="@style/TaipoText.Lead"
+                android:id="@+id/licenses_gemma4_heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/licenses_gemma4_title"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+                android:text="@string/licenses_gemma4_models" />
+
+            <Button
+                style="@style/TaipoButton.Secondary"
+                android:id="@+id/licenses_link_apache"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_md"
+                android:text="@string/licenses_link_apache" />
+
+            <Button
+                style="@style/TaipoButton.Secondary"
+                android:id="@+id/licenses_apache_toggle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+                android:text="@string/licenses_apache_show" />
+
+            <TextView
+                style="@style/TaipoText.Small"
+                android:id="@+id/licenses_apache_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_md"
+                android:textIsSelectable="true"
+                android:visibility="gone" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

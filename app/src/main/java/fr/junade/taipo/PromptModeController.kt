@@ -3,6 +3,8 @@ package fr.junade.taipo
 import android.content.Context
 import android.os.Handler
 import fr.junade.taipo.ai.ChatExchange
+import fr.junade.taipo.ai.InferenceFailureClassifier
+import fr.junade.taipo.ai.messageRes
 import fr.junade.taipo.ai.FieldContext
 import fr.junade.taipo.ai.GenerationPromptPreferences
 import fr.junade.taipo.ai.GenerationSession
@@ -352,7 +354,7 @@ class PromptModeController(
         if (generationJob?.isActive == true) return
         val model = host.activeModel()
         if (model == null) {
-            host.showMessage(context.getString(R.string.correction_no_model_selected))
+            ModelScreenRedirect.open(context)
             return
         }
         val prompt = buffer.text.trim()
@@ -411,7 +413,7 @@ class PromptModeController(
             } catch (e: CancellationException) {
                 throw e // fermeture du clavier : la conversation est déjà vidée
             } catch (t: Throwable) {
-                AppLog.e(TAG, "Échec de la génération", t)
+                AppLog.e(TAG, "Échec de la génération (${InferenceFailureClassifier.classify(t)})", t)
                 onGenerationFailed(t)
             }
         }
@@ -479,7 +481,7 @@ class PromptModeController(
             }
         }
         applyViews() // le bouton rond redevient « envoyer »
-        host.showMessage(context.getString(R.string.generation_error, t.message ?: t.javaClass.simpleName))
+        host.showMessage(context.getString(InferenceFailureClassifier.classify(t).messageRes()))
     }
 
     /**

@@ -45,7 +45,15 @@ class Sha256Test {
 
     @Test
     fun `sans empreinte de reference aucun avertissement`() {
-        assertNull(AiModel.LEGER.checksumWarning("ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"))
+        assertNull(checksumWarningFor(null, "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"))
+    }
+
+    @Test
+    fun `les 4 modeles ont une empreinte figee de 64 caracteres hexadecimaux`() {
+        AiModel.entriesOrdered().forEach {
+            assertTrue(Regex("[0-9a-f]{64}").matches(it.sha256 ?: ""), it.id)
+            assertNull(it.checksumWarning(it.sha256!!.uppercase()))
+        }
     }
 
     @Test
