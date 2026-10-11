@@ -57,6 +57,11 @@
             android:exported="false" />
 
         <activity
+            android:name=".VoiceModelDownloadActivity"
+            android:label="@string/model_download_voice_section_title"
+            android:exported="false" />
+
+        <activity
             android:name=".TermsActivity"
             android:label="@string/terms_title"
             android:exported="false" />

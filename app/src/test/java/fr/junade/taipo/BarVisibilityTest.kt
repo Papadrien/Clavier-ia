@@ -20,6 +20,7 @@ class BarVisibilityTest {
         assertTrue(BarVisibility.isBusy(VoiceBarState.LOADING, CorrectionBarState.IDLE))
         assertTrue(BarVisibility.isBusy(VoiceBarState.IDLE, CorrectionBarState.LOADING))
         assertTrue(BarVisibility.isBusy(VoiceBarState.IDLE, CorrectionBarState.CORRECTING))
+        assertTrue(BarVisibility.isBusy(VoiceBarState.IDLE, CorrectionBarState.CANCELLING))
     }
 
     @Test
@@ -144,11 +145,17 @@ class BarVisibilityTest {
         assertEquals(R.string.correction_button_idle, idle.label)
         assertTrue(idle.enabled)
         assertEquals(1f, idle.alpha)
-        for (state in listOf(CorrectionBarState.LOADING, CorrectionBarState.CORRECTING)) {
+        // Chargement / correction en cours : le bouton reste actif, un nouvel appui annule.
+        val loading = BarVisibility.correctAppearance(CorrectionBarState.LOADING)!!
+        assertTrue(loading.enabled)
+        assertEquals(1f, loading.alpha)
+        for (state in listOf(CorrectionBarState.CORRECTING, CorrectionBarState.CANCELLING)) {
             val busy = BarVisibility.correctAppearance(state)!!
             assertFalse(busy.enabled)
             assertEquals(0.6f, busy.alpha)
-            assertTrue(busy.loading, "une roue remplace l'icône pendant $state")
+        }
+        for (state in listOf(CorrectionBarState.LOADING, CorrectionBarState.CORRECTING, CorrectionBarState.CANCELLING)) {
+            assertTrue(BarVisibility.correctAppearance(state)!!.loading, "une roue remplace l'icône pendant $state")
         }
         for (state in listOf(CorrectionBarState.IDLE, CorrectionBarState.UNDO)) {
             assertFalse(BarVisibility.correctAppearance(state)!!.loading)

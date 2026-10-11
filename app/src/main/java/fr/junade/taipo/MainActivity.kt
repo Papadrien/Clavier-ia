@@ -72,11 +72,8 @@ class MainActivity : Activity() {
         val localModelVisible = LocalModelAccess.isVisible(BuildConfig.DEBUG)
         findViewById<View>(R.id.button_model_settings).visibility = if (localModelVisible) View.VISIBLE else View.GONE
         findViewById<View>(R.id.divider_model_settings).visibility = if (localModelVisible) View.VISIBLE else View.GONE
-        // Story 8.15 : le modèle vocal se télécharge depuis la section « Modèle vocal » de l'écran « Modèle IA ».
-        bindRow(R.id.button_voice_model_settings, R.string.button_voice_model_settings, R.string.home_row_voice_model_subtitle, ModelDownloadActivity::class.java)
-        findViewById<View>(R.id.button_voice_model_settings).setOnClickListener {
-            startActivity(ModelScreenRedirect.voiceIntent(this))
-        }
+        // Story 8.15 : le modèle vocal se télécharge depuis son propre écran « Modèle vocal », distinct de « Modèle IA ».
+        bindRow(R.id.button_voice_model_settings, R.string.button_voice_model_settings, R.string.home_row_voice_model_subtitle, VoiceModelDownloadActivity::class.java)
         // Le chargement des fichiers vocaux à la main est réservé au debug, comme celui du modèle de texte (8.12).
         bindRow(R.id.button_voice_model_local, R.string.button_voice_model_local, R.string.home_row_voice_model_local_subtitle, VoiceModelSettingsActivity::class.java)
         findViewById<View>(R.id.button_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE

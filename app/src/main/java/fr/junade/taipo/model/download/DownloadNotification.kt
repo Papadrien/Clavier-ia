@@ -20,19 +20,34 @@ object DownloadNotification {
 
     const val CHANNEL_ID = "model_download"
 
-    fun foregroundInfo(context: Context, notificationId: Int, title: String, percent: Int?, cancel: PendingIntent): ForegroundInfo =
+    fun foregroundInfo(
+        context: Context,
+        notificationId: Int,
+        title: String,
+        percent: Int?,
+        cancel: PendingIntent,
+        screen: Class<*> = ModelDownloadActivity::class.java,
+    ): ForegroundInfo =
         ForegroundInfo(
             notificationId,
-            build(context, title, percent, cancel),
+            build(context, title, percent, cancel, screen),
             ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC,
         )
 
-    fun notifyProgress(context: Context, notificationId: Int, title: String, percent: Int, cancel: PendingIntent) {
+    fun notifyProgress(
+        context: Context,
+        notificationId: Int,
+        title: String,
+        percent: Int,
+        cancel: PendingIntent,
+        screen: Class<*> = ModelDownloadActivity::class.java,
+    ) {
         context.getSystemService(NotificationManager::class.java)
-            ?.notify(notificationId, build(context, title, percent, cancel))
+            ?.notify(notificationId, build(context, title, percent, cancel, screen))
     }
 
-    private fun build(context: Context, title: String, percent: Int?, cancel: PendingIntent): Notification {
+    /** [screen] : écran ouvert au toucher de la notification (« Modèle IA » ou « Modèle vocal »). */
+    private fun build(context: Context, title: String, percent: Int?, cancel: PendingIntent, screen: Class<*>): Notification {
         val manager = context.getSystemService(NotificationManager::class.java)
         if (manager?.getNotificationChannel(CHANNEL_ID) == null) {
             manager?.createNotificationChannel(
@@ -46,7 +61,7 @@ object DownloadNotification {
         val openScreen = PendingIntent.getActivity(
             context,
             0,
-            Intent(context, ModelDownloadActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            Intent(context, screen).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
         return Notification.Builder(context, CHANNEL_ID)

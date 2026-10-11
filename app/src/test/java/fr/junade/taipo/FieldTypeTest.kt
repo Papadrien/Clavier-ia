@@ -17,7 +17,24 @@ class FieldTypeTest {
         assertEquals(FieldType.TEXT, FieldType.of(text or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES))
         assertEquals(FieldType.TEXT, FieldType.of(text or InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE))
         assertEquals(FieldType.TEXT, FieldType.of(text or InputType.TYPE_TEXT_VARIATION_FILTER))
-        assertEquals(FieldType.TEXT, FieldType.of(InputType.TYPE_NULL))
+    }
+
+    @Test
+    fun `champ sans type, comme un terminal, est une saisie litterale`() {
+        assertEquals(FieldType.TERMINAL, FieldType.of(InputType.TYPE_NULL))
+        assertFalse(FieldType.TERMINAL.autoCapitalizes)
+        assertFalse(FieldType.TERMINAL.autoCorrects)
+        assertFalse(FieldType.TERMINAL.doubleSpacePeriod)
+    }
+
+    @Test
+    fun `la majuscule automatique exige que l application la demande`() {
+        assertFalse(FieldType.requestsCapitalization(InputType.TYPE_NULL))
+        assertFalse(FieldType.requestsCapitalization(text))
+        assertFalse(FieldType.requestsCapitalization(text or InputType.TYPE_TEXT_FLAG_MULTI_LINE))
+        assertTrue(FieldType.requestsCapitalization(text or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES))
+        assertTrue(FieldType.requestsCapitalization(text or InputType.TYPE_TEXT_FLAG_CAP_WORDS))
+        assertTrue(FieldType.requestsCapitalization(text or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS))
     }
 
     @Test

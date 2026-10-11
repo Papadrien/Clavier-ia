@@ -1,11 +1,11 @@
 package fr.junade.taipo.model
 
 /**
- * Dossier du serveur d'Adrien qui héberge les 4 fichiers du modèle vocal (story 8.15). Même domaine que les modèles
- * Gemma 3 (Worker Cloudflare devant R2). **Versionné et immuable** (story 8.8) : ne jamais remplacer un fichier déjà
- * publié sous `v1/` ; un changement de fichier = nouveau dossier (`v2/`), nouvelle empreinte, nouvelle release.
+ * Racine du bucket R2 d'Adrien qui héberge les 4 fichiers du modèle vocal (story 8.15), à plat comme les modèles Gemma 3
+ * (même domaine : Worker Cloudflare devant R2). Remplacer un de ces fichiers sur le bucket change son empreinte : il faut
+ * alors figer la nouvelle `sha256` ici et publier une release (story 8.8), sinon la vérification refuse le téléchargement.
  */
-private const val VOICE_MODEL_BASE_URL = "https://taipo-worker.junade-models.workers.dev/voice/v1/"
+private const val VOICE_MODEL_BASE_URL = "https://taipo-worker.junade-models.workers.dev/"
 
 /**
  * Les 4 fichiers du modèle de transcription vocale (Nemotron 3.5 ASR Streaming, export sherpa-onnx multilingue
@@ -36,18 +36,18 @@ enum class VoiceModelFile(
     val sha256: String? = null,
 ) {
     ENCODER(
-        "encoder", "Encoder", "encoder.int8.onnx (ou encoder.onnx)",
-        downloadUrl = VOICE_MODEL_BASE_URL + "encoder.int8.onnx",
+        "encoder", "Encoder", "encoder.onnx (ou encoder.int8.onnx)",
+        downloadUrl = VOICE_MODEL_BASE_URL + "encoder.onnx",
         approxBytes = 600_000_000L,
     ),
     DECODER(
-        "decoder", "Decoder", "decoder.int8.onnx (ou decoder.onnx)",
-        downloadUrl = VOICE_MODEL_BASE_URL + "decoder.int8.onnx",
+        "decoder", "Decoder", "decoder.onnx (ou decoder.int8.onnx)",
+        downloadUrl = VOICE_MODEL_BASE_URL + "decoder.onnx",
         approxBytes = 15_000_000L,
     ),
     JOINER(
-        "joiner", "Joiner", "joiner.int8.onnx (ou joiner.onnx)",
-        downloadUrl = VOICE_MODEL_BASE_URL + "joiner.int8.onnx",
+        "joiner", "Joiner", "joiner.onnx (ou joiner.int8.onnx)",
+        downloadUrl = VOICE_MODEL_BASE_URL + "joiner.onnx",
         approxBytes = 10_000_000L,
     ),
     TOKENS(

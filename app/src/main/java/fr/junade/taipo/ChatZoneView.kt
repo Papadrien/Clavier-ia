@@ -54,8 +54,14 @@ class ChatZoneView(context: Context) : ScrollView(context) {
     /** Story 5.3 : bouton « Ajouter le texte » de la dernière réponse, affiché une fois la réponse terminée ou interrompue. */
     private var lastAddTextButton: TextView? = null
 
+    /** Bouton « Remplacer le texte » de la dernière réponse, placé sous « Ajouter le texte » et affiché dans les mêmes conditions. */
+    private var lastReplaceTextButton: TextView? = null
+
     /** Appui sur « Ajouter le texte » : reçoit le rang de l'échange dans la conversation. */
     private var addTextListener: ((Int) -> Unit)? = null
+
+    /** Appui sur « Remplacer le texte » : reçoit le rang de l'échange dans la conversation. */
+    private var replaceTextListener: ((Int) -> Unit)? = null
 
     /** Vrai tant que la vue est calée en bas : le contenu qui grandit la fait alors défiler. */
     private var followLatest = true
@@ -89,10 +95,16 @@ class ChatZoneView(context: Context) : ScrollView(context) {
         addTextListener = listener
     }
 
+    /** Appui sur le bouton « Remplacer le texte » placé sous « Ajouter le texte » (rang de l'échange). */
+    fun setOnReplaceTextClickListener(listener: (Int) -> Unit) {
+        replaceTextListener = listener
+    }
+
     fun clearBubbles() {
         column.removeAllViews()
         lastResponseBubble = null
         lastAddTextButton = null
+        lastReplaceTextButton = null
     }
 
     /**
@@ -104,7 +116,8 @@ class ChatZoneView(context: Context) : ScrollView(context) {
         messages.forEachIndexed { index, message ->
             addPromptBubble(message.prompt)
             lastResponseBubble = addBubble(displayText(message), fromUser = false, placeholder = message.response.isEmpty())
-            lastAddTextButton = addAddTextButton(index, canAddText(message))
+            lastAddTextButton = addActionButton(R.string.prompt_add_text, index, canAddText(message)) { addTextListener }
+            lastReplaceTextButton = addActionButton(R.string.prompt_replace_text, index, canAddText(message)) { replaceTextListener }
         }
         scrollToLatest()
     }
@@ -112,7 +125,9 @@ class ChatZoneView(context: Context) : ScrollView(context) {
     /** Met à jour la dernière bulle de réponse (morceau reçu, fin de génération). Sans effet si la zone est vide. */
     fun updateLastResponse(message: PromptMessage) {
         setBubbleText(displayText(message), placeholder = message.response.isEmpty())
-        lastAddTextButton?.visibility = if (canAddText(message)) View.VISIBLE else View.GONE
+        val actionVisibility = if (canAddText(message)) View.VISIBLE else View.GONE
+        lastAddTextButton?.visibility = actionVisibility
+        lastReplaceTextButton?.visibility = actionVisibility
     }
 
     /** « Ajouter le texte » n'existe que pour une réponse non vide dont la génération est finie ou interrompue (décision 7). */
@@ -211,13 +226,21 @@ class ChatZoneView(context: Context) : ScrollView(context) {
         return bubble
     }
 
-    /** Bouton sous une bulle de réponse (à gauche) ; [index] est le rang de l'échange. Caché tant qu'il n'y a rien à ajouter. */
-    private fun addAddTextButton(index: Int, visible: Boolean): TextView {
+    /**
+     * Bouton sous une bulle de réponse (à gauche) ; [index] est le rang de l'échange. Caché tant qu'il n'y a rien à
+     * insérer. [listener] est relu à l'appui, car l'écouteur est posé après la construction de la vue.
+     */
+    private fun addActionButton(
+        @androidx.annotation.StringRes label: Int,
+        index: Int,
+        visible: Boolean,
+        listener: () -> ((Int) -> Unit)?,
+    ): TextView {
         // Lot 20 : zone tactile de 48 dp pour une face de 36 dp : la vue déborde de [touchInset] au-dessus et au-dessous de la
         // face (fond inséré, marges négatives), le rendu et l'espacement du chat ne changent pas.
         val touchInset = dimen(R.dimen.taipo_touch_slop).toInt()
         val button = TextView(context).apply {
-            text = context.getString(R.string.prompt_add_text)
+            text = context.getString(label)
             setTextColor(context.themeColor(TEXT_COLOR))
             setTextSizeRes(R.dimen.taipo_chat_action_text_size)
             useTaipoFont(TaipoType.Weight.MEDIUM)
@@ -232,7 +255,7 @@ class ChatZoneView(context: Context) : ScrollView(context) {
             )
             background = InsetDrawable(style.pillBackground(BUTTON_COLOR), 0, touchInset, 0, touchInset)
             visibility = if (visible) View.VISIBLE else View.GONE
-            setOnClickListener { addTextListener?.invoke(index) }
+            setOnClickListener { listener()?.invoke(index) }
             announceAsButton()
         }
         column.addView(

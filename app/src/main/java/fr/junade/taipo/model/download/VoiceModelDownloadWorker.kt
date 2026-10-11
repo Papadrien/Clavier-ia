@@ -6,6 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import fr.junade.taipo.VoiceModelDownloadActivity
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.BuildConfig
 import fr.junade.taipo.R
@@ -135,10 +136,10 @@ class VoiceModelDownloadWorker(
     private fun cancelIntent(): PendingIntent = WorkManager.getInstance(applicationContext).createCancelPendingIntent(id)
 
     private fun foregroundInfo(percent: Int?): ForegroundInfo =
-        DownloadNotification.foregroundInfo(applicationContext, NOTIFICATION_ID, title(), percent, cancelIntent())
+        DownloadNotification.foregroundInfo(applicationContext, NOTIFICATION_ID, title(), percent, cancelIntent(), VoiceModelDownloadActivity::class.java)
 
     private fun notifyProgress(percent: Int) {
-        DownloadNotification.notifyProgress(applicationContext, NOTIFICATION_ID, title(), percent, cancelIntent())
+        DownloadNotification.notifyProgress(applicationContext, NOTIFICATION_ID, title(), percent, cancelIntent(), VoiceModelDownloadActivity::class.java)
     }
 
     private companion object {

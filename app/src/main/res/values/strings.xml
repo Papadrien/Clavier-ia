@@ -42,7 +42,8 @@
     <string name="system_prompt_status_default">Prompt par défaut actif.</string>
 
     <string name="correction_button_idle">Corriger</string>
-    <string name="correction_button_loading">Chargement du modèle…</string>
+    <string name="correction_button_loading">Correction en cours, toucher pour annuler</string>
+    <string name="correction_button_cancelling">Annulation…</string>
     <string name="correction_button_correcting">Correction…</string>
     <string name="correction_button_undo">Annuler la correction</string>
     <string name="correction_undo_failed">Annulation impossible : le texte a changé depuis la correction.</string>
@@ -54,7 +55,7 @@
 
     <string name="button_voice_model_settings">Modèle vocal</string>
     <string name="voice_model_title">Modèle vocal</string>
-    <string name="voice_model_description">Debug : fournissez à la main les 4 fichiers du modèle de transcription vocale (Nemotron 3.5 ASR Streaming, export sherpa-onnx) depuis le stockage du téléphone. En version publiée, le modèle vocal se télécharge depuis l\'écran « Modèle IA ».</string>
+    <string name="voice_model_description">Debug : fournissez à la main les 4 fichiers du modèle de transcription vocale (Nemotron 3.5 ASR Streaming, export sherpa-onnx) depuis le stockage du téléphone. En version publiée, le modèle vocal se télécharge depuis l\'écran « Modèle vocal ».</string>
     <string name="voice_model_pick_file">Choisir le fichier</string>
     <string name="voice_model_current_file">Fichier actuel : %1$s</string>
     <string name="voice_model_no_file">Aucun fichier fourni.</string>
@@ -112,6 +113,15 @@
     <string name="keyboard_settings_height_large">Grande (110 %)</string>
     <string name="keyboard_settings_height_extra_large">Très grande (120 %)</string>
     <string name="keyboard_settings_height_description">Ajuste la hauteur des touches. S\'applique à la prochaine ouverture du clavier.</string>
+    <string name="keyboard_settings_habits_title">Apprentissage</string>
+    <string name="keyboard_settings_habits_switch">Apprendre de mes habitudes</string>
+    <string name="keyboard_settings_habits_description">Le clavier compte, sur cet appareil, les corrections que vous annulez ou laissez en place et les mots que vous validez, pour s\'adapter à vous. Seuls des compteurs de mots et de corrections sont conservés, chiffrés, jamais de phrases. Rien n\'est compté dans les champs sensibles ni en navigation privée.</string>
+    <string name="keyboard_settings_habits_clear">Effacer mes habitudes de correction</string>
+    <string name="keyboard_settings_habits_clear_title">Effacer les habitudes de correction ?</string>
+    <string name="keyboard_settings_habits_clear_message">Tout ce que le clavier a compté sur vos corrections et vos mots sera supprimé. Cette action est définitive.</string>
+    <string name="keyboard_settings_habits_clear_confirm">Effacer</string>
+    <string name="keyboard_settings_habits_clear_cancel">Annuler</string>
+    <string name="keyboard_settings_habits_cleared">Habitudes effacées</string>
 
     <string name="clipboard_button">Presse-papiers</string>
     <string name="settings_button_description">Ouvrir les réglages de l\'application</string>
@@ -130,6 +140,8 @@
     <string name="prompt_response_empty">Le modèle n\'a pas renvoyé de réponse.</string>
     <string name="prompt_field_context_header">Texte actuellement présent dans le champ de saisie de l\'utilisateur :</string>
     <string name="prompt_add_text">Ajouter le texte</string>
+    <string name="prompt_replace_text">Remplacer le texte</string>
+    <string name="prompt_replace_text_unavailable">Impossible de remplacer le texte : aucun champ de saisie n\'est actif.</string>
     <string name="prompt_add_text_unavailable">Impossible d\'ajouter le texte : aucun champ de saisie n\'est actif.</string>
     <string name="ai_action_busy">Une action IA est déjà en cours.</string>
     <string name="generation_busy">Génération en cours : arrêtez-la ou attendez la fin.</string>
@@ -265,7 +277,7 @@
     <!-- Réglages de l'accueil (lot UX 3) -->
     <string name="home_section_keyboard">Clavier</string>
     <string name="home_section_ai">Intelligence artificielle</string>
-    <string name="home_row_keyboard_settings_subtitle">Rangée de chiffres, retour haptique, hauteur</string>
+    <string name="home_row_keyboard_settings_subtitle">Rangée de chiffres, retour haptique, hauteur, apprentissage</string>
     <string name="home_row_personal_dictionary_subtitle">Ajouter ou supprimer des mots</string>
     <string name="home_row_model_settings_subtitle">Fournir soi-même un fichier de modèle</string>
     <string name="home_row_voice_model_subtitle">Télécharger le modèle de dictée</string>
@@ -379,7 +391,7 @@
     <string name="model_download_action_update">Mettre à jour</string>
     <string name="home_status_update">Mise à jour</string>
 
-    <!-- Story 8.15 : téléchargement du modèle vocal (section de l'écran « Modèle IA »). -->
+    <!-- Story 8.15 : téléchargement du modèle vocal (écran « Modèle vocal », séparé de « Modèle IA »). -->
     <string name="model_download_voice_section_title">Modèle vocal</string>
     <string name="model_download_voice_description">Nécessaire pour la dictée (bouton Vocal). Le modèle est téléchargé en plusieurs fichiers, puis la transcription se fait sur votre appareil, sans connexion.</string>
     <string name="model_download_voice_name">Modèle vocal</string>

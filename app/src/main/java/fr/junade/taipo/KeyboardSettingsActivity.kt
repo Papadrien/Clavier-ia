@@ -1,15 +1,21 @@
 package fr.junade.taipo
 
-import android.content.Context
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
+import android.view.ContextThemeWrapper
+import android.widget.Button
 import android.widget.CompoundButton
 import android.widget.RadioGroup
+import android.widget.Toast
+import fr.junade.taipo.dictionary.CorrectionHabitsProvider
 
 /**
  * Écran « Paramètres du clavier ». Contient l'activation de la rangée de
  * chiffres (story 1.5) et le niveau de retour haptique (story 1.11) et la
- * hauteur du clavier (story 1.12).
+ * hauteur du clavier (story 1.12), ainsi que l'option « Apprendre de mes habitudes » et l'effacement des
+ * habitudes de correction.
  */
 class KeyboardSettingsActivity : Activity() {
 
@@ -56,5 +62,23 @@ class KeyboardSettingsActivity : Activity() {
             val selected = heightIds.entries.firstOrNull { it.value == checkedId }?.key ?: return@setOnCheckedChangeListener
             preferences.keyboardHeight = selected
         }
+
+        findViewById<CompoundButton>(R.id.switch_habit_learning).apply {
+            isChecked = preferences.isHabitLearningEnabled
+            setOnCheckedChangeListener { _, checked -> preferences.isHabitLearningEnabled = checked }
+        }
+        findViewById<Button>(R.id.button_habit_clear).setOnClickListener { confirmClearHabits() }
+    }
+
+    private fun confirmClearHabits() {
+        AlertDialog.Builder(ContextThemeWrapper(this, R.style.MessageDialogTheme))
+            .setTitle(R.string.keyboard_settings_habits_clear_title)
+            .setMessage(R.string.keyboard_settings_habits_clear_message)
+            .setPositiveButton(R.string.keyboard_settings_habits_clear_confirm) { _, _ ->
+                CorrectionHabitsProvider.repository(this).clear()
+                Toast.makeText(this, R.string.keyboard_settings_habits_cleared, Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton(R.string.keyboard_settings_habits_clear_cancel, null)
+            .show()
     }
 }

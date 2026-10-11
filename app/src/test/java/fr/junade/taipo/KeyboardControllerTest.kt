@@ -214,9 +214,17 @@ class KeyboardControllerTest {
 
     @Test
     fun `shouldAutoCapitalize est vrai apres un point suivi d espaces`() {
-        assertTrue(KeyboardController.shouldAutoCapitalize("Bonjour."))
         assertTrue(KeyboardController.shouldAutoCapitalize("Bonjour. "))
         assertTrue(KeyboardController.shouldAutoCapitalize("Bonjour.   "))
+    }
+
+    @Test
+    fun `shouldAutoCapitalize est faux juste apres un point sans espace`() {
+        assertFalse(KeyboardController.shouldAutoCapitalize("Bonjour."))
+        assertFalse(KeyboardController.shouldAutoCapitalize("Salut!"))
+        assertFalse(KeyboardController.shouldAutoCapitalize("Ça va?"))
+        assertFalse(KeyboardController.shouldAutoCapitalize("ls ."))
+        assertFalse(KeyboardController.shouldAutoCapitalize("pi = 3."))
     }
 
     @Test

@@ -47,7 +47,8 @@ internal object BarVisibility {
     /** Écoute, transcription ou correction en cours : les boutons concernés servent d'arrêt ou d'indicateur. */
     fun isBusy(voice: VoiceBarState, correction: CorrectionBarState): Boolean =
         voice != VoiceBarState.IDLE ||
-            correction == CorrectionBarState.LOADING || correction == CorrectionBarState.CORRECTING
+            correction == CorrectionBarState.LOADING || correction == CorrectionBarState.CORRECTING ||
+                correction == CorrectionBarState.CANCELLING
 
     /**
      * Vocal et « Générer » sont rangés derrière le menu de droite tant que la bande de mots est affichée,
@@ -91,8 +92,10 @@ internal object BarVisibility {
     fun correctAppearance(state: CorrectionBarState): CorrectAppearance? = when (state) {
         CorrectionBarState.HIDDEN -> null
         CorrectionBarState.IDLE -> CorrectAppearance(R.string.correction_button_idle, enabled = true, alpha = 1f)
-        CorrectionBarState.LOADING -> CorrectAppearance(R.string.correction_button_loading, enabled = false, alpha = 0.6f, loading = true)
+        // Chargement ou correction en cours : un nouvel appui sur le bouton annule la correction.
+        CorrectionBarState.LOADING -> CorrectAppearance(R.string.correction_button_loading, enabled = true, alpha = 1f, loading = true)
         CorrectionBarState.CORRECTING -> CorrectAppearance(R.string.correction_button_correcting, enabled = false, alpha = 0.6f, loading = true)
+        CorrectionBarState.CANCELLING -> CorrectAppearance(R.string.correction_button_cancelling, enabled = false, alpha = 0.6f, loading = true)
         CorrectionBarState.UNDO -> CorrectAppearance(R.string.correction_button_undo, enabled = true, alpha = 1f)
     }
 

@@ -47,6 +47,19 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putString(KEY_RECENT_EMOJIS, RecentEmojis.encode(value)).apply()
         }
 
+    /**
+     * « Apprendre de mes habitudes » : le clavier compte ce que l'utilisateur fait des corrections automatiques
+     * (annulée, restée en place) et des mots qu'il valide, pour s'y adapter (apprentissage des habitudes de
+     * correction). Activé par défaut, comme la prédiction du mot suivant. Désactivé, plus rien n'est compté ;
+     * ce qui l'a déjà été reste jusqu'à l'effacement depuis l'écran des paramètres.
+     * Lu par SuggestionController à chaque nouveau champ.
+     */
+    var isHabitLearningEnabled: Boolean
+        get() = prefs.getBoolean(KEY_HABIT_LEARNING, DEFAULT_HABIT_LEARNING)
+        set(value) {
+            prefs.edit().putBoolean(KEY_HABIT_LEARNING, value).apply()
+        }
+
     companion object {
         private const val PREFS_NAME = "keyboard_prefs"
         private const val KEY_NUMBER_ROW = "number_row_enabled"
@@ -54,5 +67,7 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_HAPTIC_INTENSITY = "haptic_intensity"
         private const val KEY_KEYBOARD_HEIGHT = "keyboard_height"
         private const val KEY_RECENT_EMOJIS = "recent_emojis"
+        private const val KEY_HABIT_LEARNING = "habit_learning_enabled"
+        const val DEFAULT_HABIT_LEARNING = true
     }
 }

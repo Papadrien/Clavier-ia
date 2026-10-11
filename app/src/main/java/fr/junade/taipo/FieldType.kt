@@ -7,7 +7,8 @@ import android.text.InputType
  * clavier qui en découle (comme sur Gboard : le clavier s'adapte au champ).
  *
  * - [numericPad] : le clavier de lettres est remplacé par un pavé numérique ([Keyboards.layoutOf]).
- * - [autoCapitalizes] : majuscule automatique de début de phrase (story 1.2).
+ * - [autoCapitalizes] : majuscule automatique de début de phrase (story 1.2). Elle exige en plus que
+ *   l'application la demande ([requestsCapitalization]), comme sur Gboard.
  * - [autoCorrects] : autocorrection du dictionnaire à la fin d'un mot (story 1.3). L'indicateur
  *   `NO_SUGGESTIONS` de l'application est ignoré (voir `SuggestionPolicy`).
  * - [doubleSpacePeriod] : un double espace devient « . ».
@@ -32,6 +33,12 @@ enum class FieldType(
     /** Mot de passe (texte masqué ou visible) : clavier de lettres, mais saisie littérale. */
     PASSWORD(autoCapitalizes = false, autoCorrects = false, doubleSpacePeriod = false),
 
+    /**
+     * Champ sans type (`TYPE_NULL`), typiquement un terminal comme Termux : saisie littérale, ni
+     * majuscule automatique, ni autocorrection, ni double espace remplacé par un point.
+     */
+    TERMINAL(autoCapitalizes = false, autoCorrects = false, doubleSpacePeriod = false),
+
     /** Champ numérique : pavé numérique (chiffres, séparateur décimal, signe moins). */
     NUMBER(numericPad = true, autoCapitalizes = false, autoCorrects = false, doubleSpacePeriod = false),
 
@@ -47,6 +54,7 @@ enum class FieldType(
          * gardent le clavier de texte.
          */
         fun of(inputType: Int): FieldType = when (inputType and InputType.TYPE_MASK_CLASS) {
+            InputType.TYPE_NULL -> TERMINAL
             InputType.TYPE_CLASS_NUMBER -> NUMBER
             InputType.TYPE_CLASS_PHONE -> PHONE
             InputType.TYPE_CLASS_TEXT -> when (inputType and InputType.TYPE_MASK_VARIATION) {
@@ -66,5 +74,16 @@ enum class FieldType(
 
             else -> TEXT
         }
+
+        /**
+         * Vrai si l'application demande une majuscule automatique (début de phrase, de mot ou tout en
+         * majuscules). Sans ce drapeau (terminal, champ de code, commande), le clavier n'en met pas.
+         */
+        fun requestsCapitalization(inputType: Int): Boolean =
+            inputType and (
+                InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or
+                    InputType.TYPE_TEXT_FLAG_CAP_WORDS or
+                    InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+                ) != 0
     }
 }

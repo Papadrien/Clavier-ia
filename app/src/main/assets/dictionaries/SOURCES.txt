@@ -40,3 +40,15 @@ Seuils appliqués au chargement de fr.txt (voir DictionaryLoader) : mots vus au 
 seuls proposés en correction ou en complétion (~50 000 mots, comme avant). Mesure sur 16 000 fautes de frappe
 aléatoires : 12,7 % tombent sur un mot valide en gardant toute la liste, 6,0 % avec le seuil 5, 2,5 % avec
 la liste de 50 000 mots.
+
+=== Nettoyage des fautes de frappe du corpus — 10/10/2026 ===
+fr.txt : 36 302 lignes retirées (766 833 -> 730 531) par tools/PruneDictionaryTypos.kt. Une ligne est retirée si le mot
+est rare (moins de 100 occurrences : il n'est donc jamais proposé), à une seule modification d'un mot au moins 1 000
+fois plus fréquent, et si cette modification est une faute plausible au clavier AZERTY de Taipo (touche voisine, lettre
+oubliée, doublée ou effleurée, inversion). Exemples retirés : « oeux », « eet », « beacoup », « maintenat ».
+Sans cela, ces mots « valides » empêchaient l'autocorrection (« eet » restait « eet » au lieu de devenir « est »).
+Conservés volontairement : les vrais mots rares (« hêtre », « jurais », « coupa », « uni ») et les différences d'accent
+seules (« commenté » / « commente »), traitées par Dictionary.
+Retirées à la main (tranche 100 à 1 000 occurrences, fautes évidentes) : quo, pouquoi, plis, troi, notres, votres,
+maitenant, bein, estce, pourait, touts, ajussi, vosu, ètait, içi, ést, qué, voss, ête, dûr.
+Pour relancer : voir l'en-tête de tools/PruneDictionaryTypos.kt. fr_50k.txt (secours) n'est pas modifié.

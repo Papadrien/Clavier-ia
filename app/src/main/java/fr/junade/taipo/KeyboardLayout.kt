@@ -306,7 +306,7 @@ object Keyboards {
             FieldType.PHONE -> return phonePad
             FieldType.EMAIL -> emailAtKey
             FieldType.URL -> urlSlashKey
-            FieldType.TEXT, FieldType.PASSWORD -> null
+            FieldType.TEXT, FieldType.PASSWORD, FieldType.TERMINAL -> null
         }
         val base = baseLayoutOf(id, language, numberRow)
         if (replacement == null) return base

@@ -94,6 +94,9 @@ class PromptModeController(
         /** Story 5.3 : insère [text] au curseur de l'application ; faux si le champ n'est pas accessible. */
         fun insertGeneratedText(text: String): Boolean
 
+        /** Bouton « Remplacer le texte » : remplace la sélection de l'application, ou à défaut tout le texte du champ, par [text] ; faux si le champ n'est pas accessible. */
+        fun replaceFieldText(text: String): Boolean
+
         fun onWordSuggestionTapped(suggestion: WordSuggestion)
 
         fun onEmojiSuggestionTapped()
@@ -161,6 +164,7 @@ class PromptModeController(
         chatZone = ChatZoneView(context)
         chatZone.visibility = View.GONE
         chatZone.setOnAddTextClickListener { index -> onAddTextRequested(index) }
+        chatZone.setOnReplaceTextClickListener { index -> onReplaceTextRequested(index) }
 
         // Barre du mode prompt (phase 5.1-4) ; stop et croix pendant la génération : phase 5.1-7.
         promptBar = PromptBarView(context)
@@ -440,6 +444,21 @@ class PromptModeController(
         if (text.isEmpty()) return
         if (!host.insertGeneratedText(text)) {
             host.showMessage(context.getString(R.string.prompt_add_text_unavailable))
+        }
+    }
+
+    /**
+     * Bouton « Remplacer le texte » sous la réponse de l'échange [index] : la réponse prend la place de la
+     * sélection de l'application, ou, sans sélection, de tout le texte du champ (voir [Host.replaceFieldText]).
+     * Le mode prompt reste ouvert.
+     */
+    private fun onReplaceTextRequested(index: Int) {
+        val message = conversation.messages.getOrNull(index) ?: return
+        if (message.status == PromptMessageStatus.IN_PROGRESS) return
+        val text = message.response.trim()
+        if (text.isEmpty()) return
+        if (!host.replaceFieldText(text)) {
+            host.showMessage(context.getString(R.string.prompt_replace_text_unavailable))
         }
     }
 

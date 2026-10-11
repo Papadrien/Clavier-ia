@@ -195,4 +195,66 @@ class FrenchContextCorrectorTest {
         // « c'est » n'est pas l'auxiliaire d'un passé composé.
         assertNull(correctAccent("c'est arrive"))
     }
+
+    // --- a / à : verbes qui appellent « à » + infinitif ---
+
+    @Test
+    fun `a apres un infinitif qui appelle a devient a accent grave`() {
+        assertEquals("réussir à", correct("réussir a"))
+        assertEquals("pour réussir à finir", correct("pour réussir a finir"))
+        assertEquals("il continue à manger", correct("il continue a manger"))
+    }
+
+    @Test
+    fun `a apres un nom qui ressemble a un verbe reste un verbe`() {
+        assertNull(correct("l'aide a"))
+        assertNull(correct("son arrivée a"))
+    }
+
+    // --- ou / où ---
+
+    @Test
+    fun `ou devant un sujet devient ou accent grave`() {
+        assertEquals("le jour où il", correct("le jour ou il"))
+        assertEquals("la ville où j'habite", correct("la ville ou j'habite"))
+        assertEquals("l'endroit où je", correct("l'endroit ou je"))
+    }
+
+    @Test
+    fun `ou en debut de phrase devant un verbe de question`() {
+        assertEquals("Où est-il", correct("Ou est-il"))
+        assertEquals("Salut. Où sont", correct("Salut. Ou sont"))
+        assertNull(correct("Ou est-il", truncated = true)) // fenêtre coupée : début de phrase incertain
+    }
+
+    @Test
+    fun `ou alternative reste ou`() {
+        assertNull(correct("un chat ou un chien"))
+        assertNull(correct("toi ou il"))
+        assertNull(correct("oui ou je"))
+        assertNull(correct("rouge ou bleu"))
+        assertNull(correct("Ou", retro = true))
+    }
+
+    @Test
+    fun `ou sans correction a rebours ne change rien`() {
+        assertNull(correct("le jour ou il", retro = false))
+    }
+
+    // --- la / là ---
+
+    @Test
+    fun `la apres etre devant un mot qui ne suit pas un article devient la accent grave`() {
+        assertEquals("je suis là pour", correct("je suis la pour"))
+        assertEquals("il est là depuis", correct("il est la depuis"))
+        assertEquals("c'est là et", correct("c'est la et"))
+    }
+
+    @Test
+    fun `la article reste la`() {
+        assertNull(correct("je suis la meilleure"))
+        assertNull(correct("c'est la vie"))
+        assertNull(correct("il est la"))
+        assertNull(correct("elle regarde la pour")) // « regarde » n'est pas un verbe d'état
+    }
 }

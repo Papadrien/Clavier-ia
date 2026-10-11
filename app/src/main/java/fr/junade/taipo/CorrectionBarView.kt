@@ -79,6 +79,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     val voiceButton = ImageButton(context)
     private var listener: OnCorrectListener? = null
     private var undoListener: (() -> Unit)? = null
+    private var cancelListener: (() -> Unit)? = null
     private var correctShowsUndoIcon = false
 
     /** Story 5.1 : bouton « Générer » (icône), qui bascule la barre en mode prompt ; rangé avec Vocal derrière le menu de droite. */
@@ -176,6 +177,8 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
                 }
                 // Après une correction : le même bouton rétablit le texte d'avant.
                 CorrectionBarState.UNDO -> undoListener?.invoke()
+                // Chargement ou correction en cours : le même bouton l'annule.
+                CorrectionBarState.LOADING -> cancelListener?.invoke()
                 else -> Unit
             }
         }
@@ -278,6 +281,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     /** Touche sur « Annuler » (le bouton Corriger après une correction) : rétablir le texte d'avant la correction. */
     fun setOnUndoListener(listener: () -> Unit) {
         undoListener = listener
+    }
+
+    /** Nouvelle touche sur Corriger pendant le chargement ou la correction : abandonner la correction en cours. */
+    fun setOnCancelListener(listener: () -> Unit) {
+        cancelListener = listener
     }
 
     fun setOnClipboardClickListener(listener: OnClipboardClickListener) {

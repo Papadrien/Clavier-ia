@@ -18,7 +18,9 @@ import fr.junade.taipo.ai.messageRes
 import fr.junade.taipo.ai.SpanLocator
 import fr.junade.taipo.ai.TextBlock
 import fr.junade.taipo.model.AiModel
+import fr.junade.taipo.ai.CorrectionCancelledException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
@@ -93,6 +95,9 @@ class CorrectionAiController(
     var inProgress = false
         private set
 
+    /** L'utilisateur a annulé la correction en cours : son résultat est abandonné, sans message ni modification du champ. */
+    @Volatile private var cancelRequested = false
+
     // Phrases déjà corrigées (mémoire vive uniquement) : une phrase identique n'est pas renvoyée à l'IA.
     private val correctedSentences = CorrectedSentenceMemory()
 
@@ -151,6 +156,24 @@ class CorrectionAiController(
         }
     }
 
+    /**
+     * Nouvel appui sur Corriger pendant le chargement ou la correction : abandonne la correction en cours. Le
+     * modèle s'arrête s'il inférait ; s'il se chargeait encore, le chargement va à son terme (il sert à la
+     * prochaine correction) mais rien n'est corrigé. Le bouton affiche « Annulation… » jusqu'à la fin.
+     */
+    fun onCancelClicked() {
+        if (!inProgress || cancelRequested) return
+        cancelRequested = true
+        host.setCorrectionBarState(CorrectionBarState.CANCELLING)
+        // L'arrêt natif peut bloquer un instant : hors du thread principal.
+        scope.launch(Dispatchers.Default) { correctionEngine().cancel() }
+    }
+
+    /** Abandonne la correction si l'utilisateur l'a annulée entre-temps. */
+    private fun throwIfCancelled() {
+        if (cancelRequested) throw CorrectionCancelledException()
+    }
+
     fun onCorrectClicked() {
         if (inProgress) return
         if (host.generationBusy()) { // le moteur est pris par la génération
@@ -186,12 +209,19 @@ class CorrectionAiController(
         launchCorrection {
             val correctedBlocks = blocks.map { block ->
                 val original = captured.text.substring(block.start, block.endExclusive)
-                val corrected = correctionEngine().correct(model, original, host.protectedWords(original)) {
-                    host.setCorrectionBarState(CorrectionBarState.LOADING)
+                val corrected = correctionEngine().correct(
+                    model,
+                    original,
+                    host.protectedWords(original),
+                    isCancelled = { cancelRequested },
+                ) {
+                    if (!cancelRequested) host.setCorrectionBarState(CorrectionBarState.LOADING)
                 }
+                throwIfCancelled()
                 // null : réponse vide ou tronquée, le texte d'origine est alors conservé.
                 CorrectionSafeguard.accept(original, corrected)
             }
+            throwIfCancelled()
             host.setCorrectionBarState(CorrectionBarState.CORRECTING)
             applyCorrection(ic, captured, blocks, correctedBlocks)
             if (correctedBlocks.any { it == null }) {
@@ -222,6 +252,7 @@ class CorrectionAiController(
 
         launchCorrection {
             val corrected = correctByParagraph(model, core)
+            throwIfCancelled()
             host.setCorrectionBarState(CorrectionBarState.CORRECTING)
             applySelectionCorrection(ic, selected, leading, trailing, core, corrected, absSelectionStart)
         }
@@ -250,9 +281,15 @@ class CorrectionAiController(
         if (core.isEmpty()) return paragraph
         val leading = paragraph.length - paragraph.trimStart().length
         val trailing = paragraph.length - paragraph.trimEnd().length
-        val corrected = correctionEngine().correct(model, core, host.protectedWords(core)) {
-            host.setCorrectionBarState(CorrectionBarState.LOADING)
+        val corrected = correctionEngine().correct(
+            model,
+            core,
+            host.protectedWords(core),
+            isCancelled = { cancelRequested },
+        ) {
+            if (!cancelRequested) host.setCorrectionBarState(CorrectionBarState.LOADING)
         }
+        throwIfCancelled()
         val accepted = CorrectionSafeguard.accept(core, corrected)
         if (accepted == null) AppLog.w(TAG, "correction refusée par le garde-fou (réponse vide ou tronquée) : texte conservé")
         return paragraph.substring(0, leading) + (accepted ?: core) + paragraph.substring(paragraph.length - trailing)
@@ -311,17 +348,26 @@ class CorrectionAiController(
     /** Lance une correction en arrière-plan avec indicateur de chargement et gestion d'erreur communs. */
     private fun launchCorrection(work: suspend () -> Unit) {
         inProgress = true
+        cancelRequested = false
         host.clearSuggestions()
         host.setCorrectionBarState(CorrectionBarState.LOADING)
         scope.launch {
             try {
                 work()
+            } catch (e: CorrectionCancelledException) {
+                AppLog.i(TAG, "correction annulée par l'utilisateur")
             } catch (t: Throwable) {
-                val cause = InferenceFailureClassifier.classify(t)
-                AppLog.e(TAG, "Échec de la correction IA ($cause)", t) // détail technique : debug uniquement
-                host.showMessage(context.getString(cause.messageRes()))
+                if (cancelRequested) {
+                    // L'arrêt natif a fait échouer l'inférence en cours : c'est la suite attendue de l'annulation.
+                    AppLog.i(TAG, "correction interrompue à la demande de l'utilisateur")
+                } else {
+                    val cause = InferenceFailureClassifier.classify(t)
+                    AppLog.e(TAG, "Échec de la correction IA ($cause)", t) // détail technique : debug uniquement
+                    host.showMessage(context.getString(cause.messageRes()))
+                }
             } finally {
                 inProgress = false
+                cancelRequested = false
                 host.updateCorrectionBarVisibility()
                 host.syncAutoCapitalization() // relance aussi la suggestion d'emoji, coupée pendant la correction
             }

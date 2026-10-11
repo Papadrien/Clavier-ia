@@ -44,6 +44,9 @@ class ImeViewComposer(
 
         fun onCorrectClicked()
 
+        /** Nouvelle touche sur Corriger pendant le chargement ou la correction : l'annuler. */
+        fun onCancelCorrectionClicked()
+
         /** Bouton Annuler (le bouton Corriger juste après une correction IA). */
         fun onUndoClicked()
 
@@ -110,6 +113,7 @@ class ImeViewComposer(
         correctionBar = CorrectionBarView(context)
         correctionBar.setOnCorrectListener { host.onCorrectClicked() }
         correctionBar.setOnUndoListener { host.onUndoClicked() }
+        correctionBar.setOnCancelListener { host.onCancelCorrectionClicked() }
         correctionBar.setOnGenerateClickListener {
             host.onTopBarAction()
             prompt.enter()

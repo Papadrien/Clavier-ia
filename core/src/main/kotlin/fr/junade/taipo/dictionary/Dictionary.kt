@@ -90,6 +90,19 @@ class Dictionary private constructor(
         }
     }
 
+    // Contractions dont l'écriture sans apostrophe et sans accent diffère de leur forme sans apostrophe seule
+    // (« jetais » -> « j'étais »). Même règle de collision : la plus fréquente gagne.
+    private val contractionsFolded: Map<String, String> = HashMap<String, String>().apply {
+        for (i in candidateWords.indices) {
+            val word = candidateWords[i]
+            if ('\'' !in word) continue
+            val key = foldAccents(word.replace("'", ""))
+            if (key == word.replace("'", "")) continue // déjà couvert par contractionsWithoutApostrophe
+            val existing = get(key)
+            if (existing == null || candidateFrequencies[i] > frequencies.getValue(existing)) put(key, word)
+        }
+    }
+
     // Fréquence attribuée aux mots personnels : strictement supérieure à toutes celles du dictionnaire
     // (l'utilisateur les a ajoutés volontairement, ils priment sur un mot du dictionnaire à distance égale).
     private val personalFrequency: Long = (candidateFrequencies.maxOrNull() ?: 0L) + 1L
@@ -108,13 +121,20 @@ class Dictionary private constructor(
     // accentuée : ce sont des fautes du corpus (« ca », « etait », « tres », « duree »), pas des mots.
     // Valeur = forme accentuée à proposer. Assez strict pour laisser « a »/« à », « ou »/« où »,
     // « la »/« là » intacts (les deux formes existent et sont fréquentes).
+    //
+    // Deux seuils : une paire « e / é » finale (« tue / tué », « essaye / essayé », « rencontres / rencontrés ») garde
+    // le seuil strict, car la forme sans accent est un vrai mot (verbe conjugué, pluriel) ; toute autre paire
+    // (« ecoute / écoute », « grace / grâce », « eglise / église ») passe au seuil souple : la forme sans accent n'est
+    // alors presque toujours une faute (sauf quelques exceptions, voir [PLAIN_WORDS_KEPT]).
     private val dominatedByAccented: Map<String, String> = HashMap<String, String>().apply {
         for ((folded, accented) in accentedByFolded) {
             val plainFrequency = frequencies[folded] ?: continue
+            if (folded in PLAIN_WORDS_KEPT) continue
             val top = accented.maxOf { frequencies.getValue(it) }
-            if (top < plainFrequency * ACCENT_DOMINANCE) continue
             val leaders = accented.filter { frequencies.getValue(it) == top }
-            if (leaders.size == 1) put(folded, leaders[0])
+            if (leaders.size != 1) continue
+            val dominance = if (isParticipleVariant(folded, leaders[0])) ACCENT_DOMINANCE else SOFT_ACCENT_DOMINANCE
+            if (top >= plainFrequency * dominance) put(folded, leaders[0])
         }
     }
 
@@ -192,8 +212,12 @@ class Dictionary private constructor(
         if (lower in frequencies) {
             // Mot présent dans les listes : corrigé seulement si c'est une faute du corpus dont la
             // version accentuée domine nettement (« ca » -> « ça »).
-            val accented = dominatedByAccented[lower] ?: return null
-            return applyOriginalCasing(word, accented)
+            dominatedByAccented[lower]?.let { return applyOriginalCasing(word, it) }
+            // ... ou une contraction écrite sans apostrophe, très nettement plus fréquente (« jetais » 293 contre
+            // « j'étais » 276 000) : « tes » / « t'es » restent intacts, les deux formes étant courantes.
+            val contraction = contractionsFolded[lower] ?: contractionsWithoutApostrophe[lower] ?: return null
+            if (frequencies.getValue(contraction) < frequencies.getValue(lower) * CONTRACTION_DOMINANCE) return null
+            return applyOriginalCasing(word, contraction)
         }
 
         // Pluriel, féminin ou conjugaison régulière d'un mot connu : correct, absent des listes.
@@ -211,9 +235,14 @@ class Dictionary private constructor(
         // Apostrophe oubliée : correction directe, sans passer par la distance d'édition (où un mot
         // voisin plus fréquent, comme "est" pour "cest", l'emporterait à tort sur "c'est").
         contractionsWithoutApostrophe[lower]?.let { return applyOriginalCasing(word, it) }
+        contractionsFolded[lower]?.let { return applyOriginalCasing(word, it) }
 
         // Accent oublié : la forme accentuée (éventuellement fléchie) est la correction évidente.
         accentRestoration(lower)?.let { return applyOriginalCasing(word, it.word) }
+
+        // Apostrophe d'élision oubliée devant un mot connu (« tinquiete » -> « t'inquiète », « lorsquun » ->
+        // « lorsqu'un »), avant la recherche par distance d'édition qui, sinon, retirerait la lettre élidée.
+        elisionRestoration(lower)?.let { return applyOriginalCasing(word, it) }
 
         val allowedDistance = minOf(maxDistance, maxDistanceForLength(lower.length))
 
@@ -230,6 +259,9 @@ class Dictionary private constructor(
             // résultat que damerauLevenshtein pour tout candidat retenu, mais sans calculer le reste).
             val distance = damerauLevenshteinBounded(lower, candidate, allowedDistance)
             if (distance > allowedDistance) return
+            // Un mot sans accent dont la version accentuée domine (« ete » pour « été ») est une faute du corpus : jamais
+            // une correction (« eet » -> « est », pas « ete »).
+            if (candidate in dominatedByAccented) return
             val isSwap = distance == 1 && isAdjacentSwap(lower, candidate)
             // Coût pondéré par la proximité des touches (0 si elle est désactivée : sans effet).
             val cost = proximity.editCost(lower, candidate)
@@ -344,6 +376,102 @@ class Dictionary private constructor(
         return List(SUGGESTION_LIMIT) { completion(it) }
     }
 
+    /**
+     * Contenu des [SUGGESTION_LIMIT] emplacements quand le curseur est posé sur un mot déjà écrit ([typed], le mot
+     * entier, partie après le curseur comprise), au lieu d'être en train d'en taper un :
+     *
+     * - le mot va être corrigé (même [correctionFor] que l'autocorrection) : [mot tapé, correction, meilleure
+     *   alternative] ;
+     * - le mot a déjà été corrigé ([previousForm], sa forme avant la correction) : [forme d'origine, 1re et 2e
+     *   alternatives], pour pouvoir revenir en arrière ;
+     * - sinon : les 3 meilleures alternatives (voir [alternativesFor]).
+     */
+    fun placementSlotsFor(
+        typed: String,
+        personalWords: Collection<String> = emptyList(),
+        previousForm: String? = null,
+    ): List<WordSuggestion?> {
+        val empty = List<WordSuggestion?>(SUGGESTION_LIMIT) { null }
+        if (!isSuggestible(typed)) return empty
+        val correction = correctionFor(typed, personalWords = personalWords)
+        val exclude = HashSet<String>()
+        exclude += typed.lowercase()
+        correction?.let { exclude += it.lowercase() }
+        val original = previousForm?.takeIf { correction == null && it.isNotEmpty() && it.lowercase() != typed.lowercase() }
+        original?.let { exclude += it.lowercase() }
+        val alternatives = alternativesFor(typed, SUGGESTION_LIMIT, personalWords, exclude)
+        fun alternative(index: Int) = alternatives.getOrNull(index)?.let { WordSuggestion(it, WordSuggestion.Kind.COMPLETION) }
+        return when {
+            correction != null -> listOf(
+                WordSuggestion(typed, WordSuggestion.Kind.TYPED),
+                WordSuggestion(correction, WordSuggestion.Kind.AUTOCORRECTION),
+                alternative(0),
+            )
+            original != null -> listOf(WordSuggestion(original, WordSuggestion.Kind.TYPED), alternative(0), alternative(1))
+            else -> List(SUGGESTION_LIMIT) { alternative(it) }
+        }
+    }
+
+    /**
+     * Au plus [limit] mots pertinents pour le mot entier [typed] : formes accentuées, mots personnels, mots à une
+     * faute plausible au clavier (« peu » -> « peut », « peux ») et complétions (« bon » -> « bonne »), classés par
+     * fréquence dans le corpus, comme le fait l'autocorrection à distance égale. Un mot à une faute de distance n'est
+     * retenu que s'il n'est pas bien plus rare que le mot tapé (au moins 1/[NEIGHBOR_MIN_SHARE_DIVISOR] de sa
+     * fréquence) et si l'erreur est plausible au clavier (voir [KeyProximity.editCost]) : sans cette condition, les
+     * mots courts proposeraient n'importe quel mot voisin (« bon » -> « son », « ton »).
+     * Ni [typed] ni [exclude] (clés en minuscules) n'y figurent.
+     */
+    fun alternativesFor(
+        typed: String,
+        limit: Int,
+        personalWords: Collection<String> = emptyList(),
+        exclude: Set<String> = emptySet(),
+    ): List<String> {
+        if (limit <= 0 || !isSuggestible(typed)) return emptyList()
+        val lower = typed.lowercase()
+        val typedFrequency = frequencies[lower] ?: 0L
+        val seen = HashSet<String>(exclude)
+        seen += lower
+        val scored = ArrayList<Pair<String, Long>>()
+
+        fun add(display: String, key: String, score: Long) {
+            if (seen.add(key)) scored += display to score
+        }
+
+        accentVariants(lower).forEachIndexed { index, variant ->
+            add(applyOriginalCasing(typed, variant), variant, Long.MAX_VALUE - index)
+        }
+        for (personal in personalWords) {
+            val key = personal.lowercase()
+            if (key == lower) continue
+            if (key.startsWith(lower) || (lower.length >= 3 && damerauLevenshteinBounded(lower, key, 1) <= 1)) {
+                add(personalDisplay(typed, personal), key, personalFrequency)
+            }
+        }
+        if (lower.length >= MIN_WORD_LENGTH_FOR_NEIGHBORS) {
+            val minFrequency = maxOf(1L, typedFrequency / NEIGHBOR_MIN_SHARE_DIVISOR)
+            val typedMask = letterMask(lower)
+            for (length in maxOf(0, lower.length - 1)..minOf(indicesByLength.size - 1, lower.length + 1)) {
+                for (i in indicesByLength[length]) {
+                    val frequency = candidateFrequencies[i]
+                    if (frequency < minFrequency) continue
+                    val candidate = candidateWords[i]
+                    if (candidate == lower || candidate in dominatedByAccented) continue
+                    val mask = candidateMasks[i]
+                    if ((typedMask and mask.inv()).countOneBits() > 1 || (mask and typedMask.inv()).countOneBits() > 1) continue
+                    if (damerauLevenshteinBounded(lower, candidate, 1) > 1) continue
+                    // Faute plausible au clavier seulement ; sans proximité (tests, anglais sans disposition), tout compte.
+                    if (proximity.isEnabled && proximity.editCost(lower, candidate) > PLAUSIBLE_SLIP_COST) continue
+                    add(applyOriginalCasing(typed, candidate), candidate, frequency)
+                }
+            }
+        }
+        for (word in topCompletions(lower, limit + 3)) {
+            add(applyOriginalCasing(typed, word), word, frequencies.getValue(word))
+        }
+        return scored.sortedByDescending { it.second }.take(limit).map { it.first }
+    }
+
     private fun isSuggestible(typed: String): Boolean = when {
         typed.none { it.isLetter() } -> false
         typed.any { it.isDigit() } -> false
@@ -390,6 +518,10 @@ class Dictionary private constructor(
                     offer(elision + personalDisplay(stem, personal), elision.lowercase() + key)
                 }
             }
+        }
+        // Formes accentuées du mot tapé : avant les complétions (« corrige » -> « corrigé » avant « corriger »).
+        if (result.size < limit && !hasElision) {
+            for (variant in accentVariants(lower)) offer(applyOriginalCasing(typed, variant), variant)
         }
         if (result.size < limit) {
             for (word in topCompletions(lower, limit + 1)) offer(applyOriginalCasing(typed, word), word)
@@ -455,6 +587,51 @@ class Dictionary private constructor(
         }
         if (tail in ENGLISH_CLITICS && (head in frequencies || isInflectedForm(head))) return ApostropheResult(null)
         return null
+    }
+
+    /**
+     * Mot élidé (« t'inquiète », « lorsqu'un ») dont [lower] est l'écriture sans apostrophe (et éventuellement sans
+     * accent), ou null. Seul un mot absent des listes arrive ici. Le reste du mot doit commencer par une voyelle ou un
+     * h, être un mot connu (ou une forme régulière, ou se retrouver en rétablissant ses accents) et assez courant ;
+     * après une seule lettre élidée, il doit compter au moins 3 lettres (« tai », « lon » sont trop ambigus).
+     */
+    private fun elisionRestoration(lower: String): String? {
+        for (prefix in ELISION_PREFIXES) {
+            if (!lower.startsWith(prefix) || lower.length == prefix.length) continue
+            val rest = lower.substring(prefix.length)
+            if (rest.length < (if (prefix.length == 1) 3 else 2) || !canFollowElision(rest)) continue
+            val word = elidedWord(rest) ?: continue
+            if (!canFollowElision(word)) continue
+            return "$prefix'$word"
+        }
+        return null
+    }
+
+    /** Le mot à placer après l'élision pour le reste [rest] tapé (accents rétablis si besoin), ou null s'il n'est pas assez sûr. */
+    private fun elidedWord(rest: String): String? {
+        if (rest in frequencies) {
+            val word = dominatedByAccented[rest] ?: rest
+            return if (frequencies.getValue(word) >= ELIDED_WORD_MIN_FREQUENCY) word else null
+        }
+        if (isInflectedForm(rest)) return rest
+        val restored = accentRestoration(rest)?.word ?: return null
+        return if (frequencies.getValue(restored) >= ELIDED_WORD_MIN_FREQUENCY) restored else null
+    }
+
+    /**
+     * Formes accentuées du mot [lower] tel que tapé (« corrige » -> « corrigé », « ou » -> « où », « la » -> « là »),
+     * les plus fréquentes d'abord, au plus [MAX_ACCENT_VARIANTS]. Proposées avant les complétions : un mot complet sans
+     * accent est souvent un accent oublié.
+     */
+    private fun accentVariants(lower: String): List<String> {
+        val variants = accentedByFolded[foldAccents(lower)] ?: return emptyList()
+        // Plus fréquent d'abord ; une forme très rare face à la plus courante est un débris du corpus (« lã », « oû »).
+        val sorted = variants.sortedByDescending { frequencies.getValue(it) }
+        val top = frequencies.getValue(sorted[0])
+        return sorted.asSequence()
+            .filter { it != lower && frequencies.getValue(it) * MIN_VARIANT_SHARE_DIVISOR >= top }
+            .take(MAX_ACCENT_VARIANTS)
+            .toList()
     }
 
     /** Forme enregistrée d'un mot personnel qui ne diffère de [word] que par les accents, ou null. */
@@ -563,6 +740,9 @@ class Dictionary private constructor(
             "l", "d", "j", "t", "m", "s", "n", "c", "qu", "jusqu", "lorsqu", "puisqu", "quoiqu", "quelqu", "presqu",
         )
 
+        /** Élisions classées de la plus longue à la plus courte (« lorsqu » avant « qu », « qu » avant « c »). */
+        private val ELISION_PREFIXES = ELISIONS.sortedByDescending { it.length }
+
         /** Terminaisons anglaises après l'apostrophe : « today's », « they're », « we'll ». */
         private val ENGLISH_CLITICS = setOf("s", "t", "re", "ve", "ll", "d", "m")
 
@@ -571,9 +751,47 @@ class Dictionary private constructor(
 
         /**
          * Une forme sans accent déjà présente dans les listes est corrigée si sa version accentuée
-         * est au moins 10 fois plus fréquente (« ca » 190 000 contre « ça » 2 700 000).
+         * est au moins 10 fois plus fréquente (« ca » 190 000 contre « ça » 2 700 000). Seuil des paires
+         * « e / é » finales (« tue / tué »), où la forme sans accent est un vrai mot.
          */
         private const val ACCENT_DOMINANCE = 10L
+
+        /**
+         * Seuil des autres paires : la forme accentuée est au moins 2 fois plus fréquente (« ecoute » 38 000 contre
+         * « écoute » 82 000, « grace » contre « grâce »). Les formes sans accent y sont des fautes du corpus.
+         */
+        private const val SOFT_ACCENT_DOMINANCE = 2L
+
+        /** Formes sans accent qui sont de vrais mots (« une tache » n'est pas « une tâche ») : jamais corrigées pour leur accent. */
+        private val PLAIN_WORDS_KEPT = setOf("tache", "taches")
+
+        /** Une contraction écrite sans apostrophe est corrigée si la contraction est au moins 100 fois plus fréquente. */
+        private const val CONTRACTION_DOMINANCE = 100L
+
+        /** Fréquence minimale du mot placé après une élision rétablie (« t'inquiète » : « inquiète » 44 000). */
+        private const val ELIDED_WORD_MIN_FREQUENCY = 500L
+
+        /** Une forme accentuée proposée en tête doit valoir au moins 1/20 de la plus fréquente des formes accentuées. */
+        private const val MIN_VARIANT_SHARE_DIVISOR = 20L
+
+        /** Longueur minimale du mot pour lui chercher des voisins (« la », « ou » seraient noyés de mots courants). */
+        private const val MIN_WORD_LENGTH_FOR_NEIGHBORS = 3
+
+        /** Un voisin proposé doit valoir au moins 1/20 de la fréquence du mot tapé (il ne doit pas être bien plus rare). */
+        private const val NEIGHBOR_MIN_SHARE_DIVISOR = 20L
+
+        /** Coût maximal de [KeyProximity.editCost] d'une faute « plausible » (touche voisine, lettre oubliée ou effleurée, inversion). */
+        private const val PLAUSIBLE_SLIP_COST = 2
+
+        /** Nombre maximal de formes accentuées proposées en tête de la bande de suggestions. */
+        private const val MAX_ACCENT_VARIANTS = 2
+
+        /** Vrai si [accented] ne diffère de [plain] que par un « é » final (ou avant un « s » final) : « tue » / « tué ». */
+        private fun isParticipleVariant(plain: String, accented: String): Boolean {
+            if (plain.length != accented.length) return false
+            val index = if (plain.endsWith("s")) plain.length - 2 else plain.length - 1
+            return index >= 0 && plain[index] == 'e' && accented == plain.substring(0, index) + "é" + plain.substring(index + 1)
+        }
 
         /** Une forme fléchie retrouvée par les règles compte pour 1/4 de la fréquence de son mot de base. */
         private const val INFLECTED_FREQUENCY_DIVISOR = 4L

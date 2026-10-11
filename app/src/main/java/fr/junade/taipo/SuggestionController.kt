@@ -1,10 +1,15 @@
 package fr.junade.taipo
 
 import android.content.Context
+import android.os.SystemClock
 import android.view.inputmethod.InputConnection
+import fr.junade.taipo.dictionary.CorrectionHabits
+import fr.junade.taipo.dictionary.CorrectionHabitsProvider
+import fr.junade.taipo.dictionary.CorrectionHistory
 import fr.junade.taipo.dictionary.Dictionary
 import fr.junade.taipo.dictionary.DictionaryLoader
 import fr.junade.taipo.dictionary.FrenchContextCorrector
+import fr.junade.taipo.dictionary.HabitSignals
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.suggestion.EmojiSuggesterLoader
 import fr.junade.taipo.suggestion.NextWordModel
@@ -98,6 +103,51 @@ class SuggestionController(
     /** Faux dans les champs sans suggestions et quand l'application demande de ne pas apprendre (mode privé). */
     var learningAllowed = true
 
+    /** Habitudes de correction (phase 2 : comptées en silence, la correction n'en tient pas compte). */
+    val correctionHabits by lazy { CorrectionHabitsProvider.repository(appContext) }
+    private val habitSignals by lazy { HabitSignals(correctionHabits.habits) }
+
+    // Réglage « Apprendre de mes habitudes », relu à chaque champ.
+    private var habitLearningEnabled = KeyboardPreferences.DEFAULT_HABIT_LEARNING
+
+    /** Compter les habitudes : mêmes interdictions que la prédiction du mot suivant (champ sensible, navigation privée) + le réglage. */
+    private val habitsAllowed: Boolean get() = learningAllowed && habitLearningEnabled
+
+    /** À appeler à chaque nouveau champ, une fois [learningAllowed] à jour : relit le réglage et oublie les corrections en cours. */
+    fun refreshHabitLearning(enabled: Boolean) {
+        habitLearningEnabled = enabled
+        habitSignals.reset() // une correction suivie dans un autre champ (ou quand l'apprentissage est interdit) ne se compte pas
+    }
+
+    /**
+     * Une autocorrection vient d'être appliquée (à signaler avant [learnFromTyping] de la même touche) :
+     * [original] (fin de [textBeforeCursor]) a été remplacé par [corrected].
+     */
+    fun habitAutocorrectionApplied(textBeforeCursor: String, original: String, corrected: String) {
+        if (!habitsAllowed) return
+        habitSignals.autocorrectionApplied(host.language(), textBeforeCursor, original, corrected)
+    }
+
+    /** Phase 3 : vrai si l'utilisateur a déjà refusé (annulé) cette correction du mot [typed] au moins deux fois. */
+    private fun refusedByUser(typed: String, corrected: String): Boolean =
+        habitsAllowed && correctionHabits.habits.isRefused(host.language(), typed, corrected)
+
+    /** L'utilisateur vient d'annuler une autocorrection. */
+    fun habitAutocorrectionUndone(original: String, corrected: String) {
+        if (!habitsAllowed) return
+        if (habitSignals.autocorrectionUndone(original, corrected)) onHabitsChanged()
+    }
+
+    private fun onHabitsChanged() {
+        correctionHabits.markDirty()
+        // Compteurs de debug uniquement (builds debug) : jamais de texte saisi.
+        AppLog.d(
+            TAG,
+            "Habitudes : annulations=${habitSignals.recordedUndos} acceptations=${habitSignals.recordedAccepted} " +
+                "usages=${habitSignals.recordedUsages} entrées=${correctionHabits.habits.size()}",
+        )
+    }
+
     /** Faux dans les champs sans suggestions (mot de passe, e-mail, URL, nombre...), relu à chaque champ. */
     var suggestionsAllowed = true
 
@@ -120,11 +170,29 @@ class SuggestionController(
         val available: Boolean,
         /** Suite du mot après le curseur (curseur placé dans un mot) : changer de position dans le mot relance le calcul. */
         val wordAfter: String,
+        /** Curseur posé sur un mot déjà écrit (et non en train d'en taper un) : mêmes lettres, autres propositions. */
+        val placement: Boolean,
     )
+
+    // Mots corrigés par l'autocorrection pendant cette saisie : curseur posé sur l'un d'eux, l'emplacement de gauche
+    // propose de revenir à la forme d'origine.
+    private val correctionHistory = CorrectionHistory()
+
+    // Instant de la dernière touche du clavier : tant qu'elle est récente, le curseur « suit » la frappe ; sinon il a été posé.
+    private var lastTypingAt = 0L
+
+    /** Une touche du clavier vient d'être pressée : le curseur qui bouge ensuite suit la frappe, il n'a pas été posé. */
+    fun markTyping() {
+        lastTypingAt = SystemClock.uptimeMillis()
+    }
+
+    /** Retient qu'[original] (tel que tapé) a été remplacé par [corrected] (voir [CorrectionHistory.record]). */
+    fun recordCorrection(original: String, corrected: String) = correctionHistory.record(original, corrected)
 
     /** Oublie la dernière entrée : la prochaine demande recalcule tout (nouveau champ). */
     fun invalidate() {
         lastSuggestionInput = null
+        correctionHistory.clear()
     }
 
     /**
@@ -146,7 +214,9 @@ class SuggestionController(
         val available = (promptActive || suggestionsAllowed) && !host.isRecording() && !host.isCorrectionInProgress() &&
             !host.isEmojiPanelVisible() && !host.isClipboardPanelVisible() && (promptActive || !host.hasSelection())
         val wordAfter = if (available) wordAfterCursor() else ""
-        val input = SuggestionInput(textBeforeCursor, language, available, wordAfter)
+        // Curseur dans un mot, ou posé là sans frappe récente : le mot est déjà écrit, on propose des alternatives.
+        val placement = wordAfter.isNotEmpty() || SystemClock.uptimeMillis() - lastTypingAt > TYPING_WINDOW_MS
+        val input = SuggestionInput(textBeforeCursor, language, available, wordAfter, placement)
         if (input == lastSuggestionInput) return
         lastSuggestionInput = input
         cancelPendingSuggestions()
@@ -168,7 +238,11 @@ class SuggestionController(
             publishEmoji(emoji)
             suggestionJob = scope.launch(Dispatchers.Default) {
                 val words = traced(Sections.SUGGESTIONS) {
-                    dictionary.suggestionSlotsFor(typed, personalWords = personalWords)
+                    if (placement) {
+                        dictionary.placementSlotsFor(typed, personalWords, previousForm = correctionHistory.originalOf(typed))
+                    } else {
+                        dictionary.suggestionSlotsFor(typed, personalWords = personalWords)
+                    }
                 }
                 withContext(Dispatchers.Main) {
                     if (sequence == suggestionSequence && promptActive == host.promptActive()) publishWords(words)
@@ -279,6 +353,7 @@ class SuggestionController(
             before = host.inputConnection()?.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString() ?: return
         }
         // [terminator] : séparateur à considérer comme tapé après le texte (envoi du prompt sans espace finale).
+        if (habitsAllowed && habitSignals.wordCompleted(host.language(), before + terminator)) onHabitsChanged()
         val repository = nextWords
         if (repository.model.learn(before + terminator, truncated = before.length >= TEXT_CONTEXT_LOOKBEHIND)) repository.markDirty()
     }
@@ -308,7 +383,8 @@ class SuggestionController(
     fun autocorrectionFor(textBeforeCursor: String, allowRetro: Boolean): AutocorrectionEdit? {
         val word = WordText.trailingWord(textBeforeCursor)
         if (word.isEmpty()) return null
-        val dictionaryFix = dictionaryCorrectionFor(word)
+        // Phase 3 : une correction annulée deux fois n'est plus appliquée (le mot reste tel que tapé).
+        val dictionaryFix = dictionaryCorrectionFor(word)?.takeUnless { refusedByUser(word, it) }
         var result = if (dictionaryFix != null) textBeforeCursor.dropLast(word.length) + dictionaryFix else textBeforeCursor
         if (host.language() == KeyboardLanguage.FR) {
             val dictionary = DictionaryLoader.peek(KeyboardLanguage.FR)
@@ -326,7 +402,14 @@ class SuggestionController(
         var common = 0
         val limit = minOf(result.length, textBeforeCursor.length)
         while (common < limit && result[common] == textBeforeCursor[common]) common++
-        return AutocorrectionEdit(deleteCount = textBeforeCursor.length - common, insert = result.substring(common))
+        val edit = AutocorrectionEdit(deleteCount = textBeforeCursor.length - common, insert = result.substring(common))
+        // Même règle pour les corrections de contexte (« a » / « à »...) : on regarde le mot réellement changé.
+        val changed = HabitSignals.changedWord(textBeforeCursor, edit.deleteCount, edit.insert)
+        if (changed != null && refusedByUser(changed.first, changed.second)) {
+            AppLog.d(TAG, "Habitudes : correction ignorée, annulée au moins ${CorrectionHabits.REFUSAL_THRESHOLD} fois")
+            return null
+        }
+        return edit
     }
 
     /**
@@ -346,5 +429,9 @@ class SuggestionController(
 
     private companion object {
         private const val TAG = "SuggestionController"
+
+        /** Durée après une touche pendant laquelle un curseur qui bouge est considéré comme suivant la frappe. */
+        private const val TYPING_WINDOW_MS = 1_200L
+
     }
 }

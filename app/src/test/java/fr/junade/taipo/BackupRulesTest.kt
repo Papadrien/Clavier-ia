@@ -1,6 +1,7 @@
 package fr.junade.taipo
 
 import fr.junade.taipo.clipboard.ClipboardDatabase
+import fr.junade.taipo.dictionary.CorrectionHabitsRepository
 import fr.junade.taipo.dictionary.DatabasePassphraseProvider
 import fr.junade.taipo.dictionary.PersonalDictionaryDatabase
 import fr.junade.taipo.model.ModelFileResolver
@@ -59,10 +60,13 @@ class BackupRulesTest {
             DatabasePassphraseProvider.PREFS_NAME,
             ClipboardDatabase.KEY_PREFS_NAME,
             NextWordRepository.KEY_PREFS_NAME,
+            CorrectionHabitsRepository.KEY_PREFS_NAME,
         ).map { Exclusion("sharedpref", "$it.xml") }
         val files = listOf(
             Exclusion("file", NextWordRepository.FILE_NAME),
             Exclusion("file", NextWordRepository.FILE_NAME + ".tmp"),
+            Exclusion("file", CorrectionHabitsRepository.FILE_NAME),
+            Exclusion("file", CorrectionHabitsRepository.FILE_NAME + ".tmp"),
             Exclusion("file", ModelFileResolver.DIRECTORY_NAME),
             Exclusion("file", VoiceModelFileResolver.DIRECTORY_NAME),
         )

@@ -187,6 +187,7 @@ class TaipoIme : InputMethodService() {
                 override fun capturedFieldText(): String? = currentInputConnection?.let { correction.captureFieldText(it) }?.text
                 override fun learnFromTyping(terminator: String) = this@TaipoIme.learnFromTyping(terminator)
                 override fun insertGeneratedText(text: String): Boolean = this@TaipoIme.insertGeneratedText(text)
+                override fun replaceFieldText(text: String): Boolean = this@TaipoIme.replaceFieldText(text)
                 override fun onWordSuggestionTapped(suggestion: WordSuggestion) =
                     this@TaipoIme.onWordSuggestionTapped(suggestion)
                 override fun onEmojiSuggestionTapped() = this@TaipoIme.onEmojiSuggestionTapped()
@@ -292,6 +293,7 @@ class TaipoIme : InputMethodService() {
                 override fun onDeleteSwipeCancel() = this@TaipoIme.onDeleteSwipeCancel()
                 override fun onRecentEmojiClicked(emoji: String) = onRecentEmojiBarTapped(emoji)
                 override fun onCorrectClicked() = correction.onCorrectClicked()
+                override fun onCancelCorrectionClicked() = correction.onCancelClicked()
                 override fun onUndoClicked() = correction.onUndoClicked()
                 override fun onTopBarAction() = correction.dropUndo()
                 override fun onVoiceTouch(event: MotionEvent): Boolean = voice.onButtonTouch(event)
@@ -313,7 +315,13 @@ class TaipoIme : InputMethodService() {
      * Dernière autocorrection du dictionnaire, tant que rien d'autre n'a été fait depuis :
      * une suppression immédiate la rétablit (mot tel que tapé), comme sur les claviers usuels.
      */
-    private class AppliedAutocorrection(val original: String, val corrected: String, val boundary: String = "")
+    private class AppliedAutocorrection(
+        val original: String,
+        val corrected: String,
+        val boundary: String = "",
+        // Texte avant le curseur au moment de la correction (pour les habitudes) ; vide si non renseigné.
+        val textBefore: String = "",
+    )
 
     private var pendingAutocorrection: AppliedAutocorrection? = null
 
@@ -338,6 +346,7 @@ class TaipoIme : InputMethodService() {
         // service pour qu'elle soit prête avant la première frappe.
         personalDictionary
         nextWords // l'ouverture du modèle appris est asynchrone : on la déclenche dès la création
+        suggestions.correctionHabits // idem pour les habitudes de correction
         clipboard.start() // bases du presse-papiers + retour de l'écran de modification (story 2.6)
         suggestions.preloadDictionaries()
         preloadEmojiCatalog()
@@ -390,10 +399,13 @@ class TaipoIme : InputMethodService() {
         // IME_FLAG_NO_PERSONALIZED_LEARNING : navigation privée, champ confidentiel... rien n'est appris ni proposé.
         suggestions.learningAllowed = suggestions.suggestionsAllowed &&
             (info?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING == 0
+        suggestions.refreshHabitLearning(keyboardPreferences.isHabitLearningEnabled)
         clipboard.pasteAllowedInField = SuggestionPolicy.allowsPasteSuggestion(info?.inputType ?: 0)
         fieldType = FieldType.of(info?.inputType ?: 0)
         messagingField = MessagingFieldPolicy.isMessagingField(info?.packageName, info?.inputType ?: 0)
-        controller.setAutoCapitalization(fieldType.autoCapitalizes)
+        controller.setAutoCapitalization(
+            fieldType.autoCapitalizes && FieldType.requestsCapitalization(info?.inputType ?: 0),
+        )
         suggestions.invalidate()
         controller.setLanguage(currentKeyboardLanguage())
         controller.reset()
@@ -447,6 +459,7 @@ class TaipoIme : InputMethodService() {
     override fun onFinishInputView(finishingInput: Boolean) {
         super.onFinishInputView(finishingInput)
         nextWords.flush()
+        suggestions.correctionHabits.flush()
         clearInlineSuggestions()
         dismissMessage()
         if (viewComposer.isComposed) hideEmojiPanel(resync = false)
@@ -599,6 +612,7 @@ class TaipoIme : InputMethodService() {
         super.onDestroy()
         // Écriture terminée avant de rendre la main (lot 2.6 de la revue) : pas de launch asynchrone ici.
         nextWords.flushBlocking()
+        suggestions.correctionHabits.flushBlocking()
         dismissMessage()
         llmHost.close()
         voice.release()
@@ -647,6 +661,7 @@ class TaipoIme : InputMethodService() {
 
     private fun onKeyPressed(key: Key) {
         hapticFeedback.perform(hapticIntensity)
+        suggestions.markTyping() // le curseur qui bouge ensuite suit la frappe (suggestions de complétion)
         clearHighlightIfNeeded()
 
         // Story 5.1 : en mode prompt, tout passe par le tampon du prompt, avec les mêmes traitements que
@@ -712,6 +727,7 @@ class TaipoIme : InputMethodService() {
         val boundary = result.commit
         if (autocorrection != null && boundary != null) {
             pendingAutocorrection = AppliedAutocorrection(autocorrection.original, autocorrection.corrected, boundary)
+            suggestions.habitAutocorrectionApplied(autocorrection.textBefore, autocorrection.original, autocorrection.corrected)
         }
         if (result.isEnter) {
             pressEnter()
@@ -903,6 +919,7 @@ class TaipoIme : InputMethodService() {
         val boundary = result.commit
         if (autocorrection != null && boundary != null) {
             pendingAutocorrection = AppliedAutocorrection(autocorrection.original, autocorrection.corrected, boundary)
+            suggestions.habitAutocorrectionApplied(autocorrection.textBefore, autocorrection.original, autocorrection.corrected)
         }
         // Un mot vient d'être terminé par une espace (pas une conversion en « . »).
         if (key.action == KeyAction.Space && result.deleteBefore == 0) learnFromTyping()
@@ -928,7 +945,9 @@ class TaipoIme : InputMethodService() {
         val edit = suggestions.autocorrectionFor(before, allowContextualRetro(before)) ?: return null
         prompt.buffer.deleteBefore(edit.deleteCount)
         prompt.buffer.insert(edit.insert)
-        return AppliedAutocorrection(original = before.takeLast(edit.deleteCount), corrected = edit.insert)
+        val original = before.takeLast(edit.deleteCount)
+        suggestions.recordCorrection(original, edit.insert)
+        return AppliedAutocorrection(original = original, corrected = edit.insert, textBefore = before)
     }
 
     /**
@@ -943,6 +962,7 @@ class TaipoIme : InputMethodService() {
         prompt.buffer.deleteBefore(expected.length)
         prompt.buffer.insert(pending.original + pending.boundary)
         revertedAutocorrectionTail = (pending.original + pending.boundary).takeLast(REVERTED_TAIL_LENGTH)
+        suggestions.habitAutocorrectionUndone(pending.original, pending.corrected)
         return true
     }
 
@@ -965,15 +985,17 @@ class TaipoIme : InputMethodService() {
         if (typed.isEmpty()) return
         val spaceAfter = textAfter.getOrNull(wordAfter.length) == ' '
         hapticFeedback.perform(hapticIntensity)
-        if (suggestion.kind != WordSuggestion.Kind.TYPED || wordAfter.isNotEmpty()) {
+        // Le mot tel que tapé peut différer du mot affiché à gauche : forme d'origine d'un mot déjà corrigé.
+        if (suggestion.kind != WordSuggestion.Kind.TYPED || wordAfter.isNotEmpty() || suggestion.text != typed) {
             prompt.buffer.deleteBefore(typedBefore.length)
             prompt.buffer.deleteAfter(wordAfter.length + if (spaceAfter) 1 else 0)
-            prompt.buffer.insert(if (suggestion.kind == WordSuggestion.Kind.TYPED) "$typed " else "${suggestion.text} ")
+            prompt.buffer.insert("${suggestion.text} ")
         } else {
             if (spaceAfter) prompt.buffer.deleteAfter(1)
             prompt.buffer.insert(" ")
         }
         pendingAutocorrection = if (suggestion.replacesOnSpace) {
+            suggestions.recordCorrection(typed, suggestion.text)
             AppliedAutocorrection(original = typed, corrected = suggestion.text, boundary = " ")
         } else {
             null
@@ -1031,6 +1053,32 @@ class TaipoIme : InputMethodService() {
         }
         correction.markSelfEdit()
         ic.commitText(toInsert, 1)
+        return true
+    }
+
+    /**
+     * Bouton « Remplacer le texte » du chat : [text] remplace la sélection de l'application s'il y en a une,
+     * sinon tout le texte accessible du champ. Une seule édition groupée (un seul « annuler » côté application).
+     * Rien n'est appris de ce texte. Faux si le champ n'est pas accessible.
+     */
+    private fun replaceFieldText(text: String): Boolean {
+        val ic = currentInputConnection ?: return false
+        hapticFeedback.perform(hapticIntensity)
+        clearHighlightIfNeeded()
+        pendingAutocorrection = null
+        correction.markSelfEdit()
+        ic.beginBatchEdit()
+        try {
+            val selected = ic.getSelectedText(0)
+            if (selected.isNullOrEmpty()) {
+                val before = ic.getTextBeforeCursor(REPLACE_MAX_CHARS, 0)?.length ?: 0
+                val after = ic.getTextAfterCursor(REPLACE_MAX_CHARS, 0)?.length ?: 0
+                if (before + after > 0) ic.deleteSurroundingText(before, after)
+            }
+            ic.commitText(text, 1) // avec une sélection, commitText la remplace
+        } finally {
+            ic.endBatchEdit()
+        }
         return true
     }
 
@@ -1294,9 +1342,10 @@ class TaipoIme : InputMethodService() {
         clearHighlightIfNeeded()
 
         ic.beginBatchEdit()
-        if (suggestion.kind != WordSuggestion.Kind.TYPED || wordAfter.isNotEmpty()) {
+        // Le mot tel que tapé peut différer du mot affiché à gauche : forme d'origine d'un mot déjà corrigé.
+        if (suggestion.kind != WordSuggestion.Kind.TYPED || wordAfter.isNotEmpty() || suggestion.text != typed) {
             ic.deleteSurroundingText(typedBefore.length, wordAfter.length + if (spaceAfter) 1 else 0)
-            ic.commitText(if (suggestion.kind == WordSuggestion.Kind.TYPED) "$typed " else "${suggestion.text} ", 1)
+            ic.commitText("${suggestion.text} ", 1)
         } else {
             if (spaceAfter) ic.deleteSurroundingText(0, 1)
             ic.commitText(" ", 1)
@@ -1304,6 +1353,7 @@ class TaipoIme : InputMethodService() {
         ic.endBatchEdit()
 
         pendingAutocorrection = if (suggestion.replacesOnSpace) {
+            suggestions.recordCorrection(typed, suggestion.text)
             AppliedAutocorrection(original = typed, corrected = suggestion.text, boundary = " ")
         } else {
             null
@@ -1394,7 +1444,9 @@ class TaipoIme : InputMethodService() {
         ic.deleteSurroundingText(edit.deleteCount, 0)
         ic.commitText(edit.insert, 1)
         ic.endBatchEdit()
-        return AppliedAutocorrection(original = before.takeLast(edit.deleteCount), corrected = edit.insert)
+        val original = before.takeLast(edit.deleteCount)
+        suggestions.recordCorrection(original, edit.insert)
+        return AppliedAutocorrection(original = original, corrected = edit.insert, textBefore = before)
     }
 
     /**
@@ -1443,6 +1495,7 @@ class TaipoIme : InputMethodService() {
         ic.commitText(pending.original + pending.boundary, 1)
         ic.endBatchEdit()
         revertedAutocorrectionTail = (pending.original + pending.boundary).takeLast(REVERTED_TAIL_LENGTH)
+        suggestions.habitAutocorrectionUndone(pending.original, pending.corrected)
         return true
     }
 
@@ -1501,6 +1554,9 @@ class TaipoIme : InputMethodService() {
 
     companion object {
         private const val TAG = "TaipoIme"
+
+        /** « Remplacer le texte » : nombre maximal de caractères lus de part et d'autre du curseur pour vider le champ. */
+        private const val REPLACE_MAX_CHARS = 10_000
 
         /** Longueur du texte retenu quand une autocorrection est annulée (voir [revertedAutocorrectionTail]). */
         private const val REVERTED_TAIL_LENGTH = 12

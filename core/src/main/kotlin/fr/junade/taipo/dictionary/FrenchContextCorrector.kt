@@ -9,6 +9,11 @@ package fr.junade.taipo.dictionary
  *   Paris »), après « jusqu' » (« jusqu'a »), et devant un infinitif quand ce qui précède exclut le verbe avoir
  *   (« quelque chose a manger », « j'ai a faire »). Ce dernier cas a besoin du mot suivant : il est donc revu quand
  *   ce mot vient d'être tapé (correction « à rebours » du mot précédent).
+ * - **ou / où** : « ou » devient « où » devant un sujet qui ne peut pas prolonger une alternative (« le jour ou il est
+ *   parti », « la ville ou j'habite »), et en début de phrase devant un verbe de question (« ou est-il », « ou sont »).
+ *   Ce sont des corrections « à rebours » : elles attendent le mot suivant.
+ * - **la / là** : « la » devient « là » après être, venir ou rester quand le mot suivant ne peut pas suivre un article
+ *   (« je suis la pour toi », « il est la depuis hier »).
  * - **participe passé / infinitif** : un infinitif juste après un auxiliaire devient un participe (« il a manger »
  *   -> « il a mangé ») ; un participe en -é juste après un verbe ou une préposition qui appelle l'infinitif
  *   devient un infinitif (« il faut mangé » -> « il faut manger »).
@@ -42,6 +47,7 @@ object FrenchContextCorrector {
         if (text.isEmpty() || text.last().isWhitespace()) return null
         var current = text
         current = fixAccentOnA(current, textMayBeTruncated, allowRetro, frequencyOf)
+        current = fixAccentOnOuAndLa(current, textMayBeTruncated, allowRetro)
         current = fixParticiple(current, frequencyOf)
         return if (current == text) null else current
     }
@@ -142,12 +148,64 @@ object FrenchContextCorrector {
         if (next != null) {
             // Devant un infinitif, après un mot qui exclut le verbe avoir : « quelque chose a manger », « j'ai a faire ».
             val infinitiveLike = next.isPlain && !next.hasElision && participleOf(next.core, frequencyOf) != null
-            val excludesVerb = previous.head in BEFORE_A_INFINITIVE || previous.core in WORDS_BEFORE_A
+            // Un verbe qui appelle « à » devant un infinitif : « réussir a finir », « il continue a manger ».
+            val excludesVerb = previous.head in BEFORE_A_INFINITIVE || previous.core in WORDS_BEFORE_A ||
+                previous.head in VERBS_BEFORE_A || previous.head in VERBS_BEFORE_A_INFINITIVE
             return if (infinitiveLike && excludesVerb) grave else null
         }
         if (isSubjectLike(previous)) return null
-        // Après un verbe qui appelle « à » : « je vais a Paris », « il pense a toi ».
-        return if (previous.head in VERBS_BEFORE_A || previous.core in WORDS_BEFORE_A) grave else null
+        // Après un verbe qui appelle « à » : « je vais a Paris », « il pense a toi », « pour réussir a » (un infinitif ne
+        // peut pas être le sujet de « a » dans une phrase courante, alors que « aide » ou « arrive » peuvent être des noms).
+        return if (previous.head in VERBS_BEFORE_A || previous.core in WORDS_BEFORE_A ||
+            previous.head in INFINITIVES_BEFORE_A
+        ) {
+            grave
+        } else {
+            null
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // ou / où, la / là
+    // ------------------------------------------------------------------
+
+    /** Revoit le mot précédent (« ou », « la ») à la lumière du mot qui vient d'être tapé ; sans effet sans correction à rebours. */
+    private fun fixAccentOnOuAndLa(text: String, textMayBeTruncated: Boolean, allowRetro: Boolean): String {
+        if (!allowRetro) return text
+        val tokens = tokenize(text)
+        val index = tokens.lastIndex - 1
+        if (index < 0) return text
+        val token = tokens[index]
+        val next = tokens[index + 1]
+        if (!token.isPlain || !next.isPlain || next.core.isEmpty()) return text
+        val replacement = when (token.raw) {
+            "ou", "Ou" -> ouReplacement(tokens, index, next, textMayBeTruncated)
+            "la" -> laReplacement(tokens, index, next)
+            else -> null
+        } ?: return text
+        return replaceToken(text, token, replacement)
+    }
+
+    private fun ouReplacement(tokens: List<Token>, index: Int, next: Token, textMayBeTruncated: Boolean): String? {
+        val token = tokens[index]
+        val grave = if (token.raw == "Ou") "Où" else "où"
+        val previous = previousInSentence(tokens, index)
+        if (previous == null) {
+            // Début de phrase : « Ou est-il ? », « Ou sont-ils ? ». Un « ou » au tout début d'une fenêtre coupée n'est pas sûr.
+            val sentenceStart = if (index == 0) !textMayBeTruncated else tokens[index - 1].endsSentence
+            return if (sentenceStart && next.core.substringBefore('-') in OU_QUESTION_VERBS) grave else null
+        }
+        // « toi ou il » : une alternative entre deux pronoms ou deux réponses reste un « ou ».
+        if (previous.core in BEFORE_OR_ALTERNATIVE) return null
+        val subject = next.core in OU_SUBJECTS ||
+            (next.hasElision && next.core.substringBefore('\'') in OU_ELIDED_SUBJECTS)
+        return if (subject) grave else null
+    }
+
+    private fun laReplacement(tokens: List<Token>, index: Int, next: Token): String? {
+        val previous = previousInSentence(tokens, index) ?: return null
+        if (previous.head !in BEFORE_ADVERB_LA) return null
+        return if (next.core in AFTER_ADVERB_LA) "là" else null
     }
 
     // ------------------------------------------------------------------
@@ -295,6 +353,60 @@ object FrenchContextCorrector {
         "tiens", "tient", "tenons", "tenez", "tiennent", "tenir", "tenu",
         "apprends", "apprend", "apprenons", "apprenez", "apprennent", "apprendre", "appris",
         "sert", "servent", "servir", "servi",
+    )
+
+    /**
+     * Infinitifs de verbes qui appellent « à » + infinitif : « réussir a finir », « arriver a faire ». Seuls les
+     * infinitifs servent sans mot suivant : « aide » ou « arrive » peuvent être des noms (« l'aide a été »).
+     */
+    private val INFINITIVES_BEFORE_A = setOf(
+        "réussir", "arriver", "continuer", "hésiter", "aider", "chercher", "parvenir", "essayer", "tarder",
+        "s'habituer", "habituer", "penser", "servir", "passer",
+    )
+
+    /** Formes conjuguées de ces verbes, utiles seulement quand « a » est suivi d'un infinitif : « il réussit a finir ». */
+    private val VERBS_BEFORE_A_INFINITIVE = setOf(
+        "réussis", "réussit", "réussissons", "réussissez", "réussissent", "réussi", "réussira", "réussirai", "réussissait",
+        "arrive", "arrives", "arrivons", "arrivez", "arrivent", "arrivé", "arrivait", "arriverai", "arrivera",
+        "continue", "continues", "continuons", "continuez", "continuent", "continué", "continuait", "continuera",
+        "hésite", "hésites", "hésitons", "hésitez", "hésitent", "hésité", "hésitait",
+        "aide", "aides", "aidons", "aidez", "aident", "aidé", "aidait",
+        "cherche", "cherches", "cherchons", "cherchez", "cherchent", "cherché", "cherchait",
+        "parviens", "parvient", "parvenons", "parvenez", "parviennent", "parvenu", "parvenait",
+        "essaie", "essaies", "essayons", "essayez", "essaient", "essayé", "essayait",
+        "tarde", "tardes", "tardons", "tardez", "tardent", "tardé", "tardait",
+        "habitue", "habitues", "habituons", "habituez", "habituent", "habitué", "habituait",
+    ) + INFINITIVES_BEFORE_A
+
+    /** Début de phrase : verbes de question qui suivent « où » (« où est-il », « où sont les clés », « où vas-tu »). */
+    private val OU_QUESTION_VERBS = setOf(
+        "est", "sont", "es", "était", "étais", "êtes", "sommes", "suis", "vas", "va", "allez", "vais", "vont", "allons",
+        "habites", "habitez", "habitent", "se", "peut", "puis", "pouvons", "peuvent",
+    )
+
+    /** Sujets qui, après « ou » au milieu d'une phrase, annoncent une proposition (« la ville ou il habite »). */
+    private val OU_SUBJECTS = setOf("je", "tu", "il", "ils", "on")
+
+    /** Élisions de sujet qui font la même chose : « ou j'habite », « ou t'es ». */
+    private val OU_ELIDED_SUBJECTS = setOf("j", "t")
+
+    /** Mots avant lesquels « ou » est plutôt une alternative qu'un « où » (« moi ou il », « oui ou non »). */
+    private val BEFORE_OR_ALTERNATIVE = setOf(
+        "moi", "toi", "lui", "elle", "eux", "elles", "nous", "vous", "oui", "non", "ça", "ceci", "cela",
+    )
+
+    /** Verbes (formes courantes) après lesquels « la » seul peut être « là » : « je suis là », « il reste là ». */
+    private val BEFORE_ADVERB_LA = setOf(
+        "suis", "es", "est", "sommes", "êtes", "sont", "étais", "était", "étions", "étaient", "serai", "sera", "serons",
+        "reste", "restes", "restons", "restez", "restent", "reviens", "revient", "viens", "vient", "venez", "attends",
+        "attend", "attendez", "attendons",
+    )
+
+    /** Mots qui ne peuvent pas suivre l'article « la » : « je suis la pour toi » est « là », « je suis la pluie » n'existe pas. */
+    private val AFTER_ADVERB_LA = setOf(
+        "pour", "depuis", "avec", "et", "mais", "car", "donc", "quand", "parce", "puisque", "si", "je", "tu", "il", "ils",
+        "elle", "elles", "on", "nous", "vous", "ça", "ce", "sans", "après", "ensuite", "aussi", "encore", "toujours",
+        "déjà", "maintenant", "demain", "c'est", "qu'on",
     )
 
     /** Mots et locutions (mot entier, élision comprise) après lesquels « a » est « à » : « grâce à », « quant à »... */

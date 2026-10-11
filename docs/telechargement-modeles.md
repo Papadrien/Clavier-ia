@@ -18,8 +18,8 @@ premier build.
   (`ModelScreenRedirect`, nouvelle tâche car le clavier est un service) au lieu d'afficher un message ; le texte du champ
   ou du prompt n'est pas touché. « Utilisable » = modèle actif ET fichier présent (`ModelAvailability`, testé en JVM) :
   un modèle choisi dont le fichier a disparu redirige aussi. **Vocal** : il utilise le modèle vocal (4 fichiers) ;
-  sans modèle vocal complet, le bouton ouvre la section « Modèle vocal » de l'écran « Modèle IA »
-  (`ModelScreenRedirect.openVoice`, nouvelle tâche, défilement automatique) au lieu d'un message (voir 8.15).
+  sans modèle vocal complet, le bouton ouvre l'écran « Modèle vocal », distinct de « Modèle IA »
+  (`ModelScreenRedirect.openVoice`, nouvelle tâche) au lieu d'un message (voir 8.15).
   Les chaînes `correction_no_model_selected` et `voice_no_model_selected` sont supprimées. Pour 8.13 : supprimer le dernier modèle doit retirer le modèle
   actif ou laisser `isInstalled` à faux, la redirection suit alors d'elle-même.
 - **8.6** : Corriger et Générer n'affichent plus le message brut d'une exception. `InferenceFailureClassifier` (pur,
@@ -76,10 +76,10 @@ premier build.
   Vocal redirige vers la section (8.5). **Debug** : l'écran de chargement à la main (`VoiceModelSettingsActivity`, « Modèle vocal
   local » sur l'accueil, visible en debug seulement via `LocalModelAccess`) est conservé ; choisir un fichier supprime la copie
   interne précédente (correction : avant, une copie déjà faite était réutilisée à la place du nouveau fichier) et ferme le moteur.
-  Accueil : la ligne « Modèle vocal » ouvre la section ; pastille « À télécharger » / « n/4 fichiers » / « Prêt » / « Mise à jour ».
+  Écran dédié `VoiceModelDownloadActivity` (« Modèle vocal »), séparé de « Modèle IA » depuis le 11/10/2026 (socle commun `ModelScreenActivity`). Accueil : la ligne « Modèle vocal » ouvre cet écran ; pastille « À télécharger » / « n/4 fichiers » / « Prêt » / « Mise à jour ».
   **À fournir ou à valider par Adrien (rien n'a été deviné côté serveur)** :
-  (1) **URL et noms de fichiers** : `VoiceModelFile` suppose `https://taipo-worker.junade-models.workers.dev/voice/v1/` +
-  `encoder.int8.onnx`, `decoder.int8.onnx`, `joiner.int8.onnx`, `tokens.txt` : à aligner sur ce qui est réellement hébergé ;
+  (1) **URL et noms de fichiers** : `VoiceModelFile` pointe sur la racine du bucket R2, `https://taipo-worker.junade-models.workers.dev/` +
+  `encoder.onnx`, `decoder.onnx`, `joiner.onnx`, `tokens.txt` (noms donnés par Adrien le 11/10/2026, fichiers à plat à la racine) ;
   (2) **les 4 empreintes SHA-256** (`VoiceModelFile.sha256`, null pour l'instant : la release refuse tant qu'elles manquent) ;
   (3) **tailles indicatives** (`approxBytes` : ~600 Mo / 15 Mo / 10 Mo / 100 Ko, **provisoires**, estimées sans avoir vu les
   fichiers) : elles servent au contrôle d'espace et à la barre de progression, pas à valider le fichier ;
