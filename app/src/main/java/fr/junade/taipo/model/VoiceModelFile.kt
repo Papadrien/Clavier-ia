@@ -37,17 +37,17 @@ enum class VoiceModelFile(
 ) {
     ENCODER(
         "encoder", "Encoder", "encoder.onnx (ou encoder.int8.onnx)",
-        downloadUrl = VOICE_MODEL_BASE_URL + "encoder.onnx",
+        downloadUrl = VOICE_MODEL_BASE_URL + "encoder.int8.onnx",
         approxBytes = 600_000_000L,
     ),
     DECODER(
         "decoder", "Decoder", "decoder.onnx (ou decoder.int8.onnx)",
-        downloadUrl = VOICE_MODEL_BASE_URL + "decoder.onnx",
+        downloadUrl = VOICE_MODEL_BASE_URL + "decoder.int8.onnx",
         approxBytes = 15_000_000L,
     ),
     JOINER(
         "joiner", "Joiner", "joiner.onnx (ou joiner.int8.onnx)",
-        downloadUrl = VOICE_MODEL_BASE_URL + "joiner.onnx",
+        downloadUrl = VOICE_MODEL_BASE_URL + "joiner.int8.onnx",
         approxBytes = 10_000_000L,
     ),
     TOKENS(
