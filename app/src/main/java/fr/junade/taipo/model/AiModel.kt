@@ -93,6 +93,12 @@ enum class AiModel(
     /** Vrai si l'app sait télécharger ce modèle (URL connue). */
     val hasDownloadUrl: Boolean get() = downloadUrl != null
 
+    /**
+     * Vrai si le modèle accepte de l'audio en entrée (épopée 14). D'après la documentation Google, seuls Gemma 4 E2B et
+     * E4B sont entraînés pour la reconnaissance vocale ; Gemma 3 (270M, 1B) n'a pas d'entrée audio.
+     */
+    val hasAudioInput: Boolean get() = this == EQUILIBRE || this == PERFORMANT
+
     companion object {
         /** Extension de fichier attendue pour tous les modèles (format LiteRT-LM). */
         const val EXPECTED_EXTENSION = ".litertlm"

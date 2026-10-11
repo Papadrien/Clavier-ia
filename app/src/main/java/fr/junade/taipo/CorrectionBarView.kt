@@ -73,6 +73,8 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private val actionsMenuBackgrounds = style.toggleBackgrounds()
     private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
     private val voiceSpinner = LoadingSpinnerDrawable(context)
+    private val audioSpikeSpinner = LoadingSpinnerDrawable(context)
+    private val audioSpikeBackgrounds = HashMap<Int, RoundKeyDrawable>()
     private val correctSpinner = LoadingSpinnerDrawable(context)
     private val zoneState = SuggestionZoneState()
     private var menuBackgroundExpanded: Boolean? = null
@@ -86,6 +88,12 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private val generateButton = ImageButton(context)
     private var generateListener: (() -> Unit)? = null
 
+    /**
+     * Spike 14.1 (build debug seulement) : transcription par modèle multimodal, à gauche de Vocal. Jamais affiché en
+     * release ([BuildConfig.DEBUG] faux) ; la vraie action de la barre est la story 14.5.
+     */
+    val audioSpikeButton = ImageButton(context)
+
     var state: CorrectionBarState = CorrectionBarState.HIDDEN
         set(value) {
             field = value
@@ -96,6 +104,12 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         set(value) {
             field = value
             renderVoice()
+        }
+
+    var audioSpikeState: AudioSpikeBarState = AudioSpikeBarState.IDLE
+        set(value) {
+            field = value
+            renderAudioSpike()
         }
 
     /** Vocal est le dernier bouton visible (saisie non en cours) : la barre se cale sur le bord droit des touches. */
@@ -153,6 +167,14 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         }
         addView(
             generateButton,
+            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
+        )
+
+        // Spike 14.1 : bouton « voix vers texte » (build debug), entre Générer et Vocal. Le clic est relié par l'IME.
+        style.styleRoundIconButton(audioSpikeButton, R.drawable.ic_speech_to_text)
+        audioSpikeButton.contentDescription = context.getString(R.string.audio_spike_button_description)
+        addView(
+            audioSpikeButton,
             LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
         )
 
@@ -331,6 +353,8 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         val visible = BarVisibility.actionButtons(voiceState, state, zoneState, clipboardPanelOpen)
         voiceButton.visibility = if (visible.voice) View.VISIBLE else View.GONE
         generateButton.visibility = if (visible.generate) View.VISIBLE else View.GONE
+        // Spike 14.1 : visible avec Vocal, en debug seulement (jamais en release).
+        audioSpikeButton.visibility = if (BuildConfig.DEBUG && visible.voice) View.VISIBLE else View.GONE
         correctButton.visibility = if (visible.correct) View.VISIBLE else View.GONE
         actionsMenuButton.visibility = if (visible.actionsMenu) View.VISIBLE else View.GONE
         closeButton.visibility = View.GONE // remplacée par le bouton Smart Clipboard actif, qui referme le panneau
@@ -403,5 +427,27 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         voiceButton.alpha = appearance.alpha
         voiceButton.showMicOrSpinner(appearance.loading, voiceSpinner)
         renderActionButtons()
+    }
+
+    private fun renderAudioSpike() {
+        val recording = audioSpikeState == AudioSpikeBarState.RECORDING
+        val processing = audioSpikeState == AudioSpikeBarState.PROCESSING
+        audioSpikeButton.contentDescription = context.getString(
+            when (audioSpikeState) {
+                AudioSpikeBarState.IDLE -> R.string.audio_spike_button_description
+                AudioSpikeBarState.RECORDING -> R.string.audio_spike_button_recording
+                AudioSpikeBarState.PROCESSING -> R.string.audio_spike_button_processing
+            },
+        )
+        val face = if (recording) R.color.action_danger else R.color.surface_button
+        audioSpikeButton.background = audioSpikeBackgrounds.getOrPut(face) { style.roundBackground(face) }
+        audioSpikeButton.alpha = if (processing) 0.6f else 1f
+        if (processing) {
+            if (audioSpikeButton.drawable !== audioSpikeSpinner) audioSpikeButton.setImageDrawable(audioSpikeSpinner)
+            audioSpikeSpinner.start()
+        } else {
+            audioSpikeSpinner.stop()
+            if (audioSpikeButton.drawable === audioSpikeSpinner) audioSpikeButton.setImageResource(R.drawable.ic_speech_to_text)
+        }
     }
 }

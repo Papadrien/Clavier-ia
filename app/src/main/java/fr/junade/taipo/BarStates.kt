@@ -17,3 +17,6 @@ enum class VoiceBarState {
     RECORDING,
     TRANSCRIBING,
 }
+
+/** États du bouton du spike 14.1 (transcription par modèle multimodal, build debug seulement). */
+enum class AudioSpikeBarState { IDLE, RECORDING, PROCESSING }

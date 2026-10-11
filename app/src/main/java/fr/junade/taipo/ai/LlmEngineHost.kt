@@ -41,6 +41,9 @@ class LlmEngineHost(private val appContext: Context) {
     private var engine: Engine? = null
     private var loadedModel: AiModel? = null
     private var loadedFile: File? = null
+
+    /** Le moteur chargé a un backend audio (spike 14.1) : plus lourd en mémoire, mais utilisable aussi pour le texte. */
+    private var loadedWithAudio = false
     private var conversationReleaser: (() -> Unit)? = null
 
     /** Vrai pendant le chargement d'un modèle depuis le disque (préchargement ou chargement à la demande). */
@@ -70,13 +73,15 @@ class LlmEngineHost(private val appContext: Context) {
     /**
      * Renvoie le moteur du modèle [model], en le (re)chargeant si besoin. [onLoading] est appelé si le
      * modèle doit être (re)chargé depuis le disque, pour afficher un indicateur (décision 8.7).
+     * [withAudio] (spike 14.1, faux par défaut : comportement inchangé) : le moteur doit accepter de l'audio ; un moteur
+     * déjà chargé sans audio est alors rechargé avec. Un moteur chargé avec audio reste réutilisé pour le texte.
      * À appeler avec [inferenceLock] tenu.
      */
-    suspend fun ensureLoaded(model: AiModel, onLoading: () -> Unit): Engine {
+    suspend fun ensureLoaded(model: AiModel, onLoading: () -> Unit, withAudio: Boolean = false): Engine {
         val file = ModelFileResolver.resolve(appContext, model)
 
         val current = engine
-        if (current != null && loadedModel == model && loadedFile?.path == file.path) {
+        if (current != null && loadedModel == model && loadedFile?.path == file.path && (loadedWithAudio || !withAudio)) {
             return current
         }
 
@@ -88,11 +93,20 @@ class LlmEngineHost(private val appContext: Context) {
         val newEngine: Engine
         try {
             newEngine = Engine(
-                EngineConfig(
-                    modelPath = file.path,
-                    backend = Backend.CPU(),
-                    cacheDir = appContext.cacheDir.path,
-                ),
+                if (withAudio) {
+                    EngineConfig(
+                        modelPath = file.path,
+                        backend = Backend.CPU(),
+                        audioBackend = Backend.CPU(),
+                        cacheDir = appContext.cacheDir.path,
+                    )
+                } else {
+                    EngineConfig(
+                        modelPath = file.path,
+                        backend = Backend.CPU(),
+                        cacheDir = appContext.cacheDir.path,
+                    )
+                },
             )
             withContext(Dispatchers.Default) {
                 newEngine.initialize()
@@ -109,6 +123,7 @@ class LlmEngineHost(private val appContext: Context) {
         engine = newEngine
         loadedModel = model
         loadedFile = file
+        loadedWithAudio = withAudio
         return newEngine
     }
 
@@ -119,7 +134,7 @@ class LlmEngineHost(private val appContext: Context) {
      * chargé, il ne fait rien. Lève les exceptions de chargement (modèle absent, échec d'initialisation).
      */
     suspend fun preload(model: AiModel) {
-        inferenceLock.withLock { ensureLoaded(model) { } }
+        inferenceLock.withLock { ensureLoaded(model, onLoading = { }) }
     }
 
     init {
@@ -146,6 +161,7 @@ class LlmEngineHost(private val appContext: Context) {
         engine = null
         loadedModel = null
         loadedFile = null
+        loadedWithAudio = false
     }
 
     companion object {

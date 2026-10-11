@@ -58,6 +58,9 @@ class ImeViewComposer(
         /** Lot 20 : activation du bouton Vocal par l'accessibilité (TalkBack, double appui) : bascule l'écoute. */
         fun onVoiceClick()
 
+        /** Spike 14.1 (build debug seulement) : touche sur le bouton « voix vers texte ». */
+        fun onAudioSpikeClick()
+
         fun onEmojiSuggestionClicked()
 
         fun onWordSuggestionClicked(suggestion: WordSuggestion)
@@ -134,6 +137,11 @@ class ImeViewComposer(
         correctionBar.voiceButton.setOnClickListener {
             host.onTopBarAction()
             host.onVoiceClick()
+        }
+        // Spike 14.1 : le bouton n'est affiché qu'en debug (voir CorrectionBarView), le clic est donc sans effet en release.
+        correctionBar.audioSpikeButton.setOnClickListener {
+            host.onTopBarAction()
+            host.onAudioSpikeClick()
         }
         // Le bouton micro de la barre du prompt déclenche la même dictée (appui bref : marche/arrêt, appui long : tant que maintenu).
         prompt.promptBar.voiceButton.setOnTouchListener(voiceTouchListener)

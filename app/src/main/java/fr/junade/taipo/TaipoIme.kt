@@ -26,6 +26,7 @@ import androidx.annotation.RequiresApi
 import androidx.autofill.inline.UiVersions
 import android.widget.Toast
 import fr.junade.taipo.ai.CorrectionEngine
+import fr.junade.taipo.ai.AudioSpikeEngine
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.ai.ProtectedWords
 import fr.junade.taipo.ai.VoiceField
@@ -279,6 +280,25 @@ class TaipoIme : InputMethodService() {
         )
     }
 
+    // Spike 14.1 (build debug seulement) : transcription par modèle multimodal, voir AudioSpikeController.
+    private val audioSpike: AudioSpikeController by lazy {
+        AudioSpikeController(
+            this,
+            serviceScope,
+            AudioSpikeEngine(llmHost),
+            object : AudioSpikeController.Host {
+                override fun showMessage(message: String) = this@TaipoIme.showMessage(message)
+                override fun voiceRecording(): Boolean = voice.isRecording
+                override fun aiBusy(): Boolean = prompt.generationBusy() || correctionInProgress
+                override fun activeModel() = ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled)
+                override fun insertText(text: String): Boolean = insertGeneratedText(text)
+                override fun setBarState(state: AudioSpikeBarState) {
+                    correctionBar.audioSpikeState = state
+                }
+            },
+        )
+    }
+
     // Construction de la vue du clavier : voir ImeViewComposer (lot 2.3 de la revue).
     private val viewComposer: ImeViewComposer by lazy {
         ImeViewComposer(
@@ -299,6 +319,9 @@ class TaipoIme : InputMethodService() {
                 override fun onTopBarAction() = correction.dropUndo()
                 override fun onVoiceTouch(event: MotionEvent): Boolean = voice.onButtonTouch(event)
                 override fun onVoiceClick() = voice.onAccessibilityClick()
+                override fun onAudioSpikeClick() {
+                    if (BuildConfig.DEBUG) audioSpike.onClick()
+                }
                 override fun onEmojiSuggestionClicked() = onEmojiSuggestionTapped()
                 override fun onWordSuggestionClicked(suggestion: WordSuggestion) = onWordSuggestionTapped(suggestion)
                 override fun openAppHome() = this@TaipoIme.openAppHome()
@@ -476,6 +499,7 @@ class TaipoIme : InputMethodService() {
         if (isRecording) {
             voice.cancelRecording()
         }
+        if (BuildConfig.DEBUG) audioSpike.onInputFinished()
         // Changement de champ : la génération en cours est interrompue (partiel figé), la conversation reste.
         prompt.stopGeneration()
         prompt.exit(resync = false)
@@ -620,6 +644,7 @@ class TaipoIme : InputMethodService() {
         nextWords.flushBlocking()
         suggestions.correctionHabits.flushBlocking()
         dismissMessage()
+        if (BuildConfig.DEBUG) audioSpike.release()
         llmHost.close()
         voice.release()
         clipboard.release()

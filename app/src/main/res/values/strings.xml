@@ -403,4 +403,15 @@
     <string name="model_delete_voice_message">Les fichiers (%1$s) seront supprimés de votre appareil. La dictée vocale ne fonctionnera plus tant que vous n\'aurez pas retéléchargé le modèle.</string>
     <string name="button_voice_model_local">Modèle vocal local</string>
     <string name="home_row_voice_model_local_subtitle">Fournir soi-même les fichiers du modèle vocal</string>
+
+    <!-- Spike 14.1 (build debug seulement) : transcription par modèle multimodal -->
+    <string name="audio_spike_button_description">Spike 14.1 : enregistrer puis transcrire avec le modèle IA</string>
+    <string name="audio_spike_button_recording">Spike 14.1 : arrêter l\'enregistrement et transcrire</string>
+    <string name="audio_spike_button_processing">Spike 14.1 : transcription en cours</string>
+    <string name="audio_spike_no_audio_model">Spike 14.1 : le modèle actif n\'a pas d\'entrée audio. Choisissez Équilibré ou Performant (Gemma 4).</string>
+    <string name="audio_spike_busy">Spike 14.1 : une dictée, une correction ou une génération est en cours.</string>
+    <string name="audio_spike_permission_denied">Spike 14.1 : permission micro requise. Accordez-la puis appuyez à nouveau.</string>
+    <string name="audio_spike_mic_unavailable">Spike 14.1 : le micro n\'a pas pu être ouvert.</string>
+    <string name="audio_spike_too_short">Spike 14.1 : enregistrement trop court (moins d\'une demi-seconde).</string>
+    <string name="audio_spike_processing">Spike 14.1 : transcription déjà en cours.</string>
 </resources>
