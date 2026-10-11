@@ -5,7 +5,7 @@ package fr.junade.taipo.model
  * (même domaine : Worker Cloudflare devant R2). Remplacer un de ces fichiers sur le bucket change son empreinte : il faut
  * alors figer la nouvelle `sha256` ici et publier une release (story 8.8), sinon la vérification refuse le téléchargement.
  */
-private const val VOICE_MODEL_BASE_URL = "https://taipo-worker.junade-models.workers.dev/voice/v1/"
+private const val VOICE_MODEL_BASE_URL = "https://taipo-worker.junade-models.workers.dev/"
 
 /**
  * Les 4 fichiers du modèle de transcription vocale (Nemotron 3.5 ASR Streaming, export sherpa-onnx multilingue
