@@ -50,6 +50,13 @@ class NextWordModel(private val maxEntries: Int = DEFAULT_MAX_ENTRIES) {
     }
 
     /**
+     * Combien de fois [next] a suivi [context] (un seul mot, en minuscules, ou [SENTENCE_START]). Lecture seule :
+     * sert de contexte au départage des corrections (voir `HabitContext`), sans dupliquer les bigrammes.
+     */
+    @Synchronized
+    fun bigramCount(context: String, next: String): Int = bigrams[context]?.get(next) ?: 0
+
+    /**
      * Apprend la dernière transition de [textBeforeCursor] : le dernier mot (ou emoji) terminé, en
      * fonction des un ou deux éléments qui le précèdent. [truncated] indique que le texte est une
      * fenêtre coupée au début de ce que l'utilisateur a écrit (le premier mot peut être incomplet).

@@ -23,6 +23,9 @@ import fr.junade.taipo.dictionary.WordSuggestion
  * Charte Taipo (lot 11) : texte blanc sur le fond du clavier ; le mot de l'autocorrection (action importante) est en
  * gras sur une pastille violette ; l'emplacement emoji est un bouton secondaire. Les fonds « face + ombre » sont créés
  * une fois ([BarStyle.pillBackground]) et simplement posés ou retirés, sans allocation à chaque frappe.
+ *
+ * Un mot trop long pour son emplacement est tronqué au début (« …ement ») : le début est déjà tapé, la fin est ce qui
+ * distingue les suggestions.
  */
 @SuppressLint("ViewConstructor")
 class SuggestionStripView(context: Context) : LinearLayout(context) {
@@ -65,7 +68,8 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
             slot.useTaipoFont()
             slot.gravity = Gravity.CENTER
             slot.maxLines = 1
-            slot.ellipsize = TextUtils.TruncateAt.END
+            // Mot trop long pour l'emplacement : « …» au début, pas à la fin (le début du mot est déjà tapé, la fin est ce qui compte).
+            slot.ellipsize = TextUtils.TruncateAt.START
             slot.setPadding(slotPadding, 0, slotPadding, shadow)
             slot.visibility = View.GONE
             slot.setOnClickListener { words.getOrNull(index)?.let { wordListener?.onWordClick(it) } }
@@ -117,6 +121,8 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
                 suggestion.kind == WordSuggestion.Kind.TYPED -> "\u201C${suggestion.text}\u201D"
                 else -> suggestion.text
             }
+            // Adresse e-mail trop longue : « … » à la fin (c'est son début, déjà tapé, qui identifie l'adresse, mais la fin se lit aussi).
+            slot.ellipsize = if (suggestion?.kind == WordSuggestion.Kind.EMAIL) TextUtils.TruncateAt.END else TextUtils.TruncateAt.START
             slot.useTaipoFont(if (suggestion?.replacesOnSpace == true) TaipoType.Weight.BOLD else TaipoType.Weight.REGULAR)
             slot.background = if (suggestion?.replacesOnSpace == true) wordHighlights[index] else null
             slot.visibility = if (suggestion == null) View.GONE else View.VISIBLE

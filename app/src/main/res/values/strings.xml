@@ -115,10 +115,10 @@
     <string name="keyboard_settings_height_description">Ajuste la hauteur des touches. S\'applique à la prochaine ouverture du clavier.</string>
     <string name="keyboard_settings_habits_title">Apprentissage</string>
     <string name="keyboard_settings_habits_switch">Apprendre de mes habitudes</string>
-    <string name="keyboard_settings_habits_description">Le clavier compte, sur cet appareil, les corrections que vous annulez ou laissez en place et les mots que vous validez, pour s\'adapter à vous. Seuls des compteurs de mots et de corrections sont conservés, chiffrés, jamais de phrases. Rien n\'est compté dans les champs sensibles ni en navigation privée.</string>
+    <string name="keyboard_settings_habits_description">Le clavier compte, sur cet appareil, les corrections que vous annulez ou laissez en place, les mots que vous validez et les adresses e-mail que vous tapez, pour s\'adapter à vous et vous proposer vos adresses dès que vous en commencez une. Seuls des compteurs de mots et de corrections, et vos adresses e-mail, sont conservés, chiffrés, jamais de phrases. Rien n\'est compté dans les champs sensibles ni en navigation privée ; les adresses e-mail sont aussi retenues dans les champs d\'adresse, jamais dans les mots de passe.</string>
     <string name="keyboard_settings_habits_clear">Effacer mes habitudes de correction</string>
     <string name="keyboard_settings_habits_clear_title">Effacer les habitudes de correction ?</string>
-    <string name="keyboard_settings_habits_clear_message">Tout ce que le clavier a compté sur vos corrections et vos mots sera supprimé. Cette action est définitive.</string>
+    <string name="keyboard_settings_habits_clear_message">Tout ce que le clavier a compté sur vos corrections, vos mots et vos adresses e-mail sera supprimé. Cette action est définitive.</string>
     <string name="keyboard_settings_habits_clear_confirm">Effacer</string>
     <string name="keyboard_settings_habits_clear_cancel">Annuler</string>
     <string name="keyboard_settings_habits_cleared">Habitudes effacées</string>

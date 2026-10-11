@@ -1,6 +1,7 @@
 package fr.junade.taipo.dictionary
 
 import fr.junade.taipo.KeyboardLanguage
+import fr.junade.taipo.suggestion.EmailText
 import fr.junade.taipo.suggestion.NextWordModel
 import fr.junade.taipo.suggestion.WordText
 
@@ -18,6 +19,9 @@ import fr.junade.taipo.suggestion.WordText
  *   nombreux endroits où le clavier oublie sa dernière correction.
  * - **Usage** : un mot terminé compte, sauf s'il vient d'être corrigé automatiquement (ce n'est pas l'utilisateur qui
  *   l'a tapé : le compter renforcerait les corrections elles-mêmes). Un nombre ou un code n'est jamais compté.
+ *
+ * - **Adresse e-mail** : une adresse terminée ([emailCompleted]) est retenue pour être proposée quand l'utilisateur
+ *   en commence une. Ce n'est pas une suite de mots : son dernier morceau (« com ») ne compte pas comme un usage.
  *
  * Une correction oubliée (changement de champ, apprentissage interdit) n'est jamais comptée : [reset].
  * Logique pure (aucune dépendance Android), testée en JVM, à utiliser depuis le thread principal.
@@ -49,6 +53,8 @@ class HabitSignals(private val habits: CorrectionHabits) {
         private set
     var recordedUsages = 0
         private set
+    var recordedEmails = 0
+        private set
 
     /**
      * [textBeforeCursor] : le texte avant le curseur au moment de la correction (qui se termine par [original]) ;
@@ -72,10 +78,10 @@ class HabitSignals(private val habits: CorrectionHabits) {
     }
 
     /**
-     * [textBeforeCursor] : le texte qui précède le curseur, mot terminé inclus. Vrai si un compteur a changé
-     * (la sauvegarde doit être planifiée).
+     * [textBeforeCursor] : le texte qui précède le curseur, mot terminé inclus ; [truncated] : cette fenêtre est coupée
+     * au début du texte écrit. Vrai si un compteur a changé (la sauvegarde doit être planifiée).
      */
-    fun wordCompleted(language: KeyboardLanguage, textBeforeCursor: String): Boolean {
+    fun wordCompleted(language: KeyboardLanguage, textBeforeCursor: String, truncated: Boolean = false): Boolean {
         val words = NextWordModel.tokenize(textBeforeCursor).filter { it != NextWordModel.SENTENCE_START }
         val arrived = incoming
         val previous = waiting
@@ -92,7 +98,8 @@ class HabitSignals(private val habits: CorrectionHabits) {
         }
         if (arrived != null) {
             waiting = arrived
-        } else {
+        } else if (EmailText.completedEmail(textBeforeCursor, truncated) == null) {
+            // Une adresse n'est pas un mot : ses morceaux (« gmail », « com ») ne comptent pas comme des mots tapés.
             val last = words.lastOrNull()
             if (last != null && last != NextWordModel.BARRIER && !NextWordModel.isEmoji(last) && habits.recordUsage(language, last)) {
                 recordedUsages++
@@ -100,6 +107,18 @@ class HabitSignals(private val habits: CorrectionHabits) {
             }
         }
         return changed
+    }
+
+    /**
+     * Une adresse e-mail vient d'être terminée : espace, retour à la ligne, suggestion choisie ou sortie du champ.
+     * [textBeforeCursor] se termine par elle (espaces et ponctuation de fin ignorés) ; [truncated] : la fenêtre est coupée
+     * au début. Vrai si l'adresse a été retenue (la sauvegarde doit être planifiée).
+     */
+    fun emailCompleted(textBeforeCursor: String, truncated: Boolean = false): Boolean {
+        val email = EmailText.completedEmail(textBeforeCursor, truncated) ?: return false
+        if (!habits.recordEmail(email)) return false
+        recordedEmails++
+        return true
     }
 
     /** Oublie les corrections en attente (changement de champ, apprentissage interdit ou désactivé). */

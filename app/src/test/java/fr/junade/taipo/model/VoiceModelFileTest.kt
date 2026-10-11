@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 class VoiceModelFileTest {
 
     @Test
-    fun `les 4 fichiers ont une URL HTTPS versionnee et distincte, sur le domaine des modeles`() {
+    fun `les 4 fichiers ont une URL HTTPS distincte, a plat sur le domaine des modeles`() {
         val urls = VoiceModelFile.all().map { it.downloadUrl }
         assertEquals(4, urls.size)
         assertEquals(urls.size, urls.toSet().size)
@@ -29,6 +29,15 @@ class VoiceModelFileTest {
         VoiceModelFile.all().mapNotNull { it.sha256 }.forEach {
             assertTrue(it.matches(Regex("[0-9a-f]{64}")), it)
         }
+    }
+
+    @Test
+    fun `les 4 empreintes et tailles reelles sont figees`() {
+        assertTrue(VoiceModelFile.all().all { it.sha256 != null })
+        assertEquals(657_601_403L, VoiceModelFile.ENCODER.approxBytes)
+        assertEquals(14_978_075L, VoiceModelFile.DECODER.approxBytes)
+        assertEquals(9_504_438L, VoiceModelFile.JOINER.approxBytes)
+        assertEquals(131_440L, VoiceModelFile.TOKENS.approxBytes)
     }
 
     @Test

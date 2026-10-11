@@ -28,6 +28,23 @@ object SuggestionPolicy {
     }
 
     /**
+     * Adresses e-mail déjà tapées (apprentissage et suggestions) : tout champ de texte, y compris les champs
+     * d'adresse e-mail où elles servent le plus, sauf les mots de passe, les adresses web et les filtres.
+     */
+    fun allowsEmailSuggestions(inputType: Int): Boolean {
+        if (inputType and InputType.TYPE_MASK_CLASS != InputType.TYPE_CLASS_TEXT) return false
+        return when (inputType and InputType.TYPE_MASK_VARIATION) {
+            InputType.TYPE_TEXT_VARIATION_PASSWORD,
+            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,
+            InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD,
+            InputType.TYPE_TEXT_VARIATION_URI,
+            InputType.TYPE_TEXT_VARIATION_FILTER,
+            -> false
+            else -> true
+        }
+    }
+
+    /**
      * Story 2.2 : la puce de collage est proposée dans tout champ de texte, sauf les champs de mot de
      * passe (story 10.1). Contrairement aux suggestions de mots, elle accepte aussi les champs
      * e-mail, URL ou filtre, où coller est justement utile.

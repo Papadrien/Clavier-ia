@@ -171,6 +171,14 @@ class Dictionary private constructor(
      * Formes régulières : un pluriel/féminin/conjugaison régulier d'un mot connu (voir
      * [InflectionRules]) est considéré comme correct et n'est pas modifié (« durées »).
      *
+     * Habitudes ([habits], phase 4) : à distance d'édition égale, et après le mot personnel, le candidat que
+     * l'utilisateur a déjà laissé en place (paire « tapé -> candidat » acceptée au moins
+     * [CorrectionHabits.ACCEPTANCE_THRESHOLD] fois) l'emporte, puis celui qui suit habituellement le mot précédent
+     * (bigrammes), puis celui qu'il tape le plus (voir [HabitScore]), avant la proximité des touches. Elles ne
+     * réordonnent que des candidats à distance égale, et peuvent lever une égalité qui laissait le mot sans
+     * correction. Sans habitudes (null, ou rien d'appris), le résultat est identique. Le mot collé à une élision
+     * (« t'inscrir ») est examiné sans elles : seul le reste du mot est cherché.
+     *
      * Proximité des touches ([KeyProximity]) : à distance d'édition égale, le candidat dont la différence est la
      * plus plausible au clavier (touche voisine, lettre effleurée en trop) l'emporte, avant l'inversion de lettres
      * et la fréquence (« cgat » -> « chat », g et h étant voisines). Sans proximité, comportement inchangé.
@@ -195,6 +203,7 @@ class Dictionary private constructor(
         word: String,
         maxDistance: Int = 2,
         personalWords: Collection<String> = emptyList(),
+        habits: HabitContext? = null,
     ): String? {
         if (word.length < MIN_WORD_LENGTH_FOR_CORRECTION) return null
         if (word.any { it.isDigit() }) return null
@@ -251,8 +260,11 @@ class Dictionary private constructor(
         var bestFrequency = -1L
         var bestIsSwap = false
         var bestIsPersonal = false
+        var bestHabit = HabitScore.NONE
         var bestCost = Int.MAX_VALUE
         var ambiguous = false
+        // Rien d'appris : aucun départage possible, on ne calcule rien (résultat identique à l'absence d'habitudes).
+        val activeHabits = habits?.takeUnless { it.isInert() }
 
         fun consider(candidate: String, frequency: Long, isPersonal: Boolean = false) {
             // Distance bornée : renvoie allowedDistance + 1 dès que le candidat est trop loin (même
@@ -263,18 +275,25 @@ class Dictionary private constructor(
             // une correction (« eet » -> « est », pas « ete »).
             if (candidate in dominatedByAccented) return
             val isSwap = distance == 1 && isAdjacentSwap(lower, candidate)
+            // Habitudes : seulement pour un candidat qui peut encore passer devant ou à égalité (plus loin, il est battu).
+            val habit = if (activeHabits != null && distance <= bestDistance) activeHabits.score(lower, candidate) else HabitScore.NONE
             // Coût pondéré par la proximité des touches (0 si elle est désactivée : sans effet).
             val cost = proximity.editCost(lower, candidate)
-            // À distance égale : mot personnel (ajouté volontairement) > faute plausible au clavier (touche
-            // voisine, lettre effleurée, inversion : coût pondéré le plus bas) > inversion de deux lettres >
-            // fréquence. Sans la première règle, « nae » donnait « ane » (inversion) et non « naé ».
+            // À distance égale : mot personnel (ajouté volontairement) > habitudes (paire acceptée > contexte >
+            // usage) > faute plausible au clavier (touche voisine, lettre effleurée, inversion : coût pondéré le
+            // plus bas) > inversion de deux lettres > fréquence. Sans la première règle, « nae » donnait « ane »
+            // (inversion) et non « naé ».
             val better = distance < bestDistance || (
                 distance == bestDistance && (
                     (isPersonal && !bestIsPersonal) || (
                         isPersonal == bestIsPersonal && (
-                            cost < bestCost || (
-                                cost == bestCost && (
-                                    (isSwap && !bestIsSwap) || (isSwap == bestIsSwap && frequency > bestFrequency)
+                            habit > bestHabit || (
+                                habit == bestHabit && (
+                                    cost < bestCost || (
+                                        cost == bestCost && (
+                                            (isSwap && !bestIsSwap) || (isSwap == bestIsSwap && frequency > bestFrequency)
+                                            )
+                                        )
                                     )
                                 )
                             )
@@ -287,11 +306,12 @@ class Dictionary private constructor(
                     bestFrequency = frequency
                     bestIsSwap = isSwap
                     bestIsPersonal = isPersonal
+                    bestHabit = habit
                     bestCost = cost
                     best = candidate
                     ambiguous = false
                 }
-                distance == bestDistance && isPersonal == bestIsPersonal && isSwap == bestIsSwap &&
+                distance == bestDistance && isPersonal == bestIsPersonal && habit == bestHabit && isSwap == bestIsSwap &&
                     cost == bestCost && frequency == bestFrequency && candidate != best ->
                     ambiguous = true
             }
@@ -343,14 +363,17 @@ class Dictionary private constructor(
         typed: String,
         limit: Int = SUGGESTION_LIMIT,
         personalWords: Collection<String> = emptyList(),
+        habits: HabitContext? = null,
     ): List<String> {
         if (limit <= 0 || !isSuggestible(typed)) return emptyList()
-        val correction = correctionFor(typed, personalWords = personalWords)
+        val correction = correctionFor(typed, personalWords = personalWords, habits = habits)
         return (listOfNotNull(correction) + completionsFor(typed, limit, personalWords, correction)).take(limit)
     }
 
     /**
      * Story 1.17 : contenu des [SUGGESTION_LIMIT] emplacements de mots de la bande (null = vide).
+     *
+     * [habits] : les mêmes habitudes que celles de l'autocorrection, pour que la correction affichée soit celle qui sera appliquée.
      *
      * - Si le mot tapé va être corrigé à l'espace (même [correctionFor] que l'autocorrection) :
      *   [mot tapé, correction, 1re complétion], la correction au centre (gras, elle va remplacer le
@@ -360,10 +383,11 @@ class Dictionary private constructor(
     fun suggestionSlotsFor(
         typed: String,
         personalWords: Collection<String> = emptyList(),
+        habits: HabitContext? = null,
     ): List<WordSuggestion?> {
         val empty = List<WordSuggestion?>(SUGGESTION_LIMIT) { null }
         if (!isSuggestible(typed)) return empty
-        val correction = correctionFor(typed, personalWords = personalWords)
+        val correction = correctionFor(typed, personalWords = personalWords, habits = habits)
         val completions = completionsFor(typed, SUGGESTION_LIMIT, personalWords, correction)
         fun completion(index: Int) = completions.getOrNull(index)?.let { WordSuggestion(it, WordSuggestion.Kind.COMPLETION) }
         if (correction != null) {
@@ -390,10 +414,11 @@ class Dictionary private constructor(
         typed: String,
         personalWords: Collection<String> = emptyList(),
         previousForm: String? = null,
+        habits: HabitContext? = null,
     ): List<WordSuggestion?> {
         val empty = List<WordSuggestion?>(SUGGESTION_LIMIT) { null }
         if (!isSuggestible(typed)) return empty
-        val correction = correctionFor(typed, personalWords = personalWords)
+        val correction = correctionFor(typed, personalWords = personalWords, habits = habits)
         val exclude = HashSet<String>()
         exclude += typed.lowercase()
         correction?.let { exclude += it.lowercase() }

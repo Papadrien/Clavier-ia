@@ -212,4 +212,139 @@ class CorrectionHabitsTest {
         repeat(CorrectionHabits.REFUSAL_THRESHOLD) { habits.recordUndo(fr, "jai", "j'ai") }
         assertTrue(CorrectionHabits.parse(habits.serialize()).isRefused(fr, "jai", "j'ai"))
     }
+
+    // ---- Adresses e-mail ----
+
+    @Test
+    fun `une adresse tapee est retenue en minuscules et comptee`() {
+        val habits = CorrectionHabits()
+        assertTrue(habits.recordEmail("Jean.Dupont@Gmail.com"))
+        assertTrue(habits.recordEmail("jean.dupont@gmail.com"))
+        assertEquals(2, habits.emailUsage("JEAN.DUPONT@gmail.com"))
+        assertEquals(1, habits.emailsSize())
+    }
+
+    @Test
+    fun `ce qui n'est pas une adresse n'est pas retenu`() {
+        val habits = CorrectionHabits()
+        assertFalse(habits.recordEmail("jean"))
+        assertFalse(habits.recordEmail("jean@gmail"))
+        assertEquals(0, habits.emailsSize())
+        assertEquals(0, habits.emailUsage("jean@gmail"))
+    }
+
+    @Test
+    fun `les adresses ne comptent ni dans size ni dans isEmpty`() {
+        val habits = CorrectionHabits()
+        habits.recordEmail("jean@x.fr")
+        assertTrue(habits.isEmpty(), "les adresses ne jouent pas sur la correction")
+        assertEquals(0, habits.size())
+    }
+
+    @Test
+    fun `les adresses qui commencent comme le texte tape sont proposees, les plus tapees d'abord`() {
+        val habits = CorrectionHabits()
+        habits.recordEmail("jean.dupont@gmail.com")
+        habits.recordEmail("jeanne@x.fr")
+        habits.recordEmail("jeanne@x.fr")
+        habits.recordEmail("marie@x.fr")
+        assertEquals(listOf("jeanne@x.fr", "jean.dupont@gmail.com"), habits.suggestEmails("jea", 3))
+        assertEquals(listOf("jean.dupont@gmail.com"), habits.suggestEmails("JEAN.", 3))
+        assertEquals(listOf("jeanne@x.fr"), habits.suggestEmails("jeanne@", 3))
+        assertEquals(listOf("marie@x.fr"), habits.suggestEmails("m", 3))
+    }
+
+    @Test
+    fun `a egalite de compte la plus recente passe devant`() {
+        val habits = CorrectionHabits()
+        habits.recordEmail("tom@x.fr")
+        habits.recordEmail("tim@x.fr")
+        assertEquals(listOf("tim@x.fr", "tom@x.fr"), habits.suggestEmails("t", 3))
+        habits.recordEmail("tom@x.fr")
+        assertEquals(listOf("tom@x.fr", "tim@x.fr"), habits.suggestEmails("t", 3), "plus tapée : devant")
+    }
+
+    @Test
+    fun `l'adresse complete elle-meme n'est pas proposee et la limite est respectee`() {
+        val habits = CorrectionHabits()
+        habits.recordEmail("a1@x.fr")
+        habits.recordEmail("a2@x.fr")
+        habits.recordEmail("a3@x.fr")
+        assertTrue(habits.suggestEmails("a1@x.fr", 3).isEmpty())
+        assertEquals(2, habits.suggestEmails("a", 2).size)
+        assertTrue(habits.suggestEmails("", 3).isEmpty(), "un début vide ne propose rien")
+        assertTrue(habits.suggestEmails("a", 0).isEmpty())
+        assertTrue(habits.suggestEmails("zzz", 3).isEmpty())
+    }
+
+    @Test
+    fun `les adresses survivent a la sauvegarde avec leur compte et leur ordre`() {
+        val habits = CorrectionHabits()
+        habits.recordUsage(fr, "bonjour")
+        habits.recordEmail("ancien@x.fr")
+        habits.recordEmail("ancien@x.fr")
+        habits.recordEmail("recent@x.fr")
+        val copy = CorrectionHabits.parse(habits.serialize())
+        assertEquals(2, copy.emailUsage("ancien@x.fr"))
+        assertEquals(1, copy.emailUsage("recent@x.fr"))
+        assertEquals(1, copy.usageCount(fr, "bonjour"))
+        assertEquals(habits.serialize(), copy.serialize())
+    }
+
+    @Test
+    fun `les lignes d'adresse illisibles sont ignorees`() {
+        val text = listOf(
+            "E\tbon@x.fr\t3",
+            "E\tMAJUSCULES@x.fr\t3",
+            "E\tpas-une-adresse\t3",
+            "E\tzero@x.fr\t0",
+            "E\tmanque@x.fr",
+            "E\ttrop@x.fr\t1\textra",
+            "E\tnombre@x.fr\tabc",
+        ).joinToString("\n")
+        val habits = CorrectionHabits.parse(text)
+        assertEquals(1, habits.emailsSize())
+        assertEquals(3, habits.emailUsage("bon@x.fr"))
+    }
+
+    @Test
+    fun `les adresses sont bornees et la moins utilisee part en premier`() {
+        val habits = CorrectionHabits()
+        habits.recordEmail("favori@x.fr")
+        habits.recordEmail("favori@x.fr")
+        repeat(CorrectionHabits.MAX_EMAILS + 20) { habits.recordEmail("adresse$it@x.fr") }
+        assertEquals(CorrectionHabits.MAX_EMAILS, habits.emailsSize())
+        assertEquals(2, habits.emailUsage("favori@x.fr"), "une adresse souvent tapée reste")
+        assertEquals(1, habits.emailUsage("adresse${CorrectionHabits.MAX_EMAILS + 19}@x.fr"), "la dernière tapée entre toujours")
+        assertEquals(0, habits.emailUsage("adresse0@x.fr"), "la plus ancienne des moins utilisées est partie")
+    }
+
+    @Test
+    fun `fusionner ajoute les comptes et met les adresses du disque avant les nouvelles`() {
+        val disk = CorrectionHabits()
+        disk.recordEmail("disque@x.fr")
+        disk.recordEmail("commune@x.fr")
+        val live = CorrectionHabits()
+        live.recordEmail("commune@x.fr")
+        live.recordEmail("neuve@x.fr")
+        live.mergeFrom(disk)
+        assertEquals(1, live.emailUsage("disque@x.fr"))
+        assertEquals(2, live.emailUsage("commune@x.fr"))
+        assertEquals(1, live.emailUsage("neuve@x.fr"))
+        // Ordre : disque (ancienne), commune, neuve (la plus récente en dernier).
+        assertEquals(
+            listOf("E\tdisque@x.fr\t1", "E\tcommune@x.fr\t2", "E\tneuve@x.fr\t1"),
+            live.serialize().lines().filter { it.startsWith("E\t") },
+        )
+    }
+
+    @Test
+    fun `effacer les habitudes efface aussi les adresses`() {
+        val habits = CorrectionHabits()
+        habits.recordEmail("jean@x.fr")
+        habits.clear()
+        assertEquals(0, habits.emailsSize())
+        assertTrue(habits.suggestEmails("j", 3).isEmpty())
+        assertEquals("", habits.serialize())
+    }
 }

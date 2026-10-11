@@ -9,8 +9,10 @@ import fr.junade.taipo.dictionary.CorrectionHistory
 import fr.junade.taipo.dictionary.Dictionary
 import fr.junade.taipo.dictionary.DictionaryLoader
 import fr.junade.taipo.dictionary.FrenchContextCorrector
+import fr.junade.taipo.dictionary.HabitContext
 import fr.junade.taipo.dictionary.HabitSignals
 import fr.junade.taipo.dictionary.WordSuggestion
+import fr.junade.taipo.suggestion.EmailText
 import fr.junade.taipo.suggestion.EmojiSuggesterLoader
 import fr.junade.taipo.suggestion.NextWordModel
 import fr.junade.taipo.suggestion.NextWordProvider
@@ -103,7 +105,7 @@ class SuggestionController(
     /** Faux dans les champs sans suggestions et quand l'application demande de ne pas apprendre (mode privé). */
     var learningAllowed = true
 
-    /** Habitudes de correction (phase 2 : comptées en silence, la correction n'en tient pas compte). */
+    /** Habitudes de correction : comptées (phase 2), refus après 2 annulations (phase 3), départage de candidats à distance égale (phase 4). */
     val correctionHabits by lazy { CorrectionHabitsProvider.repository(appContext) }
     private val habitSignals by lazy { HabitSignals(correctionHabits.habits) }
 
@@ -112,6 +114,25 @@ class SuggestionController(
 
     /** Compter les habitudes : mêmes interdictions que la prédiction du mot suivant (champ sensible, navigation privée) + le réglage. */
     private val habitsAllowed: Boolean get() = learningAllowed && habitLearningEnabled
+
+    /**
+     * Les adresses e-mail peuvent être apprises et proposées dans ce champ : texte libre ou champ d'adresse e-mail (là où
+     * elles servent le plus, alors que les autres suggestions y sont coupées), jamais mot de passe, adresse web ni
+     * navigation privée. Relu à chaque champ (faux tant qu'il n'a pas été posé).
+     */
+    var emailFieldAllowed = false
+
+    /** Le champ est un champ d'adresse e-mail : les adresses y sont proposées dès la première lettre. */
+    var isEmailAddressField = false
+
+    // Adresses : mêmes interdictions que les habitudes, plus le réglage « Apprendre de mes habitudes ».
+    private val emailsAllowed: Boolean get() = emailFieldAllowed && habitLearningEnabled
+
+    // Dernière adresse retenue, tant que rien n'a été tapé depuis : évite de la compter deux fois (retour à la ligne puis sortie du champ).
+    private var lastEmailRecorded: String? = null
+
+    // Une touche du clavier a été pressée dans ce champ : seul du texte tapé (pas collé ni rempli par une appli) est retenu à la sortie du champ.
+    private var typedInField = false
 
     /** À appeler à chaque nouveau champ, une fois [learningAllowed] à jour : relit le réglage et oublie les corrections en cours. */
     fun refreshHabitLearning(enabled: Boolean) {
@@ -132,6 +153,21 @@ class SuggestionController(
     private fun refusedByUser(typed: String, corrected: String): Boolean =
         habitsAllowed && correctionHabits.habits.isRefused(host.language(), typed, corrected)
 
+    // Fois où les habitudes ont changé la correction du dictionnaire depuis le démarrage (compteur de debug, jamais de texte).
+    private var habitTieBreaks = 0
+
+    /**
+     * Phase 4 : habitudes à consulter pour départager des corrections à distance égale (acceptée, puis contexte, puis
+     * usage), pour le mot qui termine [textBeforeCursor]. Null si l'apprentissage est désactivé ou interdit dans ce
+     * champ : la correction est alors celle d'avant. Le contexte est le mot qui précède, d'après les bigrammes du mot suivant.
+     */
+    private fun habitContextFor(textBeforeCursor: String): HabitContext? {
+        if (!habitsAllowed) return null
+        val before = textBeforeCursor.dropLast(WordText.trailingWord(textBeforeCursor).length)
+        val previous = HabitContext.previousWordOf(before, truncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND)
+        return HabitContext(correctionHabits.habits, host.language(), nextWords.model, previous)
+    }
+
     /** L'utilisateur vient d'annuler une autocorrection. */
     fun habitAutocorrectionUndone(original: String, corrected: String) {
         if (!habitsAllowed) return
@@ -144,7 +180,7 @@ class SuggestionController(
         AppLog.d(
             TAG,
             "Habitudes : annulations=${habitSignals.recordedUndos} acceptations=${habitSignals.recordedAccepted} " +
-                "usages=${habitSignals.recordedUsages} entrées=${correctionHabits.habits.size()}",
+                "usages=${habitSignals.recordedUsages} adresses=${habitSignals.recordedEmails} entrées=${correctionHabits.habits.size()}",
         )
     }
 
@@ -172,6 +208,8 @@ class SuggestionController(
         val wordAfter: String,
         /** Curseur posé sur un mot déjà écrit (et non en train d'en taper un) : mêmes lettres, autres propositions. */
         val placement: Boolean,
+        /** Adresses e-mail proposables (champ et réglage) : en changer relance le calcul. */
+        val emailAvailable: Boolean,
     )
 
     // Mots corrigés par l'autocorrection pendant cette saisie : curseur posé sur l'un d'eux, l'emplacement de gauche
@@ -184,6 +222,9 @@ class SuggestionController(
     /** Une touche du clavier vient d'être pressée : le curseur qui bouge ensuite suit la frappe, il n'a pas été posé. */
     fun markTyping() {
         lastTypingAt = SystemClock.uptimeMillis()
+        // Les touches tapées dans le prompt ne disent rien du texte du champ de l'application.
+        if (!host.promptActive()) typedInField = true
+        lastEmailRecorded = null
     }
 
     /** Retient qu'[original] (tel que tapé) a été remplacé par [corrected] (voir [CorrectionHistory.record]). */
@@ -193,6 +234,8 @@ class SuggestionController(
     fun invalidate() {
         lastSuggestionInput = null
         correctionHistory.clear()
+        typedInField = false
+        lastEmailRecorded = null
     }
 
     /**
@@ -211,16 +254,24 @@ class SuggestionController(
         val language = host.language()
         // Le prompt est un champ de texte libre : ni le type du champ de l'application ni sa sélection n'y comptent.
         val promptActive = host.promptActive()
-        val available = (promptActive || suggestionsAllowed) && !host.isRecording() && !host.isCorrectionInProgress() &&
+        val idle = !host.isRecording() && !host.isCorrectionInProgress() &&
             !host.isEmojiPanelVisible() && !host.isClipboardPanelVisible() && (promptActive || !host.hasSelection())
+        val available = (promptActive || suggestionsAllowed) && idle
+        val emailAvailable = emailsAllowed && idle
         val wordAfter = if (available) wordAfterCursor() else ""
         // Curseur dans un mot, ou posé là sans frappe récente : le mot est déjà écrit, on propose des alternatives.
         val placement = wordAfter.isNotEmpty() || SystemClock.uptimeMillis() - lastTypingAt > TYPING_WINDOW_MS
-        val input = SuggestionInput(textBeforeCursor, language, available, wordAfter, placement)
+        val input = SuggestionInput(textBeforeCursor, language, available, wordAfter, placement, emailAvailable)
         if (input == lastSuggestionInput) return
         lastSuggestionInput = input
         cancelPendingSuggestions()
         val sequence = suggestionSequence
+
+        // Adresse e-mail en cours de frappe : proposée seule si c'est clairement une adresse (« @ » tapé, champ d'adresse),
+        // sinon dans le dernier emplacement, à côté des mots (placement : curseur posé sur un mot, rien n'est proposé).
+        val emailChoice = emailChoiceFor(textBeforeCursor, usable = emailAvailable, placement = placement)
+        if (publishExclusiveEmails(emailChoice)) return
+        val emailSuggestion = emailChoice?.suggestions?.first()
 
         var emoji = if (available) emojiSuggester.suggest(textBeforeCursor, language) else null
         val typed = if (available) typedWordForSuggestions(textBeforeCursor, wordAfter) else ""
@@ -230,22 +281,28 @@ class SuggestionController(
             val dictionary = DictionaryLoader.peek(language)
             if (dictionary == null) {
                 // Dictionnaire pas encore chargé : pas de mots (onDictionariesLoaded relance le calcul).
-                publishSuggestions(emoji, List(Dictionary.SUGGESTION_LIMIT) { null })
+                publishSuggestions(emoji, withEmail(List(Dictionary.SUGGESTION_LIMIT) { null }, emailSuggestion))
                 return
             }
             val personalWords = host.personalWords()
+            val habits = habitContextFor(textBeforeCursor) // lu ici (thread principal), consulté pendant le calcul
             currentWordSuggestions = emptyList() // un appui sur un mot périmé est ignoré
             publishEmoji(emoji)
             suggestionJob = scope.launch(Dispatchers.Default) {
                 val words = traced(Sections.SUGGESTIONS) {
                     if (placement) {
-                        dictionary.placementSlotsFor(typed, personalWords, previousForm = correctionHistory.originalOf(typed))
+                        dictionary.placementSlotsFor(
+                            typed,
+                            personalWords,
+                            previousForm = correctionHistory.originalOf(typed),
+                            habits = habits,
+                        )
                     } else {
-                        dictionary.suggestionSlotsFor(typed, personalWords = personalWords)
+                        dictionary.suggestionSlotsFor(typed, personalWords = personalWords, habits = habits)
                     }
                 }
                 withContext(Dispatchers.Main) {
-                    if (sequence == suggestionSequence && promptActive == host.promptActive()) publishWords(words)
+                    if (sequence == suggestionSequence && promptActive == host.promptActive()) publishWords(withEmail(words, emailSuggestion))
                 }
             }
             return
@@ -259,7 +316,46 @@ class SuggestionController(
             words = prediction.words.map { WordSuggestion(it, WordSuggestion.Kind.PREDICTION) }
             if (emoji == null) emoji = prediction.emoji
         }
-        publishSuggestions(emoji, words)
+        publishSuggestions(emoji, withEmail(words, emailSuggestion))
+    }
+
+    /** Adresses proposées pour ce que l'utilisateur tape ; [exclusive] : elles remplacent les mots de la bande. */
+    private class EmailChoice(emails: List<String>, val exclusive: Boolean) {
+        val suggestions: List<WordSuggestion> = emails.map { WordSuggestion(it, WordSuggestion.Kind.EMAIL) }
+    }
+
+    /** Vrai (et les adresses sont publiées, seules) si [choice] remplace les mots de la bande. */
+    private fun publishExclusiveEmails(choice: EmailChoice?): Boolean {
+        if (choice == null || !choice.exclusive) return false
+        publishSuggestions(null, choice.suggestions)
+        return true
+    }
+
+    /**
+     * Adresses déjà tapées qui commencent comme le jeton qui touche le curseur, ou null si rien n'est pertinent :
+     * jeton coupé au début de la fenêtre, curseur au milieu d'une adresse, jeton trop court (3 caractères dans un
+     * texte libre pour ne pas encombrer la frappe d'un mot ordinaire ; une seule dans un champ d'adresse ou dès
+     * qu'un « @ » est tapé) ou aucune adresse qui commence ainsi. [usable] : adresses proposables dans ce champ ;
+     * [placement] : curseur posé sur un mot déjà écrit, rien n'est proposé.
+     */
+    private fun emailChoiceFor(textBeforeCursor: String, usable: Boolean, placement: Boolean): EmailChoice? {
+        if (!usable || placement) return null
+        val token = EmailText.trailingToken(textBeforeCursor, truncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND) ?: return null
+        val clearlyAnEmail = '@' in token || (isEmailAddressField && !host.promptActive())
+        if (token.length < (if (clearlyAnEmail) 1 else MIN_EMAIL_PREFIX_LENGTH)) return null
+        // Curseur placé dans une adresse déjà écrite : rien à compléter.
+        if (textAfterCursor().firstOrNull()?.let { EmailText.isEmailChar(it) } == true) return null
+        val emails = correctionHabits.habits.suggestEmails(token, SuggestionStripView.WORD_SLOT_COUNT)
+        if (emails.isEmpty()) return null
+        return EmailChoice(emails, exclusive = clearlyAnEmail)
+    }
+
+    /** [words] dont le dernier emplacement est pris par [email] (s'il y en a une) : les deux premiers mots restent visibles. */
+    private fun withEmail(words: List<WordSuggestion?>, email: WordSuggestion?): List<WordSuggestion?> {
+        if (email == null) return words
+        val slots = MutableList<WordSuggestion?>(SuggestionStripView.WORD_SLOT_COUNT) { words.getOrNull(it) }
+        slots[slots.size - 1] = email
+        return slots
     }
 
     /** Annule le calcul de suggestions en cours : son résultat, même terminé, ne sera pas affiché. */
@@ -343,7 +439,9 @@ class SuggestionController(
      * touchés), jamais pour du texte dicté ou collé, ni dans un champ sans suggestions.
      */
     fun learnFromTyping(terminator: String = "") {
-        if (!learningAllowed || host.isRecording() || host.isCorrectionInProgress()) return
+        if (host.isRecording() || host.isCorrectionInProgress()) return
+        // Les adresses e-mail s'apprennent aussi dans les champs d'adresse, où les mots ne s'apprennent pas.
+        if (!learningAllowed && !emailsAllowed) return
         val before: String
         if (host.promptActive()) {
             // Mode prompt : on apprend du texte du prompt, jamais de celui du champ de l'application.
@@ -353,9 +451,39 @@ class SuggestionController(
             before = host.inputConnection()?.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString() ?: return
         }
         // [terminator] : séparateur à considérer comme tapé après le texte (envoi du prompt sans espace finale).
-        if (habitsAllowed && habitSignals.wordCompleted(host.language(), before + terminator)) onHabitsChanged()
+        val text = before + terminator
+        val truncated = before.length >= TEXT_CONTEXT_LOOKBEHIND
+        if (emailsAllowed) recordTypedEmail(text, truncated)
+        if (!learningAllowed) return
+        if (habitsAllowed && habitSignals.wordCompleted(host.language(), text, truncated)) onHabitsChanged()
+        // Une adresse n'est pas une suite de mots : « jean.dupont@gmail.com » n'apprend pas « com » après un début de phrase.
+        if (EmailText.completedEmail(text, truncated) != null) return
         val repository = nextWords
-        if (repository.model.learn(before + terminator, truncated = before.length >= TEXT_CONTEXT_LOOKBEHIND)) repository.markDirty()
+        if (repository.model.learn(text, truncated = truncated)) repository.markDirty()
+    }
+
+    /** Retient l'adresse que [textBeforeCursor] vient de terminer, une seule fois tant que rien n'est tapé de plus. */
+    private fun recordTypedEmail(textBeforeCursor: String, truncated: Boolean) {
+        val email = EmailText.completedEmail(textBeforeCursor, truncated) ?: return
+        if (email == lastEmailRecorded) return
+        if (habitSignals.emailCompleted(textBeforeCursor, truncated)) {
+            lastEmailRecorded = email
+            onHabitsChanged()
+        }
+    }
+
+    /**
+     * À appeler quand le clavier quitte un champ : une adresse tapée en dernier, sans espace ni retour à la ligne
+     * après elle (champ d'adresse e-mail, formulaire de connexion), est retenue. Seulement si l'utilisateur a tapé
+     * dans ce champ, jamais en mode prompt (le texte du champ n'est alors pas le sien).
+     */
+    fun finishField() {
+        if (!typedInField || !emailsAllowed || host.promptActive()) return
+        typedInField = false
+        val before = host.inputConnection()?.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString() ?: return
+        // Terminée par une espace ou un retour à la ligne, elle a déjà été retenue à ce moment-là.
+        if (before.isEmpty() || before.last().isWhitespace()) return
+        recordTypedEmail(before, truncated = before.length >= TEXT_CONTEXT_LOOKBEHIND)
     }
 
     /** Texte juste après le curseur : dans le prompt en mode prompt, sinon dans le champ de l'application. */
@@ -383,8 +511,11 @@ class SuggestionController(
     fun autocorrectionFor(textBeforeCursor: String, allowRetro: Boolean): AutocorrectionEdit? {
         val word = WordText.trailingWord(textBeforeCursor)
         if (word.isEmpty()) return null
+        // Une adresse e-mail en cours de frappe n'est jamais corrigée (« gmal », « com »...) : l'utilisateur la tape telle quelle.
+        val token = EmailText.trailingToken(textBeforeCursor, truncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND)
+        if (token != null && token.indexOf('@') > 0) return null
         // Phase 3 : une correction annulée deux fois n'est plus appliquée (le mot reste tel que tapé).
-        val dictionaryFix = dictionaryCorrectionFor(word)?.takeUnless { refusedByUser(word, it) }
+        val dictionaryFix = dictionaryCorrectionFor(word, habitContextFor(textBeforeCursor))?.takeUnless { refusedByUser(word, it) }
         var result = if (dictionaryFix != null) textBeforeCursor.dropLast(word.length) + dictionaryFix else textBeforeCursor
         if (host.language() == KeyboardLanguage.FR) {
             val dictionary = DictionaryLoader.peek(KeyboardLanguage.FR)
@@ -415,13 +546,19 @@ class SuggestionController(
     /**
      * Correction du dictionnaire pour [word], ou null s'il n'y en a pas. Story 1.4 : les mots du
      * dictionnaire personnel ne sont jamais corrigés et servent aussi de candidats de correction.
+     * Phase 4 : [habits] départage les candidats à distance égale (voir [habitContextFor]).
      */
-    fun dictionaryCorrectionFor(word: String): String? {
+    fun dictionaryCorrectionFor(word: String, habits: HabitContext? = null): String? {
         // Lot 1.4 : jamais d'attente du chargement sur le thread principal. Tant que le dictionnaire de la
         // langue n'est pas prêt (quelques instants après la création du service), pas d'autocorrection.
         val dictionary = DictionaryLoader.peek(host.language()) ?: return null
+        val personalWords = host.personalWords()
         val correction = traced(Sections.AUTOCORRECTION) {
-            dictionary.correctionFor(word, personalWords = host.personalWords())
+            dictionary.correctionFor(word, personalWords = personalWords, habits = habits)
+        }
+        if (BuildConfig.DEBUG && habits != null && correction != dictionary.correctionFor(word, personalWords = personalWords)) {
+            habitTieBreaks++
+            AppLog.d(TAG, "Habitudes : le départage a changé la correction ($habitTieBreaks fois depuis le démarrage)")
         }
         if (correction == null || correction == word) return null
         return correction
@@ -432,6 +569,9 @@ class SuggestionController(
 
         /** Durée après une touche pendant laquelle un curseur qui bouge est considéré comme suivant la frappe. */
         private const val TYPING_WINDOW_MS = 1_200L
+
+        /** Caractères tapés avant de proposer une adresse e-mail dans un texte libre (sans « @ » ni champ d'adresse). */
+        private const val MIN_EMAIL_PREFIX_LENGTH = 3
 
     }
 }

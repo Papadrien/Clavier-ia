@@ -80,9 +80,11 @@ premier build.
   **À fournir ou à valider par Adrien (rien n'a été deviné côté serveur)** :
   (1) **URL et noms de fichiers** : `VoiceModelFile` pointe sur la racine du bucket R2, `https://taipo-worker.junade-models.workers.dev/` +
   `encoder.onnx`, `decoder.onnx`, `joiner.onnx`, `tokens.txt` (noms donnés par Adrien le 11/10/2026, fichiers à plat à la racine) ;
-  (2) **les 4 empreintes SHA-256** (`VoiceModelFile.sha256`, null pour l'instant : la release refuse tant qu'elles manquent) ;
-  (3) **tailles indicatives** (`approxBytes` : ~600 Mo / 15 Mo / 10 Mo / 100 Ko, **provisoires**, estimées sans avoir vu les
-  fichiers) : elles servent au contrôle d'espace et à la barre de progression, pas à valider le fichier ;
+  (2) **les 4 empreintes SHA-256** : figées le 11/10/2026 dans `VoiceModelFile.sha256` (encoder `012e9321…`, decoder `19f9c98f…`,
+  joiner `4101c7c6…`, tokens `729cc103…`) : la release peut télécharger le modèle vocal ; un fichier remplacé sur le bucket
+  oblige à figer la nouvelle empreinte et à publier une release ;
+  (3) **tailles** : `approxBytes` = tailles réelles (657 601 403 / 14 978 075 / 9 504 438 / 131 440 octets, ~682 Mo au total) ;
+  elles servent au contrôle d'espace et à la barre de progression, pas à valider le fichier ;
   (4) **licence du modèle vocal** : aucune mention n'est affichée (la licence du modèle Nemotron exporté n'a pas été vérifiée ;
   sherpa-onnx est sous Apache 2.0, ce qui ne dit rien de celle des poids) : à relire avant la soumission Play, et à ajouter à
   l'écran « Licences » / à la mention avant téléchargement si elle l'exige.

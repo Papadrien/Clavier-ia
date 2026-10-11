@@ -36,6 +36,7 @@ import fr.junade.taipo.emoji.EmojiText
 import fr.junade.taipo.emoji.MessagingFieldPolicy
 import fr.junade.taipo.emoji.RecentEmojiBarView
 import fr.junade.taipo.emoji.RecentEmojis
+import fr.junade.taipo.suggestion.EmailText
 import fr.junade.taipo.suggestion.NextWordRepository
 import fr.junade.taipo.suggestion.SuggestionPolicy
 import fr.junade.taipo.suggestion.WordText
@@ -400,8 +401,12 @@ class TaipoIme : InputMethodService() {
         suggestions.learningAllowed = suggestions.suggestionsAllowed &&
             (info?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING == 0
         suggestions.refreshHabitLearning(keyboardPreferences.isHabitLearningEnabled)
+        // Adresses e-mail : proposées et apprises aussi dans les champs d'adresse (là où les mots ne le sont pas), jamais en navigation privée.
+        suggestions.emailFieldAllowed = SuggestionPolicy.allowsEmailSuggestions(info?.inputType ?: 0) &&
+            (info?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING == 0
         clipboard.pasteAllowedInField = SuggestionPolicy.allowsPasteSuggestion(info?.inputType ?: 0)
         fieldType = FieldType.of(info?.inputType ?: 0)
+        suggestions.isEmailAddressField = fieldType == FieldType.EMAIL
         messagingField = MessagingFieldPolicy.isMessagingField(info?.packageName, info?.inputType ?: 0)
         controller.setAutoCapitalization(
             fieldType.autoCapitalizes && FieldType.requestsCapitalization(info?.inputType ?: 0),
@@ -458,6 +463,7 @@ class TaipoIme : InputMethodService() {
 
     override fun onFinishInputView(finishingInput: Boolean) {
         super.onFinishInputView(finishingInput)
+        suggestions.finishField() // une adresse tapée en dernier, sans espace après elle, est retenue avant la sauvegarde
         nextWords.flush()
         suggestions.correctionHabits.flush()
         clearInlineSuggestions()
@@ -977,6 +983,17 @@ class TaipoIme : InputMethodService() {
             afterPromptEdit()
             return
         }
+        if (suggestion.kind == WordSuggestion.Kind.EMAIL) {
+            val before = prompt.buffer.textBeforeCursor.takeLast(TEXT_CONTEXT_LOOKBEHIND)
+            val typedEmailStart = EmailText.trailingToken(before, truncated = before.length >= TEXT_CONTEXT_LOOKBEHIND) ?: return
+            hapticFeedback.perform(hapticIntensity)
+            pendingAutocorrection = null
+            prompt.buffer.deleteBefore(typedEmailStart.length)
+            prompt.buffer.insert("${suggestion.text} ")
+            learnFromTyping()
+            afterPromptEdit()
+            return
+        }
         val typedBefore = trailingWord(prompt.buffer.textBeforeCursor)
         // Curseur placé dans un mot : le mot entier est visé ; une espace déjà présente après lui est remplacée.
         val textAfter = prompt.buffer.textAfterCursor
@@ -1328,6 +1345,10 @@ class TaipoIme : InputMethodService() {
             insertPredictedWord(ic, suggestion.text)
             return
         }
+        if (suggestion.kind == WordSuggestion.Kind.EMAIL) {
+            insertSuggestedEmail(ic, suggestion.text)
+            return
+        }
         val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
         val typedBefore = trailingWord(before)
         // Curseur placé dans un mot : le mot entier est visé (la suite du mot après le curseur en fait partie).
@@ -1359,6 +1380,27 @@ class TaipoIme : InputMethodService() {
             null
         }
         learnFromTyping() // le mot choisi (complété ou corrigé) est celui qui compte pour la prédiction
+        syncAutoCapitalization()
+        applyState()
+        updateCorrectionBarVisibility()
+    }
+
+    /**
+     * Touche sur une adresse e-mail suggérée : elle remplace le début d'adresse tapé, suivie d'une espace (sauf dans un
+     * champ d'adresse, où il n'y en a pas à ajouter).
+     */
+    private fun insertSuggestedEmail(ic: InputConnection, email: String) {
+        val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
+        val typed = EmailText.trailingToken(before, truncated = before.length >= TEXT_CONTEXT_LOOKBEHIND) ?: return
+        hapticFeedback.perform(hapticIntensity)
+        onUserTyped()
+        clearHighlightIfNeeded()
+        pendingAutocorrection = null
+        ic.beginBatchEdit()
+        ic.deleteSurroundingText(typed.length, 0)
+        ic.commitText(if (fieldType == FieldType.EMAIL) email else "$email ", 1)
+        ic.endBatchEdit()
+        learnFromTyping() // l'adresse choisie compte comme une adresse tapée
         syncAutoCapitalization()
         applyState()
         updateCorrectionBarVisibility()

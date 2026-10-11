@@ -192,4 +192,38 @@ class HabitSignalsTest {
         assertNull(HabitSignals.changedWord("mot", 10, "x")) // texte incoherent
         assertNull(HabitSignals.changedWord("mot", 3, "mot")) // rien ne change
     }
+
+    // ---- Adresses e-mail ----
+
+    @Test
+    fun `une adresse terminee est retenue`() {
+        assertTrue(signals.emailCompleted("écris à Jean.Dupont@gmail.com "))
+        assertEquals(1, habits.emailUsage("jean.dupont@gmail.com"))
+        assertEquals(1, signals.recordedEmails)
+    }
+
+    @Test
+    fun `une adresse incomplete ou un mot ordinaire ne sont pas retenus`() {
+        assertFalse(signals.emailCompleted("écris à jean@gmail "))
+        assertFalse(signals.emailCompleted("bonjour "))
+        assertEquals(0, habits.emailsSize())
+        assertEquals(0, signals.recordedEmails)
+    }
+
+    @Test
+    fun `une adresse dont le debut est coupe n'est pas retenue`() {
+        assertFalse(signals.emailCompleted("ean.dupont@gmail.com ", truncated = true))
+        assertEquals(0, habits.emailsSize())
+    }
+
+    @Test
+    fun `les morceaux d'une adresse ne comptent pas comme des mots tapes`() {
+        assertFalse(signals.wordCompleted(fr, "écris à jean.dupont@gmail.com "))
+        assertEquals(0, habits.usageCount(fr, "com"))
+        assertEquals(0, habits.usageCount(fr, "gmail"))
+        assertTrue(habits.isEmpty())
+        // Un mot ordinaire juste après, lui, compte.
+        assertTrue(signals.wordCompleted(fr, "écris à jean.dupont@gmail.com bonjour "))
+        assertEquals(1, habits.usageCount(fr, "bonjour"))
+    }
 }

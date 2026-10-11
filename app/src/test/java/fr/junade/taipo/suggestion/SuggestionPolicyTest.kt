@@ -74,4 +74,29 @@ class SuggestionPolicyTest {
         assertFalse(SuggestionPolicy.allowsPasteSuggestion(InputType.TYPE_CLASS_NUMBER))
         assertFalse(SuggestionPolicy.allowsPasteSuggestion(0))
     }
+
+    @Test
+    fun `les adresses e-mail sont proposees en texte libre et dans les champs d'adresse`() {
+        assertTrue(SuggestionPolicy.allowsEmailSuggestions(text))
+        assertTrue(SuggestionPolicy.allowsEmailSuggestions(text or InputType.TYPE_TEXT_FLAG_MULTI_LINE))
+        assertTrue(SuggestionPolicy.allowsEmailSuggestions(text or InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE))
+        assertTrue(SuggestionPolicy.allowsEmailSuggestions(text or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS))
+        assertTrue(SuggestionPolicy.allowsEmailSuggestions(text or InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS))
+    }
+
+    @Test
+    fun `les adresses e-mail ne sont ni apprises ni proposees dans les mots de passe, les URL, les filtres et les champs non texte`() {
+        listOf(
+            InputType.TYPE_TEXT_VARIATION_PASSWORD,
+            InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,
+            InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD,
+            InputType.TYPE_TEXT_VARIATION_URI,
+            InputType.TYPE_TEXT_VARIATION_FILTER,
+        ).forEach { variation ->
+            assertFalse(SuggestionPolicy.allowsEmailSuggestions(text or variation), "variation $variation")
+        }
+        assertFalse(SuggestionPolicy.allowsEmailSuggestions(InputType.TYPE_CLASS_NUMBER))
+        assertFalse(SuggestionPolicy.allowsEmailSuggestions(InputType.TYPE_CLASS_PHONE))
+        assertFalse(SuggestionPolicy.allowsEmailSuggestions(InputType.TYPE_NULL))
+    }
 }
