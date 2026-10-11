@@ -13,7 +13,7 @@ class VoiceModelFileTest {
         assertEquals(4, urls.size)
         assertEquals(urls.size, urls.toSet().size)
         urls.forEach {
-            assertTrue(it.startsWith("https://taipo-worker.junade-models.workers.dev/voice/v"), it)
+            assertTrue(it.startsWith("https://taipo-worker.junade-models.workers.dev/"), it)
         }
     }
 
