@@ -92,7 +92,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private var generateListener: (() -> Unit)? = null
 
     /** Story 14.5 : transcription IA (enregistrement envoyé à un modèle Gemma 4), entre Corriger et le menu « robot », visible avec les actions IA. */
-    val aiTranscriptionButton = LabeledIconButton(context, style)
+    internal val aiTranscriptionButton = LabeledIconButton(context, style)
 
     var state: CorrectionBarState = CorrectionBarState.HIDDEN
         set(value) {
