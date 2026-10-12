@@ -79,7 +79,7 @@ premier build.
   Écran dédié `VoiceModelDownloadActivity` (« Modèle vocal »), séparé de « Modèle IA » depuis le 11/10/2026 (socle commun `ModelScreenActivity`). Accueil : la ligne « Modèle vocal » ouvre cet écran ; pastille « À télécharger » / « n/4 fichiers » / « Prêt » / « Mise à jour ».
   **À fournir ou à valider par Adrien (rien n'a été deviné côté serveur)** :
   (1) **URL et noms de fichiers** : `VoiceModelFile` pointe sur la racine du bucket R2, `https://taipo-worker.junade-models.workers.dev/` +
-  `encoder.onnx`, `decoder.onnx`, `joiner.onnx`, `tokens.txt` (noms donnés par Adrien le 11/10/2026, fichiers à plat à la racine) ;
+  `encoder.int8.onnx`, `decoder.int8.onnx`, `joiner.int8.onnx`, `tokens.txt` (noms corrigés le 12/10/2026 après un 404 : le bucket contient les .int8.onnx ; noms donnés par Adrien le 11/10/2026, fichiers à plat à la racine) ;
   (2) **les 4 empreintes SHA-256** : figées le 11/10/2026 dans `VoiceModelFile.sha256` (encoder `012e9321…`, decoder `19f9c98f…`,
   joiner `4101c7c6…`, tokens `729cc103…`) : la release peut télécharger le modèle vocal ; un fichier remplacé sur le bucket
   oblige à figer la nouvelle empreinte et à publier une release ;
