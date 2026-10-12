@@ -13,13 +13,15 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 /**
- * Enregistreur du spike 14.1 (build debug seulement) : capture le micro en PCM 16 bits, 16 kHz, mono (le format que la
- * documentation Google du modèle demande), tout en mémoire, jusqu'à [MAX_SECONDS]. Distinct de [VoiceRecorder], qui
- * alimente le décodeur en continu et n'est donc pas réutilisable tel quel (story 14.2 : à factoriser après le spike).
+ * Enregistreur de la transcription IA (story 14.2) : capture le micro en PCM 16 bits, 16 kHz, mono (le format que la
+ * documentation Google du modèle demande), tout en mémoire, jusqu'à [MAX_SECONDS] (limite décidée après le spike 14.1,
+ * qui remplace le découpage de la story 14.3). Aucun fichier n'est écrit : l'audio n'existe que dans la mémoire du
+ * processus, et [stop] comme [cancel] le jettent. Distinct de [VoiceRecorder], qui alimente le décodeur en continu et
+ * n'est donc pas réutilisable tel quel.
  *
  * L'appelant vérifie la permission RECORD_AUDIO avant [start]. Toutes les méthodes se rappellent depuis le thread principal.
  */
-class AudioSpikeRecorder(private val scope: CoroutineScope) {
+class AiTranscriptionRecorder(private val scope: CoroutineScope) {
 
     private var record: AudioRecord? = null
     private var captureJob: Job? = null
@@ -120,10 +122,10 @@ class AudioSpikeRecorder(private val scope: CoroutineScope) {
     }
 
     companion object {
-        private const val TAG = "AudioSpikeRecorder"
+        private const val TAG = "AiTranscriptionRecorder"
         const val SAMPLE_RATE = 16_000
 
-        /** Durée maximale enregistrée : bien au-delà des 30 s documentées, pour mesurer ce qui se passe au-delà. */
+        /** Durée maximale enregistrée : 2 minutes, validée au spike 14.1 (E2B : 120 s transcrites en 51 s, RAM stable). */
         const val MAX_SECONDS = 120
         private const val MIN_CHUNK = 1_600
         private const val EMPTY_READ_DELAY_MS = 10L

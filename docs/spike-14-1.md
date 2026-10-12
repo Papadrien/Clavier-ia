@@ -1,7 +1,22 @@
 # Spike 14.1 — transcription par modèle multimodal (Gemma 4)
 
-Banc de mesure pour décider go / go avec limite de durée / no-go de l'épopée 14. **Build debug seulement** : le bouton
-(icône « voix vers texte ») n'existe pas en release. La vraie action de la barre est la story 14.5.
+**Spike terminé (11/10/2026), décision : go** (voir la fin du document). Le banc de mesure décrit ci-dessous a été
+remplacé par la vraie fonction (`AiTranscriptionController`, `AiTranscriptionEngine`, `AiTranscriptionRecorder`) : le compte rendu
+en pop-up, la forme `Content.AudioFile` et la mesure de RAM n'existent plus dans le code. Ce document garde la trace des mesures.
+
+## Résultats mesurés (Pixel 9, 11/10/2026)
+| Modèle | Audio | Premier texte | Inférence | RAM pic |
+|---|---|---|---|---|
+| E4B (Performant) | 4,8 s | 10,0 s | 11,4 s (2,39×) | 4385 Mo |
+| E4B | 21,8 s | 13,0 s | 19,9 s (0,91×) | 4392 Mo |
+| E4B | 79,4 s | 44,3 s | 88,6 s (1,12×) | 5560 Mo |
+| E2B (Équilibré) | 18,5 s | 6,2 s | 10,1 s (0,55×) | 3705 Mo |
+| E2B | 120,0 s | 26,9 s | 51,0 s (0,42×) | 3768 Mo |
+
+`Content.AudioBytes` (WAV PCM 16 kHz mono) a fonctionné à chaque essai ; aucune coupure observée jusqu'à 120 s (la limite de
+30 s citée par la documentation n'est pas celle de l'API LiteRT-LM). E2B : plus rapide que le temps réel, RAM stable quelle que
+soit la durée ; E4B : RAM qui monte avec la durée. Audios de test avec bruit de fond. Les mesures ont été prises avec une batterie
+faible (6-7 %) : possible sous-estimation. Non fait : comparaison de qualité avec Nemotron sur un même audio, test en anglais.
 
 ## Ce qui est en place
 - Bouton « voix vers texte » dans la barre du haut, à gauche de Vocal (visible comme Vocal : hors saisie, ou via le menu « robot » pendant la saisie).
@@ -30,10 +45,9 @@ Modèle Équilibré puis Performant, premier passage = moteur à charger (noter 
 
 Pour chaque cas : le texte couvre-t-il tout ce qui a été dit (sinon, coupé à partir de quelle seconde ?), erreur éventuelle, et comparaison avec la saisie vocale actuelle sur la même phrase.
 
-## Décision (à écrire après les mesures)
-- [ ] Go
-- [ ] Go avec limite de durée : ___ s
-- [ ] No-go : raison ___
+## Décision (Adrien, 11/10/2026)
+- [x] Go, modèle de référence **E2B** (E4B possible), **120 s** maximum par enregistrement (remplace la story 14.3)
+- [ ] No-go
 
 ## Limites connues du banc
 - Pas d'annulation d'une transcription en cours (si le moteur se bloque : fermer le clavier / tuer l'application).

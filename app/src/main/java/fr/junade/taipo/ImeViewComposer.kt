@@ -58,8 +58,14 @@ class ImeViewComposer(
         /** Lot 20 : activation du bouton Vocal par l'accessibilité (TalkBack, double appui) : bascule l'écoute. */
         fun onVoiceClick()
 
-        /** Spike 14.1 (build debug seulement) : touche sur le bouton « voix vers texte ». */
-        fun onAudioSpikeClick()
+        /** Story 10.1 : le champ est sensible (mot de passe) : actions IA et Smart Clipboard grisés. */
+        fun sensitiveField(): Boolean
+
+        /** Story 10.1 : message court qui explique pourquoi le bouton touché est grisé. */
+        fun showSensitiveFieldMessage()
+
+        /** Story 14.5 : touche sur le bouton « voix vers texte » (transcription IA). */
+        fun onAiTranscriptionClick()
 
         fun onEmojiSuggestionClicked()
 
@@ -96,6 +102,13 @@ class ImeViewComposer(
         private set
 
     /** Crée toutes les vues et renvoie la racine à afficher. */
+    /** Story 10.1 : vrai (avec le message) si le champ est sensible : l'action demandée n'est pas lancée. */
+    private fun blockedBySensitiveField(): Boolean {
+        if (!host.sensitiveField()) return false
+        host.showSensitiveFieldMessage()
+        return true
+    }
+
     fun compose(): View {
         keyboardView = KeyboardView(context)
         keyboardView.heightScale = host.heightScale()
@@ -114,14 +127,20 @@ class ImeViewComposer(
         recentEmojiBar.setOnEmojiClickListener { emoji -> host.onRecentEmojiClicked(emoji) }
 
         correctionBar = CorrectionBarView(context)
-        correctionBar.setOnCorrectListener { host.onCorrectClicked() }
+        correctionBar.setOnCorrectListener { if (!blockedBySensitiveField()) host.onCorrectClicked() }
         correctionBar.setOnUndoListener { host.onUndoClicked() }
         correctionBar.setOnCancelListener { host.onCancelCorrectionClicked() }
         correctionBar.setOnGenerateClickListener {
+            if (blockedBySensitiveField()) return@setOnGenerateClickListener
             host.onTopBarAction()
             prompt.enter()
         }
         val voiceTouchListener = View.OnTouchListener { view, event ->
+            // Story 10.1 : champ sensible, le bouton est grisé ; le message s'affiche au relâchement.
+            if (host.sensitiveField()) {
+                if (event.actionMasked == MotionEvent.ACTION_UP) host.showSensitiveFieldMessage()
+                return@OnTouchListener true
+            }
             // Rendu seul (lot 08) : l'écouteur consomme l'événement, la vue ne passerait pas à « pressée » sans cela.
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
@@ -135,13 +154,14 @@ class ImeViewComposer(
         // Lot 20 : l'écouteur tactile ci-dessus consomme tout toucher, le clic n'arrive donc que de l'accessibilité.
         correctionBar.voiceButton.setOnTouchListener(voiceTouchListener)
         correctionBar.voiceButton.setOnClickListener {
+            if (blockedBySensitiveField()) return@setOnClickListener
             host.onTopBarAction()
             host.onVoiceClick()
         }
-        // Spike 14.1 : le bouton n'est affiché qu'en debug (voir CorrectionBarView), le clic est donc sans effet en release.
-        correctionBar.audioSpikeButton.setOnClickListener {
+        correctionBar.aiTranscriptionButton.setOnClickListener {
+            if (blockedBySensitiveField()) return@setOnClickListener
             host.onTopBarAction()
-            host.onAudioSpikeClick()
+            host.onAiTranscriptionClick()
         }
         // Le bouton micro de la barre du prompt déclenche la même dictée (appui bref : marche/arrêt, appui long : tant que maintenu).
         prompt.promptBar.voiceButton.setOnTouchListener(voiceTouchListener)
@@ -152,6 +172,7 @@ class ImeViewComposer(
         }
         // Le même bouton ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme.
         correctionBar.setOnClipboardClickListener {
+            if (blockedBySensitiveField()) return@setOnClipboardClickListener
             host.onTopBarAction()
             clipboard.onPanelButtonClicked()
         }

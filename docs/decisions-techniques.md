@@ -25,6 +25,15 @@ Gemma 4 ; WorkManager + service au premier plan, SHA-256 embarqué par modèle).
   `app/src/main/java/com/k2fsa/sherpa/onnx/` (pas de coordonnée Maven simple, pas de `.aar` utilisé). Voir les README de ces dossiers.
 - Les `.so` fournis ciblent **arm64-v8a** (Pixel 9) ; l'émulateur x86_64 est possible en debug (voir `app/src/debug/jniLibs/README.md`).
 
+## Transcription IA par modèle multimodal (épopée 14)
+- Enregistrement envoyé tel quel à **Gemma 4 E2B (Équilibré) ou E4B (Performant)** : `Content.AudioBytes`, WAV PCM 16 bits,
+  16 kHz, mono ; moteur chargé avec `audioBackend = Backend.CPU()`. Gemma 3 (Ultra-léger, Léger) n'a pas d'entrée audio.
+- Spike 14.1 validé le 11/10/2026 (Pixel 9, voir `docs/spike-14-1.md`) : **go**, E2B recommandé. **120 secondes** au
+  maximum par enregistrement : cette limite remplace le découpage de la story 14.3.
+- L'audio reste **en mémoire**, jamais dans un fichier : rien à supprimer après annulation, erreur ou processus tué (point
+  ouvert « fichier audio temporaire » de la story 14.2 : tranché ainsi, voir le backlog).
+- Annulation par second appui pendant le traitement (`cancelProcess` puis délai avant fermeture, comme la correction).
+
 ## Données et sécurité
 - Room + SQLCipher pour les données de l'utilisateur ; clé aléatoire protégée par l'Android Keystore ; la permission
   Internet ne sert qu'au téléchargement des modèles (voir `docs/securite.md` et `docs/telechargement-modeles.md`). Les modèles IA ne sont pas chiffrés.

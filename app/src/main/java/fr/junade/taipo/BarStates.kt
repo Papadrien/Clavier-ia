@@ -18,5 +18,8 @@ enum class VoiceBarState {
     TRANSCRIBING,
 }
 
-/** États du bouton du spike 14.1 (transcription par modèle multimodal, build debug seulement). */
-enum class AudioSpikeBarState { IDLE, RECORDING, PROCESSING }
+/**
+ * États du bouton Transcription IA (épopée 14) : enregistrement, traitement par le modèle, puis [CANCELLING] (arrêt natif
+ * demandé, en attente de la fin du moteur : un nouvel appui est ignoré).
+ */
+enum class AiTranscriptionBarState { IDLE, RECORDING, PROCESSING, CANCELLING }

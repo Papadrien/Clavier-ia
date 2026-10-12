@@ -4,8 +4,8 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /**
- * Encodage WAV (spike 14.1) : PCM 16 bits, mono, little-endian, avec l'en-tête canonique de 44 octets. C'est le format
- * que le spike envoie au modèle (`Content.AudioBytes` / `Content.AudioFile`) ; la documentation Google du modèle demande
+ * Encodage WAV (épopée 14) : PCM 16 bits, mono, little-endian, avec l'en-tête canonique de 44 octets. C'est le format
+ * envoyé au modèle (`Content.AudioBytes`) ; la documentation Google du modèle demande
  * du mono 16 kHz. Logique pure, testée en JVM.
  */
 object WavEncoder {

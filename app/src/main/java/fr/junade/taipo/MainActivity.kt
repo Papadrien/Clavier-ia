@@ -79,12 +79,15 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.button_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE
         findViewById<View>(R.id.divider_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE
         bindRow(R.id.button_system_prompts, R.string.button_system_prompts, R.string.home_row_system_prompts_subtitle, SystemPromptsActivity::class.java)
+        bindRow(R.id.button_backup, R.string.button_backup, R.string.home_row_backup_subtitle, BackupActivity::class.java)
         bindRow(R.id.button_terms, R.string.button_terms, R.string.home_row_terms_subtitle, TermsActivity::class.java)
         bindRow(R.id.button_licenses, R.string.button_licenses, R.string.home_row_licenses_subtitle, LicensesActivity::class.java)
+        bindRow(R.id.button_privacy, R.string.button_privacy, R.string.home_row_privacy_subtitle, PrivacyActivity::class.java)
 
         // Titres de groupe annoncés comme des titres par TalkBack (navigation par titres).
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_keyboard), true)
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_ai), true)
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.section_data), true)
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_about), true)
     }
 

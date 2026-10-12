@@ -32,6 +32,8 @@
     <string name="system_prompt_correction_description">Consigne envoyée au modèle pour l\'action « Corriger ».</string>
     <string name="system_prompt_generation_title">Mode prompt (chat)</string>
     <string name="system_prompt_generation_description">Consigne envoyée au modèle pour les conversations du mode prompt : longueur et format des réponses.</string>
+    <string name="system_prompt_transcription_title">Transcription IA</string>
+    <string name="system_prompt_transcription_description">Consigne envoyée au modèle pour transcrire puis nettoyer un enregistrement : suppression des hésitations, reformulation légère, ton conservé.</string>
     <string name="system_prompt_save">Enregistrer ce prompt</string>
     <string name="system_prompt_show_default">Afficher le prompt par défaut</string>
     <string name="system_prompt_reset">Réinitialiser au prompt par défaut</string>
@@ -293,6 +295,7 @@
     <string name="model_download_title">Modèle IA</string>
     <string name="model_download_description">Téléchargez un modèle pour activer la correction et la génération de texte. Le modèle est ensuite utilisé sur votre appareil, sans connexion. Le téléchargement se fait en Wi-Fi par défaut.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
+    <string name="model_download_limited_features">Certaines fonctions ne sont pas disponibles avec ce modèle (transcription IA).</string>
     <string name="model_download_badge_active">Actif</string>
     <string name="model_download_badge_installed">Installé</string>
     <string name="model_download_badge_recommended">Recommandé</string>
@@ -352,6 +355,69 @@
     <string name="model_license_dialog_cancel">Annuler</string>
 
     <!-- Conditions d'utilisation (suite de la story 8.11) : restrictions d'usage Gemma reprises dans les conditions de l'app. -->
+    <string name="home_section_data">Mes données</string>
+    <string name="button_backup">Sauvegarde et restauration</string>
+    <string name="home_row_backup_subtitle">Exporter ou restaurer mon dictionnaire, mes éléments épinglés et mes réglages</string>
+    <string name="backup_title">Sauvegarde et restauration</string>
+    <string name="backup_intro">Pour changer d\'appareil, exportez vos données dans un fichier, puis restaurez-le sur le nouvel appareil. Le fichier contient votre dictionnaire personnel, vos éléments épinglés du Smart Clipboard (avec leurs étiquettes) et vos réglages (clavier, modèle choisi, prompts personnalisés). Il ne contient pas les modèles IA, à télécharger de nouveau, ni l\'historique du presse-papiers, ni ce que le clavier a appris de votre saisie.</string>
+    <string name="backup_export_title">Exporter mes données</string>
+    <string name="backup_export_body">Enregistre un fichier à l\'emplacement de votre choix, sur l\'appareil ou dans un espace de stockage en ligne.</string>
+    <string name="backup_export_button">Exporter</string>
+    <string name="backup_export_warning_title">Fichier non chiffré</string>
+    <string name="backup_export_warning_message">Le fichier n\'est pas chiffré : toute personne qui l\'ouvre peut lire votre dictionnaire et vos éléments épinglés, qui peuvent contenir des informations personnelles (adresses, numéros, messages types). Rangez-le en lieu sûr et supprimez-le une fois la restauration faite.</string>
+    <string name="backup_export_warning_continue">Choisir l\'emplacement</string>
+    <string name="backup_export_done_title">Sauvegarde enregistrée</string>
+    <string name="backup_export_done_message">Le fichier contient %1$s, %2$s et vos réglages. Il n\'est pas chiffré : gardez-le en lieu sûr.</string>
+    <string name="backup_export_failed">L\'export a échoué. Réessayez, ou choisissez un autre emplacement.</string>
+    <string name="backup_restore_title">Restaurer depuis un fichier</string>
+    <string name="backup_restore_body">Ajoute le contenu du fichier à ce qui est déjà sur l\'appareil : rien n\'est supprimé. Les réglages du fichier remplacent les réglages actuels.</string>
+    <string name="backup_restore_button">Choisir un fichier</string>
+    <string name="backup_restore_confirm_title">Restaurer ce fichier ?</string>
+    <string name="backup_restore_confirm_message">Le fichier contient %1$s, %2$s et des réglages. Ils seront ajoutés à cet appareil, et les réglages du fichier remplaceront les réglages actuels.</string>
+    <string name="backup_restore_confirm_button">Restaurer</string>
+    <string name="backup_restore_done_title">Restauration terminée</string>
+    <string name="backup_restore_failed">La restauration a échoué. Vos données actuelles n\'ont pas été supprimées.</string>
+    <string name="backup_result_words">Dictionnaire : %1$s (%2$d déjà présents).</string>
+    <string name="backup_result_pins">Éléments épinglés : %1$s (%2$d déjà présents).</string>
+    <string name="backup_result_settings">Réglages restaurés.</string>
+    <string name="backup_result_refused">Non repris (limite atteinte ou texte invalide) : %1$d mots, %2$d éléments épinglés.</string>
+    <string name="backup_result_model_not_installed">Le modèle IA du fichier n\'est pas installé sur cet appareil : votre choix actuel est conservé.</string>
+    <string name="backup_result_models_reminder">Les modèles IA ne sont pas dans la sauvegarde : téléchargez-les depuis « Modèle IA ».</string>
+    <string name="backup_error_not_a_backup">Ce fichier n\'est pas une sauvegarde Taipo.</string>
+    <string name="backup_error_too_new">Cette sauvegarde vient d\'une version plus récente de Taipo. Mettez l\'application à jour.</string>
+    <string name="backup_error_too_large">Ce fichier est trop volumineux pour être une sauvegarde Taipo.</string>
+    <string name="backup_error_read">Le fichier n\'a pas pu être lu.</string>
+    <string name="backup_cancel">Annuler</string>
+    <plurals name="backup_words">
+        <item quantity="one">%d mot</item>
+        <item quantity="other">%d mots</item>
+    </plurals>
+    <plurals name="backup_pins">
+        <item quantity="one">%d élément épinglé</item>
+        <item quantity="other">%d éléments épinglés</item>
+    </plurals>
+    <plurals name="backup_words_added">
+        <item quantity="one">%d mot ajouté</item>
+        <item quantity="other">%d mots ajoutés</item>
+    </plurals>
+    <plurals name="backup_pins_added">
+        <item quantity="one">%d élément ajouté</item>
+        <item quantity="other">%d éléments ajoutés</item>
+    </plurals>
+    <string name="button_privacy">Confidentialité</string>
+    <string name="home_row_privacy_subtitle">Ce qui reste sur votre appareil et ce qui se connecte</string>
+    <string name="privacy_title">Confidentialité</string>
+    <string name="privacy_updated">Dernière mise à jour : 12 octobre 2026</string>
+    <string name="privacy_section_1_title">1. Traitement sur votre appareil</string>
+    <string name="privacy_section_1_body">La correction, la génération de texte, la saisie vocale et la transcription IA sont exécutées sur votre appareil par des modèles installés localement. Le texte que vous saisissez, copiez ou dictez et l\'audio de vos enregistrements ne sont envoyés à aucun serveur. L\'audio d\'une transcription IA reste en mémoire le temps du traitement : il n\'est jamais enregistré dans un fichier.</string>
+    <string name="privacy_section_2_title">2. Connexions Internet</string>
+    <string name="privacy_section_2_body">Taipo se connecte à Internet uniquement pour télécharger les fichiers des modèles IA, à votre demande : depuis un serveur de Junadé pour les modèles Gemma 3 et les modèles de saisie vocale, et depuis Hugging Face pour les modèles Gemma 4. Ces serveurs reçoivent les informations techniques habituelles d\'une connexion (adresse IP, fichier demandé), jamais votre texte ni vos enregistrements.</string>
+    <string name="privacy_section_3_title">3. Aucune collecte de données personnelles</string>
+    <string name="privacy_section_3_body">Taipo n\'a pas de compte, pas de publicité, et ne contient ni outil de mesure d\'audience ni télémétrie : il n\'y a rien à désactiver. Aucune donnée personnelle n\'est collectée.</string>
+    <string name="privacy_section_4_title">4. Champs de mot de passe</string>
+    <string name="privacy_section_4_body">Dans un champ de mot de passe ou de code secret, les actions IA (Corriger, Générer, Vocal, Transcription IA) et le Smart Clipboard sont désactivés : le contenu du champ n\'est pas lu et le micro n\'est pas ouvert.</string>
+    <string name="privacy_section_5_title">5. Ce qui est conservé sur l\'appareil</string>
+    <string name="privacy_section_5_body">Votre dictionnaire personnel, les éléments du Smart Clipboard et vos réglages restent sur votre appareil, dans des bases chiffrées. Les désinstaller supprime ces données. Vous pouvez aussi les exporter dans un fichier non chiffré (Mes données > Sauvegarde et restauration) : ce fichier ne quitte l\'appareil que si vous le déplacez vous-même.</string>
     <string name="button_terms">Conditions d\'utilisation</string>
     <string name="home_row_terms_subtitle">Règles d\'usage de Taipo et de l\'IA</string>
     <string name="terms_title">Conditions d\'utilisation</string>
@@ -404,14 +470,24 @@
     <string name="button_voice_model_local">Modèle vocal local</string>
     <string name="home_row_voice_model_local_subtitle">Fournir soi-même les fichiers du modèle vocal</string>
 
-    <!-- Spike 14.1 (build debug seulement) : transcription par modèle multimodal -->
-    <string name="audio_spike_button_description">Spike 14.1 : enregistrer puis transcrire avec le modèle IA</string>
-    <string name="audio_spike_button_recording">Spike 14.1 : arrêter l\'enregistrement et transcrire</string>
-    <string name="audio_spike_button_processing">Spike 14.1 : transcription en cours</string>
-    <string name="audio_spike_no_audio_model">Spike 14.1 : le modèle actif n\'a pas d\'entrée audio. Choisissez Équilibré ou Performant (Gemma 4).</string>
-    <string name="audio_spike_busy">Spike 14.1 : une dictée, une correction ou une génération est en cours.</string>
-    <string name="audio_spike_permission_denied">Spike 14.1 : permission micro requise. Accordez-la puis appuyez à nouveau.</string>
-    <string name="audio_spike_mic_unavailable">Spike 14.1 : le micro n\'a pas pu être ouvert.</string>
-    <string name="audio_spike_too_short">Spike 14.1 : enregistrement trop court (moins d\'une demi-seconde).</string>
-    <string name="audio_spike_processing">Spike 14.1 : transcription déjà en cours.</string>
+    <!-- Story 10.1 : champ sensible -->
+    <string name="sensitive_field_actions_disabled">Désactivé dans les champs de mot de passe : rien n\'est lu ni envoyé à l\'IA ou au presse-papiers intelligent.</string>
+
+    <!-- Épopée 14 : transcription IA par modèle multimodal -->
+    <string name="ai_transcription_button_description">Transcription IA : enregistrer puis transcrire</string>
+    <string name="ai_transcription_button_recording">Transcription IA : arrêter l\'enregistrement et transcrire</string>
+    <string name="ai_transcription_button_processing">Transcription IA en cours : appuyer pour annuler</string>
+    <string name="ai_transcription_button_cancelling">Annulation de la transcription IA…</string>
+    <string name="ai_transcription_no_audio_model">La transcription IA demande le modèle Équilibré ou Performant (Gemma 4). Choisissez-en un dans l\'application.</string>
+    <string name="ai_transcription_busy">Une dictée, une correction ou une génération est en cours.</string>
+    <string name="ai_transcription_permission_denied">Permission micro requise. Accordez-la puis appuyez à nouveau.</string>
+    <string name="ai_transcription_mic_unavailable">Le micro n\'a pas pu être ouvert.</string>
+    <string name="ai_transcription_too_short">Enregistrement trop court (moins d\'une demi-seconde).</string>
+    <string name="ai_transcription_cancelling_wait">Annulation en cours, un instant…</string>
+    <string name="ai_transcription_no_speech">Aucune parole reconnue dans l\'enregistrement.</string>
+    <string name="ai_transcription_error_model_file">Le fichier du modèle est introuvable ou illisible. Retéléchargez-le depuis l\'application.</string>
+    <string name="ai_transcription_error_memory">Mémoire insuffisante pour la transcription IA. Fermez d\'autres applications puis réessayez.</string>
+    <string name="ai_transcription_error_model_incompatible">Le modèle n\'a pas pu être chargé : il est peut-être incompatible ou corrompu. Retéléchargez-le depuis l\'application.</string>
+    <string name="ai_transcription_error_too_long">L\'enregistrement est trop long pour le modèle. Faites-en un plus court.</string>
+    <string name="ai_transcription_failed">La transcription IA a échoué. Réessayez, ou choisissez un autre modèle.</string>
 </resources>

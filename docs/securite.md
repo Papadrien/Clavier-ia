@@ -66,3 +66,51 @@ l'hygiène (dérivation standard, séparation par usage, format versionné), pas
 - [ ] Écran « Modèle IA » : choisir un fichier ; la progression s'affiche, puis l'empreinte. Comparer avec celle
       du dépôt. Choisir un autre fichier pendant le calcul : pas de plantage, l'empreinte affichée est la dernière.
 - [ ] `adb shell bmgr backupnow fr.junade.taipo` (ou `adb shell dumpsys backup`) : pas d'erreur de taille.
+
+## Transcription IA (épopée 14, story 14.6)
+
+- **Audio traité sur l'appareil** : l'enregistrement est envoyé au modèle Gemma 4 embarqué (LiteRT-LM), jamais à un serveur.
+  La permission Internet ne sert qu'au téléchargement des modèles.
+- **Aucun fichier audio** : l'enregistrement (120 s au plus) reste dans la mémoire du processus et est jeté à la fin, à
+  l'annulation, en cas d'erreur ou si le champ change.
+- **Journaux et statistiques** : ni l'audio ni le texte transcrit ne sont écrits dans `AppLog` (seulement durées, tailles et
+  trace d'erreur) ; l'application n'envoie aucune statistique (pas d'Aptabase ni d'autre outil de mesure dans le projet).
+- **Champs de mot de passe** (texte masqué, visible, web, et code PIN numérique) : le bouton est grisé (voir « Champs sensibles »).
+  Si le champ change pendant un traitement, le texte n'est pas inséré.
+- **Erreurs** : une phrase par cause (fichier du modèle, mémoire, modèle incompatible, enregistrement trop long, inattendu), jamais
+  de nom de classe ni de message brut (`InferenceFailureClassifier`, story 8.6).
+- Repris dans le menu « Confidentialité » (story 10.2, `PrivacyContent`).
+
+## Champs sensibles (épopée 10, story 10.1)
+
+- **Règle** : `SensitiveFieldPolicy.isSensitive` : champ de mot de passe texte (masqué, visible, web) ou champ numérique de type mot de passe
+  (code PIN). Les autres champs (e-mail, URL, téléphone, terminal, texte libre) ne changent pas.
+- **Dans un champ sensible** : Corriger, Générer, Vocal, Transcription IA et le bouton Smart Clipboard sont grisés (opacité réduite) mais
+  restent touchables : un appui affiche « Désactivé dans les champs de mot de passe… » et n'exécute rien. Le texte du champ n'est pas lu.
+  Le micro n'est pas ouvert.
+- **Puce de collage** : déjà bloquée dans ces champs (`SuggestionPolicy.allowsPasteSuggestion`).
+- **Navigation privée** (`IME_FLAG_NO_PERSONALIZED_LEARNING`) : non traitée comme sensible, elle coupe seulement l'apprentissage.
+
+## Menu « Confidentialité » (épopée 10, story 10.2)
+
+- Écran texte seul (accueil > À propos, en dernier), 5 sections : traitement local, connexions Internet, aucune collecte, champs de
+  mot de passe, données conservées sur l'appareil. **Aucune bascule** : il n'y a pas de télémétrie à désactiver.
+- Texte écrit d'après le code au 12/10/2026 : seules connexions = téléchargement des modèles, depuis `taipo-worker.junade-models.workers.dev`
+  (Gemma 3 et modèles vocaux) et `huggingface.co` (Gemma 4). Aucun SDK de mesure d'audience, de plantage ou de publicité.
+- `PrivacyContentTest` échoue si un modèle est téléchargé depuis un domaine que le texte ne cite pas. **Si Aptabase (ou tout autre outil)
+  est ajouté, mettre à jour les sections 2 et 3, la fiche Play et la politique du site** (le test refuse aujourd'hui le mot « Aptabase »).
+- À garder cohérent avec la fiche Play (section « Sécurité des données ») et la politique de confidentialité du site : non vérifié ici.
+
+## Sauvegarde et restauration (épopée 10, story 10.3)
+
+- **Contenu du fichier** (JSON, `formatVersion` 1, `BackupCodec`) : dictionnaire personnel, éléments épinglés du Smart Clipboard avec
+  leurs étiquettes, réglages du clavier (rangée de chiffres, retour haptique, hauteur, emojis récents, apprentissage des habitudes), modèle
+  IA choisi (identifiant) et prompts système personnalisés. **Exclus** : modèles IA, historique du presse-papiers (1 h, peut contenir des
+  copies sensibles), données apprises (mot suivant, habitudes de correction : dérivées de la saisie), clés de chiffrement, acceptation des licences
+  (le consentement se redonne sur le nouvel appareil), état des téléchargements.
+- **Non chiffré** (décision du 12/10/2026) : l'écran avertit avant le choix de l'emplacement. Le fichier est écrit via le sélecteur de fichiers du
+  système (aucune permission de stockage) ; l'application ne l'envoie nulle part.
+- **Restauration par fusion** : mots et éléments épinglés s'ajoutent (doublons ignorés, plafonds respectés : 50 épingles, limite du dictionnaire),
+  rien n'est supprimé ; les réglages du fichier remplacent les réglages actuels. Le modèle IA du fichier n'est repris que s'il est déjà installé
+  sur l'appareil. Un fichier d'un format plus récent, d'un autre programme ou de plus de 5 Mo est refusé.
+- Ni le contenu du fichier ni les données ne sont écrits dans les journaux.

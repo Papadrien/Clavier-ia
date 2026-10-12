@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-/** Spike 14.1 : l'en-tête WAV envoyé au modèle doit être exactement celui d'un PCM 16 bits mono. */
+/** Épopée 14 : l'en-tête WAV envoyé au modèle doit être exactement celui d'un PCM 16 bits mono. */
 class WavEncoderTest {
 
     private fun header(bytes: ByteArray) = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN)

@@ -67,6 +67,16 @@
             android:exported="false" />
 
         <activity
+            android:name=".BackupActivity"
+            android:label="@string/backup_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".PrivacyActivity"
+            android:label="@string/privacy_title"
+            android:exported="false" />
+
+        <activity
             android:name=".LicensesActivity"
             android:label="@string/licenses_title"
             android:exported="false" />

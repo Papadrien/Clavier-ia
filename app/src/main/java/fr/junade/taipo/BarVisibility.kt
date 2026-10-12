@@ -8,6 +8,9 @@ import androidx.annotation.StringRes
  * l'apparence des boutons Corriger et Vocal selon leur état. Logique pure (sans vue), extraite de
  * [CorrectionBarView] sans changement de comportement, testée en JVM.
  */
+/** Story 10.1 : opacité d'un bouton grisé parce que le champ est sensible (il reste touchable pour afficher la raison). */
+internal const val RESTRICTED_ALPHA = 0.4f
+
 internal data class ActionButtonsVisibility(
     val voice: Boolean,
     val generate: Boolean,

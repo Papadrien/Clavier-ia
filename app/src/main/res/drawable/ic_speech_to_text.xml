@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Spike 14.1 : icône « voix vers texte », dessinée dans la charte Taipo (trait de 2 sur une grille de 24, extrémités et angles arrondis, blanc de la charte), inspirée du principe de l'icône Material « Speech to Text » (tête qui parle, onde, lignes de texte) : tracé original, pas une copie. Taille : taipo_icon_size. -->
+<!-- Épopée 14 : icône « voix vers texte », dessinée dans la charte Taipo (trait de 2 sur une grille de 24, extrémités et angles arrondis, blanc de la charte), inspirée du principe de l'icône Material « Speech to Text » (tête qui parle, onde, lignes de texte) : tracé original, pas une copie. Taille : taipo_icon_size. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="@dimen/taipo_icon_size"
     android:height="@dimen/taipo_icon_size"

@@ -105,6 +105,11 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
         suggestionStrip.setOnWordClickListener(listener)
     }
 
+    /** Story 10.1 : champ sensible, le bouton Smart Clipboard est grisé (il reste touchable pour afficher la raison). */
+    fun setClipboardButtonRestricted(restricted: Boolean) {
+        clipboardButton.alpha = if (restricted) RESTRICTED_ALPHA else 1f
+    }
+
     fun setOnClipboardClickListener(listener: CorrectionBarView.OnClipboardClickListener) {
         clipboardListener = listener
     }

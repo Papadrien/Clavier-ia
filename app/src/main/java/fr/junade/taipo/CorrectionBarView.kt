@@ -73,8 +73,8 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private val actionsMenuBackgrounds = style.toggleBackgrounds()
     private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
     private val voiceSpinner = LoadingSpinnerDrawable(context)
-    private val audioSpikeSpinner = LoadingSpinnerDrawable(context)
-    private val audioSpikeBackgrounds = HashMap<Int, RoundKeyDrawable>()
+    private val aiTranscriptionSpinner = LoadingSpinnerDrawable(context)
+    private val aiTranscriptionBackgrounds = HashMap<Int, RoundKeyDrawable>()
     private val correctSpinner = LoadingSpinnerDrawable(context)
     private val zoneState = SuggestionZoneState()
     private var menuBackgroundExpanded: Boolean? = null
@@ -88,11 +88,8 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private val generateButton = ImageButton(context)
     private var generateListener: (() -> Unit)? = null
 
-    /**
-     * Spike 14.1 (build debug seulement) : transcription par modèle multimodal, à gauche de Vocal. Jamais affiché en
-     * release ([BuildConfig.DEBUG] faux) ; la vraie action de la barre est la story 14.5.
-     */
-    val audioSpikeButton = ImageButton(context)
+    /** Story 14.5 : transcription IA (enregistrement envoyé à un modèle Gemma 4), à gauche de Vocal, visible avec lui. */
+    val aiTranscriptionButton = ImageButton(context)
 
     var state: CorrectionBarState = CorrectionBarState.HIDDEN
         set(value) {
@@ -106,10 +103,31 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             renderVoice()
         }
 
-    var audioSpikeState: AudioSpikeBarState = AudioSpikeBarState.IDLE
+    /**
+     * Story 10.1 : faux dans un champ sensible (mot de passe) : Corriger, Générer, Vocal, Transcription IA et le bouton Smart
+     * Clipboard sont grisés (opacité réduite) mais restent touchables : l'IME explique alors la raison.
+     */
+    var aiActionsAllowed: Boolean = true
+        set(value) {
+            if (field == value) return
+            field = value
+            zoneView.setClipboardButtonRestricted(!value)
+            renderCorrect()
+            renderVoice()
+            renderAiTranscription()
+        }
+
+    /** Faux si le modèle actif n'a pas d'entrée audio (Ultra-léger, Léger) : le bouton Transcription IA n'est alors pas affiché. */
+    var aiTranscriptionAvailable: Boolean = false
         set(value) {
             field = value
-            renderAudioSpike()
+            renderActionButtons()
+        }
+
+    var aiTranscriptionState: AiTranscriptionBarState = AiTranscriptionBarState.IDLE
+        set(value) {
+            field = value
+            renderAiTranscription()
         }
 
     /** Vocal est le dernier bouton visible (saisie non en cours) : la barre se cale sur le bord droit des touches. */
@@ -170,11 +188,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
         )
 
-        // Spike 14.1 : bouton « voix vers texte » (build debug), entre Générer et Vocal. Le clic est relié par l'IME.
-        style.styleRoundIconButton(audioSpikeButton, R.drawable.ic_speech_to_text)
-        audioSpikeButton.contentDescription = context.getString(R.string.audio_spike_button_description)
+        // Story 14.5 : bouton « voix vers texte », entre Générer et Vocal. Le clic est relié par l'IME.
+        style.styleRoundIconButton(aiTranscriptionButton, R.drawable.ic_speech_to_text)
+        aiTranscriptionButton.contentDescription = context.getString(R.string.ai_transcription_button_description)
         addView(
-            audioSpikeButton,
+            aiTranscriptionButton,
             LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
         )
 
@@ -353,8 +371,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         val visible = BarVisibility.actionButtons(voiceState, state, zoneState, clipboardPanelOpen)
         voiceButton.visibility = if (visible.voice) View.VISIBLE else View.GONE
         generateButton.visibility = if (visible.generate) View.VISIBLE else View.GONE
-        // Spike 14.1 : visible avec Vocal, en debug seulement (jamais en release).
-        audioSpikeButton.visibility = if (BuildConfig.DEBUG && visible.voice) View.VISIBLE else View.GONE
+        aiTranscriptionButton.visibility = if (visible.voice && aiTranscriptionAvailable) View.VISIBLE else View.GONE
         correctButton.visibility = if (visible.correct) View.VISIBLE else View.GONE
         actionsMenuButton.visibility = if (visible.actionsMenu) View.VISIBLE else View.GONE
         closeButton.visibility = View.GONE // remplacée par le bouton Smart Clipboard actif, qui referme le panneau
@@ -418,6 +435,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             }
         }
         renderActionButtons()
+        applyFieldRestriction()
     }
 
     private fun renderVoice() {
@@ -427,27 +445,43 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         voiceButton.alpha = appearance.alpha
         voiceButton.showMicOrSpinner(appearance.loading, voiceSpinner)
         renderActionButtons()
+        applyFieldRestriction()
     }
 
-    private fun renderAudioSpike() {
-        val recording = audioSpikeState == AudioSpikeBarState.RECORDING
-        val processing = audioSpikeState == AudioSpikeBarState.PROCESSING
-        audioSpikeButton.contentDescription = context.getString(
-            when (audioSpikeState) {
-                AudioSpikeBarState.IDLE -> R.string.audio_spike_button_description
-                AudioSpikeBarState.RECORDING -> R.string.audio_spike_button_recording
-                AudioSpikeBarState.PROCESSING -> R.string.audio_spike_button_processing
+    private fun renderAiTranscription() {
+        val recording = aiTranscriptionState == AiTranscriptionBarState.RECORDING
+        val processing = aiTranscriptionState == AiTranscriptionBarState.PROCESSING ||
+            aiTranscriptionState == AiTranscriptionBarState.CANCELLING
+        aiTranscriptionButton.contentDescription = context.getString(
+            when (aiTranscriptionState) {
+                AiTranscriptionBarState.IDLE -> R.string.ai_transcription_button_description
+                AiTranscriptionBarState.RECORDING -> R.string.ai_transcription_button_recording
+                AiTranscriptionBarState.PROCESSING -> R.string.ai_transcription_button_processing
+                AiTranscriptionBarState.CANCELLING -> R.string.ai_transcription_button_cancelling
             },
         )
         val face = if (recording) R.color.action_danger else R.color.surface_button
-        audioSpikeButton.background = audioSpikeBackgrounds.getOrPut(face) { style.roundBackground(face) }
-        audioSpikeButton.alpha = if (processing) 0.6f else 1f
+        aiTranscriptionButton.background = aiTranscriptionBackgrounds.getOrPut(face) { style.roundBackground(face) }
+        aiTranscriptionButton.alpha = if (processing) 0.6f else 1f
         if (processing) {
-            if (audioSpikeButton.drawable !== audioSpikeSpinner) audioSpikeButton.setImageDrawable(audioSpikeSpinner)
-            audioSpikeSpinner.start()
+            if (aiTranscriptionButton.drawable !== aiTranscriptionSpinner) aiTranscriptionButton.setImageDrawable(aiTranscriptionSpinner)
+            aiTranscriptionSpinner.start()
         } else {
-            audioSpikeSpinner.stop()
-            if (audioSpikeButton.drawable === audioSpikeSpinner) audioSpikeButton.setImageResource(R.drawable.ic_speech_to_text)
+            aiTranscriptionSpinner.stop()
+            if (aiTranscriptionButton.drawable === aiTranscriptionSpinner) aiTranscriptionButton.setImageResource(R.drawable.ic_speech_to_text)
         }
+        applyFieldRestriction()
+    }
+
+    /**
+     * Story 10.1 : dans un champ sensible, les boutons d'action IA sont grisés par-dessus leur apparence normale (appelé en
+     * dernier par chaque rendu, qui réécrit l'opacité). Hors champ sensible, « Générer » reprend son opacité pleine.
+     */
+    private fun applyFieldRestriction() {
+        if (aiActionsAllowed) {
+            generateButton.alpha = 1f
+            return
+        }
+        listOf(correctButton, voiceButton, generateButton, aiTranscriptionButton).forEach { it.alpha = RESTRICTED_ALPHA }
     }
 }

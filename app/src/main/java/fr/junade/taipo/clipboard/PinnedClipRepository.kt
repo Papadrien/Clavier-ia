@@ -8,6 +8,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
@@ -48,6 +49,21 @@ class PinnedClipRepository(
 
     /** Éléments épinglés actuels, sans suspendre (vide tant que la base n'est pas ouverte). */
     fun snapshot(): List<PinnedClip> = _pinned.value
+
+    /** Story 10.3 : tous les éléments épinglés, une fois la base ouverte (l'export ne doit pas partir d'une liste encore vide). */
+    suspend fun all(): List<PinnedClip> =
+        dao.await().observeAll().first().map { PinnedClip(it.id, it.text, it.pinnedAt, it.label) }
+
+    /**
+     * Story 10.3 : épingle un élément restauré depuis une sauvegarde, avec son étiquette (ignorée si elle est invalide) et sa date
+     * d'origine, qui garde l'ordre. Mêmes refus que [pin] : texte vide ou trop long, doublon, plafond atteint.
+     */
+    suspend fun pinImported(text: String, label: String?, pinnedAtMillis: Long): ClipboardItems.PinResult {
+        ClipboardItems.pinRefusal(text, sensitive = false)?.let { return it }
+        val cleanLabel = label?.let(ClipboardItems::normalizeLabel)?.takeIf { ClipboardItems.labelRefusal(it) == null }
+        val entity = PinnedClipEntity(text = text, pinnedAt = pinnedAtMillis, label = cleanLabel)
+        return dao.await().insertBounded(entity, ClipboardItems.MAX_PINNED)
+    }
 
     /**
      * Épingle [text] (texte vide ou trop long refusés, doublon et plafond détectés dans la base).

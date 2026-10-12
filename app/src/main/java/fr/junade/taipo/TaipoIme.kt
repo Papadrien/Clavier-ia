@@ -25,10 +25,11 @@ import android.widget.inline.InlinePresentationSpec
 import androidx.annotation.RequiresApi
 import androidx.autofill.inline.UiVersions
 import android.widget.Toast
+import fr.junade.taipo.ai.AiTranscriptionEngine
 import fr.junade.taipo.ai.CorrectionEngine
-import fr.junade.taipo.ai.AudioSpikeEngine
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.ai.ProtectedWords
+import fr.junade.taipo.ai.TranscriptionPromptPreferences
 import fr.junade.taipo.ai.VoiceField
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.emoji.EmojiCatalog
@@ -203,6 +204,9 @@ class TaipoIme : InputMethodService() {
     /** Story 1.18 : type du champ courant (e-mail, URL, numérique...), fixé à chaque ouverture de champ. */
     private var fieldType = FieldType.TEXT
 
+    /** Story 10.1 : le champ en cours est sensible (mot de passe) : actions IA et Smart Clipboard grisés. */
+    private var sensitiveField = false
+
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -280,20 +284,20 @@ class TaipoIme : InputMethodService() {
         )
     }
 
-    // Spike 14.1 (build debug seulement) : transcription par modèle multimodal, voir AudioSpikeController.
-    private val audioSpike: AudioSpikeController by lazy {
-        AudioSpikeController(
+    // Épopée 14 : transcription IA par modèle multimodal, voir AiTranscriptionController.
+    private val aiTranscription: AiTranscriptionController by lazy {
+        AiTranscriptionController(
             this,
             serviceScope,
-            AudioSpikeEngine(llmHost),
-            object : AudioSpikeController.Host {
+            AiTranscriptionEngine(llmHost, TranscriptionPromptPreferences(applicationContext)),
+            object : AiTranscriptionController.Host {
                 override fun showMessage(message: String) = this@TaipoIme.showMessage(message)
                 override fun voiceRecording(): Boolean = voice.isRecording
                 override fun aiBusy(): Boolean = prompt.generationBusy() || correctionInProgress
                 override fun activeModel() = ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled)
                 override fun insertText(text: String): Boolean = insertGeneratedText(text)
-                override fun setBarState(state: AudioSpikeBarState) {
-                    correctionBar.audioSpikeState = state
+                override fun setBarState(state: AiTranscriptionBarState) {
+                    correctionBar.aiTranscriptionState = state
                 }
             },
         )
@@ -319,9 +323,11 @@ class TaipoIme : InputMethodService() {
                 override fun onTopBarAction() = correction.dropUndo()
                 override fun onVoiceTouch(event: MotionEvent): Boolean = voice.onButtonTouch(event)
                 override fun onVoiceClick() = voice.onAccessibilityClick()
-                override fun onAudioSpikeClick() {
-                    if (BuildConfig.DEBUG) audioSpike.onClick()
-                }
+
+                override fun sensitiveField() = this@TaipoIme.sensitiveField
+
+                override fun showSensitiveFieldMessage() = showMessage(getString(R.string.sensitive_field_actions_disabled))
+                override fun onAiTranscriptionClick() = aiTranscription.onClick()
                 override fun onEmojiSuggestionClicked() = onEmojiSuggestionTapped()
                 override fun onWordSuggestionClicked(suggestion: WordSuggestion) = onWordSuggestionTapped(suggestion)
                 override fun openAppHome() = this@TaipoIme.openAppHome()
@@ -429,6 +435,12 @@ class TaipoIme : InputMethodService() {
             (info?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING == 0
         clipboard.pasteAllowedInField = SuggestionPolicy.allowsPasteSuggestion(info?.inputType ?: 0)
         fieldType = FieldType.of(info?.inputType ?: 0)
+        // Story 10.1 : champ de mot de passe, actions IA et Smart Clipboard grisés (touchables, avec un message).
+        sensitiveField = SensitiveFieldPolicy.isSensitive(info?.inputType ?: 0)
+        correctionBar.aiActionsAllowed = !sensitiveField
+        // Story 14.5 : le bouton Transcription IA n'existe que si le modèle actif (installé) a une entrée audio.
+        correctionBar.aiTranscriptionAvailable =
+            ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled)?.hasAudioInput == true
         suggestions.isEmailAddressField = fieldType == FieldType.EMAIL
         messagingField = MessagingFieldPolicy.isMessagingField(info?.packageName, info?.inputType ?: 0)
         controller.setAutoCapitalization(
@@ -499,7 +511,7 @@ class TaipoIme : InputMethodService() {
         if (isRecording) {
             voice.cancelRecording()
         }
-        if (BuildConfig.DEBUG) audioSpike.onInputFinished()
+        aiTranscription.onInputFinished()
         // Changement de champ : la génération en cours est interrompue (partiel figé), la conversation reste.
         prompt.stopGeneration()
         prompt.exit(resync = false)
@@ -644,7 +656,7 @@ class TaipoIme : InputMethodService() {
         nextWords.flushBlocking()
         suggestions.correctionHabits.flushBlocking()
         dismissMessage()
-        if (BuildConfig.DEBUG) audioSpike.release()
+        aiTranscription.release()
         llmHost.close()
         voice.release()
         clipboard.release()

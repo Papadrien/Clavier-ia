@@ -167,6 +167,8 @@ dependencies {
 
     // junit-jupiter embarque junit-jupiter-params (@ParameterizedTest, lot 3.3).
     testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
+    // org.json réel pour les tests JVM du format de sauvegarde (story 10.3) : celui de android.jar y est « non simulé ».
+    testImplementation("org.json:json:20240303")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
 
     // Tests instrumentés (src/androidTest, lot 3.3) : `./gradlew connectedDebugAndroidTest` sur appareil.

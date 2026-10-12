@@ -8,6 +8,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
@@ -54,6 +55,10 @@ class PersonalDictionaryRepository(
 
     /** Mots actuels, sans suspendre (liste vide tant que la base n'est pas ouverte). */
     fun snapshot(): List<String> = _words.value
+
+    /** Story 10.3 : tous les mots, une fois la base ouverte (l'export ne doit pas partir d'une liste encore vide). */
+    suspend fun all(): List<String> =
+        PersonalDictionary.sortForDisplay(dao.await().observeAll().first().map { it.word })
 
     /** Normalise puis ajoute [raw]. Lève l'exception de la base en cas d'échec d'accès. */
     suspend fun add(raw: String): PersonalDictionary.AddResult {
