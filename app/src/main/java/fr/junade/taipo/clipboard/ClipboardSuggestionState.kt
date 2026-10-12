@@ -67,7 +67,7 @@ class ClipboardSuggestionState(
         val current = clip
         val sameCopy = current != null && current.text == text &&
             (copiedAtMillis <= 0 || !current.timestampKnown || copiedAtMillis == current.copiedAtMillis)
-        if (sameCopy && current != null) {
+        if (sameCopy) {
             // Relecture de la même copie : état conservé (collée le reste), sensible le reste aussi.
             if (sensitive && !current.sensitive) {
                 clip = Clip(current.text, current.copiedAtMillis, current.timestampKnown, sensitive = true, edited = current.edited)

@@ -94,7 +94,7 @@ class BarVisibilityTest {
             CorrectionBarState.CANCELLING,
         )) {
             val visible = BarVisibility.actionButtons(VoiceBarState.IDLE, state, zoneWithText(), false, wordSuggestionsShown = true)
-            assertTrue("état $state", visible.correct)
+            assertTrue(visible.correct, "état $state")
         }
     }
 

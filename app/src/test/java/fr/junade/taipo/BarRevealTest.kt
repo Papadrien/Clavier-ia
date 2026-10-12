@@ -1,7 +1,7 @@
 package fr.junade.taipo
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 /** Dévoilement de la barre du haut : calculs purs (rognage du rideau, glissement, cascade). */
 class BarRevealTest {
