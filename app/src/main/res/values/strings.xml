@@ -129,6 +129,11 @@
     <string name="settings_button_description">Ouvrir les réglages de l\'application</string>
     <string name="clipboard_menu_description">Menu : afficher le presse-papiers</string>
     <string name="actions_menu_description">Menu : génération, saisie vocale et correction</string>
+    <!-- Textes des pilules d'action IA (menu « robot » ouvert) ; Vocal reste sans texte. -->
+    <string name="action_pill_chat">Chat</string>
+    <string name="action_pill_transcription">Transcription</string>
+    <string name="action_pill_correction">Correction</string>
+    <string name="action_pill_undo">Annuler</string>
     <string name="generate_button_description">Générer du texte à partir d\'un prompt</string>
     <string name="prompt_hint">Décrivez le texte à générer…</string>
     <string name="prompt_cancel_description">Quitter le mode prompt</string>

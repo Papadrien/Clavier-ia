@@ -20,9 +20,9 @@ import fr.junade.taipo.dictionary.WordSuggestion
  * bande (GONE) : les mots proposés se partagent toute la largeur disponible de la barre. La hauteur,
  * elle, ne change pas (MATCH_PARENT).
  *
- * Charte Taipo (lot 11) : texte blanc sur le fond du clavier ; le mot de l'autocorrection (action importante) est en
- * gras sur une pastille violette ; l'emplacement emoji est un bouton secondaire. Les fonds « face + ombre » sont créés
- * une fois ([BarStyle.pillBackground]) et simplement posés ou retirés, sans allocation à chaque frappe.
+ * Charte Taipo (lot 11) : texte blanc sur le fond du clavier ; le mot de l'autocorrection est en gras, sans
+ * pastille ni fond ; l'emplacement emoji est un bouton secondaire, dont le fond « face + ombre » est créé une fois
+ * ([BarStyle.pillBackground]), sans allocation à chaque frappe.
  *
  * Un mot trop long pour son emplacement est tronqué au début (« …ement ») : le début est déjà tapé, la fin est ce qui
  * distingue les suggestions.
@@ -41,7 +41,6 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
 
     private val style = BarStyle(context)
     private val wordSlots = List(WORD_SLOT_COUNT) { TextView(context) }
-    private val wordHighlights = List(WORD_SLOT_COUNT) { style.pillBackground(R.color.accent) }
     private val emojiSlot = TextView(context)
     private val slotGap = dimen(R.dimen.taipo_suggestion_slot_gap).toInt()
     private var emojiListener: OnEmojiClickListener? = null
@@ -124,7 +123,6 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
             // Adresse e-mail trop longue : « … » à la fin (c'est son début, déjà tapé, qui identifie l'adresse, mais la fin se lit aussi).
             slot.ellipsize = if (suggestion?.kind == WordSuggestion.Kind.EMAIL) TextUtils.TruncateAt.END else TextUtils.TruncateAt.START
             slot.useTaipoFont(if (suggestion?.replacesOnSpace == true) TaipoType.Weight.BOLD else TaipoType.Weight.REGULAR)
-            slot.background = if (suggestion?.replacesOnSpace == true) wordHighlights[index] else null
             slot.visibility = if (suggestion == null) View.GONE else View.VISIBLE
             // Lot 20 : TalkBack lit le mot sans les guillemets du mot tapé, et dit lequel remplacera le mot à l'espace.
             slot.contentDescription = suggestion?.text

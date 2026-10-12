@@ -1,6 +1,7 @@
 package fr.junade.taipo
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import fr.junade.taipo.dictionary.WordSuggestion
@@ -26,8 +28,10 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
     /** Story 2.1 : bouton Smart Clipboard (icône « coller »). */
     private val clipboardButton = ImageButton(context)
 
-    /** Story 2.2 : puce de collage (aperçu du texte copié récemment). */
-    private val pasteChip = TextView(context)
+    /** Story 2.2 : puce de collage : icône « coller » (celle du Smart Clipboard) puis aperçu du texte copié récemment. */
+    private val pasteChip = LinearLayout(context)
+    private val pasteIcon = ImageView(context)
+    private val pasteText = TextView(context)
 
     /**
      * Suggestions d'auto-remplissage en ligne (gestionnaire de mots de passe) : des vues fournies par
@@ -47,14 +51,27 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
         clipboardButton.contentDescription = context.getString(R.string.clipboard_button)
         clipboardButton.setOnClickListener { clipboardListener?.onClipboardClick() }
 
-        pasteChip.setTextColor(context.themeColor(R.color.text_primary))
-        pasteChip.setFixedTextSizeRes(R.dimen.taipo_suggestion_chip_text_size)
-        pasteChip.useTaipoFont()
+        pasteIcon.setImageResource(R.drawable.ic_paste)
+        pasteIcon.imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
+        pasteIcon.scaleType = ImageView.ScaleType.CENTER_INSIDE
+        pasteIcon.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+
+        pasteText.setTextColor(context.themeColor(R.color.text_primary))
+        pasteText.setFixedTextSizeRes(R.dimen.taipo_suggestion_chip_text_size)
+        pasteText.useTaipoFont()
+        pasteText.gravity = Gravity.CENTER_VERTICAL
+        pasteText.maxLines = 1
+        pasteText.ellipsize = TextUtils.TruncateAt.END
+        pasteText.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+
+        pasteChip.orientation = LinearLayout.HORIZONTAL
         pasteChip.gravity = Gravity.CENTER_VERTICAL
-        pasteChip.maxLines = 1
-        pasteChip.ellipsize = TextUtils.TruncateAt.END
         val chipPadding = dimen(R.dimen.taipo_suggestion_chip_padding).toInt()
-        // Le texte se centre sur la face du fond : marge basse = épaisseur d'ombre.
+        val iconSize = dimen(R.dimen.taipo_icon_size).toInt()
+        val iconGap = dimen(R.dimen.taipo_suggestion_chip_gap).toInt()
+        // Icône à gauche du texte ; le contenu se centre sur la face du fond : marge basse = épaisseur d'ombre.
+        pasteChip.addView(pasteIcon, LinearLayout.LayoutParams(iconSize, iconSize).apply { marginEnd = iconGap })
+        pasteChip.addView(pasteText, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT))
         pasteChip.setPadding(chipPadding, 0, chipPadding, dimen(R.dimen.taipo_key_shadow_height).toInt())
         pasteChip.background = style.pillBackground(R.color.surface_button)
         pasteChip.setOnClickListener { pasteListener?.onPasteClick() }
@@ -125,10 +142,10 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
      */
     fun setPasteText(preview: String?, sensitive: Boolean) {
         if (preview == null) {
-            pasteChip.text = ""
+            pasteText.text = ""
             return
         }
-        pasteChip.text = preview
+        pasteText.text = preview
         pasteChip.contentDescription = if (sensitive) {
             context.getString(R.string.clipboard_paste_description_masked)
         } else {
@@ -171,15 +188,29 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
         if (views.isEmpty()) inlineScroll.scrollTo(0, 0)
     }
 
-    /** Montre le contenu décidé par [visibility] ; le bouton Smart Clipboard est coloré tant que le panneau est ouvert. */
-    fun render(visibility: ZoneContentVisibility, clipboardPanelOpen: Boolean) {
-        suggestionStrip.visibility = if (visibility.words) View.VISIBLE else View.GONE
-        clipboardButton.visibility = if (visibility.clipboardButton) View.VISIBLE else View.GONE
-        pasteChip.visibility = if (visibility.pasteChip) View.VISIBLE else View.GONE
-        inlineScroll.visibility = if (visibility.inline) View.VISIBLE else View.GONE
+    /**
+     * Montre le contenu décidé par [visibility] ; le bouton Smart Clipboard est coloré tant que le panneau est ouvert.
+     * Ce qui apparaît s'anime depuis la gauche ([BarReveal]) : dévoilement complet si [reveal] (appui sur le menu de
+     * gauche), sinon fondu discret (frappe, nouvelle copie) ; rien tant que la barre n'est pas affichée.
+     */
+    fun render(visibility: ZoneContentVisibility, clipboardPanelOpen: Boolean, reveal: Boolean = false) {
+        show(suggestionStrip, visibility.words, reveal)
+        show(clipboardButton, visibility.clipboardButton, reveal)
+        show(pasteChip, visibility.pasteChip, reveal)
+        show(inlineScroll, visibility.inline, reveal)
         if (clipboardButtonActiveBackground != clipboardPanelOpen) {
             clipboardButtonActiveBackground = clipboardPanelOpen
             clipboardButton.background = clipboardButtonBackgrounds.get(clipboardPanelOpen)
+        }
+    }
+
+    private fun show(view: View, visible: Boolean, reveal: Boolean) {
+        val wasVisible = view.visibility == View.VISIBLE
+        view.visibility = if (visible) View.VISIBLE else View.GONE
+        if (visible && !wasVisible && isLaidOut) {
+            BarReveal.enter(view, fromEnd = false, full = reveal)
+        } else if (!visible && wasVisible) {
+            BarReveal.cancel(view)
         }
     }
 }

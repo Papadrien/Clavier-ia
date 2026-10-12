@@ -158,11 +158,6 @@ class ClipboardController(
         }
     }
 
-    /** Story 2.4 : l'utilisateur a saisi ou supprimé du texte : la puce est écartée pour cette copie (story 2.2). */
-    fun onTyping() {
-        state.onTyping()
-    }
-
     // ------------------------------------------------------------------
     // Panneau Smart Clipboard (stories 2.1 et 2.5)
     // ------------------------------------------------------------------

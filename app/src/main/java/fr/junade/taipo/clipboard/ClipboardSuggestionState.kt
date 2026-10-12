@@ -8,12 +8,15 @@ package fr.junade.taipo.clipboard
  * - n'est pas vide (ni faite uniquement d'espaces) ;
  * - n'est pas trop grosse ([maxChars] : au-delà, `commitText` peut échouer) ;
  * - n'a pas déjà été collée ;
- * - n'a pas été écartée par une frappe ([onTyping]) ;
+ * - n'est pas supprimée du panneau ;
  * - n'a pas expiré, [expirationMillis] après la copie (story 2.3, 10 minutes par défaut).
  *
+ * La frappe n'écarte pas la puce : elle reste proposée tant que la copie n'est pas collée, n'a pas
+ * expiré ou n'est pas remplacée par une nouvelle copie ; c'est la barre qui ne l'affiche que quand
+ * la zone de gauche est libre (champ vide).
+ *
  * Une copie se reconnaît à son horodatage et à son contenu : relire le presse-papiers (ouverture
- * d'un champ, redémarrage du processus du clavier) ne ressuscite donc pas une puce déjà écartée
- * ou collée, alors qu'une nouvelle copie, même du même texte (autre horodatage), la fait revenir.
+ * d'un champ, redémarrage du processus du clavier) ne ressuscite donc pas une puce déjà collée, alors qu'une nouvelle copie, même du même texte (autre horodatage), la fait revenir.
  *
  * Story 2.10 : la copie est sensible si l'application source l'a signalée ou si son texte (modifié
  * compris) ressemble à un numéro de carte ([SensitiveContentDetector]) ; son aperçu est alors masqué.
@@ -44,7 +47,6 @@ class ClipboardSuggestionState(
     }
 
     private var clip: Clip? = null
-    private var dismissed = false
     private var pasted = false
     private var deleted = false
 
@@ -66,7 +68,7 @@ class ClipboardSuggestionState(
         val sameCopy = current != null && current.text == text &&
             (copiedAtMillis <= 0 || !current.timestampKnown || copiedAtMillis == current.copiedAtMillis)
         if (sameCopy && current != null) {
-            // Relecture de la même copie : état conservé (écartée/collée le reste), sensible le reste aussi.
+            // Relecture de la même copie : état conservé (collée le reste), sensible le reste aussi.
             if (sensitive && !current.sensitive) {
                 clip = Clip(current.text, current.copiedAtMillis, current.timestampKnown, sensitive = true, edited = current.edited)
             }
@@ -74,7 +76,6 @@ class ClipboardSuggestionState(
         }
         val known = copiedAtMillis > 0
         clip = Clip(text, if (known) copiedAtMillis else clock(), known, sensitive)
-        dismissed = false
         pasted = false
         deleted = false
         return true
@@ -95,7 +96,7 @@ class ClipboardSuggestionState(
     /** La suggestion à afficher maintenant, ou null si aucune puce ne doit être proposée. */
     fun suggestion(): Suggestion? {
         val current = clip ?: return null
-        if (dismissed || pasted || deleted) return null
+        if (pasted || deleted) return null
         if (current.shown.isBlank() || current.shown.length > maxChars) return null
         if (remainingMillis(current) <= 0) return null
         return Suggestion(current.shown, ClipboardItems.isSensitive(current.shown, current.sensitive))
@@ -120,7 +121,7 @@ class ClipboardSuggestionState(
 
     /**
      * Story 2.6 : la dernière copie est modifiée depuis le panneau ; la puce et le panneau montrent
-     * [newText]. La copie garde son horodatage et son état (collée, écartée, expirée) : relire le
+     * [newText]. La copie garde son horodatage et son état (collée, expirée) : relire le
      * presse-papiers Android, qui contient toujours le texte d'origine, ne défait pas la
      * modification, et une nouvelle copie la remplace. Texte vide ignoré ; le presse-papiers
      * Android lui-même n'est pas modifié.
@@ -131,14 +132,8 @@ class ClipboardSuggestionState(
         clip = Clip(current.text, current.copiedAtMillis, current.timestampKnown, current.sensitive, edited = newText)
     }
 
-    /** Première frappe : la puce est écartée pour cette copie (une nouvelle copie la fait revenir). */
-    fun onTyping() {
-        if (clip != null) dismissed = true
-    }
-
     fun clear() {
         clip = null
-        dismissed = false
         pasted = false
         deleted = false
     }
@@ -149,7 +144,7 @@ class ClipboardSuggestionState(
         /** Au-delà, pas de suggestion : `commitText` peut échouer sur de très gros textes (limite Binder). */
         const val MAX_CHARS = 100_000
 
-        /** Story 2.3 : la suggestion expire 10 minutes après la copie. */
+        /** Story 2.3 : la suggestion expire 10 minutes après la copie, quelles que soient les frappes entre-temps. */
         const val EXPIRATION_MILLIS = 10 * 60 * 1000L
     }
 }

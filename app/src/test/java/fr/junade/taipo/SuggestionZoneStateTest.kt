@@ -91,11 +91,16 @@ class SuggestionZoneStatePasteTest {
     }
 
     @Test
-    fun `pendant la saisie la puce prend la place des mots`() {
+    fun `pendant la saisie les mots gardent la place et la puce revient quand le champ est vide`() {
         val state = SuggestionZoneState()
         state.onFieldTextChanged(true)
         state.setPasteAvailable(true)
+        assertEquals(Zone.WORDS, state.zone)
+        assertTrue(state.menuButtonVisible)
+        state.onFieldTextChanged(false)
         assertEquals(Zone.PASTE, state.zone)
+        state.onFieldTextChanged(true)
+        assertEquals(Zone.WORDS, state.zone)
     }
 
     @Test
@@ -269,7 +274,7 @@ class SuggestionZoneStateActionsTest {
 
     @Test
     fun `la puce de collage ou le menu de gauche gardent Vocal et Corriger visibles`() {
-        val paste = typing()
+        val paste = SuggestionZoneState() // champ vide : la puce remplace le bouton Smart Clipboard
         paste.setPasteAvailable(true)
         assertEquals(Zone.PASTE, paste.zone)
         assertTrue(paste.actionButtonsVisible(busy = false))
@@ -282,11 +287,11 @@ class SuggestionZoneStateActionsTest {
     }
 
     @Test
-    fun `une puce de collage ou un champ vide referment le menu de droite`() {
+    fun `un champ vide referme le menu de droite, une puce de collage disponible non`() {
         val paste = typing()
         paste.toggleActionsMenu()
         paste.setPasteAvailable(true)
-        assertFalse(paste.actionsExpanded)
+        assertTrue(paste.actionsExpanded) // la puce reste en attente tant que le texte est affiché
 
         val cleared = typing()
         cleared.toggleActionsMenu()

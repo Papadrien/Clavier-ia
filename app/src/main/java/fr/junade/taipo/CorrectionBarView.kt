@@ -44,7 +44,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     }
 
     private val style = BarStyle(context)
-    private val correctButton = ImageButton(context)
+    private val correctButton = LabeledIconButton(context, style)
 
     /**
      * Zone de gauche : bande de mots, bouton Smart Clipboard, puce de collage ou suggestions
@@ -58,8 +58,12 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
 
     /** Story 2.1 : bouton « menu », visible pendant la saisie, qui donne accès au bouton Smart Clipboard. */
     private val menuButton = ImageButton(context)
+    private var menuChevron: RotatingDrawable? = null
 
-    /** Menu de droite : range les boutons Vocal et Générer pendant les suggestions de mots (Corriger reste visible à sa gauche). */
+    /**
+     * Menu « robot » : range Transcription IA et Générer pendant les suggestions de mots (Corriger, à sa gauche, n'est visible
+     * que si aucune suggestion n'est affichée) ; Vocal, à sa droite, est toujours visible. Ouvert, il met les actions IA en pilules icône + texte.
+     */
     private val actionsMenuButton = ImageButton(context)
 
     /** Croix de fermeture du panneau Smart Clipboard (à gauche de la barre) : visible seulement tant qu'il est ouvert. */
@@ -74,7 +78,6 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
     private val voiceSpinner = LoadingSpinnerDrawable(context)
     private val aiTranscriptionSpinner = LoadingSpinnerDrawable(context)
-    private val aiTranscriptionBackgrounds = HashMap<Int, RoundKeyDrawable>()
     private val correctSpinner = LoadingSpinnerDrawable(context)
     private val zoneState = SuggestionZoneState()
     private var menuBackgroundExpanded: Boolean? = null
@@ -84,12 +87,12 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private var cancelListener: (() -> Unit)? = null
     private var correctShowsUndoIcon = false
 
-    /** Story 5.1 : bouton « Générer » (icône), qui bascule la barre en mode prompt ; rangé avec Vocal derrière le menu de droite. */
-    private val generateButton = ImageButton(context)
+    /** Story 5.1 : bouton « Générer » (icône, mode chat), qui bascule la barre en mode prompt ; rangé avec Vocal derrière le menu de droite. */
+    private val generateButton = LabeledIconButton(context, style)
     private var generateListener: (() -> Unit)? = null
 
-    /** Story 14.5 : transcription IA (enregistrement envoyé à un modèle Gemma 4), à gauche de Vocal, visible avec lui. */
-    val aiTranscriptionButton = ImageButton(context)
+    /** Story 14.5 : transcription IA (enregistrement envoyé à un modèle Gemma 4), entre Corriger et le menu « robot », visible avec les actions IA. */
+    val aiTranscriptionButton = LabeledIconButton(context, style)
 
     var state: CorrectionBarState = CorrectionBarState.HIDDEN
         set(value) {
@@ -130,7 +133,14 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             renderAiTranscription()
         }
 
-    /** Vocal est le dernier bouton visible (saisie non en cours) : la barre se cale sur le bord droit des touches. */
+    /** La bande de mots affiche au moins un mot (ou un emoji) : le bouton Corriger est alors caché (voir [BarVisibility.actionButtons]). */
+    private var wordsShown = false
+    private var emojiShown = false
+
+    /** Menu « robot » ouvert : les actions IA (Chat, Transcription, Correction) passent en pilules icône + texte, si la rangée tient. */
+    private var labelsWanted = false
+
+    /** Vocal, toujours visible, est le dernier bouton de la barre : celle-ci se cale sur le bord droit des touches. */
     private var voiceAnchoredRight = false
 
     init {
@@ -155,10 +165,13 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         )
 
         style.styleBarIconButton(menuButton, R.drawable.ic_keyboard_right)
+        menuChevron = RotatingDrawable(menuButton.drawable).also {
+            menuButton.setImageDrawable(it) // le chevron pivote d'un demi-tour quand le menu s'ouvre
+        }
         menuButton.contentDescription = context.getString(R.string.clipboard_menu_description)
         menuButton.setOnClickListener {
             zoneState.toggleMenu()
-            renderZone()
+            renderZone(reveal = true)
         }
         addView(
             menuButton,
@@ -176,34 +189,16 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
 
         addView(zoneView, LayoutParams(0, barHeight, 1f).apply { marginEnd = gap })
 
-        // Story 5.1 : « Générer », à gauche de Vocal. Icône seule (40 dp) pour ménager la place de la zone de gauche.
+        // Story 5.1 : « Générer » (mode chat), le bouton le plus à gauche des actions. Icône seule (40 dp) pour ménager la place de la zone de gauche.
         style.styleRoundIconButton(generateButton, R.drawable.ic_rate_review)
         generateButton.contentDescription = context.getString(R.string.generate_button_description)
+        generateButton.label = context.getString(R.string.action_pill_chat)
         generateButton.setOnClickListener {
             collapseMenu()
             generateListener?.invoke()
         }
         addView(
             generateButton,
-            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
-        )
-
-        // Story 14.5 : bouton « voix vers texte », entre Générer et Vocal. Le clic est relié par l'IME.
-        style.styleRoundIconButton(aiTranscriptionButton, R.drawable.ic_speech_to_text)
-        aiTranscriptionButton.contentDescription = context.getString(R.string.ai_transcription_button_description)
-        addView(
-            aiTranscriptionButton,
-            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
-        )
-
-        // Lot 08 : Vocal devient un bouton rond à icône micro ; son état (écoute, chargement…) passe par la couleur,
-        // la transparence et la description d'accessibilité, plus par le texte.
-        style.styleRoundIconButton(voiceButton, R.drawable.ic_mic)
-        // Le geste réel passe par setOnTouchListener (côté appelant, qui consomme tout toucher) ; le clic, lui, n'est déclenché
-        // que par l'accessibilité (TalkBack, double appui) : l'appelant le relie à la bascule d'écoute (lot 20).
-        voiceButton.setOnClickListener { }
-        addView(
-            voiceButton,
             LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
         )
 
@@ -222,18 +217,42 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
                 else -> Unit
             }
         }
-        addView(correctButton, LayoutParams(iconButtonWidth, barHeight))
+        addView(
+            correctButton,
+            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
+        )
 
-        // Menu de droite : pendant les suggestions de mots, il range derrière lui Vocal et Générer (Corriger reste visible à sa gauche).
+        // Story 14.5 : bouton « voix vers texte », entre Corriger et le menu « robot ». Le clic est relié par l'IME.
+        style.styleRoundIconButton(aiTranscriptionButton, R.drawable.ic_speech_to_text)
+        aiTranscriptionButton.contentDescription = context.getString(R.string.ai_transcription_button_description)
+        aiTranscriptionButton.label = context.getString(R.string.action_pill_transcription)
+        addView(
+            aiTranscriptionButton,
+            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
+        )
+
+        // Menu « robot » : pendant les suggestions de mots, il range derrière lui Transcription IA et Générer (Corriger reste
+        // visible à sa gauche) ; Vocal, à sa droite, n'en dépend pas.
         style.styleBarIconButton(actionsMenuButton, R.drawable.ic_robot)
         actionsMenuButton.contentDescription = context.getString(R.string.actions_menu_description)
         actionsMenuButton.setOnClickListener {
             zoneState.toggleActionsMenu()
-            renderZone()
+            renderZone(reveal = true)
         }
         addView(
             actionsMenuButton,
-            LayoutParams(iconButtonWidth, barHeight).apply { marginStart = gap },
+            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
+        )
+
+        // Lot 08 : Vocal devient un bouton rond à icône micro ; son état (écoute, chargement…) passe par la couleur,
+        // la transparence et la description d'accessibilité, plus par le texte.
+        style.styleRoundIconButton(voiceButton, R.drawable.ic_mic)
+        // Le geste réel passe par setOnTouchListener (côté appelant, qui consomme tout toucher) ; le clic, lui, n'est déclenché
+        // que par l'accessibilité (TalkBack, double appui) : l'appelant le relie à la bascule d'écoute (lot 20).
+        voiceButton.setOnClickListener { }
+        addView(
+            voiceButton,
+            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
         )
 
         // Lot 20 : zone tactile des boutons étendue à 48 dp (36 dp dessinés), sans changer le rendu.
@@ -283,7 +302,29 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         if (paddingLeft != side || paddingRight != sideEnd) {
             setPadding(side, paddingTop, sideEnd, paddingBottom)
         }
+        val showLabels = labelsWanted && labeledRowFits(MeasureSpec.getSize(widthMeasureSpec) - side - sideEnd)
+        generateButton.labeled = showLabels
+        correctButton.labeled = showLabels
+        aiTranscriptionButton.labeled = showLabels
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    /**
+     * Les pilules icône + texte tiennent-elles dans [availableWidth] avec les autres boutons visibles (robot, Vocal) et les
+     * écarts ? Sinon (écran étroit, grande police), les actions restent en icônes seules : le texte ne déborde jamais.
+     */
+    private fun labeledRowFits(availableWidth: Int): Boolean {
+        val gap = dimen(R.dimen.taipo_bar_gap).toInt()
+        val iconWidth = dimen(R.dimen.taipo_bar_icon_button_width).toInt()
+        var total = gap // marge de fin de la zone de gauche (vide quand le menu est ouvert)
+        var count = 0
+        for (button in listOf(generateButton, correctButton, aiTranscriptionButton, actionsMenuButton, voiceButton)) {
+            if (button.visibility != View.VISIBLE) continue
+            total += if (button is LabeledIconButton) button.labeledWidth() else iconWidth
+            count++
+        }
+        total += (count - 1).coerceAtLeast(0) * gap
+        return total <= availableWidth
     }
 
     /**
@@ -299,6 +340,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     /** Story 1.16 : propose [emoji] dans le 4e emplacement de la bande de suggestions (null = aucun). */
     fun setEmojiSuggestion(emoji: String?) {
         zoneView.setEmojiSuggestion(emoji)
+        val shown = emoji != null
+        if (emojiShown != shown) {
+            emojiShown = shown
+            renderActionButtons() // Corriger se cache tant qu'une suggestion est affichée
+        }
     }
 
     fun setOnEmojiSuggestionClickListener(listener: SuggestionStripView.OnEmojiClickListener) {
@@ -308,6 +354,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     /** Story 1.17 : remplit les 3 emplacements de mots (liste vide ou null = emplacement vide). */
     fun setWordSuggestions(words: List<WordSuggestion?>) {
         zoneView.setWordSuggestions(words)
+        val shown = words.any { it != null }
+        if (wordsShown != shown) {
+            wordsShown = shown
+            renderActionButtons() // Corriger se cache tant qu'une suggestion est affichée
+        }
     }
 
     fun setOnWordSuggestionClickListener(listener: SuggestionStripView.OnWordClickListener) {
@@ -367,47 +418,76 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         renderZone()
     }
 
-    private fun renderActionButtons() {
-        val visible = BarVisibility.actionButtons(voiceState, state, zoneState, clipboardPanelOpen)
-        voiceButton.visibility = if (visible.voice) View.VISIBLE else View.GONE
-        generateButton.visibility = if (visible.generate) View.VISIBLE else View.GONE
-        aiTranscriptionButton.visibility = if (visible.voice && aiTranscriptionAvailable) View.VISIBLE else View.GONE
-        correctButton.visibility = if (visible.correct) View.VISIBLE else View.GONE
-        actionsMenuButton.visibility = if (visible.actionsMenu) View.VISIBLE else View.GONE
+    /**
+     * [reveal] : l'appel vient d'un appui sur un menu « ··· » ; les boutons qui apparaissent se dévoilent alors en
+     * cascade depuis le menu robot (le plus proche en premier), sinon ils se fondent simplement ([BarReveal]).
+     */
+    private fun renderActionButtons(reveal: Boolean = false) {
+        val visible = BarVisibility.actionButtons(voiceState, state, zoneState, clipboardPanelOpen, wordsShown || emojiShown)
+        setRevealed(voiceButton, visible.voice, order = 0, full = reveal)
+        setRevealed(generateButton, visible.generate, order = 2, full = reveal)
+        setRevealed(aiTranscriptionButton, visible.aiTranscription && aiTranscriptionAvailable, order = 0, full = reveal)
+        setRevealed(correctButton, visible.correct, order = 1, full = reveal)
+        setRevealed(actionsMenuButton, visible.actionsMenu, order = 0, full = reveal)
         closeButton.visibility = View.GONE // remplacée par le bouton Smart Clipboard actif, qui referme le panneau
         anchorTrailingButtonsRight()
     }
 
     /**
-     * Saisie non en cours (ni Corriger ni menu de droite) : Vocal est le dernier bouton visible. Il se cale alors sur le bord
-     * droit des touches (inset de touche) au lieu de garder l'espace inter-boutons et la marge de la barre.
+     * Ordre de droite à gauche : Vocal (toujours visible, hors du groupe des actions IA), menu « robot » (quand il existe),
+     * Transcription IA, Corriger, Générer. L'écart [R.dimen.taipo_bar_gap] sépare chaque bouton visible du suivant ; le
+     * dernier bouton visible (Vocal) n'a pas de marge de fin et se cale sur le bord droit des touches (inset de touche)
+     * au lieu de la marge de la barre.
      */
     private fun anchorTrailingButtonsRight() {
-        val voiceIsLast = voiceButton.visibility == View.VISIBLE &&
-            correctButton.visibility != View.VISIBLE &&
-            actionsMenuButton.visibility != View.VISIBLE
         val gap = dimen(R.dimen.taipo_bar_gap).toInt()
-        val params = voiceButton.layoutParams as LayoutParams
-        val endMargin = if (voiceIsLast) 0 else gap
-        if (params.marginEnd != endMargin) {
-            params.marginEnd = endMargin
-            voiceButton.layoutParams = params
+        val row = listOf(generateButton, correctButton, aiTranscriptionButton, actionsMenuButton, voiceButton)
+        val lastVisible = row.lastOrNull { it.visibility == View.VISIBLE }
+        row.forEach { button ->
+            val params = button.layoutParams as LayoutParams
+            val endMargin = if (button === lastVisible) 0 else gap
+            if (params.marginEnd != endMargin) {
+                params.marginEnd = endMargin
+                button.layoutParams = params
+            }
         }
+        val voiceIsLast = lastVisible === voiceButton
         if (voiceAnchoredRight != voiceIsLast) {
             voiceAnchoredRight = voiceIsLast
             requestLayout() // onMeasure recalcule la marge droite de la barre
         }
     }
 
-    private fun renderZone() {
-        renderActionButtons()
+    /**
+     * Change la visibilité de [view] ; un bouton qui apparaît sur une barre déjà affichée s'anime ([BarReveal]) depuis la
+     * droite, ou depuis la gauche quand [fromEnd] est faux ; un bouton qui disparaît interrompt son animation.
+     */
+    private fun setRevealed(view: View, visible: Boolean, order: Int, full: Boolean, fromEnd: Boolean = true) {
+        val wasVisible = view.visibility == View.VISIBLE
+        view.visibility = if (visible) View.VISIBLE else View.GONE
+        if (visible && !wasVisible && isLaidOut) {
+            BarReveal.enter(view, fromEnd = fromEnd, order = order, full = full)
+        } else if (!visible && wasVisible) {
+            BarReveal.cancel(view)
+        }
+    }
+
+    /** [reveal] : appui sur un menu « ··· » (dévoilement complet) ; sinon (frappe, copie…) simple fondu. */
+    private fun renderZone(reveal: Boolean = false) {
+        val wanted = BarVisibility.labeledActions(zoneState, clipboardPanelOpen)
+        if (labelsWanted != wanted) {
+            labelsWanted = wanted
+            requestLayout() // onMeasure décide si la rangée tient en pilules
+        }
+        renderActionButtons(reveal)
         val visible = BarVisibility.zoneContent(zoneState, clipboardPanelOpen)
-        zoneView.render(visible, clipboardPanelOpen)
-        menuButton.visibility = if (visible.menuButton) View.VISIBLE else View.GONE
-        settingsButton.visibility = if (visible.settingsButton) View.VISIBLE else View.GONE
+        zoneView.render(visible, clipboardPanelOpen, reveal = reveal && isLaidOut)
+        setRevealed(menuButton, visible.menuButton, order = 0, full = reveal, fromEnd = false)
+        setRevealed(settingsButton, visible.settingsButton, order = 0, full = reveal, fromEnd = false)
         if (menuBackgroundExpanded != zoneState.menuExpanded) {
             menuBackgroundExpanded = zoneState.menuExpanded
             menuButton.background = menuBackgrounds.get(zoneState.menuExpanded)
+            menuChevron?.rotateTo(if (zoneState.menuExpanded) 180f else 0f, animate = isLaidOut)
         }
         if (actionsMenuBackgroundExpanded != zoneState.actionsExpanded) {
             actionsMenuBackgroundExpanded = zoneState.actionsExpanded
@@ -421,6 +501,9 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             correctButton.isEnabled = it.enabled
             correctButton.alpha = it.alpha
             correctButton.contentDescription = context.getString(it.label)
+            correctButton.label = context.getString(
+                if (state == CorrectionBarState.UNDO) R.string.action_pill_undo else R.string.action_pill_correction,
+            )
         }
         if (appearance?.loading == true) {
             // Chargement du modèle ou correction : roue animée à la place de l'icône (le bouton reste désactivé).
@@ -461,7 +544,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             },
         )
         val face = if (recording) R.color.action_danger else R.color.surface_button
-        aiTranscriptionButton.background = aiTranscriptionBackgrounds.getOrPut(face) { style.roundBackground(face) }
+        aiTranscriptionButton.face = face
         aiTranscriptionButton.alpha = if (processing) 0.6f else 1f
         if (processing) {
             if (aiTranscriptionButton.drawable !== aiTranscriptionSpinner) aiTranscriptionButton.setImageDrawable(aiTranscriptionSpinner)

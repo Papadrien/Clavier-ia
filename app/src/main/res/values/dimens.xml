@@ -80,6 +80,12 @@
     <dimen name="taipo_bar_text_button_max_width">136dp</dimen>
     <!-- Texte des boutons à libellé de la barre du haut (Corriger). -->
     <dimen name="taipo_bar_button_text_size">14sp</dimen>
+    <!-- Menu « robot » ouvert : boutons d'action IA en pilule (icône + texte). Valeurs resserrées pour que Chat, Correction,
+         Transcription, le robot et Vocal tiennent sur une barre de 412 dp ; si la rangée ne tient pas, les textes se retirent. -->
+    <dimen name="taipo_bar_pill_text_size">11sp</dimen>
+    <dimen name="taipo_bar_pill_padding_horizontal">8dp</dimen>
+    <dimen name="taipo_bar_pill_icon_size">18dp</dimen>
+    <dimen name="taipo_bar_pill_icon_gap">4dp</dimen>
     <!-- Bouton rond d'envoi / stop et sa roue de chargement. -->
     <dimen name="taipo_bar_round_button_size">36dp</dimen>
     <dimen name="taipo_bar_spinner_size">20dp</dimen>

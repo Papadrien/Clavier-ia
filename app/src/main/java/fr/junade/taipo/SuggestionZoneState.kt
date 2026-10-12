@@ -9,16 +9,18 @@ package fr.junade.taipo
  * - Dès qu'il y a du texte : le bouton est caché et la zone montre les suggestions de mots. Il reste
  *   accessible par le bouton « menu » (à gauche de la barre, visible seulement quand il y a du
  *   texte), qui bascule la zone vers l'affichage « avant saisie ».
- * - Story 2.2 : tant qu'un collage est proposé, la puce prend la place de la bande de mots (et du
- *   bouton Smart Clipboard). Le bouton « menu » est alors visible même sur un champ vide : il
- *   donne accès au bouton Smart Clipboard à la place de la puce, et la puce revient en le retouchant.
+ * - Story 2.2 : tant qu'un collage est proposé et que le champ est vide, la puce prend la place du
+ *   bouton Smart Clipboard. Le bouton « menu » est alors visible : il donne accès au bouton Smart
+ *   Clipboard à la place de la puce, et la puce revient en le retouchant. Dès qu'il y a du texte, la
+ *   bande de mots reprend la place ; la puce reste proposée (10 minutes après la copie) et revient
+ *   chaque fois que le champ est de nouveau vide.
  * - Retour automatique aux suggestions de mots dès le début de la frappe (story 2.4, déjà gérée ici
  *   par [onTyping]) ; le menu ne reste jamais ouvert quand le bouton « menu » n'est pas visible.
  *
  * - Deux menus « ··· » : celui de gauche (ci-dessus) donne accès au bouton Smart Clipboard ; celui de
- *   droite n'existe que pendant les suggestions de mots et range derrière lui les boutons Vocal et
- *   Générer ([actionButtonsVisible], [toggleActionsMenu]) ; Corriger, lui, reste visible à côté du menu
- *   (voir [BarVisibility.actionButtons]). Un seul est ouvert à la fois ; la frappe
+ *   droite (menu « robot ») n'existe que pendant les suggestions de mots et range derrière lui les boutons
+ *   Transcription IA et Générer ([actionButtonsVisible], [toggleActionsMenu]) ; Corriger, lui, se cache tant qu'une
+ *   suggestion est affichée, et Vocal, à droite du menu, est toujours visible (voir [BarVisibility.actionButtons]). Un seul est ouvert à la fois ; la frappe
  *   referme les deux.
  *
  * - Suggestions d'auto-remplissage en ligne (gestionnaire de mots de passe, identifiants) : tant
@@ -57,7 +59,7 @@ class SuggestionZoneState {
         get() = when {
             menuExpanded -> Zone.CLIPBOARD
             inlineAvailable -> Zone.INLINE
-            pasteAvailable -> Zone.PASTE
+            !fieldHasText && pasteAvailable -> Zone.PASTE
             !fieldHasText -> Zone.CLIPBOARD
             actionsExpanded -> Zone.ACTIONS
             else -> Zone.WORDS
@@ -137,7 +139,7 @@ class SuggestionZoneState {
 
     private fun closeMenuIfUnavailable() {
         if (!menuButtonVisible) menuExpanded = false
-        // Le menu de droite n'existe que pendant les suggestions de mots (texte présent, pas de puce).
-        if (!fieldHasText || pasteAvailable) actionsExpanded = false
+        // Le menu de droite n'existe que pendant les suggestions de mots (texte présent).
+        if (!fieldHasText) actionsExpanded = false
     }
 }

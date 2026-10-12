@@ -13,6 +13,8 @@ internal const val RESTRICTED_ALPHA = 0.4f
 
 internal data class ActionButtonsVisibility(
     val voice: Boolean,
+    /** Transcription IA : visible avec les actions IA (rangée derrière le menu « robot » pendant les suggestions de mots). */
+    val aiTranscription: Boolean,
     val generate: Boolean,
     val correct: Boolean,
     val actionsMenu: Boolean,
@@ -54,27 +56,60 @@ internal object BarVisibility {
                 correction == CorrectionBarState.CANCELLING
 
     /**
-     * Vocal et « Générer » sont rangés derrière le menu de droite tant que la bande de mots est affichée,
-     * sauf pendant une écoute, une transcription ou une correction. Corriger, lui, reste visible (à gauche du
-     * menu « ··· ») pendant les suggestions de mots, dès que du texte permet de corriger. « Générer »
+     * Vocal est toujours visible, à droite du menu « robot ». Transcription IA et « Générer » sont rangés derrière ce
+     * menu tant que la bande de mots est affichée, sauf pendant une écoute, une transcription ou une correction. Corriger, lui, est visible (à gauche du
+     * menu « robot ») dès que du texte permet de corriger, sauf tant qu'une suggestion est affichée. « Générer »
      * disparaît quand [isBusy] (le moteur est partagé : pas de génération en parallèle).
+     *
+     * Corriger se cache tant qu'une suggestion est affichée dans la barre ([suggestionsDisplayed]) et réapparaît
+     * quand il n'y en a aucune. Il reste visible dès que son état n'est plus au repos (annuler, chargement,
+     * correction en cours) : le bouton sert alors d'annulation ou d'indicateur et ne doit pas disparaître.
+     * [wordSuggestionsShown] : la bande de mots affiche au moins un mot ou un emoji.
      */
     fun actionButtons(
         voice: VoiceBarState,
         correction: CorrectionBarState,
         zoneState: SuggestionZoneState,
         clipboardPanelOpen: Boolean,
+        wordSuggestionsShown: Boolean = false,
     ): ActionButtonsVisibility {
         val busy = isBusy(voice, correction)
         val actionsVisible = zoneState.actionButtonsVisible(busy)
+        val hiddenBySuggestion = correction == CorrectionBarState.IDLE &&
+            suggestionsDisplayed(zoneState, clipboardPanelOpen, wordSuggestionsShown)
         return ActionButtonsVisibility(
-            voice = actionsVisible,
+            voice = true,
+            aiTranscription = actionsVisible,
             generate = actionsVisible && !busy,
             correct = (actionsVisible || zoneState.zone == SuggestionZoneState.Zone.WORDS) &&
-                correction != CorrectionBarState.HIDDEN,
+                correction != CorrectionBarState.HIDDEN && !hiddenBySuggestion,
             actionsMenu = !clipboardPanelOpen && zoneState.actionsMenuButtonVisible(busy),
         )
     }
+
+    /**
+     * Une suggestion est affichée dans la zone de gauche : mots ou emoji de la bande (zone des mots, au moins un
+     * emplacement rempli, [wordSuggestionsShown]) ou suggestions d'auto-remplissage en ligne. Ni la puce de collage, ni le
+     * bouton Smart Clipboard, ni le menu robot ouvert (la bande est alors effacée), ni le panneau Smart Clipboard
+     * ouvert ne comptent.
+     */
+    fun suggestionsDisplayed(
+        zoneState: SuggestionZoneState,
+        clipboardPanelOpen: Boolean,
+        wordSuggestionsShown: Boolean,
+    ): Boolean = !clipboardPanelOpen && when (zoneState.zone) {
+        SuggestionZoneState.Zone.WORDS -> wordSuggestionsShown
+        SuggestionZoneState.Zone.INLINE -> true
+        else -> false
+    }
+
+    /**
+     * Menu « robot » ouvert (zone [SuggestionZoneState.Zone.ACTIONS]) : les actions IA s'affichent en pilules icône + texte.
+     * Dans toutes les autres zones (suggestions de mots, Smart Clipboard, puce de collage, auto-remplissage) ou panneau
+     * Smart Clipboard ouvert, elles restent des boutons ronds à icône seule. Vocal n'a jamais de texte.
+     */
+    fun labeledActions(zoneState: SuggestionZoneState, clipboardPanelOpen: Boolean): Boolean =
+        !clipboardPanelOpen && zoneState.zone == SuggestionZoneState.Zone.ACTIONS
 
     /**
      * Panneau Smart Clipboard ouvert : la zone ne montre que le bouton Smart Clipboard (actif), quel que

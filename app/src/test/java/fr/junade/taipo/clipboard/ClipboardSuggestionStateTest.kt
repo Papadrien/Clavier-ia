@@ -74,24 +74,19 @@ class ClipboardSuggestionStateTest {
     }
 
     @Test
-    fun `une frappe ecarte la puce pour cette copie`() {
-        copy("Bonjour")
-        state.onTyping()
-        assertNull(state.suggestion())
-    }
-
-    @Test
-    fun `relire la meme copie apres une frappe ne ressuscite pas la puce`() {
+    fun `la puce reste proposee apres des relectures pendant la saisie`() {
         copy("Bonjour", at = now)
-        state.onTyping()
-        copy("Bonjour", at = now)
-        assertNull(state.suggestion())
+        now += 60_000
+        copy("Bonjour", at = now - 60_000)
+        now += 60_000
+        copy("Bonjour", at = now - 120_000)
+        assertEquals("Bonjour", state.suggestion()?.text)
     }
 
     @Test
     fun `une nouvelle copie du meme texte fait revenir la puce`() {
         copy("Bonjour", at = now)
-        state.onTyping()
+        state.onPasted()
         now += 5_000
         copy("Bonjour", at = now)
         assertNotNull(state.suggestion())
@@ -104,13 +99,6 @@ class ClipboardSuggestionStateTest {
         now += 5_000
         copy("Au revoir", at = now)
         assertEquals("Au revoir", state.suggestion()?.text)
-    }
-
-    @Test
-    fun `une frappe sans copie ne bloque pas la copie suivante`() {
-        state.onTyping()
-        copy("Bonjour")
-        assertNotNull(state.suggestion())
     }
 
     @Test
@@ -148,17 +136,16 @@ class ClipboardSuggestionStateTest {
     @Test
     fun `aucun delai a planifier quand la puce n est pas proposee`() {
         copy("Bonjour")
-        state.onTyping()
+        state.onPasted()
         assertNull(state.expiresInMillis())
     }
 
     @Test
     fun `sans horodatage la copie se reconnait a son contenu et expire depuis la premiere lecture`() {
         copy("Bonjour", at = 0)
-        state.onTyping()
         now += 60_000
         copy("Bonjour", at = 0)
-        assertNull(state.suggestion())
+        assertNotNull(state.suggestion())
         now += tenMinutes
         assertNull(state.suggestion())
     }
@@ -166,7 +153,7 @@ class ClipboardSuggestionStateTest {
     @Test
     fun `sans horodatage un autre texte est une nouvelle copie`() {
         copy("Bonjour", at = 0)
-        state.onTyping()
+        state.onPasted()
         copy("Au revoir", at = 0)
         assertEquals("Au revoir", state.suggestion()?.text)
     }
@@ -195,9 +182,8 @@ class ClipboardSuggestionStateTest {
     // --- Story 2.5 : dernière copie du panneau, suppression ---
 
     @Test
-    fun `lastClip montre la copie meme ecartee par une frappe ou collee`() {
+    fun `lastClip montre la copie meme collee`() {
         copy("Bonjour")
-        state.onTyping()
         assertEquals("Bonjour", state.lastClip()?.text)
         state.onPasted()
         assertEquals("Bonjour", state.lastClip()?.text)
