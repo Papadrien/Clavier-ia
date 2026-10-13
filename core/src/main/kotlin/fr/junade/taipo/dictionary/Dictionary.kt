@@ -557,7 +557,7 @@ class Dictionary private constructor(
         if (hasElision && result.size < limit) {
             val elision = typed.substring(0, apostrophe + 1)
             val stem = typed.substring(apostrophe + 1)
-            if (elision.dropLast(1).lowercase() in ELISIONS && canFollowElision(stem)) {
+            if (elision.dropLast(1).lowercase() in APOSTROPHE_ELISIONS && canFollowElision(stem)) {
                 for (word in topCompletions(stem.lowercase(), limit + 1)) {
                     offer(elision + applyOriginalCasing(stem, word), elision.lowercase() + word)
                 }
@@ -604,7 +604,7 @@ class Dictionary private constructor(
         if (apostrophe <= 0 || apostrophe >= lower.length - 1) return null
         val head = lower.substring(0, apostrophe)
         val tail = lower.substring(apostrophe + 1)
-        if (head in ELISIONS) {
+        if (head in APOSTROPHE_ELISIONS) {
             // Le reste du mot est examiné seul : correct (listes, forme régulière, mot personnel) ou corrigé.
             val stem = word.substring(apostrophe + 1)
             val corrected = correctionFor(stem, maxDistance, personalWords) ?: return ApostropheResult(null)
@@ -764,6 +764,19 @@ class Dictionary private constructor(
         private val ELISIONS = setOf(
             "l", "d", "j", "t", "m", "s", "n", "c", "qu", "jusqu", "lorsqu", "puisqu", "quoiqu", "quelqu", "presqu",
         )
+
+        /**
+         * Élisions italiennes (« un'altra », « dell'acqua », « all'inizio », « quest'anno ») : le corpus italien les
+         * sépare (« dell' » + « acqua »), donc le mot collé n'est jamais dans la liste ; comme en français, seul le
+         * mot qui suit l'apostrophe est examiné. Non utilisées pour restituer une apostrophe oubliée
+         * ([ELISION_PREFIXES]) : « un » ou « all » en tête de mot y feraient trop de faux positifs en français.
+         */
+        private val ITALIAN_ELISIONS = setOf(
+            "un", "dell", "all", "nell", "dall", "sull", "quest", "quell", "com", "anch", "sant", "bell",
+        )
+
+        /** Élisions dont le mot collé à l'apostrophe est examiné seul : françaises et italiennes. */
+        private val APOSTROPHE_ELISIONS = ELISIONS + ITALIAN_ELISIONS
 
         /** Élisions classées de la plus longue à la plus courte (« lorsqu » avant « qu », « qu » avant « c »). */
         private val ELISION_PREFIXES = ELISIONS.sortedByDescending { it.length }

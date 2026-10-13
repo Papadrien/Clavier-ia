@@ -55,12 +55,15 @@ internal object BarReveal {
 
     /**
      * Anime l'apparition de [view], qui vient de passer visible. [fromEnd] : le bouton touché est à droite de la vue ;
-     * [order] : rang dans la cascade ; [full] : dévoilement complet, sinon simple fondu.
+     * [order] : rang dans la cascade ; [full] : dévoilement complet, sinon simple fondu. [restingAlpha] : opacité de
+     * repos de la vue, relue à chaque image et à la fin, pour une vue dont l'opacité change d'elle-même (bouton grisé
+     * dans un champ sensible) ; sans elle, l'opacité du départ est mémorisée puis rétablie, ce qui figerait une
+     * opacité devenue périmée pendant l'animation, puis la mémoriserait de nouveau à chaque apparition.
      */
-    fun enter(view: View, fromEnd: Boolean, order: Int = 0, full: Boolean = true) {
+    fun enter(view: View, fromEnd: Boolean, order: Int = 0, full: Boolean = true, restingAlpha: (() -> Float)? = null) {
         cancel(view)
         if (!ValueAnimator.areAnimatorsEnabled()) return
-        val baseAlpha = view.alpha
+        val baseAlpha = restingAlpha?.invoke() ?: view.alpha
         val slidePx = SLIDE_DP * view.resources.displayMetrics.density
         view.alpha = 0f
         val animator = ValueAnimator.ofFloat(0f, 1f).apply {
@@ -69,7 +72,7 @@ internal object BarReveal {
             interpolator = easing
             addUpdateListener { update ->
                 val progress = update.animatedValue as Float
-                view.alpha = baseAlpha * progress
+                view.alpha = (restingAlpha?.invoke() ?: baseAlpha) * progress
                 if (full) {
                     val width = view.width
                     if (width > 0) {
@@ -83,7 +86,7 @@ internal object BarReveal {
                 object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         running.remove(view)
-                        view.alpha = baseAlpha
+                        view.alpha = restingAlpha?.invoke() ?: baseAlpha
                         view.clipBounds = null
                         view.translationX = 0f
                     }

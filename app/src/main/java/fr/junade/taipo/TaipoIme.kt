@@ -16,7 +16,6 @@ import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
-import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InlineSuggestionsRequest
 import android.view.inputmethod.InlineSuggestionsResponse
 import android.view.inputmethod.InputMethodSubtype
@@ -448,6 +447,7 @@ class TaipoIme : InputMethodService() {
         )
         suggestions.invalidate()
         controller.setLanguage(currentKeyboardLanguage())
+        suggestions.preloadDictionaries() // la langue a pu changer dans les paramètres : charge son dictionnaire si besoin
         controller.reset()
         syncAutoCapitalization()
         correction.clearHighlightState()
@@ -469,24 +469,22 @@ class TaipoIme : InputMethodService() {
 
     override fun onCurrentInputMethodSubtypeChanged(newSubtype: InputMethodSubtype?) {
         super.onCurrentInputMethodSubtypeChanged(newSubtype)
-        controller.setLanguage(languageForSubtype(newSubtype))
+        controller.setLanguage(currentKeyboardLanguage())
         if (viewComposer.isComposed) {
             syncAutoCapitalization()
             applyState()
         }
     }
 
-    /** Langue active selon le subtype IME actuellement sélectionné par le système (décision 1.1). */
-    private fun currentKeyboardLanguage(): KeyboardLanguage {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
-        return languageForSubtype(imm?.currentInputMethodSubtype)
-    }
-
-    @Suppress("DEPRECATION") // InputMethodSubtype.locale reste la source fiable pour un subtype déclaré via imeSubtypeLocale (voir method.xml).
-    private fun languageForSubtype(subtype: InputMethodSubtype?): KeyboardLanguage {
-        val locale = subtype?.locale.orEmpty()
-        return if (locale.startsWith("en")) KeyboardLanguage.EN else KeyboardLanguage.FR
-    }
+    /**
+     * Langue active : celle choisie dans les paramètres du clavier ; en mode « automatique », la langue du système
+     * si le clavier la gère, sinon le français (voir [KeyboardPreferences.keyboardLanguage]).
+     */
+    private fun currentKeyboardLanguage(): KeyboardLanguage =
+        KeyboardLanguageChoice.resolve(
+            keyboardPreferences.keyboardLanguage,
+            resources.configuration.locales.get(0)?.toLanguageTag(),
+        )
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)

@@ -37,3 +37,15 @@ Gemma 4 ; WorkManager + service au premier plan, SHA-256 embarqué par modèle).
 ## Données et sécurité
 - Room + SQLCipher pour les données de l'utilisateur ; clé aléatoire protégée par l'Android Keystore ; la permission
   Internet ne sert qu'au téléchargement des modèles (voir `docs/securite.md` et `docs/telechargement-modeles.md`). Les modèles IA ne sont pas chiffrés.
+
+## Demande d'avis (13/10/2026)
+- **Google Play In-App Review** (`com.google.android.play:review`, version dans `gradle/libs.versions.toml`) : note en étoiles et
+  commentaire dans une fenêtre en bas de l'écran, sans quitter l'application (`fr.junade.taipo.review`).
+- Calendrier (`ReviewPromptPolicy`) : au **3e lancement**, puis tous les **20 lancements** : 3e, 23e, 43e et **63e**, soit 4 demandes
+  au plus. Après le 63e lancement, plus aucune demande **et plus aucun comptage** (le compteur reste figé à 63). Un lancement = une
+  nouvelle instance de `MainActivity` (état sauvegardé nul) ; le compteur est dans `SharedPreferences` (`review_prompt`).
+- Limite de l'API : Google ne dit jamais si la personne a laissé un avis ni si la fenêtre s'est affichée : le calendrier est donc
+  fixe (4 demandes au plus), sans dépendre de la réponse ; Google Play décide d'afficher ou non la fenêtre (quota). Rien ne
+  s'affiche hors installation Google Play (debug, APK installé à la main) : test prévu en release, correctifs ensuite si besoin.
+- Confidentialité : la fenêtre est affichée par Google Play, Taipo ne reçoit ni la note ni le commentaire (texte de la section 2
+  de l'écran Confidentialité mis à jour). Aucune permission ajoutée.

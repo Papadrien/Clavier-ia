@@ -5,8 +5,10 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.ContextThemeWrapper
+import android.view.View
 import android.widget.Button
 import android.widget.CompoundButton
+import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import fr.junade.taipo.dictionary.CorrectionHabitsProvider
@@ -27,9 +29,10 @@ class KeyboardSettingsActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_keyboard_settings)
+        val preferences = KeyboardPreferences(this)
+        setUpLanguageChoice(preferences)
         findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
-        val preferences = KeyboardPreferences(this)
 
         findViewById<CompoundButton>(R.id.switch_number_row).apply {
             isChecked = preferences.isNumberRowEnabled
@@ -68,6 +71,31 @@ class KeyboardSettingsActivity : Activity() {
             setOnCheckedChangeListener { _, checked -> preferences.isHabitLearningEnabled = checked }
         }
         findViewById<Button>(R.id.button_habit_clear).setOnClickListener { confirmClearHabits() }
+    }
+
+    /**
+     * Langue du clavier : « Automatique » puis une ligne par langue gérée ([KeyboardLanguage.entries], nom dans la langue
+     * elle-même). La liste suit l'énumération : une langue ajoutée au code apparaît ici sans autre modification.
+     */
+    private fun setUpLanguageChoice(preferences: KeyboardPreferences) {
+        val group = findViewById<RadioGroup>(R.id.radio_group_language)
+        val choices: List<Pair<KeyboardLanguage?, String>> =
+            listOf<Pair<KeyboardLanguage?, String>>(null to getString(R.string.keyboard_settings_language_auto)) +
+                KeyboardLanguage.entries.map { it to it.displayName }
+        val ids = choices.map { (language, label) ->
+            val button = RadioButton(this).apply {
+                id = View.generateViewId()
+                text = label
+                layoutParams = RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, RadioGroup.LayoutParams.WRAP_CONTENT)
+            }
+            group.addView(button)
+            language to button.id
+        }
+        group.check(ids.first { it.first == preferences.keyboardLanguage }.second)
+        group.setOnCheckedChangeListener { _, checkedId ->
+            val selected = ids.firstOrNull { it.second == checkedId } ?: return@setOnCheckedChangeListener
+            preferences.keyboardLanguage = selected.first
+        }
     }
 
     private fun confirmClearHabits() {

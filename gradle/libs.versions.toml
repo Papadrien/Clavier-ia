@@ -19,6 +19,9 @@ litertlm = "0.17.1"
 # Téléchargement des modèles (épopée 8) : WorkManager, travail au premier plan. À confirmer au premier build.
 work = "2.10.0"
 
+# Demande d'avis intégrée (bottom sheet Google Play In-App Review) : voir fr.junade.taipo.review.
+play-review = "2.0.2"
+
 [libraries]
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
@@ -29,6 +32,7 @@ androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstall
 androidx-benchmark-macro = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
 androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
+play-review = { module = "com.google.android.play:review", version.ref = "play-review" }
 litertlm-android = { module = "com.google.ai.edge.litertlm:litertlm-android", version.ref = "litertlm" }
 
 [plugins]

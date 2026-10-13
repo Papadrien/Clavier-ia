@@ -124,8 +124,14 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
 
     /** Story 10.1 : champ sensible, le bouton Smart Clipboard est grisé (il reste touchable pour afficher la raison). */
     fun setClipboardButtonRestricted(restricted: Boolean) {
-        clipboardButton.alpha = if (restricted) RESTRICTED_ALPHA else 1f
+        clipboardRestricted = restricted
+        clipboardButton.alpha = clipboardRestingAlpha()
     }
+
+    private var clipboardRestricted = false
+
+    /** Opacité de repos du bouton Smart Clipboard : l'animation d'apparition la relit au lieu de mémoriser celle du départ. */
+    private fun clipboardRestingAlpha(): Float = if (clipboardRestricted) RESTRICTED_ALPHA else 1f
 
     fun setOnClipboardClickListener(listener: CorrectionBarView.OnClipboardClickListener) {
         clipboardListener = listener
@@ -195,7 +201,7 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
      */
     fun render(visibility: ZoneContentVisibility, clipboardPanelOpen: Boolean, reveal: Boolean = false) {
         show(suggestionStrip, visibility.words, reveal)
-        show(clipboardButton, visibility.clipboardButton, reveal)
+        show(clipboardButton, visibility.clipboardButton, reveal, ::clipboardRestingAlpha)
         show(pasteChip, visibility.pasteChip, reveal)
         show(inlineScroll, visibility.inline, reveal)
         if (clipboardButtonActiveBackground != clipboardPanelOpen) {
@@ -204,11 +210,11 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
         }
     }
 
-    private fun show(view: View, visible: Boolean, reveal: Boolean) {
+    private fun show(view: View, visible: Boolean, reveal: Boolean, restingAlpha: (() -> Float)? = null) {
         val wasVisible = view.visibility == View.VISIBLE
         view.visibility = if (visible) View.VISIBLE else View.GONE
         if (visible && !wasVisible && isLaidOut) {
-            BarReveal.enter(view, fromEnd = false, full = reveal)
+            BarReveal.enter(view, fromEnd = false, full = reveal, restingAlpha = restingAlpha)
         } else if (!visible && wasVisible) {
             BarReveal.cancel(view)
         }

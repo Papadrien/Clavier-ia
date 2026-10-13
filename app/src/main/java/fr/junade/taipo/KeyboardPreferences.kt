@@ -38,6 +38,19 @@ class KeyboardPreferences(context: Context) {
         }
 
     /**
+     * Langue du clavier choisie dans les paramètres (disposition, accents, dictionnaire, autocorrection) ; null =
+     * automatique : langue du système si le clavier la gère, sinon français ([KeyboardLanguageChoice]).
+     * Relue à chaque ouverture d'un champ.
+     */
+    var keyboardLanguage: KeyboardLanguage?
+        get() = KeyboardLanguage.fromTag(prefs.getString(KEY_LANGUAGE, null))
+        set(value) {
+            prefs.edit().apply {
+                if (value == null) remove(KEY_LANGUAGE) else putString(KEY_LANGUAGE, value.tag)
+            }.apply()
+        }
+
+    /**
      * Emojis récemment utilisés (story 1.15), du plus récent au plus ancien. Stockés localement,
      * comme les autres réglages : juste la liste des derniers emojis choisis, rien n'est analysé.
      */
@@ -66,6 +79,7 @@ class KeyboardPreferences(context: Context) {
         const val DEFAULT_NUMBER_ROW = false
         private const val KEY_HAPTIC_INTENSITY = "haptic_intensity"
         private const val KEY_KEYBOARD_HEIGHT = "keyboard_height"
+        private const val KEY_LANGUAGE = "keyboard_language"
         private const val KEY_RECENT_EMOJIS = "recent_emojis"
         private const val KEY_HABIT_LEARNING = "habit_learning_enabled"
         const val DEFAULT_HABIT_LEARNING = true

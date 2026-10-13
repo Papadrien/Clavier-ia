@@ -16,6 +16,7 @@ import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.ModelStatus
 import fr.junade.taipo.model.VoiceModelFile
 import fr.junade.taipo.model.VoiceModelPreferences
+import fr.junade.taipo.review.InAppReview
 
 class MainActivity : Activity() {
 
@@ -89,6 +90,10 @@ class MainActivity : Activity() {
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_ai), true)
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_data), true)
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_about), true)
+
+        // Demande d'avis : un « lancement » est une nouvelle instance de l'écran d'accueil (pas une rotation ni une
+        // recréation après arrêt du processus, qui arrivent avec un état sauvegardé).
+        if (savedInstanceState == null) InAppReview.onAppLaunched(this)
     }
 
     // L'état des étapes vient d'Android (réglages système, sélecteur) : on le relit au retour sur l'écran et quand le

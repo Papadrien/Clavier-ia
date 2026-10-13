@@ -110,6 +110,55 @@ object Keyboards {
         'z' to "žźż",
     )
 
+    /** Accents des autres langues (mêmes principes : les plus courants d'abord). */
+    private val accentsEs: Map<Char, String> = mapOf(
+        'a' to "áàâäã",
+        'e' to "éèêë",
+        'i' to "íìîï",
+        'o' to "óòôöõ",
+        'u' to "úüùû",
+        'c' to "ç",
+    )
+
+    private val accentsDe: Map<Char, String> = mapOf(
+        'a' to "äàáâãå",
+        'e' to "éèêë",
+        'i' to "íìîï",
+        'o' to "öòóôõø",
+        'u' to "üùúû",
+        's' to "ß",
+        'c' to "çćč",
+        'n' to "ñ",
+    )
+
+    private val accentsIt: Map<Char, String> = mapOf(
+        'a' to "àáâä",
+        'e' to "èéêë",
+        'i' to "ìíîï",
+        'o' to "òóôö",
+        'u' to "ùúûü",
+        'c' to "ç",
+    )
+
+    private val accentsPt: Map<Char, String> = mapOf(
+        'a' to "áàâãä",
+        'c' to "ç",
+        'e' to "éêèë",
+        'i' to "íìîï",
+        'o' to "óôõòö",
+        'u' to "úüùû",
+    )
+
+    private val accentsNl: Map<Char, String> = mapOf(
+        'e' to "éëèê",
+        'a' to "äáàâ",
+        'i' to "ïíìî",
+        'o' to "öóòô",
+        'u' to "üúùû",
+        'c' to "ç",
+        'n' to "ñ",
+    )
+
     /** Nombre maximal de caractères par rangée de la bulle (au-delà, la bulle passe sur 2 rangées). */
     private const val POPUP_MAX_COLUMNS = 5
 
@@ -129,13 +178,27 @@ object Keyboards {
      * virgule, comme sur Gboard ; il prend 1 unité sur l'espace (4,8 → 3,8) pour que la rangée
      * reste à 10 unités.
      */
-    private val punctuationRow = listOf(
+    private fun punctuationRowWith(popup: List<List<Char>>) = listOf(
         Key("comma", ",", KeyAction.TypeChar(','), secondary = true),
         Key("emoji", "☺", KeyAction.Emoji, secondary = true),
         Key("space", "", KeyAction.Space, 3.8f),
-        Key("period", ".", KeyAction.TypeChar('.'), secondary = true, popup = periodPopup),
+        Key("period", ".", KeyAction.TypeChar('.'), secondary = true, popup = popup),
         Key("enter", "⏎", KeyAction.Enter, 1.8f),
     )
+
+    private val punctuationRow = punctuationRowWith(periodPopup)
+
+    /** Espagnol : « ¿ » et « ¡ » prennent la place de « · » et « _ » dans la bulle du point. */
+    private val periodPopupEs: List<List<Char>> = periodPopup.map { row ->
+        row.map { c ->
+            when (c) {
+                '·' -> '¿'
+                '_' -> '¡'
+                else -> c
+            }
+        }
+    }
+    private val punctuationRowEs = punctuationRowWith(periodPopupEs)
 
     /** Disposition AZERTY (français), sans les chiffres en appui long (voir [letters]). */
     private val lettersBase = KeyboardLayout(
@@ -155,6 +218,38 @@ object Keyboards {
             "qwertyuiop".map { letter(it, accentsEn) },
             "asdfghjkl".map { letter(it, accentsEn) },
             listOf(shiftKey()) + "zxcvbnm".map { letter(it, accentsEn) } + listOf(backspace),
+            listOf(toggleLetters) + punctuationRow,
+        ),
+    )
+
+    /** QWERTY des langues sans touche supplémentaire (italien, portugais, néerlandais), accents en appui long. */
+    private fun qwertyBase(accents: Map<Char, String>) = lettersEnBase.copy(
+        rows = listOf(
+            "qwertyuiop".map { letter(it, accents) },
+            "asdfghjkl".map { letter(it, accents) },
+            listOf(shiftKey()) + "zxcvbnm".map { letter(it, accents) } + listOf(backspace),
+            listOf(toggleLetters) + punctuationRow,
+        ),
+    )
+
+    /** QWERTY espagnol : touche Ñ à droite du L (la rangée du milieu a 10 touches, comme l'AZERTY), « ¿ » et « ¡ » sur le point. */
+    private val lettersEsBase = KeyboardLayout(
+        id = LayoutId.LETTERS,
+        rows = listOf(
+            "qwertyuiop".map { letter(it, accentsEs) },
+            "asdfghjklñ".map { letter(it, accentsEs) },
+            listOf(shiftKey()) + "zxcvbnm".map { letter(it, accentsEs) } + listOf(backspace),
+            listOf(toggleLetters) + punctuationRowEs,
+        ),
+    )
+
+    /** QWERTZ allemand : Z et Y échangés ; ä, ö, ü et ß en appui long. */
+    private val lettersDeBase = KeyboardLayout(
+        id = LayoutId.LETTERS,
+        rows = listOf(
+            "qwertzuiop".map { letter(it, accentsDe) },
+            "asdfghjkl".map { letter(it, accentsDe) },
+            listOf(shiftKey()) + "yxcvbnm".map { letter(it, accentsDe) } + listOf(backspace),
             listOf(toggleLetters) + punctuationRow,
         ),
     )
@@ -228,6 +323,27 @@ object Keyboards {
     private val lettersWithNumberRow = lettersBase.withNumberRow()
     private val lettersEnWithNumberRow = lettersEnBase.withNumberRow()
 
+    /** Dispositions des langues ajoutées après FR et EN : bases sans appui long, puis variantes avec appui long des chiffres ou avec rangée de chiffres. */
+    private class LetterSet(base: KeyboardLayout, withLongPressDigits: (KeyboardLayout) -> KeyboardLayout, withNumberRow: (KeyboardLayout) -> KeyboardLayout) {
+        val plain: KeyboardLayout = withLongPressDigits(base)
+        val numbered: KeyboardLayout = withNumberRow(base)
+    }
+
+    private val otherLetterSets: Map<KeyboardLanguage, LetterSet> = mapOf(
+        KeyboardLanguage.ES to lettersEsBase,
+        KeyboardLanguage.DE to lettersDeBase,
+        KeyboardLanguage.IT to qwertyBase(accentsIt),
+        KeyboardLanguage.PT to qwertyBase(accentsPt),
+        KeyboardLanguage.NL to qwertyBase(accentsNl),
+    ).mapValues { (_, base) -> LetterSet(base, { it.withTopRowLongPressDigits() }, { it.withNumberRow() }) }
+
+    /** Disposition des lettres de [language], avec ou sans rangée de chiffres. */
+    fun lettersOf(language: KeyboardLanguage, numberRow: Boolean = false): KeyboardLayout = when (language) {
+        KeyboardLanguage.FR -> if (numberRow) lettersWithNumberRow else letters
+        KeyboardLanguage.EN -> if (numberRow) lettersEnWithNumberRow else lettersEn
+        else -> otherLetterSets.getValue(language).let { if (numberRow) it.numbered else it.plain }
+    }
+
     private fun KeyboardLayout.withNumberRow() = copy(rows = listOf(numberRow) + rows)
 
     /**
@@ -276,10 +392,7 @@ object Keyboards {
     )
 
     private fun baseLayoutOf(id: LayoutId, language: KeyboardLanguage, numberRow: Boolean): KeyboardLayout = when (id) {
-        LayoutId.LETTERS -> when (language) {
-            KeyboardLanguage.EN -> if (numberRow) lettersEnWithNumberRow else lettersEn
-            KeyboardLanguage.FR -> if (numberRow) lettersWithNumberRow else letters
-        }
+        LayoutId.LETTERS -> lettersOf(language, numberRow)
         LayoutId.SYMBOLS, LayoutId.PAD -> symbols
         LayoutId.SYMBOLS_2 -> symbolsMore
     }

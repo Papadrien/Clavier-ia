@@ -391,19 +391,21 @@ class SuggestionController(
     }
 
     /**
-     * Charge FR et EN en arrière-plan dès la création du service (lot 1.4) : lecture et indexation
-     * (liste française complète, ~50 000 mots en anglais), jamais sur le thread principal.
+     * Charge le dictionnaire de la langue active en arrière-plan (lot 1.4) : lecture et indexation
+     * (liste française complète, ~50 000 mots pour les autres langues), jamais sur le thread principal.
+     * Appelé à la création du service puis à chaque ouverture de champ : sans effet si la langue est déjà
+     * chargée, et un changement de langue dans les paramètres charge la nouvelle langue ici.
      */
     fun preloadDictionaries() {
+        val language = host.language()
+        if (DictionaryLoader.peek(language) != null) return
         scope.launch(Dispatchers.IO) {
-            for (language in KeyboardLanguage.values()) {
-                try {
-                    DictionaryLoader.forLanguage(appContext, language)
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (t: Throwable) {
-                    AppLog.w(TAG, "préchargement du dictionnaire $language", t)
-                }
+            try {
+                DictionaryLoader.forLanguage(appContext, language)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (t: Throwable) {
+                AppLog.w(TAG, "préchargement du dictionnaire $language", t)
             }
             withContext(Dispatchers.Main) { onDictionariesLoaded() }
         }

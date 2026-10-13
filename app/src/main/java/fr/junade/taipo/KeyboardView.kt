@@ -239,8 +239,8 @@ class KeyboardView(context: Context) : View(context) {
     }
     private val previewRect = RectF()
 
-    // Taille de la bulle d'agrandissement (largeur, hauteur et texte) : 50 % de la taille d'origine.
-    private val PREVIEW_SCALE = 0.5f
+    // Taille de la bulle d'agrandissement (largeur, hauteur et texte) : 60 % de la taille d'origine (0,5 + 20 %).
+    private val PREVIEW_SCALE = 0.6f
 
     // Garde-fou : l'ombre ne dépasse jamais cette part de la hauteur de la touche (rangées basses en paysage).
     private val MAX_SHADOW_RATIO = 0.15f

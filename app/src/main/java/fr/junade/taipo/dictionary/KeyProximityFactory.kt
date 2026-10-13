@@ -7,19 +7,14 @@ import fr.junade.taipo.Keyboards
 
 /**
  * Construit la [KeyProximity] d'une langue à partir de la disposition réelle du clavier (AZERTY en
- * français, QWERTY en anglais) : la proximité suit donc toujours ce que l'utilisateur voit à l'écran
+ * français, QWERTZ en allemand, QWERTY sinon) : la proximité suit donc toujours ce que l'utilisateur voit à l'écran
  * (largeurs de touches comprises, apostrophe française entre N et Effacer).
  *
  * Uniquement la page des lettres, sans la rangée de chiffres : la proximité ne sert qu'aux lettres.
  */
 object KeyProximityFactory {
 
-    fun forLanguage(language: KeyboardLanguage): KeyProximity = fromLayout(
-        when (language) {
-            KeyboardLanguage.FR -> Keyboards.letters
-            KeyboardLanguage.EN -> Keyboards.lettersEn
-        },
-    )
+    fun forLanguage(language: KeyboardLanguage): KeyProximity = fromLayout(Keyboards.lettersOf(language))
 
     internal fun fromLayout(layout: KeyboardLayout): KeyProximity = KeyProximity.fromRows(
         layout.rows.map { row ->

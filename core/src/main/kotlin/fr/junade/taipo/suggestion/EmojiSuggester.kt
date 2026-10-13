@@ -27,6 +27,9 @@ class EmojiSuggester(
         val keywords = when (language) {
             KeyboardLanguage.FR -> french
             KeyboardLanguage.EN -> english
+            // Pas de liste de mots-clés pour les autres langues : aucun emoji proposé (les mots-clés français ou anglais
+            // déclencheraient de faux emojis sur des mots d'une autre langue).
+            else -> return null
         }
         val key = normalize(word)
         keywords[key]?.let { return it }

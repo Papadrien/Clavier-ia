@@ -52,3 +52,30 @@ seules (« commenté » / « commente »), traitées par Dictionary.
 Retirées à la main (tranche 100 à 1 000 occurrences, fautes évidentes) : quo, pouquoi, plis, troi, notres, votres,
 maitenant, bein, estce, pourait, touts, ajussi, vosu, ètait, içi, ést, qué, voss, ête, dûr.
 Pour relancer : voir l'en-tête de tools/PruneDictionaryTypos.kt. fr_50k.txt (secours) n'est pas modifié.
+
+
+=== Listes complètes des autres langues (en, es, de, it, pt, nl) — 12/10/2026 ===
+Le clavier gère aussi l'anglais, l'espagnol, l'allemand, l'italien, le portugais et le néerlandais (réglage « Langue du
+clavier »). Chaque langue a, comme le français : <code>.txt = liste COMPLÈTE, <code>_50k.txt = liste de secours d'environ
+50 000 mots (DictionaryLoader bascule dessus si la liste complète ne peut pas être chargée). Fichiers : en.txt, en_50k.txt,
+es.txt, es_50k.txt, de.txt, de_50k.txt, it.txt, it_50k.txt, pt.txt, pt_50k.txt, nl.txt, nl_50k.txt.
+Source : les listes <code>_full.txt de FrequencyWords (hermitdave/FrequencyWords, contenu 2018, OpenSubtitles2018,
+CC-BY-SA 4.0 : attribution à reprendre dans l'écran « Licences / crédits »), nettoyées par tools/fetch_dictionaries.py
+(python3 tools/fetch_dictionaries.py --from=DOSSIER_DES_FICHIERS_full) :
+- minuscules, forme NFC ; seuls les mots faits des lettres de l'alphabet de la langue (avec jusqu'à 3 apostrophes ou
+  traits d'union au milieu) sont gardés : débris d'encodage et caractères d'autres alphabets retirés ;
+- lettres isolées retirées sauf les vrais mots (en : a i ; es : a e o u y ; de : a i o ; it : a e i o u è ;
+  pt : a e o é à ; nl : e u) ; mots vus moins de 5 fois retirés (fautes de frappe, jamais utilisés par le chargeur).
+Tailles : en 341 538 mots, es 339 762, de 241 779, it 239 101, pt 240 057, nl 247 547.
+<code>_50k.txt : les 50 000 mots les plus fréquents de la liste complète nettoyée (es, de, it, pt, nl). en_50k.txt : l'ancienne
+liste anglaise de ~48 650 mots, conservée telle quelle en secours.
+Anglais : le corpus sépare les contractions (don + 't). Les 45 contractions écrites à la main de l'ancienne liste (it's,
+don't, can't...) sont reprises dans en.txt et leurs formes sans apostrophe qui ne sont pas des mots (dont, im, thats, ive...)
+sont retirées, comme pour le français.
+Italien : le corpus sépare aussi les élisions (l' + ho, dell' + acqua) : elles sont gérées par le code (Dictionary :
+seul le mot qui suit l'apostrophe est examiné), pas par la liste. Débris « e'o », « e'ato » (è mal saisi) retirés.
+Seuils appliqués au chargement (voir DictionaryLoader) : mots vus au moins 5 fois (déjà garanti par le fichier) et mots
+proposés en correction ou en complétion seulement au-dessus de la fréquence du 50 000e mot de chaque liste : en 149, es 183,
+de 61, it 102, pt 91, nl 77 (fr : 100).
+Non fait pour ces langues : le retrait des fautes de frappe du corpus (tools/PruneDictionaryTypos.kt, propre au clavier
+AZERTY français) ; des fautes rares restent donc des mots « valides » qui peuvent empêcher une autocorrection.

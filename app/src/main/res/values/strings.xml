@@ -103,6 +103,9 @@
     <string name="keyboard_settings_title">Paramètres du clavier</string>
     <string name="keyboard_settings_number_row">Rangée de chiffres</string>
     <string name="keyboard_settings_number_row_description">Affiche une rangée de chiffres (1 à 0) au-dessus des lettres. Désactivée, les chiffres restent accessibles via la touche « 123 ». S\'applique à la prochaine ouverture du clavier.</string>
+    <string name="keyboard_settings_language_title">Langue du clavier</string>
+    <string name="keyboard_settings_language_auto">Automatique (langue du téléphone)</string>
+    <string name="keyboard_settings_language_description">Choisit la disposition des touches, les accents de l\'appui long, le dictionnaire et l\'autocorrection. Automatique suit la langue du téléphone si le clavier la gère, sinon le français. S\'applique à la prochaine ouverture du clavier.</string>
     <string name="keyboard_settings_haptic_title">Retour haptique</string>
     <string name="keyboard_settings_haptic_off">Désactivé</string>
     <string name="keyboard_settings_haptic_light">Léger</string>
@@ -284,7 +287,7 @@
     <!-- Réglages de l'accueil (lot UX 3) -->
     <string name="home_section_keyboard">Clavier</string>
     <string name="home_section_ai">Intelligence artificielle</string>
-    <string name="home_row_keyboard_settings_subtitle">Rangée de chiffres, retour haptique, hauteur, apprentissage</string>
+    <string name="home_row_keyboard_settings_subtitle">Langue, rangée de chiffres, retour haptique, hauteur, apprentissage</string>
     <string name="home_row_personal_dictionary_subtitle">Ajouter ou supprimer des mots</string>
     <string name="home_row_model_settings_subtitle">Fournir soi-même un fichier de modèle</string>
     <string name="home_row_voice_model_subtitle">Télécharger le modèle de dictée</string>
@@ -412,11 +415,11 @@
     <string name="button_privacy">Confidentialité</string>
     <string name="home_row_privacy_subtitle">Ce qui reste sur votre appareil et ce qui se connecte</string>
     <string name="privacy_title">Confidentialité</string>
-    <string name="privacy_updated">Dernière mise à jour : 12 octobre 2026</string>
+    <string name="privacy_updated">Dernière mise à jour : 13 octobre 2026</string>
     <string name="privacy_section_1_title">1. Traitement sur votre appareil</string>
     <string name="privacy_section_1_body">La correction, la génération de texte, la saisie vocale et la transcription IA sont exécutées sur votre appareil par des modèles installés localement. Le texte que vous saisissez, copiez ou dictez et l\'audio de vos enregistrements ne sont envoyés à aucun serveur. L\'audio d\'une transcription IA reste en mémoire le temps du traitement : il n\'est jamais enregistré dans un fichier.</string>
     <string name="privacy_section_2_title">2. Connexions Internet</string>
-    <string name="privacy_section_2_body">Taipo se connecte à Internet uniquement pour télécharger les fichiers des modèles IA, à votre demande : depuis un serveur de Junadé pour les modèles Gemma 3 et les modèles de saisie vocale, et depuis Hugging Face pour les modèles Gemma 4. Ces serveurs reçoivent les informations techniques habituelles d\'une connexion (adresse IP, fichier demandé), jamais votre texte ni vos enregistrements.</string>
+    <string name="privacy_section_2_body">Taipo se connecte à Internet uniquement pour télécharger les fichiers des modèles IA, à votre demande : depuis un serveur de Junadé pour les modèles Gemma 3 et les modèles de saisie vocale, et depuis Hugging Face pour les modèles Gemma 4. Ces serveurs reçoivent les informations techniques habituelles d\'une connexion (adresse IP, fichier demandé), jamais votre texte ni vos enregistrements. De temps en temps, Taipo peut aussi vous proposer de laisser un avis : cette fenêtre est affichée par Google Play, qui reçoit votre note et votre commentaire ; Taipo ne les reçoit pas.</string>
     <string name="privacy_section_3_title">3. Aucune collecte de données personnelles</string>
     <string name="privacy_section_3_body">Taipo n\'a pas de compte, pas de publicité, et ne contient ni outil de mesure d\'audience ni télémétrie : il n\'y a rien à désactiver. Aucune donnée personnelle n\'est collectée.</string>
     <string name="privacy_section_4_title">4. Champs de mot de passe</string>

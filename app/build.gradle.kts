@@ -154,6 +154,9 @@ dependencies {
     // Épopée 8 : téléchargement des modèles IA en arrière-plan (WorkManager, service au premier plan dataSync).
     implementation(libs.androidx.work.runtime.ktx)
 
+    // Demande d'avis intégrée à l'application (note + commentaire en bottom sheet) : Google Play In-App Review.
+    implementation(libs.play.review)
+
     // Dictionnaire personnel (story 1.4) : Room chiffré par SQLCipher.
     // La clé de chiffrement est générée aléatoirement et protégée par
     // l'Android Keystore (voir DatabasePassphraseProvider). Room reste à la

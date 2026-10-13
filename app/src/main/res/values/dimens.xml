@@ -62,7 +62,7 @@
     <!-- ===== Bulle d'agrandissement (touche pressée) ===== -->
     <dimen name="taipo_preview_max_width">72dp</dimen>
     <dimen name="taipo_preview_gap">4dp</dimen>
-    <!-- Taille avant réduction par PREVIEW_SCALE (voir KeyboardView). -->
+    <!-- Taille avant réduction par PREVIEW_SCALE (0,6) (voir KeyboardView). -->
     <dimen name="taipo_preview_text_size">30sp</dimen>
 
     <!-- ===== Barres du haut (correction, prompt, suggestions) ===== -->
