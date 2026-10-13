@@ -181,7 +181,7 @@ class ClipboardItemsTest {
     }
 
     @Test
-    fun `une ligne d historique de plus d une heure n est pas montree`() {
+    fun `une ligne d historique de plus de douze heures n est pas montree`() {
         val items = build(history = listOf(entry(1, "juste avant", ageMillis = hour - 1), entry(2, "expiree", ageMillis = hour)))
         assertEquals(listOf("juste avant"), items.map { it.text })
     }

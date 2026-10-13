@@ -88,7 +88,7 @@ class ClipboardController(
     // asynchrone et doit être terminée avant la première ouverture du panneau.
     private val pinnedRepository by lazy { ClipboardProvider.repository(context.applicationContext) }
 
-    // Story 2.9 : historique des copies (1 h, chiffré), dans la même base que les éléments épinglés.
+    // Story 2.9 : historique des copies (12 h, chiffré), dans la même base que les éléments épinglés.
     private val historyRepository by lazy { ClipboardProvider.historyRepository(context.applicationContext) }
     private var panelJob: Job? = null
     private val pasteExpiryRunnable = Runnable { refreshPasteSuggestion() }
@@ -207,7 +207,7 @@ class ClipboardController(
 
     /**
      * Cartes du panneau : dernière copie (même écartée ou collée), copies récentes de l'historique
-     * (moins d'1 h), puis éléments épinglés.
+     * (moins de 12 h), puis éléments épinglés.
      */
     private fun refreshPanel() {
         if (!isPanelVisible) return
@@ -384,7 +384,7 @@ class ClipboardController(
     }
 
     /**
-     * Story 2.9 : une nouvelle copie entre dans l'historique chiffré (1 h). Une copie vide ou de
+     * Story 2.9 : une nouvelle copie entre dans l'historique chiffré (12 h). Une copie vide ou de
      * plus de 10 000 caractères reste en mémoire du clavier seulement ; une copie sensible est
      * enregistrée comme les autres, avec son drapeau (le panneau en masque l'aperçu). Le texte
      * copié n'est jamais journalisé.

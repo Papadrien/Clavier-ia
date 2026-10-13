@@ -153,8 +153,8 @@ class ClipHistoryRepositoryTest {
 
     @Test
     fun `une copie deja expiree n est pas enregistree`() = runBlocking {
-        assertFalse(repository.record("vieille", copiedAtMillis = now - HOUR, sensitive = false))
-        assertTrue(repository.record("juste valide", copiedAtMillis = now - HOUR + 1, sensitive = false))
+        assertFalse(repository.record("vieille", copiedAtMillis = now - RETENTION, sensitive = false))
+        assertTrue(repository.record("juste valide", copiedAtMillis = now - RETENTION + 1, sensitive = false))
         assertEquals(listOf("juste valide"), texts())
     }
 
@@ -215,18 +215,18 @@ class ClipHistoryRepositoryTest {
     }
 
     @Test
-    fun `chaque copie purge les lignes de plus d une heure`() = runBlocking {
+    fun `chaque copie purge les lignes de plus de douze heures`() = runBlocking {
         repository.record("ancienne", now - 10, false)
-        now += HOUR
+        now += RETENTION
         repository.record("nouvelle", now - 5, false)
         assertEquals(listOf("nouvelle"), texts())
     }
 
     @Test
-    fun `purgeExpired supprime les lignes de plus d une heure`() = runBlocking {
+    fun `purgeExpired supprime les lignes de plus de douze heures`() = runBlocking {
         repository.record("a", now - 20 * MINUTE, false)
         repository.record("b", now - 10, false)
-        now += HOUR - 15 * MINUTE
+        now += RETENTION - 15 * MINUTE
         repository.purgeExpired()
         assertEquals(listOf("b"), texts())
     }
@@ -234,7 +234,7 @@ class ClipHistoryRepositoryTest {
     @Test
     fun `la base ouverte purge les lignes expirees au demarrage`() = runBlocking {
         val seeded = FakeDao()
-        seeded.insert(ClipHistoryEntity(text = "expiree", copiedAt = now - 2 * HOUR))
+        seeded.insert(ClipHistoryEntity(text = "expiree", copiedAt = now - RETENTION - HOUR))
         seeded.insert(ClipHistoryEntity(text = "valide", copiedAt = now - 10 * MINUTE))
         val local = ClipHistoryRepository(scope, openDao = { seeded }, clock = { now })
         withTimeout(5_000) { local.history.first { it.isNotEmpty() } }
@@ -307,5 +307,8 @@ class ClipHistoryRepositoryTest {
     private companion object {
         const val MINUTE = 60 * 1000L
         const val HOUR = 60 * MINUTE
+
+        /** Rétention de l'historique (12 h) : les tests suivent la constante de production. */
+        const val RETENTION = ClipboardItems.HISTORY_RETENTION_MILLIS
     }
 }

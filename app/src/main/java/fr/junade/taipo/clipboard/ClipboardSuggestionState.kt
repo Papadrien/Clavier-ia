@@ -84,7 +84,7 @@ class ClipboardSuggestionState(
     /**
      * Story 2.5 : la dernière copie telle que le panneau Presse-papiers la montre, même si la puce
      * a été écartée, collée ou a expiré ; null si elle est vide, trop grosse, supprimée du panneau
-     * ou plus ancienne que la rétention du panneau (1 h après la copie, story 2.9).
+     * ou plus ancienne que la rétention du panneau (12 h après la copie, story 2.9).
      */
     fun lastClip(): Suggestion? {
         val current = clip ?: return null

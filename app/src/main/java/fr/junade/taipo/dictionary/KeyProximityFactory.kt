@@ -18,10 +18,14 @@ object KeyProximityFactory {
 
     internal fun fromLayout(layout: KeyboardLayout): KeyProximity = KeyProximity.fromRows(
         layout.rows.map { row ->
-            row.map { key ->
+            val boxes = row.map { key ->
                 val char = (key.action as? KeyAction.TypeChar)?.char?.takeIf { it.isLetter() || it == '\'' }
                 KeyProximity.KeyBox(char, key.weight)
             }
+            // Une rangée plus courte que la référence est centrée à l'écran (voir KeyboardLayout.rowStartUnits) :
+            // des marges sans touche reproduisent ce décalage.
+            val margin = layout.rowStartUnits(row)
+            if (margin > 0f) listOf(KeyProximity.KeyBox(null, margin)) + boxes + listOf(KeyProximity.KeyBox(null, margin)) else boxes
         },
     )
 }

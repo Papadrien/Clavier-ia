@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 /**
  * Ligne de l'historique du presse-papiers (story 2.9), stockée dans la base chiffrée.
  *
- * [copiedAt] : moment de la copie (ms), point de départ de la rétention d'1 h. [sensitive] : la
+ * [copiedAt] : moment de la copie (ms), point de départ de la rétention de 12 h. [sensitive] : la
  * copie avait été signalée « sensible » par l'application source. Elle est stockée comme les
  * autres (la base est chiffrée), mais le drapeau est conservé pour que le panneau continue d'en
  * masquer l'aperçu et d'en refuser l'épinglage.

@@ -105,7 +105,7 @@ l'hygiène (dérivation standard, séparation par usage, format versionné), pas
 
 - **Contenu du fichier** (JSON, `formatVersion` 1, `BackupCodec`) : dictionnaire personnel, éléments épinglés du Smart Clipboard avec
   leurs étiquettes, réglages du clavier (rangée de chiffres, retour haptique, hauteur, emojis récents, apprentissage des habitudes), modèle
-  IA choisi (identifiant) et prompts système personnalisés. **Exclus** : modèles IA, historique du presse-papiers (1 h, peut contenir des
+  IA choisi (identifiant) et prompts système personnalisés. **Exclus** : modèles IA, historique du presse-papiers (12 h, peut contenir des
   copies sensibles), données apprises (mot suivant, habitudes de correction : dérivées de la saisie), clés de chiffrement, acceptation des licences
   (le consentement se redonne sur le nouvel appareil), état des téléchargements.
 - **Non chiffré** (décision du 12/10/2026) : l'écran avertit avant le choix de l'emplacement. Le fichier est écrit via le sélecteur de fichiers du

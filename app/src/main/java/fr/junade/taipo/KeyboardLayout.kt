@@ -43,10 +43,34 @@ data class Key(
     val longPressChar: Char? = null,
 )
 
+/** Largeur d'une rangée, en unités de poids des touches. */
+internal fun rowUnits(row: List<Key>): Float = row.fold(0f) { acc, key -> acc + key.weight }
+
 data class KeyboardLayout(
     val id: LayoutId,
     val rows: List<List<Key>>,
-)
+) {
+    /**
+     * Largeur de référence de la disposition, en unités de poids : celle de la rangée la plus large (10 pour les
+     * lettres et les symboles, 4 pour les pavés). Toutes les rangées partagent la même unité : une touche pèse
+     * toujours la même largeur d'écran, quelle que soit sa rangée.
+     */
+    val referenceUnits: Float = rows.maxOfOrNull { rowUnits(it) } ?: 0f
+
+    /**
+     * Marge, en unités, à gauche (et à droite) d'une rangée plus courte que la référence : elle est centrée au lieu
+     * d'être étirée (rangée « asdfghjkl » du QWERTY et du QWERTZ, 9 touches au lieu de 10).
+     */
+    fun rowStartUnits(row: List<Key>): Float {
+        val gap = referenceUnits - rowUnits(row)
+        return if (gap < ROW_GAP_EPSILON) 0f else gap / 2f
+    }
+
+    private companion object {
+        /** Tolérance sur les sommes de poids flottants (1,4 + 6 + 1 + 1,6 peut donner 9,999999). */
+        const val ROW_GAP_EPSILON = 0.001f
+    }
+}
 
 object Keyboards {
 

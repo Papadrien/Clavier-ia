@@ -29,7 +29,7 @@ import fr.junade.taipo.useTaipoFont
  * la croix de la barre du haut.
  *
  * Il affiche les éléments en cartes (2 par rangée, aperçu sur 3 lignes, masqué si le contenu est
- * sensible) : les copies récentes (la dernière copie puis l'historique d'1 h, story 2.9), puis les
+ * sensible) : les copies récentes (la dernière copie puis l'historique de 12 h, story 2.9), puis les
  * éléments épinglés, marqués d'une épingle. Une copie récente a le même menu qu'une carte non
  * épinglée. Un appui sur une
  * carte la colle ; un appui long ouvre un petit menu dessiné par-dessus le panneau (et non une

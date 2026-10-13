@@ -344,11 +344,11 @@ class KeyboardView(context: Context) : View(context) {
         val rowHeight = usableHeightPx() / rows.size.toFloat()
         val content = keyboardWidth()
         val slots = ArrayList<KeySlot>()
+        val unit = content.widthPx / layout.referenceUnits
         rows.forEachIndexed { rowIndex, row ->
-            val totalWeight = row.fold(0f) { acc, key -> acc + key.weight }
-            var left = content.leftPx
+            var left = content.leftPx + layout.rowStartUnits(row) * unit
             row.forEach { key ->
-                val keyWidth = content.widthPx * key.weight / totalWeight
+                val keyWidth = unit * key.weight
                 slots += KeySlot(
                     key,
                     Rect(
@@ -389,13 +389,13 @@ class KeyboardView(context: Context) : View(context) {
         val rowHeight = usableHeight / layout.rows.size.toFloat()
         val content = keyboardWidth()
 
+        val unit = content.widthPx / layout.referenceUnits
         layout.rows.forEachIndexed { rowIndex, row ->
-            val totalWeight = row.fold(0f) { acc, key -> acc + key.weight }
             val top = rowIndex * rowHeight
-            var left = content.leftPx
+            var left = content.leftPx + layout.rowStartUnits(row) * unit
 
             row.forEach { key ->
-                val keyWidth = content.widthPx * key.weight / totalWeight
+                val keyWidth = unit * key.weight
                 drawKey(canvas, key, left, top, keyWidth, rowHeight, inset)
                 left += keyWidth
             }
@@ -757,11 +757,11 @@ class KeyboardView(context: Context) : View(context) {
     private fun keyBounds(target: Key): RectF? {
         val rowHeight = usableHeightPx() / layout.rows.size.toFloat()
         val content = keyboardWidth()
+        val unit = content.widthPx / layout.referenceUnits
         layout.rows.forEachIndexed { rowIndex, row ->
-            val totalWeight = row.fold(0f) { acc, key -> acc + key.weight }
-            var left = content.leftPx
+            var left = content.leftPx + layout.rowStartUnits(row) * unit
             row.forEach { key ->
-                val keyWidth = content.widthPx * key.weight / totalWeight
+                val keyWidth = unit * key.weight
                 if (key == target) {
                     // Lot 21 : RectF réutilisé (appelé à chaque dessin de la bulle d'agrandissement) ; les appelants ne le gardent pas.
                     boundsScratch.set(left, rowIndex * rowHeight, left + keyWidth, (rowIndex + 1) * rowHeight)
@@ -944,10 +944,11 @@ class KeyboardView(context: Context) : View(context) {
         val content = keyboardWidth()
         // Story 1.14 : en classe large, les marges de part et d'autre de la zone des touches sont inertes.
         if (content.leftPx > 0f && (x < content.leftPx || x >= content.rightPx)) return null
-        val totalWeight = row.fold(0f) { acc, key -> acc + key.weight }
-        var acc = content.leftPx
+        // Rangée plus courte que la référence (centrée) : un appui dans la marge revient à la touche la plus proche.
+        val unit = content.widthPx / layout.referenceUnits
+        var acc = content.leftPx + layout.rowStartUnits(row) * unit
         for (key in row) {
-            acc += content.widthPx * key.weight / totalWeight
+            acc += unit * key.weight
             if (x < acc) return key
         }
         return row.last()

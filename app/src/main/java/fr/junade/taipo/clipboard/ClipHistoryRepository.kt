@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
  *   des cartes ([ClipboardItems.build]).
  * - [record] / [updateText] / [replaceText] / [remove] / [purgeExpired] : écritures asynchrones.
  *
- * Rétention de [retentionMillis] (1 h) à partir de la copie, [maxEntries] lignes au plus. La
+ * Rétention de [retentionMillis] (12 h) à partir de la copie, [maxEntries] lignes au plus. La
  * purge physique des lignes expirées a lieu à l'ouverture de la base, à chaque [record] et à la
  * demande ([purgeExpired], à l'ouverture du panneau). L'horloge est injectable pour les tests.
  * Aucune dépendance Android : la base est fournie par [openDao].

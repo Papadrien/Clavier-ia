@@ -318,7 +318,7 @@ class ClipboardSuggestionStateTest {
     }
 
     @Test
-    fun `lastClip reste montree jusqu a une heure apres la copie puis disparait`() {
+    fun `lastClip reste montree jusqu a douze heures apres la copie puis disparait`() {
         copy("Bonjour", at = now)
         now += oneHour - 1
         assertEquals("Bonjour", state.lastClip()?.text)
@@ -327,7 +327,7 @@ class ClipboardSuggestionStateTest {
     }
 
     @Test
-    fun `l expiration d une heure se compte depuis la copie, pas depuis la lecture`() {
+    fun `l expiration de douze heures se compte depuis la copie, pas depuis la lecture`() {
         copy("Bonjour", at = now - oneHour + 1_000)
         assertEquals("Bonjour", state.lastClip()?.text)
         now += 1_000
@@ -335,7 +335,7 @@ class ClipboardSuggestionStateTest {
     }
 
     @Test
-    fun `la modification ne prolonge pas l expiration d une heure`() {
+    fun `la modification ne prolonge pas l expiration de douze heures`() {
         copy("Bonjour", at = now)
         now += oneHour - 1_000
         state.onEdited("Bonjour à tous")

@@ -6,10 +6,12 @@ import android.content.Context
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CompoundButton
-import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Spinner
 import android.widget.Toast
 import fr.junade.taipo.dictionary.CorrectionHabitsProvider
 
@@ -74,27 +76,26 @@ class KeyboardSettingsActivity : Activity() {
     }
 
     /**
-     * Langue du clavier : « Automatique » puis une ligne par langue gérée ([KeyboardLanguage.entries], nom dans la langue
-     * elle-même). La liste suit l'énumération : une langue ajoutée au code apparaît ici sans autre modification.
+     * Langue du clavier : liste déroulante « Automatique » puis une entrée par langue gérée ([KeyboardLanguage.entries],
+     * nom dans la langue elle-même). La liste suit l'énumération : une langue ajoutée au code apparaît ici sans autre
+     * modification.
      */
     private fun setUpLanguageChoice(preferences: KeyboardPreferences) {
-        val group = findViewById<RadioGroup>(R.id.radio_group_language)
+        val spinner = findViewById<Spinner>(R.id.spinner_language)
         val choices: List<Pair<KeyboardLanguage?, String>> =
             listOf<Pair<KeyboardLanguage?, String>>(null to getString(R.string.keyboard_settings_language_auto)) +
                 KeyboardLanguage.entries.map { it to it.displayName }
-        val ids = choices.map { (language, label) ->
-            val button = RadioButton(this).apply {
-                id = View.generateViewId()
-                text = label
-                layoutParams = RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, RadioGroup.LayoutParams.WRAP_CONTENT)
+        spinner.adapter = ArrayAdapter(this, R.layout.spinner_item, choices.map { it.second })
+            .also { it.setDropDownViewResource(R.layout.spinner_dropdown_item) }
+        spinner.setSelection(choices.indexOfFirst { it.first == preferences.keyboardLanguage }.coerceAtLeast(0))
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selected = choices[position].first
+                // Android notifie aussi la sélection initiale : on n'écrit que s'il y a un vrai changement.
+                if (selected != preferences.keyboardLanguage) preferences.keyboardLanguage = selected
             }
-            group.addView(button)
-            language to button.id
-        }
-        group.check(ids.first { it.first == preferences.keyboardLanguage }.second)
-        group.setOnCheckedChangeListener { _, checkedId ->
-            val selected = ids.firstOrNull { it.second == checkedId } ?: return@setOnCheckedChangeListener
-            preferences.keyboardLanguage = selected.first
+
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
         }
     }
 

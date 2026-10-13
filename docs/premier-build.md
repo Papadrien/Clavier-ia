@@ -34,7 +34,7 @@ La dictée est sortie de `TaipoIme` (2 922 → 2 659 lignes) sans changement de 
 
 Le Smart Clipboard est sorti de `TaipoIme` (2 659 → 2 358 lignes) sans changement de comportement :
 puce de collage et son expiration (2.2, 2.3), panneau, épinglage, modification, étiquettes, suppression,
-historique d'1 h (2.5 à 2.9). L'IME lui parle via `ClipboardController.Host`. La logique pure
+historique de 12 h (2.5 à 2.9). L'IME lui parle via `ClipboardController.Host`. La logique pure
 (`ClipboardItems`, `ClipboardSuggestionState`…) reste couverte par les tests existants, inchangés.
 Non compilé ni exécuté ici. Smoke test manuel : copier un texte → puce → collage ; ouverture du panneau,
 collage d'une carte ; épingler, modifier, étiqueter, supprimer ; champ mot de passe (pas de puce) ;

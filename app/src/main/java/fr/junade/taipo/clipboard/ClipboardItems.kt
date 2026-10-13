@@ -7,7 +7,7 @@ package fr.junade.taipo.clipboard
  * puis les lignes de l'historique, de la plus récente à la plus ancienne ; ensuite les éléments
  * épinglés, du plus récent au plus ancien. Un texte n'apparaît qu'une fois : un texte déjà épinglé
  * n'est montré que comme carte épinglée (l'épinglé prime), et la dernière copie n'est pas répétée
- * par sa ligne d'historique. Une ligne d'historique de plus d'1 h n'est pas montrée.
+ * par sa ligne d'historique. Une ligne d'historique de plus de 12 h n'est pas montrée.
  *
  * Story 2.10 : une copie ou une ligne d'historique est sensible si l'application source l'a signalée
  * ou si son texte ressemble à un numéro de carte ([SensitiveContentDetector]), calculé à chaque
@@ -33,8 +33,8 @@ object ClipboardItems {
     /** Story 2.9 : taille maximale d'une copie de l'historique (au-delà, elle reste en mémoire du clavier seulement). */
     const val MAX_HISTORY_CHARS = 10_000
 
-    /** Story 2.9 : une copie reste dans l'historique 1 h après avoir été copiée. */
-    const val HISTORY_RETENTION_MILLIS = 60 * 60 * 1000L
+    /** Story 2.9 : une copie reste dans l'historique 12 h après avoir été copiée. */
+    const val HISTORY_RETENTION_MILLIS = 12 * 60 * 60 * 1000L
 
     enum class PinResult { PINNED, ALREADY_PINNED, FULL, TOO_LONG, EMPTY, SENSITIVE }
 
@@ -63,7 +63,7 @@ object ClipboardItems {
     }
 
     /**
-     * Cartes du panneau : la dernière copie, les lignes d'[history] de moins d'1 h à [nowMillis]
+     * Cartes du panneau : la dernière copie, les lignes d'[history] de moins de 12 h à [nowMillis]
      * (de la plus récente à la plus ancienne), puis les éléments [pinned]. Voir la description de
      * l'objet pour les règles de dédoublonnage.
      */
