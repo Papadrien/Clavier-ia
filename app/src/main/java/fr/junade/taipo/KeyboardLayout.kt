@@ -86,10 +86,14 @@ object Keyboards {
     /**
      * Largeur des touches Maj/Effacer : elle est choisie pour que la largeur d'une lettre reste la
      * même sur toutes les rangées (10 unités par rangée). Sur l'AZERTY, la rangée du bas contient
-     * 7 lettres + apostrophe : Maj (1,4) + Effacer (1,6) + 7 lettres = 10.
+     * 6 lettres + apostrophe : Maj (1,4) + Effacer (1,6) + 7 touches = 10. Sur les QWERTY/QWERTZ, elle contient
+     * 7 lettres : Maj (1,5) + Effacer (1,5) + 7 lettres = 10.
      */
-    private fun shiftKey(weight: Float = 1.6f) = Key("shift", "⇧", KeyAction.Shift, weight)
+    private fun shiftKey(weight: Float = 1.5f) = Key("shift", "⇧", KeyAction.Shift, weight)
     private val backspace = Key("backspace", "⌫", KeyAction.Backspace, 1.6f)
+
+    /** Effacer des dispositions QWERTY/QWERTZ (rangée du bas : Maj 1,5 + 7 lettres + Effacer 1,5 = 10 unités). */
+    private val backspaceQwerty = backspace.copy(weight = 1.5f)
 
     /** Touche apostrophe, uniquement sur le clavier français (entre N et Effacer). */
     private val apostrophe = Key("apostrophe", "'", KeyAction.TypeChar('\''))
@@ -241,7 +245,7 @@ object Keyboards {
         rows = listOf(
             "qwertyuiop".map { letter(it, accentsEn) },
             "asdfghjkl".map { letter(it, accentsEn) },
-            listOf(shiftKey()) + "zxcvbnm".map { letter(it, accentsEn) } + listOf(backspace),
+            listOf(shiftKey()) + "zxcvbnm".map { letter(it, accentsEn) } + listOf(backspaceQwerty),
             listOf(toggleLetters) + punctuationRow,
         ),
     )
@@ -251,7 +255,7 @@ object Keyboards {
         rows = listOf(
             "qwertyuiop".map { letter(it, accents) },
             "asdfghjkl".map { letter(it, accents) },
-            listOf(shiftKey()) + "zxcvbnm".map { letter(it, accents) } + listOf(backspace),
+            listOf(shiftKey()) + "zxcvbnm".map { letter(it, accents) } + listOf(backspaceQwerty),
             listOf(toggleLetters) + punctuationRow,
         ),
     )
@@ -262,7 +266,7 @@ object Keyboards {
         rows = listOf(
             "qwertyuiop".map { letter(it, accentsEs) },
             "asdfghjklñ".map { letter(it, accentsEs) },
-            listOf(shiftKey()) + "zxcvbnm".map { letter(it, accentsEs) } + listOf(backspace),
+            listOf(shiftKey()) + "zxcvbnm".map { letter(it, accentsEs) } + listOf(backspaceQwerty),
             listOf(toggleLetters) + punctuationRowEs,
         ),
     )
@@ -273,7 +277,7 @@ object Keyboards {
         rows = listOf(
             "qwertzuiop".map { letter(it, accentsDe) },
             "asdfghjkl".map { letter(it, accentsDe) },
-            listOf(shiftKey()) + "yxcvbnm".map { letter(it, accentsDe) } + listOf(backspace),
+            listOf(shiftKey()) + "yxcvbnm".map { letter(it, accentsDe) } + listOf(backspaceQwerty),
             listOf(toggleLetters) + punctuationRow,
         ),
     )

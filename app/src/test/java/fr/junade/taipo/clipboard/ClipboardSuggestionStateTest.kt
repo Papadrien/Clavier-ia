@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test
 /** Stories 2.2 et 2.3 : quand la puce de collage est proposée (copie récente, non collée, non écartée). */
 class ClipboardSuggestionStateTest {
 
-    private var now = 10_000_000L
+    // Assez grand pour que « maintenant - rétention » reste positif (un horodatage <= 0 signifie « inconnu »).
+    private var now = 100L * ClipboardItems.HISTORY_RETENTION_MILLIS
     private val state = ClipboardSuggestionState(clock = { now })
 
     private val tenMinutes = ClipboardSuggestionState.EXPIRATION_MILLIS

@@ -313,9 +313,11 @@ class KeyboardLayoutTest {
     @Test
     fun `la touche maj francaise est plus etroite et les lettres gardent la meme largeur`() {
         val frRow = Keyboards.letters.rows[2]
-        assertTrue(frRow.first { it.id == "shift" }.weight < 1.6f)
+        val enRow = Keyboards.lettersEn.rows[2]
+        assertTrue(frRow.first { it.id == "shift" }.weight < enRow.first { it.id == "shift" }.weight)
         assertEquals(10f, frRow.sumOf { it.weight.toDouble() }.toFloat(), 0.001f)
-        assertEquals(1.6f, Keyboards.lettersEn.rows[2].first { it.id == "shift" }.weight)
+        assertEquals(1.5f, enRow.first { it.id == "shift" }.weight)
+        assertEquals(10f, enRow.sumOf { it.weight.toDouble() }.toFloat(), 0.001f)
     }
 
     @Test
