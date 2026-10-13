@@ -45,6 +45,9 @@ class ClipboardController(
         /** Oublie l'autocorrection en attente (le texte collé la rend caduque). */
         fun clearPendingAutocorrection()
 
+        /** Un collage vient d'avoir lieu : [inserted] a pris la place de [original] (la sélection, vide sinon) ; bouton Annuler. */
+        fun recordUndoEdit(inserted: String, original: String)
+
         /** La barre du haut est créée (sinon la puce n'est pas mise à jour). */
         fun barReady(): Boolean
 
@@ -230,7 +233,9 @@ class ClipboardController(
         host.haptic()
         host.clearHighlight()
         host.clearPendingAutocorrection()
+        val replaced = ic.getSelectedText(0)?.toString().orEmpty()
         ic.commitText(item.text, 1)
+        host.recordUndoEdit(inserted = item.text, original = replaced)
         if (item.isLastClip) state.onPasted()
         host.collapseMenu()
         hidePanel() // resynchronise majuscule, suggestions et barre
@@ -436,7 +441,9 @@ class ClipboardController(
         host.haptic()
         host.clearHighlight()
         host.clearPendingAutocorrection()
+        val replaced = ic.getSelectedText(0)?.toString().orEmpty()
         ic.commitText(suggestion.text, 1)
+        host.recordUndoEdit(inserted = suggestion.text, original = replaced)
         state.onPasted()
         host.collapseMenu()
         host.resyncKeyboard()

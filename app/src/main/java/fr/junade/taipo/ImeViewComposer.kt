@@ -47,11 +47,8 @@ class ImeViewComposer(
         /** Nouvelle touche sur Corriger pendant le chargement ou la correction : l'annuler. */
         fun onCancelCorrectionClicked()
 
-        /** Bouton Annuler (le bouton Corriger juste après une correction IA). */
+        /** Bouton Annuler (à droite du bouton Smart Clipboard) : défait la dernière action. */
         fun onUndoClicked()
-
-        /** Action de la barre du haut (Vocal, Générer, suggestion, presse-papiers, collage…) : l'annulation n'est plus proposée. */
-        fun onTopBarAction()
 
         fun onVoiceTouch(event: MotionEvent): Boolean
 
@@ -132,7 +129,6 @@ class ImeViewComposer(
         correctionBar.setOnCancelListener { host.onCancelCorrectionClicked() }
         correctionBar.setOnGenerateClickListener {
             if (blockedBySensitiveField()) return@setOnGenerateClickListener
-            host.onTopBarAction()
             prompt.enter()
         }
         val voiceTouchListener = View.OnTouchListener { view, event ->
@@ -145,7 +141,6 @@ class ImeViewComposer(
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
                     view.isPressed = true
-                    host.onTopBarAction()
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> view.isPressed = false
             }
@@ -155,41 +150,33 @@ class ImeViewComposer(
         correctionBar.voiceButton.setOnTouchListener(voiceTouchListener)
         correctionBar.voiceButton.setOnClickListener {
             if (blockedBySensitiveField()) return@setOnClickListener
-            host.onTopBarAction()
             host.onVoiceClick()
         }
         correctionBar.aiTranscriptionButton.setOnClickListener {
             if (blockedBySensitiveField()) return@setOnClickListener
-            host.onTopBarAction()
             host.onAiTranscriptionClick()
         }
         // Le bouton micro de la barre du prompt déclenche la même dictée (appui bref : marche/arrêt, appui long : tant que maintenu).
         prompt.promptBar.voiceButton.setOnTouchListener(voiceTouchListener)
         prompt.promptBar.voiceButton.setOnClickListener { host.onVoiceClick() }
         correctionBar.setOnEmojiSuggestionClickListener {
-            host.onTopBarAction()
             host.onEmojiSuggestionClicked()
         }
         // Le même bouton ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme.
         correctionBar.setOnClipboardClickListener {
             if (blockedBySensitiveField()) return@setOnClipboardClickListener
-            host.onTopBarAction()
             clipboard.onPanelButtonClicked()
         }
         correctionBar.setOnClipboardCloseClickListener {
-            host.onTopBarAction()
             clipboard.hidePanel()
         }
         correctionBar.setOnSettingsClickListener {
-            host.onTopBarAction()
             host.openAppHome()
         }
         correctionBar.setOnPasteClickListener {
-            host.onTopBarAction()
             clipboard.onPasteTapped()
         }
         correctionBar.setOnWordSuggestionClickListener { suggestion ->
-            host.onTopBarAction()
             host.onWordSuggestionClicked(suggestion)
         }
 

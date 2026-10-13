@@ -63,6 +63,9 @@ class VoiceController(
 
         fun setVoiceBarState(state: VoiceBarState)
 
+        /** La dictée vient d'écrire [inserted] dans le champ de l'application (bouton Annuler). */
+        fun recordUndoEdit(inserted: String, original: String)
+
         fun inputConnection(): InputConnection?
 
         fun hasSelection(): Boolean
@@ -333,6 +336,8 @@ class VoiceController(
             // Une sélection restante obligerait à insérer par-dessus : on la replie d'abord (champ de l'application seulement).
             if (finalText != null && !recordingInPrompt) host.collapseSelectionBeforeInsert()
             textSync.finish(field, finalText)
+            // Le texte dicté (dernière hypothèse, devenue définitive) est une action annulable du champ de l'application.
+            if (finalText != null && !recordingInPrompt) host.recordUndoEdit(inserted = textSync.insertedText, original = "")
         }
         textSync.reset()
     }

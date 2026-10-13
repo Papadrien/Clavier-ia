@@ -23,6 +23,8 @@ internal data class ActionButtonsVisibility(
 internal data class ZoneContentVisibility(
     val words: Boolean,
     val clipboardButton: Boolean,
+    /** Bouton Annuler : juste à droite du bouton Smart Clipboard, visible avec lui. */
+    val undoButton: Boolean,
     val pasteChip: Boolean,
     val inline: Boolean,
     val menuButton: Boolean,
@@ -62,8 +64,8 @@ internal object BarVisibility {
      * disparaît quand [isBusy] (le moteur est partagé : pas de génération en parallèle).
      *
      * Corriger se cache tant qu'une suggestion est affichée dans la barre ([suggestionsDisplayed]) et réapparaît
-     * quand il n'y en a aucune. Il reste visible dès que son état n'est plus au repos (annuler, chargement,
-     * correction en cours) : le bouton sert alors d'annulation ou d'indicateur et ne doit pas disparaître.
+     * quand il n'y en a aucune. Il reste visible dès que son état n'est plus au repos (chargement, correction en
+     * cours) : le bouton sert alors d'annulation ou d'indicateur et ne doit pas disparaître.
      * [wordSuggestionsShown] : la bande de mots affiche au moins un mot ou un emoji.
      */
     fun actionButtons(
@@ -120,6 +122,7 @@ internal object BarVisibility {
         return ZoneContentVisibility(
             words = zone == SuggestionZoneState.Zone.WORDS,
             clipboardButton = zone == SuggestionZoneState.Zone.CLIPBOARD,
+            undoButton = zone == SuggestionZoneState.Zone.CLIPBOARD,
             pasteChip = zone == SuggestionZoneState.Zone.PASTE,
             inline = zone == SuggestionZoneState.Zone.INLINE,
             menuButton = zoneState.menuButtonVisible && !clipboardPanelOpen,
@@ -134,7 +137,6 @@ internal object BarVisibility {
         CorrectionBarState.LOADING -> CorrectAppearance(R.string.correction_button_loading, enabled = true, alpha = 1f, loading = true)
         CorrectionBarState.CORRECTING -> CorrectAppearance(R.string.correction_button_correcting, enabled = false, alpha = 0.6f, loading = true)
         CorrectionBarState.CANCELLING -> CorrectAppearance(R.string.correction_button_cancelling, enabled = false, alpha = 0.6f, loading = true)
-        CorrectionBarState.UNDO -> CorrectAppearance(R.string.correction_button_undo, enabled = true, alpha = 1f)
     }
 
     fun voiceAppearance(state: VoiceBarState): VoiceAppearance = when (state) {

@@ -71,6 +71,8 @@ class TaipoIme : InputMethodService() {
                 override fun inputConnection() = currentInputConnection
                 override fun haptic() = hapticFeedback.perform(hapticIntensity)
                 override fun clearHighlight() = clearHighlightIfNeeded()
+                override fun recordUndoEdit(inserted: String, original: String) =
+                    this@TaipoIme.recordUndoEdit(inserted, original)
                 override fun clearPendingAutocorrection() {
                     pendingAutocorrection = null
                 }
@@ -248,6 +250,28 @@ class TaipoIme : InputMethodService() {
                 override fun clearPendingAutocorrection() {
                     pendingAutocorrection = null
                 }
+                override fun recordUndo(undo: UndoHistory.Undo) = this@TaipoIme.recordUndoAction(undo)
+            },
+        )
+    }
+
+    // Bouton Annuler (à droite du bouton Smart Clipboard) : historique des 10 dernières actions, voir UndoController.
+    private val undoController: UndoController by lazy {
+        UndoController(
+            this,
+            object : UndoController.Host {
+                override fun inputConnection() = currentInputConnection
+                override fun showMessage(message: String) = this@TaipoIme.showMessage(message)
+                override fun beforeUndo() = clearHighlightIfNeeded()
+                override fun afterUndo() {
+                    pendingAutocorrection = null
+                    syncAutoCapitalization()
+                    applyState()
+                    updateCorrectionBarVisibility()
+                }
+                override fun onUndoAvailabilityChanged(canUndo: Boolean) {
+                    if (viewComposer.isComposed) correctionBar.setUndoAvailable(canUndo)
+                }
             },
         )
     }
@@ -279,6 +303,8 @@ class TaipoIme : InputMethodService() {
                         currentInputConnection?.setSelection(lastSelectionEnd, lastSelectionEnd)
                     }
                 }
+                override fun recordUndoEdit(inserted: String, original: String) =
+                    this@TaipoIme.recordUndoEdit(inserted, original)
             },
         )
     }
@@ -318,8 +344,11 @@ class TaipoIme : InputMethodService() {
                 override fun onRecentEmojiClicked(emoji: String) = onRecentEmojiBarTapped(emoji)
                 override fun onCorrectClicked() = correction.onCorrectClicked()
                 override fun onCancelCorrectionClicked() = correction.onCancelClicked()
-                override fun onUndoClicked() = correction.onUndoClicked()
-                override fun onTopBarAction() = correction.dropUndo()
+                override fun onUndoClicked() {
+                    // Correction ou dictée en cours : le texte bouge encore, l'annulation attend.
+                    if (correctionInProgress || isRecording) return
+                    undoController.onUndoClicked()
+                }
                 override fun onVoiceTouch(event: MotionEvent): Boolean = voice.onButtonTouch(event)
                 override fun onVoiceClick() = voice.onAccessibilityClick()
 
@@ -407,7 +436,7 @@ class TaipoIme : InputMethodService() {
         super.onStartInputView(info, restarting)
         // Lot 3.6 : section de trace pour mesurer l'ouverture du clavier (le `return` reste local à la fonction).
         // Même champ relancé par l'application (restarting) : l'annulation reste possible, le texte est retrouvé par son contenu.
-        if (!restarting) correction.dropUndo(notify = false)
+        if (!restarting) undoController.clear(notify = false)
         traced(Sections.START_INPUT_VIEW) { startInputView(info) }
     }
 
@@ -504,7 +533,7 @@ class TaipoIme : InputMethodService() {
         if (viewComposer.isComposed) hideEmojiPanel(resync = false)
         clipboard.hidePanel(resync = false)
         correction.clearHighlightState()
-        if (finishingInput) correction.dropUndo(notify = false)
+        if (finishingInput) undoController.clear(notify = false)
         clipboard.stopListening()
         if (isRecording) {
             voice.cancelRecording()
@@ -769,6 +798,7 @@ class TaipoIme : InputMethodService() {
         if (autocorrection != null && boundary != null) {
             pendingAutocorrection = AppliedAutocorrection(autocorrection.original, autocorrection.corrected, boundary)
             suggestions.habitAutocorrectionApplied(autocorrection.textBefore, autocorrection.original, autocorrection.corrected)
+            recordUndoEdit(inserted = autocorrection.corrected + boundary, original = autocorrection.original + boundary)
         }
         if (result.isEnter) {
             pressEnter()
@@ -870,7 +900,9 @@ class TaipoIme : InputMethodService() {
         clearHighlightIfNeeded()
         pendingAutocorrection = null
         // commitText remplace une éventuelle sélection, comme n'importe quelle saisie.
+        val replacedByEmoji = currentInputConnection?.getSelectedText(0)?.toString().orEmpty()
         currentInputConnection?.commitText(emoji, 1)
+        recordUndoEdit(inserted = emoji, original = replacedByEmoji)
         keyboardPreferences.recentEmojis = RecentEmojis.add(keyboardPreferences.recentEmojis, emoji)
         learnFromTyping()
         updateCorrectionBarVisibility()
@@ -1104,6 +1136,8 @@ class TaipoIme : InputMethodService() {
         }
         correction.markSelfEdit()
         ic.commitText(toInsert, 1)
+        // Position inconnue : le texte sélectionné a été remis devant l'ajout (il remplaçait la sélection).
+        recordUndoEdit(inserted = toInsert, original = if (toInsert != text) selected else "")
         return true
     }
 
@@ -1118,18 +1152,25 @@ class TaipoIme : InputMethodService() {
         clearHighlightIfNeeded()
         pendingAutocorrection = null
         correction.markSelfEdit()
+        var replaced = ""
         ic.beginBatchEdit()
         try {
             val selected = ic.getSelectedText(0)
             if (selected.isNullOrEmpty()) {
-                val before = ic.getTextBeforeCursor(REPLACE_MAX_CHARS, 0)?.length ?: 0
-                val after = ic.getTextAfterCursor(REPLACE_MAX_CHARS, 0)?.length ?: 0
-                if (before + after > 0) ic.deleteSurroundingText(before, after)
+                val before = ic.getTextBeforeCursor(REPLACE_MAX_CHARS, 0)?.toString().orEmpty()
+                val after = ic.getTextAfterCursor(REPLACE_MAX_CHARS, 0)?.toString().orEmpty()
+                if (before.length + after.length > 0) {
+                    ic.deleteSurroundingText(before.length, after.length)
+                    replaced = before + after
+                }
+            } else {
+                replaced = selected.toString()
             }
             ic.commitText(text, 1) // avec une sélection, commitText la remplace
         } finally {
             ic.endBatchEdit()
         }
+        recordUndoEdit(inserted = text, original = replaced)
         return true
     }
 
@@ -1401,9 +1442,11 @@ class TaipoIme : InputMethodService() {
         if (suggestion.kind != WordSuggestion.Kind.TYPED || wordAfter.isNotEmpty() || suggestion.text != typed) {
             ic.deleteSurroundingText(typedBefore.length, wordAfter.length + if (spaceAfter) 1 else 0)
             ic.commitText("${suggestion.text} ", 1)
+            recordUndoEdit(inserted = "${suggestion.text} ", original = typedBefore + wordAfter + if (spaceAfter) " " else "")
         } else {
             if (spaceAfter) ic.deleteSurroundingText(0, 1)
             ic.commitText(" ", 1)
+            recordUndoEdit(inserted = " ", original = if (spaceAfter) " " else "")
         }
         ic.endBatchEdit()
 
@@ -1432,8 +1475,10 @@ class TaipoIme : InputMethodService() {
         pendingAutocorrection = null
         ic.beginBatchEdit()
         ic.deleteSurroundingText(typed.length, 0)
-        ic.commitText(if (fieldType == FieldType.EMAIL) email else "$email ", 1)
+        val insertedEmail = if (fieldType == FieldType.EMAIL) email else "$email "
+        ic.commitText(insertedEmail, 1)
         ic.endBatchEdit()
+        recordUndoEdit(inserted = insertedEmail, original = typed)
         learnFromTyping() // l'adresse choisie compte comme une adresse tapée
         syncAutoCapitalization()
         applyState()
@@ -1447,6 +1492,7 @@ class TaipoIme : InputMethodService() {
         clearHighlightIfNeeded()
         pendingAutocorrection = null
         ic.commitText("$word ", 1)
+        recordUndoEdit(inserted = "$word ", original = "")
         learnFromTyping()
         syncAutoCapitalization()
         applyState()
@@ -1481,7 +1527,9 @@ class TaipoIme : InputMethodService() {
         pendingAutocorrection = null
         val lastChar = ic.getTextBeforeCursor(1, 0)?.lastOrNull()
         val needsSpace = lastChar != null && lastChar.isLetterOrDigit()
-        ic.commitText(if (needsSpace) " $emoji" else emoji, 1)
+        val insertedEmoji = if (needsSpace) " $emoji" else emoji
+        ic.commitText(insertedEmoji, 1)
+        recordUndoEdit(inserted = insertedEmoji, original = "")
         keyboardPreferences.recentEmojis = RecentEmojis.add(keyboardPreferences.recentEmojis, emoji)
         learnFromTyping()
         syncAutoCapitalization()
@@ -1586,10 +1634,24 @@ class TaipoIme : InputMethodService() {
     /** Appelée avant toute action de l'utilisateur (touche, Corriger, Vocal) : le surlignage disparaît. */
     private fun clearHighlightIfNeeded() = correction.clearHighlightIfNeeded()
 
+    /**
+     * Enregistre dans l'historique du bouton Annuler une insertion faite par le clavier : [inserted] a pris la place de
+     * [original] (vide pour une insertion pure). Rien n'est gardé dans un champ sensible (mot de passe).
+     */
+    private fun recordUndoEdit(inserted: String, original: String) {
+        if (!sensitiveField) undoController.recordEdit(inserted, original)
+    }
+
+    /** Idem pour une action dont le geste d'annulation est spécifique (correction IA). */
+    private fun recordUndoAction(undo: UndoHistory.Undo) {
+        if (!sensitiveField) undoController.record(undo)
+    }
+
 
     /** Décision 3.3 : le bouton Corriger n'est visible que si le champ contient du texte. */
     private fun updateCorrectionBarVisibility() {
         clipboard.refreshPasteSuggestion() // story 2.2 : la puce suit l'état courant (dictée, correction, frappe, expiration…)
+        correctionBar.setUndoAvailable(undoController.canUndo) // bouton Annuler : actif tant qu'une action est annulable
         if (correctionInProgress) return
         val ic = currentInputConnection
         val hasText = ic != null &&
@@ -1601,7 +1663,6 @@ class TaipoIme : InputMethodService() {
         correctionBar.setFieldHasText(hasText)
         correctionBar.state = when {
             !hasText -> CorrectionBarState.HIDDEN
-            correction.canUndo -> CorrectionBarState.UNDO // juste après une correction : le bouton annule
             else -> CorrectionBarState.IDLE
         }
     }

@@ -15,7 +15,6 @@ class BarVisibilityTest {
     fun `occupe pendant une ecoute une transcription ou une correction, pas au repos`() {
         assertFalse(BarVisibility.isBusy(VoiceBarState.IDLE, CorrectionBarState.IDLE))
         assertFalse(BarVisibility.isBusy(VoiceBarState.IDLE, CorrectionBarState.HIDDEN))
-        assertFalse(BarVisibility.isBusy(VoiceBarState.IDLE, CorrectionBarState.UNDO))
         assertTrue(BarVisibility.isBusy(VoiceBarState.RECORDING, CorrectionBarState.IDLE))
         assertTrue(BarVisibility.isBusy(VoiceBarState.LOADING, CorrectionBarState.IDLE))
         assertTrue(BarVisibility.isBusy(VoiceBarState.IDLE, CorrectionBarState.LOADING))
@@ -24,11 +23,17 @@ class BarVisibilityTest {
     }
 
     @Test
-    fun `apres une correction le bouton Annuler prend la place de Corriger et reste visible`() {
-        val visible = BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.UNDO, zoneWithText(), false)
-        assertTrue(visible.correct)
-        assertFalse(visible.generate)
-        assertTrue(visible.voice)
+    fun `le bouton Annuler suit le bouton Smart Clipboard`() {
+        // Champ vide : le bouton Smart Clipboard est affiché, Annuler juste à sa droite.
+        assertTrue(BarVisibility.zoneContent(SuggestionZoneState(), false).undoButton)
+        // Panneau Smart Clipboard ouvert : le bouton reste affiché (actif), Annuler aussi.
+        assertTrue(BarVisibility.zoneContent(zoneWithText(), true).undoButton)
+        // Menu « ··· » de gauche ouvert pendant la saisie : le bouton Smart Clipboard est affiché, donc Annuler aussi.
+        assertTrue(BarVisibility.zoneContent(zoneWithText().apply { toggleMenu() }, false).undoButton)
+        // Suggestions de mots (saisie) : ni bouton Smart Clipboard, ni Annuler.
+        assertFalse(BarVisibility.zoneContent(zoneWithText(), false).undoButton)
+        // Puce de collage à la place du bouton Smart Clipboard : pas d'Annuler non plus.
+        assertFalse(BarVisibility.zoneContent(SuggestionZoneState().apply { setPasteAvailable(true) }, false).undoButton)
     }
 
     @Test
@@ -88,7 +93,6 @@ class BarVisibilityTest {
     @Test
     fun `Corriger reste visible hors du repos meme avec une suggestion affichee`() {
         for (state in listOf(
-            CorrectionBarState.UNDO,
             CorrectionBarState.LOADING,
             CorrectionBarState.CORRECTING,
             CorrectionBarState.CANCELLING,
@@ -204,10 +208,6 @@ class BarVisibilityTest {
 
     @Test
     fun `apparence de Corriger selon l etat`() {
-        val undo = BarVisibility.correctAppearance(CorrectionBarState.UNDO)!!
-        assertEquals(R.string.correction_button_undo, undo.label)
-        assertTrue(undo.enabled)
-        assertEquals(1f, undo.alpha)
         assertNull(BarVisibility.correctAppearance(CorrectionBarState.HIDDEN))
         val idle = BarVisibility.correctAppearance(CorrectionBarState.IDLE)!!
         assertEquals(R.string.correction_button_idle, idle.label)
@@ -225,9 +225,7 @@ class BarVisibilityTest {
         for (state in listOf(CorrectionBarState.LOADING, CorrectionBarState.CORRECTING, CorrectionBarState.CANCELLING)) {
             assertTrue(BarVisibility.correctAppearance(state)!!.loading, "une roue remplace l'icône pendant $state")
         }
-        for (state in listOf(CorrectionBarState.IDLE, CorrectionBarState.UNDO)) {
-            assertFalse(BarVisibility.correctAppearance(state)!!.loading)
-        }
+        assertFalse(BarVisibility.correctAppearance(CorrectionBarState.IDLE)!!.loading)
     }
 
     @Test

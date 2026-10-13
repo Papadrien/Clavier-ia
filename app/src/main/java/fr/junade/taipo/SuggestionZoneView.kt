@@ -17,7 +17,7 @@ import fr.junade.taipo.dictionary.WordSuggestion
 /**
  * Zone de gauche de la barre du haut (lot 4.2, extraite de [CorrectionBarView] sans changement de
  * comportement) : superpose la bande de suggestions de mots, le bouton Smart Clipboard, la puce de collage
- * et les suggestions d'auto-remplissage en ligne ; [render] n'en montre qu'une à la fois, selon
+ * le bouton Annuler (à droite du bouton Smart Clipboard) et les suggestions d'auto-remplissage en ligne ; [render] n'en montre qu'une à la fois, selon
  * [BarVisibility.zoneContent] (décidé par [SuggestionZoneState]).
  */
 internal class SuggestionZoneView(context: Context, private val style: BarStyle) : FrameLayout(context) {
@@ -27,6 +27,11 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
 
     /** Story 2.1 : bouton Smart Clipboard (icône « coller »). */
     private val clipboardButton = ImageButton(context)
+
+    /** Bouton Annuler (icône « annuler »), juste à droite du bouton Smart Clipboard : défait la dernière action. */
+    private val undoButton = ImageButton(context)
+    private var undoListener: (() -> Unit)? = null
+    private var undoEnabled = false
 
     /** Story 2.2 : puce de collage : icône « coller » (celle du Smart Clipboard) puis aperçu du texte copié récemment. */
     private val pasteChip = LinearLayout(context)
@@ -50,6 +55,12 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
         style.styleBarIconButton(clipboardButton, R.drawable.ic_paste)
         clipboardButton.contentDescription = context.getString(R.string.clipboard_button)
         clipboardButton.setOnClickListener { clipboardListener?.onClipboardClick() }
+
+        style.styleBarIconButton(undoButton, R.drawable.ic_undo)
+        undoButton.contentDescription = context.getString(R.string.undo_button)
+        undoButton.setOnClickListener { undoListener?.invoke() }
+        undoButton.isEnabled = false
+        undoButton.alpha = undoRestingAlpha()
 
         pasteIcon.setImageResource(R.drawable.ic_paste)
         pasteIcon.imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
@@ -95,6 +106,12 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
             LayoutParams(iconButtonWidth, LayoutParams.MATCH_PARENT, Gravity.START),
         )
         addView(
+            undoButton,
+            LayoutParams(iconButtonWidth, LayoutParams.MATCH_PARENT, Gravity.START).apply {
+                marginStart = iconButtonWidth + dimen(R.dimen.taipo_bar_gap).toInt()
+            },
+        )
+        addView(
             pasteChip,
             LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, Gravity.START),
         )
@@ -136,6 +153,20 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
     fun setOnClipboardClickListener(listener: CorrectionBarView.OnClipboardClickListener) {
         clipboardListener = listener
     }
+
+    fun setOnUndoClickListener(listener: () -> Unit) {
+        undoListener = listener
+    }
+
+    /** Une action est annulable ([enabled]) ou non : le bouton Annuler est actif ou grisé (et non touchable). */
+    fun setUndoEnabled(enabled: Boolean) {
+        undoEnabled = enabled
+        undoButton.isEnabled = enabled
+        undoButton.alpha = undoRestingAlpha()
+    }
+
+    /** Opacité de repos du bouton Annuler : l'animation d'apparition la relit au lieu de mémoriser celle du départ. */
+    private fun undoRestingAlpha(): Float = if (undoEnabled) 1f else RESTRICTED_ALPHA
 
     fun setOnPasteClickListener(listener: CorrectionBarView.OnPasteClickListener) {
         pasteListener = listener
@@ -202,6 +233,7 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
     fun render(visibility: ZoneContentVisibility, clipboardPanelOpen: Boolean, reveal: Boolean = false) {
         show(suggestionStrip, visibility.words, reveal)
         show(clipboardButton, visibility.clipboardButton, reveal, ::clipboardRestingAlpha)
+        show(undoButton, visibility.undoButton, reveal, ::undoRestingAlpha)
         show(pasteChip, visibility.pasteChip, reveal)
         show(inlineScroll, visibility.inline, reveal)
         if (clipboardButtonActiveBackground != clipboardPanelOpen) {

@@ -83,9 +83,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private var menuBackgroundExpanded: Boolean? = null
     val voiceButton = ImageButton(context)
     private var listener: OnCorrectListener? = null
-    private var undoListener: (() -> Unit)? = null
     private var cancelListener: (() -> Unit)? = null
-    private var correctShowsUndoIcon = false
 
     /** Story 5.1 : bouton « Générer » (icône, mode chat), qui bascule la barre en mode prompt ; rangé avec Vocal derrière le menu de droite. */
     private val generateButton = LabeledIconButton(context, style)
@@ -210,8 +208,6 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
                     collapseMenu()
                     listener?.onCorrectClicked()
                 }
-                // Après une correction : le même bouton rétablit le texte d'avant.
-                CorrectionBarState.UNDO -> undoListener?.invoke()
                 // Chargement ou correction en cours : le même bouton l'annule.
                 CorrectionBarState.LOADING -> cancelListener?.invoke()
                 else -> Unit
@@ -369,9 +365,14 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         this.listener = listener
     }
 
-    /** Touche sur « Annuler » (le bouton Corriger après une correction) : rétablir le texte d'avant la correction. */
+    /** Touche sur le bouton Annuler (à droite du bouton Smart Clipboard) : défaire la dernière action. */
     fun setOnUndoListener(listener: () -> Unit) {
-        undoListener = listener
+        zoneView.setOnUndoClickListener(listener)
+    }
+
+    /** Le bouton Annuler est actif quand au moins une action est annulable, grisé sinon. */
+    fun setUndoAvailable(available: Boolean) {
+        zoneView.setUndoEnabled(available)
     }
 
     /** Nouvelle touche sur Corriger pendant le chargement ou la correction : abandonner la correction en cours. */
@@ -501,9 +502,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             correctButton.isEnabled = it.enabled
             correctButton.alpha = it.alpha
             correctButton.contentDescription = context.getString(it.label)
-            correctButton.label = context.getString(
-                if (state == CorrectionBarState.UNDO) R.string.action_pill_undo else R.string.action_pill_correction,
-            )
+            correctButton.label = context.getString(R.string.action_pill_correction)
         }
         if (appearance?.loading == true) {
             // Chargement du modèle ou correction : roue animée à la place de l'icône (le bouton reste désactivé).
@@ -511,11 +510,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             correctSpinner.start()
         } else {
             correctSpinner.stop()
-            val showsUndo = state == CorrectionBarState.UNDO
-            if (showsUndo != correctShowsUndoIcon || correctButton.drawable === correctSpinner) {
-                correctShowsUndoIcon = showsUndo
-                correctButton.setImageResource(if (showsUndo) R.drawable.ic_undo else R.drawable.ic_spellcheck)
-            }
+            if (correctButton.drawable === correctSpinner) correctButton.setImageResource(R.drawable.ic_spellcheck)
         }
         renderActionButtons()
         applyFieldRestriction()

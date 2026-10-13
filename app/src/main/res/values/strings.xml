@@ -47,8 +47,8 @@
     <string name="correction_button_loading">Correction en cours, toucher pour annuler</string>
     <string name="correction_button_cancelling">Annulation…</string>
     <string name="correction_button_correcting">Correction…</string>
-    <string name="correction_button_undo">Annuler la correction</string>
-    <string name="correction_undo_failed">Annulation impossible : le texte a changé depuis la correction.</string>
+    <string name="undo_button">Annuler la dernière action</string>
+    <string name="undo_failed">Annulation impossible : le texte a changé depuis cette action.</string>
     <string name="correction_nothing_new">Rien de nouveau à corriger.</string>
     <string name="correction_no_change">Aucune correction appliquée : texte inchangé ou réponse du modèle refusée.</string>
     <string name="message_dialog_ok">OK</string>
@@ -136,7 +136,6 @@
     <string name="action_pill_chat">Chat</string>
     <string name="action_pill_transcription">Transcription</string>
     <string name="action_pill_correction">Correction</string>
-    <string name="action_pill_undo">Annuler</string>
     <string name="generate_button_description">Générer du texte à partir d\'un prompt</string>
     <string name="prompt_hint">Décrivez le texte à générer…</string>
     <string name="prompt_cancel_description">Quitter le mode prompt</string>
