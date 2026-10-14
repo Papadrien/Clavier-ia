@@ -98,19 +98,19 @@ class VoiceRecorder(private val engine: VoiceEngine, private val scope: Coroutin
         // Micro non initialisé (permission retirée entre-temps, micro indisponible) : on libère et on le dit.
         if (record.state != AudioRecord.STATE_INITIALIZED) {
             record.release()
-            throw MicUnavailableException("AudioRecord non initialisé (état ${record.state})")
+            throw MicUnavailableException("AudioRecord not initialized (state ${record.state})")
         }
         val voiceStream = engine.createStream()
         try {
             record.startRecording()
         } catch (e: IllegalStateException) {
             abortStart(record, voiceStream)
-            throw MicUnavailableException("Démarrage du micro refusé", e)
+            throw MicUnavailableException("Microphone start refused", e)
         }
         // startRecording() ne lève pas toujours d'exception quand le micro est pris ailleurs.
         if (record.recordingState != AudioRecord.RECORDSTATE_RECORDING) {
             abortStart(record, voiceStream)
-            throw MicUnavailableException("Le micro n'est pas passé en enregistrement")
+            throw MicUnavailableException("The microphone did not switch to recording")
         }
         audioRecord = record
         stream = voiceStream

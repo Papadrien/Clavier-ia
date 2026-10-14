@@ -71,7 +71,7 @@ class VoiceEngine(private val appContext: Context) {
     }
 
     fun createStream(): OnlineStream =
-        requireNotNull(recognizer) { "Modèle vocal non chargé : appelez ensureLoaded() d'abord." }.createStream()
+        requireNotNull(recognizer) { "Voice model not loaded: call ensureLoaded() first." }.createStream()
 
     /** Fait avancer le décodage tant que le moteur a de quoi produire un résultat. */
     fun decodeAvailable(stream: OnlineStream) {

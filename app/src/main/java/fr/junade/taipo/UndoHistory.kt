@@ -32,6 +32,9 @@ class UndoHistory(private val capacity: Int = MAX_ACTIONS) {
         while (entries.size > capacity) entries.removeFirst()
     }
 
+    /** Action la plus récente, sans la retirer (pour y regrouper une suppression qui la prolonge). */
+    fun last(): Undo? = entries.lastOrNull()
+
     fun clear() {
         entries.clear()
     }

@@ -11,6 +11,8 @@ import fr.junade.taipo.AppLog
 import fr.junade.taipo.BuildConfig
 import fr.junade.taipo.R
 import fr.junade.taipo.ai.VoiceEngine
+import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.model.VoiceModelFile
 import fr.junade.taipo.model.VoiceModelFileResolver
 import fr.junade.taipo.model.VoiceModelPreferences
@@ -42,6 +44,7 @@ class VoiceModelDownloadWorker(
         }
 
         DownloadTracker.updateVoice(DownloadState.Downloading(downloadedBytes = 0, totalBytes = -1))
+        Analytics.track(applicationContext, AnalyticsEvents.MODEL_DOWNLOAD_STARTED, "model" to VOICE_MODEL_ID)
         try {
             // Peut être refusé (Android 12+ : service au premier plan lancé depuis l'arrière-plan) : le
             // téléchargement continue alors comme un travail ordinaire, sans notification.
@@ -53,6 +56,7 @@ class VoiceModelDownloadWorker(
         return when (val outcome = downloadAll(allowMobileData)) {
             is ModelFileFetcher.Outcome.Done -> {
                 DownloadTracker.updateVoice(DownloadState.Idle)
+                Analytics.track(applicationContext, AnalyticsEvents.MODEL_DOWNLOAD_DONE, "model" to VOICE_MODEL_ID)
                 Result.success()
             }
             is ModelFileFetcher.Outcome.Cancelled -> {
@@ -61,6 +65,12 @@ class VoiceModelDownloadWorker(
             }
             is ModelFileFetcher.Outcome.Failed -> {
                 DownloadTracker.updateVoice(DownloadState.Failed(outcome.reason))
+                Analytics.track(
+                    applicationContext,
+                    AnalyticsEvents.MODEL_DOWNLOAD_FAILED,
+                    "model" to VOICE_MODEL_ID,
+                    "reason" to outcome.reason.name.lowercase(),
+                )
                 Result.failure()
             }
         }
@@ -144,6 +154,9 @@ class VoiceModelDownloadWorker(
 
     private companion object {
         const val TAG = "VoiceModelDownloadWorker"
+
+        /** Valeur de la propriété `model` pour le modèle de saisie vocale (un seul, composé de plusieurs fichiers). */
+        private const val VOICE_MODEL_ID = "voice"
         const val NOTIFICATION_ID = 4102
     }
 }

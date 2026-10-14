@@ -132,7 +132,7 @@ class MainActivity : Activity() {
         renderRowStatus(R.id.button_model_download, textStatus, textLabel)
         findViewById<View>(R.id.button_model_download).findViewById<TextView>(R.id.row_subtitle).text =
             if (activeModel != null && activeInstalled) {
-                getString(R.string.model_download_technical_line, activeModel.displayName, activeModel.technicalName)
+                getString(R.string.model_download_technical_line, activeModel.displayName(this), activeModel.technicalName)
             } else {
                 getString(R.string.home_row_model_download_subtitle)
             }

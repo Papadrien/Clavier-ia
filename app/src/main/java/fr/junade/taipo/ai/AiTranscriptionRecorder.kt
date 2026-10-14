@@ -50,17 +50,17 @@ class AiTranscriptionRecorder(private val scope: CoroutineScope) {
         )
         if (audioRecord.state != AudioRecord.STATE_INITIALIZED) {
             audioRecord.release()
-            throw MicUnavailableException("AudioRecord non initialisé (état ${audioRecord.state})")
+            throw MicUnavailableException("AudioRecord not initialized (state ${audioRecord.state})")
         }
         try {
             audioRecord.startRecording()
         } catch (e: IllegalStateException) {
             audioRecord.release()
-            throw MicUnavailableException("Démarrage du micro refusé", e)
+            throw MicUnavailableException("Microphone start refused", e)
         }
         if (audioRecord.recordingState != AudioRecord.RECORDSTATE_RECORDING) {
             audioRecord.release()
-            throw MicUnavailableException("Le micro n'est pas passé en enregistrement")
+            throw MicUnavailableException("The microphone did not switch to recording")
         }
         record = audioRecord
         samples = ShortArray(MAX_SECONDS * SAMPLE_RATE)

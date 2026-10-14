@@ -17,6 +17,11 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // SDK Kotlin d'Aptabase (mesure d'usage, docs/analytics.md) : publié seulement via JitPack, qu'on limite à son groupe.
+        maven {
+            url = uri("https://www.jitpack.io")
+            content { includeGroup("com.github.aptabase") }
+        }
     }
 }
 

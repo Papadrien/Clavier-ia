@@ -65,7 +65,7 @@ object ModelInstaller {
     ): InstallResult {
         val directory = destination.parentFile
         if (directory != null && !directory.isDirectory && !directory.mkdirs() && !directory.isDirectory) {
-            return InstallResult.Failed(InstallFailure.IO, IOException("Dossier des modèles inaccessible"))
+            return InstallResult.Failed(InstallFailure.IO, IOException("Models folder inaccessible"))
         }
         val temp = temporaryFileFor(destination)
         temp.delete()

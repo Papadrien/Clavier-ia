@@ -70,11 +70,11 @@ l'hygiène (dérivation standard, séparation par usage, format versionné), pas
 ## Transcription IA (épopée 14, story 14.6)
 
 - **Audio traité sur l'appareil** : l'enregistrement est envoyé au modèle Gemma 4 embarqué (LiteRT-LM), jamais à un serveur.
-  La permission Internet ne sert qu'au téléchargement des modèles.
+  La permission Internet sert au téléchargement des modèles et à la mesure d'usage anonyme (voir `docs/analytics.md`) : jamais au texte, à l'audio ni au presse-papiers.
 - **Aucun fichier audio** : l'enregistrement (120 s au plus) reste dans la mémoire du processus et est jeté à la fin, à
   l'annulation, en cas d'erreur ou si le champ change.
 - **Journaux et statistiques** : ni l'audio ni le texte transcrit ne sont écrits dans `AppLog` (seulement durées, tailles et
-  trace d'erreur) ; l'application n'envoie aucune statistique (pas d'Aptabase ni d'autre outil de mesure dans le projet).
+  trace d'erreur) ; la mesure d'usage Aptabase n'envoie que des événements à propriétés filtrées (mots-clés, nombres, booléens : voir `docs/analytics.md`), jamais de texte.
 - **Champs de mot de passe** (texte masqué, visible, web, et code PIN numérique) : le bouton est grisé (voir « Champs sensibles »).
   Si le champ change pendant un traitement, le texte n'est pas inséré.
 - **Erreurs** : une phrase par cause (fichier du modèle, mémoire, modèle incompatible, enregistrement trop long, inattendu), jamais
@@ -94,11 +94,11 @@ l'hygiène (dérivation standard, séparation par usage, format versionné), pas
 ## Menu « Confidentialité » (épopée 10, story 10.2)
 
 - Écran texte seul (accueil > À propos, en dernier), 5 sections : traitement local, connexions Internet, aucune collecte, champs de
-  mot de passe, données conservées sur l'appareil. **Aucune bascule** : il n'y a pas de télémétrie à désactiver.
+  mot de passe, données conservées sur l'appareil. La seule bascule est « Mesure d'usage » (Paramètres du clavier) : voir `docs/analytics.md`.
 - Texte écrit d'après le code au 12/10/2026 : seules connexions = téléchargement des modèles, depuis `taipo-worker.junade-models.workers.dev`
-  (Gemma 3 et modèles vocaux) et `huggingface.co` (Gemma 4). Aucun SDK de mesure d'audience, de plantage ou de publicité.
-- `PrivacyContentTest` échoue si un modèle est téléchargé depuis un domaine que le texte ne cite pas. **Si Aptabase (ou tout autre outil)
-  est ajouté, mettre à jour les sections 2 et 3, la fiche Play et la politique du site** (le test refuse aujourd'hui le mot « Aptabase »).
+  (Gemma 3 et modèles vocaux) et `huggingface.co` (Gemma 4). Mesure d'usage : Aptabase (`eu.aptabase.com`), via le SDK Kotlin d'Aptabase (aucun autre SDK de mesure, de plantage ou de publicité).
+- `PrivacyContentTest` échoue si un modèle est téléchargé depuis un domaine que le texte ne cite pas. Aptabase est maintenant cité dans les sections 2 et 3 (`PrivacyContentTest` le vérifie). **Si un autre outil
+  est ajouté, mettre à jour les sections 2 et 3, la fiche Play et la politique du site.**
 - À garder cohérent avec la fiche Play (section « Sécurité des données ») et la politique de confidentialité du site : non vérifié ici.
 
 ## Sauvegarde et restauration (épopée 10, story 10.3)

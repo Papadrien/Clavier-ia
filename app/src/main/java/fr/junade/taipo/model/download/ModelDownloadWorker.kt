@@ -10,6 +10,8 @@ import fr.junade.taipo.AppLog
 import fr.junade.taipo.BuildConfig
 import fr.junade.taipo.R
 import fr.junade.taipo.ai.LlmEngineHost
+import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.model.ModelFileResolver
 import fr.junade.taipo.model.ModelPreferences
@@ -45,6 +47,7 @@ class ModelDownloadWorker(
         }
 
         DownloadTracker.update(model, DownloadState.Downloading(downloadedBytes = 0, totalBytes = -1))
+        Analytics.track(applicationContext, AnalyticsEvents.MODEL_DOWNLOAD_STARTED, "model" to model.id)
         try {
             // Peut être refusé (Android 12+ : service au premier plan lancé depuis l'arrière-plan) : le
             // téléchargement continue alors comme un travail ordinaire, sans notification.
@@ -64,6 +67,7 @@ class ModelDownloadWorker(
                 // Debug : relever l'empreinte réelle pour la figer dans AiModel.sha256 (story 8.8).
                 if (model.sha256 == null) AppLog.i(TAG, "SHA-256 de ${model.id} : ${outcome.sha256} (${outcome.sizeBytes} octets)")
                 DownloadTracker.update(model, DownloadState.Idle)
+                Analytics.track(appContext, AnalyticsEvents.MODEL_DOWNLOAD_DONE, "model" to model.id)
                 Result.success()
             }
             is ModelFileFetcher.Outcome.Cancelled -> {
@@ -72,6 +76,12 @@ class ModelDownloadWorker(
             }
             is ModelFileFetcher.Outcome.Failed -> {
                 DownloadTracker.update(model, DownloadState.Failed(outcome.reason))
+                Analytics.track(
+                    applicationContext,
+                    AnalyticsEvents.MODEL_DOWNLOAD_FAILED,
+                    "model" to model.id,
+                    "reason" to outcome.reason.name.lowercase(),
+                )
                 Result.failure()
             }
         }
@@ -81,7 +91,7 @@ class ModelDownloadWorker(
         withContext(Dispatchers.IO) {
             val scope = this
             val appContext = applicationContext
-            val url = requireNotNull(model.downloadUrl) { "Modèle sans URL de téléchargement : ${model.id}" }
+            val url = requireNotNull(model.downloadUrl) { "Model without a download URL: ${model.id}" }
             var total = -1L
             ModelFileFetcher.fetch(
                 context = appContext,
@@ -113,7 +123,7 @@ class ModelDownloadWorker(
     // --- Notification (service au premier plan) -------------------------------------------------------------
 
     private fun title(): String =
-        applicationContext.getString(R.string.model_download_notification_title, model?.displayName.orEmpty())
+        applicationContext.getString(R.string.model_download_notification_title, model?.displayName(applicationContext).orEmpty())
 
     private fun cancelIntent(): PendingIntent = WorkManager.getInstance(applicationContext).createCancelPendingIntent(id)
 

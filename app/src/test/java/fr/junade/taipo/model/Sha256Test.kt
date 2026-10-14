@@ -2,6 +2,7 @@ package fr.junade.taipo.model
 
 import java.io.ByteArrayInputStream
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -60,6 +61,6 @@ class Sha256Test {
     fun `avec une empreinte de reference une difference est signalee`() {
         val reference = "a".repeat(64)
         assertNull(checksumWarningFor(reference, reference.uppercase()))
-        assertTrue(checksumWarningFor(reference, "b".repeat(64))!!.isNotBlank())
+        assertNotNull(checksumWarningFor(reference, "b".repeat(64)))
     }
 }

@@ -2,6 +2,8 @@ package fr.junade.taipo
 
 import android.content.Context
 import android.view.inputmethod.InputConnection
+import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.analytics.AnalyticsEvents
 
 /**
  * Bouton Annuler de la barre : tient l'[UndoHistory] des dix dernières actions du clavier et les défait une à une.
@@ -46,6 +48,32 @@ class UndoController(
         record { host.inputConnection()?.let { FieldUndo.replace(it, inserted, original) } ?: false }
     }
 
+    /**
+     * Enregistre une suppression faite avec la touche supprimer : [deleted] a été effacé juste après [anchor].
+     * [before] : le texte qui précédait le curseur juste avant l'effacement ; il permet de regrouper des appuis
+     * successifs en une seule action ([mergeable], vrai pour un effacement caractère par caractère). [offsetProvider]
+     * donne la position de la zone effacée ; il n'est appelé que pour une nouvelle action (pas pour un regroupement).
+     */
+    fun recordDeletion(
+        deleted: String,
+        anchor: String,
+        before: String,
+        mergeable: Boolean,
+        offsetProvider: () -> Int,
+    ) {
+        if (deleted.isEmpty()) return
+        val top = history.last()
+        if (mergeable && top is DeletionUndo && top.tryMerge(deleted, before)) {
+            host.onUndoAvailabilityChanged(true)
+            return
+        }
+        record(
+            DeletionUndo(deleted, offsetProvider(), anchor) { text, offset, expectedAnchor ->
+                host.inputConnection()?.let { FieldUndo.reinsert(it, text, offset, expectedAnchor) } ?: false
+            },
+        )
+    }
+
     /** Oublie l'historique (autre champ, clavier fermé). [notify] : grise le bouton ; faux quand l'appelant s'en charge. */
     fun clear(notify: Boolean = true) {
         if (history.isEmpty) return
@@ -56,6 +84,7 @@ class UndoController(
     /** Touche sur le bouton Annuler : défait la dernière action enregistrée. */
     fun onUndoClicked() {
         if (history.isEmpty) return
+        Analytics.track(context, AnalyticsEvents.UNDO_USED)
         host.beforeUndo()
         if (history.undoLast() == UndoHistory.Outcome.FAILED) {
             host.showMessage(context.getString(R.string.undo_failed))

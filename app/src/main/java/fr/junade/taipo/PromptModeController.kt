@@ -2,6 +2,7 @@ package fr.junade.taipo
 
 import android.content.Context
 import android.os.Handler
+import android.os.SystemClock
 import fr.junade.taipo.ai.ChatExchange
 import fr.junade.taipo.ai.InferenceFailureClassifier
 import fr.junade.taipo.ai.messageRes
@@ -12,6 +13,8 @@ import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.ai.PromptConversation
 import fr.junade.taipo.ai.PromptMessageStatus
 import fr.junade.taipo.ai.VoiceField
+import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.model.AiModel
 import android.view.View
@@ -400,6 +403,7 @@ class PromptModeController(
      */
     private fun launchGeneration(model: AiModel, history: List<ChatExchange>, prompt: String) {
         stopping = false
+        val startedAt = SystemClock.elapsedRealtime()
         val job = scope.launch {
             try {
                 val outcome = generationSession.send(
@@ -411,13 +415,16 @@ class PromptModeController(
                 )
                 // Texte final du moteur ; réponse partielle conservée si la génération a été interrompue.
                 // Sans effet si un stop ou la croix ont déjà figé l'échange (5.1-7).
+                if (outcome.completed) Analytics.aiAction(context, AnalyticsEvents.AiType.GENERATE, model.id, startedAt)
                 conversation.finish(outcome.text, outcome.completed)
                 conversation.messages.lastOrNull()?.let { chatZone.updateLastResponse(it) }
                 applyViews() // le bouton rond redevient « envoyer »
             } catch (e: CancellationException) {
                 throw e // fermeture du clavier : la conversation est déjà vidée
             } catch (t: Throwable) {
-                AppLog.e(TAG, "Échec de la génération (${InferenceFailureClassifier.classify(t)})", t)
+                val cause = InferenceFailureClassifier.classify(t)
+                AppLog.e(TAG, "Échec de la génération ($cause)", t)
+                Analytics.aiAction(context, AnalyticsEvents.AiType.GENERATE, model.id, startedAt, failure = cause)
                 onGenerationFailed(t)
             }
         }

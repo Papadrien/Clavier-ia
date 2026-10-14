@@ -13,7 +13,7 @@ class CorrectionPromptTest {
 
     @Test
     fun `le prompt systeme precise de ne repondre qu avec le texte corrige`() {
-        assertTrue(CorrectionPrompt.SYSTEM.contains("texte corrigé"))
+        assertTrue(CorrectionPrompt.SYSTEM.contains("corrected text"))
     }
 
     @Test
@@ -23,7 +23,7 @@ class CorrectionPromptTest {
 
     @Test
     fun `le prompt systeme couvre les fautes de frappe et les homophones`() {
-        assertTrue(CorrectionPrompt.SYSTEM.contains("fautes de frappe", ignoreCase = true))
+        assertTrue(CorrectionPrompt.SYSTEM.contains("typos", ignoreCase = true))
         assertTrue(CorrectionPrompt.SYSTEM.contains("homophones", ignoreCase = true))
     }
 

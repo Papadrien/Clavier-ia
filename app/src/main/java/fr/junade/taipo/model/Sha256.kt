@@ -1,5 +1,6 @@
 package fr.junade.taipo.model
 
+import fr.junade.taipo.R
 import java.io.InputStream
 import java.security.MessageDigest
 
@@ -40,11 +41,10 @@ fun sameSha256(a: String, b: String): Boolean = a.trim().equals(b.trim(), ignore
  * Message d'avertissement si l'empreinte [actual] diffère de l'empreinte [reference] attendue, ou null
  * (identiques, ou aucune référence connue).
  */
-fun checksumWarningFor(reference: String?, actual: String): String? {
+fun checksumWarningFor(reference: String?, actual: String): UiText? {
     if (reference == null || sameSha256(reference, actual)) return null
-    return "L'empreinte SHA-256 du fichier ne correspond pas à celle attendue pour ce modèle : fichier " +
-        "corrompu, incomplet, ou autre variante. Retéléchargez-le depuis le dépôt de référence."
+    return UiText(R.string.model_checksum_warning)
 }
 
 /** Même contrôle pour un [AiModel] : sans effet tant que [AiModel.sha256] n'est pas renseigné. */
-fun AiModel.checksumWarning(actual: String): String? = checksumWarningFor(sha256, actual)
+fun AiModel.checksumWarning(actual: String): UiText? = checksumWarningFor(sha256, actual)

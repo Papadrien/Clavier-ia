@@ -30,6 +30,8 @@ import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.ai.ProtectedWords
 import fr.junade.taipo.ai.TranscriptionPromptPreferences
 import fr.junade.taipo.ai.VoiceField
+import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.emoji.EmojiCatalog
 import fr.junade.taipo.emoji.EmojiPanelView
@@ -465,6 +467,7 @@ class TaipoIme : InputMethodService() {
         fieldType = FieldType.of(info?.inputType ?: 0)
         // Story 10.1 : champ de mot de passe, actions IA et Smart Clipboard grisés (touchables, avec un message).
         sensitiveField = SensitiveFieldPolicy.isSensitive(info?.inputType ?: 0)
+        Analytics.sensitiveFieldActive = sensitiveField // mesure d'usage coupée tant qu'un champ de mot de passe est affiché
         correctionBar.aiActionsAllowed = !sensitiveField
         // Story 14.5 : le bouton Transcription IA n'existe que si le modèle actif (installé) a une entrée audio.
         correctionBar.aiTranscriptionAvailable =
@@ -476,6 +479,7 @@ class TaipoIme : InputMethodService() {
         )
         suggestions.invalidate()
         controller.setLanguage(currentKeyboardLanguage())
+        trackKeyboardLanguage()
         suggestions.preloadDictionaries() // la langue a pu changer dans les paramètres : charge son dictionnaire si besoin
         controller.reset()
         syncAutoCapitalization()
@@ -494,6 +498,22 @@ class TaipoIme : InputMethodService() {
         refreshRecentEmojiBar()
         updateCorrectionBarVisibility()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) applyPendingInlineResponse()
+    }
+
+    /** Dernière langue envoyée à la mesure d'usage : l'événement ne repart que si elle change (pas à chaque champ). */
+    private var lastTrackedLanguage: KeyboardLanguage? = null
+
+    private fun trackKeyboardLanguage() {
+        val language = controller.state.language
+        if (sensitiveField || language == lastTrackedLanguage) return
+        lastTrackedLanguage = language
+        Analytics.track(
+            this,
+            AnalyticsEvents.KEYBOARD_LANGUAGE,
+            "lang" to language.tag,
+            "layout" to AnalyticsEvents.layoutOf(language),
+            "auto" to (keyboardPreferences.keyboardLanguage == null),
+        )
     }
 
     override fun onCurrentInputMethodSubtypeChanged(newSubtype: InputMethodSubtype?) {
@@ -525,6 +545,7 @@ class TaipoIme : InputMethodService() {
 
     override fun onFinishInputView(finishingInput: Boolean) {
         super.onFinishInputView(finishingInput)
+        Analytics.sensitiveFieldActive = false
         suggestions.finishField() // une adresse tapée en dernier, sans espace après elle, est retenue avant la sauvegarde
         nextWords.flush()
         suggestions.correctionHabits.flush()
@@ -832,6 +853,13 @@ class TaipoIme : InputMethodService() {
         val ic = currentInputConnection ?: return
         val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)
         val length = if (before.isNullOrEmpty()) 1 else EmojiText.lastClusterLength(before).coerceAtLeast(1)
+        if (!before.isNullOrEmpty() && before.length >= length) {
+            val text = before.toString()
+            val deleted = text.takeLast(length)
+            recordUndoDeletion(deleted, text.dropLast(length).takeLast(DeletionUndo.ANCHOR_LENGTH), text, mergeable = true) {
+                selectionStartOffset(ic) - length
+            }
+        }
         ic.deleteSurroundingText(length, 0)
     }
 
@@ -1035,6 +1063,7 @@ class TaipoIme : InputMethodService() {
         prompt.buffer.insert(pending.original + pending.boundary)
         revertedAutocorrectionTail = (pending.original + pending.boundary).takeLast(REVERTED_TAIL_LENGTH)
         suggestions.habitAutocorrectionUndone(pending.original, pending.corrected)
+        Analytics.track(this, AnalyticsEvents.AUTOCORRECT_UNDONE)
         return true
     }
 
@@ -1317,7 +1346,14 @@ class TaipoIme : InputMethodService() {
         ic.beginBatchEdit()
         try {
             ic.setSelection(swipe.end, swipe.end)
-            ic.deleteSurroundingText(swipe.length + (swipe.end - swipe.base), 0)
+            val count = swipe.length + (swipe.end - swipe.base)
+            val text = ic.getTextBeforeCursor(count + DeletionUndo.ANCHOR_LENGTH, 0)?.toString().orEmpty()
+            if (text.length >= count) {
+                recordUndoDeletion(text.takeLast(count), text.dropLast(count).takeLast(DeletionUndo.ANCHOR_LENGTH), text, mergeable = false) {
+                    swipe.end - count
+                }
+            }
+            ic.deleteSurroundingText(count, 0)
         } finally {
             ic.endBatchEdit()
         }
@@ -1596,6 +1632,12 @@ class TaipoIme : InputMethodService() {
     private fun deleteSelectedText(): Boolean {
         val ic = currentInputConnection ?: return false
         if (!hasSelection()) return false
+        val selected = ic.getSelectedText(0)?.toString().orEmpty()
+        if (selected.isNotEmpty()) {
+            val before = ic.getTextBeforeCursor(DeletionUndo.ANCHOR_LENGTH, 0)?.toString().orEmpty()
+            val offset = selectionStartOffset(ic)
+            recordUndoDeletion(selected, before, before, mergeable = false) { offset }
+        }
         ic.commitText("", 1) // remplace la sélection par du vide
         return true
     }
@@ -1620,6 +1662,7 @@ class TaipoIme : InputMethodService() {
         ic.endBatchEdit()
         revertedAutocorrectionTail = (pending.original + pending.boundary).takeLast(REVERTED_TAIL_LENGTH)
         suggestions.habitAutocorrectionUndone(pending.original, pending.corrected)
+        Analytics.track(this, AnalyticsEvents.AUTOCORRECT_UNDONE)
         return true
     }
 
@@ -1640,6 +1683,27 @@ class TaipoIme : InputMethodService() {
      */
     private fun recordUndoEdit(inserted: String, original: String) {
         if (!sensitiveField) undoController.recordEdit(inserted, original)
+    }
+
+    /**
+     * Enregistre dans l'historique du bouton Annuler un texte effacé avec la touche supprimer (retour arrière, sélection,
+     * glissement) : [deleted] se trouvait juste après [anchor]. Rien n'est gardé dans un champ sensible (mot de passe).
+     */
+    private fun recordUndoDeletion(
+        deleted: String,
+        anchor: String,
+        before: String,
+        mergeable: Boolean,
+        offsetProvider: () -> Int,
+    ) {
+        if (!sensitiveField) undoController.recordDeletion(deleted, anchor, before, mergeable, offsetProvider)
+    }
+
+    /** Position absolue du début de la sélection (ou du curseur) dans le champ, ou -1 si l'application ne la donne pas. */
+    private fun selectionStartOffset(ic: InputConnection): Int {
+        val extracted = ic.getExtractedText(ExtractedTextRequest(), 0) ?: return -1
+        if (extracted.startOffset < 0) return -1
+        return extracted.startOffset + minOf(extracted.selectionStart, extracted.selectionEnd)
     }
 
     /** Idem pour une action dont le geste d'annulation est spécifique (correction IA). */

@@ -3,12 +3,12 @@ package fr.junade.taipo
 import androidx.annotation.StringRes
 
 /**
- * Sections du menu « Confidentialité » (story 10.2), dans l'ordre d'affichage. Texte seul : aucune bascule, car l'application
- * ne contient ni télémétrie ni mesure d'audience à désactiver. Les textes sont dans `strings.xml`
+ * Sections du menu « Confidentialité » (story 10.2), dans l'ordre d'affichage. Texte seul ; la bascule de la mesure d'usage
+ * anonyme (Aptabase) est dans les paramètres du clavier. Les textes sont dans `strings.xml`
  * (`privacy_section_<n>_title` / `privacy_section_<n>_body`).
  *
  * À tenir à jour avec le code : toute nouvelle connexion réseau (nouveau domaine de téléchargement, outil de mesure d'audience
- * comme Aptabase, etc.) doit être ajoutée à la section 2 ou 3 ; `PrivacyContentTest` échoue si un modèle est téléchargé
+ * autre que Aptabase, etc.) doit être ajoutée à la section 2 ou 3 ; `PrivacyContentTest` échoue si un modèle est téléchargé
  * depuis un domaine que le texte ne mentionne pas.
  */
 object PrivacyContent {

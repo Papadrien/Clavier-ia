@@ -1,6 +1,7 @@
 package fr.junade.taipo.model
 
 import android.content.Context
+import fr.junade.taipo.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -21,17 +22,11 @@ object VoiceModelFileResolver {
             if (destination.isFile && destination.length() == prefs.downloadedSizeFor(file)) {
                 return@withContext destination
             }
-            throw IllegalStateException(
-                "Le fichier ${file.label} du modèle vocal est introuvable ou incomplet. " +
-                    "Retéléchargez le modèle vocal dans l'écran « Modèle IA ».",
-            )
+            throw IllegalStateException(context.getString(R.string.voice_file_error_missing, file.label))
         }
 
         val sourceUri = prefs.savedUriFor(file)
-            ?: throw IllegalStateException(
-                "Fichier ${file.label} manquant pour le modèle vocal. " +
-                    "Téléchargez le modèle vocal dans l'écran « Modèle IA ».",
-            )
+            ?: throw IllegalStateException(context.getString(R.string.voice_file_error_not_provided, file.label))
 
         if (destination.exists() && destination.length() > 0) {
             return@withContext destination
@@ -40,9 +35,7 @@ object VoiceModelFileResolver {
         destination.parentFile?.mkdirs()
         val tempFile = File(destination.parentFile, "${destination.name}.tmp")
         val input = context.contentResolver.openInputStream(sourceUri)
-            ?: throw IllegalStateException(
-                "Impossible d'ouvrir le fichier ${file.label} (permission perdue ? à re-sélectionner).",
-            )
+            ?: throw IllegalStateException(context.getString(R.string.voice_file_error_cannot_open, file.label))
         input.use { source ->
             tempFile.outputStream().use { output ->
                 source.copyTo(output, bufferSize = 1 shl 20)
@@ -50,7 +43,7 @@ object VoiceModelFileResolver {
         }
 
         if (!tempFile.renameTo(destination)) {
-            throw IllegalStateException("Impossible de finaliser la copie du fichier ${file.label}.")
+            throw IllegalStateException(context.getString(R.string.voice_file_error_cannot_finalize, file.label))
         }
         destination
     }

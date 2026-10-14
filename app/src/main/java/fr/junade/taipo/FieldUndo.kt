@@ -42,6 +42,33 @@ internal object FieldUndo {
         }
     }
 
+    /**
+     * Défait une suppression : remet [text] à la position absolue [offset] du champ (curseur placé après le texte
+     * restitué). [anchor] (les caractères qui précédaient la zone effacée) doit toujours se trouver juste avant ce
+     * point, sinon le champ a trop changé et rien n'est modifié. Sans [offset] (-1, application sans ExtractedText),
+     * le texte est remis à la position du curseur, à condition que [anchor] le précède.
+     */
+    fun reinsert(ic: InputConnection, text: String, offset: Int, anchor: String): Boolean {
+        if (text.isEmpty()) return false
+        ic.beginBatchEdit()
+        try {
+            val extracted = if (offset >= 0) ic.getExtractedText(ExtractedTextRequest(), 0) else null
+            val full = extracted?.text?.toString()
+            if (extracted != null && full != null && extracted.startOffset >= 0) {
+                val local = offset - extracted.startOffset
+                if (local < 0 || local > full.length) return false
+                if (anchor.isNotEmpty() && !full.substring(0, local).endsWith(anchor)) return false
+                ic.setSelection(offset, offset)
+            } else if (anchor.isNotEmpty() && ic.getTextBeforeCursor(anchor.length, 0)?.toString() != anchor) {
+                return false
+            }
+            ic.commitText(text, 1)
+            return true
+        } finally {
+            ic.endBatchEdit()
+        }
+    }
+
     private fun replaceBeforeCursor(ic: InputConnection, inserted: String, original: String) {
         ic.deleteSurroundingText(inserted.length, 0)
         if (original.isNotEmpty()) ic.commitText(original, 1)

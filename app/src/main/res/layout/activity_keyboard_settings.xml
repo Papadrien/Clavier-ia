@@ -172,5 +172,26 @@
             android:text="@string/keyboard_settings_habits_clear"
             android:layout_marginTop="@dimen/taipo_settings_gap_md" />
 
+        <TextView
+            style="@style/TaipoText.Section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/keyboard_settings_analytics_title"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+        <Switch
+            android:id="@+id/switch_analytics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/keyboard_settings_analytics_switch" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/keyboard_settings_analytics_description"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+
     </LinearLayout>
 </ScrollView>

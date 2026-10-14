@@ -18,6 +18,10 @@ android {
         versionCode = (System.getenv("VERSION_CODE") ?: System.getenv("GITHUB_RUN_NUMBER"))?.toIntOrNull() ?: 1
         versionName = "1.0.0"
 
+        // Mesure d'usage anonyme (SDK Aptabase, serveur UE). Une clé d'application Aptabase n'est pas un secret : elle ne permet
+        // que d'envoyer des événements, et figure de toute façon dans l'APK. Voir docs/analytics.md.
+        buildConfigField("String", "APTABASE_APP_KEY", "\"A-EU-8162668661\"")
+
         // Lot 4.1 (B7, décision D7) : les bibliothèques natives de la dictée (sherpa-onnx) n'existent que pour
         // arm64-v8a. La release (et la variante benchmark) ne contient donc que cet ABI ; la variante debug
         // ajoute x86_64 pour l'émulateur (voir app/src/debug/jniLibs/README.md : sans les .so sherpa x86_64,
@@ -153,6 +157,9 @@ dependencies {
 
     // Épopée 8 : téléchargement des modèles IA en arrière-plan (WorkManager, service au premier plan dataSync).
     implementation(libs.androidx.work.runtime.ktx)
+
+    // Mesure d'usage anonyme : SDK Kotlin d'Aptabase (dépôt JitPack déclaré dans settings.gradle.kts, limité à son groupe).
+    implementation(libs.aptabase.kotlin)
 
     // Demande d'avis intégrée à l'application (note + commentaire en bottom sheet) : Google Play In-App Review.
     implementation(libs.play.review)

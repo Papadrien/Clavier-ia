@@ -1,6 +1,7 @@
 package fr.junade.taipo.model
 
 import android.content.Context
+import fr.junade.taipo.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -30,17 +31,11 @@ object ModelFileResolver {
             if (downloaded.isFile && downloaded.length() == prefs.downloadedSizeFor(model)) {
                 return@withContext downloaded
             }
-            throw ModelFileException(
-                "Le fichier du modèle ${model.displayName} est introuvable ou incomplet. " +
-                    "Retéléchargez-le depuis l'écran Modèle IA.",
-            )
+            throw ModelFileException(context.getString(R.string.model_file_error_missing, model.displayName(context)))
         }
 
         val sourceUri = prefs.savedUriFor(model)
-            ?: throw ModelFileException(
-                "Aucun fichier fourni pour le modèle ${model.displayName}. " +
-                    "Sélectionnez-le d'abord dans les paramètres du modèle IA.",
-            )
+            ?: throw ModelFileException(context.getString(R.string.model_file_error_not_provided, model.displayName(context)))
         val expectedSize = prefs.savedFileSizeFor(model)
 
         val destination = localFileFor(context, model)
@@ -54,9 +49,7 @@ object ModelFileResolver {
         destination.parentFile?.mkdirs()
         val tempFile = File(destination.parentFile, "${destination.name}.tmp")
         val input = context.contentResolver.openInputStream(sourceUri)
-            ?: throw ModelFileException(
-                "Impossible d'ouvrir le fichier sélectionné pour ${model.displayName} (permission perdue ? à re-sélectionner).",
-            )
+            ?: throw ModelFileException(context.getString(R.string.model_file_error_cannot_open, model.displayName(context)))
         // L'empreinte de la copie est calculée pendant la copie (sans relecture) et gardée à côté,
         // pour pouvoir vérifier plus tard que la copie correspond bien au fichier choisi.
         val digest = MessageDigest.getInstance("SHA-256")
@@ -74,7 +67,7 @@ object ModelFileResolver {
         }
 
         if (!tempFile.renameTo(destination)) {
-            throw ModelFileException("Impossible de finaliser la copie du modèle ${model.displayName}.")
+            throw ModelFileException(context.getString(R.string.model_file_error_cannot_finalize, model.displayName(context)))
         }
         sha256MarkerFor(destination).writeText(digest.digest().joinToString("") { "%02x".format(it) })
         destination

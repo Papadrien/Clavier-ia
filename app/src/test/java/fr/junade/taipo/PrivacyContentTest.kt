@@ -45,11 +45,24 @@ class PrivacyContentTest {
     }
 
     @Test
-    fun `aucune bascule de telemetrie n est proposee et aucun outil absent n est cite`() {
+    fun `la mesure d usage Aptabase est annoncee et desactivable, sans promesse de zero telemetrie`() {
         val all = strings.filterKeys { it.startsWith("privacy_") }.values.joinToString(" ")
-        assertTrue(all.contains("rien à désactiver"))
-        // Aptabase n'est pas dans le projet : le citer serait faux. À ajouter ici et à la section 3 le jour où il y entre.
-        assertFalse(all.contains("Aptabase"))
+        // Aptabase est dans le projet : le texte doit le dire (sections 2 et 3), et ne plus prétendre qu'il n'y a rien à désactiver.
+        assertTrue(strings["privacy_section_2_body"]!!.contains("Aptabase"))
+        assertTrue(strings["privacy_section_3_body"]!!.contains("Aptabase"))
+        assertFalse(all.contains("rien à désactiver"))
+        assertFalse(all.contains("ni télémétrie"))
+        // Le texte renvoie à la bascule, qui doit exister dans l'écran des paramètres.
+        assertTrue(strings["privacy_section_3_body"]!!.contains("Paramètres du clavier > Mesure d"))
+        assertTrue(!strings["keyboard_settings_analytics_switch"].isNullOrBlank())
+    }
+
+    @Test
+    fun `le texte ne promet que ce que la mesure garantit`() {
+        val body = strings["privacy_section_3_body"]!!
+        assertTrue(body.contains("Jamais votre texte"))
+        assertTrue(body.contains("champs de mot de passe"))
+        assertTrue(body.contains("identifiant"))
     }
 
     @Test

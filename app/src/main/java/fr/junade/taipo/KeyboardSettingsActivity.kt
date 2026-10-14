@@ -13,6 +13,8 @@ import android.widget.CompoundButton
 import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.Toast
+import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.analytics.AnalyticsPreferences
 import fr.junade.taipo.dictionary.CorrectionHabitsProvider
 
 /**
@@ -38,7 +40,10 @@ class KeyboardSettingsActivity : Activity() {
 
         findViewById<CompoundButton>(R.id.switch_number_row).apply {
             isChecked = preferences.isNumberRowEnabled
-            setOnCheckedChangeListener { _, checked -> preferences.isNumberRowEnabled = checked }
+            setOnCheckedChangeListener { _, checked ->
+                preferences.isNumberRowEnabled = checked
+                Analytics.setting(this@KeyboardSettingsActivity, "number_row", checked)
+            }
         }
 
         val radioGroup = findViewById<RadioGroup>(R.id.radio_group_haptic)
@@ -52,6 +57,7 @@ class KeyboardSettingsActivity : Activity() {
         radioGroup.setOnCheckedChangeListener { _, checkedId ->
             val selected = radioIds.entries.firstOrNull { it.value == checkedId }?.key ?: return@setOnCheckedChangeListener
             preferences.hapticIntensity = selected
+            Analytics.setting(this, "haptic", selected.storageKey)
         }
 
         val heightGroup = findViewById<RadioGroup>(R.id.radio_group_height)
@@ -66,12 +72,17 @@ class KeyboardSettingsActivity : Activity() {
         heightGroup.setOnCheckedChangeListener { _, checkedId ->
             val selected = heightIds.entries.firstOrNull { it.value == checkedId }?.key ?: return@setOnCheckedChangeListener
             preferences.keyboardHeight = selected
+            Analytics.setting(this, "keyboard_height", selected.storageKey)
         }
 
         findViewById<CompoundButton>(R.id.switch_habit_learning).apply {
             isChecked = preferences.isHabitLearningEnabled
-            setOnCheckedChangeListener { _, checked -> preferences.isHabitLearningEnabled = checked }
+            setOnCheckedChangeListener { _, checked ->
+                preferences.isHabitLearningEnabled = checked
+                Analytics.setting(this@KeyboardSettingsActivity, "habit_learning", checked)
+            }
         }
+        setUpAnalyticsSwitch()
         findViewById<Button>(R.id.button_habit_clear).setOnClickListener { confirmClearHabits() }
     }
 
@@ -92,10 +103,28 @@ class KeyboardSettingsActivity : Activity() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selected = choices[position].first
                 // Android notifie aussi la sélection initiale : on n'écrit que s'il y a un vrai changement.
-                if (selected != preferences.keyboardLanguage) preferences.keyboardLanguage = selected
+                if (selected != preferences.keyboardLanguage) {
+                    preferences.keyboardLanguage = selected
+                    Analytics.setting(this@KeyboardSettingsActivity, "language", selected?.tag ?: "auto")
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+        }
+    }
+
+    /**
+     * « Mesure d'usage anonyme » (Aptabase) : activée par défaut, désactivable ici. Désactivée, plus aucun événement n'est
+     * créé (le SDK n'est plus appelé). Le passage à « activé » est le seul réglage de mesure qui est lui-même mesuré.
+     */
+    private fun setUpAnalyticsSwitch() {
+        val analyticsPreferences = AnalyticsPreferences(this)
+        findViewById<CompoundButton>(R.id.switch_analytics).apply {
+            isChecked = analyticsPreferences.isEnabled
+            setOnCheckedChangeListener { _, checked ->
+                analyticsPreferences.isEnabled = checked
+                if (checked) Analytics.setting(this@KeyboardSettingsActivity, "analytics", true)
+            }
         }
     }
 

@@ -55,14 +55,14 @@ class ProtectedWordsTest {
     fun `le tour utilisateur liste les mots proteges avant le texte`() {
         val turn = CorrectionPrompt.userTurn("Bonjour Junadé", listOf("Junadé", "Taipo"))
         assertTrue(turn.contains("Junadé, Taipo"))
-        assertTrue(turn.indexOf("Junadé, Taipo") < turn.indexOf("Texte :"))
-        assertTrue(turn.endsWith("Texte :\nBonjour Junadé"))
+        assertTrue(turn.indexOf("Junadé, Taipo") < turn.indexOf("Text:"))
+        assertTrue(turn.endsWith("Text:\nBonjour Junadé"))
     }
 
     @Test
     fun `sans mot protege le tour utilisateur ne mentionne rien`() {
         val turn = CorrectionPrompt.userTurn("Bonjour")
-        assertFalse(turn.contains("Mots à conserver"))
-        assertTrue(turn.endsWith("Texte :\nBonjour"))
+        assertFalse(turn.contains("Words to keep"))
+        assertTrue(turn.endsWith("Text:\nBonjour"))
     }
 }

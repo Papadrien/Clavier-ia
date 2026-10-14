@@ -13,20 +13,20 @@ class GenerationPromptTest {
 
     @Test
     fun `le prompt systeme demande des reponses courtes par defaut`() {
-        assertTrue(GenerationPrompt.SYSTEM.contains("par défaut", ignoreCase = true))
-        assertTrue(GenerationPrompt.SYSTEM.contains("courte", ignoreCase = true))
+        assertTrue(GenerationPrompt.SYSTEM.contains("by default", ignoreCase = true))
+        assertTrue(GenerationPrompt.SYSTEM.contains("briefly", ignoreCase = true))
     }
 
     @Test
     fun `le prompt systeme autorise une reponse longue sur demande`() {
         assertTrue(GenerationPrompt.SYSTEM.contains("détaille", ignoreCase = true))
-        assertTrue(GenerationPrompt.SYSTEM.contains("longue", ignoreCase = true))
+        assertTrue(GenerationPrompt.SYSTEM.contains("long", ignoreCase = true))
     }
 
     @Test
     fun `le prompt systeme interdit le markdown`() {
         assertTrue(GenerationPrompt.SYSTEM.contains("Markdown"))
-        assertTrue(GenerationPrompt.SYSTEM.contains("texte brut", ignoreCase = true))
+        assertTrue(GenerationPrompt.SYSTEM.contains("plain text", ignoreCase = true))
     }
 
     @Test

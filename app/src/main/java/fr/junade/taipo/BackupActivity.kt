@@ -200,7 +200,7 @@ class BackupActivity : ComponentActivity() {
 
     /** Lit le fichier en refusant tout ce qui dépasse [BackupCodec.MAX_BYTES] (un fichier choisi par erreur ne doit pas saturer la mémoire). */
     private fun readLimited(uri: Uri): String {
-        val input = contentResolver.openInputStream(uri) ?: error("Flux d'entrée indisponible")
+        val input = contentResolver.openInputStream(uri) ?: error("Input stream unavailable")
         input.use { stream ->
             val out = ByteArrayOutputStream()
             val buffer = ByteArray(BUFFER_BYTES)

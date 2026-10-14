@@ -43,11 +43,12 @@ Tests déplacés dans `core/src/test/kotlin/` (JUnit 5, comme avant) : `Dictiona
 
 ## U4 / D4 : langue de l'interface
 
-**Décision D4 (option par défaut du plan) : interface 100 % française, assumée.** Les écrans, libellés et messages sont
-uniquement en français dans `app/src/main/res/values/strings.xml` ; il n'y a pas de dossier `values-en`. Ce n'est pas un oubli :
+**Décision D4 révisée (14/10/2026) : interface bilingue, anglais par défaut.** Les libellés sont dans
+`app/src/main/res/values/strings.xml` (anglais, langue par défaut, utilisée pour toute langue non gérée) et
+`app/src/main/res/values-fr/strings.xml` (français). Toute nouvelle chaîne s'ajoute dans les deux fichiers, avec les mêmes
+clés et les mêmes arguments de format.
 
-- la langue de **frappe** du clavier (FR / EN, disposition, dictionnaires, dictée) est indépendante de la langue de l'**interface** ;
-- la traduction de l'interface n'est pas dans le périmètre de la V1 ; elle viendra avec les langues de la V3 si la décision change.
-
-Pour la reconsidérer plus tard : les libellés sont déjà dans `strings.xml` (aucune action de code requise pour ajouter
-`values-en/strings.xml`). Reste à vérifier à ce moment-là les chaînes construites en dur dans le code.
+- la langue de **frappe** du clavier (FR / EN, disposition, dictionnaires, dictée) reste indépendante de la langue de l'**interface** ;
+- les **prompts** envoyés au modèle ne sont pas traduits (`prompt_field_context_header` est marqué `translatable="false"`) ;
+- plus aucun texte visible n'est écrit en dur dans le code : noms des modèles, indications de fichier et avertissements de
+  taille / empreinte passent par des ressources (`AiModel.displayName(context)`, `UiText`).

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Handler
+import android.os.SystemClock
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.view.inputmethod.InputConnection
@@ -14,6 +15,8 @@ import fr.junade.taipo.ai.VoiceEngine
 import fr.junade.taipo.ai.VoiceField
 import fr.junade.taipo.ai.VoiceRecorder
 import fr.junade.taipo.ai.VoiceTextSync
+import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.model.VoiceModelPreferences
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -88,6 +91,9 @@ class VoiceController(
     var isRecording = false
         private set
     private var isHoldModeRecording = false
+
+    /** Instant (SystemClock.elapsedRealtime) où le micro a réellement commencé à capter, pour la durée d'écoute mesurée. */
+    private var listeningStartedAt = 0L
     private var longPressTriggered = false
 
     // Cible de l'écoute en cours, fixée au démarrage : une dictée lancée dans le mode prompt écrit dans la saisie du prompt
@@ -234,6 +240,7 @@ class VoiceController(
                 }
                 voiceRecorder = recorder
                 recorder.start()
+                listeningStartedAt = SystemClock.elapsedRealtime()
                 host.setVoiceBarState(VoiceBarState.RECORDING) // le micro capte vraiment, à partir de maintenant
                 voiceStartJob = null
                 // Insertion au fur et à mesure : chaque nouvelle hypothèse remplace
@@ -275,6 +282,8 @@ class VoiceController(
         voiceRecorder = null
         isRecording = false
         host.setVoiceBarState(VoiceBarState.TRANSCRIBING)
+        val holdMode = isHoldModeRecording
+        val listenedSeconds = (SystemClock.elapsedRealtime() - listeningStartedAt) / 1000L
         scope.launch {
             // On arrête d'abord de suivre les hypothèses partielles pour ne pas
             // risquer une mise à jour concurrente pendant qu'on insère le texte final.
@@ -286,6 +295,12 @@ class VoiceController(
                 // surlignage — le texte final remplace ici la dernière hypothèse
                 // partielle déjà insérée pendant l'écoute (peut différer légèrement).
                 replaceInsertedPartialText(text)
+                Analytics.track(
+                    context,
+                    AnalyticsEvents.VOICE_INPUT,
+                    "mode" to (if (holdMode) "hold" else "tap"),
+                    "duration" to AnalyticsEvents.listenBucket(listenedSeconds),
+                )
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de la transcription vocale", t)
                 host.showMessage(context.getString(R.string.voice_error, t.message ?: t.javaClass.simpleName))

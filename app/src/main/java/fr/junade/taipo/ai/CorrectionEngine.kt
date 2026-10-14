@@ -18,7 +18,7 @@ import fr.junade.taipo.AppLog
  * La correction a été annulée par l'utilisateur (second appui sur le bouton Corriger pendant le chargement).
  * Sous-classe de [CancellationException] : ce n'est pas une erreur, rien n'est affiché ni appliqué.
  */
-class CorrectionCancelledException : CancellationException("Correction annulée par l'utilisateur")
+class CorrectionCancelledException : CancellationException("Correction cancelled by the user")
 
 /**
  * Exécute la correction IA (orthographe/grammaire, épopée 3 du backlog V1) avec le moteur LiteRT-LM

@@ -91,7 +91,7 @@ class ModelSettingsActivity : ComponentActivity() {
         spinner.adapter = ArrayAdapter(
             this,
             R.layout.spinner_item,
-            models.map { it.displayName },
+            models.map { it.displayName(this) },
         ).also { it.setDropDownViewResource(R.layout.spinner_dropdown_item) }
 
         val activeModel = preferences.activeModel()
@@ -178,7 +178,7 @@ class ModelSettingsActivity : ComponentActivity() {
                 if (model == displayedModel) {
                     refreshInfo()
                 }
-                Toast.makeText(this, getString(R.string.model_settings_file_saved, model.displayName), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.model_settings_file_saved, model.displayName(this)), Toast.LENGTH_SHORT).show()
                 startChecksum(model, uri, fileSize)
             }
         }, "taipo-model-replace").start()
@@ -249,7 +249,7 @@ class ModelSettingsActivity : ComponentActivity() {
             R.string.model_settings_model_info,
             model.technicalName,
             AiModel.EXPECTED_EXTENSION,
-            model.fileHint,
+            model.fileHint(this),
             model.huggingFaceRepo,
         )
 
@@ -266,7 +266,7 @@ class ModelSettingsActivity : ComponentActivity() {
             buttonForgetFile.visibility = View.VISIBLE
 
             val sha256 = preferences.savedSha256For(model)
-            val warnings = listOfNotNull(model.sizeWarning(fileSize), sha256?.let { model.checksumWarning(it) })
+            val warnings = listOfNotNull(model.sizeWarning(fileSize), sha256?.let { model.checksumWarning(it) }).map { it.resolve(this) }
             if (warnings.isNotEmpty()) {
                 textSizeWarning.text = warnings.joinToString("\n\n")
                 textSizeWarning.visibility = View.VISIBLE

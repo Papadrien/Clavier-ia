@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.SystemClock
 import androidx.annotation.StringRes
 import fr.junade.taipo.ai.AiTranscriptionEngine
 import fr.junade.taipo.ai.AiTranscriptionRecorder
@@ -11,6 +12,8 @@ import fr.junade.taipo.ai.InferenceFailureCause
 import fr.junade.taipo.ai.InferenceFailureClassifier
 import fr.junade.taipo.ai.MicUnavailableException
 import fr.junade.taipo.ai.WavEncoder
+import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.model.AiModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -136,6 +139,7 @@ class AiTranscriptionController(
     private fun stopAndTranscribe() {
         val model = host.activeModel()
         setState(AiTranscriptionBarState.PROCESSING)
+        val startedAt = SystemClock.elapsedRealtime()
         job = scope.launch {
             try {
                 val samples = recorder.stop()
@@ -153,7 +157,10 @@ class AiTranscriptionController(
                 if (cancelled) return@launch
                 when {
                     text.isEmpty() -> host.showMessage(context.getString(R.string.ai_transcription_no_speech))
-                    insertAllowed -> host.insertText(text)
+                    insertAllowed -> {
+                        host.insertText(text)
+                        Analytics.aiAction(context, AnalyticsEvents.AiType.TRANSCRIBE, model?.id, startedAt)
+                    }
                 }
             } catch (e: CancellationException) {
                 // Annulation par l'utilisateur ou destruction du service : rien à afficher ni à insérer.
@@ -162,7 +169,11 @@ class AiTranscriptionController(
                 // Diagnostic : la trace seulement, jamais l'audio ni le texte (story 14.6). L'utilisateur voit une phrase
                 // selon la cause (story 8.6), jamais un nom de classe ni le message brut de l'exception.
                 AppLog.e(TAG, "transcription en échec", e)
-                if (!cancelled) host.showMessage(context.getString(failureMessage(InferenceFailureClassifier.classify(e))))
+                if (!cancelled) {
+                    val cause = InferenceFailureClassifier.classify(e)
+                    Analytics.aiAction(context, AnalyticsEvents.AiType.TRANSCRIBE, model?.id, startedAt, failure = cause)
+                    host.showMessage(context.getString(failureMessage(cause)))
+                }
             } finally {
                 setState(AiTranscriptionBarState.IDLE)
             }

@@ -98,7 +98,7 @@ class ModelDownloadActivity : ModelScreenActivity() {
         val present = status == ModelRowStatus.INSTALLED || status == ModelRowStatus.UPDATE_AVAILABLE
         val active = preferences.activeModel() == model
 
-        views.name.text = model.displayName
+        views.name.text = model.displayName(this)
         val size = Formatter.formatFileSize(this, model.approxDownloadBytes ?: model.approxSizeBytesMax)
         val technicalLine = getString(R.string.model_download_technical_line, model.technicalName, size)
         // Gemma 3 (Ultra-léger, Léger) n'a pas d'entrée audio : on prévient que certaines fonctions manquent.
@@ -235,7 +235,7 @@ class ModelDownloadActivity : ModelScreenActivity() {
             start = { startDownload(model, mobileDataAccepted = false) },
             confirmMobile = {
                 val size = Formatter.formatFileSize(this, model.approxDownloadBytes ?: model.approxSizeBytesMax)
-                confirmMobileData(getString(R.string.model_download_mobile_message, model.displayName, size)) {
+                confirmMobileData(getString(R.string.model_download_mobile_message, model.displayName(this), size)) {
                     startDownload(model, mobileDataAccepted = true)
                 }
             },
@@ -259,7 +259,7 @@ class ModelDownloadActivity : ModelScreenActivity() {
             startActivity(android.content.Intent(this, TermsActivity::class.java))
         }
         AlertDialog.Builder(dialogContext)
-            .setTitle(getString(R.string.model_license_dialog_title, model.displayName))
+            .setTitle(getString(R.string.model_license_dialog_title, model.displayName(this)))
             .setView(content)
             .setPositiveButton(R.string.model_license_dialog_accept) { _, _ ->
                 licenseAcceptance.accept(model.license)
@@ -280,11 +280,11 @@ class ModelDownloadActivity : ModelScreenActivity() {
         val message = when {
             installed.none { it != model } -> getString(R.string.model_delete_message_last, size)
             preferences.activeModel() == model && successor != null ->
-                getString(R.string.model_delete_message_active, size, successor.displayName)
+                getString(R.string.model_delete_message_active, size, successor.displayName(this))
             else -> getString(R.string.model_delete_message, size)
         }
         AlertDialog.Builder(ContextThemeWrapper(this, R.style.MessageDialogTheme))
-            .setTitle(getString(R.string.model_delete_title, model.displayName))
+            .setTitle(getString(R.string.model_delete_title, model.displayName(this)))
             .setMessage(message)
             .setPositiveButton(R.string.model_delete_confirm) { _, _ -> deleteModel(model) }
             .setNegativeButton(R.string.model_delete_cancel, null)

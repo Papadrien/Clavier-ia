@@ -65,7 +65,7 @@ class AiTranscriptionEngine(
         onLoading: () -> Unit,
     ): String = host.inferenceLock.withLock {
         val engine = host.ensureLoaded(model, onLoading, withAudio = true)
-        if (isCancelled()) throw CancellationException("Transcription annulée par l'utilisateur")
+        if (isCancelled()) throw CancellationException("Transcription cancelled by the user")
         // Le moteur ne porte qu'une conversation à la fois : on ferme celle de la génération par prompt.
         host.releaseOpenConversation()
         val config = ConversationConfig(systemInstruction = Contents.of(promptPreferences.get()))

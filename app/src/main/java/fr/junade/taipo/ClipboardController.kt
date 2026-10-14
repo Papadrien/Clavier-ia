@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Handler
 import android.view.View
 import android.view.inputmethod.InputConnection
+import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.clipboard.ClipboardEditBridge
 import fr.junade.taipo.clipboard.ClipboardItems
 import fr.junade.taipo.clipboard.ClipboardPanelView
@@ -250,6 +252,9 @@ class ClipboardController(
         scope.launch {
             try {
                 val result = pinnedRepository.pin(item.text)
+                if (result == ClipboardItems.PinResult.PINNED) {
+                    Analytics.track(context, AnalyticsEvents.CLIPBOARD_USED, "action" to "pin")
+                }
                 host.showMessage(pinMessage(result))
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de l'épinglage", t)
@@ -444,6 +449,7 @@ class ClipboardController(
         val replaced = ic.getSelectedText(0)?.toString().orEmpty()
         ic.commitText(suggestion.text, 1)
         host.recordUndoEdit(inserted = suggestion.text, original = replaced)
+        Analytics.track(context, AnalyticsEvents.CLIPBOARD_USED, "action" to "paste")
         state.onPasted()
         host.collapseMenu()
         host.resyncKeyboard()

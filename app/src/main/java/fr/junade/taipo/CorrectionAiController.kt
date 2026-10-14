@@ -17,6 +17,8 @@ import fr.junade.taipo.ai.InferenceFailureClassifier
 import fr.junade.taipo.ai.messageRes
 import fr.junade.taipo.ai.SpanLocator
 import fr.junade.taipo.ai.TextBlock
+import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.ai.CorrectionCancelledException
 import kotlinx.coroutines.CoroutineScope
@@ -344,9 +346,12 @@ class CorrectionAiController(
         cancelRequested = false
         host.clearSuggestions()
         host.setCorrectionBarState(CorrectionBarState.LOADING)
+        val startedAt = SystemClock.elapsedRealtime()
+        val modelId = host.activeModel()?.id
         scope.launch {
             try {
                 work()
+                Analytics.aiAction(context, AnalyticsEvents.AiType.CORRECT, modelId, startedAt)
             } catch (e: CorrectionCancelledException) {
                 AppLog.i(TAG, "correction annulée par l'utilisateur")
             } catch (t: Throwable) {
@@ -356,6 +361,7 @@ class CorrectionAiController(
                 } else {
                     val cause = InferenceFailureClassifier.classify(t)
                     AppLog.e(TAG, "Échec de la correction IA ($cause)", t) // détail technique : debug uniquement
+                    Analytics.aiAction(context, AnalyticsEvents.AiType.CORRECT, modelId, startedAt, failure = cause)
                     host.showMessage(context.getString(cause.messageRes()))
                 }
             } finally {
