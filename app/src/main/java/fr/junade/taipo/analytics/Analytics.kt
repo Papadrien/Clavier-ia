@@ -3,9 +3,9 @@ package fr.junade.taipo.analytics
 import android.app.Application
 import android.content.Context
 import android.os.SystemClock
-import com.aptabase.aptabase.Aptabase
-import com.aptabase.aptabase.InitOptions
-import com.aptabase.aptabase.TrackingMode
+import com.aptabase.Aptabase
+import com.aptabase.InitOptions
+import com.aptabase.TrackingMode
 import fr.junade.taipo.BuildConfig
 import fr.junade.taipo.ai.InferenceFailureCause
 

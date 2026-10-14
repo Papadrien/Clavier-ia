@@ -60,7 +60,7 @@ Le mode chat est la génération par prompt : il compte sous `type = generate`.
 
 ## À vérifier sur appareil (rien n'a été compilé ni exécuté)
 
-0. Au premier build : la résolution de `com.github.aptabase:aptabase-kotlin:0.1.0` sur JitPack, et les imports `com.aptabase.aptabase.*`
+0. Au premier build : la résolution de `com.github.aptabase:aptabase-kotlin:0.1.0` sur JitPack, et les imports `com.aptabase.*`
    (`Aptabase`, `InitOptions`, `TrackingMode`) dans `Analytics.kt`, écrits sans avoir pu lire le code du SDK. Le comportement hors ligne
    du SDK (réessai ou non) n'est pas documenté : le test 5 ci-dessous le dira.
 1. Installer le debug, faire une correction IA, un collage, un Annuler, changer un réglage.
