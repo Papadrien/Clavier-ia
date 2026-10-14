@@ -145,6 +145,7 @@ class EmojiTabsView(context: Context) : View(context) {
             for (index in icons.indices) virtualViewIds.add(index)
         }
 
+        @Suppress("DEPRECATION") // setBoundsInParent : bornes exigées par ExploreByTouchHelper
         override fun onPopulateNodeForVirtualView(virtualViewId: Int, node: AccessibilityNodeInfoCompat) {
             if (virtualViewId !in icons.indices) {
                 node.contentDescription = ""

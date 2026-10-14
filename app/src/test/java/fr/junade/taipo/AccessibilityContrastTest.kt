@@ -41,7 +41,7 @@ class AccessibilityContrastTest {
     /** Superpose [fg] (avec son alpha) sur [bg] opaque. */
     private fun over(fg: Long, bg: Long): Long {
         val alpha = channel(fg, 24) / 255.0
-        fun mix(shift: Int) = Math.round(alpha * channel(fg, shift) + (1 - alpha) * channel(bg, shift)).toLong()
+        fun mix(shift: Int) = Math.round(alpha * channel(fg, shift) + (1 - alpha) * channel(bg, shift))
         return 0xFF000000L or (mix(16) shl 16) or (mix(8) shl 8) or mix(0)
     }
 

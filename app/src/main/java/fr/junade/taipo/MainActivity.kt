@@ -120,7 +120,7 @@ class MainActivity : Activity() {
         val activeModel = textPreferences.activeModel()
         val activeInstalled = activeModel != null && textPreferences.isInstalled(activeModel)
         // Story 8.14 : modèle actif utilisable mais dont le fichier a une nouvelle version au catalogue.
-        val updateAvailable = activeInstalled && activeModel != null && textPreferences.updateAvailable(activeModel)
+        val updateAvailable = activeInstalled && textPreferences.updateAvailable(activeModel)
         val textStatus = if (updateAvailable) ModelStatus.INCOMPLETE else ModelStatus.forTextModel(activeInstalled)
         val textLabel = getString(
             when {

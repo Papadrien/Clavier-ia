@@ -127,6 +127,7 @@ internal class KeyboardAccessibility(private val view: KeyboardView) : ExploreBy
         for (index in view.keySlots().indices) virtualViewIds.add(index)
     }
 
+    @Suppress("DEPRECATION") // setBoundsInParent : bornes exigées par ExploreByTouchHelper
     override fun onPopulateNodeForVirtualView(virtualViewId: Int, node: AccessibilityNodeInfoCompat) {
         val slot = view.keySlots().getOrNull(virtualViewId)
         if (slot == null) {

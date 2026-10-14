@@ -159,7 +159,7 @@ class AiTranscriptionController(
                     text.isEmpty() -> host.showMessage(context.getString(R.string.ai_transcription_no_speech))
                     insertAllowed -> {
                         host.insertText(text)
-                        Analytics.aiAction(context, AnalyticsEvents.AiType.TRANSCRIBE, model?.id, startedAt)
+                        Analytics.aiAction(context, AnalyticsEvents.AiType.TRANSCRIBE, model.id, startedAt)
                     }
                 }
             } catch (e: CancellationException) {

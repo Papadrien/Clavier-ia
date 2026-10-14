@@ -131,7 +131,7 @@ class ModelInstallerTest {
     @Test
     fun `un fichier existant est remplace seulement apres verification`() {
         val destination = destination()
-        destination.parentFile.mkdirs()
+        destination.parentFile!!.mkdirs()
         destination.writeText("ancien")
         // Échec de vérification : l'ancien fichier reste intact.
         ModelInstaller.install(payload.inputStream(), destination, payload.size.toLong(), "0".repeat(64))
@@ -153,7 +153,7 @@ class ModelInstallerTest {
     @Test
     fun `un temporaire laisse par un precedent echec est ecrase`() {
         val destination = destination()
-        destination.parentFile.mkdirs()
+        destination.parentFile!!.mkdirs()
         ModelInstaller.temporaryFileFor(destination).writeText("reste")
         val result = ModelInstaller.install(payload.inputStream(), destination, payload.size.toLong(), payloadSha)
         assertTrue(result is InstallResult.Installed)

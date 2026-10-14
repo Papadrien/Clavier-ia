@@ -358,6 +358,7 @@ class EmojiGridView(context: Context) : View(context) {
             )
         }
 
+        @Suppress("DEPRECATION") // setBoundsInParent : bornes exigées par ExploreByTouchHelper
         override fun onPopulateNodeForVirtualView(virtualViewId: Int, node: AccessibilityNodeInfoCompat) {
             val g = gridLayout
             val section = sections.getOrNull(virtualViewId / ID_STRIDE)
