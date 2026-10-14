@@ -419,7 +419,6 @@ fim 51803
 deste 51477
 eram 51420
 pára 51392
-agente 51239
 equipa 51176
 rapariga 51106
 marido 50972
@@ -18258,7 +18257,6 @@ aluguei 482
 autodestruição 482
 bartlett 482
 blunt 482
-concerteza 482
 deixem-se 482
 desportiva 482
 embarcação 482
@@ -47578,7 +47576,6 @@ canudo 99
 caracter 99
 cbc 99
 certificação 99
-cetro 99
 chefões 99
 chibar 99
 chileno 99
@@ -47770,7 +47767,6 @@ repulsiva 99
 resoluções 99
 respirações 99
 restringe 99
-reve 99
 riccardo 99
 ritu 99
 romulus 99
@@ -48395,7 +48391,6 @@ tannen 97
 tauron 97
 tesseract 97
 tetravô 97
-tez 97
 thomasin 97
 tornou-os 97
 transferir-me 97
@@ -48409,7 +48404,6 @@ tywin 97
 udinov 97
 urologista 97
 usurpador 97
-vas 97
 vassar 97
 venderá 97
 veritas 97
@@ -48685,7 +48679,6 @@ videiras 96
 vimo-los 96
 vitral 96
 voltada 96
-vovê 96
 wasabi 96
 weyland 96
 wukong 96
@@ -48743,7 +48736,6 @@ bully 95
 cab 95
 canadianas 95
 capuzes 95
-caqui 95
 carjacking 95
 carnívora 95
 casamata 95
@@ -48834,7 +48826,6 @@ fodo-te 95
 funerários 95
 gambrelli 95
 gemenon 95
-ger 95
 goetz 95
 goku-san 95
 golpista 95
@@ -49035,7 +49026,6 @@ carnívoras 94
 carregaram 94
 catarata 94
 cavalheiresco 94
-caza 94
 cent 94
 certificarmo-nos 94
 chafurdar 94
@@ -49265,7 +49255,6 @@ transcontinental 94
 trariam 94
 trimestral 94
 triturar 94
-tus 94
 use-a 94
 valorizamos 94
 vel 94
@@ -49325,7 +49314,6 @@ avelãs 93
 avistados 93
 avôs 93
 babette 93
-bada 93
 barrows 93
 batata-doce 93
 beluga 93
@@ -49737,7 +49725,6 @@ ganhas-te 92
 gedda 92
 globalmente 92
 goethe 92
-gora 92
 greggs 92
 greyjoy 92
 grã 92
@@ -49899,7 +49886,6 @@ trash 92
 tratam-te 92
 tratava-me 92
 trinidad 92
-tufo 92
 túnicas 92
 ulster 92
 unificar 92
@@ -49983,7 +49969,6 @@ criei-a 91
 crispin 91
 curran 91
 céline 91
-dais 91
 dar-lhe-emos 91
 dawg 91
 decompor 91

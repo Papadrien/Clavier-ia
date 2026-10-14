@@ -4,7 +4,6 @@ che 6063914
 di 5880995
 la 3887197
 il 3726599
-un 3555300
 a 3451723
 per 2866558
 è 2559257
@@ -59,7 +58,6 @@ questa 534612
 detto 530015
 ok 513655
 va 507886
-perche 489341
 quello 485627
 mai 477108
 alla 469810
@@ -2812,7 +2810,6 @@ opportunita 6623
 scienza 6622
 costume 6619
 rompere 6616
-pò 6614
 scendi 6613
 episode 6604
 sembro 6601

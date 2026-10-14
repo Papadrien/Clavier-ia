@@ -79,3 +79,19 @@ proposés en correction ou en complétion seulement au-dessus de la fréquence d
 de 61, it 102, pt 91, nl 77 (fr : 100).
 Non fait pour ces langues : le retrait des fautes de frappe du corpus (tools/PruneDictionaryTypos.kt, propre au clavier
 AZERTY français) ; des fautes rares restent donc des mots « valides » qui peuvent empêcher une autocorrection.
+
+
+=== Nettoyage complémentaire des fautes de frappe — 14/10/2026 ===
+Les 7 listes complètes et leurs listes de secours ont été passées par un filtre heuristique conservateur :
+retrait des formes rares (fréquence <= 99) lorsqu'un mot à une seule modification est au moins 1 000 fois
+plus fréquent et que la modification est compatible avec une faute de saisie (remplacement par une touche voisine,
+lettre oubliée/ajoutée/doublée ou inversion). Les paires qui ne diffèrent que par les accents sont conservées.
+Quelques fautes évidentes déjà identifiées ont également été retirées manuellement.
+
+Lignes retirées des listes complètes (fr/en/es/de/it/pt/nl) : 1 439 / 6 153 / 3 824 / 1 290 / 2 157 / 1 885 / 1 920.
+Lignes retirées des listes de secours : 20 / 7 / 5 / 56 / 3 / 15 / 36.
+
+Important : ce filtre ne prouve pas qu'un mot est absent de la langue. Les corpus de sous-titres contiennent des noms
+propres, de l'argot, des emprunts et des formes régionales ; les formes rares sans voisin fréquent restent donc
+possibles. Le filtre privilégie la réduction des faux mots qui bloquent l'autocorrection sans prétendre remplacer
+un dictionnaire lexicographique validé pour chaque langue.
