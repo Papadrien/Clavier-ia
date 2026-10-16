@@ -48,7 +48,7 @@ class LicenseNoticesTest {
 
     @Test
     fun `le texte de la licence de la police est embarque`() {
-        val text = File(mainDir, LicenseNotices.OFL_ASSET).readText()
+        val text = File(mainDir, "assets/${LicenseNotices.OFL_ASSET}").readText()
         assertTrue(text.contains("SIL OPEN FONT LICENSE Version 1.1"))
         assertTrue(text.contains("Open Sans Project Authors"))
     }
