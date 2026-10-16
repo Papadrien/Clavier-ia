@@ -44,6 +44,9 @@ internal class KeyPopup(private val view: View) {
     private var popupDefaultCol = -1
     private val popupHomeRect = RectF()
 
+    // Zone tactile élargie autour de la bulle : un doigt juste à côté sélectionne la cellule la plus proche.
+    private val popupTouchRect = RectF()
+
     val isShown: Boolean get() = key != null
 
     /** Symbole de la cellule sélectionnée, ou null si le doigt est hors de la bulle. */
@@ -108,6 +111,9 @@ internal class KeyPopup(private val view: View) {
         popupHomeRect.set(
             bounds.left - clipMargin, popupRect.bottom, bounds.right + clipMargin, bounds.bottom + clipMargin,
         )
+        val touchMargin = view.dimen(R.dimen.taipo_popup_touch_margin)
+        popupTouchRect.set(popupRect)
+        popupTouchRect.inset(-touchMargin, -touchMargin)
         popupDefaultRow = defaultRow
         popupDefaultCol = defaultCol
         popupSelectedRow = popupDefaultRow
@@ -137,23 +143,33 @@ internal class KeyPopup(private val view: View) {
         var row = -1
         var col = -1
         if (popupRect.contains(x, y)) {
-            val r = ((y - popupRect.top - popupPaddingV) / popupCellHeight).toInt()
-                .coerceIn(0, popupGrid.lastIndex)
-            val c = ((x - popupRect.left - popupPadding) / popupCellWidth).toInt()
-                .coerceIn(0, popupGrid[r].lastIndex)
-            row = r
-            col = c
+            val cell = cellAt(x, y)
+            row = cell.first
+            col = cell.second
         } else if (popupDefaultRow >= 0 && popupHomeRect.contains(x, y)) {
             // Doigt resté sur la touche d'origine (ou juste au-dessus) : le choix par défaut reste
             // sélectionné, un léger tremblement du doigt ne l'annule donc pas.
             row = popupDefaultRow
             col = popupDefaultCol
+        } else if (popupTouchRect.contains(x, y)) {
+            // Petite marge autour de la bulle : la cellule la plus proche du doigt est sélectionnée,
+            // pour qu'un relâchement légèrement hors de la bulle ne soit pas perdu.
+            val cell = cellAt(x, y)
+            row = cell.first
+            col = cell.second
         }
         if (row != popupSelectedRow || col != popupSelectedCol) {
             popupSelectedRow = row
             popupSelectedCol = col
             view.invalidate()
         }
+    }
+
+    /** Cellule (rangée, colonne) la plus proche de (x, y) : un point hors de la bulle est ramené sur son bord. */
+    private fun cellAt(x: Float, y: Float): Pair<Int, Int> {
+        val r = ((y - popupRect.top - popupPaddingV) / popupCellHeight).toInt().coerceIn(0, popupGrid.lastIndex)
+        val c = ((x - popupRect.left - popupPadding) / popupCellWidth).toInt().coerceIn(0, popupGrid[r].lastIndex)
+        return r to c
     }
 
     /**

@@ -57,6 +57,8 @@
     <dimen name="taipo_popup_cell_min_height">24dp</dimen>
     <dimen name="taipo_popup_selection_inset">1dp</dimen>
     <dimen name="taipo_popup_clip_margin">4dp</dimen>
+    <!-- Marge tactile autour de la bulle de symboles : la cellule la plus proche reste sélectionnée. -->
+    <dimen name="taipo_popup_touch_margin">20dp</dimen>
     <dimen name="taipo_popup_text_size">22sp</dimen>
 
     <!-- ===== Bulle d'agrandissement (touche pressée) ===== -->

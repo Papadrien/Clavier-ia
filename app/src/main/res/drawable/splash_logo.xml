@@ -1,23 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Icône du splashscreen : logo du studio Junadé.
      Android 12+ affiche l'icône dans un canevas de 288 dp, masqué par un cercle de 192 dp de diamètre : tout ce qui
-     dépasse est rogné. Le logo, très large (rapport 2,5), est donc posé à 168 × 67 dp au centre, ce qui garde sa
-     diagonale (≈ 181 dp) à l'intérieur du cercle. Avant Android 12, la bibliothèque core-splashscreen affiche le même
-     drawable sans masque. -->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:width="288dp"
-        android:height="288dp">
-        <shape android:shape="rectangle">
-            <solid android:color="@android:color/transparent" />
-        </shape>
-    </item>
-    <item
-        android:width="168dp"
-        android:height="67dp"
-        android:gravity="center">
-        <bitmap
-            android:src="@drawable/junade_logo_splash"
-            android:gravity="fill" />
-    </item>
-</layer-list>
+     dépasse est rogné. L'image (junade_logo_splash.webp) est donc carrée (1200 × 1200 px) : le logo, de rapport
+     largeur/hauteur 2,5 conservé, n'occupe que 52 % de la largeur, centré sur fond transparent (≈ 150 × 60 dp, diagonale
+     ≈ 162 dp, donc entièrement dans le cercle de 192 dp). Un canevas carré évite tout étirement : le système l'affiche tel
+     quel, sans redimensionner le logo. Avant Android 12, la bibliothèque core-splashscreen affiche le même drawable
+     sans masque. -->
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/junade_logo_splash"
+    android:gravity="fill" />
