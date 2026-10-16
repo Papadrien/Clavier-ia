@@ -67,6 +67,10 @@ class DownloadStateTest {
             DownloadFailure.CORRUPTED,
             DownloadFailureMapper.from(InstallResult.Failed(InstallFailure.SIZE_MISMATCH)),
         )
+        assertEquals(
+            DownloadFailure.NETWORK,
+            DownloadFailureMapper.from(InstallResult.Failed(InstallFailure.TRUNCATED)),
+        )
         assertEquals(DownloadFailure.NETWORK, DownloadFailureMapper.fromException(UnknownHostException()))
         assertEquals(DownloadFailure.NETWORK, DownloadFailureMapper.fromException(SocketTimeoutException()))
         assertEquals(

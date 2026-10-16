@@ -94,7 +94,12 @@ object ModelFileResolver {
     fun deleteLocalCopy(context: Context, model: AiModel): Long {
         val copy = localFileFor(context, model)
         var freed = 0L
-        val targets = listOf(copy, File(copy.parentFile, "${copy.name}.tmp"), sha256MarkerFor(copy)) +
+        val targets = listOf(
+            copy,
+            File(copy.parentFile, "${copy.name}.tmp"),
+            File(copy.parentFile, "${copy.name}.tmp.resume"),
+            sha256MarkerFor(copy),
+        ) +
             xnnpackCacheFiles(context, model)
         targets.forEach { file ->
             if (file.exists()) {

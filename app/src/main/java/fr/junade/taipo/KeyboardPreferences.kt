@@ -39,9 +39,35 @@ class KeyboardPreferences(context: Context) {
 
     /**
      * Langue du clavier choisie dans les paramètres (disposition, accents, dictionnaire, autocorrection) ; null =
-     * automatique : langue du système si le clavier la gère, sinon français ([KeyboardLanguageChoice]).
+     * automatique : première langue du système gérée par le clavier, sinon anglais ([KeyboardLanguageChoice]).
      * Relue à chaque ouverture d'un champ.
      */
+    var isMultilingualEnabled: Boolean
+        get() = prefs.getBoolean(KEY_MULTILINGUAL, false)
+        set(value) {
+            prefs.edit().putBoolean(KEY_MULTILINGUAL, value).apply()
+        }
+
+    /** Langues cochées pour le clavier multilingue (dans l'ordre de [KeyboardLanguage.entries]). */
+    var multilingualSelection: List<KeyboardLanguage>
+        get() = MultilingualChoice.decode(prefs.getString(KEY_MULTILINGUAL_LANGUAGES, null))
+        set(value) {
+            prefs.edit().putString(KEY_MULTILINGUAL_LANGUAGES, MultilingualChoice.encode(value)).apply()
+        }
+
+    /** Langues du clavier multilingue effectivement utilisées : vide si le mode est désactivé ou si moins de deux sont cochées. */
+    val multilingualLanguages: List<KeyboardLanguage>
+        get() = if (isMultilingualEnabled) multilingualSelection.takeIf { MultilingualChoice.isActive(it) }.orEmpty() else emptyList()
+
+    /** Dernière langue choisie par appui long sur Entrée (conservée entre les champs). */
+    var activeMultilingualLanguage: KeyboardLanguage?
+        get() = KeyboardLanguage.fromTag(prefs.getString(KEY_MULTILINGUAL_ACTIVE, null))
+        set(value) {
+            prefs.edit().apply {
+                if (value == null) remove(KEY_MULTILINGUAL_ACTIVE) else putString(KEY_MULTILINGUAL_ACTIVE, value.tag)
+            }.apply()
+        }
+
     var keyboardLanguage: KeyboardLanguage?
         get() = KeyboardLanguage.fromTag(prefs.getString(KEY_LANGUAGE, null))
         set(value) {
@@ -80,6 +106,9 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_HAPTIC_INTENSITY = "haptic_intensity"
         private const val KEY_KEYBOARD_HEIGHT = "keyboard_height"
         private const val KEY_LANGUAGE = "keyboard_language"
+        private const val KEY_MULTILINGUAL = "multilingual_enabled"
+        private const val KEY_MULTILINGUAL_LANGUAGES = "multilingual_languages"
+        private const val KEY_MULTILINGUAL_ACTIVE = "multilingual_active_language"
         private const val KEY_RECENT_EMOJIS = "recent_emojis"
         private const val KEY_HABIT_LEARNING = "habit_learning_enabled"
         const val DEFAULT_HABIT_LEARNING = true

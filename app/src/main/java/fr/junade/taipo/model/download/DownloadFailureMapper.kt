@@ -11,6 +11,7 @@ object DownloadFailureMapper {
 
     fun from(failure: InstallResult.Failed): DownloadFailure = when (failure.reason) {
         InstallFailure.HASH_MISMATCH, InstallFailure.SIZE_MISMATCH -> DownloadFailure.CORRUPTED
+        InstallFailure.TRUNCATED -> DownloadFailure.NETWORK
         InstallFailure.IO -> fromException(failure.cause)
     }
 

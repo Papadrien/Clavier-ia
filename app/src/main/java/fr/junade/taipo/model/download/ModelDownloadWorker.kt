@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import fr.junade.taipo.AppLog
@@ -16,6 +17,7 @@ import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.model.ModelFileResolver
 import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.sizeWarning
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
@@ -23,8 +25,12 @@ import kotlinx.coroutines.withContext
 /**
  * Télécharge un modèle de texte (épopée 8) : GET HTTPS en flux vers `models/<id>.litertlm.tmp`, SHA-256 calculé
  * pendant le flux, rename atomique (voir [ModelFileFetcher] et [ModelInstaller]). Service au premier plan avec
- * notification : un téléchargement de plusieurs Go doit continuer écran éteint. Aucune reprise : un téléchargement
- * interrompu repart de zéro (V2).
+ * notification : un téléchargement de plusieurs Go doit continuer écran éteint.
+ *
+ * Reprise (point 1.7 de l'audit) : une coupure réseau (relancée automatiquement, voir
+ * [ModelFileFetcher.fetchWithRetry]) ou un arrêt par le système (délai du service `dataSync` d'Android 15, contrainte
+ * perdue) conserve le `.tmp` ; « Réessayer » reprend là où il s'est arrêté. Seule une annulation par l'utilisateur
+ * supprime le partiel.
  *
  * L'état affiché par les écrans passe par [DownloadTracker]. Le modèle vocal a son propre worker
  * ([VoiceModelDownloadWorker]).
@@ -56,7 +62,14 @@ class ModelDownloadWorker(
             AppLog.w(TAG, "Service au premier plan refusé", e)
         }
 
-        return when (val outcome = download(model, allowMobileData)) {
+        val outcome = try {
+            download(model, allowMobileData)
+        } catch (e: CancellationException) {
+            // Arrêt pendant une attente entre deux tentatives (hors du flux) : même traitement qu'un arrêt en cours de flux.
+            settleAfterStop(model)
+            throw e
+        }
+        return when (outcome) {
             is ModelFileFetcher.Outcome.Done -> {
                 val appContext = applicationContext
                 val preferences = ModelPreferences(appContext)
@@ -71,7 +84,7 @@ class ModelDownloadWorker(
                 Result.success()
             }
             is ModelFileFetcher.Outcome.Cancelled -> {
-                DownloadTracker.update(model, DownloadState.Idle)
+                settleAfterStop(model)
                 Result.failure()
             }
             is ModelFileFetcher.Outcome.Failed -> {
@@ -87,13 +100,27 @@ class ModelDownloadWorker(
         }
     }
 
+    /**
+     * Après un arrêt du travail : annulation par l'utilisateur (écran ou notification) = retour à « Télécharger » et
+     * partiel supprimé ; tout autre arrêt (délai du service au premier plan d'Android 15+, contrainte perdue…) vient du
+     * système : on l'annonce (« Réessayer ») et le partiel est conservé pour la reprise.
+     */
+    private fun settleAfterStop(model: AiModel) {
+        if (stopReason == WorkInfo.STOP_REASON_CANCELLED_BY_APP) {
+            PartialDownload.discard(ModelFileResolver.localFileFor(applicationContext, model))
+            DownloadTracker.update(model, DownloadState.Idle)
+        } else {
+            DownloadTracker.update(model, DownloadState.Failed(DownloadFailure.SYSTEM_STOP))
+        }
+    }
+
     private suspend fun download(model: AiModel, allowMobileData: Boolean): ModelFileFetcher.Outcome =
         withContext(Dispatchers.IO) {
             val scope = this
             val appContext = applicationContext
             val url = requireNotNull(model.downloadUrl) { "Model without a download URL: ${model.id}" }
             var total = -1L
-            ModelFileFetcher.fetch(
+            ModelFileFetcher.fetchWithRetry(
                 context = appContext,
                 url = url,
                 destination = ModelFileResolver.localFileFor(appContext, model),
@@ -102,6 +129,7 @@ class ModelDownloadWorker(
                 acceptContentLength = { model.sizeWarning(it) == null },
                 allowMobileData = allowMobileData,
                 isActive = { scope.isActive },
+                keepPartialOnStop = { stopReason != WorkInfo.STOP_REASON_CANCELLED_BY_APP },
                 onTotal = {
                     total = it
                     DownloadTracker.update(model, DownloadState.Downloading(0, it))

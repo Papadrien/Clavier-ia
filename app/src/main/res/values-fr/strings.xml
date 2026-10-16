@@ -3,7 +3,7 @@
     <string name="app_name">Taipo</string>
     <string name="ime_name">Taipo</string>
     <string name="main_title">Clavier IA 100% local</string>
-    <string name="main_description">Bilingue français (AZERTY) / anglais (QWERTY) selon la langue active.</string>
+    <string name="main_description">Écris en anglais, français, espagnol, allemand, italien, portugais et néerlandais, avec une disposition pour chaque langue.</string>
     <string name="button_enable">Ouvrir les réglages</string>
     <string name="button_select">Choisir la méthode de saisie</string>
     <string name="button_model_settings">Modèle IA local</string>
@@ -105,7 +105,10 @@
     <string name="keyboard_settings_number_row_description">Affiche une rangée de chiffres (1 à 0) au-dessus des lettres. Désactivée, les chiffres restent accessibles via la touche « 123 ». S\'applique à la prochaine ouverture du clavier.</string>
     <string name="keyboard_settings_language_title">Langue du clavier</string>
     <string name="keyboard_settings_language_auto">Automatique (langue du téléphone)</string>
-    <string name="keyboard_settings_language_description">Choisit la disposition des touches, les accents de l\'appui long, le dictionnaire et l\'autocorrection. Automatique suit la langue du téléphone si le clavier la gère, sinon le français. S\'applique à la prochaine ouverture du clavier.</string>
+    <string name="keyboard_settings_language_description">Choisit la disposition des touches, les accents de l\'appui long, le dictionnaire et l\'autocorrection. Automatique suit la langue du téléphone si le clavier la gère, sinon l\'anglais. S\'applique à la prochaine ouverture du clavier.</string>
+    <string name="keyboard_settings_multilingual_switch">Clavier multilingue</string>
+    <string name="keyboard_settings_multilingual_min">Sélectionnez au moins deux langues pour activer le changement de langue.</string>
+    <string name="keyboard_settings_multilingual_description">Écrivez en plusieurs langues sans ouvrir les paramètres. Choisissez vos langues, puis faites un appui long sur la touche Entrée du clavier et glissez vers le haut jusqu\'au globe pour changer de langue. Avec deux langues, le changement est immédiat ; avec plus, vous choisissez dans une liste.</string>
     <string name="keyboard_settings_haptic_title">Retour haptique</string>
     <string name="keyboard_settings_haptic_off">Désactivé</string>
     <string name="keyboard_settings_haptic_light">Léger</string>
@@ -127,9 +130,9 @@
     <string name="keyboard_settings_habits_clear_confirm">Effacer</string>
     <string name="keyboard_settings_habits_clear_cancel">Annuler</string>
     <string name="keyboard_settings_habits_cleared">Habitudes effacées</string>
-    <string name="keyboard_settings_analytics_title">Mesure d\'usage</string>
-    <string name="keyboard_settings_analytics_switch">Mesure d\'usage anonyme</string>
-    <string name="keyboard_settings_analytics_description">Aide à améliorer Taipo en comptant, sans aucun texte ni identifiant, quelles fonctions sont utilisées (par exemple « une correction IA a réussi en moins de 3 secondes »), via Aptabase, un service européen. Rien n\'est envoyé depuis les champs de mot de passe. Désactivée, plus rien n\'est envoyé.</string>
+    <string name="keyboard_settings_analytics_title">Données d\'utilisation</string>
+    <string name="keyboard_settings_analytics_switch">Partager les données d\'utilisation</string>
+    <string name="keyboard_settings_analytics_description">Cela nous aide à améliorer l\'application. Vous pouvez le désactiver à tout moment.</string>
 
     <string name="clipboard_button">Presse-papiers</string>
     <string name="settings_button_description">Ouvrir les réglages de l\'application</string>
@@ -321,7 +324,8 @@
     <string name="model_download_action_retry">Réessayer</string>
     <string name="model_download_action_cancel">Annuler</string>
     <string name="model_download_action_use">Utiliser ce modèle</string>
-    <string name="model_download_failed_network">Téléchargement interrompu : connexion perdue ou Wi-Fi quitté.</string>
+    <string name="model_download_failed_network">Téléchargement interrompu : connexion perdue ou Wi-Fi quitté. « Réessayer » reprend là où il s\'est arrêté.</string>
+    <string name="model_download_failed_system_stop">Android a interrompu le téléchargement. Appuyez sur Réessayer : il reprendra là où il s\'est arrêté.</string>
     <string name="model_download_failed_server">Le serveur n\'a pas renvoyé le fichier attendu. Réessayez plus tard.</string>
     <string name="model_download_failed_no_space">Espace insuffisant sur l\'appareil pour ce modèle.</string>
     <string name="model_download_failed_corrupted">Le fichier reçu est incomplet ou ne correspond pas au modèle attendu.</string>
@@ -341,8 +345,8 @@
     <string name="home_section_about">À propos</string>
     <string name="button_licenses">Licences</string>
     <string name="licenses_title">Licences</string>
-    <string name="home_row_licenses_subtitle">Conditions et licences des modèles IA</string>
-    <string name="licenses_description">Les modèles IA de Taipo sont des modèles Gemma de Google, distribués sous des licences différentes selon leur version. Ils sont utilisés sur votre appareil et ne sont pas modifiés par Taipo.</string>
+    <string name="home_row_licenses_subtitle">Modèles IA, dictionnaires et bibliothèques</string>
+    <string name="licenses_description">Taipo repose sur des modèles IA, des listes de mots et des bibliothèques libres. Leurs licences et crédits sont listés ici. Les modèles Gemma sont utilisés sur votre appareil et ne sont pas modifiés par Taipo.</string>
     <string name="licenses_gemma3_title">Gemma 3 : conditions d\'utilisation Gemma</string>
     <string name="licenses_gemma3_models">Modèles concernés : Ultra-léger (Gemma 3 270M) et Léger (Gemma 3 1B).</string>
     <string name="licenses_gemma3_notice">Gemma is provided under and subject to the Gemma Terms of Use found at ai.google.dev/gemma/terms</string>
@@ -356,6 +360,30 @@
     <string name="licenses_apache_hide">Masquer le texte de la licence</string>
     <string name="licenses_apache_unreadable">Le texte de la licence n\'a pas pu être chargé. Il est disponible sur www.apache.org/licenses/LICENSE-2.0.</string>
     <string name="licenses_no_browser">Aucun navigateur disponible pour ouvrir ce lien.</string>
+
+    <!-- Audit 1.9 : mentions des composants tiers (écran Licences). Noms de licences et de projets non traduits. -->
+    <string name="licenses_section_models">Modèles IA</string>
+    <string name="licenses_section_dictionaries">Dictionnaires</string>
+    <string name="licenses_section_software">Bibliothèques et police</string>
+    <string name="licenses_software_intro">Taipo est construit avec les composants libres ci-dessous. Le texte complet de la licence Apache 2.0, qui couvre la plupart d\'entre eux, se trouve dans la carte « Gemma 4 » plus haut.</string>
+    <string name="licenses_meta_license">Licence : %1$s</string>
+    <string name="licenses_item_project_link">Site du projet</string>
+    <string name="licenses_item_license_link">Lire la licence en ligne</string>
+    <string name="licenses_fulltext_show">Afficher le texte complet de la licence</string>
+    <string name="licenses_fulltext_hide">Masquer le texte de la licence</string>
+    <string name="licenses_fulltext_unreadable">Le texte de la licence n\'a pas pu être chargé. Utilisez le lien ci-dessus pour le lire en ligne.</string>
+    <string name="licenses_usage_nemotron">Modèle de dictée vocale (français et anglais), téléchargé à la demande et utilisé sur votre appareil.</string>
+    <string name="licenses_notice_nemotron">Distribué sous l\'OpenMDW License Agreement, version 1.1. Taipo utilise un export ONNX (int8) de ce modèle, exécuté avec sherpa-onnx.</string>
+    <string name="licenses_usage_frequencywords">Listes de mots pour l\'autocorrection et les suggestions dans les sept langues du clavier : français, anglais, espagnol, allemand, italien, portugais et néerlandais.</string>
+    <string name="licenses_notice_frequencywords">Listes de mots adaptées de FrequencyWords de Hermit Dave (contenu 2018, issu du corpus OpenSubtitles 2018), sous licence CC BY-SA 4.0. Modifications apportées par Taipo : mots passés en minuscules et normalisés ; fragments, abréviations, entrées contenant des chiffres ou des caractères d\'autres alphabets retirés ; mots rares et fautes de frappe probables retirés ; quelques entrées ajoutées à la main. Les listes ainsi adaptées sont partagées sous la même licence, CC BY-SA 4.0.</string>
+    <string name="licenses_usage_litertlm">Moteur qui exécute les modèles Gemma sur votre appareil.</string>
+    <string name="licenses_usage_sherpa">Moteur de reconnaissance vocale de la dictée.</string>
+    <string name="licenses_usage_onnxruntime">Environnement d\'exécution de réseaux de neurones utilisé par sherpa-onnx.</string>
+    <string name="licenses_usage_sqlcipher">Chiffrement des bases de données stockées sur votre appareil (dictionnaire personnel, Smart Clipboard).</string>
+    <string name="licenses_usage_androidx">Briques Android : Room, WorkManager, Activity, Core, Custom View, Autofill, Profile Installer.</string>
+    <string name="licenses_usage_kotlin">Langage de programmation et bibliothèque de coroutines utilisés pour écrire Taipo.</string>
+    <string name="licenses_usage_aptabase">Statistiques d\'usage anonymes, que vous pouvez désactiver dans les réglages.</string>
+    <string name="licenses_usage_opensans">Police des écrans de Taipo.</string>
     <string name="model_download_license_gemma">Licence : conditions d\'utilisation Gemma</string>
     <string name="model_download_license_apache">Licence : Apache 2.0</string>
     <string name="model_license_dialog_title">Licence du modèle %1$s</string>
@@ -416,13 +444,13 @@
     <string name="button_privacy">Confidentialité</string>
     <string name="home_row_privacy_subtitle">Ce qui reste sur votre appareil et ce qui se connecte</string>
     <string name="privacy_title">Confidentialité</string>
-    <string name="privacy_updated">Dernière mise à jour : 14 octobre 2026</string>
+    <string name="privacy_updated">Dernière mise à jour : 15 octobre 2026</string>
     <string name="privacy_section_1_title">1. Traitement sur votre appareil</string>
     <string name="privacy_section_1_body">La correction, la génération de texte, la saisie vocale et la transcription IA sont exécutées sur votre appareil par des modèles installés localement. Le texte que vous saisissez, copiez ou dictez et l\'audio de vos enregistrements ne sont envoyés à aucun serveur. L\'audio d\'une transcription IA reste en mémoire le temps du traitement : il n\'est jamais enregistré dans un fichier.</string>
     <string name="privacy_section_2_title">2. Connexions Internet</string>
     <string name="privacy_section_2_body">Taipo se connecte à Internet pour télécharger les fichiers des modèles IA, à votre demande : depuis un serveur de Junadé pour les modèles Gemma 3 et les modèles de saisie vocale, et depuis Hugging Face pour les modèles Gemma 4. Ces serveurs reçoivent les informations techniques habituelles d\'une connexion (adresse IP, fichier demandé), jamais votre texte ni vos enregistrements. Taipo envoie aussi, sauf si vous le désactivez dans les paramètres du clavier, une mesure d\'usage anonyme à Aptabase, un service européen (voir la section 3). De temps en temps, Taipo peut aussi vous proposer de laisser un avis : cette fenêtre est affichée par Google Play, qui reçoit votre note et votre commentaire ; Taipo ne les reçoit pas.</string>
     <string name="privacy_section_3_title">3. Aucune collecte de données personnelles</string>
-    <string name="privacy_section_3_body">Taipo n\'a pas de compte et pas de publicité. Il mesure son usage de façon anonyme avec Aptabase : des événements comme « une correction IA a réussi », « un modèle a été téléchargé » ou « un réglage a changé », avec la version de l\'application, la version d\'Android, le modèle de l\'appareil et sa langue. Jamais votre texte, ce que vous copiez ou dictez, ni un identifiant de l\'appareil ou de la personne, et rien depuis les champs de mot de passe. Vous pouvez la désactiver à tout moment dans Paramètres du clavier > Mesure d\'usage. Aucune donnée personnelle n\'est collectée.</string>
+    <string name="privacy_section_3_body">Taipo n\'a pas de compte et pas de publicité. Il mesure son usage de façon anonyme avec Aptabase : des événements comme « une correction IA a réussi », « un modèle a été téléchargé » ou « un réglage a changé », avec la version de l\'application, la version d\'Android, le modèle de l\'appareil et sa langue. Jamais votre texte, ce que vous copiez ou dictez, ni un identifiant de l\'appareil ou de la personne, et rien depuis les champs de mot de passe. Vous pouvez la désactiver à tout moment dans Paramètres du clavier > Données d\'utilisation. Comme pour toute connexion Internet, les serveurs d\'Aptabase reçoivent techniquement l\'adresse IP de la requête ; Taipo ne la voit ni ne la conserve jamais (voir la politique de confidentialité d\'Aptabase pour son traitement). Taipo lui-même ne collecte aucune donnée personnelle vous concernant.</string>
     <string name="privacy_section_4_title">4. Champs de mot de passe</string>
     <string name="privacy_section_4_body">Dans un champ de mot de passe ou de code secret, les actions IA (Corriger, Générer, Vocal, Transcription IA) et le Smart Clipboard sont désactivés : le contenu du champ n\'est pas lu et le micro n\'est pas ouvert.</string>
     <string name="privacy_section_5_title">5. Ce qui est conservé sur l\'appareil</string>

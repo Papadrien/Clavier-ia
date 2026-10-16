@@ -18,6 +18,12 @@ enum class DownloadFailure {
     /** Fichier incomplet ou empreinte différente de la référence. */
     CORRUPTED,
 
+    /**
+     * Le système a arrêté le travail (délai du service au premier plan `dataSync` d'Android 15, contrainte perdue…).
+     * Le fichier partiel est conservé : « Réessayer » reprend là où le téléchargement s'est arrêté.
+     */
+    SYSTEM_STOP,
+
     /** Autre erreur d'entrée-sortie. */
     OTHER,
 }
@@ -40,7 +46,7 @@ sealed interface DownloadState {
 
 /**
  * État des téléchargements en cours, partagé dans le processus (le worker et les écrans y vivent). Ne survit pas
- * à un redémarrage du processus : un téléchargement interrompu repart de zéro (reprise reportée en V2).
+ * à un redémarrage du processus ; le fichier partiel, lui, est conservé sur disque et repris (voir [PartialDownload]).
  */
 object DownloadTracker {
 

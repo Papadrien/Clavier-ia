@@ -3,7 +3,7 @@
     <string name="app_name">Taipo</string>
     <string name="ime_name">Taipo</string>
     <string name="main_title">100% local AI keyboard</string>
-    <string name="main_description">Bilingual French (AZERTY) / English (QWERTY) depending on the active language.</string>
+    <string name="main_description">Type in English, French, Spanish, German, Italian, Portuguese and Dutch, with a layout for each language.</string>
     <string name="button_enable">Open settings</string>
     <string name="button_select">Choose input method</string>
     <string name="button_model_settings">Local AI model</string>
@@ -105,7 +105,10 @@
     <string name="keyboard_settings_number_row_description">Shows a row of digits (1 to 0) above the letters. When off, digits remain available via the “123” key. Applies the next time the keyboard opens.</string>
     <string name="keyboard_settings_language_title">Keyboard language</string>
     <string name="keyboard_settings_language_auto">Automatic (phone language)</string>
-    <string name="keyboard_settings_language_description">Sets the key layout, long-press accents, dictionary and autocorrect. Automatic follows the phone\'s language if the keyboard supports it, otherwise French. Applies the next time the keyboard opens.</string>
+    <string name="keyboard_settings_language_description">Sets the key layout, long-press accents, dictionary and autocorrect. Automatic follows the phone\'s language if the keyboard supports it, otherwise English. Applies the next time the keyboard opens.</string>
+    <string name="keyboard_settings_multilingual_switch">Multilingual keyboard</string>
+    <string name="keyboard_settings_multilingual_min">Select at least two languages to turn on language switching.</string>
+    <string name="keyboard_settings_multilingual_description">Type in several languages without opening the settings. Choose your languages, then long-press the Enter key on the keyboard and slide up to the globe to switch language. With two languages it switches right away; with more, you pick one from a list.</string>
     <string name="keyboard_settings_haptic_title">Haptic feedback</string>
     <string name="keyboard_settings_haptic_off">Off</string>
     <string name="keyboard_settings_haptic_light">Light</string>
@@ -127,9 +130,9 @@
     <string name="keyboard_settings_habits_clear_confirm">Clear</string>
     <string name="keyboard_settings_habits_clear_cancel">Cancel</string>
     <string name="keyboard_settings_habits_cleared">Habits cleared</string>
-    <string name="keyboard_settings_analytics_title">Usage analytics</string>
-    <string name="keyboard_settings_analytics_switch">Anonymous usage analytics</string>
-    <string name="keyboard_settings_analytics_description">Helps improve Taipo by counting which features are used, with no text and no identifier (for example “an AI correction succeeded in under 3 seconds”), through Aptabase, a European service. Nothing is sent from password fields. When turned off, nothing is sent anymore.</string>
+    <string name="keyboard_settings_analytics_title">Usage data</string>
+    <string name="keyboard_settings_analytics_switch">Share usage data</string>
+    <string name="keyboard_settings_analytics_description">This helps us improve the app. You can turn it off at any time.</string>
 
     <string name="clipboard_button">Clipboard</string>
     <string name="settings_button_description">Open the app settings</string>
@@ -314,7 +317,8 @@
     <string name="model_download_action_retry">Retry</string>
     <string name="model_download_action_cancel">Cancel</string>
     <string name="model_download_action_use">Use this model</string>
-    <string name="model_download_failed_network">Download interrupted: connection lost or Wi-Fi left.</string>
+    <string name="model_download_failed_network">Download interrupted: connection lost or Wi-Fi left. Tap Retry to resume where it stopped.</string>
+    <string name="model_download_failed_system_stop">Android paused the download. Tap Retry: it will resume where it stopped.</string>
     <string name="model_download_failed_server">The server didn\'t return the expected file. Try again later.</string>
     <string name="model_download_failed_no_space">Not enough space on the device for this model.</string>
     <string name="model_download_failed_corrupted">The received file is incomplete or doesn\'t match the expected model.</string>
@@ -333,8 +337,8 @@
     <string name="home_section_about">About</string>
     <string name="button_licenses">Licenses</string>
     <string name="licenses_title">Licenses</string>
-    <string name="home_row_licenses_subtitle">Terms and licenses of the AI models</string>
-    <string name="licenses_description">Taipo\'s AI models are Google Gemma models, distributed under different licenses depending on their version. They run on your device and are not modified by Taipo.</string>
+    <string name="home_row_licenses_subtitle">AI models, dictionaries and libraries</string>
+    <string name="licenses_description">Taipo relies on AI models, word lists and open-source libraries. Their licenses and credits are listed here. The Gemma models run on your device and are not modified by Taipo.</string>
     <string name="licenses_gemma3_title">Gemma 3: Gemma Terms of Use</string>
     <string name="licenses_gemma3_models">Models covered: Ultra-light (Gemma 3 270M) and Light (Gemma 3 1B).</string>
     <string name="licenses_gemma3_notice">Gemma is provided under and subject to the Gemma Terms of Use found at ai.google.dev/gemma/terms</string>
@@ -348,6 +352,30 @@
     <string name="licenses_apache_hide">Hide the license text</string>
     <string name="licenses_apache_unreadable">The license text couldn\'t be loaded. It is available at www.apache.org/licenses/LICENSE-2.0.</string>
     <string name="licenses_no_browser">No browser available to open this link.</string>
+
+    <!-- Audit 1.9 : mentions des composants tiers (écran Licences). Noms de licences et de projets non traduits. -->
+    <string name="licenses_section_models">AI models</string>
+    <string name="licenses_section_dictionaries">Dictionaries</string>
+    <string name="licenses_section_software">Libraries and font</string>
+    <string name="licenses_software_intro">Taipo is built with the open-source components below. The full text of the Apache License 2.0, which covers most of them, is in the “Gemma 4” card above.</string>
+    <string name="licenses_meta_license">License: %1$s</string>
+    <string name="licenses_item_project_link">Project website</string>
+    <string name="licenses_item_license_link">Read the license online</string>
+    <string name="licenses_fulltext_show">Show the full license text</string>
+    <string name="licenses_fulltext_hide">Hide the license text</string>
+    <string name="licenses_fulltext_unreadable">The license text couldn\'t be loaded. Use the link above to read it online.</string>
+    <string name="licenses_usage_nemotron">Voice dictation model (French and English), downloaded on demand and run on your device.</string>
+    <string name="licenses_notice_nemotron">Licensed under the OpenMDW License Agreement, version 1.1. Taipo uses an ONNX (int8) export of this model, run with sherpa-onnx.</string>
+    <string name="licenses_usage_frequencywords">Word lists for autocorrection and suggestions in the seven keyboard languages: French, English, Spanish, German, Italian, Portuguese and Dutch.</string>
+    <string name="licenses_notice_frequencywords">Word lists adapted from FrequencyWords by Hermit Dave (2018 content, built from the OpenSubtitles 2018 corpus), licensed under CC BY-SA 4.0. Changes made by Taipo: words converted to lowercase and normalized; fragments, abbreviations, entries with digits or characters from other alphabets removed; rare words and likely typos removed; a few entries added by hand. The lists as adapted are shared under the same license, CC BY-SA 4.0.</string>
+    <string name="licenses_usage_litertlm">Engine that runs the Gemma models on your device.</string>
+    <string name="licenses_usage_sherpa">Speech recognition engine for voice dictation.</string>
+    <string name="licenses_usage_onnxruntime">Neural network runtime used by sherpa-onnx.</string>
+    <string name="licenses_usage_sqlcipher">Encryption of the databases stored on your device (personal dictionary, Smart Clipboard).</string>
+    <string name="licenses_usage_androidx">Android building blocks: Room, WorkManager, Activity, Core, Custom View, Autofill, Profile Installer.</string>
+    <string name="licenses_usage_kotlin">Programming language and coroutines library used to write Taipo.</string>
+    <string name="licenses_usage_aptabase">Anonymous usage statistics, which you can turn off in the settings.</string>
+    <string name="licenses_usage_opensans">Typeface of Taipo\'s screens.</string>
     <string name="model_download_license_gemma">License: Gemma Terms of Use</string>
     <string name="model_download_license_apache">License: Apache 2.0</string>
     <string name="model_license_dialog_title">%1$s model license</string>
@@ -407,13 +435,13 @@
     <string name="button_privacy">Privacy</string>
     <string name="home_row_privacy_subtitle">What stays on your device and what connects</string>
     <string name="privacy_title">Privacy</string>
-    <string name="privacy_updated">Last updated: October 14, 2026</string>
+    <string name="privacy_updated">Last updated: October 15, 2026</string>
     <string name="privacy_section_1_title">1. On-device processing</string>
     <string name="privacy_section_1_body">Correction, text generation, voice input and AI transcription run on your device using locally installed models. The text you type, copy or dictate and the audio of your recordings are not sent to any server. The audio of an AI transcription stays in memory while it is processed: it is never saved to a file.</string>
     <string name="privacy_section_2_title">2. Internet connections</string>
     <string name="privacy_section_2_body">Taipo connects to the Internet to download AI model files, at your request: from a Junadé server for the Gemma 3 models and the voice input models, and from Hugging Face for the Gemma 4 models. These servers receive the usual technical information of a connection (IP address, requested file), never your text or your recordings. Unless you turn it off in the keyboard settings, Taipo also sends anonymous usage analytics to Aptabase, a European service (see section 3). From time to time, Taipo may also offer to let you leave a review: this window is displayed by Google Play, which receives your rating and comment; Taipo does not receive them.</string>
     <string name="privacy_section_3_title">3. No personal data collection</string>
-    <string name="privacy_section_3_body">Taipo has no account and no ads. It measures its usage anonymously with Aptabase: events such as “an AI correction succeeded”, “a model was downloaded” or “a setting changed”, along with the app version, the Android version, the device model and its language. Never your text, what you copy or dictate, or any identifier of the device or the person, and nothing from password fields. You can turn it off at any time in Keyboard settings > Usage analytics. No personal data is collected.</string>
+    <string name="privacy_section_3_body">Taipo has no account and no ads. It measures its usage anonymously with Aptabase: events such as “an AI correction succeeded”, “a model was downloaded” or “a setting changed”, along with the app version, the Android version, the device model and its language. Never your text, what you copy or dictate, or any identifier of the device or the person, and nothing from password fields. As with any Internet connection, Aptabase\'s servers technically receive the IP address of the request; Taipo itself never sees it or stores it (see Aptabase\'s privacy policy for how it is handled). You can turn it off at any time in Keyboard settings > Usage data. Taipo itself collects no personal data about you.</string>
     <string name="privacy_section_4_title">4. Password fields</string>
     <string name="privacy_section_4_body">In a password or secret code field, AI actions (Correct, Generate, Voice, AI transcription) and the Smart Clipboard are disabled: the field\'s content is not read and the microphone is not opened.</string>
     <string name="privacy_section_5_title">5. What is stored on the device</string>

@@ -66,7 +66,7 @@ premier build.
   télécharger (`DownloadPolicy.decideVoice`) ; en release, aucun téléchargement tant qu'**une** des 4 empreintes manque ;
   en debug, le téléchargement est permis et chaque empreinte réelle est écrite dans logcat (tag `VoiceModelDownloadWorker`,
   ligne « SHA-256 de voice/<fichier> ») pour être figée dans `VoiceModelFile.sha256`. Reprise au fichier près : « Réessayer »
-  saute les fichiers déjà installés et à jour (la reprise au milieu d'un fichier reste reportée en V2). Un fichier déjà
+  saute les fichiers déjà installés et à jour, et le fichier en cours reprend là où il s'était arrêté (voir **1.7**). Un fichier déjà
   téléchargé dont l'empreinte enregistrée diffère de celle du catalogue passe en *Mise à jour disponible* (8.14 appliquée au
   vocal ; badge « Mise à jour » sur l'accueil) ; un fichier fourni à la main (debug) est remplacé par le téléchargement.
   Stockage : `filesDir/voice-model/<id>.onnx` (`tokens.txt`), jamais recopié ; au chargement, la taille du fichier téléchargé
@@ -85,9 +85,8 @@ premier build.
   oblige à figer la nouvelle empreinte et à publier une release ;
   (3) **tailles** : `approxBytes` = tailles réelles (657 601 403 / 14 978 075 / 9 504 438 / 131 440 octets, ~682 Mo au total) ;
   elles servent au contrôle d'espace et à la barre de progression, pas à valider le fichier ;
-  (4) **licence du modèle vocal** : aucune mention n'est affichée (la licence du modèle Nemotron exporté n'a pas été vérifiée ;
-  sherpa-onnx est sous Apache 2.0, ce qui ne dit rien de celle des poids) : à relire avant la soumission Play, et à ajouter à
-  l'écran « Licences » / à la mention avant téléchargement si elle l'exige.
+  (4) **licence du modèle vocal** : vérifiée le 15/10/2026 sur la fiche NVIDIA : **OpenMDW-1.1** (voir docs/licences.md). La
+  mention figure maintenant dans l'écran « Licences » ; le texte complet de la licence est à déposer dans les assets (docs/licences.md).
 - **8.13** : chaque modèle installé a un bouton « Supprimer » (écran « Modèle IA ») avec confirmation ; le message prévient si
   c'est le dernier modèle ou le modèle actif. Suppression hors du thread principal : `LlmEngineHost.releaseModelEverywhere`
   d'abord (moteur du clavier compris), puis `ModelPreferences.clearAndDeleteCopy` (fichier, `.tmp`, empreinte, cache
@@ -103,6 +102,59 @@ premier build.
   l'ancien fichier est intact. Les fichiers chargés à la main (debug) ne sont pas concernés. Pas de vérification automatique :
   la veille reste manuelle (décision existante). Il faut de la place pour la nouvelle version **en plus** de l'ancienne
   pendant le téléchargement.
+
+## Reprise des téléchargements et service au premier plan (point 1.7 de l'audit du 14/10/2026)
+
+Non compilé ni exécuté dans l'environnement de développement : à valider au premier build (voir la liste en fin de section).
+
+**Constat.** Un téléchargement interrompu repartait de zéro (décision V1 d'origine). Pour 3,6 Go (Performant), un arrêt
+tardif — coupure réseau, délai du service `dataSync` d'Android 15, processus tué — coûtait tout le fichier. La gestion
+du délai existait déjà dans les deux workers (`stopReason == STOP_REASON_FOREGROUND_SERVICE_TIMEOUT` → état d'échec),
+mais sans message dédié et sans rien à reprendre.
+
+**Ce qui change** (reprise au milieu d'un fichier, décision V2 ramenée en V1) :
+- **Partiel conservé.** Une coupure du flux, un réseau perdu ou un arrêt par le système laissent `<fichier>.tmp` et un
+  marqueur `<fichier>.tmp.resume` (taille totale + validateur HTTP). Seuls une annulation par l'utilisateur (écran ou
+  notification), une empreinte fausse, un fichier trop gros ou une erreur d'écriture (disque plein) suppriment le partiel.
+- **Reprise `Range`.** La tentative suivante envoie `Range: bytes=N-` (+ `If-Range` avec l'ETag fort, sinon `Last-Modified`).
+  206 avec `Content-Range` cohérent : on ajoute la suite. 200 (Range ignoré, ou fichier changé) : on repart de zéro.
+  416 : partiel supprimé, on repart de zéro. Taille totale différente de celle du marqueur : partiel supprimé, nouvelle
+  tentative. HTTPS reste contrôlé sur l'URL finale (redirections comprises).
+- **Intégrité.** Le SHA-256 est toujours celui du fichier entier : `ModelInstaller` relit le partiel une fois au
+  redémarrage pour continuer le condensat (quelques secondes pour plusieurs Go ; la progression avance pendant la relecture).
+  Un partiel périmé ou altéré échoue à l'empreinte et est supprimé : il ne peut pas être installé.
+- **Relances automatiques** (`ModelFileFetcher.fetchWithRetry`, dans le même service au premier plan) : après une coupure
+  réseau, 2 s, 6 s, 18 s… d'attente puis reprise ; abandon vers « Réessayer » après 4 échecs d'affilée **sans un octet de
+  plus** (chaque octet gagné remet le compteur à zéro). Pas de relance après « Wi-Fi quitté sans accord données mobiles »
+  (arrêt voulu), refus du serveur, disque plein ou annulation.
+- **Arrêt par le système** : tout arrêt qui n'est pas une annulation par l'utilisateur (délai `dataSync` d'Android 15+,
+  contrainte réseau perdue…) affiche l'échec `SYSTEM_STOP` (« Android a interrompu le téléchargement… Réessayer ») et
+  conserve le partiel. Un arrêt pendant l'attente entre deux tentatives est traité de la même façon.
+- **Contrôle d'espace** : seul ce qu'il reste à recevoir est comparé à l'espace libre (+ marge de 200 Mo).
+- **Partiel oublié** : un partiel non touché depuis plus de 7 jours est abandonné au prochain téléchargement (il n'y a pas
+  d'écran pour le supprimer). « Supprimer » du modèle ou du modèle vocal retire aussi `.tmp` et `.tmp.resume`.
+
+**Limites connues** : l'état affiché ne survit pas à un redémarrage du processus (l'écran revient à « Télécharger » ;
+appuyer dessus reprend le partiel). Le marqueur n'est pas écrit si le disque refuse l'écriture : le téléchargement
+fonctionne mais ne pourra pas être repris.
+
+**À valider sur l'appareil (Pixel 9 puis un appareil modeste)**
+- [ ] Téléchargement de Performant (3,6 Go) : couper le Wi-Fi à ~50 % puis le rétablir en moins d'une minute : la reprise
+  se fait seule, la barre repart d'environ 50 % (après la relecture) et le modèle s'installe (empreinte OK).
+- [ ] Couper le Wi-Fi plus longtemps : *Réessayer* ; « Réessayer » reprend à la même position (vérifier dans
+  `files/models/` : `.tmp` et `.tmp.resume` présents, taille du `.tmp` inchangée).
+- [ ] Mode avion pendant le flux : même comportement ; passage Wi-Fi → données mobiles sans accord : arrêt, pas de relance.
+- [ ] « Annuler » (écran puis notification), y compris pendant une attente entre deux tentatives : ni `.tmp` ni `.tmp.resume`.
+- [ ] Tuer le processus de l'application en plein téléchargement, puis relancer : « Télécharger » reprend le partiel.
+- [ ] Serveur : vérifier que le Worker/R2 renvoie 206 + `Content-Range` à `Range`, et que Hugging Face (Gemma 4, via
+  redirection vers son CDN) le fait aussi, avec `If-Range` ; sinon la reprise retombe sur un téléchargement complet.
+- [ ] Android 15+ : forcer le délai du service (réglage développeur `dataSync` raccourci, à retrouver dans la
+  documentation Android « Foreground service timeouts ») : l'écran affiche le message d'arrêt par le système, le partiel
+  est conservé, « Réessayer » reprend. Vérifier si WorkManager 2.10 relance le travail de lui-même (l'état repasse alors
+  à « Téléchargement… ») ; dans les deux cas l'écran doit rester cohérent.
+- [ ] Release (R8) : même parcours (`HttpURLConnection`, `kotlinx.coroutines` et WorkManager n'ont pas de règle keep dédiée ici).
+- [ ] `./gradlew testDebugUnitTest` : nouveaux `PartialDownloadTest`, tests de reprise de `ModelInstallerTest`,
+  relances dans `DownloadPolicyTest`.
 
 ## Sources et empreintes
 Gemma 3 (270M, 1B) : serveur de l'utilisateur (Worker Cloudflare devant R2). Gemma 4 (E2B, E4B) : Hugging Face

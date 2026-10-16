@@ -9,7 +9,9 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.CompoundButton
+import android.widget.LinearLayout
 import android.widget.RadioGroup
 import android.widget.Spinner
 import android.widget.Toast
@@ -35,6 +37,7 @@ class KeyboardSettingsActivity : Activity() {
         setContentView(R.layout.activity_keyboard_settings)
         val preferences = KeyboardPreferences(this)
         setUpLanguageChoice(preferences)
+        setUpMultilingual(preferences)
         findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
 
@@ -111,6 +114,50 @@ class KeyboardSettingsActivity : Activity() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) = Unit
         }
+    }
+
+    /**
+     * Clavier multilingue : interrupteur + une case par langue gérée. Activé, l'appui long sur Entrée passe d'une langue
+     * cochée à la suivante (au moins deux). À la première activation, la langue actuellement utilisée est pré-cochée.
+     */
+    private fun setUpMultilingual(preferences: KeyboardPreferences) {
+        val switch = findViewById<CompoundButton>(R.id.switch_multilingual)
+        val container = findViewById<LinearLayout>(R.id.layout_multilingual_languages)
+        val minHint = findViewById<View>(R.id.text_multilingual_min)
+        val selected = preferences.multilingualSelection.toMutableSet()
+        val boxes = KeyboardLanguage.entries.map { language ->
+            CheckBox(this).apply {
+                text = language.displayName
+                isChecked = language in selected
+            }.also { container.addView(it) }
+        }
+
+        fun refresh() {
+            val on = switch.isChecked
+            container.visibility = if (on) View.VISIBLE else View.GONE
+            minHint.visibility = if (on && !MultilingualChoice.isActive(selected.toList())) View.VISIBLE else View.GONE
+        }
+        boxes.forEachIndexed { index, box ->
+            val language = KeyboardLanguage.entries[index]
+            box.setOnCheckedChangeListener { _, checked ->
+                if (checked) selected.add(language) else selected.remove(language)
+                preferences.multilingualSelection = selected.toList()
+                refresh()
+            }
+        }
+        switch.isChecked = preferences.isMultilingualEnabled
+        switch.setOnCheckedChangeListener { _, checked ->
+            preferences.isMultilingualEnabled = checked
+            if (checked && selected.isEmpty()) {
+                val current = KeyboardLanguageChoice.resolve(
+                    preferences.keyboardLanguage,
+                    resources.configuration.locales.let { list -> (0 until list.size()).map { list.get(it).toLanguageTag() } },
+                )
+                boxes[KeyboardLanguage.entries.indexOf(current)].isChecked = true // met aussi à jour la sélection enregistrée
+            }
+            refresh()
+        }
+        refresh()
     }
 
     /**

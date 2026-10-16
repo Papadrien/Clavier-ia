@@ -2,7 +2,7 @@ Listes de mots avec fréquences (fr.txt, en.txt) : extraites des listes de fréq
 (hermitdave/FrequencyWords, contenu 2018, dérivé du corpus OpenSubtitles2018),
 via le miroir Hugging Face StephanAkkerman/frequency-words-2018 (fr_50k.txt, en_50k.txt).
 Licence du contenu : CC-BY-SA 4.0 (dépôt d'origine) — attribution requise, à reprendre
-dans l'écran "Licences / crédits" de l'app avant publication.
+dans l'écran "Licences" de l'app (fait : mention CC BY-SA 4.0 avec les modifications apportées).
 
 Format : une ligne par mot, "mot fréquence" (nombre d'occurrences dans le corpus), triées par
 fréquence décroissante. La fréquence sert à départager les corrections (story 1.14).
@@ -60,7 +60,7 @@ clavier »). Chaque langue a, comme le français : <code>.txt = liste COMPLÈTE,
 50 000 mots (DictionaryLoader bascule dessus si la liste complète ne peut pas être chargée). Fichiers : en.txt, en_50k.txt,
 es.txt, es_50k.txt, de.txt, de_50k.txt, it.txt, it_50k.txt, pt.txt, pt_50k.txt, nl.txt, nl_50k.txt.
 Source : les listes <code>_full.txt de FrequencyWords (hermitdave/FrequencyWords, contenu 2018, OpenSubtitles2018,
-CC-BY-SA 4.0 : attribution à reprendre dans l'écran « Licences / crédits »), nettoyées par tools/fetch_dictionaries.py
+CC-BY-SA 4.0 : attribution reprise dans l'écran « Licences »), nettoyées par tools/fetch_dictionaries.py
 (python3 tools/fetch_dictionaries.py --from=DOSSIER_DES_FICHIERS_full) :
 - minuscules, forme NFC ; seuls les mots faits des lettres de l'alphabet de la langue (avec jusqu'à 3 apostrophes ou
   traits d'union au milieu) sont gardés : débris d'encodage et caractères d'autres alphabets retirés ;

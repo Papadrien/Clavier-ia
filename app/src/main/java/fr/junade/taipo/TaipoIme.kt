@@ -1,6 +1,5 @@
 package fr.junade.taipo
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.inputmethodservice.InputMethodService
 import android.os.Build
@@ -8,42 +7,33 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.view.ContextThemeWrapper
 import android.view.KeyEvent
-import android.view.MotionEvent
 import android.view.View
-import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InlineSuggestionsRequest
 import android.view.inputmethod.InlineSuggestionsResponse
 import android.view.inputmethod.InputMethodSubtype
-import android.util.Size
-import android.widget.inline.InlinePresentationSpec
 import androidx.annotation.RequiresApi
-import androidx.autofill.inline.UiVersions
 import android.widget.Toast
 import fr.junade.taipo.ai.AiTranscriptionEngine
 import fr.junade.taipo.ai.CorrectionEngine
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.ai.ProtectedWords
 import fr.junade.taipo.ai.TranscriptionPromptPreferences
-import fr.junade.taipo.ai.VoiceField
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.emoji.EmojiCatalog
-import fr.junade.taipo.emoji.EmojiPanelView
 import fr.junade.taipo.emoji.EmojiText
 import fr.junade.taipo.emoji.MessagingFieldPolicy
-import fr.junade.taipo.emoji.RecentEmojiBarView
-import fr.junade.taipo.emoji.RecentEmojis
 import fr.junade.taipo.suggestion.EmailText
 import fr.junade.taipo.suggestion.NextWordRepository
 import fr.junade.taipo.suggestion.SuggestionPolicy
 import fr.junade.taipo.suggestion.WordText
 import fr.junade.taipo.dictionary.PersonalDictionaryProvider
+import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.model.ModelAvailability
 import fr.junade.taipo.model.ModelPreferences
 import kotlinx.coroutines.CoroutineScope
@@ -59,8 +49,81 @@ class TaipoIme : InputMethodService() {
     private val keyboardView: KeyboardView get() = viewComposer.keyboardView
     private val correctionBar: CorrectionBarView get() = viewComposer.correctionBar
 
-    // Story 1.15 : panneau emoji, superposé au clavier (même taille) tant qu'il est affiché.
-    private val emojiPanel: EmojiPanelView get() = viewComposer.emojiPanel
+    // Contexte commun des hôtes des contrôleurs (audit 2.1, étape 5) : voir ImeHosts.kt. Chaque membre délègue au service,
+    // toujours par `this@TaipoIme` (un nom nu désignerait le membre du contexte lui-même).
+    private val imeContext: ImeHostContext = object : ImeHostContext {
+        override val prompt: PromptModeController get() = this@TaipoIme.prompt
+        override val voice: VoiceController get() = this@TaipoIme.voice
+        override val clipboard: ClipboardController get() = this@TaipoIme.clipboard
+        override val emoji: EmojiController get() = this@TaipoIme.emojiController
+        override val correction: CorrectionAiController get() = this@TaipoIme.correction
+        override val suggestions: SuggestionController get() = this@TaipoIme.suggestions
+        override val deleteSwipe: DeleteSwipeController get() = this@TaipoIme.deleteSwipe
+        override val undo: UndoController get() = this@TaipoIme.undoController
+        override val aiTranscription: AiTranscriptionController get() = this@TaipoIme.aiTranscription
+        override val messagePopup: MessagePopup get() = this@TaipoIme.messagePopup
+        override val viewComposer: ImeViewComposer get() = this@TaipoIme.viewComposer
+        override val correctionBar: CorrectionBarView get() = this@TaipoIme.correctionBar
+        override val keyboardView: KeyboardView get() = this@TaipoIme.keyboardView
+        override val keyboardPreferences: KeyboardPreferences get() = this@TaipoIme.keyboardPreferences
+
+        override val messagingField: Boolean get() = this@TaipoIme.messagingField
+        override val sensitiveField: Boolean get() = this@TaipoIme.sensitiveField
+        override val lastSelectionStart: Int get() = this@TaipoIme.lastSelectionStart
+        override val lastSelectionEnd: Int get() = this@TaipoIme.lastSelectionEnd
+        override val keyboardLanguage: KeyboardLanguage get() = this@TaipoIme.controller.state.language
+        override val heightScale: Float get() = this@TaipoIme.keyboardHeight.scale
+
+        override fun inputConnection(): InputConnection? = this@TaipoIme.currentInputConnection
+        override fun isInputViewShown(): Boolean = this@TaipoIme.isInputViewShown
+        override fun string(resId: Int): String = this@TaipoIme.getString(resId)
+        override fun hasSelection(): Boolean = this@TaipoIme.hasSelection()
+        override fun activeModel(): AiModel? =
+            ModelAvailability.usable(this@TaipoIme.modelPreferences.activeModel(), this@TaipoIme.modelPreferences::isInstalled)
+        override fun personalWords(): List<String> = this@TaipoIme.personalDictionary.snapshot()
+        override fun protectedWordsIn(text: String): List<String> = this@TaipoIme.protectedWordsIn(text)
+
+        override fun haptic() = this@TaipoIme.hapticFeedback.perform(this@TaipoIme.hapticIntensity)
+        override fun hapticCursorMove() =
+            this@TaipoIme.hapticFeedback.perform(this@TaipoIme.hapticIntensity.cursorMoveFeedback())
+        override fun clearHighlight() = this@TaipoIme.clearHighlightIfNeeded()
+        override fun clearPendingAutocorrection() {
+            this@TaipoIme.pendingAutocorrection = null
+        }
+        override fun onUserTyped() = this@TaipoIme.onUserTyped()
+        override fun recordUndoEdit(inserted: String, original: String) =
+            this@TaipoIme.recordUndoEdit(inserted = inserted, original = original)
+        override fun recordUndoAction(undo: UndoHistory.Undo) = this@TaipoIme.recordUndoAction(undo)
+        override fun recordUndoDeletion(
+            deleted: String,
+            anchor: String,
+            before: String,
+            mergeable: Boolean,
+            offsetProvider: () -> Int,
+        ) = this@TaipoIme.recordUndoDeletion(deleted, anchor, before, mergeable, offsetProvider)
+        override fun learnFromTyping(terminator: String) = this@TaipoIme.learnFromTyping(terminator)
+        override fun clearSuggestions() = this@TaipoIme.clearSuggestions()
+        override fun syncAutoCapitalization() = this@TaipoIme.syncAutoCapitalization()
+        override fun applyState() = this@TaipoIme.applyState()
+        override fun updateCorrectionBarVisibility() = this@TaipoIme.updateCorrectionBarVisibility()
+        override fun afterPromptEdit() = this@TaipoIme.afterPromptEdit()
+        override fun deleteSelectedText(): Boolean = this@TaipoIme.deleteSelectedText()
+        override fun deleteLastCluster() = this@TaipoIme.deleteLastCluster()
+        override fun insertGeneratedText(text: String): Boolean = this@TaipoIme.insertGeneratedText(text)
+        override fun replaceFieldText(text: String): Boolean = this@TaipoIme.replaceFieldText(text)
+        override fun onWordSuggestionTapped(suggestion: WordSuggestion) = this@TaipoIme.onWordSuggestionTapped(suggestion)
+        override fun onKeyPressed(key: Key) = this@TaipoIme.onKeyPressed(key)
+        override fun onCursorMoved(steps: Int) = this@TaipoIme.onCursorMoved(steps)
+        override fun onGlobeSelected() = this@TaipoIme.onGlobeSelected()
+        override fun openAppHome() = this@TaipoIme.openAppHome()
+    }
+
+    // Emojis (story 1.15 : panneau, barre des récents, insertion) : voir EmojiController (audit 2.1).
+    private val emojiController: EmojiController by lazy {
+        EmojiController(
+            EmojiHost(imeContext),
+        )
+    }
 
     // Smart Clipboard (puce de collage, panneau, épinglés) : voir ClipboardController (lot 2.3 de la revue).
     private val clipboard: ClipboardController by lazy {
@@ -68,37 +131,7 @@ class TaipoIme : InputMethodService() {
             this,
             serviceScope,
             mainHandler,
-            object : ClipboardController.Host {
-                override fun showMessage(message: String) = this@TaipoIme.showMessage(message)
-                override fun inputConnection() = currentInputConnection
-                override fun haptic() = hapticFeedback.perform(hapticIntensity)
-                override fun clearHighlight() = clearHighlightIfNeeded()
-                override fun recordUndoEdit(inserted: String, original: String) =
-                    this@TaipoIme.recordUndoEdit(inserted, original)
-                override fun clearPendingAutocorrection() {
-                    pendingAutocorrection = null
-                }
-                override fun barReady(): Boolean = viewComposer.isComposed
-                override fun collapseMenu() = correctionBar.collapseMenu()
-                override fun setClipboardPanelOpen(open: Boolean) = correctionBar.setClipboardPanelOpen(open)
-                override fun setPasteSuggestion(preview: String?, sensitive: Boolean) =
-                    correctionBar.setPasteSuggestion(preview, sensitive)
-                override fun isRecording(): Boolean = voice.isRecording
-                override fun isCorrectionInProgress(): Boolean = correctionInProgress
-                override fun isEmojiPanelVisible(): Boolean = emojiPanelVisible()
-                override fun hideEmojiPanel() = this@TaipoIme.hideEmojiPanel(resync = false)
-                override fun keyboardBottomInsetPx(): Int = keyboardView.bottomInsetPx()
-                override fun setKeyboardVisible(visible: Boolean) {
-                    keyboardView.visibility = if (visible) View.VISIBLE else View.INVISIBLE
-                }
-                override fun refreshRecentEmojiBar() = this@TaipoIme.refreshRecentEmojiBar()
-                override fun clearSuggestions() = this@TaipoIme.clearSuggestions()
-                override fun resyncKeyboard() {
-                    syncAutoCapitalization()
-                    applyState()
-                    updateCorrectionBarVisibility()
-                }
-            },
+            ClipboardHost(imeContext),
         )
     }
 
@@ -108,34 +141,7 @@ class TaipoIme : InputMethodService() {
         SuggestionController(
             this,
             serviceScope,
-            object : SuggestionController.Host {
-                override fun inputConnection() = currentInputConnection
-                override fun promptActive(): Boolean = prompt.active
-                override fun promptTextBeforeCursor(): String = prompt.buffer.textBeforeCursor
-                override fun promptTextAfterCursor(): String = prompt.buffer.textAfterCursor
-                override fun barReady(): Boolean = viewComposer.isComposed
-                override fun language(): KeyboardLanguage = controller.state.language
-                override fun isRecording(): Boolean = voice.isRecording
-                override fun isCorrectionInProgress(): Boolean = correctionInProgress
-                override fun isEmojiPanelVisible(): Boolean = emojiPanelVisible()
-                override fun isClipboardPanelVisible(): Boolean = clipboard.isPanelVisible
-                override fun hasSelection(): Boolean = this@TaipoIme.hasSelection()
-                override fun isInputViewShown(): Boolean = this@TaipoIme.isInputViewShown
-                override fun personalWords(): List<String> = personalDictionary.snapshot()
-                override fun showEmoji(emoji: String?) {
-                    // En mode prompt, la barre du haut est remplacée par celle du prompt : la bande s'affiche dans sa propre rangée.
-                    if (prompt.active) prompt.setSuggestionEmoji(emoji) else correctionBar.setEmojiSuggestion(emoji)
-                }
-                override fun showWords(words: List<WordSuggestion?>) {
-                    if (prompt.active) prompt.setSuggestionWords(words) else correctionBar.setWordSuggestions(words)
-                }
-                override fun clearBars() {
-                    correctionBar.setEmojiSuggestion(null)
-                    correctionBar.setWordSuggestions(emptyList())
-                    prompt.clearSuggestionBar()
-                    clipboard.refreshPasteSuggestion() // dictée, correction ou panneau en cours : la puce disparaît aussi
-                }
-            },
+            SuggestionHost(imeContext),
         )
     }
 
@@ -143,11 +149,13 @@ class TaipoIme : InputMethodService() {
     private val currentWordSuggestions: List<WordSuggestion?> get() = suggestions.currentWordSuggestions
     private val currentEmojiSuggestion: String? get() = suggestions.currentEmojiSuggestion
 
-    /** Pop-up d'information en cours (remplace les toasts), s'il y en a un. */
-    private var messageDialog: AlertDialog? = null
-
-    /** Barre des emojis récents (champs de messagerie), au-dessus de la barre du haut. */
-    private val recentEmojiBar: RecentEmojiBarView get() = viewComposer.recentEmojiBar
+    // Pop-ups d'information et liste des langues : voir MessagePopup (audit 2.1).
+    private val messagePopup: MessagePopup by lazy {
+        MessagePopup(
+            this,
+            MessagePopupHost(imeContext),
+        )
+    }
 
     // Mode prompt (conversation, génération, zone de chat) : voir PromptModeController (lot 2.3 de la revue).
     private val prompt: PromptModeController by lazy {
@@ -156,48 +164,7 @@ class TaipoIme : InputMethodService() {
             serviceScope,
             mainHandler,
             llmHost,
-            object : PromptModeController.Host {
-                override fun showMessage(message: String) = this@TaipoIme.showMessage(message)
-                override fun haptic() = hapticFeedback.perform(hapticIntensity)
-                override fun onPromptCursorMoved() {
-                    hapticFeedback.perform(hapticIntensity.cursorMoveFeedback())
-                    syncAutoCapitalization()
-                    applyState()
-                }
-                override fun isRecording(): Boolean = voice.isRecording
-                override fun cancelVoice() {
-                    if (voice.isRecording) voice.cancelRecording()
-                }
-                override fun isCorrectionInProgress(): Boolean = correctionInProgress
-                override fun barReady(): Boolean = viewComposer.isComposed
-                override fun setNormalBarVisible(visible: Boolean) {
-                    correctionBar.visibility = if (visible) View.VISIBLE else View.GONE
-                }
-                override fun collapseMenu() = correctionBar.collapseMenu()
-                override fun hideEmojiPanel() {
-                    if (viewComposer.isComposed) this@TaipoIme.hideEmojiPanel(resync = false)
-                }
-                override fun hideClipboardPanel() = clipboard.hidePanel(resync = false)
-                override fun refreshRecentEmojiBar() = this@TaipoIme.refreshRecentEmojiBar()
-                override fun clearPendingAutocorrection() {
-                    pendingAutocorrection = null
-                }
-                override fun clearSuggestions() = this@TaipoIme.clearSuggestions()
-                override fun cancelDeleteSwipe() {
-                    deleteSwipe.active = false
-                }
-                override fun syncAutoCapitalization() = this@TaipoIme.syncAutoCapitalization()
-                override fun applyState() = this@TaipoIme.applyState()
-                override fun updateCorrectionBarVisibility() = this@TaipoIme.updateCorrectionBarVisibility()
-                override fun activeModel() = ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled)
-                override fun capturedFieldText(): String? = currentInputConnection?.let { correction.captureFieldText(it) }?.text
-                override fun learnFromTyping(terminator: String) = this@TaipoIme.learnFromTyping(terminator)
-                override fun insertGeneratedText(text: String): Boolean = this@TaipoIme.insertGeneratedText(text)
-                override fun replaceFieldText(text: String): Boolean = this@TaipoIme.replaceFieldText(text)
-                override fun onWordSuggestionTapped(suggestion: WordSuggestion) =
-                    this@TaipoIme.onWordSuggestionTapped(suggestion)
-                override fun onEmojiSuggestionTapped() = this@TaipoIme.onEmojiSuggestionTapped()
-            },
+            PromptHost(imeContext),
         )
     }
 
@@ -237,23 +204,7 @@ class TaipoIme : InputMethodService() {
             this,
             serviceScope,
             { correctionEngine },
-            object : CorrectionAiController.Host {
-                override fun showMessage(message: String) = this@TaipoIme.showMessage(message)
-                override fun inputConnection() = currentInputConnection
-                override fun generationBusy(): Boolean = prompt.isGenerating // le moteur est pris par la génération
-                override fun activeModel() = ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled)
-                override fun protectedWords(text: String): List<String> = protectedWordsIn(text)
-                override fun setCorrectionBarState(state: CorrectionBarState) {
-                    correctionBar.state = state
-                }
-                override fun clearSuggestions() = this@TaipoIme.clearSuggestions()
-                override fun updateCorrectionBarVisibility() = this@TaipoIme.updateCorrectionBarVisibility()
-                override fun syncAutoCapitalization() = this@TaipoIme.syncAutoCapitalization()
-                override fun clearPendingAutocorrection() {
-                    pendingAutocorrection = null
-                }
-                override fun recordUndo(undo: UndoHistory.Undo) = this@TaipoIme.recordUndoAction(undo)
-            },
+            CorrectionHost(imeContext),
         )
     }
 
@@ -261,20 +212,7 @@ class TaipoIme : InputMethodService() {
     private val undoController: UndoController by lazy {
         UndoController(
             this,
-            object : UndoController.Host {
-                override fun inputConnection() = currentInputConnection
-                override fun showMessage(message: String) = this@TaipoIme.showMessage(message)
-                override fun beforeUndo() = clearHighlightIfNeeded()
-                override fun afterUndo() {
-                    pendingAutocorrection = null
-                    syncAutoCapitalization()
-                    applyState()
-                    updateCorrectionBarVisibility()
-                }
-                override fun onUndoAvailabilityChanged(canUndo: Boolean) {
-                    if (viewComposer.isComposed) correctionBar.setUndoAvailable(canUndo)
-                }
-            },
+            UndoHost(imeContext),
         )
     }
 
@@ -283,31 +221,7 @@ class TaipoIme : InputMethodService() {
             this,
             serviceScope,
             mainHandler,
-            object : VoiceController.Host {
-                override fun showMessage(message: String) = this@TaipoIme.showMessage(message)
-                override fun generationBusy(): Boolean = prompt.generationBusy()
-                override fun clearHighlight() = clearHighlightIfNeeded()
-                override fun clearSuggestions() = this@TaipoIme.clearSuggestions()
-                override fun refreshPasteSuggestion() = clipboard.refreshPasteSuggestion()
-                override fun updateCorrectionBarVisibility() = this@TaipoIme.updateCorrectionBarVisibility()
-                override fun syncAutoCapitalization() = this@TaipoIme.syncAutoCapitalization()
-                override fun onUserTyped() = this@TaipoIme.onUserTyped()
-                override fun setVoiceBarState(state: VoiceBarState) {
-                    correctionBar.voiceState = state
-                    prompt.setVoiceState(state) // le bouton micro de la barre du prompt suit le même état
-                }
-                override fun inputConnection() = currentInputConnection
-                override fun promptActive(): Boolean = prompt.active
-                override fun promptVoiceField(): VoiceField = prompt.voiceField
-                override fun hasSelection(): Boolean = this@TaipoIme.hasSelection()
-                override fun collapseSelectionBeforeInsert() {
-                    if (hasSelection() && lastSelectionEnd >= 0) {
-                        currentInputConnection?.setSelection(lastSelectionEnd, lastSelectionEnd)
-                    }
-                }
-                override fun recordUndoEdit(inserted: String, original: String) =
-                    this@TaipoIme.recordUndoEdit(inserted, original)
-            },
+            VoiceHost(imeContext),
         )
     }
 
@@ -317,55 +231,24 @@ class TaipoIme : InputMethodService() {
             this,
             serviceScope,
             AiTranscriptionEngine(llmHost, TranscriptionPromptPreferences(applicationContext)),
-            object : AiTranscriptionController.Host {
-                override fun showMessage(message: String) = this@TaipoIme.showMessage(message)
-                override fun voiceRecording(): Boolean = voice.isRecording
-                override fun aiBusy(): Boolean = prompt.generationBusy() || correctionInProgress
-                override fun activeModel() = ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled)
-                override fun insertText(text: String): Boolean = insertGeneratedText(text)
-                override fun setBarState(state: AiTranscriptionBarState) {
-                    correctionBar.aiTranscriptionState = state
-                }
-            },
+            AiTranscriptionHost(imeContext),
         )
     }
 
     // Construction de la vue du clavier : voir ImeViewComposer (lot 2.3 de la revue).
+    // Glissement de suppression depuis la touche retour arrière (story 1.9) : voir DeleteSwipeController (audit 2.1).
+    private val deleteSwipe: DeleteSwipeController by lazy {
+        DeleteSwipeController(
+            DeleteSwipeHost(imeContext),
+        )
+    }
+
     private val viewComposer: ImeViewComposer by lazy {
         ImeViewComposer(
             this,
             prompt,
             clipboard,
-            object : ImeViewComposer.Host {
-                override fun heightScale(): Float = keyboardHeight.scale
-                override fun onKey(key: Key) = onKeyPressed(key)
-                override fun onCursorMoved(steps: Int) = this@TaipoIme.onCursorMoved(steps)
-                override fun onDeleteSwipeUpdate(words: Int) = this@TaipoIme.onDeleteSwipeUpdate(words)
-                override fun onDeleteSwipeRelease() = this@TaipoIme.onDeleteSwipeRelease()
-                override fun onDeleteSwipeCancel() = this@TaipoIme.onDeleteSwipeCancel()
-                override fun onRecentEmojiClicked(emoji: String) = onRecentEmojiBarTapped(emoji)
-                override fun onCorrectClicked() = correction.onCorrectClicked()
-                override fun onCancelCorrectionClicked() = correction.onCancelClicked()
-                override fun onUndoClicked() {
-                    // Correction ou dictée en cours : le texte bouge encore, l'annulation attend.
-                    if (correctionInProgress || isRecording) return
-                    undoController.onUndoClicked()
-                }
-                override fun onVoiceTouch(event: MotionEvent): Boolean = voice.onButtonTouch(event)
-                override fun onVoiceClick() = voice.onAccessibilityClick()
-
-                override fun sensitiveField() = this@TaipoIme.sensitiveField
-
-                override fun showSensitiveFieldMessage() = showMessage(getString(R.string.sensitive_field_actions_disabled))
-                override fun onAiTranscriptionClick() = aiTranscription.onClick()
-                override fun onEmojiSuggestionClicked() = onEmojiSuggestionTapped()
-                override fun onWordSuggestionClicked(suggestion: WordSuggestion) = onWordSuggestionTapped(suggestion)
-                override fun openAppHome() = this@TaipoIme.openAppHome()
-                override fun onEmojiSelected(emoji: String) = this@TaipoIme.onEmojiSelected(emoji)
-                override fun onEmojiBackspace() = this@TaipoIme.onEmojiBackspace()
-                override fun onEmojiPanelClose() = hideEmojiPanel()
-                override fun onViewsCreated() = applyState()
-            },
+            ViewComposerHost(imeContext),
         )
     }
 
@@ -392,11 +275,14 @@ class TaipoIme : InputMethodService() {
     // Saisie vocale : voir VoiceController (lot 2.3 de la revue).
     private val isRecording: Boolean get() = voice.isRecording
 
-    /** Numéro de la dernière réponse d'auto-remplissage en ligne : les vues d'une réponse périmée sont ignorées. */
-    private var inlineGeneration = 0
-
-    // Réponse d'auto-remplissage reçue avant la construction de la vue (InlineSuggestionsResponse, API 30+ : typée Any pour rester chargeable sous l'API 26).
-    private var pendingInlineResponse: Any? = null
+    // Auto-remplissage en ligne (gestionnaire de mots de passe) : voir InlineSuggestionsController (audit 2.1).
+    private val inlineSuggestions: InlineSuggestionsController by lazy {
+        InlineSuggestionsController(
+            this,
+            mainHandler,
+            InlineSuggestionsHost(imeContext),
+        )
+    }
 
 
     override fun onCreate() {
@@ -452,7 +338,7 @@ class TaipoIme : InputMethodService() {
         hapticIntensity = keyboardPreferences.hapticIntensity
         keyboardHeight = keyboardPreferences.keyboardHeight
         keyboardView.heightScale = keyboardHeight.scale
-        hideEmojiPanel(resync = false)
+        emojiController.hidePanel(resync = false)
         clipboard.hidePanel(resync = false)
         correctionBar.collapseMenu()
         suggestions.suggestionsAllowed = SuggestionPolicy.allowsSuggestions(info?.inputType ?: 0)
@@ -495,9 +381,9 @@ class TaipoIme : InputMethodService() {
                 "suggestionsAllowed=${suggestions.suggestionsAllowed} pasteAllowedInField=${clipboard.pasteAllowedInField} " +
                 "copieLue=${clipboard.hasLastClip} puce=${clipboard.hasSuggestion}",
         )
-        refreshRecentEmojiBar()
+        emojiController.refreshRecentBar()
         updateCorrectionBarVisibility()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) applyPendingInlineResponse()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) inlineSuggestions.applyPending()
     }
 
     /** Dernière langue envoyée à la mesure d'usage : l'événement ne repart que si elle change (pas à chaque champ). */
@@ -526,20 +412,64 @@ class TaipoIme : InputMethodService() {
     }
 
     /**
-     * Langue active : celle choisie dans les paramètres du clavier ; en mode « automatique », la langue du système
-     * si le clavier la gère, sinon le français (voir [KeyboardPreferences.keyboardLanguage]).
+     * Langue active : celle choisie dans les paramètres du clavier ; en mode « automatique », la première langue
+     * du système que le clavier gère, sinon l'anglais (voir [KeyboardPreferences.keyboardLanguage]).
      */
     private fun currentKeyboardLanguage(): KeyboardLanguage =
         KeyboardLanguageChoice.resolve(
             keyboardPreferences.keyboardLanguage,
-            resources.configuration.locales.get(0)?.toLanguageTag(),
+            resources.configuration.locales.let { list -> (0 until list.size()).map { list.get(it).toLanguageTag() } },
+            keyboardPreferences.multilingualLanguages,
+            keyboardPreferences.activeMultilingualLanguage,
         )
+
+    /**
+     * Clavier multilingue : touche globe de la bulle d'appui long sur Entrée. Deux langues cochées : on passe
+     * directement à l'autre ; davantage : liste de choix. Sans effet si le mode n'est pas actif.
+     */
+    private fun onGlobeSelected() {
+        val languages = keyboardPreferences.multilingualLanguages
+        when {
+            languages.size == 2 -> MultilingualChoice.next(languages, controller.state.language)?.let { switchLanguage(it) }
+            languages.size > 2 -> showLanguagePicker(languages)
+        }
+    }
+
+    /** Liste des langues cochées (au-dessus du clavier) : un appui sur une langue la rend active et ferme la liste. */
+    private fun showLanguagePicker(languages: List<KeyboardLanguage>) {
+        // Pas de fenêtre où accrocher la liste : on passe simplement à la langue suivante.
+        fun nextLanguage() {
+            MultilingualChoice.next(languages, controller.state.language)?.let { switchLanguage(it) }
+        }
+        messagePopup.showChoice(
+            title = R.string.keyboard_settings_language_title,
+            items = languages.map { it.displayName }.toTypedArray(),
+            checked = languages.indexOf(controller.state.language),
+            onChosen = { which -> switchLanguage(languages[which]) },
+            onUnavailable = ::nextLanguage,
+        )
+    }
+
+    /** Passe le clavier à [next] tout de suite (disposition, dictionnaire, suggestions) et la retient pour les prochains champs. */
+    private fun switchLanguage(next: KeyboardLanguage) {
+        if (next == controller.state.language) return
+        keyboardPreferences.activeMultilingualLanguage = next
+        hapticFeedback.perform(hapticIntensity)
+        controller.setLanguage(next)
+        pendingAutocorrection = null
+        suggestions.invalidate() // les suggestions affichées étaient celles de l'ancienne langue
+        suggestions.preloadDictionaries()
+        trackKeyboardLanguage()
+        syncAutoCapitalization()
+        applyState()
+        Toast.makeText(this, next.displayName, Toast.LENGTH_SHORT).show()
+    }
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)
         // Le panneau emoji est calé sur les dimensions du clavier : on revient aux touches après
         // une rotation ou un changement de taille de fenêtre, plutôt que d'afficher un panneau mal ajusté.
-        if (viewComposer.isComposed && emojiPanel.visibility == View.VISIBLE) hideEmojiPanel()
+        if (emojiController.isPanelVisible) emojiController.hidePanel()
         if (clipboard.isPanelVisible) clipboard.hidePanel()
     }
 
@@ -549,9 +479,9 @@ class TaipoIme : InputMethodService() {
         suggestions.finishField() // une adresse tapée en dernier, sans espace après elle, est retenue avant la sauvegarde
         nextWords.flush()
         suggestions.correctionHabits.flush()
-        clearInlineSuggestions()
-        dismissMessage()
-        if (viewComposer.isComposed) hideEmojiPanel(resync = false)
+        inlineSuggestions.clear()
+        messagePopup.dismiss()
+        if (viewComposer.isComposed) emojiController.hidePanel(resync = false)
         clipboard.hidePanel(resync = false)
         correction.clearHighlightState()
         if (finishingInput) undoController.clear(notify = false)
@@ -586,88 +516,12 @@ class TaipoIme : InputMethodService() {
      * doit avoir l'auto-remplissage « en ligne » activé dans ses propres réglages.
      */
     @RequiresApi(Build.VERSION_CODES.R)
-    override fun onCreateInlineSuggestionsRequest(uiExtras: Bundle): InlineSuggestionsRequest? {
-        val density = resources.displayMetrics.density
-        val height = (INLINE_SUGGESTION_HEIGHT_DP * density).toInt()
-        val styles = UiVersions.newStylesBuilder()
-            .addStyle(buildInlineSuggestionStyle(this))
-            .build()
-        val spec = InlinePresentationSpec.Builder(
-            Size((INLINE_SUGGESTION_MIN_WIDTH_DP * density).toInt(), height),
-            Size((INLINE_SUGGESTION_MAX_WIDTH_DP * density).toInt(), height),
-        ).setStyle(styles).build()
-        AppLog.d(TAG, "autofill en ligne : demande envoyée au système (hauteur ${height}px)")
-        return InlineSuggestionsRequest.Builder(listOf(spec))
-            .setMaxSuggestionCount(INLINE_SUGGESTION_MAX_COUNT)
-            .build()
-    }
+    override fun onCreateInlineSuggestionsRequest(uiExtras: Bundle): InlineSuggestionsRequest? =
+        inlineSuggestions.createRequest(uiExtras)
 
     @RequiresApi(Build.VERSION_CODES.R)
-    override fun onInlineSuggestionsResponse(response: InlineSuggestionsResponse): Boolean {
-        AppLog.d(
-            TAG,
-            "autofill en ligne : réponse de ${response.inlineSuggestions.size} suggestion(s), vue du clavier prête=${viewComposer.isComposed}",
-        )
-        if (!viewComposer.isComposed) {
-            // Première ouverture : la réponse peut arriver avant la construction de la vue du clavier. Elle est
-            // gardée et appliquée à l'ouverture du champ (le système ne la renvoie pas de lui-même).
-            pendingInlineResponse = response
-            return response.inlineSuggestions.isNotEmpty()
-        }
-        pendingInlineResponse = null
-        return showInlineSuggestions(response)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.R)
-    private fun showInlineSuggestions(response: InlineSuggestionsResponse): Boolean {
-        val suggestions = response.inlineSuggestions
-        val generation = ++inlineGeneration
-        if (suggestions.isEmpty()) {
-            clearInlineSuggestions()
-            return false
-        }
-        val slots = arrayOfNulls<View>(suggestions.size)
-        val wrap = android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-        suggestions.forEachIndexed { index, suggestion ->
-            try {
-                suggestion.inflate(this, Size(wrap, wrap), mainExecutor) { view ->
-                    // Réponse périodiquement remplacée par une plus récente : on ignore les vues en retard.
-                    if (generation != inlineGeneration || !viewComposer.isComposed) return@inflate
-                    if (view == null) {
-                        AppLog.w(TAG, "autofill en ligne : vue $index non rendue par le service d'auto-remplissage")
-                        return@inflate
-                    }
-                    slots[index] = view
-                    correctionBar.setInlineSuggestions(slots.filterNotNull())
-                    if (BuildConfig.DEBUG) {
-                        mainHandler.postDelayed(
-                            { AppLog.d(TAG, "autofill en ligne : vue $index ${view.width}x${view.height} px, affichée=${view.isShown}") },
-                            INLINE_LAYOUT_LOG_DELAY_MS,
-                        )
-                    }
-                }
-            } catch (e: IllegalArgumentException) {
-                AppLog.e(TAG, "autofill en ligne : taille refusée pour la suggestion $index", e)
-            }
-        }
-        return true
-    }
-
-    /** Applique la réponse d'auto-remplissage arrivée avant la construction de la vue du clavier, s'il y en a une. */
-    @RequiresApi(Build.VERSION_CODES.R)
-    private fun applyPendingInlineResponse() {
-        val pending = pendingInlineResponse as? InlineSuggestionsResponse ?: return
-        pendingInlineResponse = null
-        AppLog.d(TAG, "autofill en ligne : application de la réponse reçue avant la vue du clavier")
-        showInlineSuggestions(pending)
-    }
-
-    /** Retire les suggestions d'auto-remplissage : la barre retrouve ses suggestions habituelles. */
-    private fun clearInlineSuggestions() {
-        inlineGeneration++
-        pendingInlineResponse = null
-        if (viewComposer.isComposed) correctionBar.setInlineSuggestions(emptyList())
-    }
+    override fun onInlineSuggestionsResponse(response: InlineSuggestionsResponse): Boolean =
+        inlineSuggestions.onResponse(response)
 
     override fun onUpdateSelection(
         oldSelStart: Int,
@@ -703,51 +557,12 @@ class TaipoIme : InputMethodService() {
         // Écriture terminée avant de rendre la main (lot 2.6 de la revue) : pas de launch asynchrone ici.
         nextWords.flushBlocking()
         suggestions.correctionHabits.flushBlocking()
-        dismissMessage()
+        messagePopup.dismiss()
         aiTranscription.release()
         llmHost.close()
         voice.release()
         clipboard.release()
         serviceJob.cancel()
-    }
-
-    /**
-     * Affiche [message] dans un pop-up avec un bouton OK (les toasts passaient inaperçus). Le pop-up
-     * est rattaché à la fenêtre du clavier, qui garde la saisie en cours. Si le clavier n'est plus
-     * affiché (pas de fenêtre pour accrocher le pop-up), repli sur un toast.
-     */
-    private fun showMessage(message: String) {
-        val token = if (viewComposer.isComposed && keyboardView.isAttachedToWindow) keyboardView.windowToken else null
-        if (token == null) {
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-            return
-        }
-        dismissMessage()
-        val dialog = AlertDialog.Builder(ContextThemeWrapper(this, R.style.MessageDialogTheme))
-            .setMessage(message)
-            .setPositiveButton(R.string.message_dialog_ok, null)
-            .create()
-        dialog.window?.let { window ->
-            val params = window.attributes
-            params.token = token
-            params.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG
-            window.attributes = params
-            window.addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
-        }
-        messageDialog = dialog
-        try {
-            dialog.show()
-            dialog.window?.decorView?.applyTaipoFontToTree()
-        } catch (t: Throwable) {
-            messageDialog = null
-            AppLog.e(TAG, "Impossible d'afficher le pop-up", t)
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun dismissMessage() {
-        messageDialog?.dismiss()
-        messageDialog = null
     }
 
     private fun onKeyPressed(key: Key) {
@@ -766,7 +581,7 @@ class TaipoIme : InputMethodService() {
         // Story 1.15 : la touche emoji ouvre le panneau, sans saisir de texte.
         if (key.action == KeyAction.Emoji) {
             pendingAutocorrection = null
-            showEmojiPanel()
+            emojiController.showPanel()
             return
         }
 
@@ -864,33 +679,7 @@ class TaipoIme : InputMethodService() {
     }
 
     // ------------------------------------------------------------------
-    // Panneau emoji (story 1.15)
-    // ------------------------------------------------------------------
-
-    private fun showEmojiPanel() {
-        emojiPanel.configure(keyboardView.rowHeightPx(), keyboardView.bottomInsetPx())
-        emojiPanel.show(keyboardPreferences.recentEmojis)
-        keyboardView.visibility = View.INVISIBLE
-        emojiPanel.visibility = View.VISIBLE
-        refreshRecentEmojiBar()
-        clearSuggestions()
-    }
-
-    /** Retour aux touches (bouton ABC, nouveau champ, rotation) ; [resync] resynchronise majuscule et barre. */
-    private fun hideEmojiPanel(resync: Boolean = true) {
-        if (emojiPanel.visibility != View.VISIBLE) return
-        emojiPanel.visibility = View.GONE
-        keyboardView.visibility = View.VISIBLE
-        refreshRecentEmojiBar()
-        if (resync) {
-            syncAutoCapitalization()
-            applyState()
-            updateCorrectionBarVisibility()
-        }
-    }
-
-    // ------------------------------------------------------------------
-    // Panneau Smart Clipboard (stories 2.1 et 2.5)
+    // Page d'accueil et saisie utilisateur (le panneau Smart Clipboard est dans ClipboardController)
     // ------------------------------------------------------------------
 
     /** Roue crantée de la barre : ouvre la page d'accueil de l'application. */
@@ -914,61 +703,6 @@ class TaipoIme : InputMethodService() {
         if (viewComposer.isComposed) correctionBar.collapseMenu()
     }
 
-    private fun onEmojiSelected(emoji: String) {
-        hapticFeedback.perform(hapticIntensity)
-        if (prompt.active) {
-            pendingAutocorrection = null
-            prompt.buffer.insert(emoji)
-            keyboardPreferences.recentEmojis = RecentEmojis.add(keyboardPreferences.recentEmojis, emoji)
-            learnFromTyping()
-            prompt.refreshInput()
-            return
-        }
-        onUserTyped()
-        clearHighlightIfNeeded()
-        pendingAutocorrection = null
-        // commitText remplace une éventuelle sélection, comme n'importe quelle saisie.
-        val replacedByEmoji = currentInputConnection?.getSelectedText(0)?.toString().orEmpty()
-        currentInputConnection?.commitText(emoji, 1)
-        recordUndoEdit(inserted = emoji, original = replacedByEmoji)
-        keyboardPreferences.recentEmojis = RecentEmojis.add(keyboardPreferences.recentEmojis, emoji)
-        learnFromTyping()
-        updateCorrectionBarVisibility()
-    }
-
-    /**
-     * Un emoji de la barre des récents est inséré au curseur (il remplace une éventuelle sélection) et
-     * rejoint la tête des récents ; la barre garde son ordre jusqu'à la prochaine ouverture de champ
-     * ou du panneau, pour ne pas bouger sous le doigt.
-     */
-    private fun onRecentEmojiBarTapped(emoji: String) {
-        if (isRecording || correctionInProgress) return
-        onEmojiSelected(emoji)
-        syncAutoCapitalization()
-        applyState()
-    }
-
-    /**
-     * La barre n'est affichée que dans un champ de messagerie, avec des récents, hors mode prompt. Quand un panneau (emoji,
-     * Smart Clipboard) la masque, elle reste INVISIBLE et garde sa place : la hauteur du clavier ne varie pas, donc l'application
-     * n'a pas à rescroller (sinon le dernier message ou le curseur passe sous la barre). GONE seulement hors messagerie / mode prompt.
-     */
-    private fun refreshRecentEmojiBar() {
-        if (!viewComposer.isComposed) return
-        val recents = keyboardPreferences.recentEmojis
-        // Décision 12 : masquée en mode prompt, quelle que soit la règle habituelle.
-        val reserved = !prompt.active && messagingField && recents.isNotEmpty()
-        val visible = reserved &&
-            !(viewComposer.isComposed && emojiPanel.visibility == View.VISIBLE) &&
-            !clipboard.isPanelVisible
-        if (visible) recentEmojiBar.setEmojis(recents)
-        recentEmojiBar.visibility = when {
-            visible -> View.VISIBLE
-            reserved -> View.INVISIBLE
-            else -> View.GONE
-        }
-    }
-
     // ------------------------------------------------------------------
     // Mode prompt : traitement des touches (story 5.1) ; le reste est dans PromptModeController
     // ------------------------------------------------------------------
@@ -983,7 +717,7 @@ class TaipoIme : InputMethodService() {
     private fun onPromptKeyPressed(key: Key) {
         if (key.action == KeyAction.Emoji) {
             pendingAutocorrection = null
-            showEmojiPanel()
+            emojiController.showPanel()
             return
         }
         // Suppression juste après une autocorrection : on rétablit le mot tapé au lieu d'effacer un caractère.
@@ -1116,33 +850,6 @@ class TaipoIme : InputMethodService() {
         afterPromptEdit()
     }
 
-    /** Glissement de suppression en mode prompt : mots visés calculés sur le tampon, suppression au relâchement. */
-    private fun onPromptDeleteSwipeUpdate(words: Int) {
-        if (!deleteSwipe.active) {
-            deleteSwipe.active = true
-            deleteSwipe.base = prompt.buffer.cursor
-            deleteSwipe.end = prompt.buffer.cursor
-            deleteSwipe.length = 0
-            deleteSwipe.before = prompt.buffer.textBeforeCursor.takeLast(TEXT_CONTEXT_LOOKBEHIND)
-        }
-        val length = deleteSwipeLength(words)
-        if (length == deleteSwipe.length) return
-        deleteSwipe.length = length
-        hapticFeedback.perform(hapticIntensity.cursorMoveFeedback()) // un cran par changement de zone
-    }
-
-    private fun onPromptDeleteSwipeRelease() {
-        val swipe = deleteSwipe
-        if (!swipe.active) return
-        swipe.active = false
-        if (swipe.length == 0) return
-        hapticFeedback.perform(hapticIntensity)
-        prompt.buffer.deleteBefore(swipe.length)
-        prompt.refreshInput()
-        syncAutoCapitalization()
-        applyState()
-    }
-
     /**
      * Story 5.3, « Ajouter le texte » : insère [text] à la position du curseur de l'application, sans rien
      * remplacer. Une sélection dans le champ est d'abord repliée à sa fin, pour que le texte sélectionné
@@ -1203,21 +910,6 @@ class TaipoIme : InputMethodService() {
         return true
     }
 
-    private fun onEmojiBackspace() {
-        hapticFeedback.perform(hapticIntensity)
-        if (prompt.active) {
-            pendingAutocorrection = null
-            prompt.buffer.backspace()
-            prompt.refreshInput()
-            return
-        }
-        onUserTyped()
-        clearHighlightIfNeeded()
-        pendingAutocorrection = null
-        if (!deleteSelectedText()) deleteLastCluster()
-        updateCorrectionBarVisibility()
-    }
-
     /**
      * Story 1.7 : glissement sur la barre espace. Déplace le curseur de [steps] caractères
      * (négatif = vers la gauche) via des touches directionnelles, ce qui replie aussi une
@@ -1259,147 +951,6 @@ class TaipoIme : InputMethodService() {
         val after = ic.getTextAfterCursor(limit, 0)
         if (before == null || after == null) return steps
         return CursorSteps.allowed(steps, before, after, hasSelection())
-    }
-
-    /**
-     * Story 1.9 : glissement vers la gauche depuis la touche retour arrière. Pendant le geste, rien
-     * n'est supprimé : la zone qui le serait (les [words] mots précédant le curseur de départ, espaces
-     * de fin compris) est sélectionnée, ce qui la surligne et place le curseur à sa gauche. Revenir vers
-     * la droite réduit la zone. La suppression a lieu au relâchement ([onDeleteSwipeRelease]).
-     * S'il n'y a pas de mot immédiatement avant le curseur (ponctuation), un seul caractère est visé
-     * pour que le geste ne reste jamais sans effet.
-     */
-    private fun onDeleteSwipeUpdate(words: Int) {
-        if (prompt.active) {
-            onPromptDeleteSwipeUpdate(words)
-            return
-        }
-        val ic = currentInputConnection ?: return
-        if (!deleteSwipe.active) {
-            if (!beginDeleteSwipe(ic)) return
-        }
-        val length = deleteSwipeLength(words)
-        if (length == deleteSwipe.length) return
-        deleteSwipe.length = length
-        hapticFeedback.perform(hapticIntensity.cursorMoveFeedback()) // un cran par changement de zone, toujours faible
-        ic.setSelection(deleteSwipe.base - length, deleteSwipe.end)
-    }
-
-    /** Capture le point de départ du glissement ; faux si la position du curseur est inconnue. */
-    private fun beginDeleteSwipe(ic: InputConnection): Boolean {
-        clearHighlightIfNeeded()
-        pendingAutocorrection = null
-        val extracted = ic.getExtractedText(ExtractedTextRequest(), 0)
-        val base: Int
-        val end: Int
-        if (extracted != null) {
-            base = extracted.startOffset + minOf(extracted.selectionStart, extracted.selectionEnd)
-            end = extracted.startOffset + maxOf(extracted.selectionStart, extracted.selectionEnd)
-        } else if (lastSelectionStart >= 0 && lastSelectionEnd >= 0) {
-            base = minOf(lastSelectionStart, lastSelectionEnd)
-            end = maxOf(lastSelectionStart, lastSelectionEnd)
-        } else {
-            return false
-        }
-        // Une éventuelle sélection de départ est incluse dans la zone supprimée (comme la touche retour arrière seule).
-        deleteSwipe.active = true
-        deleteSwipe.base = base
-        deleteSwipe.end = end
-        deleteSwipe.length = 0
-        deleteSwipe.before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
-        return true
-    }
-
-    /** Nombre de caractères couverts par [words] mots avant le point de départ (borné au texte connu). */
-    private fun deleteSwipeLength(words: Int): Int {
-        var total = 0
-        repeat(words) {
-            val remaining = deleteSwipe.before.substring(0, deleteSwipe.before.length - total)
-            val piece = wordToDeleteBeforeCursor(remaining)
-            if (piece.isEmpty()) return total
-            total += piece.length
-        }
-        return total
-    }
-
-    private fun onDeleteSwipeRelease() {
-        if (prompt.active) {
-            onPromptDeleteSwipeRelease()
-            return
-        }
-        val ic = currentInputConnection
-        val swipe = deleteSwipe
-        if (!swipe.active || ic == null) {
-            swipe.active = false
-            return
-        }
-        swipe.active = false
-        if (swipe.length == 0) {
-            // Doigt revenu au point de départ : on annule, la sélection d'origine est rétablie.
-            ic.setSelection(swipe.base, swipe.end)
-            syncAutoCapitalization()
-            applyState()
-            return
-        }
-        hapticFeedback.perform(hapticIntensity)
-        onUserTyped()
-        ic.beginBatchEdit()
-        try {
-            ic.setSelection(swipe.end, swipe.end)
-            val count = swipe.length + (swipe.end - swipe.base)
-            val text = ic.getTextBeforeCursor(count + DeletionUndo.ANCHOR_LENGTH, 0)?.toString().orEmpty()
-            if (text.length >= count) {
-                recordUndoDeletion(text.takeLast(count), text.dropLast(count).takeLast(DeletionUndo.ANCHOR_LENGTH), text, mergeable = false) {
-                    swipe.end - count
-                }
-            }
-            ic.deleteSurroundingText(count, 0)
-        } finally {
-            ic.endBatchEdit()
-        }
-        syncAutoCapitalization()
-        applyState()
-        updateCorrectionBarVisibility()
-    }
-
-    private fun onDeleteSwipeCancel() {
-        val swipe = deleteSwipe
-        if (!swipe.active) return
-        if (prompt.active) {
-            swipe.active = false
-            return
-        }
-        swipe.active = false
-        currentInputConnection?.setSelection(swipe.base, swipe.end)
-        syncAutoCapitalization()
-        applyState()
-    }
-
-    /** État du glissement de suppression en cours (offsets absolus dans le champ). */
-    private class DeleteSwipeState {
-        var active = false
-        var base = 0 // début de la sélection de départ (= curseur s'il n'y en avait pas)
-        var end = 0 // fin de la sélection de départ
-        var length = 0 // caractères surlignés à gauche de [base]
-        var before = "" // texte précédant [base] au départ du geste
-    }
-
-    private val deleteSwipe = DeleteSwipeState()
-
-    /** Portion de [textBeforeCursor], en partant de la fin, à supprimer pour la story 1.9. */
-    private fun wordToDeleteBeforeCursor(textBeforeCursor: String): String {
-        if (textBeforeCursor.isEmpty()) return ""
-        var start = textBeforeCursor.length
-        while (start > 0 && (textBeforeCursor[start - 1] == ' ' || textBeforeCursor[start - 1] == '\t')) start--
-        val afterTrailingSpace = start
-        while (start > 0 && isWordChar(textBeforeCursor[start - 1])) start--
-        return if (start < afterTrailingSpace) {
-            textBeforeCursor.substring(start)
-        } else if (afterTrailingSpace < textBeforeCursor.length) {
-            textBeforeCursor.substring(afterTrailingSpace) // que des espaces/tabulations
-        } else {
-            textBeforeCursor.substring(textBeforeCursor.length - 1) // ni mot ni espace : un caractère
-        }
     }
 
     /**
@@ -1535,44 +1086,6 @@ class TaipoIme : InputMethodService() {
         updateCorrectionBarVisibility()
     }
 
-    private fun emojiPanelVisible(): Boolean =
-        viewComposer.isComposed && emojiPanel.visibility == View.VISIBLE
-
-    /**
-     * Touche sur l'emoji suggéré : il est inséré au curseur, précédé d'une espace si le mot vient
-     * d'être tapé sans espace après lui. Il rejoint aussi les emojis récents.
-     */
-    private fun onEmojiSuggestionTapped() {
-        val emoji = currentEmojiSuggestion ?: return
-        if (prompt.active) {
-            // Même règle que dans le champ : précédé d'une espace si le mot vient d'être tapé sans espace après lui.
-            hapticFeedback.perform(hapticIntensity)
-            pendingAutocorrection = null
-            val needsSpace = prompt.buffer.textBeforeCursor.lastOrNull()?.isLetterOrDigit() == true
-            prompt.buffer.insert(if (needsSpace) " $emoji" else emoji)
-            keyboardPreferences.recentEmojis = RecentEmojis.add(keyboardPreferences.recentEmojis, emoji)
-            learnFromTyping()
-            afterPromptEdit()
-            return
-        }
-        if (isRecording || correctionInProgress || hasSelection()) return
-        val ic = currentInputConnection ?: return
-        hapticFeedback.perform(hapticIntensity)
-        onUserTyped()
-        clearHighlightIfNeeded()
-        pendingAutocorrection = null
-        val lastChar = ic.getTextBeforeCursor(1, 0)?.lastOrNull()
-        val needsSpace = lastChar != null && lastChar.isLetterOrDigit()
-        val insertedEmoji = if (needsSpace) " $emoji" else emoji
-        ic.commitText(insertedEmoji, 1)
-        recordUndoEdit(inserted = insertedEmoji, original = "")
-        keyboardPreferences.recentEmojis = RecentEmojis.add(keyboardPreferences.recentEmojis, emoji)
-        learnFromTyping()
-        syncAutoCapitalization()
-        applyState()
-        updateCorrectionBarVisibility()
-    }
-
     // ------------------------------------------------------------------
     // Dictionnaire local / autocorrection (story 1.3)
     // ------------------------------------------------------------------
@@ -1583,8 +1096,6 @@ class TaipoIme : InputMethodService() {
         is KeyAction.TypeChar -> !action.char.isLetterOrDigit() && action.char != '\'' && action.char != '-'
         else -> false
     }
-
-    private fun isWordChar(c: Char): Boolean = WordText.isWordChar(c)
 
     /** Dernier "mot" avant le curseur : lettres/apostrophes/traits d'union contigus en fin de texte. */
     private fun trailingWord(textBeforeCursor: String): String = WordText.trailingWord(textBeforeCursor)
@@ -1751,6 +1262,7 @@ class TaipoIme : InputMethodService() {
         keyboardView.layout = Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled, fieldType)
         keyboardView.isShifted = controller.state.isShifted
         keyboardView.isCapsLock = controller.state.isCapsLock
+        keyboardView.isEnterLongPressEnabled = MultilingualChoice.isActive(keyboardPreferences.multilingualLanguages)
     }
 
     companion object {
@@ -1761,12 +1273,5 @@ class TaipoIme : InputMethodService() {
 
         /** Longueur du texte retenu quand une autocorrection est annulée (voir [revertedAutocorrectionTail]). */
         private const val REVERTED_TAIL_LENGTH = 12
-
-        // Suggestions d'auto-remplissage en ligne : hauteur alignée sur la zone de la barre (36 dp, moins la marge).
-        private const val INLINE_SUGGESTION_HEIGHT_DP = 32f
-        private const val INLINE_SUGGESTION_MIN_WIDTH_DP = 48f
-        private const val INLINE_SUGGESTION_MAX_WIDTH_DP = 320f
-        private const val INLINE_SUGGESTION_MAX_COUNT = 5
-        private const val INLINE_LAYOUT_LOG_DELAY_MS = 500L
     }
 }

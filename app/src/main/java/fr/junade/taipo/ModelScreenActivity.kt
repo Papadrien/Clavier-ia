@@ -90,6 +90,7 @@ abstract class ModelScreenActivity : ComponentActivity() {
         DownloadFailure.SERVER -> R.string.model_download_failed_server
         DownloadFailure.NO_SPACE -> R.string.model_download_failed_no_space
         DownloadFailure.CORRUPTED -> R.string.model_download_failed_corrupted
+        DownloadFailure.SYSTEM_STOP -> R.string.model_download_failed_system_stop
         DownloadFailure.OTHER -> R.string.model_download_failed_other
     }
 

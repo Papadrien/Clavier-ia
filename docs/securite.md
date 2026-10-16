@@ -52,7 +52,7 @@ l'hygiène (dérivation standard, séparation par usage, format versionné), pas
   GET HTTPS d'un fichier de modèle : aucun texte saisi, copié ou dicté n'est envoyé, aucun autre code réseau. Le
   message de confidentialité (« 100 % local ») reste vrai pour l'usage, mais « aucune permission Internet » ne l'est
   plus : à reporter dans la fiche Play (déclaration de sécurité des données) et dans la politique de confidentialité.
-- HTTPS obligatoire, y compris après redirection (contrôlé sur l'URL finale). Pas de reprise (Range) : V2.
+- HTTPS obligatoire, y compris après redirection (contrôlé sur l'URL finale). Reprise (Range) possible depuis le point 1.7 : le SHA-256 reste calculé sur le fichier entier (partiel relu au redémarrage), donc un partiel altéré ou périmé est rejeté ; partiel abandonné après 7 jours.
 - Fichier écrit dans `<id>.litertlm.tmp`, SHA-256 calculé pendant le flux, comparé à `AiModel.sha256`, puis rename
   atomique. Sans empreinte de référence, le téléchargement n'est permis qu'en debug (relever l'empreinte).
 - La taille du fichier installé est recontrôlée à chaque chargement du moteur (`ModelFileResolver.resolve`).
@@ -94,7 +94,7 @@ l'hygiène (dérivation standard, séparation par usage, format versionné), pas
 ## Menu « Confidentialité » (épopée 10, story 10.2)
 
 - Écran texte seul (accueil > À propos, en dernier), 5 sections : traitement local, connexions Internet, aucune collecte, champs de
-  mot de passe, données conservées sur l'appareil. La seule bascule est « Mesure d'usage » (Paramètres du clavier) : voir `docs/analytics.md`.
+  mot de passe, données conservées sur l'appareil. La seule bascule est « Partager les données d'utilisation » (Paramètres du clavier) : voir `docs/analytics.md`.
 - Texte écrit d'après le code au 12/10/2026 : seules connexions = téléchargement des modèles, depuis `taipo-worker.junade-models.workers.dev`
   (Gemma 3 et modèles vocaux) et `huggingface.co` (Gemma 4). Mesure d'usage : Aptabase (`eu.aptabase.com`), via le SDK Kotlin d'Aptabase (aucun autre SDK de mesure, de plantage ou de publicité).
 - `PrivacyContentTest` échoue si un modèle est téléchargé depuis un domaine que le texte ne cite pas. Aptabase est maintenant cité dans les sections 2 et 3 (`PrivacyContentTest` le vérifie). **Si un autre outil

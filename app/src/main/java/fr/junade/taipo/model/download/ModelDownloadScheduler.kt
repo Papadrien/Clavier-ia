@@ -34,8 +34,8 @@ object ModelDownloadScheduler {
                     KEY_MOBILE_DATA_ACCEPTED to mobileDataAccepted,
                 ),
             )
-            // Le contrôle Wi-Fi / données mobiles est fait par le worker (arrêt propre vers « Réessayer »,
-            // sans reprise automatique qui repartirait de zéro) : la contrainte ne exige qu'une connexion.
+            // Le contrôle Wi-Fi / données mobiles est fait par le worker (arrêt propre vers « Réessayer », partiel
+            // conservé pour la reprise) : la contrainte n'exige qu'une connexion.
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
             .build()
         WorkManager.getInstance(context.applicationContext)

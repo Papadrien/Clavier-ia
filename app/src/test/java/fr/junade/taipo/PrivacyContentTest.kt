@@ -49,11 +49,11 @@ class PrivacyContentTest {
 
     private val locales = listOf(
         Locale(
-            "values", "on your device", "download", "Keyboard settings > Usage analytics", "Never your text",
+            "values", "on your device", "download", "Keyboard settings > Usage data", "Never your text",
             "password fields", "identifier", "a Junadé server", "nothing to turn off", "no telemetry",
         ),
         Locale(
-            "values-fr", "sur votre appareil", "télécharger", "Paramètres du clavier > Mesure d", "Jamais votre texte",
+            "values-fr", "sur votre appareil", "télécharger", "Paramètres du clavier > Données d", "Jamais votre texte",
             "champs de mot de passe", "identifiant", "serveur de Junadé", "rien à désactiver", "ni télémétrie",
         ),
     )

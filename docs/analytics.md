@@ -15,7 +15,7 @@ déclaré dans `settings.gradle.kts` et limité à son groupe). Le SDK est initi
   événement.
 - **Champs de mot de passe** : `Analytics.sensitiveFieldActive` (tenu par `TaipoIme`) coupe tout événement tant qu'un champ
   sensible est affiché.
-- **Désactivable** : Paramètres du clavier > Mesure d'usage. Activée par défaut. Désactivée, `Analytics.track` ne rappelle plus le SDK.
+- **Désactivable** : Paramètres du clavier > Données d'utilisation (« Partager les données d'utilisation »). Activée par défaut. Désactivée, `Analytics.track` ne rappelle plus le SDK.
 - **Jamais bloquant** : d'après la doc du SDK, les envois se font sur un pool de fils d'arrière-plan, jamais sur le fil principal.
 - **Types** : le SDK n'accepte que des `String` et des `Int` ; `AnalyticsProps.forSdk()` convertit les booléens en `"true"` / `"false"`
   (mots-clés) et les `Long` en `Int`.

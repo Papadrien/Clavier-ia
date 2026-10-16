@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import fr.junade.taipo.VoiceModelDownloadActivity
@@ -16,6 +17,7 @@ import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.model.VoiceModelFile
 import fr.junade.taipo.model.VoiceModelFileResolver
 import fr.junade.taipo.model.VoiceModelPreferences
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
@@ -23,8 +25,9 @@ import kotlinx.coroutines.withContext
 /**
  * Télécharge le modèle vocal (story 8.15) : ses 4 fichiers l'un après l'autre, chacun avec le même mécanisme sûr que
  * les modèles de texte ([ModelFileFetcher] : HTTPS, `.tmp`, SHA-256 pendant le flux, rename atomique). Un fichier déjà
- * téléchargé et à jour est sauté : après un échec, « Réessayer » ne reprend que ce qui manque (reprise au fichier près ;
- * la reprise au milieu d'un fichier reste reportée en V2, comme pour les modèles de texte).
+ * téléchargé et à jour est sauté : après un échec, « Réessayer » ne reprend que ce qui manque, et le fichier en cours
+ * reprend là où il s'était arrêté (partiel conservé, `Range`, relances automatiques : point 1.7 de l'audit, comme pour
+ * les modèles de texte). Seule une annulation par l'utilisateur supprime les partiels.
  *
  * Le modèle n'est utilisable qu'une fois les 4 fichiers présents ([VoiceModelPreferences.isComplete]). L'état affiché
  * par l'écran « Modèle IA » passe par [DownloadTracker] (état vocal).
@@ -53,14 +56,21 @@ class VoiceModelDownloadWorker(
             AppLog.w(TAG, "Service au premier plan refusé", e)
         }
 
-        return when (val outcome = downloadAll(allowMobileData)) {
+        val outcome = try {
+            downloadAll(allowMobileData)
+        } catch (e: CancellationException) {
+            // Arrêt pendant une attente entre deux tentatives (hors du flux) : même traitement qu'un arrêt en cours de flux.
+            settleAfterStop()
+            throw e
+        }
+        return when (outcome) {
             is ModelFileFetcher.Outcome.Done -> {
                 DownloadTracker.updateVoice(DownloadState.Idle)
                 Analytics.track(applicationContext, AnalyticsEvents.MODEL_DOWNLOAD_DONE, "model" to VOICE_MODEL_ID)
                 Result.success()
             }
             is ModelFileFetcher.Outcome.Cancelled -> {
-                DownloadTracker.updateVoice(DownloadState.Idle)
+                settleAfterStop()
                 Result.failure()
             }
             is ModelFileFetcher.Outcome.Failed -> {
@@ -73,6 +83,20 @@ class VoiceModelDownloadWorker(
                 )
                 Result.failure()
             }
+        }
+    }
+
+    /**
+     * Après un arrêt du travail : annulation par l'utilisateur = retour à « Télécharger » et partiels supprimés ; tout
+     * autre arrêt (délai du service au premier plan d'Android 15+, contrainte perdue…) vient du système : on l'annonce
+     * (« Réessayer ») et les partiels sont conservés pour la reprise.
+     */
+    private fun settleAfterStop() {
+        if (stopReason == WorkInfo.STOP_REASON_CANCELLED_BY_APP) {
+            VoiceModelFile.all().forEach { PartialDownload.discard(VoiceModelFileResolver.localFileFor(applicationContext, it)) }
+            DownloadTracker.updateVoice(DownloadState.Idle)
+        } else {
+            DownloadTracker.updateVoice(DownloadState.Failed(DownloadFailure.SYSTEM_STOP))
         }
     }
 
@@ -107,7 +131,7 @@ class VoiceModelDownloadWorker(
                     notifyProgress(percent)
                 }
 
-                val outcome = ModelFileFetcher.fetch(
+                val outcome = ModelFileFetcher.fetchWithRetry(
                     context = appContext,
                     url = file.downloadUrl,
                     destination = VoiceModelFileResolver.localFileFor(appContext, file),
@@ -116,6 +140,7 @@ class VoiceModelDownloadWorker(
                     acceptContentLength = { true },
                     allowMobileData = allowMobileData,
                     isActive = { scope.isActive },
+                    keepPartialOnStop = { stopReason != WorkInfo.STOP_REASON_CANCELLED_BY_APP },
                     onTotal = {
                         currentTotal = it
                         report(0L)

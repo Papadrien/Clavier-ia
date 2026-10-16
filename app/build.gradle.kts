@@ -75,6 +75,11 @@ android {
             // SQLCipher) sont dans proguard-rules.pro : à valider sur un APK release installé.
             isMinifyEnabled = true
             isShrinkResources = true
+            // Symboles natifs (sherpa-onnx, LiteRT-LM, SQLCipher) joints à l'AAB : Play Console peut alors
+            // symboliser les plantages natifs. À vérifier : le fichier `native-debug-symbols.zip` du bundle.
+            ndk {
+                debugSymbolLevel = "SYMBOL_TABLE"
+            }
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             if (keystorePath != null) signingConfig = signingConfigs.getByName("release")
         }

@@ -34,6 +34,9 @@ class ImeViewComposer(
 
         fun onCursorMoved(steps: Int)
 
+        /** Touche globe de la bulle d'Entrée (clavier multilingue) relâchée : changement de langue. */
+        fun onGlobeSelected()
+
         fun onDeleteSwipeUpdate(words: Int)
 
         fun onDeleteSwipeRelease()
@@ -111,6 +114,7 @@ class ImeViewComposer(
         keyboardView.heightScale = host.heightScale()
         keyboardView.setOnKeyListener { key -> host.onKey(key) }
         keyboardView.setOnCursorMoveListener { steps -> host.onCursorMoved(steps) }
+        keyboardView.setOnGlobeSelectedListener { host.onGlobeSelected() }
         keyboardView.setOnDeleteSwipeListener(object : KeyboardView.OnDeleteSwipeListener {
             override fun onDeleteSwipeUpdate(words: Int) = host.onDeleteSwipeUpdate(words)
             override fun onDeleteSwipeRelease() = host.onDeleteSwipeRelease()

@@ -55,7 +55,12 @@ object VoiceModelFileResolver {
     fun deleteLocalCopy(context: Context, file: VoiceModelFile): Long {
         val local = localFileFor(context, file)
         var freed = 0L
-        listOf(local, File(local.parentFile, "${local.name}.tmp"), File(local.parentFile, "${local.name}.sha256"))
+        listOf(
+            local,
+            File(local.parentFile, "${local.name}.tmp"),
+            File(local.parentFile, "${local.name}.tmp.resume"),
+            File(local.parentFile, "${local.name}.sha256"),
+        )
             .forEach { target ->
                 if (target.exists()) {
                     val size = target.length()

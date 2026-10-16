@@ -2,6 +2,7 @@ package fr.junade.taipo.model.download
 
 import fr.junade.taipo.model.sameSha256
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.nio.file.AtomicMoveNotSupportedException
@@ -14,8 +15,11 @@ enum class InstallFailure {
     /** Empreinte SHA-256 différente de la référence : fichier corrompu ou autre variante. */
     HASH_MISMATCH,
 
-    /** Nombre d'octets reçus différent du `Content-Length` annoncé : téléchargement tronqué. */
+    /** Plus d'octets reçus que la taille annoncée : fichier incohérent (le partiel est supprimé). */
     SIZE_MISMATCH,
+
+    /** Flux terminé avant la taille annoncée : le partiel est conservé pour une reprise (`Range`). */
+    TRUNCATED,
 
     /** Erreur de lecture ou d'écriture (réseau coupé, disque plein…). */
     IO,
@@ -34,9 +38,13 @@ sealed interface InstallResult {
 /**
  * Installation sûre d'un modèle téléchargé (story 8.9), sans dépendance Android : testée en JVM.
  *
- * Le flux est écrit dans `<fichier>.tmp`, l'empreinte SHA-256 est calculée pendant l'écriture (aucune relecture
- * de plusieurs Go), puis le fichier est renommé atomiquement vers sa destination. Tout échec ou toute
- * annulation supprime le temporaire : un fichier partiel n'est jamais pris pour un modèle valide.
+ * Le flux est écrit dans `<fichier>.tmp`, l'empreinte SHA-256 est calculée pendant l'écriture, puis le fichier est
+ * renommé atomiquement vers sa destination. Un fichier partiel n'est jamais pris pour un modèle valide.
+ *
+ * Reprise (point 1.7 de l'audit) : une coupure du flux (réseau, arrêt du système) **conserve** le `.tmp` ; à la
+ * relance, [install] le relit une fois pour continuer le SHA-256 (le condensat Java ne se sauvegarde pas), puis
+ * ajoute la suite. Une annulation demandée par l'utilisateur, une empreinte fausse, un fichier trop gros ou une
+ * erreur d'écriture (disque plein) suppriment le temporaire.
  */
 object ModelInstaller {
 
@@ -46,12 +54,20 @@ object ModelInstaller {
 
     fun sha256MarkerFor(destination: File) = File(destination.parentFile, "${destination.name}.sha256")
 
+    /** Marqueur de reprise du `.tmp` : voir [ResumeMarker]. */
+    fun resumeMarkerFor(destination: File) = File(destination.parentFile, "${destination.name}.tmp.resume")
+
     /**
-     * @param expectedBytes taille annoncée par le serveur (`Content-Length`), ou une valeur <= 0 si inconnue
+     * @param expectedBytes taille TOTALE du fichier (pas seulement ce qui reste à recevoir), ou une valeur <= 0 si inconnue
      * @param expectedSha256 empreinte de référence ; null = pas de comparaison (debug seulement, voir [DownloadPolicy])
+     * @param onProgress octets cumulés, la partie déjà présente comprise
      * @param beforeCommit appelé une fois le fichier vérifié, juste avant de remplacer la destination
      *   (ex. fermer le moteur qui aurait l'ancien fichier ouvert)
      * @param onVerifying appelé quand tout le flux est reçu et qu'on passe aux contrôles finaux
+     * @param resumeFrom taille du partiel à reprendre : [input] doit alors fournir la suite du fichier à partir de cet
+     *   octet. Ignoré (on repart de zéro) si le `.tmp` n'a pas exactement cette taille.
+     * @param keepPartial interrogé quand [isCancelled] devient vrai : vrai = arrêt temporaire (le partiel est gardé),
+     *   faux = annulation (le partiel est supprimé)
      */
     fun install(
         input: InputStream,
@@ -62,25 +78,57 @@ object ModelInstaller {
         onProgress: (Long) -> Unit = {},
         onVerifying: () -> Unit = {},
         beforeCommit: () -> Unit = {},
+        resumeFrom: Long = 0L,
+        keepPartial: () -> Boolean = { false },
     ): InstallResult {
         val directory = destination.parentFile
         if (directory != null && !directory.isDirectory && !directory.mkdirs() && !directory.isDirectory) {
             return InstallResult.Failed(InstallFailure.IO, IOException("Models folder inaccessible"))
         }
         val temp = temporaryFileFor(destination)
-        temp.delete()
+        val resuming = resumeFrom > 0 && temp.isFile && temp.length() == resumeFrom
+        if (!resuming) temp.delete()
 
         val digest = MessageDigest.getInstance("SHA-256")
+        val buffer = ByteArray(BUFFER_SIZE)
         var total = 0L
-        try {
-            temp.outputStream().use { output ->
-                val buffer = ByteArray(BUFFER_SIZE)
-                while (true) {
-                    if (isCancelled()) {
-                        temp.delete()
-                        return InstallResult.Cancelled
+
+        fun interrupted(): InstallResult {
+            if (!keepPartial()) PartialDownload.discard(destination)
+            return InstallResult.Cancelled
+        }
+
+        if (resuming) {
+            // Relecture du partiel pour reprendre le SHA-256 là où il s'était arrêté.
+            try {
+                temp.inputStream().use { existing ->
+                    while (true) {
+                        if (isCancelled()) return interrupted()
+                        val read = existing.read(buffer)
+                        if (read < 0) break
+                        if (read == 0) continue
+                        digest.update(buffer, 0, read)
+                        total += read
+                        onProgress(total)
                     }
-                    val read = input.read(buffer)
+                }
+            } catch (e: IOException) {
+                PartialDownload.discard(destination)
+                return InstallResult.Failed(InstallFailure.IO, e)
+            }
+        }
+
+        var readFailure: IOException? = null
+        try {
+            FileOutputStream(temp, resuming).use { output ->
+                while (true) {
+                    if (isCancelled()) return interrupted()
+                    val read = try {
+                        input.read(buffer)
+                    } catch (e: IOException) {
+                        readFailure = e
+                        break
+                    }
                     if (read < 0) break
                     if (read == 0) continue
                     digest.update(buffer, 0, read)
@@ -90,33 +138,40 @@ object ModelInstaller {
                 }
             }
         } catch (e: IOException) {
-            temp.delete()
+            // Écriture ou fermeture du fichier (disque plein…) : rien à reprendre.
+            PartialDownload.discard(destination)
             return InstallResult.Failed(InstallFailure.IO, e)
         }
+        val interruption = readFailure
+        if (interruption != null) {
+            // Flux coupé (réseau) : le partiel est gardé pour une reprise.
+            return InstallResult.Failed(InstallFailure.IO, interruption)
+        }
 
-        onVerifying()
-        if (expectedBytes > 0 && total != expectedBytes) {
-            temp.delete()
+        if (expectedBytes > 0 && total > expectedBytes) {
+            PartialDownload.discard(destination)
             return InstallResult.Failed(InstallFailure.SIZE_MISMATCH)
         }
+        if (expectedBytes > 0 && total < expectedBytes) {
+            return InstallResult.Failed(InstallFailure.TRUNCATED)
+        }
+        onVerifying()
         val actualSha256 = digest.digest().joinToString("") { "%02x".format(it) }
         if (expectedSha256 != null && !sameSha256(expectedSha256, actualSha256)) {
-            temp.delete()
+            PartialDownload.discard(destination)
             return InstallResult.Failed(InstallFailure.HASH_MISMATCH)
         }
-        if (isCancelled()) {
-            temp.delete()
-            return InstallResult.Cancelled
-        }
+        if (isCancelled()) return interrupted()
 
         try {
             beforeCommit()
             move(temp, destination)
             sha256MarkerFor(destination).writeText(actualSha256)
         } catch (e: IOException) {
-            temp.delete()
+            PartialDownload.discard(destination)
             return InstallResult.Failed(InstallFailure.IO, e)
         }
+        resumeMarkerFor(destination).delete()
         return InstallResult.Installed(total, actualSha256)
     }
 

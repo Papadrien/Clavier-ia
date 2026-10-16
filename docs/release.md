@@ -23,12 +23,21 @@
     echo "TAIPO_KEY_PASSWORD=${{ secrets.TAIPO_KEY_PASSWORD }}" >> "$GITHUB_ENV"
 ```
 
-## Checklist de validation d'un APK release (à faire avant toute diffusion)
-- [ ] `./gradlew assembleRelease` réussit (sinon : ajouter les `-dontwarn` réclamés par R8).
-- [ ] Installer l'APK release sur l'appareil, activer le clavier.
-- [ ] Frappe, suggestions, autocorrection ; dictionnaire personnel (base chiffrée) ; presse-papiers.
-- [ ] Correction IA, mode prompt (streaming), dictée (sherpa-onnx).
-- [ ] Noter la taille de l'APK debug et release.
+## Checklist de validation d'un build release (à faire avant toute diffusion)
+Play exige un **AAB** : `./gradlew bundleRelease` (sortie `app/build/outputs/bundle/release/`). Pour tester sur appareil,
+`assembleRelease` (APK). Les deux utilisent les mêmes règles R8.
+- [ ] `./gradlew assembleRelease bundleRelease` réussit (sinon : ajouter les `-dontwarn` réclamés par R8, voir `app/build/outputs/mapping/release/missing_rules.txt`).
+- [ ] Garder `mapping.txt` (`app/build/outputs/mapping/release/`) de **chaque** version publiée (désobfuscation des plantages) ; l'AAB le contient aussi une fois importé dans la Play Console.
+- [ ] Installer l'APK release signé (`adb install`), activer le clavier. Surveiller `adb logcat *:E` pendant tous les tests : aucune `ClassNotFoundException`, `NoSuchMethodError`, `NoSuchFieldError`, `UnsatisfiedLinkError`.
+- [ ] Frappe dans plusieurs applications ; suggestions ; autocorrection ; changement de langue (appui long sur Entrée).
+- [ ] Dictionnaire personnel et presse-papiers (bases chiffrées SQLCipher) : ajouter, redémarrer l'appareil, retrouver les données.
+- [ ] Sauvegarde puis restauration (Mes données > Sauvegarde et restauration).
+- [ ] Téléchargement d'un modèle (réseau mobile et Wi-Fi), reprise après coupure du réseau et après arrêt par le système (liste détaillée : `docs/telechargement-modeles.md`, point 1.7).
+- [ ] Correction IA, mode prompt (streaming), dictée (sherpa-onnx) et transcription IA.
+- [ ] Mesure d'usage (Aptabase) : activer puis désactiver, aucune erreur dans logcat.
+- [ ] Demande d'avis Play (peut ne rien afficher hors Play) et écran de confidentialité.
+- [ ] Noter la taille de l'APK debug et release, et de l'AAB.
+- [ ] Contrôler l'alignement 16 Ko des `.so` de l'AAB (outil d'alignement des NDK/Android Studio ou Analyseur d'APK).
 
 ## À essayer séparément
 - `org.gradle.configuration-cache=true` : non activé (le Kotlin surclassé en 2.4.0 dans le build racine et

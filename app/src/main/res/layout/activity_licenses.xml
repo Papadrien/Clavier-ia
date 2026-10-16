@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Story 8.11 : écran « Licences » (accessible depuis l'accueil). Le texte Apache 2.0 est chargé depuis
-     assets/licenses/apache-2.0.txt par LicensesActivity et masqué tant que l'utilisateur ne le déplie pas. -->
+<!-- Story 8.11 + audit 1.9 : écran « Licences » (accessible depuis l'accueil). Cartes Gemma écrites ici ; les autres
+     mentions (Nemotron, dictionnaires, bibliothèques, police) viennent de LicenseNotices et remplissent les trois
+     conteneurs. Le texte Apache 2.0 est chargé depuis assets/licenses/apache-2.0.txt, masqué tant qu'on ne le déplie pas. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -25,6 +26,14 @@
             android:layout_height="wrap_content"
             android:text="@string/licenses_description"
             android:layout_marginBottom="@dimen/taipo_settings_gap_xl" />
+
+        <TextView
+            style="@style/TaipoText.Section"
+            android:id="@+id/licenses_section_models"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/licenses_section_models"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
 
         <!-- Gemma 3 : Gemma Terms of Use -->
         <LinearLayout
@@ -88,7 +97,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/bg_settings_card"
-            android:padding="@dimen/taipo_settings_card_padding">
+            android:padding="@dimen/taipo_settings_card_padding"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_md">
 
             <TextView
                 style="@style/TaipoText.Lead"
@@ -130,6 +140,50 @@
                 android:textIsSelectable="true"
                 android:visibility="gone" />
         </LinearLayout>
+
+        <!-- Autres modèles (Nemotron), remplis par LicensesActivity depuis LicenseNotices -->
+        <LinearLayout
+            android:id="@+id/licenses_models_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            style="@style/TaipoText.Section"
+            android:id="@+id/licenses_section_dictionaries"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/licenses_section_dictionaries"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+        <LinearLayout
+            android:id="@+id/licenses_dictionaries_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <TextView
+            style="@style/TaipoText.Section"
+            android:id="@+id/licenses_section_software"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/licenses_section_software"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+        <TextView
+            style="@style/TaipoText.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/licenses_software_intro"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_md" />
+
+        <LinearLayout
+            android:id="@+id/licenses_software_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
 
     </LinearLayout>
 </ScrollView>

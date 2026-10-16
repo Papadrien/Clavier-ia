@@ -115,4 +115,22 @@ object DownloadPolicy {
         NetworkKind.METERED -> !mobileDataAccepted
         NetworkKind.UNMETERED -> false
     }
+
+    // --- Relances automatiques pendant le téléchargement (point 1.7 de l'audit) ------------------------------
+
+    /** Nombre d'échecs réseau consécutifs, sans un seul octet de plus reçu, après lequel on abandonne (vers « Réessayer »). */
+    const val MAX_FAILURES_WITHOUT_PROGRESS = 4
+
+    private const val RETRY_BASE_DELAY_MS = 2_000L
+    private const val RETRY_MAX_DELAY_MS = 60_000L
+
+    /** Faut-il relancer tout seul après [failuresWithoutProgress] échecs d'affilée sans progrès ? */
+    fun canAutoRetry(failuresWithoutProgress: Int): Boolean = failuresWithoutProgress < MAX_FAILURES_WITHOUT_PROGRESS
+
+    /** Attente avant la relance : 2 s, 6 s, 18 s… (x3 à chaque échec sans progrès), plafonnée à 60 s. */
+    fun retryDelayMs(failuresWithoutProgress: Int): Long {
+        var delay = RETRY_BASE_DELAY_MS
+        repeat((failuresWithoutProgress - 1).coerceAtLeast(0)) { delay = (delay * 3).coerceAtMost(RETRY_MAX_DELAY_MS) }
+        return delay
+    }
 }

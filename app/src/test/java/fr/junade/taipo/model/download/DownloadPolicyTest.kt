@@ -111,6 +111,24 @@ class DownloadPolicyTest {
         assertFalse(DownloadPolicy.shouldAbortForNetwork(NetworkKind.UNMETERED, mobileDataAccepted = false))
     }
 
+    @Test
+    fun `relances automatiques limitees aux echecs sans progres`() {
+        assertTrue(DownloadPolicy.canAutoRetry(0))
+        assertTrue(DownloadPolicy.canAutoRetry(DownloadPolicy.MAX_FAILURES_WITHOUT_PROGRESS - 1))
+        assertFalse(DownloadPolicy.canAutoRetry(DownloadPolicy.MAX_FAILURES_WITHOUT_PROGRESS))
+    }
+
+    @Test
+    fun `attente avant relance triplee a chaque echec et plafonnee`() {
+        assertEquals(2_000L, DownloadPolicy.retryDelayMs(0))
+        assertEquals(2_000L, DownloadPolicy.retryDelayMs(1))
+        assertEquals(6_000L, DownloadPolicy.retryDelayMs(2))
+        assertEquals(18_000L, DownloadPolicy.retryDelayMs(3))
+        assertEquals(54_000L, DownloadPolicy.retryDelayMs(4))
+        assertEquals(60_000L, DownloadPolicy.retryDelayMs(5))
+        assertEquals(60_000L, DownloadPolicy.retryDelayMs(50))
+    }
+
     // --- Story 8.15 : modèle vocal -------------------------------------------------------------------------------
 
     private fun decideVoice(

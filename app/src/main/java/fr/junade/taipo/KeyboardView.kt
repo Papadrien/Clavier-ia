@@ -4,16 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
-import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
-import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import kotlin.math.roundToInt
@@ -117,148 +114,68 @@ class KeyboardView(context: Context) : View(context) {
             invalidate()
         }
 
-    // Charte Taipo (lot 04) : chaque touche = une face + une ombre (épaisseur inférieure), voir drawKey.
-    // Lettres, chiffres, symboles et espace : gris ; virgule, point, emoji, Maj, retour arrière et ABC/123 : violet-gris ;
-    // Entrée : violet d'accent (voir keyStyle).
-    private val normalPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_normal) }
-    private val secondaryPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_functional) }
-    private val activePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_pressed) }
-    private val enterPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_enter) }
-    private val normalShadowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_normal_shadow) }
-    private val secondaryShadowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_functional_shadow) }
-    private val enterShadowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_enter_shadow) }
-    private val spaceBarPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = context.themeColor(R.color.key_space_bar)
-        strokeWidth = context.dimen(R.dimen.taipo_space_bar_thickness)
-        strokeCap = Paint.Cap.ROUND
-    }
-
-    private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = context.themeColor(R.color.text_primary)
-        textAlign = Paint.Align.CENTER
-        useTaipoFont(context)
-    }
-
-    private val keyRect = RectF()
-
-    /**
-     * Lot 21 : dimensions de la charte lues **une fois** (construction, changement de configuration ou de taille), puis
-     * réutilisées au dessin. Avant, chaque touche relisait 4 à 7 dimensions dans les ressources à chaque dessin
-     * (de l'ordre de 150 accès par dessin du clavier). Seul le contenu change avec la configuration (orientation, classe de largeur,
-     * échelle de police) : [refreshDimens] est appelée à ces moments.
-     */
-    private class DrawDimens(context: Context) {
-        val keyInset = context.dimen(R.dimen.taipo_key_inset)
-        val keyCornerRadius = context.dimen(R.dimen.taipo_key_corner_radius)
-        val keyShadowHeight = context.dimen(R.dimen.taipo_key_shadow_height)
-        val keyShadowPressedHeight = context.dimen(R.dimen.taipo_key_shadow_pressed_height)
-        val spaceBarLength = context.dimen(R.dimen.taipo_space_bar_length)
-        val iconSize = context.dimen(R.dimen.taipo_icon_size)
-        val keyTextSize = context.dimen(R.dimen.taipo_key_text_size)
-        val keyTextSizeLarge = context.dimen(R.dimen.taipo_key_text_size_large)
-        val hintTextSize = context.dimen(R.dimen.taipo_key_hint_text_size)
-        val hintMarginEnd = context.dimen(R.dimen.taipo_key_hint_margin_end)
-        val hintMarginTop = context.dimen(R.dimen.taipo_key_hint_margin_top)
-        val popupCornerRadius = context.dimen(R.dimen.taipo_popup_corner_radius)
-        val popupTextSize = context.dimen(R.dimen.taipo_popup_text_size)
-        val popupSelectionInset = context.dimen(R.dimen.taipo_popup_selection_inset)
-        val previewMaxWidth = context.dimen(R.dimen.taipo_preview_max_width)
-        val previewGap = context.dimen(R.dimen.taipo_preview_gap)
-        val previewTextSize = context.dimen(R.dimen.taipo_preview_text_size)
-    }
+    // Dessin des touches (faces, ombres, icônes, libellés) : voir KeyRenderer (audit 2.1).
+    private val keyRenderer = KeyRenderer(context)
 
     private var dims = DrawDimens(context)
 
     private fun refreshDimens() {
         dims = DrawDimens(context)
-        spaceBarPaint.strokeWidth = context.dimen(R.dimen.taipo_space_bar_thickness)
+        keyRenderer.refreshDimens()
         contentCache = null
     }
 
     // Lot 21 : zone des touches (un objet par appel avant) mise en cache ; invalidée quand la largeur ou la densité change.
     private var contentCache: KeyboardWidth? = null
 
-    // Lot 21 : tampons réutilisés au dessin (aucune chaîne ni RectF créés par frame) : un caractère à dessiner sans passer
-    // par String, et l'emprise d'une touche pour les bulles.
-    private val charBuffer = CharArray(1)
+    // Lot 21 : tampon réutilisé (aucun RectF créé par frame) : l'emprise d'une touche pour les bulles.
     private val boundsScratch = RectF()
-    private var lastKeyTextSize = -1f
 
-    // Icônes des touches (lot 09) : VectorDrawable de la charte, teintés une fois, redimensionnés au dessin (aucune
-    // allocation dans onDraw). Remplacent les glyphes de police (Maj, Effacer) et les tracés Canvas (Entrée, Emoji).
-    private val shiftIcon = loadKeyIcon(R.drawable.ic_key_shift)
-    private val shiftCapsIcon = loadKeyIcon(R.drawable.ic_key_shift_caps)
-    private val backspaceIcon = loadKeyIcon(R.drawable.ic_key_backspace)
-    private val enterIcon = loadKeyIcon(R.drawable.ic_key_enter)
-    private val emojiIcon = loadKeyIcon(R.drawable.ic_key_emoji)
+    // Icône du globe (bulle d'Entrée) : les autres icônes de touche sont chargées par KeyRenderer.
+    private val globeIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_key_globe)) { "Icône globe introuvable" }
+        .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
 
-    // Appui long : bulle de symboles (grille) affichée au-dessus de la touche.
-    private val popupPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_popup) }
-    private val popupSelectionPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_popup_selection) }
-    private val popupTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = context.themeColor(R.color.text_primary)
-        textAlign = Paint.Align.CENTER
-        useTaipoFont(context, TaipoType.Weight.BOLD)
-    }
-    private val popupRect = RectF()
-    private var popupKey: Key? = null
-    private var popupSelectedRow = -1
-    private var popupSelectedCol = -1
-    private var popupCellWidth = 0f
-    private var popupCellHeight = 0f
-    private var popupPadding = 0f
-    private var popupPaddingV = 0f
-
-    // Cellule sélectionnée d'office à l'ouverture (Key.defaultPopupChar) et zone « de départ » (la
-    // touche pressée jusqu'à la bulle) où le doigt la conserve : relâcher sans bouger la saisit.
-    private var popupDefaultRow = -1
-    private var popupDefaultCol = -1
-    private val popupHomeRect = RectF()
+    // Appui long : bulle de symboles (grille) affichée au-dessus de la touche : voir KeyPopup (audit 2.1).
+    private val keyPopup = KeyPopup(this)
 
     // Story 1.6 : vrai quand l'appui long a déjà saisi le chiffre de la touche (le relâchement ne
     // doit alors pas saisir aussi la lettre).
     private var longPressCommitted = false
-
-    private val hintPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = context.themeColor(R.color.key_hint)
-        textAlign = Paint.Align.CENTER
-        useTaipoFont(context)
-    }
 
     // Story 1.10 : bulle d'agrandissement de la touche pressée (retour visuel de frappe), affichée
     // au-dessus de la touche tant qu'elle est maintenue. Réservée aux touches qui saisissent un
     // caractère (lettres/chiffres/symboles) : les touches de fonction (espace, maj, retour arrière,
     // entrée, bascule) ont déjà leur propre retour visuel (fond éclairci). Disparaît dès qu'une
     // bulle d'accents (1.8) s'affiche par-dessus, ou au relâchement/annulation.
-    private var previewKey: Key? = null
-    private val previewPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_popup) }
-    private val previewTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = context.themeColor(R.color.text_primary)
-        textAlign = Paint.Align.CENTER
-        useTaipoFont(context)
-    }
-    private val previewRect = RectF()
-
-    // Taille de la bulle d'agrandissement (largeur, hauteur et texte) : 60 % de la taille d'origine (0,5 + 20 %).
-    private val PREVIEW_SCALE = 0.6f
-
-    // Garde-fou : l'ombre ne dépasse jamais cette part de la hauteur de la touche (rangées basses en paysage).
-    private val MAX_SHADOW_RATIO = 0.15f
-
-    // Icônes des touches : jamais plus de cette part de la hauteur de la face (rangées basses en paysage).
-    private val KEY_ICON_MAX_RATIO = 0.62f
+    private val keyPreview = KeyPreview(this)
 
     private fun showsPreview(key: Key?): Boolean = key?.action is KeyAction.TypeChar
+
+    /**
+     * Clavier multilingue : l'appui long sur Entrée ouvre une bulle contenant la touche globe (sélection par
+     * glissement vers le haut, comme les accents). L'IME active ce comportement.
+     */
+    var isEnterLongPressEnabled = false
+    private var globeListener: Runnable? = null
+
+    /** Appelé quand la touche globe de la bulle d'Entrée est relâchée (choix de la langue : voir TaipoIme). */
+    fun setOnGlobeSelectedListener(listener: Runnable) {
+        globeListener = listener
+    }
 
     private val longPressRunnable = Runnable {
         val key = pressedKey ?: return@Runnable
         val digit = key.longPressChar
-        if (key.popup.isNotEmpty()) {
+        if (key.action is KeyAction.Enter) {
+            // Bulle à une cellule (globe) : relâcher dessus change de langue, relâcher ailleurs ferme la bulle sans
+            // envoyer de retour à la ligne (le relâchement avec bulle ouverte ne saisit jamais la touche d'origine).
+            showPopup(key, KeyPopup.ENTER_GRID)
+        } else if (key.popup.isNotEmpty()) {
             // Story 1.8 : bulle d'accents / symboles, sélection par glissement du doigt.
             showPopup(key)
         } else if (digit != null) {
             longPressCommitted = true
-            previewKey = null
+            keyPreview.key = null
             keyListener?.onKey(Key("longpress_$digit", digit.toString(), KeyAction.TypeChar(digit)))
             invalidate()
         }
@@ -299,7 +216,7 @@ class KeyboardView(context: Context) : View(context) {
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         repeatHandler.removeCallbacksAndMessages(null)
-        popupKey = null
+        keyPopup.forget()
         activePointerId = MotionEvent.INVALID_POINTER_ID
     }
 
@@ -311,7 +228,7 @@ class KeyboardView(context: Context) : View(context) {
         isLandscape = landscape
         slotCache = null
         // Une bulle ouverte pendant la rotation serait mal positionnée : on la ferme.
-        previewKey = null
+        keyPreview.key = null
         dismissPopup()
         requestLayout()
         invalidate()
@@ -324,7 +241,7 @@ class KeyboardView(context: Context) : View(context) {
         // Story 1.14 : largeur modifiée (dépliage d'un pliable, multi-fenêtre) ; une bulle ouverte
         // serait mal positionnée, on la ferme.
         if (oldw != 0 && w != oldw) {
-            previewKey = null
+            keyPreview.key = null
             dismissPopup()
         }
     }
@@ -396,188 +313,16 @@ class KeyboardView(context: Context) : View(context) {
 
             row.forEach { key ->
                 val keyWidth = unit * key.weight
-                drawKey(canvas, key, left, top, keyWidth, rowHeight, inset)
+                keyRenderer.draw(
+                    canvas, key, left, top, keyWidth, rowHeight, inset,
+                    dims, layout, isShifted, isCapsLock, pressedKey,
+                )
                 left += keyWidth
             }
         }
 
         drawPopup(canvas)
         drawPreview(canvas)
-    }
-
-    private fun drawKey(canvas: Canvas, key: Key, left: Float, top: Float, keyWidth: Float, rowHeight: Float, inset: Float) {
-        keyRect.set(left + inset, top + inset, left + keyWidth - inset, top + rowHeight - inset)
-
-        val style = keyStyle(key)
-        // Face : la couleur de la charte ; Maj verrouillée / clavier de symboles affiché = état actif (touche à bascule).
-        // L'état pressé ne change pas la couleur : il enfonce la touche (voir ci-dessous).
-        val face = when {
-            key.action is KeyAction.Shift && isShifted -> activePaint
-            key.action is KeyAction.ToggleLayout && layout.id.isSymbols -> activePaint
-            style == KeyStyle.ACCENT -> enterPaint
-            style == KeyStyle.SECONDARY -> secondaryPaint
-            else -> normalPaint
-        }
-        val shadow = when (style) {
-            KeyStyle.ACCENT -> enterShadowPaint
-            KeyStyle.SECONDARY -> secondaryShadowPaint
-            KeyStyle.NORMAL -> normalShadowPaint
-        }
-        // Ombre = la touche entière ; la face la recouvre en laissant voir l'épaisseur en bas. Au repos, l'ombre
-        // visible fait [taipo_key_shadow_height]. Pressée, la touche s'enfonce : l'ombre visible se réduit à
-        // [taipo_key_shadow_pressed_height] et la face descend de la différence (sa taille ne change pas).
-        // L'emprise de référence (zones tactiles, dimensions) ne change pas ; le contenu suit la face.
-        val radius = dims.keyCornerRadius
-        val restShadow = minOf(dims.keyShadowHeight, keyRect.height() * MAX_SHADOW_RATIO)
-        val shownShadow = if (key == pressedKey) minOf(dims.keyShadowPressedHeight, restShadow) else restShadow
-        keyRect.top += restShadow - shownShadow
-        if (style == KeyStyle.ACCENT) {
-            // Lot 07 : Entrée est une touche ronde (la zone tactile reste le rectangle de la touche).
-            drawRoundKey(canvas, shownShadow, shadow, face)
-        } else {
-            canvas.drawRoundRect(keyRect, radius, radius, shadow)
-            keyRect.bottom -= shownShadow
-            canvas.drawRoundRect(keyRect, radius, radius, face)
-        }
-
-        when (key.action) {
-            KeyAction.Space -> {
-                val cx = keyRect.centerX()
-                val cy = keyRect.centerY()
-                canvas.drawLine(
-                    cx - dims.spaceBarLength, cy, cx + dims.spaceBarLength, cy, spaceBarPaint,
-                )
-            }
-
-            KeyAction.Emoji -> drawKeyIcon(canvas, emojiIcon)
-
-            KeyAction.Enter -> drawKeyIcon(canvas, enterIcon)
-
-            KeyAction.Shift -> drawKeyIcon(canvas, if (isCapsLock) shiftCapsIcon else shiftIcon)
-
-            KeyAction.Backspace -> drawKeyIcon(canvas, backspaceIcon)
-
-            else -> drawKeyLabel(canvas, key)
-        }
-    }
-
-    /**
-     * Libellé de la touche et indice d'appui long. Lot 21 : une lettre en majuscule (Maj actif) est dessinée depuis un
-     * tampon de caractère, sans créer de String.
-     */
-    private fun drawKeyLabel(canvas: Canvas, key: Key) {
-        val upper = shiftedChar(key)
-        val label = if (upper == NO_CHAR) displayLabel(key) else ""
-        if (upper != NO_CHAR || label.isNotEmpty()) {
-            autoSizeTextPaint(key)
-            val baseline = keyRect.centerY() - (textPaint.ascent() + textPaint.descent()) / 2f
-            if (upper != NO_CHAR) {
-                drawChar(canvas, upper, keyRect.centerX(), baseline, textPaint)
-            } else {
-                canvas.drawText(label, keyRect.centerX(), baseline, textPaint)
-            }
-        }
-        key.longPressChar?.let { drawLongPressHint(canvas, it) }
-    }
-
-    /**
-     * Touche ronde (Entrée) : cercle de la face, de diamètre la plus petite dimension de la face, centré dans la touche,
-     * sur un cercle d'ombre décalé vers le bas. Laisse [keyRect] réduit à la face, pour centrer le contenu.
-     */
-    private fun drawRoundKey(canvas: Canvas, shownShadow: Float, shadow: Paint, face: Paint) {
-        val faceHeight = keyRect.height() - shownShadow
-        val radius = minOf(keyRect.width(), faceHeight) / 2f
-        val cx = keyRect.centerX()
-        val faceCy = keyRect.top + faceHeight / 2f
-        canvas.drawCircle(cx, faceCy + shownShadow, radius, shadow)
-        canvas.drawCircle(cx, faceCy, radius, face)
-        keyRect.bottom -= shownShadow
-    }
-
-    private fun loadKeyIcon(@DrawableRes id: Int): Drawable {
-        val icon = checkNotNull(ContextCompat.getDrawable(context, id)) { "Icône de touche introuvable" }
-        return icon.mutate().apply { setTint(context.themeColor(R.color.key_label)) }
-    }
-
-    /** Lot 09 : icône centrée sur la face de la touche, à [R.dimen.taipo_icon_size] (réduite sur les touches basses). */
-    private fun drawKeyIcon(canvas: Canvas, icon: Drawable) {
-        val half = minOf(dims.iconSize, keyRect.height() * KEY_ICON_MAX_RATIO) / 2f
-        val cx = keyRect.centerX()
-        val cy = keyRect.centerY()
-        icon.setBounds(
-            (cx - half).roundToInt(), (cy - half).roundToInt(), (cx + half).roundToInt(), (cy + half).roundToInt(),
-        )
-        icon.draw(canvas)
-    }
-
-    /** Petit indice du chiffre accessible par appui long, en haut à droite de la touche. */
-    private fun drawLongPressHint(canvas: Canvas, char: Char) {
-        if (hintPaint.textSize != dims.hintTextSize) hintPaint.textSize = dims.hintTextSize
-        drawChar(
-            canvas,
-            char,
-            keyRect.right - dims.hintMarginEnd,
-            keyRect.top + dims.hintMarginTop - hintPaint.ascent(),
-            hintPaint,
-        )
-    }
-
-    private fun autoSizeTextPaint(key: Key) {
-        val base = when (key.id) {
-            // « ?123 » (page des lettres) : police réduite de 30 % ; « ABC » garde la taille large.
-            "toggle" -> if (layout.id == LayoutId.LETTERS) dims.keyTextSizeLarge * TOGGLE_123_TEXT_RATIO else dims.keyTextSizeLarge
-            "symbol_page" -> dims.keyTextSize * SYMBOL_PAGE_TEXT_RATIO // « ?123 » et « =\< » : 4 signes sur une touche étroite
-            else -> dims.keyTextSize
-        }
-        // Rangées basses (paysage, hauteur réduite) : le texte ne doit pas déborder de la touche.
-        // Lot 21 : la taille n'est reposée sur le Paint que si elle change (la plupart des touches ont la même).
-        val size = base.coerceAtMost(keyRect.height() * 0.62f)
-        if (size != lastKeyTextSize) {
-            lastKeyTextSize = size
-            textPaint.textSize = size
-        }
-    }
-
-    /** Lot 21 : la majuscule à dessiner à la place du libellé (Maj actif sur une lettre), ou [NO_CHAR]. Sans allocation. */
-    private fun shiftedChar(key: Key): Char {
-        val action = key.action
-        return if (action is KeyAction.TypeChar && isShifted && layout.id == LayoutId.LETTERS && action.char.isLetter()) {
-            action.char.uppercaseChar()
-        } else {
-            NO_CHAR
-        }
-    }
-
-    /** Lot 21 : dessine un caractère par le tampon [charBuffer] (aucune String créée, contrairement à `Char.toString()`). */
-    private fun drawChar(canvas: Canvas, char: Char, x: Float, y: Float, paint: Paint) {
-        charBuffer[0] = char
-        canvas.drawText(charBuffer, 0, 1, x, y, paint)
-    }
-
-    private fun displayLabel(key: Key): String = when (val action = key.action) {
-        is KeyAction.TypeChar ->
-            if (isShifted && layout.id == LayoutId.LETTERS && action.char.isLetter()) action.char.uppercaseChar().toString() else key.label
-
-        // Icônes VectorDrawable (lot 09), dessinées par drawKeyIcon.
-        KeyAction.Shift, KeyAction.Backspace, KeyAction.Enter -> ""
-        KeyAction.Space -> ""
-        KeyAction.ToggleLayout -> if (layout.id == LayoutId.LETTERS) "?123" else "ABC"
-        KeyAction.SymbolPage -> key.label // « ?123 » (page 1) ou « =\< » (page 2)
-        KeyAction.Emoji -> "" // icône dessinée par drawEmojiIcon
-    }
-
-    /**
-     * Famille de couleurs d'une touche (charte Taipo). Un seul endroit à modifier pour reclasser une touche.
-     * Demande du 05/10/2026 : lettres, chiffres, symboles et espace en gris (SECONDARY) ; virgule, point, « @ », « / » et
-     * emoji en violet-gris (NORMAL) ; Maj, retour arrière et 123 / ABC restent violet-gris ; Entrée reste violette.
-     */
-    private enum class KeyStyle { NORMAL, SECONDARY, ACCENT }
-
-    private fun keyStyle(key: Key): KeyStyle = when (key.action) {
-        KeyAction.Enter -> KeyStyle.ACCENT
-        KeyAction.Shift, KeyAction.Backspace, KeyAction.ToggleLayout, KeyAction.SymbolPage, KeyAction.Emoji -> KeyStyle.NORMAL
-        KeyAction.Space -> KeyStyle.SECONDARY
-        is KeyAction.TypeChar -> if (key.secondary) KeyStyle.NORMAL else KeyStyle.SECONDARY
     }
 
     // Multi-touch : en frappe rapide, le doigt suivant se pose avant que le précédent soit levé.
@@ -636,7 +381,7 @@ class KeyboardView(context: Context) : View(context) {
         backspaceSwipe.reset()
         deleteSwipeWords = 0
         pressedKey = keyAt(x, y)
-        previewKey = pressedKey.takeIf { showsPreview(it) }
+        keyPreview.key = pressedKey.takeIf { showsPreview(it) }
         if (pressedKey?.action is KeyAction.Space) spaceSwipe.onDown(x)
         if (pressedKey?.action is KeyAction.Backspace) backspaceSwipe.onDown(x)
         startRepeat(pressedKey)
@@ -645,8 +390,8 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     private fun moveTouch(x: Float, y: Float) {
-        if (popupKey != null) {
-            updatePopupSelection(x, y)
+        if (keyPopup.isShown) {
+            keyPopup.updateSelection(x, y)
             return
         }
         if (longPressCommitted) return
@@ -673,7 +418,7 @@ class KeyboardView(context: Context) : View(context) {
         if (current != pressedKey) {
             cancelKeyLongPress()
             pressedKey = current
-            previewKey = current.takeIf { showsPreview(it) }
+            keyPreview.key = current.takeIf { showsPreview(it) }
             startRepeat(current)
             invalidate()
         }
@@ -683,15 +428,16 @@ class KeyboardView(context: Context) : View(context) {
     private fun releaseTouch(x: Float, y: Float) {
         stopRepeat()
         cancelKeyLongPress()
-        previewKey = null
-        val popup = popupKey
-        if (popup != null) {
+        keyPreview.key = null
+        if (keyPopup.isShown) {
             // Relâcher sur un symbole le saisit ; relâcher ailleurs ferme la bulle sans rien saisir.
-            updatePopupSelection(x, y)
-            val symbol = popup.popup.getOrNull(popupSelectedRow)?.getOrNull(popupSelectedCol)
+            keyPopup.updateSelection(x, y)
+            val symbol = keyPopup.selectedSymbol()
             dismissPopup()
             pressedKey = null
-            if (symbol != null) {
+            if (symbol == KeyPopup.GLOBE_SYMBOL) {
+                globeListener?.run()
+            } else if (symbol != null) {
                 keyListener?.onKey(Key("popup_$symbol", symbol.toString(), KeyAction.TypeChar(symbol)))
             }
             invalidate()
@@ -730,7 +476,7 @@ class KeyboardView(context: Context) : View(context) {
         stopRepeat()
         cancelKeyLongPress()
         dismissPopup()
-        previewKey = null
+        keyPreview.key = null
         longPressCommitted = false
         spaceSwipe.reset()
         backspaceSwipe.reset()
@@ -740,7 +486,7 @@ class KeyboardView(context: Context) : View(context) {
 
     private fun scheduleLongPress(key: Key?) {
         cancelKeyLongPress()
-        if (key != null && (key.popup.isNotEmpty() || key.longPressChar != null)) {
+        if (key != null && (key.popup.isNotEmpty() || key.longPressChar != null || isEnterLongPress(key))) {
             repeatHandler.postDelayed(longPressRunnable, longPressDelayMs())
         }
     }
@@ -748,6 +494,8 @@ class KeyboardView(context: Context) : View(context) {
     /** Délai système d'appui long (réglable dans l'accessibilité), réduit de 20 % pour que les accents et chiffres s'affichent plus vite. */
     private fun longPressDelayMs(): Long =
         (ViewConfiguration.getLongPressTimeout() * LONG_PRESS_DELAY_RATIO).toLong()
+
+    private fun isEnterLongPress(key: Key): Boolean = isEnterLongPressEnabled && key.action is KeyAction.Enter
 
     private fun cancelKeyLongPress() {
         repeatHandler.removeCallbacks(longPressRunnable)
@@ -773,164 +521,46 @@ class KeyboardView(context: Context) : View(context) {
         return null
     }
 
-    private fun showPopup(key: Key) {
-        previewKey = null
+    private fun showPopup(key: Key, grid: List<List<Char>> = key.popup) {
+        keyPreview.key = null
         val bounds = keyBounds(key) ?: return
-        val rows = key.popup.size
-        val cols = key.popup.maxOf { it.size }
-        val margin = dimen(R.dimen.taipo_popup_margin)
-        val gap = dimen(R.dimen.taipo_popup_gap)
-        val padding = dimen(R.dimen.taipo_popup_padding)
-        val clipMargin = dimen(R.dimen.taipo_popup_clip_margin)
-        // Marge verticale un peu plus grande que la marge horizontale : la bulle est plus haute
-        // de quelques pixels sans grossir les symboles ni les cellules.
-        val paddingV = padding + dimen(R.dimen.taipo_popup_padding_extra_vertical)
-
         // Place disponible au-dessus de la vue : la bulle peut recouvrir la barre d'actions qui la
         // surmonte (le parent ne clippe pas ses enfants, voir TaipoIme), pas au-delà de la fenêtre.
-        val headroom = headroomPx()
-
-        // La bulle doit tenir dans cet espace : la hauteur des cellules s'adapte à la place
-        // disponible au-dessus de la rangée de la touche.
-        val content = keyboardWidth()
-        val cellMax = dimen(R.dimen.taipo_popup_cell_max)
-        val cellWidth = minOf(cellMax, (content.widthPx - 2 * margin - 2 * padding) / cols)
-        val cellHeight = minOf(cellMax, (bounds.top + headroom - gap - 2 * paddingV) / rows)
-            .coerceAtLeast(dimen(R.dimen.taipo_popup_cell_min_height))
-        val popupWidth = cols * cellWidth + 2 * padding
-        val popupHeight = rows * cellHeight + 2 * paddingV
-
-        // Choix présélectionné (Key.defaultPopupChar) : il doit se trouver centré juste au-dessus
-        // de la touche pressée, pour que relâcher sans bouger le doigt le saisisse et que le geste
-        // vers le haut soit naturel. Sans choix par défaut, c'est la bulle entière qui est centrée.
-        var defaultRow = -1
-        var defaultCol = -1
-        key.defaultPopupChar?.let { default ->
-            key.popup.forEachIndexed { r, row ->
-                val c = row.indexOf(default)
-                if (c >= 0) {
-                    defaultRow = r
-                    defaultCol = c
-                }
-            }
-        }
-        val anchorInPopup = if (defaultCol >= 0) padding + (defaultCol + 0.5f) * cellWidth else popupWidth / 2f
-        // Une bulle trop proche d'un bord de l'écran est décalée pour rester visible : le choix
-        // présélectionné ne peut alors plus être centré exactement sur la touche.
-        val left = PopupPlacement.left(
-            keyCenterX = bounds.centerX(),
-            anchorInPopup = anchorInPopup,
-            popupWidth = popupWidth,
-            minLeft = content.leftPx + margin,
-            maxRight = content.rightPx - margin,
-        )
-        val popupTop = (bounds.top - gap - popupHeight).coerceAtLeast(-headroom)
-
-        popupRect.set(left, popupTop, left + popupWidth, popupTop + popupHeight)
-        popupCellWidth = cellWidth
-        popupCellHeight = cellHeight
-        popupPadding = padding
-        popupPaddingV = paddingV
-        // Zone de départ : la touche et l'espace jusqu'à la bulle, avec une petite tolérance.
-        popupHomeRect.set(
-            bounds.left - clipMargin, popupRect.bottom, bounds.right + clipMargin, bounds.bottom + clipMargin,
-        )
-        popupDefaultRow = defaultRow
-        popupDefaultCol = defaultCol
-        popupSelectedRow = popupDefaultRow
-        popupSelectedCol = popupDefaultCol
-        popupKey = key
-        invalidate()
+        keyPopup.show(key, grid, bounds, headroomPx(), keyboardWidth())
     }
 
-    private fun dismissPopup() {
-        popupKey = null
-        popupSelectedRow = -1
-        popupSelectedCol = -1
-        popupDefaultRow = -1
-        popupDefaultCol = -1
-        invalidate()
-    }
+    private fun dismissPopup() = keyPopup.dismiss()
 
-    private fun updatePopupSelection(x: Float, y: Float) {
-        val key = popupKey ?: return
-        var row = -1
-        var col = -1
-        if (popupRect.contains(x, y)) {
-            val r = ((y - popupRect.top - popupPaddingV) / popupCellHeight).toInt()
-                .coerceIn(0, key.popup.lastIndex)
-            val c = ((x - popupRect.left - popupPadding) / popupCellWidth).toInt()
-                .coerceIn(0, key.popup[r].lastIndex)
-            row = r
-            col = c
-        } else if (popupDefaultRow >= 0 && popupHomeRect.contains(x, y)) {
-            // Doigt resté sur la touche d'origine (ou juste au-dessus) : le choix par défaut reste
-            // sélectionné, un léger tremblement du doigt ne l'annule donc pas.
-            row = popupDefaultRow
-            col = popupDefaultCol
-        }
-        if (row != popupSelectedRow || col != popupSelectedCol) {
-            popupSelectedRow = row
-            popupSelectedCol = col
-            invalidate()
-        }
-    }
-
-    private fun drawPopup(canvas: Canvas) {
-        val key = popupKey ?: return
-        val radius = dims.popupCornerRadius
-        canvas.drawRoundRect(popupRect, radius, radius, popupPaint)
-
-        if (popupTextPaint.textSize != dims.popupTextSize) popupTextPaint.textSize = dims.popupTextSize
-        val baselineOffset = -(popupTextPaint.ascent() + popupTextPaint.descent()) / 2f
-        val selectionInset = dims.popupSelectionInset
-
-        key.popup.forEachIndexed { rowIndex, row ->
-            row.forEachIndexed { colIndex, symbol ->
-                val cx = popupRect.left + popupPadding + (colIndex + 0.5f) * popupCellWidth
-                val cy = popupRect.top + popupPaddingV + (rowIndex + 0.5f) * popupCellHeight
-                if (rowIndex == popupSelectedRow && colIndex == popupSelectedCol) {
-                    val selectionRadius = minOf(popupCellWidth, popupCellHeight) / 2f - selectionInset
-                    canvas.drawCircle(cx, cy, selectionRadius, popupSelectionPaint)
-                }
-                val shown = if (isShifted && symbol.isLetter()) symbol.uppercaseChar() else symbol
-                drawChar(canvas, shown, cx, cy + baselineOffset, popupTextPaint)
-            }
-        }
-    }
+    private fun drawPopup(canvas: Canvas) = keyPopup.draw(
+        canvas,
+        cornerRadius = dims.popupCornerRadius,
+        textSize = dims.popupTextSize,
+        selectionInset = dims.popupSelectionInset,
+        iconSize = dims.iconSize,
+        iconMaxRatio = KeyRenderer.KEY_ICON_MAX_RATIO,
+        shifted = isShifted,
+        globeIcon = globeIcon,
+    )
 
     /** Story 1.10 : bulle d'agrandissement affichée au-dessus de la touche de caractère pressée. */
     private fun drawPreview(canvas: Canvas) {
-        val key = previewKey ?: return
+        val key = keyPreview.key ?: return
         val bounds = keyBounds(key) ?: return
-        val upper = shiftedChar(key)
-        val label = if (upper == NO_CHAR) displayLabel(key) else ""
+        val upper = keyRenderer.shiftedChar(key, layout, isShifted)
+        val label = if (upper == NO_CHAR) keyRenderer.displayLabel(key, layout, isShifted) else ""
         if (upper == NO_CHAR && label.isEmpty()) return
-
-        val previewWidth = (bounds.width() * 1.6f).coerceAtMost(dims.previewMaxWidth) * PREVIEW_SCALE
-        val previewHeight = bounds.height() * 1.8f * PREVIEW_SCALE
-        val gap = dims.previewGap
-        // Place disponible au-dessus de la vue : comme la bulle d'accents (1.8), la bulle peut
-        // recouvrir la barre d'actions qui la surmonte, pas au-delà de la fenêtre.
-        val headroom = headroomPx()
-
-        val content = keyboardWidth()
-        val left = (bounds.centerX() - previewWidth / 2f)
-            .coerceIn(content.leftPx, (content.rightPx - previewWidth).coerceAtLeast(content.leftPx))
-        val previewBottom = bounds.top - gap
-        val previewTop = (previewBottom - previewHeight).coerceAtLeast(-headroom)
-
-        previewRect.set(left, previewTop, left + previewWidth, previewBottom)
-        canvas.drawRoundRect(previewRect, dims.keyCornerRadius, dims.keyCornerRadius, previewPaint)
-
-        val previewTextSize = dims.previewTextSize * PREVIEW_SCALE
-        if (previewTextPaint.textSize != previewTextSize) previewTextPaint.textSize = previewTextSize
-        val baseline = previewRect.centerY() - (previewTextPaint.ascent() + previewTextPaint.descent()) / 2f
-        if (upper != NO_CHAR) {
-            drawChar(canvas, upper, previewRect.centerX(), baseline, previewTextPaint)
-        } else {
-            canvas.drawText(label, previewRect.centerX(), baseline, previewTextPaint)
-        }
+        keyPreview.draw(
+            canvas,
+            bounds = bounds,
+            upper = upper.takeIf { it != NO_CHAR },
+            label = label,
+            headroom = headroomPx(),
+            content = keyboardWidth(),
+            maxWidth = dims.previewMaxWidth,
+            cornerRadius = dims.keyCornerRadius,
+            gap = dims.previewGap,
+            textSize = dims.previewTextSize,
+        )
     }
 
     private fun keyAt(x: Float, y: Float): Key? {
@@ -1000,12 +630,8 @@ class KeyboardView(context: Context) : View(context) {
     private fun dp(value: Float): Float = value * resources.displayMetrics.density
 
     private companion object {
-        /** Lot 21 : « pas de caractère » (voir [shiftedChar]). */
-        const val NO_CHAR = '\u0000'
-
-        /** Taille du libellé des touches de bascule entre les pages de symboles, par rapport à une touche normale. */
-        const val SYMBOL_PAGE_TEXT_RATIO = 0.75f
-        const val TOGGLE_123_TEXT_RATIO = 0.7f
+        /** Lot 21 : « pas de caractère » (voir [KeyRenderer.shiftedChar]). */
+        const val NO_CHAR = KeyRenderer.NO_CHAR
 
         /** Part du délai système d'appui long utilisée pour les touches à pop-up ou à chiffre (−20 %). */
         const val LONG_PRESS_DELAY_RATIO = 0.8f
