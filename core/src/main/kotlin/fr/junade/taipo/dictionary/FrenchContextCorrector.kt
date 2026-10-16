@@ -9,6 +9,8 @@ package fr.junade.taipo.dictionary
  *   Paris »), après « jusqu' » (« jusqu'a »), et devant un infinitif quand ce qui précède exclut le verbe avoir
  *   (« quelque chose a manger », « j'ai a faire »). Ce dernier cas a besoin du mot suivant : il est donc revu quand
  *   ce mot vient d'être tapé (correction « à rebours » du mot précédent).
+ *   Aussi : après être (« je suis a la mairie », « t'es pas a la maison »), dans les locutions « a côté », « a cause »,
+ *   « a partir », « a quelle heure », « a peu près », « vis a vis » (voir [ALWAYS_AFTER_A], [A_PHRASES]).
  * - **ou / où** : « ou » devient « où » devant un sujet qui ne peut pas prolonger une alternative (« le jour ou il est
  *   parti », « la ville ou j'habite »), et en début de phrase devant un verbe de question (« ou est-il », « ou sont »).
  *   Ce sont des corrections « à rebours » : elles attendent le mot suivant.
@@ -109,15 +111,20 @@ object FrenchContextCorrector {
     ): String {
         var current = text
         // D'abord le mot précédent (revu avec le mot qui vient d'être tapé), puis le mot courant.
-        for (offset in intArrayOf(1, 0)) {
-            if (offset == 1 && !allowRetro) continue
+        for (offset in intArrayOf(2, 1, 0)) {
+            if (offset > 0 && !allowRetro) continue
             val tokens = tokenize(current)
             val index = tokens.lastIndex - offset
             if (index < 0) continue
             val token = tokens[index]
-            val next = if (offset == 1) tokens[index + 1] else null
             if (!token.isPlain) continue
-            val replacement = graveReplacement(tokens, index, next, textMayBeTruncated, frequencyOf) ?: continue
+            val replacement: String? = if (offset == 2) {
+                // Locution de trois mots (« a quelle heure », « a peu près ») : revue quand son dernier mot est tapé.
+                graveBeforePhrase(token, tokens[index + 1], tokens[index + 2])
+            } else {
+                graveReplacement(tokens, index, if (offset == 1) tokens[index + 1] else null, textMayBeTruncated, frequencyOf)
+            }
+            if (replacement == null) continue
             current = replaceToken(current, token, replacement)
         }
         return current
@@ -144,7 +151,14 @@ object FrenchContextCorrector {
             return grave
         }
 
+        // Locutions figées : « il a côté » ou « elle a cause » n'existent pas, « a côté » est donc toujours « à côté ».
+        if (next != null && next.isPlain && next.core in ALWAYS_AFTER_A) return grave
         if (previous == null) return null
+        // « vis a vis » : « vis-à-vis ».
+        if (next != null && previous.core == "vis" && next.core == "vis") return grave
+        // Après être (éventuellement suivi d'un adverbe) : « je suis a la mairie », « c'est a toi », « t'es pas a la
+        // maison ». Deux verbes conjugués ne se suivent pas : ce « a » ne peut pas être le verbe avoir.
+        if (isAfterBe(tokens, index)) return grave
         if (next != null) {
             // Devant un infinitif, après un mot qui exclut le verbe avoir : « quelque chose a manger », « j'ai a faire ».
             val infinitiveLike = next.isPlain && !next.hasElision && participleOf(next.core, frequencyOf) != null
@@ -163,6 +177,24 @@ object FrenchContextCorrector {
         } else {
             null
         }
+    }
+
+    /** « a quelle heure », « a peu près » : [token] est « a » et [second], [third] complètent la locution. */
+    private fun graveBeforePhrase(token: Token, second: Token, third: Token): String? {
+        if (token.raw != "a" && token.raw != "A") return null
+        if (!second.isPlain || !third.isPlain) return null
+        if ((second.core to third.core) !in A_PHRASES) return null
+        return if (token.raw == "A") "À" else "à"
+    }
+
+    /** Le mot tokens[index] suit-il une forme de être, avec au plus un adverbe entre les deux (« je ne suis pas a ») ? */
+    private fun isAfterBe(tokens: List<Token>, index: Int): Boolean {
+        var k = index - 1
+        if (k >= 0 && tokens[k].isPlain && tokens[k].core in ADVERBS_BETWEEN) k--
+        if (k < 0) return false
+        for (j in k until index) if (tokens[j].endsSentence) return false
+        val verb = tokens[k]
+        return verb.isPlain && verb.head in BE_FORMS
     }
 
     // ------------------------------------------------------------------
@@ -411,6 +443,21 @@ object FrenchContextCorrector {
 
     /** Mots et locutions (mot entier, élision comprise) après lesquels « a » est « à » : « grâce à », « quant à »... */
     private val WORDS_BEFORE_A = setOf("grâce", "quant", "face", "rendez-vous")
+
+    /** Mots qui ne peuvent pas suivre le verbe avoir : « a côté », « a cause de », « a partir de », « a gauche »... */
+    private val ALWAYS_AFTER_A = setOf("côté", "cause", "propos", "partir", "travers", "présent", "gauche", "droite")
+
+    /** Locutions de trois mots où « a » est toujours « à » : « à quelle heure », « à quel moment », « à peu près ». */
+    private val A_PHRASES = setOf(
+        "quelle" to "heure", "quelle" to "date", "quel" to "moment", "quel" to "endroit", "peu" to "près",
+    )
+
+    /** Formes de être (sans « été », qui est aussi un nom : « l'été a commencé » ; ni « soit » : « soit a, soit b »). */
+    private val BE_FORMS = setOf(
+        "suis", "es", "est", "sommes", "êtes", "sont", "étais", "était", "étions", "étiez", "étaient",
+        "serai", "seras", "sera", "serons", "serez", "seront", "serais", "serait", "serions", "seriez", "seraient",
+        "sois", "soyons", "soyez", "être",
+    )
 
     /** Mots après lesquels « a » devant un infinitif est « à » : « quelque chose à manger », « j'ai à faire ». */
     private val BEFORE_A_INFINITIVE = setOf(

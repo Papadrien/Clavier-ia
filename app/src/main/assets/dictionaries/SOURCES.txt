@@ -95,3 +95,17 @@ Important : ce filtre ne prouve pas qu'un mot est absent de la langue. Les corpu
 propres, de l'argot, des emprunts et des formes régionales ; les formes rares sans voisin fréquent restent donc
 possibles. Le filtre privilégie la réduction des faux mots qui bloquent l'autocorrection sans prétendre remplacer
 un dictionnaire lexicographique validé pour chaque langue.
+
+
+=== Prénoms (names/<code>.txt) — 16/10/2026 ===
+Les listes de fréquence sont TOUTES en minuscules : elles ne disent pas qu'« adrien » est un prénom, donc aucune majuscule
+n'était mise et les prénoms rares (sous le seuil de candidats) n'étaient jamais proposés en correction.
+names/<code>.txt : prénoms courants de chaque langue (fr, en, es, de, it, nl, pt) avec leur majuscule et leurs accents, un
+par ligne (« # » = commentaire). Liste écrite à la main pour l'application (pas de source externe, pas de licence à
+reprendre) ; elle n'est pas exhaustive : les prénoms absents se règlent par le dictionnaire personnel.
+Effet (Dictionary.properNameForm) : « adrien » -> « Adrien », « adrein » -> « Adrien », « eric » -> « Éric » (mot tapé en
+minuscules sans accent) ; un nom déjà bien écrit ou présent dans le dictionnaire personnel n'est pas touché ; un mot tapé avec
+une majuscule garde sa graphie (« Eric » reste « Eric »). Les prénoms rares sont aussi proposés en correction (« Mathide » -> « Mathilde »).
+Règle de la liste : jamais un prénom qui est aussi un mot courant de la langue (fr : pierre, jean, rose, claire, marine, jade,
+noël, clément ; en : will, mark, bill, rose, grace, hope, april, may, june, jack ; es : alba, pilar, ángel, tomás ; it : rosa,
+aurora ; nl : roos, wil, iris...), sinon un mot ordinaire serait mis en majuscule à tort.

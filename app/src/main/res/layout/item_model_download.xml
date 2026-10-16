@@ -38,6 +38,15 @@
             android:visibility="gone" />
     </LinearLayout>
 
+    <!-- Sous-titre descriptif du modèle IA ; reste masqué pour le modèle vocal. -->
+    <TextView
+        style="@style/TaipoText.Caption"
+        android:id="@+id/model_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+        android:visibility="gone" />
+
     <TextView
         style="@style/TaipoText.Caption"
         android:id="@+id/model_technical"

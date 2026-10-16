@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import fr.junade.taipo.R
 
 /**
- * Les 4 modèles IA prévus pour le clavier (Ultra-léger / Léger / Équilibré / Performant).
+ * Les 4 modèles IA prévus pour le clavier (Fourmi / Colibri / Singe / Éléphant ; ids internes ultra_leger / leger / equilibre / performant).
  *
  * Deux façons d'obtenir un modèle : le téléchargement dans l'app (épopée 8, seulement les modèles qui ont une
  * [downloadUrl] : Gemma 3 et Gemma 4) ou le fichier .litertlm fourni à la main via le sélecteur de fichiers
@@ -21,6 +21,8 @@ enum class AiModel(
     val id: String,
     /** Nom affiché (ressource, traduit selon la langue de l'app). */
     @StringRes val displayNameRes: Int,
+    /** Sous-titre descriptif affiché sous le nom (ressource, traduite selon la langue de l'app). */
+    @StringRes val subtitleRes: Int,
     val technicalName: String,
     val huggingFaceRepo: String,
     val approxSizeBytesMin: Long,
@@ -46,6 +48,7 @@ enum class AiModel(
     ULTRA_LEGER(
         id = "ultra_leger",
         displayNameRes = R.string.model_name_ultra_leger,
+        subtitleRes = R.string.model_subtitle_ultra_leger,
         technicalName = "Gemma 3 270M (instruct)",
         huggingFaceRepo = "litert-community/gemma-3-270m-it",
         approxSizeBytesMin = 250_000_000L,
@@ -58,6 +61,7 @@ enum class AiModel(
     LEGER(
         id = "leger",
         displayNameRes = R.string.model_name_leger,
+        subtitleRes = R.string.model_subtitle_leger,
         technicalName = "Gemma 3 1B (instruct)",
         huggingFaceRepo = "litert-community/Gemma3-1B-IT",
         approxSizeBytesMin = 500_000_000L,
@@ -70,6 +74,7 @@ enum class AiModel(
     EQUILIBRE(
         id = "equilibre",
         displayNameRes = R.string.model_name_equilibre,
+        subtitleRes = R.string.model_subtitle_equilibre,
         technicalName = "Gemma 4 E2B (instruct)",
         huggingFaceRepo = "litert-community/gemma-4-E2B-it-litert-lm",
         approxSizeBytesMin = 2_300_000_000L,
@@ -82,6 +87,7 @@ enum class AiModel(
     PERFORMANT(
         id = "performant",
         displayNameRes = R.string.model_name_performant,
+        subtitleRes = R.string.model_subtitle_performant,
         technicalName = "Gemma 4 E4B (instruct)",
         huggingFaceRepo = "litert-community/gemma-4-E4B-it-litert-lm",
         approxSizeBytesMin = 3_300_000_000L,
@@ -93,6 +99,8 @@ enum class AiModel(
     );
 
     fun displayName(context: Context): String = context.getString(displayNameRes)
+
+    fun subtitle(context: Context): String = context.getString(subtitleRes)
 
     fun fileHint(context: Context): String = context.getString(fileHintRes)
 

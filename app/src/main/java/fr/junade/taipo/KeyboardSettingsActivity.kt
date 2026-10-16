@@ -27,6 +27,9 @@ import fr.junade.taipo.dictionary.CorrectionHabitsProvider
  */
 class KeyboardSettingsActivity : Activity() {
 
+    /** Rappelé quand la langue du clavier change, pour que les cases du mode multilingue suivent. */
+    private var onKeyboardLanguageChanged: (() -> Unit)? = null
+
     // Thème de la V1 : toujours sombre (voir KeyboardTheme).
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
@@ -110,15 +113,24 @@ class KeyboardSettingsActivity : Activity() {
                     preferences.keyboardLanguage = selected
                     Analytics.setting(this@KeyboardSettingsActivity, "language", selected?.tag ?: "auto")
                 }
+                onKeyboardLanguageChanged?.invoke()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) = Unit
         }
     }
 
+    /** Langue effectivement utilisée par le clavier d'après la liste déroulante (« Automatique » = langue du système). */
+    private fun baseKeyboardLanguage(preferences: KeyboardPreferences): KeyboardLanguage =
+        KeyboardLanguageChoice.resolve(
+            preferences.keyboardLanguage,
+            resources.configuration.locales.let { list -> (0 until list.size()).map { list.get(it).toLanguageTag() } },
+        )
+
     /**
      * Clavier multilingue : interrupteur + une case par langue gérée. Activé, l'appui long sur Entrée passe d'une langue
-     * cochée à la suivante (au moins deux). À la première activation, la langue actuellement utilisée est pré-cochée.
+     * cochée à la suivante (au moins deux). La langue choisie plus haut dans « Langue du clavier » est toujours cochée
+     * et grisée (non décochable) : elle fait partie du mode et suit la liste déroulante.
      */
     private fun setUpMultilingual(preferences: KeyboardPreferences) {
         val switch = findViewById<CompoundButton>(R.id.switch_multilingual)
@@ -135,6 +147,16 @@ class KeyboardSettingsActivity : Activity() {
         fun refresh() {
             val on = switch.isChecked
             container.visibility = if (on) View.VISIBLE else View.GONE
+            if (on) {
+                // Langue du clavier : cochée (ce qui met aussi à jour la sélection enregistrée) puis grisée.
+                val base = baseKeyboardLanguage(preferences)
+                boxes.forEachIndexed { index, box ->
+                    val locked = KeyboardLanguage.entries[index] == base
+                    if (locked && !box.isChecked) box.isChecked = true
+                    box.isEnabled = !locked
+                    box.alpha = if (locked) LOCKED_BOX_ALPHA else 1f
+                }
+            }
             minHint.visibility = if (on && !MultilingualChoice.isActive(selected.toList())) View.VISIBLE else View.GONE
         }
         boxes.forEachIndexed { index, box ->
@@ -148,15 +170,9 @@ class KeyboardSettingsActivity : Activity() {
         switch.isChecked = preferences.isMultilingualEnabled
         switch.setOnCheckedChangeListener { _, checked ->
             preferences.isMultilingualEnabled = checked
-            if (checked && selected.isEmpty()) {
-                val current = KeyboardLanguageChoice.resolve(
-                    preferences.keyboardLanguage,
-                    resources.configuration.locales.let { list -> (0 until list.size()).map { list.get(it).toLanguageTag() } },
-                )
-                boxes[KeyboardLanguage.entries.indexOf(current)].isChecked = true // met aussi à jour la sélection enregistrée
-            }
             refresh()
         }
+        onKeyboardLanguageChanged = ::refresh
         refresh()
     }
 
@@ -185,5 +201,10 @@ class KeyboardSettingsActivity : Activity() {
             }
             .setNegativeButton(R.string.keyboard_settings_habits_clear_cancel, null)
             .show()
+    }
+
+    private companion object {
+        /** Opacité de la case de la langue du clavier (cochée, non modifiable). */
+        const val LOCKED_BOX_ALPHA = 0.5f
     }
 }

@@ -211,6 +211,52 @@ class FrenchContextCorrectorTest {
         assertNull(correct("son arrivée a"))
     }
 
+    // --- a / à : cas réels (être, locutions figées) ---
+
+    @Test
+    fun `a apres etre devient a accent grave`() {
+        assertEquals("Je suis à", correct("Je suis a"))
+        assertEquals("Je suis à la", correct("Je suis a la"))
+        assertEquals("c'est à", correct("c'est a"))
+        assertEquals("il est à", correct("il est a"))
+    }
+
+    @Test
+    fun `a apres etre et un adverbe devient a accent grave`() {
+        assertEquals("t'es pas à", correct("t'es pas a"))
+        assertEquals("je ne suis pas à", correct("je ne suis pas a"))
+        assertEquals("t'es déjà à", correct("t'es déjà a"))
+    }
+
+    @Test
+    fun `a de la locution a cote est toujours a accent grave`() {
+        assertEquals("Juste à côté", correct("Juste a côté"))
+        assertEquals("il habite à côté", correct("il habite a côté"))
+        assertEquals("tout ça à cause", correct("tout ça a cause"))
+    }
+
+    @Test
+    fun `a devant une locution de trois mots devient a accent grave`() {
+        assertEquals("Tu rentreras à quelle heure", correct("Tu rentreras a quelle heure"))
+        assertEquals("c'est à peu près", correct("c'est a peu près"))
+    }
+
+    @Test
+    fun `vis a vis devient vis a accent grave vis`() {
+        assertEquals("vis à vis", correct("vis a vis"))
+    }
+
+    @Test
+    fun `le verbe avoir reste inchange dans les cas proches`() {
+        assertNull(correct("l'été a"))
+        assertNull(correct("Ton frère a quel âge"))
+        assertNull(correct("il a peu"))
+        assertNull(correct("il n'y a pas"))
+        assertNull(correct("il n'a pas"))
+        assertNull(correct("la vis a"))
+        assertNull(correct("Tu rentreras a quelle heure", retro = false))
+    }
+
     // --- ou / où ---
 
     @Test

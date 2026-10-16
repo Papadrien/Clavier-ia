@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.ModelStatus
@@ -48,6 +49,8 @@ class MainActivity : Activity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Splashscreen (logo Junadé) : à appeler avant super.onCreate(). Remplace le thème de lancement par AppTheme.
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()

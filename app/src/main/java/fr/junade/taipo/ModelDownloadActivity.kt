@@ -99,6 +99,8 @@ class ModelDownloadActivity : ModelScreenActivity() {
         val active = preferences.activeModel() == model
 
         views.name.text = model.displayName(this)
+        views.subtitle.text = model.subtitle(this)
+        views.subtitle.visibility = View.VISIBLE
         val size = Formatter.formatFileSize(this, model.approxDownloadBytes ?: model.approxSizeBytesMax)
         val technicalLine = getString(R.string.model_download_technical_line, model.technicalName, size)
         // Gemma 3 (Ultra-léger, Léger) n'a pas d'entrée audio : on prévient que certaines fonctions manquent.

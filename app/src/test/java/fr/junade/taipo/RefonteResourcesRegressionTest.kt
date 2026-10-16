@@ -67,7 +67,8 @@ class RefonteResourcesRegressionTest {
         val raster = setOf("png", "jpg", "jpeg", "webp", "gif", "bmp")
         // Exception documentée (lot UX 1) : le logo de marque est une illustration raster (dégradés et textures des
         // touches) fournie par le design, non vectorisable sans perte ; c'est la seule image autorisée.
-        val allowed = setOf("taipo_logo_horizontal")
+        // Idem pour le logo du studio Junadé affiché par le splashscreen (fourni par le design, PNG converti en WebP).
+        val allowed = setOf("taipo_logo_horizontal", "junade_logo_splash")
         val found = res.listFiles { f -> f.isDirectory && f.name.startsWith("drawable") }.orEmpty()
             .flatMap {
                 it.walkTopDown()

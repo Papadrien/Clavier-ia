@@ -83,6 +83,16 @@ class RecentEmojiBarView(context: Context) : HorizontalScrollView(context) {
         requestLayout()
     }
 
+    /**
+     * Recale la barre sur son extrémité droite (emoji le plus récent) à la prochaine mise en page, même si la liste
+     * n'a pas changé : appelé à chaque ouverture du clavier, pour qu'un défilement fait lors d'une session précédente
+     * ne soit pas conservé.
+     */
+    fun scrollToLatest() {
+        pinToEnd = true
+        requestLayout()
+    }
+
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
         if (pinToEnd && width > 0) {

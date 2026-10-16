@@ -125,6 +125,9 @@ dependencies {
 
     implementation("androidx.core:core-ktx:1.18.0")
 
+    // Splashscreen au lancement (logo Junadé) : voir Theme.Taipo.Splash dans res/values/themes.xml.
+    implementation(libs.androidx.core.splashscreen)
+
     // Lot 3.5 (U3) : Activity Result API (ComponentActivity) pour les sélecteurs de fichier des écrans modèle.
     implementation(libs.androidx.activity)
 

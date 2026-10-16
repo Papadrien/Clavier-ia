@@ -21,7 +21,23 @@ class Dictionary private constructor(
     candidateMinFrequency: Long,
     internal val proximity: KeyProximity = KeyProximity.NONE,
     private val letterPrefilter: Boolean = true,
+    properNames: Collection<String> = emptyList(),
 ) {
+
+    // Prénoms et noms propres courants (forme avec majuscule, « Adrien », « Éric ») : les listes de fréquence sont
+    // toutes en minuscules, elles ne savent donc pas qu'un mot prend une majuscule. Clé = minuscules.
+    private val exactNames: Map<String, String> = properNames.associateBy { it.lowercase() }
+
+    // Clé sans accent -> forme accentuée (« eric » -> « Éric »), pour un mot tapé en minuscules sans ses accents.
+    private val foldedNames: Map<String, String> = HashMap<String, String>().apply {
+        for ((key, display) in exactNames) {
+            val folded = WordForms.foldAccents(key)
+            if (folded != key && folded !in exactNames) putIfAbsent(folded, display)
+        }
+    }
+
+    // Fréquence donnée aux prénoms quand ils sont proposés en correction (celle du seuil : jamais devant un vrai mot).
+    private val nameFrequency: Long = maxOf(1L, candidateMinFrequency)
 
     /**
      * Mots seuls (sans fréquence connue) : tous ont la même fréquence, donc aucun n'est
@@ -191,8 +207,8 @@ class Dictionary private constructor(
      * Retourne null si :
      * - le mot est déjà dans le dictionnaire, ou dans [personalWords] (rien à corriger) ;
      * - le mot est trop court pour qu'une correction soit fiable ;
-     * - le mot contient un chiffre (probablement pas un mot du langage
-     *   courant : numéro, code...) ;
+     * - le mot contient un chiffre (probablement pas un mot du langage courant : numéro, code...), sauf un
+     *   chiffre unique tapé à la place d'une lettre voisine (voir [digitSlipCorrection]) ;
      * - le mot est entièrement en majuscules (probablement un acronyme) ;
      * - aucun candidat n'est assez proche, ou plusieurs candidats sont à égalité de
      *   distance ET de fréquence (ambiguïté : mieux vaut ne rien changer qu'un mauvais choix).
@@ -203,8 +219,35 @@ class Dictionary private constructor(
         personalWords: Collection<String> = emptyList(),
         habits: HabitContext? = null,
     ): String? {
+        val correction = correctionWithoutNames(word, maxDistance, personalWords, habits)
+        return properNameForm(word, correction, personalWords) ?: correction
+    }
+
+    /**
+     * Forme d'un prénom ou nom propre connu : « adrien » -> « Adrien », « adrein » -> « Adrien » (faute corrigée puis
+     * mise en majuscule), « eric » -> « Éric ». Null si le mot n'est pas un nom connu ou s'il est déjà bien écrit.
+     * Un mot du dictionnaire personnel garde toujours la forme choisie par l'utilisateur, et un mot tapé avec une
+     * majuscule garde ses accents (« Eric » reste « Eric »). Les noms qui sont aussi des mots courants (« rose »,
+     * « pierre », « will ») ne figurent pas dans les listes de noms.
+     */
+    private fun properNameForm(word: String, correction: String?, personalWords: Collection<String>): String? {
+        if (exactNames.isEmpty() || word.length < MIN_WORD_LENGTH_FOR_CORRECTION || word.any { it.isDigit() }) return null
+        if (word.all { it.isUpperCase() }) return null // acronyme ou nom écrit en capitales
+        if (personalWords.any { it.equals(word, ignoreCase = true) || (correction != null && it.equals(correction, ignoreCase = true)) }) return null
+        val target = correction ?: word
+        exactNames[target.lowercase()]?.let { return it.takeIf { display -> display != word } }
+        if (correction == null && word == word.lowercase()) foldedNames[word]?.let { return it }
+        return null
+    }
+
+    private fun correctionWithoutNames(
+        word: String,
+        maxDistance: Int,
+        personalWords: Collection<String>,
+        habits: HabitContext?,
+    ): String? {
         if (word.length < MIN_WORD_LENGTH_FOR_CORRECTION) return null
-        if (word.any { it.isDigit() }) return null
+        if (word.any { it.isDigit() }) return digitSlipCorrection(word)
         if (word.length > 1 && word.all { it.isUpperCase() }) return null
 
         val lower = word.lowercase()
@@ -336,6 +379,8 @@ class Dictionary private constructor(
             }
         }
         for (candidate in personal.keys) if (candidate !in frequencies) consider(candidate, personalFrequency, isPersonal = true)
+        // Prénoms courants : proposés en correction même s'ils sont absents des listes ou trop rares pour y être candidats.
+        for (name in exactNames.keys) if ((frequencies[name] ?: 0L) < nameFrequency) consider(name, nameFrequency)
 
         val correction = best ?: return null
         if (bestDistance > allowedDistance || ambiguous) return null
@@ -568,8 +613,31 @@ class Dictionary private constructor(
         rule.baseOf(lower)?.let { it in frequencies && it !in dominatedByAccented } == true
     }
 
+    /**
+     * Chiffre tapé à la place d'une lettre (« 3crire » pour « écrire » : le doigt a visé la rangée du dessus). Cas
+     * volontairement étroit, car un mot avec chiffre est en général un code ou un numéro : un seul chiffre, au moins
+     * 4 caractères, le reste en lettres, et le chiffre remplacé par une lettre dont la touche est voisine. Corrigé
+     * seulement si un seul mot du dictionnaire sort de ce remplacement (ou si l'un est nettement plus fréquent).
+     */
+    private fun digitSlipCorrection(word: String): String? {
+        if (!proximity.isEnabled || word.length < DIGIT_SLIP_MIN_LENGTH) return null
+        if (word.count { it.isDigit() } != 1 || !word.all { it.isLetterOrDigit() }) return null
+        val digitIndex = word.indexOfFirst { it.isDigit() }
+        val letters = word.filterIndexed { i, _ -> i != digitIndex }
+        if (letters.length > 1 && letters.all { it.isUpperCase() }) return null
+        val lower = word.lowercase()
+        val matches = proximity.neighborsOf(word[digitIndex]).filter { it.isLetter() }
+            .map { lower.replaceRange(digitIndex, digitIndex + 1, it.toString()) }
+            .filter { it in frequencies }
+            .sortedByDescending { frequencies.getValue(it) }
+        val best = matches.firstOrNull() ?: return null
+        if (matches.size > 1 && frequencies.getValue(best) == frequencies.getValue(matches[1])) return null
+        return applyOriginalCasing(word, best)
+    }
+
     companion object {
         private const val MIN_WORD_LENGTH_FOR_CORRECTION = 2
+        private const val DIGIT_SLIP_MIN_LENGTH = 4
 
         /** Élisions françaises (partie avant l'apostrophe, minuscules) : « l'ami », « qu'il », « jusqu'à ». */
         private val ELISIONS = setOf(
@@ -656,6 +724,7 @@ class Dictionary private constructor(
          * [proximity] : proximité des touches du clavier, pour départager les candidats à distance égale.
          * [letterPrefilter] : pré-filtre par les lettres de la recherche par distance d'édition (résultat identique,
          * beaucoup plus rapide) ; désactivable uniquement pour mesurer ou comparer.
+         * [properNames] : prénoms et noms propres courants avec leur majuscule (voir [properNameForm]).
          */
         fun withFrequencies(
             entries: Map<String, Long>,
@@ -663,17 +732,18 @@ class Dictionary private constructor(
             candidateMinFrequency: Long = 0L,
             proximity: KeyProximity = KeyProximity.NONE,
             letterPrefilter: Boolean = true,
+            properNames: Collection<String> = emptyList(),
         ): Dictionary {
             // Liste déjà en minuscules (cas des listes de l'application) : pas de copie, ce qui évite de
             // doubler la mémoire avec une liste complète de plusieurs centaines de milliers de mots.
-            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter)
+            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames)
             val merged = HashMap<String, Long>(entries.size)
             entries.forEach { (word, count) ->
                 val key = word.lowercase()
                 val previous = merged[key]
                 if (previous == null || count > previous) merged[key] = count
             }
-            return Dictionary(merged, inflections, candidateMinFrequency, proximity, letterPrefilter)
+            return Dictionary(merged, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames)
         }
 
         // Relais vers EditDistance et WordForms (audit 2.1, étape 6) : l'API de Dictionary reste celle d'avant.

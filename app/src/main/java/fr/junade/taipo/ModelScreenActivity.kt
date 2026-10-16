@@ -21,6 +21,7 @@ import fr.junade.taipo.model.download.DownloadFailure
 internal class ModelRowViews(
     val name: TextView,
     val badge: TextView,
+    val subtitle: TextView,
     val technical: TextView,
     val license: TextView,
     val status: TextView,
@@ -33,6 +34,7 @@ internal class ModelRowViews(
         fun from(item: View) = ModelRowViews(
             name = item.findViewById(R.id.model_name),
             badge = item.findViewById(R.id.model_badge),
+            subtitle = item.findViewById(R.id.model_subtitle),
             technical = item.findViewById(R.id.model_technical),
             license = item.findViewById(R.id.model_license),
             status = item.findViewById(R.id.model_status),

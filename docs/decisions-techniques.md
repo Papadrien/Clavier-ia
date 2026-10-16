@@ -13,7 +13,7 @@ le backlog produit : seulement ce qui explique des choix visibles dans le code.
   Le rechargement après que le système a tué le processus du clavier est une limitation connue, avec indicateur de chargement.
 
 ## Modèles (4 niveaux, fichiers `.litertlm`)
-Ultra-léger = Gemma 3 270M, Léger = Gemma 3 1B, Équilibré = Gemma 4 E2B, Performant = Gemma 4 E4B. Deux origines :
+Fourmi (ex Ultra-léger) = Gemma 3 270M, Colibri (ex Léger) = Gemma 3 1B, Singe (ex Équilibré) = Gemma 4 E2B, Éléphant (ex Performant) = Gemma 4 E4B (noms et sous-titres dans les ressources `model_name_*` / `model_subtitle_*` ; ids internes inchangés). Deux origines :
 le fichier fourni à la main (écran « Modèle IA local ») ou le téléchargement dans l'app (épopée 8, commencée avec
 Gemma 4 ; WorkManager + service au premier plan, SHA-256 embarqué par modèle). Voir `AiModel.kt` et
 `docs/telechargement-modeles.md`.

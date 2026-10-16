@@ -3,7 +3,6 @@
     <string name="app_name">Taipo</string>
     <string name="ime_name">Taipo</string>
     <string name="main_title">Clavier IA 100% local</string>
-    <string name="main_description">Écris en anglais, français, espagnol, allemand, italien, portugais et néerlandais, avec une disposition pour chaque langue.</string>
     <string name="button_enable">Ouvrir les réglages</string>
     <string name="button_select">Choisir la méthode de saisie</string>
     <string name="button_model_settings">Modèle IA local</string>
@@ -348,13 +347,13 @@
     <string name="home_row_licenses_subtitle">Modèles IA, dictionnaires et bibliothèques</string>
     <string name="licenses_description">Taipo repose sur des modèles IA, des listes de mots et des bibliothèques libres. Leurs licences et crédits sont listés ici. Les modèles Gemma sont utilisés sur votre appareil et ne sont pas modifiés par Taipo.</string>
     <string name="licenses_gemma3_title">Gemma 3 : conditions d\'utilisation Gemma</string>
-    <string name="licenses_gemma3_models">Modèles concernés : Ultra-léger (Gemma 3 270M) et Léger (Gemma 3 1B).</string>
+    <string name="licenses_gemma3_models">Modèles concernés : Fourmi (Gemma 3 270M) et Colibri (Gemma 3 1B).</string>
     <string name="licenses_gemma3_notice">Gemma is provided under and subject to the Gemma Terms of Use found at ai.google.dev/gemma/terms</string>
     <string name="licenses_gemma3_restrictions">Restrictions d\'usage : ces modèles ne doivent pas être utilisés pour un usage interdit par la politique d\'usage interdit de Gemma (Prohibited Use Policy). En téléchargeant ou en utilisant un modèle Gemma 3 dans Taipo, vous vous engagez à respecter ces conditions.</string>
     <string name="licenses_link_gemma_terms">Lire les Gemma Terms of Use</string>
     <string name="licenses_link_gemma_policy">Lire la Prohibited Use Policy</string>
     <string name="licenses_gemma4_title">Gemma 4 : licence Apache 2.0</string>
-    <string name="licenses_gemma4_models">Modèles concernés : Équilibré (Gemma 4 E2B) et Performant (Gemma 4 E4B). Licence Apache, version 2.0 : le texte complet est conservé ci-dessous.</string>
+    <string name="licenses_gemma4_models">Modèles concernés : Singe (Gemma 4 E2B) et Éléphant (Gemma 4 E4B). Licence Apache, version 2.0 : le texte complet est conservé ci-dessous.</string>
     <string name="licenses_link_apache">Lire la licence Apache 2.0 en ligne</string>
     <string name="licenses_apache_show">Afficher le texte complet de la licence</string>
     <string name="licenses_apache_hide">Masquer le texte de la licence</string>
@@ -464,7 +463,7 @@
     <string name="terms_section_2_title">2. Vos données</string>
     <string name="terms_section_2_body">Le texte que vous saisissez, copiez ou dictez reste sur votre appareil : Taipo ne l\'envoie à aucun serveur. L\'accès à Internet sert uniquement à télécharger le fichier d\'un modèle IA, à votre demande.</string>
     <string name="terms_section_3_title">3. Modèles IA et licences</string>
-    <string name="terms_section_3_body">Les modèles de correction et de génération sont des modèles Gemma de Google. Gemma 3 (Ultra-léger et Léger) est fourni selon les Gemma Terms of Use ; Gemma 4 (Équilibré et Performant) est fourni sous licence Apache 2.0. Les textes et les liens figurent dans l\'écran « Licences ».</string>
+    <string name="terms_section_3_body">Les modèles de correction et de génération sont des modèles Gemma de Google. Gemma 3 (Fourmi et Colibri) est fourni selon les Gemma Terms of Use ; Gemma 4 (Singe et Éléphant) est fourni sous licence Apache 2.0. Les textes et les liens figurent dans l\'écran « Licences ».</string>
     <string name="terms_section_4_title">4. Restrictions d\'usage</string>
     <string name="terms_section_4_body">Vous vous engagez à ne pas utiliser les fonctions d\'IA de Taipo pour les usages interdits par la politique d\'usage interdit de Gemma (Gemma Prohibited Use Policy, ai.google.dev/gemma/prohibited_use_policy), qui fait partie des présentes conditions. Google peut mettre cette politique à jour : la version en ligne fait foi. Si vous transmettez un modèle Gemma 3 à un tiers, vous devez lui imposer ces mêmes restrictions et l\'informer qu\'il y est soumis. Dans tous les cas, vous vous engagez à respecter la loi applicable.</string>
     <string name="terms_section_5_title">5. Résultats de l\'IA</string>
@@ -515,7 +514,7 @@
     <string name="ai_transcription_button_recording">Transcription IA : arrêter l\'enregistrement et transcrire</string>
     <string name="ai_transcription_button_processing">Transcription IA en cours : appuyer pour annuler</string>
     <string name="ai_transcription_button_cancelling">Annulation de la transcription IA…</string>
-    <string name="ai_transcription_no_audio_model">La transcription IA demande le modèle Équilibré ou Performant (Gemma 4). Choisissez-en un dans l\'application.</string>
+    <string name="ai_transcription_no_audio_model">La transcription IA demande le modèle Singe ou Éléphant (Gemma 4). Choisissez-en un dans l\'application.</string>
     <string name="ai_transcription_busy">Une dictée, une correction ou une génération est en cours.</string>
     <string name="ai_transcription_permission_denied">Permission micro requise. Accordez-la puis appuyez à nouveau.</string>
     <string name="ai_transcription_mic_unavailable">Le micro n\'a pas pu être ouvert.</string>
@@ -529,10 +528,14 @@
     <string name="ai_transcription_failed">La transcription IA a échoué. Réessayez, ou choisissez un autre modèle.</string>
 
     <!-- Noms des modèles, indications de fichier et avertissements de taille / empreinte (auparavant en dur dans le Kotlin). -->
-    <string name="model_name_ultra_leger">Ultra-léger</string>
-    <string name="model_name_leger">Léger</string>
-    <string name="model_name_equilibre">Équilibré</string>
-    <string name="model_name_performant">Performant</string>
+    <string name="model_name_ultra_leger">Fourmi</string>
+    <string name="model_subtitle_ultra_leger">Le plus léger et rapide</string>
+    <string name="model_name_leger">Colibri</string>
+    <string name="model_subtitle_leger">Léger et rapide</string>
+    <string name="model_name_equilibre">Singe</string>
+    <string name="model_subtitle_equilibre">Le compromis entre rapidité et performances</string>
+    <string name="model_name_performant">Éléphant</string>
+    <string name="model_subtitle_performant">Plus lent mais très performant</string>
     <string name="model_hint_ultra_leger">Fichier attendu : gemma3-270m-it-q8.litertlm (~300 Mo).</string>
     <string name="model_hint_leger">Plusieurs variantes existent (int4 ≈ 580–660 Mo, q8 ≈ 1 Go). Prendre une variante générique (_q8_ ou _q4_), pas une variante liée à un SoC précis (_qualcomm_, _mediatek_…). Fichier hébergé : gemma3-1b-it-int4.litertlm.</string>
     <string name="model_hint_equilibre">Fichier attendu : gemma-4-E2B-it.litertlm (~2,6 Go). Éviter les variantes *-web.litertlm (plus petites, réservées au web) et celles liées à un SoC précis.</string>

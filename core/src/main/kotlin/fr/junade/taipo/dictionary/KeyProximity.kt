@@ -21,7 +21,7 @@ class KeyProximity private constructor(
     private val missingLetterCost: Int,
 ) {
 
-    /** Une touche d'une rangée : [char] est null pour une touche sans caractère (Maj, Effacer...). */
+    /** Une touche d'une rangée : [char] est null pour une touche sans caractère (Maj, Effacer...) ; [SPACE] pour la barre d'espace. */
     class KeyBox(val char: Char?, val weight: Float)
 
     /** Faux pour [NONE] : aucune information de proximité, le coût pondéré n'est alors pas utilisé. */
@@ -35,6 +35,12 @@ class KeyProximity private constructor(
         return neighbors[x]?.contains(y) == true
     }
 
+    /** Touches voisines de [c] (en minuscules, sans accent) : lettres, chiffres, symboles et [SPACE]. */
+    fun neighborsOf(c: Char): Set<Char> = neighbors[fold(c)].orEmpty()
+
+    /** Vrai si la touche de [c] touche la barre d'espace (le doigt vise l'espace et effleure la lettre voisine). */
+    fun isNextToSpace(c: Char): Boolean = areNeighbors(c, SPACE)
+
     /**
      * Coût d'édition pondéré pour passer de [typed] (minuscules) à [candidate] (minuscules), variante
      * « optimal string alignment » comme [Dictionary.damerauLevenshtein] mais avec des coûts qui
@@ -42,7 +48,8 @@ class KeyProximity private constructor(
      *
      * - substitution par une touche voisine (ou même lettre sans l'accent) : 2 ; autre substitution : 4 ;
      * - lettre en trop dans le mot tapé, doublée ou voisine d'une lettre adjacente (doigt qui effleure deux
-     *   touches) : 2 ; autre lettre en trop : 4 ;
+     *   touches), ou, en début ou fin de mot, voisine de la barre d'espace (espace visée, lettre touchée) : 2 ;
+     *   autre lettre en trop : 4 ;
      * - lettre manquante dans le mot tapé : [DEFAULT_MISSING_LETTER_COST] par défaut (réglable, voir [fromRows]) :
      *   2 par défaut, comme une touche voisine : oublier une lettre est aussi plausible que glisser sur la touche
      *   d'à côté, et à coût égal la fréquence départage (valeur retenue après mesure : 2 corrige mieux que 3 ou 4) ;
@@ -95,12 +102,16 @@ class KeyProximity private constructor(
         val after = typed.getOrNull(index + 1)
         val touchesBefore = before != null && (fold(before) == fold(c) || areNeighbors(before, c))
         val touchesAfter = after != null && (fold(after) == fold(c) || areNeighbors(after, c))
-        return if (touchesBefore || touchesAfter) COST_PROBABLE else COST_NORMAL
+        val touchesSpace = (index == 0 || index == typed.lastIndex) && areNeighbors(c, SPACE)
+        return if (touchesBefore || touchesAfter || touchesSpace) COST_PROBABLE else COST_NORMAL
     }
 
     private fun sameKeyOrNeighbor(a: Char, b: Char): Boolean = fold(a) == fold(b) || areNeighbors(a, b)
 
     companion object {
+        /** Caractère de la barre d'espace dans les rangées de [fromRows]. */
+        const val SPACE = ' '
+
         private const val COST_PROBABLE = 2
         private const val COST_NORMAL = 4
 

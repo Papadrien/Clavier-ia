@@ -26,6 +26,15 @@
         <item name="android:buttonStyle">@style/TaipoButton.Secondary</item>
     </style>
 
+    <!-- Splashscreen (logo Junadé) : thème de MainActivity au lancement à froid, remplacé par AppTheme dès que
+         MainActivity appelle installSplashScreen() (postSplashScreenTheme). Fond = fond de l'app (#0E0E0E) pour
+         que la transition vers l'accueil ne montre aucun saut de couleur. -->
+    <style name="Theme.Taipo.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/keyboard_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    </style>
+
     <!-- Story 2.6 : fenêtre de modification d'un élément du presse-papiers. -->
     <style name="EditDialogTheme" parent="android:Theme.Material.Dialog.NoActionBar">
         <item name="android:colorAccent">@color/accent</item>

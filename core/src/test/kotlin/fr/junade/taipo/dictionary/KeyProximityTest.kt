@@ -128,4 +128,64 @@ class KeyProximityTest {
         val dictionary = Dictionary.withFrequencies(mapOf("chat" to 1L), proximity = azerty)
         assertEquals("cpat", dictionary.correctionFor("cqat", personalWords = listOf("cpat")))
     }
+
+    /** AZERTY complet : rangée de chiffres, virgule, point et barre d'espace (comme KeyProximityFactory). */
+    private val azertyFull = KeyProximity.fromRows(
+        listOf(
+            letters("1234567890"),
+            letters("azertyuiop"),
+            letters("qsdfghjklm"),
+            listOf(KeyProximity.KeyBox(null, 1.4f)) + letters("wxcvbn'") + listOf(KeyProximity.KeyBox(null, 1.6f)),
+            listOf(
+                KeyProximity.KeyBox(null, 1.4f), KeyProximity.KeyBox(',', 1f), KeyProximity.KeyBox(null, 1f),
+                KeyProximity.KeyBox(KeyProximity.SPACE, 3.8f), KeyProximity.KeyBox('.', 1f), KeyProximity.KeyBox(null, 1.8f),
+            ),
+        ),
+    )
+
+    @Test
+    fun `la rangee de chiffres est voisine de la rangee du haut`() {
+        assertTrue(azertyFull.areNeighbors('1', 'a'))
+        assertTrue(azertyFull.areNeighbors('3', 'e'))
+        assertTrue(azertyFull.areNeighbors('3', '4'))
+        assertFalse(azertyFull.areNeighbors('1', 'p'))
+        assertFalse(azertyFull.areNeighbors('1', 'q'))
+    }
+
+    @Test
+    fun `la barre d espace est voisine des lettres du bas et de la ponctuation`() {
+        assertTrue(azertyFull.isNextToSpace('v'))
+        assertTrue(azertyFull.isNextToSpace('b'))
+        assertTrue(azertyFull.isNextToSpace('n'))
+        assertTrue(azertyFull.areNeighbors(',', 'x'))
+        assertFalse(azertyFull.isNextToSpace('a'))
+        assertFalse(azertyFull.isNextToSpace('p'))
+    }
+
+    @Test
+    fun `une lettre voisine de l espace en fin ou debut de mot est une lettre en trop probable`() {
+        assertEquals(2, azertyFull.editCost("bonjourn", "bonjour"))
+        assertEquals(4, azertyFull.editCost("bonjourp", "bonjour"))
+        // Au milieu du mot, le voisinage de l'espace ne compte pas.
+        assertEquals(4, azertyFull.editCost("bonvjour", "bonjour"))
+    }
+
+    @Test
+    fun `un chiffre tape a la place d une lettre voisine est corrige`() {
+        val dictionary = Dictionary.withFrequencies(mapOf("merci" to 10L), proximity = azertyFull)
+        assertEquals("merci", dictionary.correctionFor("m3rci"))
+        assertEquals("Merci", dictionary.correctionFor("M3rci"))
+    }
+
+    @Test
+    fun `un mot avec chiffre reste intact sauf glissement d un seul chiffre sur une touche voisine`() {
+        val dictionary = Dictionary.withFrequencies(mapOf("merci" to 10L, "mars" to 10L), proximity = azertyFull)
+        // chiffre trop court, deux chiffres, chiffre non voisin de la lettre attendue, acronyme.
+        assertNull(dictionary.correctionFor("m3r"))
+        assertNull(dictionary.correctionFor("m33ci"))
+        assertNull(dictionary.correctionFor("m9rci"))
+        assertNull(dictionary.correctionFor("MERC1"))
+        // Sans proximité, comportement inchangé.
+        assertNull(Dictionary.withFrequencies(mapOf("merci" to 10L)).correctionFor("m3rci"))
+    }
 }

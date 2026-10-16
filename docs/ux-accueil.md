@@ -64,3 +64,25 @@ police agrandie (sous-titres sur plusieurs lignes), TalkBack (navigation par tit
 TalkBack.
 
 Reste à faire (suite du plan UX) : en-tête commun des sous-pages.
+
+## Splashscreen — logo Junadé (16/10/2026)
+
+- Logo du studio Junadé affiché au lancement à froid (`drawable-nodpi/junade_logo_splash.webp`, WebP sans perte,
+  1000 × 401, fond noir converti en transparence), sur le fond de l'app (`keyboard_background`, #0E0E0E).
+- Bibliothèque `androidx.core:core-splashscreen` 1.0.1 : thème `Theme.Taipo.Splash` sur `MainActivity` (manifeste),
+  `installSplashScreen()` en tête de `MainActivity.onCreate`, `postSplashScreenTheme` = `AppTheme`.
+- Android 12+ masque l'icône dans un cercle de 192 dp : `drawable/splash_logo.xml` pose le logo à 168 × 67 dp dans un
+  canevas de 288 dp pour que sa diagonale reste dans le cercle (sinon les bords seraient rognés).
+- Seconde exception à la règle « aucune image raster », ajoutée au test `RefonteResourcesRegressionTest`.
+- À vérifier sur appareil : lancement à froid sur Android 12+ et sur une version antérieure (API 26-30).
+
+## Barre des emojis récents — calage à l'ouverture (16/10/2026)
+
+- `RecentEmojiBarView.scrollToLatest()` est appelé à chaque `startInputView` : la barre repart toujours calée à droite,
+  sur l'emoji le plus récent, même si la liste n'a pas changé depuis le dernier défilement de l'utilisateur
+  (`setEmojis` ne recalait que lorsque la liste changeait).
+
+## Accueil — sous-titre retiré (16/10/2026)
+
+- Le texte d'explication sous le titre (`main_description`, liste des langues du clavier) est supprimé de l'accueil,
+  ainsi que ses chaînes FR/EN ; le titre est directement suivi des étapes d'activation.

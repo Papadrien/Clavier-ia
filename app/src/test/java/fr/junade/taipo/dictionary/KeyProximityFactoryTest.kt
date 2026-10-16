@@ -49,4 +49,27 @@ class KeyProximityFactoryTest {
         assertTrue(fr.isEnabled)
         assertTrue(en.isEnabled)
     }
+
+    @Test
+    fun `la rangee de chiffres est voisine des lettres du haut`() {
+        assertTrue(fr.areNeighbors('1', 'a'))
+        assertTrue(fr.areNeighbors('3', 'e'))
+        assertTrue(en.areNeighbors('1', 'q'))
+        assertFalse(fr.areNeighbors('1', 'p'))
+    }
+
+    @Test
+    fun `la barre d espace est voisine des lettres du bas`() {
+        listOf(fr, en).forEach {
+            assertTrue(it.isNextToSpace('v'))
+            assertTrue(it.isNextToSpace('b'))
+            assertFalse(it.isNextToSpace('a'))
+        }
+    }
+
+    @Test
+    fun `la virgule et le point sont voisins des lettres du bas`() {
+        assertTrue(fr.areNeighbors(',', 'x'))
+        assertTrue(fr.areNeighbors('.', 'n') || fr.areNeighbors('.', '\''))
+    }
 }

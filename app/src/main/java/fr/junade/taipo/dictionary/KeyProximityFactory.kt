@@ -10,16 +10,22 @@ import fr.junade.taipo.Keyboards
  * français, QWERTZ en allemand, QWERTY sinon) : la proximité suit donc toujours ce que l'utilisateur voit à l'écran
  * (largeurs de touches comprises, apostrophe française entre N et Effacer).
  *
- * Uniquement la page des lettres, sans la rangée de chiffres : la proximité ne sert qu'aux lettres.
+ * Page des lettres avec la rangée de chiffres (toujours prise en compte, même si elle est masquée à l'écran), les
+ * symboles de cette page (virgule, point, apostrophe) et la barre d'espace : une faute peut tomber sur n'importe
+ * laquelle de ces touches voisines.
  */
 object KeyProximityFactory {
 
-    fun forLanguage(language: KeyboardLanguage): KeyProximity = fromLayout(Keyboards.lettersOf(language))
+    fun forLanguage(language: KeyboardLanguage): KeyProximity = fromLayout(Keyboards.lettersOf(language, numberRow = true))
 
     internal fun fromLayout(layout: KeyboardLayout): KeyProximity = KeyProximity.fromRows(
         layout.rows.map { row ->
             val boxes = row.map { key ->
-                val char = (key.action as? KeyAction.TypeChar)?.char?.takeIf { it.isLetter() || it == '\'' }
+                val char = when (val action = key.action) {
+                    is KeyAction.TypeChar -> action.char.takeIf { !it.isWhitespace() }
+                    KeyAction.Space -> KeyProximity.SPACE
+                    else -> null
+                }
                 KeyProximity.KeyBox(char, key.weight)
             }
             // Une rangée plus courte que la référence est centrée à l'écran (voir KeyboardLayout.rowStartUnits) :

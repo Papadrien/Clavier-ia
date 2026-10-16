@@ -382,6 +382,8 @@ class TaipoIme : InputMethodService() {
                 "copieLue=${clipboard.hasLastClip} puce=${clipboard.hasSuggestion}",
         )
         emojiController.refreshRecentBar()
+        // À chaque ouverture du clavier, la barre des emojis récents repart calée à droite, sur le plus récent.
+        viewComposer.recentEmojiBar.scrollToLatest()
         updateCorrectionBarVisibility()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) inlineSuggestions.applyPending()
     }
@@ -830,19 +832,20 @@ class TaipoIme : InputMethodService() {
         val typed = typedBefore + wordAfter
         if (typed.isEmpty()) return
         val spaceAfter = textAfter.getOrNull(wordAfter.length) == ' '
+        val separator = separatorAfterSuggestion(textAfter, wordAfter) // pas d'espace ajoutée devant une virgule
         hapticFeedback.perform(hapticIntensity)
         // Le mot tel que tapé peut différer du mot affiché à gauche : forme d'origine d'un mot déjà corrigé.
         if (suggestion.kind != WordSuggestion.Kind.TYPED || wordAfter.isNotEmpty() || suggestion.text != typed) {
             prompt.buffer.deleteBefore(typedBefore.length)
             prompt.buffer.deleteAfter(wordAfter.length + if (spaceAfter) 1 else 0)
-            prompt.buffer.insert("${suggestion.text} ")
-        } else {
+            prompt.buffer.insert("${suggestion.text}$separator")
+        } else if (separator.isNotEmpty()) {
             if (spaceAfter) prompt.buffer.deleteAfter(1)
-            prompt.buffer.insert(" ")
+            prompt.buffer.insert(separator)
         }
         pendingAutocorrection = if (suggestion.replacesOnSpace) {
             suggestions.recordCorrection(typed, suggestion.text)
-            AppliedAutocorrection(original = typed, corrected = suggestion.text, boundary = " ")
+            AppliedAutocorrection(original = typed, corrected = suggestion.text, boundary = separator)
         } else {
             null
         }
@@ -1020,6 +1023,8 @@ class TaipoIme : InputMethodService() {
         if (typed.isEmpty()) return
         // Une espace suit déjà le mot : elle est remplacée par celle qu'on ajoute, jamais doublée.
         val spaceAfter = textAfter.getOrNull(wordAfter.length) == ' '
+        // Une virgule suit le mot : aucune espace n'est ajoutée (« mot, » et non « mot , »).
+        val separator = separatorAfterSuggestion(textAfter, wordAfter)
         hapticFeedback.perform(hapticIntensity)
         onUserTyped()
         clearHighlightIfNeeded()
@@ -1028,18 +1033,18 @@ class TaipoIme : InputMethodService() {
         // Le mot tel que tapé peut différer du mot affiché à gauche : forme d'origine d'un mot déjà corrigé.
         if (suggestion.kind != WordSuggestion.Kind.TYPED || wordAfter.isNotEmpty() || suggestion.text != typed) {
             ic.deleteSurroundingText(typedBefore.length, wordAfter.length + if (spaceAfter) 1 else 0)
-            ic.commitText("${suggestion.text} ", 1)
-            recordUndoEdit(inserted = "${suggestion.text} ", original = typedBefore + wordAfter + if (spaceAfter) " " else "")
-        } else {
+            ic.commitText("${suggestion.text}$separator", 1)
+            recordUndoEdit(inserted = "${suggestion.text}$separator", original = typedBefore + wordAfter + if (spaceAfter) " " else "")
+        } else if (separator.isNotEmpty()) {
             if (spaceAfter) ic.deleteSurroundingText(0, 1)
-            ic.commitText(" ", 1)
-            recordUndoEdit(inserted = " ", original = if (spaceAfter) " " else "")
+            ic.commitText(separator, 1)
+            recordUndoEdit(inserted = separator, original = if (spaceAfter) " " else "")
         }
         ic.endBatchEdit()
 
         pendingAutocorrection = if (suggestion.replacesOnSpace) {
             suggestions.recordCorrection(typed, suggestion.text)
-            AppliedAutocorrection(original = typed, corrected = suggestion.text, boundary = " ")
+            AppliedAutocorrection(original = typed, corrected = suggestion.text, boundary = separator)
         } else {
             null
         }
@@ -1096,6 +1101,13 @@ class TaipoIme : InputMethodService() {
         is KeyAction.TypeChar -> !action.char.isLetterOrDigit() && action.char != '\'' && action.char != '-'
         else -> false
     }
+
+    /**
+     * Séparateur ajouté après un mot suggéré touché : une espace, sauf si une virgule suit déjà le mot
+     * ([textAfter] = texte après le curseur, [wordAfter] = suite du mot), pour ne pas obtenir « mot , ».
+     */
+    private fun separatorAfterSuggestion(textAfter: String, wordAfter: String): String =
+        if (textAfter.getOrNull(wordAfter.length) == ',') "" else " "
 
     /** Dernier "mot" avant le curseur : lettres/apostrophes/traits d'union contigus en fin de texte. */
     private fun trailingWord(textBeforeCursor: String): String = WordText.trailingWord(textBeforeCursor)

@@ -116,7 +116,18 @@ object DictionaryLoader {
             source.candidateMinFrequency,
             // Proximité des touches de la disposition de la langue : départage les corrections à distance égale.
             KeyProximityFactory.forLanguage(language),
+            // Prénoms courants avec leur majuscule (les listes de fréquence sont toutes en minuscules).
+            properNames = readNames(context, language),
         )
+
+    /** Prénoms de [language] : dictionaries/names/<code>.txt, un par ligne, « # » = commentaire. Absent : aucun nom. */
+    private fun readNames(context: Context, language: KeyboardLanguage): List<String> {
+        val path = "dictionaries/names/${language.tag}.txt"
+        if (!hasAsset(context, path)) return emptyList()
+        return context.assets.open(path).bufferedReader(Charsets.UTF_8).useLines { lines ->
+            lines.map { it.trim() }.filter { it.isNotEmpty() && !it.startsWith("#") }.toList()
+        }
+    }
 
     /** Formes régulières (pluriels, etc.) absentes des listes de fréquence : voir [InflectionRules]. */
     private fun inflectionsFor(language: KeyboardLanguage): InflectionRules = when (language) {

@@ -30,13 +30,6 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/main_title"
-        android:layout_marginBottom="@dimen/taipo_settings_gap_md" />
-
-    <TextView
-        style="@style/TaipoText.Lead"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/main_description"
         android:layout_marginBottom="@dimen/taipo_settings_gap_xxl" />
 
     <LinearLayout

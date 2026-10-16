@@ -3,7 +3,6 @@
     <string name="app_name">Taipo</string>
     <string name="ime_name">Taipo</string>
     <string name="main_title">100% local AI keyboard</string>
-    <string name="main_description">Type in English, French, Spanish, German, Italian, Portuguese and Dutch, with a layout for each language.</string>
     <string name="button_enable">Open settings</string>
     <string name="button_select">Choose input method</string>
     <string name="button_model_settings">Local AI model</string>
@@ -340,13 +339,13 @@
     <string name="home_row_licenses_subtitle">AI models, dictionaries and libraries</string>
     <string name="licenses_description">Taipo relies on AI models, word lists and open-source libraries. Their licenses and credits are listed here. The Gemma models run on your device and are not modified by Taipo.</string>
     <string name="licenses_gemma3_title">Gemma 3: Gemma Terms of Use</string>
-    <string name="licenses_gemma3_models">Models covered: Ultra-light (Gemma 3 270M) and Light (Gemma 3 1B).</string>
+    <string name="licenses_gemma3_models">Models covered: Ant (Gemma 3 270M) and Hummingbird (Gemma 3 1B).</string>
     <string name="licenses_gemma3_notice">Gemma is provided under and subject to the Gemma Terms of Use found at ai.google.dev/gemma/terms</string>
     <string name="licenses_gemma3_restrictions">Usage restrictions: these models must not be used for any use prohibited by the Gemma Prohibited Use Policy. By downloading or using a Gemma 3 model in Taipo, you agree to comply with these terms.</string>
     <string name="licenses_link_gemma_terms">Read the Gemma Terms of Use</string>
     <string name="licenses_link_gemma_policy">Read the Prohibited Use Policy</string>
     <string name="licenses_gemma4_title">Gemma 4: Apache 2.0 license</string>
-    <string name="licenses_gemma4_models">Models covered: Balanced (Gemma 4 E2B) and Powerful (Gemma 4 E4B). Apache License, version 2.0: the full text is kept below.</string>
+    <string name="licenses_gemma4_models">Models covered: Monkey (Gemma 4 E2B) and Elephant (Gemma 4 E4B). Apache License, version 2.0: the full text is kept below.</string>
     <string name="licenses_link_apache">Read the Apache 2.0 license online</string>
     <string name="licenses_apache_show">Show the full license text</string>
     <string name="licenses_apache_hide">Hide the license text</string>
@@ -455,7 +454,7 @@
     <string name="terms_section_2_title">2. Your data</string>
     <string name="terms_section_2_body">The text you type, copy or dictate stays on your device: Taipo does not send it to any server. Internet access is used only to download an AI model file, at your request.</string>
     <string name="terms_section_3_title">3. AI models and licenses</string>
-    <string name="terms_section_3_body">The correction and generation models are Google Gemma models. Gemma 3 (Ultra-light and Light) is provided under the Gemma Terms of Use; Gemma 4 (Balanced and Powerful) is provided under the Apache 2.0 license. The texts and links are in the “Licenses” screen.</string>
+    <string name="terms_section_3_body">The correction and generation models are Google Gemma models. Gemma 3 (Ant and Hummingbird) is provided under the Gemma Terms of Use; Gemma 4 (Monkey and Elephant) is provided under the Apache 2.0 license. The texts and links are in the “Licenses” screen.</string>
     <string name="terms_section_4_title">4. Usage restrictions</string>
     <string name="terms_section_4_body">You agree not to use Taipo\'s AI features for any use prohibited by the Gemma Prohibited Use Policy (ai.google.dev/gemma/prohibited_use_policy), which forms part of these terms. Google may update this policy: the online version prevails. If you pass a Gemma 3 model on to a third party, you must impose these same restrictions on them and inform them that they apply. In all cases, you agree to comply with applicable law.</string>
     <string name="terms_section_5_title">5. AI output</string>
@@ -501,7 +500,7 @@
     <string name="ai_transcription_button_recording">AI transcription: stop recording and transcribe</string>
     <string name="ai_transcription_button_processing">AI transcription in progress: tap to cancel</string>
     <string name="ai_transcription_button_cancelling">Cancelling AI transcription…</string>
-    <string name="ai_transcription_no_audio_model">AI transcription requires the Balanced or Powerful model (Gemma 4). Choose one in the app.</string>
+    <string name="ai_transcription_no_audio_model">AI transcription requires the Monkey or Elephant model (Gemma 4). Choose one in the app.</string>
     <string name="ai_transcription_busy">A dictation, correction or generation is in progress.</string>
     <string name="ai_transcription_permission_denied">Microphone permission required. Grant it, then tap again.</string>
     <string name="ai_transcription_mic_unavailable">The microphone couldn\'t be opened.</string>
@@ -515,10 +514,14 @@
     <string name="ai_transcription_failed">AI transcription failed. Try again, or choose another model.</string>
 
     <!-- Model names, file hints and size/checksum warnings (previously hard-coded in Kotlin) -->
-    <string name="model_name_ultra_leger">Ultra-light</string>
-    <string name="model_name_leger">Light</string>
-    <string name="model_name_equilibre">Balanced</string>
-    <string name="model_name_performant">Powerful</string>
+    <string name="model_name_ultra_leger">Ant</string>
+    <string name="model_subtitle_ultra_leger">The lightest and fastest</string>
+    <string name="model_name_leger">Hummingbird</string>
+    <string name="model_subtitle_leger">Light and fast</string>
+    <string name="model_name_equilibre">Monkey</string>
+    <string name="model_subtitle_equilibre">The balance between speed and performance</string>
+    <string name="model_name_performant">Elephant</string>
+    <string name="model_subtitle_performant">Slower but very powerful</string>
     <string name="model_hint_ultra_leger">Expected file: gemma3-270m-it-q8.litertlm (~300 MB).</string>
     <string name="model_hint_leger">Several variants exist (int4 ≈ 580–660 MB, q8 ≈ 1 GB). Pick a generic variant (_q8_ or _q4_), not one tied to a specific SoC (_qualcomm_, _mediatek_…). Hosted file: gemma3-1b-it-int4.litertlm.</string>
     <string name="model_hint_equilibre">Expected file: gemma-4-E2B-it.litertlm (~2.6 GB). Avoid *-web.litertlm variants (smaller, web-only) and those tied to a specific SoC.</string>
