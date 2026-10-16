@@ -155,7 +155,7 @@ class ModelInstallerTest {
     }
 
     @Test
-    fun `reprise d un partiel : empreinte calculee sur le fichier entier`() {
+    fun `reprise d un partiel - empreinte calculee sur le fichier entier`() {
         val destination = destination()
         val first = ModelInstaller.install(cutAfter(1_000_000), destination, payload.size.toLong(), payloadSha)
         assertTrue(first is InstallResult.Failed)
