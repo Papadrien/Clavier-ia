@@ -12,7 +12,7 @@ internal object RobotIconPose {
     fun antennaTopY(progress: Float): Float = ANTENNA_REST_Y + ANTENNA_DROP * progress
 
     /** Décalage vertical des yeux (négatif = vers le haut). */
-    fun eyeShiftY(progress: Float): Float = -EYE_RISE * progress
+    fun eyeShiftY(progress: Float): Float = 0f - EYE_RISE * progress
 
     /** Part de la hauteur de l'œil rognée par le bas (0 = œil rond, [EYE_SQUINT_MAX] = plissé). */
     fun eyeSquint(progress: Float): Float = (EYE_SQUINT * progress).coerceIn(0f, EYE_SQUINT_MAX)
