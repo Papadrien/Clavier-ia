@@ -7,7 +7,11 @@ import fr.junade.taipo.dictionary.CorrectionHabits
 import fr.junade.taipo.dictionary.CorrectionHabitsProvider
 import fr.junade.taipo.dictionary.CorrectionHistory
 import fr.junade.taipo.dictionary.Dictionary
+import fr.junade.taipo.dictionary.DictionaryFiles
 import fr.junade.taipo.dictionary.DictionaryLoader
+import fr.junade.taipo.dictionary.download.DictionaryDownloadScheduler
+import fr.junade.taipo.dictionary.download.DictionaryDownloadState
+import fr.junade.taipo.dictionary.download.DictionaryDownloadTracker
 import fr.junade.taipo.dictionary.FrenchContextCorrector
 import fr.junade.taipo.dictionary.HabitContext
 import fr.junade.taipo.dictionary.HabitSignals
@@ -91,6 +95,22 @@ class SuggestionController(
     }
 
     private val appContext = context.applicationContext
+
+    /** Dictionnaire téléchargé pendant que le clavier est ouvert : la langue active se charge sans attendre le prochain champ. */
+    private val dictionaryDownloadListener = DictionaryDownloadTracker.Listener { language, state ->
+        if (state == DictionaryDownloadState.Installed) {
+            scope.launch(Dispatchers.Main) { if (language == host.language()) preloadDictionaries() }
+        }
+    }
+
+    init {
+        DictionaryDownloadTracker.addListener(dictionaryDownloadListener)
+    }
+
+    /** À appeler à la destruction du service. */
+    fun release() {
+        DictionaryDownloadTracker.removeListener(dictionaryDownloadListener)
+    }
 
     // Story 1.16 : emoji suggéré d'après le dernier mot (4e emplacement de la barre de suggestions).
     private val emojiSuggester by lazy { EmojiSuggesterLoader.get(appContext) }
@@ -399,6 +419,12 @@ class SuggestionController(
     fun preloadDictionaries() {
         val language = host.language()
         if (DictionaryLoader.peek(language) != null) return
+        // Les dictionnaires ne sont plus dans l'APK : langue pas encore téléchargée (première utilisation, ou mise à jour
+        // depuis une version qui les embarquait) = on lance le téléchargement ; le chargement suit à son arrivée.
+        if (!DictionaryFiles.isInstalled(appContext.filesDir, language)) {
+            DictionaryDownloadScheduler.ensure(appContext, language)
+            return
+        }
         scope.launch(Dispatchers.IO) {
             try {
                 DictionaryLoader.forLanguage(appContext, language)

@@ -3,7 +3,7 @@ import fr.junade.taipo.dictionary.KeyProximity
 import java.io.File
 
 /**
- * Nettoyage de la liste française (app/src/main/assets/dictionaries/fr.txt) : retire les fautes de frappe du corpus
+ * Nettoyage de la liste française (dictionaries/fr.txt) : retire les fautes de frappe du corpus
  * (OpenSubtitles). Un mot est retiré s'il remplit TOUTES ces conditions :
  *  - il est rare (moins de [MAX_TYPO_FREQUENCY] + 1 occurrences : un tel mot n'est jamais proposé, il ne fait que
  *    valider une faute) et compte au moins [MIN_LENGTH] lettres ;
@@ -19,7 +19,7 @@ import java.io.File
  *   kotlinc core/src/main/kotlin tools/PruneDictionaryTypos.kt -include-runtime -d prune.jar
  *   java -jar prune.jar fr.txt fr.pruned.txt [--list]
  * `--list` affiche aussi les mots retirés de fréquence >= 30 (les plus fréquents, à relire).
- * Dernière exécution : 05/10/2026 -> 10/10/2026 (voir app/src/main/assets/dictionaries/SOURCES.txt).
+ * Dernière exécution : 05/10/2026 -> 10/10/2026 (voir dictionaries/SOURCES.txt).
  */
 private const val ALPHABET = "abcdefghijklmnopqrstuvwxyzéèêàâùûôîïçëöüœæ'-"
 private const val MAX_TYPO_FREQUENCY = 99L

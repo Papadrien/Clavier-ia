@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
-/** Listes de prénoms (dictionaries/names/<code>.txt) : une par langue du clavier, bien formées, sans doublon. */
+/** Listes de prénoms (dictionaries/names/<code>.txt à la racine du projet, envoyées sur le bucket R2) : une par langue du clavier, bien formées, sans doublon. */
 class ProperNamesAssetsTest {
 
     private fun names(language: String): List<String> {
         val candidates = listOf(
-            File("src/main/assets/dictionaries/names/$language.txt"),
-            File("app/src/main/assets/dictionaries/names/$language.txt"),
+            File("../dictionaries/names/$language.txt"),
+            File("dictionaries/names/$language.txt"),
         )
         val file = candidates.firstOrNull { it.isFile } ?: fail("Liste de prénoms introuvable : $language")
         return file.readLines(Charsets.UTF_8).map { it.trim() }.filter { it.isNotEmpty() && !it.startsWith("#") }

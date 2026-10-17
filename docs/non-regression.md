@@ -63,3 +63,7 @@ d'une génération, les messages d'erreur de l'IA, les préférences (`KeyboardP
 - [ ] `./gradlew :core:test :app:testDebugUnitTest` vert.
 - [ ] `./gradlew :app:connectedDebugAndroidTest` vert sur le Pixel 9 (si un test de rendu échoue, noter lequel : certains reposent sur des détails du dessin non vérifiés).
 - [ ] Recette manuelle ci-dessus.
+
+## Icône robot animée (17/10/2026)
+
+`RobotIconDrawable` (Canvas, même tracé que `ic_robot.xml`) remplace l'icône du bouton robot : antenne qui raccourcit, yeux qui montent et se plissent, bouche qui apparaît quand le bouton passe à l'état actif (fond violet), et l'inverse au retour. 300 ms, `OvershootInterpolator(1.2)` (léger ressort dans les deux sens). Saut direct si la barre n'est pas encore affichée ou si les animations système sont coupées. Test JVM : `RobotIconPoseTest`. Rendu à valider sur Pixel 9 (rien compilé ni exécuté).

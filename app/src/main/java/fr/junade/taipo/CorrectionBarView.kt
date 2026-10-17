@@ -66,6 +66,9 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
      */
     private val actionsMenuButton = ImageButton(context)
 
+    /** Icône robot animée (antenne, yeux, bouche) : repos ↔ actif (fond violet), 300 ms avec léger ressort. */
+    private var robotIcon: RobotIconDrawable? = null
+
     /** Croix de fermeture du panneau Smart Clipboard (à gauche de la barre) : visible seulement tant qu'il est ouvert. */
     private val closeButton = ImageButton(context)
     private var clipboardPanelOpen = false
@@ -230,6 +233,9 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         // Menu « robot » : pendant les suggestions de mots, il range derrière lui Transcription IA et Générer (Corriger reste
         // visible à sa gauche) ; Vocal, à sa droite, n'en dépend pas.
         style.styleBarIconButton(actionsMenuButton, R.drawable.ic_robot)
+        robotIcon = RobotIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt()).also {
+            actionsMenuButton.setImageDrawable(it) // même tracé que ic_robot, animé quand le menu s'ouvre
+        }
         actionsMenuButton.contentDescription = context.getString(R.string.actions_menu_description)
         actionsMenuButton.setOnClickListener {
             zoneState.toggleActionsMenu()
@@ -289,6 +295,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
      * Story 1.14 : en classe de largeur large (≥ 600 dp), les boutons restent alignés sur la zone
      * centrée des touches (le fond de la barre garde toute la largeur).
      */
+    override fun onDetachedFromWindow() {
+        robotIcon?.cancel()
+        super.onDetachedFromWindow()
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val available = MeasureSpec.getSize(widthMeasureSpec).toFloat()
         val content = KeyboardWidth.forAvailableWidth(available, resources.displayMetrics.density)
@@ -493,6 +504,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         if (actionsMenuBackgroundExpanded != zoneState.actionsExpanded) {
             actionsMenuBackgroundExpanded = zoneState.actionsExpanded
             actionsMenuButton.background = actionsMenuBackgrounds.get(zoneState.actionsExpanded)
+            robotIcon?.setActive(zoneState.actionsExpanded, animate = isLaidOut)
         }
     }
 

@@ -3,6 +3,7 @@ package fr.junade.taipo
 import fr.junade.taipo.clipboard.ClipboardDatabase
 import fr.junade.taipo.dictionary.CorrectionHabitsRepository
 import fr.junade.taipo.dictionary.DatabasePassphraseProvider
+import fr.junade.taipo.dictionary.DictionaryFiles
 import fr.junade.taipo.dictionary.PersonalDictionaryDatabase
 import fr.junade.taipo.model.ModelFileResolver
 import fr.junade.taipo.model.VoiceModelFileResolver
@@ -69,6 +70,7 @@ class BackupRulesTest {
             Exclusion("file", CorrectionHabitsRepository.FILE_NAME + ".tmp"),
             Exclusion("file", ModelFileResolver.DIRECTORY_NAME),
             Exclusion("file", VoiceModelFileResolver.DIRECTORY_NAME),
+            Exclusion("file", DictionaryFiles.DIRECTORY_NAME),
         )
         return databases + keyPrefs + files
     }

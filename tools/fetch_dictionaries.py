@@ -7,9 +7,9 @@ Usage (depuis la racine du projet) :
     python3 tools/fetch_dictionaries.py es de            # certaines langues seulement
 
 Source : listes de fréquence FrequencyWords (hermitdave/FrequencyWords, contenu 2018, corpus OpenSubtitles2018),
-licence CC-BY-SA 4.0 (attribution reprise dans app/src/main/assets/dictionaries/SOURCES.txt). Le fichier
+licence CC-BY-SA 4.0 (attribution reprise dans dictionaries/SOURCES.txt). Le fichier
 `<code>_full.txt` (une ligne « mot fréquence ») est téléchargé depuis GitHub (miroir Hugging Face en secours) ou lu
-dans le dossier donné par --from, puis nettoyé et écrit sous app/src/main/assets/dictionaries/ :
+dans le dossier donné par --from, puis nettoyé et écrit sous dictionaries/ (racine du projet ; à envoyer ensuite sur le bucket R2, voir docs/dictionnaires-distants.md) :
   <code>.txt      liste COMPLÈTE nettoyée ;
   <code>_50k.txt  ses 50 000 mots les plus fréquents : liste de SECOURS (DictionaryLoader bascule dessus si la
                   liste complète ne peut pas être chargée). Pour l'anglais, le secours existant est conservé.
@@ -67,7 +67,7 @@ WORD = re.compile(r"^[^\W\d_]+(?:['’\-][^\W\d_]+){0,3}$")
 
 # Débris du corpus propres à une langue : « e'o », « e'ato »... (italien : « è » mal saisi).
 REJECTED_PREFIXES = {"it": ("e'",)}
-OUTPUT_DIR = Path(__file__).resolve().parent.parent / "app" / "src" / "main" / "assets" / "dictionaries"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "dictionaries"
 
 
 def read_source(code: str, source_dir: Path | None) -> str:

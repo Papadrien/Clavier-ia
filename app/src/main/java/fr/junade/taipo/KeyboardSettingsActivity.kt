@@ -30,6 +30,9 @@ class KeyboardSettingsActivity : Activity() {
     /** Rappelé quand la langue du clavier change, pour que les cases du mode multilingue suivent. */
     private var onKeyboardLanguageChanged: (() -> Unit)? = null
 
+    /** État des dictionnaires des langues utilisées (téléchargement automatique, Réessayer). */
+    private lateinit var dictionaries: DictionaryStatusSection
+
     // Thème de la V1 : toujours sombre (voir KeyboardTheme).
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
@@ -39,6 +42,7 @@ class KeyboardSettingsActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_keyboard_settings)
         val preferences = KeyboardPreferences(this)
+        dictionaries = DictionaryStatusSection(this, findViewById(R.id.layout_dictionaries), preferences)
         setUpLanguageChoice(preferences)
         setUpMultilingual(preferences)
         findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
@@ -90,6 +94,16 @@ class KeyboardSettingsActivity : Activity() {
         }
         setUpAnalyticsSwitch()
         findViewById<Button>(R.id.button_habit_clear).setOnClickListener { confirmClearHabits() }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dictionaries.start()
+    }
+
+    override fun onStop() {
+        dictionaries.stop()
+        super.onStop()
     }
 
     /**
@@ -158,6 +172,8 @@ class KeyboardSettingsActivity : Activity() {
                 }
             }
             minHint.visibility = if (on && !MultilingualChoice.isActive(selected.toList())) View.VISIBLE else View.GONE
+            // Langues utilisées modifiées : le dictionnaire des nouvelles langues se télécharge tout de suite.
+            dictionaries.refresh()
         }
         boxes.forEachIndexed { index, box ->
             val language = KeyboardLanguage.entries[index]

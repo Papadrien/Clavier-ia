@@ -559,6 +559,7 @@ class TaipoIme : InputMethodService() {
         // Écriture terminée avant de rendre la main (lot 2.6 de la revue) : pas de launch asynchrone ici.
         nextWords.flushBlocking()
         suggestions.correctionHabits.flushBlocking()
+        suggestions.release()
         messagePopup.dismiss()
         aiTranscription.release()
         llmHost.close()

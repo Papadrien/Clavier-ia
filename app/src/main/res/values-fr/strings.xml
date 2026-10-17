@@ -443,11 +443,11 @@
     <string name="button_privacy">Confidentialité</string>
     <string name="home_row_privacy_subtitle">Ce qui reste sur votre appareil et ce qui se connecte</string>
     <string name="privacy_title">Confidentialité</string>
-    <string name="privacy_updated">Dernière mise à jour : 15 octobre 2026</string>
+    <string name="privacy_updated">Dernière mise à jour : 17 octobre 2026</string>
     <string name="privacy_section_1_title">1. Traitement sur votre appareil</string>
     <string name="privacy_section_1_body">La correction, la génération de texte, la saisie vocale et la transcription IA sont exécutées sur votre appareil par des modèles installés localement. Le texte que vous saisissez, copiez ou dictez et l\'audio de vos enregistrements ne sont envoyés à aucun serveur. L\'audio d\'une transcription IA reste en mémoire le temps du traitement : il n\'est jamais enregistré dans un fichier.</string>
     <string name="privacy_section_2_title">2. Connexions Internet</string>
-    <string name="privacy_section_2_body">Taipo se connecte à Internet pour télécharger les fichiers des modèles IA, à votre demande : depuis un serveur de Junadé pour les modèles Gemma 3 et les modèles de saisie vocale, et depuis Hugging Face pour les modèles Gemma 4. Ces serveurs reçoivent les informations techniques habituelles d\'une connexion (adresse IP, fichier demandé), jamais votre texte ni vos enregistrements. Taipo envoie aussi, sauf si vous le désactivez dans les paramètres du clavier, une mesure d\'usage anonyme à Aptabase, un service européen (voir la section 3). De temps en temps, Taipo peut aussi vous proposer de laisser un avis : cette fenêtre est affichée par Google Play, qui reçoit votre note et votre commentaire ; Taipo ne les reçoit pas.</string>
+    <string name="privacy_section_2_body">Taipo se connecte à Internet pour télécharger les fichiers des modèles IA, à votre demande : depuis un serveur de Junadé pour les modèles Gemma 3 et les modèles de saisie vocale, et depuis Hugging Face pour les modèles Gemma 4. Il télécharge aussi, depuis ce même serveur de Junadé, le dictionnaire de chaque langue du clavier que vous utilisez (quelques Mo, automatiquement dès qu\'une langue est choisie). Ces serveurs reçoivent les informations techniques habituelles d\'une connexion (adresse IP, fichier demandé), jamais votre texte ni vos enregistrements. Taipo envoie aussi, sauf si vous le désactivez dans les paramètres du clavier, une mesure d\'usage anonyme à Aptabase, un service européen (voir la section 3). De temps en temps, Taipo peut aussi vous proposer de laisser un avis : cette fenêtre est affichée par Google Play, qui reçoit votre note et votre commentaire ; Taipo ne les reçoit pas.</string>
     <string name="privacy_section_3_title">3. Aucune collecte de données personnelles</string>
     <string name="privacy_section_3_body">Taipo n\'a pas de compte et pas de publicité. Il mesure son usage de façon anonyme avec Aptabase : des événements comme « une correction IA a réussi », « un modèle a été téléchargé » ou « un réglage a changé », avec la version de l\'application, la version d\'Android, le modèle de l\'appareil et sa langue. Jamais votre texte, ce que vous copiez ou dictez, ni un identifiant de l\'appareil ou de la personne, et rien depuis les champs de mot de passe. Vous pouvez la désactiver à tout moment dans Paramètres du clavier > Données d\'utilisation. Comme pour toute connexion Internet, les serveurs d\'Aptabase reçoivent techniquement l\'adresse IP de la requête ; Taipo ne la voit ni ne la conserve jamais (voir la politique de confidentialité d\'Aptabase pour son traitement). Taipo lui-même ne collecte aucune donnée personnelle vous concernant.</string>
     <string name="privacy_section_4_title">4. Champs de mot de passe</string>
@@ -554,4 +554,17 @@
     <string name="voice_file_error_not_provided">Fichier %1$s manquant pour le modèle vocal. Téléchargez le modèle vocal dans l\'écran « Modèle vocal ».</string>
     <string name="voice_file_error_cannot_open">Impossible d\'ouvrir le fichier %1$s (permission perdue ? à re-sélectionner).</string>
     <string name="voice_file_error_cannot_finalize">Impossible de finaliser la copie du fichier %1$s.</string>
+    <string name="keyboard_settings_dictionaries_title">Dictionnaires</string>
+    <string name="keyboard_settings_dictionaries_description">Le dictionnaire de chaque langue utilisée (correction et suggestions) se télécharge automatiquement, quelques Mo par langue, puis fonctionne sans connexion.</string>
+    <string name="dictionary_status_downloading">Téléchargement… %1$d %%</string>
+    <string name="dictionary_status_queued">En attente de connexion…</string>
+    <string name="dictionary_status_installed">Installé</string>
+    <string name="dictionary_status_missing">Pas encore téléchargé : correction et suggestions indisponibles pour cette langue.</string>
+    <string name="dictionary_download">Télécharger</string>
+    <string name="dictionary_retry">Réessayer</string>
+    <string name="dictionary_failed_network">Téléchargement interrompu : connexion perdue. « Réessayer » reprend là où il s\'est arrêté.</string>
+    <string name="dictionary_failed_server">Le serveur n\'a pas renvoyé le fichier attendu. Réessayez plus tard.</string>
+    <string name="dictionary_failed_no_space">Espace insuffisant sur l\'appareil pour ce dictionnaire.</string>
+    <string name="dictionary_failed_system_stop">Android a interrompu le téléchargement. Appuyez sur Réessayer.</string>
+    <string name="dictionary_failed_other">Le téléchargement a échoué. Réessayez.</string>
 </resources>

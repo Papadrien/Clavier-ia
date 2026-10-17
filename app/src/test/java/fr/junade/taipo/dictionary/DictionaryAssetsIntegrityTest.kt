@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.ValueSource
  * `Dictionary.parseFrequencyLines` est volontairement tolérant (une ligne sans fréquence valide compte
  * pour 1, une ligne vide est ignorée) : une liste abîmée par un mauvais export ou un mauvais éditeur
  * passerait donc inaperçue. Ces tests relisent le fichier brut et exigent le format strict décrit dans
- * `assets/dictionaries/SOURCES.txt` : une ligne « mot fréquence », triée par fréquence décroissante.
+ * `dictionaries/SOURCES.txt` : une ligne « mot fréquence », triée par fréquence décroissante.
  *
  * Les seuils (taille plancher, lettres isolées) reprennent l'état constaté des fichiers au 04/10/2026 :
  * ils détectent une régression, pas une perfection linguistique (les fautes de corpus connues, citées
@@ -28,9 +28,10 @@ class DictionaryAssetsIntegrityTest {
     private class Entry(val lineNumber: Int, val word: String, val frequency: Long)
 
     private fun assetFile(name: String): File {
-        // Gradle lance les tests JVM depuis le dossier du module (app/) ; on tolère aussi la racine du projet.
-        val candidates = listOf(File("src/main/assets/dictionaries/$name"), File("app/src/main/assets/dictionaries/$name"))
-        return candidates.firstOrNull { it.isFile } ?: fail("Asset introuvable : $name (cherché dans $candidates)")
+        // Les listes ne sont plus dans l'APK : elles vivent dans dictionaries/ à la racine du projet (source de ce qui est envoyé
+        // sur le bucket R2). Gradle lance les tests JVM depuis le dossier du module (app/) ; on tolère aussi la racine du projet.
+        val candidates = listOf(File("../dictionaries/$name"), File("dictionaries/$name"))
+        return candidates.firstOrNull { it.isFile } ?: fail("Fichier de dictionnaire introuvable : $name (cherché dans $candidates)")
     }
 
     private fun rawLines(language: String): List<String> {

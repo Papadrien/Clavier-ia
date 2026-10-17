@@ -434,11 +434,11 @@
     <string name="button_privacy">Privacy</string>
     <string name="home_row_privacy_subtitle">What stays on your device and what connects</string>
     <string name="privacy_title">Privacy</string>
-    <string name="privacy_updated">Last updated: October 15, 2026</string>
+    <string name="privacy_updated">Last updated: October 17, 2026</string>
     <string name="privacy_section_1_title">1. On-device processing</string>
     <string name="privacy_section_1_body">Correction, text generation, voice input and AI transcription run on your device using locally installed models. The text you type, copy or dictate and the audio of your recordings are not sent to any server. The audio of an AI transcription stays in memory while it is processed: it is never saved to a file.</string>
     <string name="privacy_section_2_title">2. Internet connections</string>
-    <string name="privacy_section_2_body">Taipo connects to the Internet to download AI model files, at your request: from a Junadé server for the Gemma 3 models and the voice input models, and from Hugging Face for the Gemma 4 models. These servers receive the usual technical information of a connection (IP address, requested file), never your text or your recordings. Unless you turn it off in the keyboard settings, Taipo also sends anonymous usage analytics to Aptabase, a European service (see section 3). From time to time, Taipo may also offer to let you leave a review: this window is displayed by Google Play, which receives your rating and comment; Taipo does not receive them.</string>
+    <string name="privacy_section_2_body">Taipo connects to the Internet to download AI model files, at your request: from a Junadé server for the Gemma 3 models and the voice input models, and from Hugging Face for the Gemma 4 models. It also downloads, from the same Junadé server, the dictionary of each keyboard language you use (a few MB, automatically as soon as a language is selected). These servers receive the usual technical information of a connection (IP address, requested file), never your text or your recordings. Unless you turn it off in the keyboard settings, Taipo also sends anonymous usage analytics to Aptabase, a European service (see section 3). From time to time, Taipo may also offer to let you leave a review: this window is displayed by Google Play, which receives your rating and comment; Taipo does not receive them.</string>
     <string name="privacy_section_3_title">3. No personal data collection</string>
     <string name="privacy_section_3_body">Taipo has no account and no ads. It measures its usage anonymously with Aptabase: events such as “an AI correction succeeded”, “a model was downloaded” or “a setting changed”, along with the app version, the Android version, the device model and its language. Never your text, what you copy or dictate, or any identifier of the device or the person, and nothing from password fields. As with any Internet connection, Aptabase\'s servers technically receive the IP address of the request; Taipo itself never sees it or stores it (see Aptabase\'s privacy policy for how it is handled). You can turn it off at any time in Keyboard settings > Usage data. Taipo itself collects no personal data about you.</string>
     <string name="privacy_section_4_title">4. Password fields</string>
@@ -539,4 +539,17 @@
     <string name="voice_file_error_not_provided">%1$s file missing for the voice model. Download the voice model from the “Voice model” screen.</string>
     <string name="voice_file_error_cannot_open">Couldn\'t open the %1$s file (permission lost? select it again).</string>
     <string name="voice_file_error_cannot_finalize">Couldn\'t finalize the copy of the %1$s file.</string>
+    <string name="keyboard_settings_dictionaries_title">Dictionaries</string>
+    <string name="keyboard_settings_dictionaries_description">The dictionary of each language in use (correction and suggestions) downloads automatically, a few MB per language, then works offline.</string>
+    <string name="dictionary_status_downloading">Downloading… %1$d %%</string>
+    <string name="dictionary_status_queued">Waiting for a connection…</string>
+    <string name="dictionary_status_installed">Installed</string>
+    <string name="dictionary_status_missing">Not downloaded yet: correction and suggestions are unavailable for this language.</string>
+    <string name="dictionary_download">Download</string>
+    <string name="dictionary_retry">Retry</string>
+    <string name="dictionary_failed_network">Download interrupted: connection lost. “Retry” resumes where it stopped.</string>
+    <string name="dictionary_failed_server">The server did not return the expected file. Try again later.</string>
+    <string name="dictionary_failed_no_space">Not enough space on the device for this dictionary.</string>
+    <string name="dictionary_failed_system_stop">Android interrupted the download. Tap Retry.</string>
+    <string name="dictionary_failed_other">The download failed. Try again.</string>
 </resources>

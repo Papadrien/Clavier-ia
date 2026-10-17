@@ -26,4 +26,6 @@
          et le transfert d'appareil copierait les modèles. L'utilisateur les re-sélectionne après restauration. -->
     <exclude domain="file" path="models/" />
     <exclude domain="file" path="voice-model/" />
+    <!-- Dictionnaires téléchargés (quelques Mo par langue) : retéléchargés au besoin. -->
+    <exclude domain="file" path="dictionaries/" />
 </full-backup-content>
