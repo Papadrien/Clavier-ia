@@ -20,15 +20,15 @@ internal object RobotIconPose {
     /** Opacité de la bouche, de 0 à 1. */
     fun mouthAlpha(progress: Float): Float = progress.coerceIn(0f, 1f)
 
-    /** Largeur relative de la bouche (elle s'élargit en apparaissant), de [MOUTH_MIN_SCALE] à 1. */
+    /** Largeur relative de la bouche (elle s'élargit en apparaissant) : [MOUTH_MIN_SCALE] au repos, 1 en pose finale, un peu plus pendant le ressort. */
     fun mouthScaleX(progress: Float): Float =
-        MOUTH_MIN_SCALE + (1f - MOUTH_MIN_SCALE) * progress.coerceIn(0f, 1f)
+        MOUTH_MIN_SCALE + (1f - MOUTH_MIN_SCALE) * progress.coerceAtLeast(0f)
 
     const val ANTENNA_REST_Y = 4f
     const val ANTENNA_BASE_Y = 8f
     const val ANTENNA_DROP = 2.4f
     const val EYE_RISE = 1f
     const val EYE_SQUINT = 0.45f
-    const val EYE_SQUINT_MAX = 0.55f
+    const val EYE_SQUINT_MAX = 0.65f
     const val MOUTH_MIN_SCALE = 0.6f
 }

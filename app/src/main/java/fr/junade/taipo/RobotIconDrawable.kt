@@ -133,13 +133,13 @@ internal class RobotIconDrawable(private val sizePx: Int) : Drawable() {
 
     private companion object {
         const val DURATION_MS = 300L
-        const val OVERSHOOT_TENSION = 1.2f
+        const val OVERSHOOT_TENSION = 4f
         const val GRID = 24f
         const val EYE_RADIUS = 1.4f
         const val EYE_CENTER_Y = 13.5f
         val EYE_CENTERS_X = floatArrayOf(9f, 15f)
         const val MOUTH_Y = 16.6f
-        const val MOUTH_HALF_WIDTH = 3f
+        const val MOUTH_HALF_WIDTH = 2.4f
         const val MOUTH_STROKE = 1.6f
     }
 }
