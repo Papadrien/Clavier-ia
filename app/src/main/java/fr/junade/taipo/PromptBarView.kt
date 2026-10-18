@@ -69,10 +69,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
     private val chatHiddenBackground = style.pillBackground(BUTTON_COLOR)
     private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
     private val chatIcon = ChatIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
-    private val micIcon = MicIconDrawable(
-        context.dimen(R.dimen.taipo_icon_size).toInt(),
-        context.getColor(R.color.taipo_purple_light),
-    )
+    private val micIcon = MicIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
 
     // Icône du bouton rond (étincelles en orbite, flèche, stop) ; coupée au cercle de la face, ombre déduite.
     private val sendIcon = SendIconDrawable(
@@ -171,7 +168,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         // Bouton micro (dictée dans le prompt) : à gauche de la pilule. Le geste réel passe par un écouteur tactile posé par
         // l'appelant ; le clic n'est déclenché que par l'accessibilité (TalkBack), comme pour le bouton Vocal.
         style.styleRoundIconButton(voiceButton, R.drawable.ic_mic)
-        voiceButton.setImageDrawable(micIcon) // même onde que ic_mic ; les barres s'animent (écoute, chargement)
+        voiceButton.setImageDrawable(micIcon) // même tracé que ic_mic ; la capsule s'anime (chargement, écoute)
         addView(
             voiceButton,
             LayoutParams(dimen(R.dimen.taipo_bar_icon_button_width).toInt(), barHeight).apply { marginEnd = gap },
@@ -403,7 +400,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
-    /** Niveau sonore de l'écoute (0 à 1) : fait monter et descendre les barres de l'icône Vocal. */
+    /** Niveau sonore de l'écoute (0 à 1) : fait monter et descendre la jauge de la capsule du micro. */
     fun setVoiceLevel(level: Float) = micIcon.setLevel(level)
 
     private fun renderVoice() {

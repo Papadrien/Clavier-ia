@@ -4,6 +4,7 @@ import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import fr.junade.taipo.AppLog
+import fr.junade.taipo.VoiceLevel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -34,6 +35,9 @@ class AiTranscriptionRecorder(private val scope: CoroutineScope) {
 
     /** Appelé (thread d'arrière-plan) quand le micro ne fournit plus de données : la capture est alors terminée. */
     var onMicLost: (() -> Unit)? = null
+
+    /** Appelé (thread d'arrière-plan) à chaque bloc lu, avec le niveau sonore de 0 à 1 : il anime l'icône du bouton. */
+    var onLevel: ((Float) -> Unit)? = null
 
     val isRecording: Boolean get() = record != null
 
@@ -76,7 +80,10 @@ class AiTranscriptionRecorder(private val scope: CoroutineScope) {
                 }
                 val read = audioRecord.read(samples, filled, minOf(chunk, room))
                 when {
-                    read > 0 -> filled += read
+                    read > 0 -> {
+                        onLevel?.invoke(VoiceLevel.fromRms(rms(samples, filled, read)))
+                        filled += read
+                    }
                     read == 0 -> delay(EMPTY_READ_DELAY_MS)
                     else -> {
                         AppLog.e(TAG, "Lecture du micro en échec (code $read) : capture arrêtée")
@@ -106,6 +113,15 @@ class AiTranscriptionRecorder(private val scope: CoroutineScope) {
         releaseMic()
         samples = ShortArray(0)
         filled = 0
+    }
+
+    private fun rms(buffer: ShortArray, from: Int, length: Int): Double {
+        var sum = 0.0
+        for (i in from until from + length) {
+            val v = buffer[i].toDouble()
+            sum += v * v
+        }
+        return kotlin.math.sqrt(sum / length)
     }
 
     private fun releaseMic() {

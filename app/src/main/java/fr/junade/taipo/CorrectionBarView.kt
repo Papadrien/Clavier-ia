@@ -79,11 +79,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private val menuBackgrounds = style.toggleBackgrounds()
     private val actionsMenuBackgrounds = style.toggleBackgrounds()
     private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
-    private val micIcon = MicIconDrawable(
+    private val micIcon = MicIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
+    private val aiTranscriptionIcon = WaveIconDrawable(
         context.dimen(R.dimen.taipo_icon_size).toInt(),
         context.getColor(R.color.taipo_purple_light),
     )
-    private val aiTranscriptionSpinner = LoadingSpinnerDrawable(context)
     private val correctIcon = CorrectIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
 
     /** État précédent du bouton Corriger : CORRECTING → IDLE (correction réussie) déclenche le retracé de la coche. */
@@ -230,6 +230,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
 
         // Story 14.5 : bouton « voix vers texte », entre Corriger et le menu « robot ». Le clic est relié par l'IME.
         style.styleRoundIconButton(aiTranscriptionButton, R.drawable.ic_speech_to_text)
+        aiTranscriptionButton.setImageDrawable(aiTranscriptionIcon) // trois barres : onde au repos et à l'écoute, lignes pendant le traitement
         aiTranscriptionButton.contentDescription = context.getString(R.string.ai_transcription_button_description)
         aiTranscriptionButton.label = context.getString(R.string.action_pill_transcription)
         addView(
@@ -256,7 +257,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         // Lot 08 : Vocal devient un bouton rond à icône micro ; son état (écoute, chargement…) passe par la couleur,
         // la transparence et la description d'accessibilité, plus par le texte.
         style.styleRoundIconButton(voiceButton, R.drawable.ic_mic)
-        voiceButton.setImageDrawable(micIcon) // même onde que ic_mic ; les barres s'animent (écoute, chargement)
+        voiceButton.setImageDrawable(micIcon) // même tracé que ic_mic ; la capsule s'anime (chargement, écoute)
         // Le geste réel passe par setOnTouchListener (côté appelant, qui consomme tout toucher) ; le clic, lui, n'est déclenché
         // que par l'accessibilité (TalkBack, double appui) : l'appelant le relie à la bascule d'écoute (lot 20).
         voiceButton.setOnClickListener { }
@@ -533,7 +534,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         applyFieldRestriction()
     }
 
-    /** Niveau sonore de l'écoute (0 à 1) : fait monter et descendre les barres de l'icône Vocal. */
+    /** Niveau sonore de l'écoute (0 à 1) : fait monter et descendre la jauge de la capsule du micro. */
     fun setVoiceLevel(level: Float) = micIcon.setLevel(level)
 
     private fun renderVoice() {
@@ -545,6 +546,9 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         renderActionButtons()
         applyFieldRestriction()
     }
+
+    /** Niveau sonore de l'enregistrement (0 à 1) : fait monter et descendre les barres de l'icône Transcription IA. */
+    fun setAiTranscriptionLevel(level: Float) = aiTranscriptionIcon.setLevel(level)
 
     private fun renderAiTranscription() {
         val recording = aiTranscriptionState == AiTranscriptionBarState.RECORDING
@@ -561,13 +565,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         val face = if (recording) R.color.action_danger else R.color.surface_button
         aiTranscriptionButton.face = face
         aiTranscriptionButton.alpha = if (processing) 0.6f else 1f
-        if (processing) {
-            if (aiTranscriptionButton.drawable !== aiTranscriptionSpinner) aiTranscriptionButton.setImageDrawable(aiTranscriptionSpinner)
-            aiTranscriptionSpinner.start()
-        } else {
-            aiTranscriptionSpinner.stop()
-            if (aiTranscriptionButton.drawable === aiTranscriptionSpinner) aiTranscriptionButton.setImageResource(R.drawable.ic_speech_to_text)
-        }
+        aiTranscriptionIcon.setMode(WaveIconMode.of(aiTranscriptionState), animate = isLaidOut)
         applyFieldRestriction()
     }
 

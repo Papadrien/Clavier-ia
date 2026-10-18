@@ -321,6 +321,7 @@ internal class AiTranscriptionHost(private val ime: ImeHostContext) : AiTranscri
     override fun setBarState(state: AiTranscriptionBarState) {
         ime.correctionBar.aiTranscriptionState = state
     }
+    override fun setLevel(level: Float) = ime.correctionBar.setAiTranscriptionLevel(level)
 }
 
 /** Glissement de suppression depuis la touche retour arrière (story 1.9) : voir [DeleteSwipeController]. */

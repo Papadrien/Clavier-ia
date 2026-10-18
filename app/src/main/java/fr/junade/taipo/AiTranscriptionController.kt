@@ -54,6 +54,9 @@ class AiTranscriptionController(
         fun insertText(text: String): Boolean
 
         fun setBarState(state: AiTranscriptionBarState)
+
+        /** Niveau sonore (0 à 1) pendant l'enregistrement : il fait monter et descendre les barres de l'icône. */
+        fun setLevel(level: Float)
     }
 
     private val recorder = AiTranscriptionRecorder(scope)
@@ -69,6 +72,7 @@ class AiTranscriptionController(
     init {
         // Limite de durée atteinte ou micro perdu : même chose qu'un second appui.
         recorder.onLimitReached = { scope.launch { if (state == AiTranscriptionBarState.RECORDING) stopAndTranscribe() } }
+        recorder.onLevel = { level -> scope.launch { if (state == AiTranscriptionBarState.RECORDING) host.setLevel(level) } }
         recorder.onMicLost = { scope.launch { if (state == AiTranscriptionBarState.RECORDING) stopAndTranscribe() } }
     }
 

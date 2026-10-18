@@ -6,19 +6,21 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.ColorFilter
 import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.PathMeasure
 import android.graphics.PixelFormat
 import android.graphics.PorterDuff
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.view.animation.LinearInterpolator
-import kotlin.math.roundToInt
 
 /**
- * Icône du bouton Vocal, dessinée au Canvas sur une grille de 24 : trois barres verticales en onde. Au repos l'onde est
- * fixe ; à l'écoute les barres montent et descendent selon le niveau sonore réel ([setLevel]) et passent à la teinte
- * [accentColor] ; en chargement ou transcription elles se couchent en trois lignes qu'un reflet balaie. Les passages d'un
- * état à l'autre se font avec un léger ressort. Teinte et opacité de base : celles posées par le bouton.
+ * Icône micro du bouton Vocal, dessinée au Canvas (même tracé que `ic_mic.xml`, grille de 24). Seule la capsule s'anime :
+ * en chargement (ou transcription) son contour se dessine puis s'efface en boucle ; à l'écoute une jauge la remplit et la
+ * vide selon le niveau sonore réel ([setLevel]). Le pied (U, tige, base) ne change jamais. Les passages d'un état à l'autre
+ * se font avec un léger ressort. Teinte et opacité : celles posées par le bouton.
  */
-internal class MicIconDrawable(private val sizePx: Int, private val accentColor: Int = 0) : Drawable() {
+internal class MicIconDrawable(private val sizePx: Int) : Drawable() {
 
     private var mode = MicIconMode.IDLE
     private val loadSpring = SpringValue()
@@ -31,7 +33,36 @@ internal class MicIconDrawable(private val sizePx: Int, private val accentColor:
     private var tint: ColorStateList? = null
     private var alphaValue = 255
 
+    private val stroke = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeWidth = 2f
+        strokeCap = Paint.Cap.ROUND
+        strokeJoin = Paint.Join.ROUND
+    }
     private val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
+
+    // Tracé de ic_mic.xml : capsule (de y = 3 à 14), U, tige et base.
+    private val capsule = Path().apply {
+        moveTo(12f, 3f)
+        arcTo(RectF(9f, 3f, 15f, 9f), -90f, 90f)
+        lineTo(15f, 11f)
+        arcTo(RectF(9f, 8f, 15f, 14f), 0f, 180f)
+        lineTo(9f, 6f)
+        arcTo(RectF(9f, 3f, 15f, 9f), 180f, 90f)
+        close()
+    }
+    private val foot = Path().apply {
+        moveTo(5.5f, 11f)
+        arcTo(RectF(5.5f, 4.5f, 18.5f, 17.5f), 180f, -180f)
+        moveTo(12f, 17.5f)
+        lineTo(12f, 21f)
+        moveTo(9f, 21f)
+        lineTo(15f, 21f)
+    }
+    private val measure = PathMeasure(capsule, true)
+    private val capsuleLength = measure.length
+    private val segment = Path()
+    private val wave = Path()
 
     /** Passe à [newMode] ; [animate] faux (barre pas encore affichée) ou animations coupées : pose directe, sans ressort. */
     fun setMode(newMode: MicIconMode, animate: Boolean) {
@@ -100,36 +131,46 @@ internal class MicIconDrawable(private val sizePx: Int, private val accentColor:
     override fun draw(canvas: Canvas) {
         val b = bounds
         if (b.isEmpty) return
-        val base = tint?.defaultColor ?: Color.WHITE
-        val alpha = Color.alpha(base) * alphaValue / OPAQUE
-        val listen = listenSpring.value.coerceIn(0f, 1f)
-        val load = loadSpring.value.coerceIn(0f, 1f)
+        val color = tint?.defaultColor ?: Color.WHITE
+        val a = Color.alpha(color) * alphaValue / 255
+        stroke.color = color
+        stroke.alpha = a
+        fill.color = color
+        fill.alpha = a * GAUGE_ALPHA / 255
 
         canvas.save()
         canvas.translate(b.left.toFloat(), b.top.toFloat())
         canvas.scale(b.width() / GRID, b.height() / GRID)
-        for (i in 0 until MicIconPose.BAR_COUNT) {
-            val r = MicIconPose.bar(i, listenSpring.value, loadSpring.value, shownLevel, time)
-            val toAccent = listen + (1f - listen) * load * MicIconPose.sweep(i, time) * SWEEP_STRENGTH
-            fill.color = blend(base, accentColor, if (accentColor == 0) 0f else toAccent)
-            fill.alpha = alpha
-            val radius = minOf(r.width, r.height) / 2f
-            canvas.drawRoundRect(r.x, r.y, r.x + r.width, r.y + r.height, radius, radius, fill)
+
+        canvas.drawPath(foot, stroke) // le pied ne bouge jamais
+
+        val level = MicIconPose.gaugeFill(listenSpring.value, shownLevel)
+        if (level > FILL_EPSILON) {
+            wave.rewind()
+            wave.moveTo(WAVE_LEFT, MicIconPose.surfaceY(level, WAVE_LEFT, time))
+            var x = WAVE_LEFT + WAVE_STEP
+            while (x <= WAVE_RIGHT) {
+                wave.lineTo(x, MicIconPose.surfaceY(level, x, time))
+                x += WAVE_STEP
+            }
+            wave.lineTo(WAVE_RIGHT, WAVE_BOTTOM)
+            wave.lineTo(WAVE_LEFT, WAVE_BOTTOM)
+            wave.close()
+            canvas.save()
+            canvas.clipPath(capsule)
+            canvas.drawPath(wave, fill)
+            canvas.restore()
+        }
+
+        val (start, end) = MicIconPose.traceWindow(time, loadSpring.value)
+        if (start <= 0f && end >= 1f) {
+            canvas.drawPath(capsule, stroke)
+        } else if (end - start > MIN_TRACE) {
+            segment.rewind()
+            measure.getSegment(start * capsuleLength, end * capsuleLength, segment, true)
+            canvas.drawPath(segment, stroke)
         }
         canvas.restore()
-    }
-
-    /** Mélange [from] vers [to] (alpha de [from] conservé) : [weight] = 0 donne [from], 1 donne [to]. */
-    private fun blend(from: Int, to: Int, weight: Float): Int {
-        val w = weight.coerceIn(0f, 1f)
-        if (w == 0f) return from
-        fun mixed(a: Int, b: Int) = (a + (b - a) * w).roundToInt()
-        return Color.argb(
-            Color.alpha(from),
-            mixed(Color.red(from), Color.red(to)),
-            mixed(Color.green(from), Color.green(to)),
-            mixed(Color.blue(from), Color.blue(to)),
-        )
     }
 
     /** L'animation ne tourne que tant que le bouton est visible : elle s'arrête quand la barre est masquée ou détachée. */
@@ -153,6 +194,7 @@ internal class MicIconDrawable(private val sizePx: Int, private val accentColor:
     }
 
     override fun setColorFilter(colorFilter: ColorFilter?) {
+        stroke.colorFilter = colorFilter
         fill.colorFilter = colorFilter
         invalidateSelf()
     }
@@ -173,7 +215,12 @@ internal class MicIconDrawable(private val sizePx: Int, private val accentColor:
         const val NANOS_PER_SECOND = 1_000_000_000f
         const val MAX_FRAME_S = 0.05f
         const val LEVEL_EPSILON = 0.005f
-        const val SWEEP_STRENGTH = 0.9f
-        const val OPAQUE = 255
+        const val FILL_EPSILON = 0.01f
+        const val GAUGE_ALPHA = 242 // 0,95 sur 255
+        const val MIN_TRACE = 0.003f
+        const val WAVE_LEFT = 8f
+        const val WAVE_RIGHT = 16f
+        const val WAVE_STEP = 0.5f
+        const val WAVE_BOTTOM = 15f
     }
 }
