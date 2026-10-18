@@ -65,7 +65,7 @@ class ModelDownloadActivity : ModelScreenActivity() {
 
         val container = findViewById<LinearLayout>(R.id.models_container)
         val inflater = LayoutInflater.from(this)
-        AiModel.entriesOrdered().forEach { model ->
+        AiModel.entriesForDisplay().forEach { model ->
             val item = inflater.inflate(R.layout.item_model_download, container, false)
             item.applyTaipoFontToTree()
             rows[model] = ModelRowViews.from(item)

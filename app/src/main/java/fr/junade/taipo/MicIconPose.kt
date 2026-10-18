@@ -26,10 +26,10 @@ internal enum class MicIconMode {
 /** Niveau sonore du micro, de 0 (silence) à 1 (voix forte), à partir de l'amplitude RMS d'un tampon PCM16. */
 internal object VoiceLevel {
     private const val FULL_SCALE = 32768.0
-    private const val FLOOR_DB = -50.0
-    private const val CEILING_DB = -15.0
+    private const val FLOOR_DB = -55.0
+    private const val CEILING_DB = -20.0
 
-    /** Échelle en décibels (l'oreille est logarithmique) : une voix normale (RMS ≈ 500 à 3000) tombe entre 0,4 et 0,85. */
+    /** Échelle en décibels (l'oreille est logarithmique) : une voix normale (RMS ≈ 500 à 3000) tombe entre 0,53 et 0,98 (échelle décalée de 5 dB : jauge du micro et onde plus sensibles). */
     fun fromRms(rms: Double): Float {
         if (rms <= 0.0) return 0f
         val db = 20.0 * log10(rms / FULL_SCALE)

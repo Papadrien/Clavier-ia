@@ -148,6 +148,7 @@
     <string name="prompt_stopping_description">Stopping generation…</string>
     <string name="prompt_chat_toggle_description">Show or hide the conversation</string>
     <string name="prompt_response_pending">…</string>
+    <string name="prompt_waiting_description">Generating the response…</string>
     <string name="prompt_loading_model">Loading the model…</string>
     <string name="prompt_response_interrupted">Generation interrupted.</string>
     <string name="prompt_response_empty">The model returned no response.</string>

@@ -149,6 +149,7 @@
     <string name="prompt_stopping_description">Arrêt de la génération en cours…</string>
     <string name="prompt_chat_toggle_description">Afficher ou masquer la conversation</string>
     <string name="prompt_response_pending">…</string>
+    <string name="prompt_waiting_description">Génération de la réponse…</string>
     <string name="prompt_loading_model">Chargement du modèle…</string>
     <string name="prompt_response_interrupted">Génération interrompue.</string>
     <string name="prompt_response_empty">Le modèle n\'a pas renvoyé de réponse.</string>

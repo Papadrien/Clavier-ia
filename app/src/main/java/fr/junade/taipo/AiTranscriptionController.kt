@@ -42,6 +42,9 @@ class AiTranscriptionController(
     interface Host {
         fun showMessage(message: String)
 
+        /** Retour haptique d'une action IA (début, fin d'enregistrement, fin de traitement). */
+        fun hapticAi(cue: AiHapticCue)
+
         /** Une dictée est en cours (le micro est pris). */
         fun voiceRecording(): Boolean
 
@@ -79,7 +82,10 @@ class AiTranscriptionController(
     fun onClick() {
         when (state) {
             AiTranscriptionBarState.IDLE -> start()
-            AiTranscriptionBarState.RECORDING -> stopAndTranscribe()
+            AiTranscriptionBarState.RECORDING -> {
+                host.hapticAi(AiHapticCue.TRANSCRIPTION_STOP) // appui qui termine l'enregistrement
+                stopAndTranscribe()
+            }
             AiTranscriptionBarState.PROCESSING -> cancelProcessing()
             AiTranscriptionBarState.CANCELLING -> host.showMessage(context.getString(R.string.ai_transcription_cancelling_wait))
         }
@@ -127,6 +133,7 @@ class AiTranscriptionController(
         }
         insertAllowed = true
         cancelled = false
+        host.hapticAi(AiHapticCue.ACTION_START)
         setState(AiTranscriptionBarState.RECORDING)
     }
 
@@ -163,6 +170,7 @@ class AiTranscriptionController(
                     text.isEmpty() -> host.showMessage(context.getString(R.string.ai_transcription_no_speech))
                     insertAllowed -> {
                         host.insertText(text)
+                        host.hapticAi(AiHapticCue.PROCESSING_DONE) // fin du traitement : texte inséré
                         Analytics.aiAction(context, AnalyticsEvents.AiType.TRANSCRIBE, model.id, startedAt)
                     }
                 }

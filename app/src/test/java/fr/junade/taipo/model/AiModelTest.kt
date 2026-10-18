@@ -1,5 +1,6 @@
 package fr.junade.taipo.model
 
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
@@ -33,5 +34,12 @@ class AiModelTest {
     fun `byId retrouve le bon modele`() {
         assertNotNull(AiModel.byId("equilibre"))
         assertNull(AiModel.byId("inconnu"))
+    }
+
+    @Test
+    fun `l ordre d affichage des parametres est l inverse de l ordre logique`() {
+        assertEquals(AiModel.entriesOrdered().reversed(), AiModel.entriesForDisplay())
+        assertEquals(AiModel.PERFORMANT, AiModel.entriesForDisplay().first())
+        assertEquals(AiModel.ULTRA_LEGER, AiModel.entriesOrdered().first())
     }
 }

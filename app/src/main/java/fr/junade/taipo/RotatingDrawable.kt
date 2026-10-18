@@ -87,6 +87,6 @@ internal class RotatingDrawable(private val inner: Drawable) : Drawable(), Drawa
 
     private companion object {
         const val DURATION_MS = 320L
-        const val OVERSHOOT_TENSION = 4f // même ressort que l'icône robot (RobotIconDrawable)
+        const val OVERSHOOT_TENSION = 2f // moitié de l'icône robot (4f) : effet ressort du chevron divisé par deux
     }
 }

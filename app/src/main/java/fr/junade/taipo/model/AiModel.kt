@@ -121,6 +121,9 @@ enum class AiModel(
 
         /** Liste ordonnée des 4 modèles, dans l'ordre Ultra-léger → Performant. */
         fun entriesOrdered(): List<AiModel> = values().toList()
+
+        /** Ordre des listes des paramètres (sélecteur et écran « Modèle IA ») : Performant → Ultra-léger, l'inverse de [entriesOrdered]. */
+        fun entriesForDisplay(): List<AiModel> = entriesOrdered().reversed()
     }
 }
 

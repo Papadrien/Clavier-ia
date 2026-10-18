@@ -46,6 +46,9 @@ class VoiceController(
     interface Host {
         fun showMessage(message: String)
 
+        /** Retour haptique d'une action IA (début, fin de chargement, fin de saisie). */
+        fun hapticAi(cue: AiHapticCue)
+
         /** Une génération (mode prompt) est en cours : la dictée est refusée. */
         fun generationBusy(): Boolean
 
@@ -201,6 +204,7 @@ class VoiceController(
             return
         }
 
+        host.hapticAi(AiHapticCue.ACTION_START) // le premier appui déclenche le chargement
         host.clearHighlight()
         recordingInPrompt = host.promptActive()
         isRecording = true
@@ -249,6 +253,7 @@ class VoiceController(
                 recorder.start()
                 listeningStartedAt = SystemClock.elapsedRealtime()
                 host.setVoiceBarState(VoiceBarState.RECORDING) // le micro capte vraiment, à partir de maintenant
+                host.hapticAi(AiHapticCue.LOADING_DONE)
                 voiceStartJob = null
                 // Insertion au fur et à mesure : chaque nouvelle hypothèse remplace
                 // entièrement la précédente (le décodeur streaming peut réviser des
@@ -277,7 +282,9 @@ class VoiceController(
         }
     }
 
+    /** Fin de l'écoute (appui, ou arrêt automatique après silence ou micro perdu) : toujours la même vibration forte de 6 ms. */
     fun stopRecording() {
+        host.hapticAi(AiHapticCue.RECORDING_STOP)
         val recorder = voiceRecorder ?: run {
             // Arrêt demandé pendant le chargement : on abandonne le démarrage, rien n'a été enregistré.
             voiceStartJob?.cancel()

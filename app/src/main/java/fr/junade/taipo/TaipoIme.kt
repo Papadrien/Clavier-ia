@@ -86,6 +86,7 @@ class TaipoIme : InputMethodService() {
         override fun haptic() = this@TaipoIme.hapticFeedback.perform(this@TaipoIme.hapticIntensity)
         override fun hapticCursorMove() =
             this@TaipoIme.hapticFeedback.perform(this@TaipoIme.hapticIntensity.cursorMoveFeedback())
+        override fun hapticAi(cue: AiHapticCue) = this@TaipoIme.hapticFeedback.perform(cue, this@TaipoIme.hapticIntensity)
         override fun clearHighlight() = this@TaipoIme.clearHighlightIfNeeded()
         override fun clearPendingAutocorrection() {
             this@TaipoIme.pendingAutocorrection = null

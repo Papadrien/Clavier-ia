@@ -38,6 +38,14 @@ internal data class CorrectAppearance(
     val alpha: Float,
     /** Chargement du modèle ou correction en cours : une roue animée remplace l'icône du bouton. */
     val loading: Boolean = false,
+    /** Couleur de la face : violet pendant le traitement de la correction, gris sinon. */
+    @ColorRes val face: Int = R.color.surface_button,
+)
+
+/** Apparence du bouton Transcription IA : couleur de la face (rouge à l'écoute, violet au traitement, gris sinon) et opacité. */
+internal data class AiTranscriptionAppearance(
+    @ColorRes val face: Int,
+    val alpha: Float,
 )
 
 /** Apparence du bouton Vocal. */
@@ -76,7 +84,10 @@ internal object BarVisibility {
         wordSuggestionsShown: Boolean = false,
     ): ActionButtonsVisibility {
         val busy = isBusy(voice, correction)
-        val actionsVisible = zoneState.actionButtonsVisible(busy)
+        // Une écoute (ou sa transcription) ne change pas la rangée : le menu « robot » reste en place et Transcription IA
+        // n'apparaît pas à sa place. Seule une correction en cours fait disparaître le menu (Corriger sert alors d'arrêt).
+        val rowBusy = isBusy(VoiceBarState.IDLE, correction)
+        val actionsVisible = zoneState.actionButtonsVisible(rowBusy)
         val hiddenBySuggestion = correction == CorrectionBarState.IDLE &&
             suggestionsDisplayed(zoneState, clipboardPanelOpen, wordSuggestionsShown)
         return ActionButtonsVisibility(
@@ -85,7 +96,7 @@ internal object BarVisibility {
             generate = actionsVisible && !busy,
             correct = (actionsVisible || zoneState.zone == SuggestionZoneState.Zone.WORDS) &&
                 correction != CorrectionBarState.HIDDEN && !hiddenBySuggestion,
-            actionsMenu = !clipboardPanelOpen && zoneState.actionsMenuButtonVisible(busy),
+            actionsMenu = !clipboardPanelOpen && zoneState.actionsMenuButtonVisible(rowBusy),
         )
     }
 
@@ -114,8 +125,10 @@ internal object BarVisibility {
         !clipboardPanelOpen && zoneState.zone == SuggestionZoneState.Zone.ACTIONS
 
     /**
-     * Panneau Smart Clipboard ouvert : la zone ne montre que le bouton Smart Clipboard (actif), quel que
-     * soit l'état de saisie, et les menus « ··· » de gauche ainsi que la roue crantée se cachent.
+     * Panneau Smart Clipboard ouvert : la zone ne montre que le bouton Smart Clipboard (actif) et le bouton Annuler,
+     * quel que soit l'état de saisie, et le menu « ··· » de gauche se cache. La roue crantée reste affichée : la
+     * barre du haut ne change donc pas à l'ouverture (le panneau ne s'ouvre que depuis le bouton Smart Clipboard,
+     * donc déjà accompagné de la roue crantée).
      */
     fun zoneContent(zoneState: SuggestionZoneState, clipboardPanelOpen: Boolean): ZoneContentVisibility {
         val zone = if (clipboardPanelOpen) SuggestionZoneState.Zone.CLIPBOARD else zoneState.zone
@@ -126,7 +139,7 @@ internal object BarVisibility {
             pasteChip = zone == SuggestionZoneState.Zone.PASTE,
             inline = zone == SuggestionZoneState.Zone.INLINE,
             menuButton = zoneState.menuButtonVisible && !clipboardPanelOpen,
-            settingsButton = zoneState.settingsButtonVisible && !clipboardPanelOpen,
+            settingsButton = zoneState.settingsButtonVisible,
         )
     }
 
@@ -135,7 +148,8 @@ internal object BarVisibility {
         CorrectionBarState.IDLE -> CorrectAppearance(R.string.correction_button_idle, enabled = true, alpha = 1f)
         // Chargement ou correction en cours : un nouvel appui sur le bouton annule la correction.
         CorrectionBarState.LOADING -> CorrectAppearance(R.string.correction_button_loading, enabled = true, alpha = 1f, loading = true)
-        CorrectionBarState.CORRECTING -> CorrectAppearance(R.string.correction_button_correcting, enabled = false, alpha = 0.6f, loading = true)
+        // Traitement en cours : fond violet, opacité pleine (le bouton reste désactivé).
+        CorrectionBarState.CORRECTING -> CorrectAppearance(R.string.correction_button_correcting, enabled = false, alpha = 1f, loading = true, face = R.color.accent)
         CorrectionBarState.CANCELLING -> CorrectAppearance(R.string.correction_button_cancelling, enabled = false, alpha = 0.6f, loading = true)
     }
 
@@ -143,6 +157,15 @@ internal object BarVisibility {
         VoiceBarState.IDLE -> VoiceAppearance(R.string.voice_button_idle, R.color.surface_button, 1f)
         VoiceBarState.LOADING -> VoiceAppearance(R.string.voice_button_loading, R.color.surface_button, 0.6f, loading = true)
         VoiceBarState.RECORDING -> VoiceAppearance(R.string.voice_button_recording, R.color.action_danger, 1f)
-        VoiceBarState.TRANSCRIBING -> VoiceAppearance(R.string.voice_button_transcribing, R.color.surface_button, 0.6f)
+        // Transcription en cours de traitement : fond violet, opacité pleine.
+        VoiceBarState.TRANSCRIBING -> VoiceAppearance(R.string.voice_button_transcribing, R.color.accent, 1f)
+    }
+
+    fun aiTranscriptionAppearance(state: AiTranscriptionBarState): AiTranscriptionAppearance = when (state) {
+        AiTranscriptionBarState.IDLE -> AiTranscriptionAppearance(R.color.surface_button, 1f)
+        AiTranscriptionBarState.RECORDING -> AiTranscriptionAppearance(R.color.action_danger, 1f)
+        // Traitement par le modèle : fond violet, opacité pleine. L'annulation (arrêt natif en cours) reste grisée.
+        AiTranscriptionBarState.PROCESSING -> AiTranscriptionAppearance(R.color.accent, 1f)
+        AiTranscriptionBarState.CANCELLING -> AiTranscriptionAppearance(R.color.surface_button, 0.6f)
     }
 }

@@ -47,6 +47,9 @@ class ImeViewComposer(
 
         fun onCorrectClicked()
 
+        /** Retour haptique d'une touche (niveau des paramètres), pour le bouton « ··· » de gauche. */
+        fun haptic()
+
         /** Nouvelle touche sur Corriger pendant le chargement ou la correction : l'annuler. */
         fun onCancelCorrectionClicked()
 
@@ -129,6 +132,7 @@ class ImeViewComposer(
 
         correctionBar = CorrectionBarView(context)
         correctionBar.setOnCorrectListener { if (!blockedBySensitiveField()) host.onCorrectClicked() }
+        correctionBar.setOnMenuClickListener { host.haptic() } // même vibration que le bouton Smart Clipboard
         correctionBar.setOnUndoListener { host.onUndoClicked() }
         correctionBar.setOnCancelListener { host.onCancelCorrectionClicked() }
         correctionBar.setOnGenerateClickListener {

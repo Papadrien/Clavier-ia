@@ -6,9 +6,9 @@ premier build.
 ## Ce qui est fait
 - **8.1** (partiel) : écran « Modèle IA » (`ModelDownloadActivity`), 4 lignes, statuts *Télécharger / Téléchargement… % /
   Vérification / Réessayer / Installé*, choix du modèle actif, accueil mis à jour (statut et sous-titre du modèle actif).
-- **8.2** : `ModelRecommendation` (pur, testé) lit `totalMem` : < 4 Go → Léger (badge « Recommandé »), de 4 à 7 Go →
-  Équilibré, 7 Go et plus → Performant. Seuils = constantes nommées. **Seuil Performant (7 Go) provisoire** : à fixer
-  après tests sur le Pixel 9 et un appareil milieu de gamme. Le badge passe après « Actif » / « Installé » et ne
+- **8.2** : `ModelRecommendation` (pur, testé) lit `totalMem` : < 4 Go → Léger (badge « Recommandé »), de 4 à 13 Go →
+  Équilibré, 13 Go et plus (téléphones « 16 Go » ; pas les « 12 Go » comme le Pixel 9) → Performant. Seuils = constantes
+  nommées. Seuil Performant relevé le 18/10/2026 (il était de 7 Go). Le badge passe après « Actif » / « Installé » et ne
   bloque aucun téléchargement.
 - **8.3** : Wi-Fi par défaut, confirmation en données mobiles (taille affichée), arrêt vers *Réessayer* si le Wi-Fi est
   perdu sans accord, message sans connexion. Service au premier plan `dataSync` (WorkManager) avec notification et

@@ -55,6 +55,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     /** Roue crantée : ouvre la page d'accueil de l'application, visible hors saisie, ou quand le menu « ··· » de gauche est ouvert. */
     private val settingsButton = ImageButton(context)
     private var settingsListener: (() -> Unit)? = null
+    private var menuClickListener: (() -> Unit)? = null
 
     /** Story 2.1 : bouton « menu », visible pendant la saisie, qui donne accès au bouton Smart Clipboard. */
     private val menuButton = ImageButton(context)
@@ -177,6 +178,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         }
         menuButton.contentDescription = context.getString(R.string.clipboard_menu_description)
         menuButton.setOnClickListener {
+            menuClickListener?.invoke()
             zoneState.toggleMenu()
             renderZone(reveal = true)
         }
@@ -275,6 +277,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     }
 
     /** Touche sur la roue crantée : ouvrir la page d'accueil de l'application. */
+    /** Touche sur le bouton « ··· » de gauche (chevron) : sert au retour haptique, le menu s'ouvre ou se ferme ensuite. */
+    fun setOnMenuClickListener(listener: () -> Unit) {
+        menuClickListener = listener
+    }
+
     fun setOnSettingsClickListener(listener: () -> Unit) {
         settingsListener = listener
     }
@@ -291,8 +298,8 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
 
     /**
      * Le panneau Smart Clipboard est ouvert (ou refermé) : le bouton Smart Clipboard reste affiché,
-     * coloré (actif), seul dans la zone de gauche, et un nouvel appui dessus referme le panneau. Les
-     * menus « ··· » (celui de gauche n'a plus d'objet) ainsi que la roue crantée se cachent.
+     * coloré (actif), seul dans la zone de gauche, et un nouvel appui dessus referme le panneau. Le
+     * menu « ··· » de gauche (il n'a plus d'objet) se cache ; la roue crantée reste affichée.
      */
     fun setClipboardPanelOpen(open: Boolean) {
         if (clipboardPanelOpen == open) return
@@ -522,6 +529,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         appearance?.let {
             correctButton.isEnabled = it.enabled
             correctButton.alpha = it.alpha
+            correctButton.face = it.face
             correctButton.contentDescription = context.getString(it.label)
             correctButton.label = context.getString(R.string.action_pill_correction)
         }
@@ -551,9 +559,6 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     fun setAiTranscriptionLevel(level: Float) = aiTranscriptionIcon.setLevel(level)
 
     private fun renderAiTranscription() {
-        val recording = aiTranscriptionState == AiTranscriptionBarState.RECORDING
-        val processing = aiTranscriptionState == AiTranscriptionBarState.PROCESSING ||
-            aiTranscriptionState == AiTranscriptionBarState.CANCELLING
         aiTranscriptionButton.contentDescription = context.getString(
             when (aiTranscriptionState) {
                 AiTranscriptionBarState.IDLE -> R.string.ai_transcription_button_description
@@ -562,9 +567,9 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
                 AiTranscriptionBarState.CANCELLING -> R.string.ai_transcription_button_cancelling
             },
         )
-        val face = if (recording) R.color.action_danger else R.color.surface_button
-        aiTranscriptionButton.face = face
-        aiTranscriptionButton.alpha = if (processing) 0.6f else 1f
+        val appearance = BarVisibility.aiTranscriptionAppearance(aiTranscriptionState)
+        aiTranscriptionButton.face = appearance.face
+        aiTranscriptionButton.alpha = appearance.alpha
         aiTranscriptionIcon.setMode(WaveIconMode.of(aiTranscriptionState), animate = isLaidOut)
         applyFieldRestriction()
     }

@@ -19,9 +19,9 @@ class MicIconPoseTest {
     fun `le niveau sonore suit l'amplitude sur une échelle logarithmique bornée`() {
         assertEquals(0f, VoiceLevel.fromRms(0.0))
         assertEquals(1f, VoiceLevel.fromRms(32768.0))
-        assertTrue(VoiceLevel.fromRms(500.0) in 0.3f..0.5f)
+        assertTrue(VoiceLevel.fromRms(500.0) in 0.5f..0.65f)
         assertTrue(VoiceLevel.fromRms(3000.0) > VoiceLevel.fromRms(500.0))
-        assertTrue(VoiceLevel.fromRms(3000.0) in 0.7f..0.95f)
+        assertTrue(VoiceLevel.fromRms(3000.0) in 0.9f..1f)
     }
 
     @Test

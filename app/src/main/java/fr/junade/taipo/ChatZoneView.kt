@@ -53,6 +53,9 @@ class ChatZoneView(context: Context) : ScrollView(context) {
     /** Dernière bulle de réponse du modèle, celle que le flux complète ; null si la zone est vide. */
     private var lastResponseBubble: TextView? = null
 
+    /** Étincelles en orbite qui remplacent la dernière bulle de réponse tant que le modèle n'a rien renvoyé (chargement, attente). */
+    private var lastWaitingView: OrbitSparklesView? = null
+
     /** Story 5.3 : bouton « Ajouter le texte » de la dernière réponse, affiché une fois la réponse terminée ou interrompue. */
     private var lastAddTextButton: TextView? = null
 
@@ -159,6 +162,7 @@ class ChatZoneView(context: Context) : ScrollView(context) {
     fun clearBubbles() {
         column.removeAllViews()
         lastResponseBubble = null
+        lastWaitingView = null
         lastAddTextButton = null
         lastReplaceTextButton = null
     }
@@ -172,6 +176,8 @@ class ChatZoneView(context: Context) : ScrollView(context) {
         messages.forEachIndexed { index, message ->
             addPromptBubble(message.prompt)
             lastResponseBubble = addBubble(displayText(message), fromUser = false, placeholder = message.response.isEmpty())
+            lastWaitingView = addWaitingView()
+            setWaiting(isWaiting(message))
             lastAddTextButton = addActionButton(R.string.prompt_add_text, index, canAddText(message)) { addTextListener }
             lastReplaceTextButton = addActionButton(R.string.prompt_replace_text, index, canAddText(message)) { replaceTextListener }
         }
@@ -180,7 +186,8 @@ class ChatZoneView(context: Context) : ScrollView(context) {
 
     /** Met à jour la dernière bulle de réponse (morceau reçu, fin de génération). Sans effet si la zone est vide. */
     fun updateLastResponse(message: PromptMessage) {
-        setBubbleText(displayText(message), placeholder = message.response.isEmpty())
+        setWaiting(isWaiting(message))
+        if (!isWaiting(message)) setBubbleText(displayText(message), placeholder = message.response.isEmpty())
         val actionVisibility = if (canAddText(message)) View.VISIBLE else View.GONE
         lastAddTextButton?.visibility = actionVisibility
         lastReplaceTextButton?.visibility = actionVisibility
@@ -190,8 +197,37 @@ class ChatZoneView(context: Context) : ScrollView(context) {
     private fun canAddText(message: PromptMessage): Boolean =
         message.status != PromptMessageStatus.IN_PROGRESS && message.response.isNotBlank()
 
-    /** Remplace le texte de la dernière bulle de réponse par un texte d'attente (par exemple « chargement du modèle »). */
-    fun setLastResponseText(text: String) = setBubbleText(text, placeholder = true)
+    /** Attente du modèle (chargement ou premier morceau) : les étincelles en orbite remplacent la dernière bulle de réponse. */
+    fun showLastResponseWaiting() = setWaiting(true)
+
+    /** Vrai tant que le modèle n'a rien renvoyé : pas de bulle, mais les étincelles en orbite. */
+    private fun isWaiting(message: PromptMessage): Boolean =
+        message.status == PromptMessageStatus.IN_PROGRESS && message.response.isEmpty()
+
+    /** Montre les étincelles en orbite à la place de la dernière bulle de réponse ([waiting]), ou la bulle. */
+    private fun setWaiting(waiting: Boolean) {
+        val bubble = lastResponseBubble ?: return
+        bubble.visibility = if (waiting) View.GONE else View.VISIBLE
+        lastWaitingView?.visibility = if (waiting) View.VISIBLE else View.GONE
+    }
+
+    /** Étincelles en orbite, à gauche comme une réponse du modèle ; cachées tant que la bulle est affichée. */
+    private fun addWaitingView(): OrbitSparklesView {
+        val size = dimen(R.dimen.taipo_chat_waiting_size).toInt()
+        val view = OrbitSparklesView(context, context.themeColor(TEXT_COLOR)).apply {
+            visibility = View.GONE
+            contentDescription = context.getString(R.string.prompt_waiting_description)
+            importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
+        }
+        column.addView(
+            view,
+            LinearLayout.LayoutParams(size, size).apply {
+                gravity = Gravity.START
+                topMargin = if (column.childCount == 0) 0 else dimen(R.dimen.taipo_chat_bubble_gap).toInt()
+            },
+        )
+        return view
+    }
 
     private fun setBubbleText(text: String, placeholder: Boolean) {
         val bubble = lastResponseBubble ?: return

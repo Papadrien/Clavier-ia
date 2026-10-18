@@ -48,6 +48,9 @@ class PromptModeController(
 
         fun haptic()
 
+        /** Retour haptique du mode chat (un mot généré, fin de génération). */
+        fun hapticAi(cue: AiHapticCue)
+
         /** Le curseur du prompt a été déplacé d'une touche dans le texte : resynchroniser majuscule auto et suggestions. */
         fun onPromptCursorMoved()
 
@@ -279,16 +282,14 @@ class PromptModeController(
     /**
      * Décision 8.7 : le chargement du modèle commence ou se termine (préchargement, chargement à l'envoi
      * ou rechargement après un changement de modèle). La barre du prompt affiche l'indicateur ; si un
-     * échange attend le moteur sans rien avoir reçu, sa bulle dit « Chargement du modèle… » puis revient à « … ».
+     * échange attend le moteur sans rien avoir reçu, les étincelles en orbite remplacent sa bulle (chargement ou attente).
      */
     private fun onModelLoadingChanged(loading: Boolean) {
         if (this::promptBar.isInitialized) promptBar.modelLoading = loading
         if (this::chatZone.isInitialized && conversation.isGenerating &&
             conversation.messages.lastOrNull()?.response.isNullOrEmpty()
         ) {
-            chatZone.setLastResponseText(
-                context.getString(if (loading) R.string.prompt_loading_model else R.string.prompt_response_pending),
-            )
+            chatZone.showLastResponseWaiting() // les étincelles en orbite, chargement ou attente du premier morceau
         }
     }
 
@@ -392,7 +393,7 @@ class PromptModeController(
         chatShown = true
         chatZone.showMessages(conversation.messages) // prompt de l'utilisateur + bulle de réponse « … »
         // Le préchargement (décision 18) n'est pas fini : la génération attend le moteur, la bulle l'indique.
-        if (llmHost.isLoading) chatZone.setLastResponseText(context.getString(R.string.prompt_loading_model))
+        if (llmHost.isLoading) chatZone.showLastResponseWaiting()
         refreshInput()
         applyViews()
         host.syncAutoCapitalization() // majuscule en début du prochain prompt
@@ -421,6 +422,8 @@ class PromptModeController(
                 // Texte final du moteur ; réponse partielle conservée si la génération a été interrompue.
                 // Sans effet si un stop ou la croix ont déjà figé l'échange (5.1-7).
                 if (outcome.completed) Analytics.aiAction(context, AnalyticsEvents.AiType.GENERATE, model.id, startedAt)
+                // Fin de génération (pas après un stop ou la croix, qui ont déjà figé l'échange) : vibration moyenne.
+                if (outcome.completed && conversation.isGenerating) host.hapticAi(AiHapticCue.CHAT_DONE)
                 conversation.finish(outcome.text, outcome.completed)
                 conversation.messages.lastOrNull()?.let { chatZone.updateLastResponse(it) }
                 applyViews() // le bouton rond redevient « envoyer »
@@ -478,15 +481,17 @@ class PromptModeController(
     private fun onGenerationLoading() {
         if (!conversation.isGenerating) return
         if (conversation.messages.lastOrNull()?.response.isNullOrEmpty()) {
-            chatZone.setLastResponseText(context.getString(R.string.prompt_loading_model))
+            chatZone.showLastResponseWaiting()
         }
     }
 
     /** Un morceau de réponse est arrivé : il s'ajoute à la conversation et à la dernière bulle. */
     private fun onGenerationChunk(chunk: String) {
         if (!conversation.isGenerating) return // morceau en retard (clavier refermé entre-temps)
+        val previous = conversation.messages.lastOrNull()?.response.orEmpty()
         conversation.appendResponse(chunk)
         conversation.messages.lastOrNull()?.let { chatZone.updateLastResponse(it) }
+        if (ChatWordPulse.completesWord(previous, chunk)) host.hapticAi(AiHapticCue.CHAT_WORD)
     }
 
     /**

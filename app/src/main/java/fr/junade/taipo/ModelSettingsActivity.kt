@@ -56,7 +56,7 @@ class ModelSettingsActivity : ComponentActivity() {
     private var nextChecksumRun = 0
 
     /** Modèle actuellement affiché dans la page (correspond à la sélection du spinner). */
-    private var displayedModel: AiModel = AiModel.entriesOrdered().first()
+    private var displayedModel: AiModel = AiModel.entriesForDisplay().first()
 
     /**
      * Lot 3.5 (U3) : un sélecteur de fichier par modèle (Activity Result API). Ils sont enregistrés dans
@@ -80,7 +80,7 @@ class ModelSettingsActivity : ComponentActivity() {
         textChecksum = findViewById(R.id.text_checksum)
         buttonForgetFile = findViewById(R.id.button_forget_file)
 
-        val models = AiModel.entriesOrdered()
+        val models = AiModel.entriesForDisplay()
         models.forEach { model ->
             filePickers[model] = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
                 // Annulation du sélecteur : uri == null, rien à faire.

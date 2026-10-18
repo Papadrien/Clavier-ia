@@ -15,10 +15,11 @@ object ModelRecommendation {
     const val LIGHT_BELOW_BYTES = 4_000_000_000L
 
     /**
-     * Seuil provisoire (point ouvert de la story 8.2) : à partir de cette RAM totale, Performant est recommandé
-     * à la place d'Équilibré. À fixer après tests sur le Pixel 9 et au moins un appareil bas ou milieu de gamme.
+     * Décision du 18/10/2026 : Performant n'est recommandé qu'au-dessus de 12 Go de RAM annoncée, donc pas sur un
+     * « 12 Go » comme le Pixel 9 (il rapporte environ 11,2 Go ; un « 16 Go » rapporte environ 15 Go). Le seuil tombe
+     * entre les deux. En dessous, Équilibré reste recommandé.
      */
-    const val PERFORMANT_FROM_BYTES = 7_000_000_000L
+    const val PERFORMANT_FROM_BYTES = 13_000_000_000L
 
     fun recommended(totalMemBytes: Long): AiModel = when {
         totalMemBytes < LIGHT_BELOW_BYTES -> AiModel.LEGER

@@ -60,6 +60,9 @@ internal interface ImeHostContext {
     // Actions partagées
     fun haptic()
     fun hapticCursorMove()
+
+    /** Retour haptique d'une action IA (voir [AiHapticCue]). */
+    fun hapticAi(cue: AiHapticCue)
     fun clearHighlight()
     fun clearPendingAutocorrection()
     fun onUserTyped()
@@ -215,6 +218,7 @@ internal class MessagePopupHost(private val ime: ImeHostContext) : MessagePopup.
 internal class PromptHost(private val ime: ImeHostContext) : PromptModeController.Host {
     override fun showMessage(message: String) = ime.showMessage(message)
     override fun haptic() = ime.haptic()
+    override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
     override fun onPromptCursorMoved() {
         ime.hapticCursorMove()
         ime.syncAutoCapitalization()
@@ -265,6 +269,7 @@ internal class CorrectionHost(private val ime: ImeHostContext) : CorrectionAiCon
     override fun syncAutoCapitalization() = ime.syncAutoCapitalization()
     override fun clearPendingAutocorrection() = ime.clearPendingAutocorrection()
     override fun recordUndo(undo: UndoHistory.Undo) = ime.recordUndoAction(undo)
+    override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
 }
 
 /** Bouton Annuler (à droite du bouton Smart Clipboard) : historique des 10 dernières actions, voir [UndoController]. */
@@ -309,6 +314,7 @@ internal class VoiceHost(private val ime: ImeHostContext) : VoiceController.Host
         }
     }
     override fun recordUndoEdit(inserted: String, original: String) = ime.recordUndoEdit(inserted, original)
+    override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
 }
 
 /** Épopée 14 : transcription IA par modèle multimodal, voir [AiTranscriptionController]. */
@@ -322,6 +328,7 @@ internal class AiTranscriptionHost(private val ime: ImeHostContext) : AiTranscri
         ime.correctionBar.aiTranscriptionState = state
     }
     override fun setLevel(level: Float) = ime.correctionBar.setAiTranscriptionLevel(level)
+    override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
 }
 
 /** Glissement de suppression depuis la touche retour arrière (story 1.9) : voir [DeleteSwipeController]. */
@@ -363,11 +370,13 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
     override fun onDeleteSwipeRelease() = ime.deleteSwipe.onRelease()
     override fun onDeleteSwipeCancel() = ime.deleteSwipe.onCancel()
     override fun onRecentEmojiClicked(emoji: String) = ime.emoji.onRecentBarTapped(emoji)
+    override fun haptic() = ime.haptic()
     override fun onCorrectClicked() = ime.correction.onCorrectClicked()
     override fun onCancelCorrectionClicked() = ime.correction.onCancelClicked()
     override fun onUndoClicked() {
         // Correction ou dictée en cours : le texte bouge encore, l'annulation attend.
         if (ime.isCorrectionInProgress() || ime.isRecording()) return
+        ime.haptic() // même vibration que le bouton Smart Clipboard
         ime.undo.onUndoClicked()
     }
     override fun onVoiceTouch(event: MotionEvent): Boolean = ime.voice.onButtonTouch(event)

@@ -47,6 +47,9 @@ class CorrectionAiController(
     interface Host {
         fun showMessage(message: String)
 
+        /** Retour haptique d'une action IA (premier appui). */
+        fun hapticAi(cue: AiHapticCue)
+
         fun inputConnection(): InputConnection?
 
         /** Une génération (mode prompt) est en cours : le moteur est pris, la correction est refusée. */
@@ -344,6 +347,7 @@ class CorrectionAiController(
     private fun launchCorrection(work: suspend () -> Unit) {
         inProgress = true
         cancelRequested = false
+        host.hapticAi(AiHapticCue.ACTION_START) // le premier appui déclenche le chargement
         host.clearSuggestions()
         host.setCorrectionBarState(CorrectionBarState.LOADING)
         val startedAt = SystemClock.elapsedRealtime()

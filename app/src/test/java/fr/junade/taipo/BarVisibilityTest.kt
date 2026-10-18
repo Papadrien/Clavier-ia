@@ -67,11 +67,22 @@ class BarVisibilityTest {
     }
 
     @Test
-    fun `pendant une ecoute Vocal reste visible mais Generer disparait et le menu de droite aussi`() {
-        val visible = BarVisibility.actionButtons(VoiceBarState.RECORDING, CorrectionBarState.IDLE, zoneWithText(), false)
-        assertTrue(visible.voice)
-        assertFalse(visible.generate)
+    fun `pendant une ecoute le menu robot reste, Transcription IA n apparait pas et Generer disparait`() {
+        for (voice in listOf(VoiceBarState.LOADING, VoiceBarState.RECORDING, VoiceBarState.TRANSCRIBING)) {
+            val visible = BarVisibility.actionButtons(voice, CorrectionBarState.IDLE, zoneWithText(), false)
+            assertTrue(visible.voice)
+            assertFalse(visible.generate)
+            assertFalse(visible.aiTranscription)
+            assertTrue(visible.correct)
+            assertTrue(visible.actionsMenu)
+        }
+    }
+
+    @Test
+    fun `pendant une correction le menu robot disparait et Transcription IA apparait`() {
+        val visible = BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.CORRECTING, zoneWithText(), false)
         assertTrue(visible.correct)
+        assertTrue(visible.aiTranscription)
         assertFalse(visible.actionsMenu)
     }
 
@@ -197,13 +208,24 @@ class BarVisibilityTest {
     }
 
     @Test
-    fun `panneau Smart Clipboard ouvert montre seulement le bouton actif et cache menus et roue crantee`() {
+    fun `panneau Smart Clipboard ouvert montre seulement le bouton actif, cache le menu et garde la roue crantee`() {
         val visible = BarVisibility.zoneContent(zoneWithText().apply { setPasteAvailable(true) }, true)
         assertTrue(visible.clipboardButton)
         assertFalse(visible.words)
         assertFalse(visible.pasteChip)
         assertFalse(visible.menuButton)
-        assertFalse(visible.settingsButton)
+    }
+
+    @Test
+    fun `ouvrir le panneau Smart Clipboard ne fait pas disparaitre la roue crantee`() {
+        // Avant saisie : la roue crantée est affichée avec le bouton Smart Clipboard, avant comme après l'ouverture.
+        val empty = SuggestionZoneState()
+        assertTrue(BarVisibility.zoneContent(empty, false).settingsButton)
+        assertTrue(BarVisibility.zoneContent(empty, true).settingsButton)
+        // Pendant la saisie, menu de gauche ouvert : même chose.
+        val withMenu = zoneWithText().apply { toggleMenu() }
+        assertTrue(BarVisibility.zoneContent(withMenu, false).settingsButton)
+        assertTrue(BarVisibility.zoneContent(withMenu, true).settingsButton)
     }
 
     @Test
@@ -218,10 +240,10 @@ class BarVisibilityTest {
         assertTrue(loading.enabled)
         assertEquals(1f, loading.alpha)
         for (state in listOf(CorrectionBarState.CORRECTING, CorrectionBarState.CANCELLING)) {
-            val busy = BarVisibility.correctAppearance(state)!!
-            assertFalse(busy.enabled)
-            assertEquals(0.6f, busy.alpha)
+            assertFalse(BarVisibility.correctAppearance(state)!!.enabled)
         }
+        assertEquals(1f, BarVisibility.correctAppearance(CorrectionBarState.CORRECTING)!!.alpha)
+        assertEquals(0.6f, BarVisibility.correctAppearance(CorrectionBarState.CANCELLING)!!.alpha)
         for (state in listOf(CorrectionBarState.LOADING, CorrectionBarState.CORRECTING, CorrectionBarState.CANCELLING)) {
             assertTrue(BarVisibility.correctAppearance(state)!!.loading, "une roue remplace l'icône pendant $state")
         }
@@ -229,14 +251,36 @@ class BarVisibilityTest {
     }
 
     @Test
-    fun `apparence de Vocal selon l etat, rouge seulement pendant l ecoute`() {
+    fun `Corriger a le fond violet pendant le traitement de la correction seulement`() {
+        assertEquals(R.color.accent, BarVisibility.correctAppearance(CorrectionBarState.CORRECTING)!!.face)
+        for (state in listOf(CorrectionBarState.IDLE, CorrectionBarState.LOADING, CorrectionBarState.CANCELLING)) {
+            assertEquals(R.color.surface_button, BarVisibility.correctAppearance(state)!!.face, "fond gris pendant $state")
+        }
+    }
+
+    @Test
+    fun `Transcription IA a le fond violet pendant le traitement seulement`() {
+        val processing = BarVisibility.aiTranscriptionAppearance(AiTranscriptionBarState.PROCESSING)
+        assertEquals(R.color.accent, processing.face)
+        assertEquals(1f, processing.alpha)
+        assertEquals(R.color.action_danger, BarVisibility.aiTranscriptionAppearance(AiTranscriptionBarState.RECORDING).face)
+        assertEquals(R.color.surface_button, BarVisibility.aiTranscriptionAppearance(AiTranscriptionBarState.IDLE).face)
+        val cancelling = BarVisibility.aiTranscriptionAppearance(AiTranscriptionBarState.CANCELLING)
+        assertEquals(R.color.surface_button, cancelling.face)
+        assertEquals(0.6f, cancelling.alpha)
+    }
+
+    @Test
+    fun `apparence de Vocal selon l etat, rouge a l ecoute et violet a la transcription`() {
         val recording = BarVisibility.voiceAppearance(VoiceBarState.RECORDING)
         assertEquals(R.color.action_danger, recording.background)
         assertEquals(1f, recording.alpha)
         assertEquals(R.string.voice_button_recording, recording.label)
-        for (state in listOf(VoiceBarState.IDLE, VoiceBarState.LOADING, VoiceBarState.TRANSCRIBING)) {
+        for (state in listOf(VoiceBarState.IDLE, VoiceBarState.LOADING)) {
             assertEquals(R.color.surface_button, BarVisibility.voiceAppearance(state).background)
         }
+        // Transcription en cours de traitement : fond violet.
+        assertEquals(R.color.accent, BarVisibility.voiceAppearance(VoiceBarState.TRANSCRIBING).background)
         // Seul le chargement du modèle remplace l'icône micro par une roue animée.
         assertEquals(true, BarVisibility.voiceAppearance(VoiceBarState.LOADING).loading)
         listOf(VoiceBarState.IDLE, VoiceBarState.RECORDING, VoiceBarState.TRANSCRIBING).forEach { state ->
@@ -244,6 +288,6 @@ class BarVisibilityTest {
         }
         assertEquals(1f, BarVisibility.voiceAppearance(VoiceBarState.IDLE).alpha)
         assertEquals(0.6f, BarVisibility.voiceAppearance(VoiceBarState.LOADING).alpha)
-        assertEquals(0.6f, BarVisibility.voiceAppearance(VoiceBarState.TRANSCRIBING).alpha)
+        assertEquals(1f, BarVisibility.voiceAppearance(VoiceBarState.TRANSCRIBING).alpha)
     }
 }
