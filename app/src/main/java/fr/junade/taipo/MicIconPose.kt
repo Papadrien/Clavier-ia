@@ -6,7 +6,7 @@ import kotlin.math.exp
 import kotlin.math.log10
 import kotlin.math.sin
 
-/** Ce que montre l'icône micro du bouton Vocal : repos, attente (chargement / transcription) ou écoute. */
+/** Ce que montre l'icône Vocal : repos (onde), attente (chargement / transcription : lignes) ou écoute (onde au volume). */
 internal enum class MicIconMode {
     IDLE,
     LOADING,
@@ -14,7 +14,7 @@ internal enum class MicIconMode {
     ;
 
     companion object {
-        /** Chargement du modèle et transcription finale : le micro n'écoute pas, il « travaille ». */
+        /** Chargement du modèle et transcription finale : les barres se couchent en lignes (l'appareil « travaille »). */
         fun of(state: VoiceBarState): MicIconMode = when (state) {
             VoiceBarState.IDLE -> IDLE
             VoiceBarState.LOADING, VoiceBarState.TRANSCRIBING -> LOADING
@@ -74,42 +74,79 @@ internal class SpringValue(var value: Float = 0f) {
     }
 }
 
+/** Rectangle d'une barre de l'icône, sur la grille de 24 (coin haut-gauche, largeur, hauteur). */
+internal data class BarRect(val x: Float, val y: Float, val width: Float, val height: Float)
+
 /**
- * Pose de l'icône micro animée. Calculs purs : le trait de la capsule qui se dessine puis s'efface (chargement), la jauge
- * qui suit le niveau sonore (écoute). Le pied (U, tige, base) ne bouge jamais.
+ * Pose de l'icône Vocal : trois barres verticales en onde. Au repos elles forment une onde fixe ; à l'écoute leur hauteur suit
+ * le niveau sonore ; en attente (chargement, transcription) elles se couchent en trois lignes de longueurs différentes qu'un
+ * reflet balaie. Calculs purs (grille de 24), sans dépendance Android.
  */
 internal object MicIconPose {
 
-    /** Durée d'un cycle « le trait se dessine, puis s'efface » en chargement. */
-    const val TRACE_PERIOD_S = 2.6f
+    const val BAR_COUNT = 3
+    const val BAR_WIDTH = 3.4f
+    const val BAR_PITCH = 6.2f
+    const val CENTER = 12f
 
-    /** Part minimale de remplissage pendant l'écoute, pour que la jauge reste visible dans le silence. */
-    const val GAUGE_FLOOR = 0.08f
-    const val GAUGE_MAX = 1.04f
-    const val WAVE_AMPLITUDE = 0.45f
+    /** Hauteurs au repos (onde fixe : la barre centrale domine). */
+    val REST_HEIGHT = floatArrayOf(9f, 15f, 11f)
+
+    /** Longueurs des trois lignes en attente. */
+    val LINE_LENGTH = floatArrayOf(19f, 13f, 16f)
+
+    /** Part du niveau sonore suivie par chaque barre : la centrale réagit le plus. */
+    val LEVEL_GAIN = floatArrayOf(0.8f, 1f, 0.88f)
+
+    /** Hauteur d'une barre à l'écoute dans le silence, puis à pleine voix. */
+    const val LISTEN_MIN_HEIGHT = 4.5f
+    const val LISTEN_MAX_HEIGHT = 19f
+
+    /** Taille minimale d'un côté de barre : le ressort peut sous-dépasser sans que la barre disparaisse. */
+    const val MIN_SIDE = 0.6f
+    private const val WOBBLE_BASE = 0.82f
+    private const val WOBBLE_DEPTH = 0.18f
+    private const val WOBBLE_SPEED = 13f
+    private const val WOBBLE_SHIFT = 2.1f
+    private const val SWEEP_SPEED = 5f
+    private const val SWEEP_SHIFT = 1.4f
     private const val ATTACK_S = 0.05f
     private const val RELEASE_S = 0.18f
 
     /**
-     * Portion visible du contour de la capsule, en fractions (début, fin) de son périmètre. [loadWeight] = 0 : contour entier ;
-     * 1 : le trait se dessine de 0 à 1 (première moitié du cycle), puis s'efface de 0 à 1 (seconde moitié).
+     * Hauteur de la barre [index] quand elle est droite. [listenWeight] = 0 : hauteur de repos ; 1 : hauteur d'écoute selon
+     * [micLevel] (0 à 1), avec un léger frémissement propre à chaque barre pour que l'onde reste vivante.
      */
-    fun traceWindow(timeSeconds: Float, loadWeight: Float): Pair<Float, Float> {
-        val tau = (timeSeconds % TRACE_PERIOD_S) / TRACE_PERIOD_S
-        var start = 0f
-        var end = 1f
-        if (tau < 0.5f) end = ease(tau / 0.5f) else start = ease((tau - 0.5f) / 0.5f)
-        val w = loadWeight.coerceIn(0f, 1f)
-        return start * w to 1f + (end - 1f) * w
+    fun barHeight(index: Int, listenWeight: Float, micLevel: Float, timeSeconds: Float): Float {
+        val wobble = WOBBLE_BASE + WOBBLE_DEPTH * sin(timeSeconds * WOBBLE_SPEED + index * WOBBLE_SHIFT)
+        val level = (micLevel.coerceIn(0f, 1f) * LEVEL_GAIN[index] * wobble).coerceIn(0f, 1f)
+        val listening = LISTEN_MIN_HEIGHT + (LISTEN_MAX_HEIGHT - LISTEN_MIN_HEIGHT) * level
+        return lerp(REST_HEIGHT[index], listening, listenWeight)
     }
 
-    /** Hauteur de remplissage de la capsule (0 = vide, 1 = pleine), qui dépasse un peu 1 pendant le ressort. */
-    fun gaugeFill(listenWeight: Float, micLevel: Float): Float =
-        (listenWeight * (GAUGE_FLOOR + (1f - GAUGE_FLOOR) * micLevel.coerceIn(0f, 1f))).coerceIn(0f, GAUGE_MAX)
+    /**
+     * Rectangle de la barre [index]. [loadWeight] = 0 : barre verticale ; 1 : ligne horizontale (la barre se couche autour de
+     * son centre). Le ressort peut dépasser 1 : la ligne s'étire alors un instant.
+     */
+    fun bar(index: Int, listenWeight: Float, loadWeight: Float, micLevel: Float, timeSeconds: Float): BarRect {
+        val height = barHeight(index, listenWeight, micLevel, timeSeconds)
+        val offset = (index - 1) * BAR_PITCH
+        val verticalX = CENTER + offset - BAR_WIDTH / 2f
+        val verticalY = CENTER - height / 2f
+        val length = LINE_LENGTH[index]
+        val horizontalX = CENTER - length / 2f
+        val horizontalY = CENTER + offset - BAR_WIDTH / 2f
+        return BarRect(
+            x = lerp(verticalX, horizontalX, loadWeight),
+            y = lerp(verticalY, horizontalY, loadWeight),
+            width = lerp(BAR_WIDTH, length, loadWeight).coerceAtLeast(MIN_SIDE),
+            height = lerp(height, BAR_WIDTH, loadWeight).coerceAtLeast(MIN_SIDE),
+        )
+    }
 
-    /** Ordonnée de la surface du liquide en [x] sur la grille de 24 (la capsule va de y = 3 à 14). */
-    fun surfaceY(fill: Float, x: Float, timeSeconds: Float): Float =
-        CAPSULE_BOTTOM - fill * CAPSULE_HEIGHT + WAVE_AMPLITUDE * sin(x * 1.6f + timeSeconds * 8f)
+    /** Intensité (0 à 1) du reflet qui balaie la ligne [index] en attente ; décalé d'une ligne à l'autre. */
+    fun sweep(index: Int, timeSeconds: Float): Float =
+        0.5f + 0.5f * sin(timeSeconds * SWEEP_SPEED - index * SWEEP_SHIFT)
 
     /** Lissage du niveau reçu par à-coups : monte vite (attaque), redescend plus doucement. Ne dépasse jamais la cible. */
     fun smooth(current: Float, target: Float, dtSeconds: Float): Float {
@@ -117,8 +154,5 @@ internal object MicIconPose {
         return current + (target - current) * (1f - exp(-dtSeconds / tau))
     }
 
-    private fun ease(x: Float): Float = if (x < 0.5f) 2f * x * x else 1f - (-2f * x + 2f) * (-2f * x + 2f) / 2f
-
-    const val CAPSULE_BOTTOM = 14f
-    const val CAPSULE_HEIGHT = 11f
+    private fun lerp(from: Float, to: Float, t: Float): Float = from + (to - from) * t
 }

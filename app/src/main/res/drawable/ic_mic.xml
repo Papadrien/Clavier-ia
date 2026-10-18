@@ -1,26 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Charte Taipo (lot 09) : icône au trait de 2 sur une grille de 24, extrémités et angles arrondis, blanc de la charte. Taille : taipo_icon_size. -->
+<!-- Icône Vocal au repos : trois barres en onde (grille de 24, barres de 3,4). Même tracé que MicIconDrawable. Taille : taipo_icon_size. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="@dimen/taipo_icon_size"
     android:height="@dimen/taipo_icon_size"
     android:viewportWidth="24"
     android:viewportHeight="24">
     <path
-        android:pathData="M12,3 a3,3 0 0 1 3,3 V11 a3,3 0 0 1 -6,0 V6 a3,3 0 0 1 3,-3 Z"
-        android:strokeColor="@color/taipo_text"
-        android:strokeWidth="2"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round" />
+        android:pathData="M4.1,9.2 a1.7,1.7 0 0 1 3.4,0 V14.8 a1.7,1.7 0 0 1 -3.4,0 Z"
+        android:fillColor="@color/taipo_text" />
     <path
-        android:pathData="M5.5,11 a6.5,6.5 0 0 0 13,0"
-        android:strokeColor="@color/taipo_text"
-        android:strokeWidth="2"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round" />
+        android:pathData="M10.3,6.2 a1.7,1.7 0 0 1 3.4,0 V17.8 a1.7,1.7 0 0 1 -3.4,0 Z"
+        android:fillColor="@color/taipo_text" />
     <path
-        android:pathData="M12,17.5 V21 M9,21 H15"
-        android:strokeColor="@color/taipo_text"
-        android:strokeWidth="2"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round" />
+        android:pathData="M16.5,8.2 a1.7,1.7 0 0 1 3.4,0 V15.8 a1.7,1.7 0 0 1 -3.4,0 Z"
+        android:fillColor="@color/taipo_text" />
 </vector>

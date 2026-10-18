@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/** Icône micro animée : états, niveau sonore, ressort, trait de la capsule et jauge (calculs purs). */
+/** Icône Vocal animée : états, niveau sonore, ressort, barres en onde et lignes (calculs purs). */
 class MicIconPoseTest {
 
     @Test
-    fun `le chargement et la transcription montrent l'attente, l'enregistrement l'écoute`() {
+    fun `le chargement et la transcription montrent l'attente (lignes), l'enregistrement l'écoute`() {
         assertEquals(MicIconMode.IDLE, MicIconMode.of(VoiceBarState.IDLE))
         assertEquals(MicIconMode.LOADING, MicIconMode.of(VoiceBarState.LOADING))
         assertEquals(MicIconMode.LOADING, MicIconMode.of(VoiceBarState.TRANSCRIBING))
@@ -39,43 +39,77 @@ class MicIconPoseTest {
     }
 
     @Test
-    fun `sans chargement le contour de la capsule est entier`() {
-        assertEquals(0f to 1f, MicIconPose.traceWindow(0f, 0f))
-        assertEquals(0f to 1f, MicIconPose.traceWindow(1.1f, 0f))
+    fun `au repos les trois barres sont droites, centrées, et la centrale est la plus haute`() {
+        val bars = (0 until MicIconPose.BAR_COUNT).map { MicIconPose.bar(it, 0f, 0f, 0f, 1.3f) }
+        bars.forEachIndexed { i, r ->
+            assertEquals(MicIconPose.REST_HEIGHT[i], r.height, 1e-4f)
+            assertEquals(MicIconPose.BAR_WIDTH, r.width, 1e-4f)
+            assertEquals(MicIconPose.CENTER, r.y + r.height / 2f, 1e-4f)
+            assertEquals(MicIconPose.CENTER + (i - 1) * MicIconPose.BAR_PITCH, r.x + r.width / 2f, 1e-4f)
+        }
+        assertTrue(bars[1].height > bars[0].height && bars[1].height > bars[2].height)
     }
 
     @Test
-    fun `en chargement le trait se dessine puis s'efface`() {
-        val p = MicIconPose.TRACE_PERIOD_S
-        assertEquals(0f to 0f, MicIconPose.traceWindow(0f, 1f))
-        val drawing = MicIconPose.traceWindow(p * 0.25f, 1f)
-        assertEquals(0f, drawing.first, 1e-4f)
-        assertEquals(0.5f, drawing.second, 1e-4f)
-        val erasing = MicIconPose.traceWindow(p * 0.75f, 1f)
-        assertEquals(0.5f, erasing.first, 1e-4f)
-        assertEquals(1f, erasing.second, 1e-4f)
-        val half = MicIconPose.traceWindow(p * 0.25f, 0.5f)
-        assertEquals(0.75f, half.second, 1e-4f)
+    fun `à l'écoute les barres grandissent avec le niveau sonore, la centrale en tête`() {
+        for (i in 0 until MicIconPose.BAR_COUNT) {
+            val silent = MicIconPose.barHeight(i, 1f, 0f, 0.4f)
+            val loud = MicIconPose.barHeight(i, 1f, 1f, 0.4f)
+            assertEquals(MicIconPose.LISTEN_MIN_HEIGHT, silent, 1e-4f)
+            assertTrue(loud > silent)
+            assertTrue(loud <= MicIconPose.LISTEN_MAX_HEIGHT)
+        }
+        val loud = (0 until MicIconPose.BAR_COUNT).map { MicIconPose.barHeight(it, 1f, 1f, 0f) }
+        assertTrue(loud[1] > loud[0] && loud[1] > loud[2])
     }
 
     @Test
-    fun `la jauge est vide hors écoute et suit le niveau sonore pendant l'écoute`() {
-        assertEquals(0f, MicIconPose.gaugeFill(0f, 1f))
-        assertEquals(MicIconPose.GAUGE_FLOOR, MicIconPose.gaugeFill(1f, 0f), 1e-4f)
-        assertEquals(1f, MicIconPose.gaugeFill(1f, 1f), 1e-4f)
-        assertTrue(MicIconPose.gaugeFill(1f, 0.8f) > MicIconPose.gaugeFill(1f, 0.3f))
+    fun `hors écoute le niveau sonore ne change pas la hauteur des barres`() {
+        for (i in 0 until MicIconPose.BAR_COUNT) {
+            assertEquals(MicIconPose.barHeight(i, 0f, 0f, 2f), MicIconPose.barHeight(i, 0f, 1f, 2f), 1e-4f)
+        }
     }
 
     @Test
-    fun `le ressort peut faire déborder la jauge un peu, jamais sous zéro ni au-delà du maximum`() {
-        assertEquals(MicIconPose.GAUGE_MAX, MicIconPose.gaugeFill(1.2f, 1f))
-        assertEquals(0f, MicIconPose.gaugeFill(-0.1f, 0.5f))
+    fun `en attente les barres se couchent en trois lignes empilées de longueurs différentes`() {
+        val lines = (0 until MicIconPose.BAR_COUNT).map { MicIconPose.bar(it, 0f, 1f, 0f, 0.7f) }
+        lines.forEachIndexed { i, r ->
+            assertEquals(MicIconPose.LINE_LENGTH[i], r.width, 1e-4f)
+            assertEquals(MicIconPose.BAR_WIDTH, r.height, 1e-4f)
+            assertEquals(MicIconPose.CENTER, r.x + r.width / 2f, 1e-4f)
+            assertEquals(MicIconPose.CENTER + (i - 1) * MicIconPose.BAR_PITCH, r.y + r.height / 2f, 1e-4f)
+        }
+        assertEquals(3, lines.map { it.width }.toSet().size)
     }
 
     @Test
-    fun `la surface du liquide va du bas au haut de la capsule`() {
-        assertEquals(14f, MicIconPose.surfaceY(0f, 8f, 0f), MicIconPose.WAVE_AMPLITUDE + 0.01f)
-        assertEquals(3f, MicIconPose.surfaceY(1f, 8f, 0f), MicIconPose.WAVE_AMPLITUDE + 0.01f)
+    fun `à mi-chemin la barre garde son centre, ni disparue ni inversée`() {
+        val mid = MicIconPose.bar(1, 0f, 0.5f, 0f, 0f)
+        assertEquals(MicIconPose.CENTER, mid.x + mid.width / 2f, 1e-4f)
+        assertEquals(MicIconPose.CENTER + 0f, mid.y + mid.height / 2f, 1e-4f)
+    }
+
+    @Test
+    fun `le ressort ne fait jamais disparaître une barre`() {
+        for (i in 0 until MicIconPose.BAR_COUNT) {
+            for (load in listOf(-0.3f, 0f, 1f, 1.3f)) {
+                for (listen in listOf(-0.3f, 0f, 1f, 1.3f)) {
+                    val r = MicIconPose.bar(i, listen, load, 0.5f, 0.2f)
+                    assertTrue(r.width >= MicIconPose.MIN_SIDE)
+                    assertTrue(r.height >= MicIconPose.MIN_SIDE)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `le reflet reste entre 0 et 1 et se décale d'une ligne à l'autre`() {
+        for (i in 0 until MicIconPose.BAR_COUNT) {
+            for (t in listOf(0f, 0.3f, 1.7f, 12f)) {
+                assertTrue(MicIconPose.sweep(i, t) in 0f..1f)
+            }
+        }
+        assertTrue(MicIconPose.sweep(0, 0.4f) != MicIconPose.sweep(1, 0.4f))
     }
 
     @Test

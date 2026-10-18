@@ -7,6 +7,7 @@
     <!-- ===== Charte (valeurs de la plaquette) ===== -->
     <color name="taipo_background">#0E0E0E</color>
     <color name="taipo_purple">#8C00FF</color>
+    <color name="taipo_purple_light">#C58BFF</color>
     <color name="taipo_purple_shadow">#6800AB</color>
     <color name="taipo_key">#43384C</color>
     <color name="taipo_key_shadow">#27212D</color>

@@ -79,7 +79,10 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private val menuBackgrounds = style.toggleBackgrounds()
     private val actionsMenuBackgrounds = style.toggleBackgrounds()
     private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
-    private val micIcon = MicIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
+    private val micIcon = MicIconDrawable(
+        context.dimen(R.dimen.taipo_icon_size).toInt(),
+        context.getColor(R.color.taipo_purple_light),
+    )
     private val aiTranscriptionSpinner = LoadingSpinnerDrawable(context)
     private val correctIcon = CorrectIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
 
@@ -253,7 +256,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         // Lot 08 : Vocal devient un bouton rond à icône micro ; son état (écoute, chargement…) passe par la couleur,
         // la transparence et la description d'accessibilité, plus par le texte.
         style.styleRoundIconButton(voiceButton, R.drawable.ic_mic)
-        voiceButton.setImageDrawable(micIcon) // même tracé que ic_mic ; la capsule s'anime (chargement, écoute)
+        voiceButton.setImageDrawable(micIcon) // même onde que ic_mic ; les barres s'animent (écoute, chargement)
         // Le geste réel passe par setOnTouchListener (côté appelant, qui consomme tout toucher) ; le clic, lui, n'est déclenché
         // que par l'accessibilité (TalkBack, double appui) : l'appelant le relie à la bascule d'écoute (lot 20).
         voiceButton.setOnClickListener { }
@@ -530,7 +533,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         applyFieldRestriction()
     }
 
-    /** Niveau sonore de l'écoute (0 à 1) : fait monter et descendre la jauge de la capsule du micro. */
+    /** Niveau sonore de l'écoute (0 à 1) : fait monter et descendre les barres de l'icône Vocal. */
     fun setVoiceLevel(level: Float) = micIcon.setLevel(level)
 
     private fun renderVoice() {
