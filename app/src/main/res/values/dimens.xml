@@ -120,6 +120,8 @@
     <dimen name="taipo_chat_bubble_text_size">15sp</dimen>
     <dimen name="taipo_chat_bubble_gap">6dp</dimen>
     <dimen name="taipo_chat_follow_threshold">12dp</dimen>
+    <!-- Apparition de la zone de chat : elle monte de cette distance avec un effet ressort. -->
+    <dimen name="taipo_chat_rise_distance">40dp</dimen>
     <!-- Bouton « Ajouter le texte » sous une réponse. -->
     <dimen name="taipo_chat_action_text_size">13sp</dimen>
     <!-- Hauteur de la FACE du bouton. Lot 20 : la vue fait 48 dp (face + taipo_touch_slop de chaque côté, fond inséré), le rendu ne change pas. -->

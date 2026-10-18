@@ -28,6 +28,9 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
     /** Story 2.1 : bouton Smart Clipboard (icône « coller »). */
     private val clipboardButton = ImageButton(context)
 
+    /** Icône « coller » animée : panneau ouvert, le presse-papiers s'incline et des étincelles jaillissent. */
+    private val clipboardIcon = ClipboardIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
+
     /** Bouton Annuler (icône « annuler »), juste à droite du bouton Smart Clipboard : défait la dernière action. */
     private val undoButton = ImageButton(context)
     private var undoListener: (() -> Unit)? = null
@@ -53,6 +56,7 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
     init {
         // Bouton Smart Clipboard : icône « coller » à la place du texte.
         style.styleBarIconButton(clipboardButton, R.drawable.ic_paste)
+        clipboardButton.setImageDrawable(clipboardIcon) // même tracé que ic_paste au repos
         clipboardButton.contentDescription = context.getString(R.string.clipboard_button)
         clipboardButton.setOnClickListener { clipboardListener?.onClipboardClick() }
 
@@ -239,6 +243,7 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
         if (clipboardButtonActiveBackground != clipboardPanelOpen) {
             clipboardButtonActiveBackground = clipboardPanelOpen
             clipboardButton.background = clipboardButtonBackgrounds.get(clipboardPanelOpen)
+            clipboardIcon.setActive(clipboardPanelOpen, animate = isLaidOut)
         }
     }
 

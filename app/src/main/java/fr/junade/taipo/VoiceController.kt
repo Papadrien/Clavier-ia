@@ -66,6 +66,9 @@ class VoiceController(
 
         fun setVoiceBarState(state: VoiceBarState)
 
+        /** Niveau sonore de l'écoute (0 à 1), pour la jauge de l'icône micro. */
+        fun setVoiceLevel(level: Float)
+
         /** La dictée vient d'écrire [inserted] dans le champ de l'application (bouton Annuler). */
         fun recordUndoEdit(inserted: String, original: String)
 
@@ -219,6 +222,10 @@ class VoiceController(
                             stopRecording()
                         }
                     }
+                }
+                recorder.onLevel = { level ->
+                    // Appelé depuis le thread d'enregistrement : la jauge de l'icône se met à jour sur le thread principal.
+                    mainHandler.post { if (voiceRecorder === recorder) host.setVoiceLevel(level) }
                 }
                 recorder.onCaptureError = { error ->
                     // Appelé depuis le thread d'enregistrement (lot 2.5 de la revue) : micro perdu ou

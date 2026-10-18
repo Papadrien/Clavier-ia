@@ -5,6 +5,7 @@ import android.media.AudioRecord
 import android.media.MediaRecorder
 import com.k2fsa.sherpa.onnx.OnlineStream
 import fr.junade.taipo.AppLog
+import fr.junade.taipo.VoiceLevel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -63,6 +64,12 @@ class VoiceRecorder(private val engine: VoiceEngine, private val scope: Coroutin
      * récupérer le texte déjà transcrit et libérer le micro.
      */
     var onCaptureError: ((CaptureError) -> Unit)? = null
+
+    /**
+     * Appelé (sur un thread d'arrière-plan) à chaque bloc audio lu, avec le niveau sonore de 0 (silence) à 1 (voix forte) :
+     * l'icône micro du bouton Vocal en fait une jauge.
+     */
+    var onLevel: ((Float) -> Unit)? = null
 
     private val _partialText = MutableStateFlow("")
 
@@ -158,7 +165,9 @@ class VoiceRecorder(private val engine: VoiceEngine, private val scope: Coroutin
                 }
 
                 val now = System.currentTimeMillis()
-                if (rms(buffer, read) < SILENCE_RMS_THRESHOLD) {
+                val amplitude = rms(buffer, read)
+                onLevel?.invoke(VoiceLevel.fromRms(amplitude))
+                if (amplitude < SILENCE_RMS_THRESHOLD) {
                     if (silenceStartAt < 0) {
                         silenceStartAt = now
                     } else if (now - silenceStartAt >= SILENCE_TIMEOUT_MS) {

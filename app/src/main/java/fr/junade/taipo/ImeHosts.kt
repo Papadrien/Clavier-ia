@@ -295,6 +295,10 @@ internal class VoiceHost(private val ime: ImeHostContext) : VoiceController.Host
         ime.correctionBar.voiceState = state
         ime.prompt.setVoiceState(state) // le bouton micro de la barre du prompt suit le même état
     }
+    override fun setVoiceLevel(level: Float) {
+        ime.correctionBar.setVoiceLevel(level)
+        ime.prompt.setVoiceLevel(level)
+    }
     override fun inputConnection() = ime.inputConnection()
     override fun promptActive(): Boolean = ime.prompt.active
     override fun promptVoiceField(): VoiceField = ime.prompt.voiceField

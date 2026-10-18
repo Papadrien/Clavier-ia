@@ -206,6 +206,11 @@ class PromptModeController(
         if (this::promptBar.isInitialized) promptBar.voiceState = state
     }
 
+    /** Niveau sonore de l'écoute (0 à 1) pour la jauge de l'icône micro de la barre du prompt. */
+    fun setVoiceLevel(level: Float) {
+        if (this::promptBar.isInitialized) promptBar.setVoiceLevel(level)
+    }
+
     fun setSuggestionEmoji(emoji: String?) {
         suggestionBar.setEmoji(emoji)
     }
@@ -558,7 +563,12 @@ class PromptModeController(
         }
         host.refreshRecentEmojiBar()
         val chatVisible = active && chatAvailable && chatShown
-        if (this::chatZone.isInitialized) chatZone.visibility = if (chatVisible) View.VISIBLE else View.GONE
+        if (this::chatZone.isInitialized) {
+            val wasVisible = chatZone.visibility == View.VISIBLE
+            chatZone.visibility = if (chatVisible) View.VISIBLE else View.GONE
+            // La zone sort du clavier en montant, avec un ressort, seulement quand elle vient d'apparaître.
+            if (chatVisible && !wasVisible) chatZone.playRise()
+        }
         promptBar.setChatToggleVisible(active && chatAvailable)
         promptBar.setChatShown(chatVisible)
         promptBar.stopping = stopping && !conversation.isGenerating && generationJob?.isActive == true

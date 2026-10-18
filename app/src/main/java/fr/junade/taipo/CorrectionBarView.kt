@@ -79,9 +79,12 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private val menuBackgrounds = style.toggleBackgrounds()
     private val actionsMenuBackgrounds = style.toggleBackgrounds()
     private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
-    private val voiceSpinner = LoadingSpinnerDrawable(context)
+    private val micIcon = MicIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
     private val aiTranscriptionSpinner = LoadingSpinnerDrawable(context)
-    private val correctSpinner = LoadingSpinnerDrawable(context)
+    private val correctIcon = CorrectIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
+
+    /** État précédent du bouton Corriger : CORRECTING → IDLE (correction réussie) déclenche le retracé de la coche. */
+    private var previousCorrectState = CorrectionBarState.HIDDEN
     private val zoneState = SuggestionZoneState()
     private var menuBackgroundExpanded: Boolean? = null
     val voiceButton = ImageButton(context)
@@ -205,6 +208,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
 
         // Icône seule, grise comme Vocal ; l'état (chargement, correction…) passe par la transparence et la description d'accessibilité.
         style.styleRoundIconButton(correctButton, R.drawable.ic_spellcheck)
+        correctButton.setImageDrawable(correctIcon) // même tracé que ic_spellcheck ; animé pendant la correction
         correctButton.setOnClickListener {
             when (state) {
                 CorrectionBarState.IDLE -> {
@@ -249,6 +253,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         // Lot 08 : Vocal devient un bouton rond à icône micro ; son état (écoute, chargement…) passe par la couleur,
         // la transparence et la description d'accessibilité, plus par le texte.
         style.styleRoundIconButton(voiceButton, R.drawable.ic_mic)
+        voiceButton.setImageDrawable(micIcon) // même tracé que ic_mic ; la capsule s'anime (chargement, écoute)
         // Le geste réel passe par setOnTouchListener (côté appelant, qui consomme tout toucher) ; le clic, lui, n'est déclenché
         // que par l'accessibilité (TalkBack, double appui) : l'appelant le relie à la bascule d'écoute (lot 20).
         voiceButton.setOnClickListener { }
@@ -516,24 +521,24 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             correctButton.contentDescription = context.getString(it.label)
             correctButton.label = context.getString(R.string.action_pill_correction)
         }
-        if (appearance?.loading == true) {
-            // Chargement du modèle ou correction : roue animée à la place de l'icône (le bouton reste désactivé).
-            if (correctButton.drawable !== correctSpinner) correctButton.setImageDrawable(correctSpinner)
-            correctSpinner.start()
-        } else {
-            correctSpinner.stop()
-            if (correctButton.drawable === correctSpinner) correctButton.setImageResource(R.drawable.ic_spellcheck)
-        }
+        // Chargement du modèle ou correction : un faisceau balaie l'icône (le bouton reste désactivé). Correction réussie
+        // (CORRECTING puis IDLE) : la coche se retrace avec un rebond. Annulation ou erreur : retour direct au repos.
+        correctIcon.setWorking(appearance?.loading == true, animate = isLaidOut)
+        if (state == CorrectionBarState.IDLE && previousCorrectState == CorrectionBarState.CORRECTING) correctIcon.playDone()
+        previousCorrectState = state
         renderActionButtons()
         applyFieldRestriction()
     }
+
+    /** Niveau sonore de l'écoute (0 à 1) : fait monter et descendre la jauge de la capsule du micro. */
+    fun setVoiceLevel(level: Float) = micIcon.setLevel(level)
 
     private fun renderVoice() {
         val appearance = BarVisibility.voiceAppearance(voiceState)
         voiceButton.contentDescription = context.getString(appearance.label)
         voiceButton.background = voiceBackgrounds.getOrPut(appearance.background) { style.roundBackground(appearance.background) }
         voiceButton.alpha = appearance.alpha
-        voiceButton.showMicOrSpinner(appearance.loading, voiceSpinner)
+        micIcon.setMode(MicIconMode.of(voiceState), animate = isLaidOut)
         renderActionButtons()
         applyFieldRestriction()
     }

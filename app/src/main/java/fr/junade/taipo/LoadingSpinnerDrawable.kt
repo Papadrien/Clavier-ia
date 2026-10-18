@@ -10,7 +10,6 @@ import android.graphics.RectF
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.view.animation.LinearInterpolator
-import android.widget.ImageButton
 
 /**
  * Roue de chargement animée (arc qui tourne, trait arrondi), posée comme icône d'un bouton : même aspect que la roue du
@@ -87,19 +86,5 @@ internal class LoadingSpinnerDrawable(context: Context) : Drawable(), Animatable
         const val FULL_TURN = 360f
         const val SWEEP = 270f
         const val TURN_MS = 900L
-    }
-}
-
-/**
- * Icône d'un bouton rond de la barre : la roue [spinner] pendant le [loading], l'icône micro sinon. Ne touche au bouton
- * que si l'icône change (appelé à chaque rendu du bouton).
- */
-internal fun ImageButton.showMicOrSpinner(loading: Boolean, spinner: LoadingSpinnerDrawable) {
-    if (loading) {
-        if (drawable !== spinner) setImageDrawable(spinner)
-        spinner.start()
-    } else {
-        spinner.stop()
-        if (drawable === spinner) setImageResource(R.drawable.ic_mic)
     }
 }

@@ -8,7 +8,7 @@ import android.graphics.PixelFormat
 import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.view.animation.PathInterpolator
+import android.view.animation.OvershootInterpolator
 
 /**
  * Icône qui pivote sur elle-même autour de son centre (le chevron du menu de gauche fait un demi-tour quand le menu
@@ -35,7 +35,7 @@ internal class RotatingDrawable(private val inner: Drawable) : Drawable(), Drawa
         }
         animator = ValueAnimator.ofFloat(angle, target).apply {
             duration = DURATION_MS
-            interpolator = PathInterpolator(0.2f, 0f, 0f, 1f)
+            interpolator = OvershootInterpolator(OVERSHOOT_TENSION)
             addUpdateListener {
                 angle = it.animatedValue as Float
                 invalidateSelf()
@@ -87,5 +87,6 @@ internal class RotatingDrawable(private val inner: Drawable) : Drawable(), Drawa
 
     private companion object {
         const val DURATION_MS = 320L
+        const val OVERSHOOT_TENSION = 4f // même ressort que l'icône robot (RobotIconDrawable)
     }
 }

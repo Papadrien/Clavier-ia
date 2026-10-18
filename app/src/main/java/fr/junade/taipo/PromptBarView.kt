@@ -1,5 +1,9 @@
 package fr.junade.taipo
 
+import android.animation.Keyframe
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
@@ -17,7 +21,6 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import kotlin.math.abs
@@ -56,7 +59,8 @@ class PromptBarView(context: Context) : LinearLayout(context) {
     private val cancelButton = ImageButton(context)
     private val inputView = TextView(context)
     private val sendButton = ImageButton(context)
-    private val sendSpinner = ProgressBar(context)
+    private val sendHolder = FrameLayout(context)
+    private var sendSquash: ObjectAnimator? = null
 
     private val style = BarStyle(context)
     private val sendBackground = style.roundBackground(SEND_COLOR)
@@ -64,7 +68,14 @@ class PromptBarView(context: Context) : LinearLayout(context) {
     private val chatShownBackground = style.pillBackground(ACCENT_COLOR)
     private val chatHiddenBackground = style.pillBackground(BUTTON_COLOR)
     private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
-    private val voiceSpinner = LoadingSpinnerDrawable(context)
+    private val chatIcon = ChatIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
+    private val micIcon = MicIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
+
+    // Icône du bouton rond (étincelles en orbite, flèche, stop) ; coupée au cercle de la face, ombre déduite.
+    private val sendIcon = SendIconDrawable(
+        context.dimen(R.dimen.taipo_icon_size).toInt(),
+        (context.dimen(R.dimen.taipo_bar_round_button_size) - context.dimen(R.dimen.taipo_key_shadow_height)) / 2f,
+    )
 
     private var cancelListener: (() -> Unit)? = null
     private var sendListener: (() -> Unit)? = null
@@ -145,6 +156,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
 
         // Bouton afficher/masquer le chat : caché tant qu'aucun prompt n'a été envoyé.
         style.styleBarIconButton(chatToggleButton, R.drawable.ic_chat)
+        chatToggleButton.setImageDrawable(chatIcon) // même tracé que ic_chat ; l'étincelle s'anime à l'ouverture et à la fermeture
         chatToggleButton.contentDescription = context.getString(R.string.prompt_chat_toggle_description)
         chatToggleButton.setOnClickListener { chatToggleListener?.invoke() }
         chatToggleButton.visibility = View.GONE
@@ -156,6 +168,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         // Bouton micro (dictée dans le prompt) : à gauche de la pilule. Le geste réel passe par un écouteur tactile posé par
         // l'appelant ; le clic n'est déclenché que par l'accessibilité (TalkBack), comme pour le bouton Vocal.
         style.styleRoundIconButton(voiceButton, R.drawable.ic_mic)
+        voiceButton.setImageDrawable(micIcon) // même tracé que ic_mic ; la capsule s'anime (chargement, écoute)
         addView(
             voiceButton,
             LayoutParams(dimen(R.dimen.taipo_bar_icon_button_width).toInt(), barHeight).apply { marginEnd = gap },
@@ -216,22 +229,19 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         // L'icône se centre sur la face du bouton rond, au-dessus de l'épaisseur d'ombre.
         val shadow = dimen(R.dimen.taipo_key_shadow_height).toInt()
         sendButton.setPadding(0, 0, 0, shadow)
+        sendButton.setImageDrawable(sendIcon)
         sendButton.setOnClickListener {
-            if (generating) stopListener?.invoke() else sendListener?.invoke()
+            if (generating) {
+                stopListener?.invoke()
+            } else {
+                // Décollage de la flèche et rebond du bouton, avant que l'envoi ne passe le bouton en stop.
+                sendIcon.launch()
+                playSendSquash()
+                sendListener?.invoke()
+            }
         }
         val roundSize = dimen(R.dimen.taipo_bar_round_button_size).toInt()
-        val sendHolder = FrameLayout(context)
         sendHolder.addView(sendButton, FrameLayout.LayoutParams(roundSize, roundSize))
-        val spinnerSize = dimen(R.dimen.taipo_bar_spinner_size).toInt()
-        sendSpinner.isIndeterminate = true
-        sendSpinner.indeterminateTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
-        sendSpinner.visibility = View.GONE
-        // Lot 20 : la roue est décorative ; le chargement est annoncé par l'état du bouton d'envoi (voir renderSendButton).
-        sendSpinner.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-        sendHolder.addView(
-            sendSpinner,
-            FrameLayout.LayoutParams(spinnerSize, spinnerSize, Gravity.CENTER).apply { bottomMargin = shadow },
-        )
         addView(sendHolder, LayoutParams(roundSize, roundSize).apply { marginEnd = gap })
 
         // Croix « annuler » : à droite du bouton d'envoi, hors de la pilule. Bouton secondaire, comme le bouton de chat.
@@ -373,7 +383,9 @@ class PromptBarView(context: Context) : LinearLayout(context) {
     /** La zone de chat est affichée (bouton coloré) ou masquée. */
     fun setChatShown(shown: Boolean) {
         if (chatShown == shown) return
+        val firstCall = chatShown == null
         chatShown = shown
+        chatIcon.setShown(shown, animate = !firstCall)
         chatToggleButton.background = if (shown) chatShownBackground else chatHiddenBackground
     }
 
@@ -388,38 +400,65 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
+    /** Niveau sonore de l'écoute (0 à 1) : fait monter et descendre la jauge de la capsule du micro. */
+    fun setVoiceLevel(level: Float) = micIcon.setLevel(level)
+
     private fun renderVoice() {
         val appearance = BarVisibility.voiceAppearance(voiceState)
         voiceButton.contentDescription = context.getString(appearance.label)
         voiceButton.background = voiceBackgrounds.getOrPut(appearance.background) { style.roundBackground(appearance.background) }
         voiceButton.alpha = appearance.alpha
-        voiceButton.showMicOrSpinner(appearance.loading, voiceSpinner)
+        micIcon.setMode(MicIconMode.of(voiceState), animate = isLaidOut)
+    }
+
+    /** Le bouton s'écrase puis rebondit quand le message part (même geste que la maquette « Orbite »). */
+    private fun playSendSquash() {
+        if (!ValueAnimator.areAnimatorsEnabled()) return
+        sendSquash?.cancel()
+        fun keyframes(name: String, a: Float, b: Float, c: Float) = PropertyValuesHolder.ofKeyframe(
+            name,
+            Keyframe.ofFloat(0f, 1f),
+            Keyframe.ofFloat(SQUASH_PRESS_AT, a),
+            Keyframe.ofFloat(SQUASH_REBOUND_AT, b),
+            Keyframe.ofFloat(1f, c),
+        )
+        sendHolder.pivotX = sendHolder.width / 2f
+        sendHolder.pivotY = sendHolder.height / 2f
+        sendSquash = ObjectAnimator.ofPropertyValuesHolder(
+            sendHolder,
+            keyframes("scaleX", 1.08f, 0.96f, 1f),
+            keyframes("scaleY", 0.88f, 1.05f, 1f),
+        ).apply {
+            duration = SQUASH_MS
+            start()
+        }
     }
 
     private fun renderSendButton() {
+        // Icône : étincelles en orbite pendant le chargement du modèle ou l'arrêt, stop pendant la génération, flèche sinon.
+        val iconMode = when {
+            stopping -> SendIconMode.LOADING
+            generating -> SendIconMode.STOP
+            modelLoading -> SendIconMode.LOADING
+            else -> SendIconMode.SEND
+        }
+        sendIcon.setMode(iconMode, animate = isLaidOut)
         if (stopping) {
-            sendButton.setImageDrawable(null)
             sendButton.background = stopBackground
             sendButton.contentDescription = context.getString(R.string.prompt_stopping_description)
             ViewCompat.setStateDescription(sendButton, context.getString(R.string.prompt_stopping_description))
             sendButton.isEnabled = false
             sendButton.alpha = 0.6f
-            sendSpinner.visibility = View.VISIBLE
         } else if (generating) {
-            sendButton.setImageResource(R.drawable.ic_stop)
             sendButton.background = stopBackground
             sendButton.contentDescription = context.getString(R.string.prompt_stop_description)
             ViewCompat.setStateDescription(sendButton, null)
             sendButton.isEnabled = true
             sendButton.alpha = 1f
-            sendSpinner.visibility = View.GONE
         } else {
-            // Modèle en chargement : la roue remplace l'icône d'envoi (l'envoi reste possible, il attendra).
-            if (modelLoading) sendButton.setImageDrawable(null) else sendButton.setImageResource(R.drawable.ic_send)
-            sendSpinner.visibility = if (modelLoading) View.VISIBLE else View.GONE
             sendButton.background = sendBackground
             sendButton.contentDescription = context.getString(R.string.prompt_send_description)
-            // Lot 20 : pendant le chargement du modèle, le bouton le dit (la roue visuelle est masquée à TalkBack).
+            // Lot 20 : pendant le chargement du modèle, le bouton le dit (les étincelles sont décoratives pour TalkBack).
             ViewCompat.setStateDescription(sendButton, if (modelLoading) context.getString(R.string.prompt_loading_model) else null)
             // Un prompt vide ne s'envoie pas : le bouton est grisé.
             sendButton.isEnabled = !inputBlank
@@ -437,5 +476,8 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         const val CARET = "|"
         const val BEFORE_CURSOR_SHARE = 0.7f
         const val CARET_BLINK_MS = 530L
+        const val SQUASH_MS = 500L
+        const val SQUASH_PRESS_AT = 0.3f
+        const val SQUASH_REBOUND_AT = 0.6f
     }
 }

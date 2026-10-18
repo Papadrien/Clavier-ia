@@ -45,7 +45,7 @@ internal data class VoiceAppearance(
     @StringRes val label: Int,
     @ColorRes val background: Int,
     val alpha: Float,
-    /** Le modèle se charge : une roue animée remplace l'icône micro. */
+    /** Le modèle se charge (le contour de la capsule du micro se dessine alors en boucle ; voir [MicIconMode]). */
     val loading: Boolean = false,
 )
 
