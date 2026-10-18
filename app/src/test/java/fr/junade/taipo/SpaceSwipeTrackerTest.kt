@@ -76,4 +76,12 @@ class SpaceSwipeTrackerTest {
         t.reset()
         assertFalse(t.isActive)
     }
+
+    @Test
+    fun `la distance au point d appui est signee`() {
+        val t = tracker()
+        t.onDown(100f)
+        assertEquals(30f, t.offsetFromDown(130f))
+        assertEquals(-45f, t.offsetFromDown(55f))
+    }
 }

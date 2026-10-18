@@ -43,6 +43,9 @@ class SpaceSwipeTracker(
         return steps
     }
 
+    /** Distance du doigt (en x) à son point d'appui, négative vers la gauche : l'animation du trait s'en sert. */
+    fun offsetFromDown(x: Float): Float = x - downX
+
     fun reset() {
         isActive = false
     }

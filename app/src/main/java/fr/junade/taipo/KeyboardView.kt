@@ -1,6 +1,7 @@
 package fr.junade.taipo
 
 import android.annotation.SuppressLint
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Canvas
@@ -186,7 +187,7 @@ class KeyboardView(context: Context) : View(context) {
         override fun run() {
             pressedKey?.let { key ->
                 if (key.action is KeyAction.Backspace) {
-                    keyListener?.onKey(key)
+                    deliverKey(key, repeat = true)
                     repeatHandler.postDelayed(this, 60L)
                 }
             }
@@ -213,8 +214,50 @@ class KeyboardView(context: Context) : View(context) {
     // distinct d'un simple appui long sur la touche.
     private val backspaceSwipe = BackspaceSwipeTracker(activationPx = dp(24f), stepPx = dp(40f))
 
+    // Animation de l'icône retour arrière (balancier, inclinaison, étincelles) : seule l'icône bouge, pas la touche.
+    private val backspaceAnimation = BackspaceAnimation(
+        density = resources.displayMetrics.density,
+        animationsEnabled = { ValueAnimator.areAnimatorsEnabled() },
+    )
+    private val sparkPainter = SparkPainter(
+        intArrayOf(
+            context.themeColor(R.color.taipo_purple_light),
+            context.themeColor(R.color.taipo_purple),
+            context.themeColor(R.color.key_label),
+        ),
+    )
+
+    // Animation de l'icône Maj (« Bond ») : seule l'icône bouge, la face de la touche garde son rendu. L'état vient de
+    // isShifted / isCapsLock, relu à chaque dessin (voir syncShiftAnimation) ; un appui sur Maj est horodaté pour
+    // distinguer l'activation au doigt de la majuscule automatique (début de phrase).
+    private val shiftAnimation = ShiftAnimation(
+        density = resources.displayMetrics.density,
+        animationsEnabled = { ValueAnimator.areAnimatorsEnabled() },
+    )
+    private val shiftRing = ShiftRingPainter(context.themeColor(R.color.taipo_purple_light), resources.displayMetrics.density)
+    private var shiftSeeded = false
+    private var lastShiftTapNanos = 0L
+
+    // Animation « Amibe » du trait de la barre espace pendant le glissement du curseur : deux ressorts, l'avant colle au doigt,
+    // l'arrière traîne. Le trait seul bouge, pas la touche.
+    private val spaceBarAnimation = SpaceBarAnimation(
+        density = resources.displayMetrics.density,
+        animationsEnabled = { ValueAnimator.areAnimatorsEnabled() },
+        halfLengthPx = { resources.getDimension(R.dimen.taipo_space_bar_length) },
+    )
+
+    init {
+        keyRenderer.shiftAnimation = shiftAnimation
+        keyRenderer.spaceBarAnimation = spaceBarAnimation
+    }
+
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        backspaceAnimation.cancel()
+        shiftAnimation.cancel()
+        spaceBarAnimation.cancel()
+        shiftSeeded = false
+        keyRenderer.backspaceIconAngle = 0f
         repeatHandler.removeCallbacksAndMessages(null)
         keyPopup.forget()
         activePointerId = MotionEvent.INVALID_POINTER_ID
@@ -284,7 +327,7 @@ class KeyboardView(context: Context) : View(context) {
 
     /** Lot 20 : saisie d'une touche demandée par TalkBack (double appui), sans geste tactile. */
     internal fun activateKey(key: Key) {
-        keyListener?.onKey(key)
+        deliverKey(key, repeat = false)
     }
 
     /** Lot 20 : saisie d'un caractère de l'appui long demandée par TalkBack (action « Saisir é »), comme le choix dans la bulle. */
@@ -306,6 +349,13 @@ class KeyboardView(context: Context) : View(context) {
         val rowHeight = usableHeight / layout.rows.size.toFloat()
         val content = keyboardWidth()
 
+        val now = System.nanoTime()
+        syncShiftAnimation(now)
+        if (backspaceAnimation.isRunning) backspaceAnimation.advance(now)
+        if (shiftAnimation.isRunning) shiftAnimation.advance(now)
+        if (spaceBarAnimation.isRunning) spaceBarAnimation.advance(now)
+        keyRenderer.backspaceIconAngle = backspaceAnimation.iconAngle
+
         val unit = content.widthPx / layout.referenceUnits
         layout.rows.forEachIndexed { rowIndex, row ->
             val top = rowIndex * rowHeight
@@ -315,14 +365,18 @@ class KeyboardView(context: Context) : View(context) {
                 val keyWidth = unit * key.weight
                 keyRenderer.draw(
                     canvas, key, left, top, keyWidth, rowHeight, inset,
-                    dims, layout, isShifted, isCapsLock, pressedKey,
+                    dims, layout, isShifted, pressedKey,
                 )
                 left += keyWidth
             }
         }
 
+        shiftRing.draw(canvas, shiftAnimation)
+        sparkPainter.draw(canvas, shiftAnimation.sparks)
+        sparkPainter.draw(canvas, backspaceAnimation.sparks)
         drawPopup(canvas)
         drawPreview(canvas)
+        if (backspaceAnimation.isRunning || shiftAnimation.isRunning || spaceBarAnimation.isRunning) postInvalidateOnAnimation()
     }
 
     // Multi-touch : en frappe rapide, le doigt suivant se pose avant que le précédent soit levé.
@@ -383,7 +437,10 @@ class KeyboardView(context: Context) : View(context) {
         pressedKey = keyAt(x, y)
         keyPreview.key = pressedKey.takeIf { showsPreview(it) }
         if (pressedKey?.action is KeyAction.Space) spaceSwipe.onDown(x)
-        if (pressedKey?.action is KeyAction.Backspace) backspaceSwipe.onDown(x)
+        if (pressedKey?.action is KeyAction.Backspace) {
+            backspaceSwipe.onDown(x)
+            backspaceAnimation.onPress(x)
+        }
         startRepeat(pressedKey)
         scheduleLongPress(pressedKey)
         invalidate()
@@ -399,13 +456,19 @@ class KeyboardView(context: Context) : View(context) {
             val steps = spaceSwipe.onMove(x)
             if (steps != 0) cursorMoveListener?.onCursorMove(steps)
             // Une fois le glissement engagé, le doigt peut sortir de la barre espace sans changer de touche.
-            if (spaceSwipe.isActive) return
+            if (spaceSwipe.isActive) {
+                spaceBarAnimation.onDrag(spaceSwipe.offsetFromDown(x), spaceBarMaxTravelPx())
+                invalidate()
+                return
+            }
         }
         if (pressedKey?.action is KeyAction.Backspace) {
             val words = backspaceSwipe.onMove(x)
             if (backspaceSwipe.isActive) {
                 // Le glissement remplace la suppression caractère par caractère de l'appui maintenu (repeatRunnable).
                 stopRepeat()
+                backspaceAnimation.onDrag(x, y, backspaceSwipe.leftwardDistance(x), words)
+                invalidate()
                 if (words != deleteSwipeWords) {
                     deleteSwipeWords = words
                     deleteSwipeListener?.onDeleteSwipeUpdate(words)
@@ -426,6 +489,7 @@ class KeyboardView(context: Context) : View(context) {
 
     /** Relâchement du doigt actif en (x, y) : saisit la touche, le symbole de la bulle, ou rien. */
     private fun releaseTouch(x: Float, y: Float) {
+        spaceBarAnimation.onRelease()
         stopRepeat()
         cancelKeyLongPress()
         keyPreview.key = null
@@ -456,6 +520,7 @@ class KeyboardView(context: Context) : View(context) {
             backspaceSwipe.reset()
             deleteSwipeWords = 0
             deleteSwipeListener?.onDeleteSwipeRelease()
+            backspaceAnimation.onSwipeRelease(x, y)
             invalidate()
             return
         }
@@ -465,13 +530,53 @@ class KeyboardView(context: Context) : View(context) {
             return
         }
         if (key != null && keyAt(x, y) == key) {
-            keyListener?.onKey(key)
+            deliverKey(key, repeat = false)
         }
         invalidate()
     }
 
+    /** Saisit [key] ; pour le retour arrière, lance aussi l'animation de l'icône (balancier et étincelles au centre de la touche). */
+    private fun deliverKey(key: Key, repeat: Boolean) {
+        if (key.action is KeyAction.Shift) lastShiftTapNanos = System.nanoTime()
+        keyListener?.onKey(key)
+        if (key.action !is KeyAction.Backspace) return
+        val bounds = keyBounds(key) ?: return
+        backspaceAnimation.onKey(bounds.centerX(), bounds.centerY(), repeat, System.nanoTime())
+        invalidate()
+    }
+
+    /**
+     * Compare l'état de Maj (minuscule, majuscule, verrouillée) à celui de l'animation et lance la transition. Fait à chaque
+     * dessin : plusieurs changements dans la même image (majuscule puis verrouillage) n'en font qu'une. Premier dessin ou
+     * touche absente de la disposition : pose directe, sans animation. Majuscule « automatique » = aucun appui sur Maj
+     * juste avant (début de phrase).
+     */
+    private fun syncShiftAnimation(nowNanos: Long) {
+        val target = ShiftState.of(isShifted, isCapsLock)
+        if (!shiftSeeded) {
+            shiftSeeded = true
+            shiftAnimation.snap(target)
+            return
+        }
+        if (target == shiftAnimation.state) return
+        val bounds = shiftKeyBounds()
+        if (bounds == null) {
+            shiftAnimation.snap(target)
+            return
+        }
+        val auto = nowNanos - lastShiftTapNanos > SHIFT_TAP_WINDOW_NANOS
+        shiftAnimation.onState(target, auto, bounds.centerX(), bounds.centerY() - dims.keyShadowHeight / 2f, dims.iconSize)
+    }
+
+    private fun shiftKeyBounds(): RectF? {
+        val key = layout.rows.firstNotNullOfOrNull { row -> row.firstOrNull { it.action is KeyAction.Shift } } ?: return null
+        return keyBounds(key)
+    }
+
     private fun cancelTouch() {
         if (backspaceSwipe.isActive) deleteSwipeListener?.onDeleteSwipeCancel()
+        backspaceAnimation.onSwipeCancel()
+        spaceBarAnimation.onRelease()
         deleteSwipeWords = 0
         stopRepeat()
         cancelKeyLongPress()
@@ -502,6 +607,13 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     /** Position (gauche, haut, largeur) de la touche dans la vue, ou null si elle n'est pas affichée. */
+    /** Distance maximale du trait de la barre espace au centre de la touche : la touche moins le demi-trait et une marge. */
+    private fun spaceBarMaxTravelPx(): Float {
+        val bounds = pressedKey?.let { keyBounds(it) } ?: return 0f
+        val half = resources.getDimension(R.dimen.taipo_space_bar_length)
+        return (bounds.width() / 2f - half - dp(SPACE_BAR_EDGE_MARGIN_DP)).coerceAtLeast(dp(SPACE_BAR_EDGE_MARGIN_DP))
+    }
+
     private fun keyBounds(target: Key): RectF? {
         val rowHeight = usableHeightPx() / layout.rows.size.toFloat()
         val content = keyboardWidth()
@@ -633,7 +745,13 @@ class KeyboardView(context: Context) : View(context) {
         /** Lot 21 : « pas de caractère » (voir [KeyRenderer.shiftedChar]). */
         const val NO_CHAR = KeyRenderer.NO_CHAR
 
+        /** Marge entre le bout du trait et le bord de la barre espace quand le trait est au bout de sa course. */
+        private const val SPACE_BAR_EDGE_MARGIN_DP = 8f
+
         /** Part du délai système d'appui long utilisée pour les touches à pop-up ou à chiffre (−20 %). */
         const val LONG_PRESS_DELAY_RATIO = 0.8f
+
+        /** Un changement de Maj dans les 400 ms qui suivent un appui sur la touche vient de cet appui ; au-delà, c'est la majuscule automatique. */
+        const val SHIFT_TAP_WINDOW_NANOS = 400_000_000L
     }
 }

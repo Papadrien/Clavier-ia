@@ -3,6 +3,7 @@ package fr.junade.taipo
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
@@ -60,6 +61,12 @@ internal class KeyRenderer(private val context: Context) {
         strokeCap = Paint.Cap.ROUND
     }
 
+    // Animation « Amibe » du trait : forme pleine (capsule à deux rayons) dessinée à la place du trait pendant le glissement.
+    var spaceBarAnimation: SpaceBarAnimation? = null
+    private val spaceBarBlobPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
+    private val spaceBarBlobPath = Path()
+    private val spaceBarTint = context.themeColor(R.color.taipo_purple_light)
+
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = context.themeColor(R.color.text_primary)
         textAlign = Paint.Align.CENTER
@@ -74,14 +81,19 @@ internal class KeyRenderer(private val context: Context) {
 
     private val keyRect = RectF()
 
+    // Icône Maj dessinée au Canvas (flèche creuse, pleine ou verrouillée, animation « Bond ») : l'état vient de la vue.
+    var shiftAnimation: ShiftAnimation? = null
+    private val shiftPainter = ShiftIconPainter(context.themeColor(R.color.key_label))
+
+    /** Inclinaison de l'icône retour arrière en degrés (balancier et glissement : voir [BackspaceAnimation]), posée par la vue avant chaque dessin. */
+    var backspaceIconAngle = 0f
+
     // Lot 21 : un caractère à dessiner sans passer par String.
     private val charBuffer = CharArray(1)
     private var lastKeyTextSize = -1f
 
     // Icônes des touches (lot 09) : VectorDrawable de la charte, teintés une fois, redimensionnés au dessin (aucune
     // allocation dans onDraw). Remplacent les glyphes de police (Maj, Effacer) et les tracés Canvas (Entrée, Emoji).
-    private val shiftIcon = loadKeyIcon(R.drawable.ic_key_shift)
-    private val shiftCapsIcon = loadKeyIcon(R.drawable.ic_key_shift_caps)
     private val backspaceIcon = loadKeyIcon(R.drawable.ic_key_backspace)
     private val enterIcon = loadKeyIcon(R.drawable.ic_key_enter)
     private val emojiIcon = loadKeyIcon(R.drawable.ic_key_emoji)
@@ -90,12 +102,37 @@ internal class KeyRenderer(private val context: Context) {
     private var dims: DrawDimens = DrawDimens(context)
     private var layout: KeyboardLayout = Keyboards.letters
     private var isShifted = false
-    private var isCapsLock = false
     private var pressedKey: Key? = null
 
     /** Relit l'épaisseur du trait de la barre d'espace (changement de configuration). */
     fun refreshDimens() {
         spaceBarPaint.strokeWidth = context.dimen(R.dimen.taipo_space_bar_thickness)
+    }
+
+    /**
+     * Trait de la barre espace pendant le glissement (animation « Amibe ») : une capsule entre deux cercles. Le bout avant
+     * gonfle et le bout arrière s'amincit quand le trait s'étire ; la teinte vire au violet clair. Sans allocation.
+     */
+    private fun drawSpaceBarBlob(canvas: Canvas, blob: SpaceBarAnimation, cx: Float, cy: Float) {
+        val half = dims.spaceBarLength
+        val rest = spaceBarPaint.strokeWidth / 2f
+        val rightX = cx + half + blob.rightOffset
+        val leftX = cx - half + blob.leftOffset
+        val stretch = SpaceBarPose.stretch(rightX - leftX, 2f * half)
+        val headR = SpaceBarPose.headRadius(stretch, rest)
+        val tailR = SpaceBarPose.tailRadius(stretch, rest)
+        val rightR = if (blob.headIsRight) headR else tailR
+        val leftR = if (blob.headIsRight) tailR else headR
+        spaceBarBlobPaint.color = SpaceBarPose.blend(spaceBarPaint.color, spaceBarTint, SpaceBarPose.tint(stretch))
+        canvas.drawCircle(rightX, cy, rightR, spaceBarBlobPaint)
+        canvas.drawCircle(leftX, cy, leftR, spaceBarBlobPaint)
+        spaceBarBlobPath.rewind()
+        spaceBarBlobPath.moveTo(leftX, cy - leftR)
+        spaceBarBlobPath.lineTo(rightX, cy - rightR)
+        spaceBarBlobPath.lineTo(rightX, cy + rightR)
+        spaceBarBlobPath.lineTo(leftX, cy + leftR)
+        spaceBarBlobPath.close()
+        canvas.drawPath(spaceBarBlobPath, spaceBarBlobPaint)
     }
 
     /** Lot 21 : la majuscule à dessiner à la place du libellé (Maj actif sur une lettre), ou [NO_CHAR]. Sans allocation. */
@@ -132,13 +169,11 @@ internal class KeyRenderer(private val context: Context) {
         dims: DrawDimens,
         layout: KeyboardLayout,
         isShifted: Boolean,
-        isCapsLock: Boolean,
         pressedKey: Key?,
     ) {
         this.dims = dims
         this.layout = layout
         this.isShifted = isShifted
-        this.isCapsLock = isCapsLock
         this.pressedKey = pressedKey
         drawKey(canvas, key, left, top, keyWidth, rowHeight, inset)
     }
@@ -182,18 +217,23 @@ internal class KeyRenderer(private val context: Context) {
             KeyAction.Space -> {
                 val cx = keyRect.centerX()
                 val cy = keyRect.centerY()
-                canvas.drawLine(
-                    cx - dims.spaceBarLength, cy, cx + dims.spaceBarLength, cy, spaceBarPaint,
-                )
+                val blob = spaceBarAnimation
+                if (blob != null && blob.isRunning) {
+                    drawSpaceBarBlob(canvas, blob, cx, cy)
+                } else {
+                    canvas.drawLine(
+                        cx - dims.spaceBarLength, cy, cx + dims.spaceBarLength, cy, spaceBarPaint,
+                    )
+                }
             }
 
             KeyAction.Emoji -> drawKeyIcon(canvas, emojiIcon)
 
             KeyAction.Enter -> drawKeyIcon(canvas, enterIcon)
 
-            KeyAction.Shift -> drawKeyIcon(canvas, if (isCapsLock) shiftCapsIcon else shiftIcon)
+            KeyAction.Shift -> drawShiftIcon(canvas)
 
-            KeyAction.Backspace -> drawKeyIcon(canvas, backspaceIcon)
+            KeyAction.Backspace -> drawKeyIcon(canvas, backspaceIcon, backspaceIconAngle)
 
             else -> drawKeyLabel(canvas, key)
         }
@@ -238,14 +278,29 @@ internal class KeyRenderer(private val context: Context) {
     }
 
     /** Lot 09 : icône centrée sur la face de la touche, à [R.dimen.taipo_icon_size] (réduite sur les touches basses). */
-    private fun drawKeyIcon(canvas: Canvas, icon: Drawable) {
+    private fun drawKeyIcon(canvas: Canvas, icon: Drawable, angleDegrees: Float = 0f) {
         val half = minOf(dims.iconSize, keyRect.height() * KEY_ICON_MAX_RATIO) / 2f
         val cx = keyRect.centerX()
         val cy = keyRect.centerY()
         icon.setBounds(
             (cx - half).roundToInt(), (cy - half).roundToInt(), (cx + half).roundToInt(), (cy + half).roundToInt(),
         )
+        if (angleDegrees == 0f) {
+            icon.draw(canvas)
+            return
+        }
+        // Icône animée (retour arrière) : elle pivote autour de son centre, la touche ne bouge pas.
+        canvas.save()
+        canvas.rotate(angleDegrees, cx, cy)
         icon.draw(canvas)
+        canvas.restore()
+    }
+
+    /** Icône Maj centrée sur la face de la touche, à la même taille que les autres icônes de touche. */
+    private fun drawShiftIcon(canvas: Canvas) {
+        val animation = shiftAnimation ?: return
+        val size = minOf(dims.iconSize, keyRect.height() * KEY_ICON_MAX_RATIO)
+        shiftPainter.draw(canvas, animation, keyRect.centerX(), keyRect.centerY(), size)
     }
 
     /** Petit indice du chiffre accessible par appui long, en haut à droite de la touche. */

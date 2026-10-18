@@ -76,4 +76,13 @@ class BackspaceSwipeTrackerTest {
         t.reset()
         assertFalse(t.isActive)
     }
+
+    @Test
+    fun `la distance vers la gauche suit le doigt et ne devient jamais negative`() {
+        val t = tracker()
+        t.onDown(100f)
+        assertEquals(0f, t.leftwardDistance(100f), 1e-6f)
+        assertEquals(45f, t.leftwardDistance(55f), 1e-6f)
+        assertEquals(0f, t.leftwardDistance(160f), 1e-6f)
+    }
 }

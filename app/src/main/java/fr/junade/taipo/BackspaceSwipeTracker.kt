@@ -44,6 +44,9 @@ class BackspaceSwipeTracker(
         return 1 + ((leftward - activationPx) / stepPx).toInt()
     }
 
+    /** Distance parcourue vers la gauche depuis le point d'appui (0 si le doigt est à droite de celui-ci). */
+    fun leftwardDistance(x: Float): Float = (downX - x).coerceAtLeast(0f)
+
     fun reset() {
         isActive = false
     }
