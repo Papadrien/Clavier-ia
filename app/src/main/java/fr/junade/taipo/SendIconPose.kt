@@ -59,7 +59,7 @@ internal object SendIconPose {
         if (p >= TAKEOFF_END) return LaunchPose(0f, 1f, 0f, visible = false)
         val u = p / TAKEOFF_END
         val eased = u * u
-        return LaunchPose(-LAUNCH_DISTANCE * eased, 1f + 0.35f * eased, 1f - eased, visible = true)
+        return LaunchPose(0f - LAUNCH_DISTANCE * eased, 1f + 0.35f * eased, 1f - eased, visible = true)
     }
 
     /** Avancement (0 à 1) de l'onde [seconds] secondes après l'appui ; hors de sa durée : null. */
