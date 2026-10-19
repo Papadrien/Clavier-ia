@@ -24,7 +24,7 @@ class DictionaryFilesTest {
         assertFalse(DictionaryFiles.isInstalled(dir, language))
         DictionaryFile.entries.dropLast(1).forEach { write(DictionaryFiles.localFile(dir, language, it)) }
         assertEquals(listOf(DictionaryFile.FULL), DictionaryFiles.missing(dir, language))
-        DictionaryFiles.localFile(dir, language, DictionaryFile.FULL).apply { parentFile.mkdirs(); writeText("") }
+        DictionaryFiles.localFile(dir, language, DictionaryFile.FULL).apply { parentFile?.mkdirs(); writeText("") }
         assertFalse(DictionaryFiles.isInstalled(dir, language))
         write(DictionaryFiles.localFile(dir, language, DictionaryFile.FULL))
         assertTrue(DictionaryFiles.isInstalled(dir, language))
@@ -37,7 +37,7 @@ class DictionaryFilesTest {
     }
 
     private fun write(file: File) {
-        file.parentFile.mkdirs()
+        file.parentFile?.mkdirs()
         file.writeText("x 1\n")
     }
 }

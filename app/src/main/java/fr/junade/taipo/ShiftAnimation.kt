@@ -154,10 +154,11 @@ internal class ShiftAnimation(
         }
     }
 
+    /** Second bond : la flèche retombe sur la pose de repos de l'état courant (verrouillée, elle est plus courte et plus haute). */
     private fun hop(speed: Float) {
         sy.jump(SECOND_CROUCH_SCALE_Y)
-        sy.go(1f, 240f, 9f)
-        lift.go(0f, 210f, 8f, -speed)
+        sy.go(ShiftIconPose.restScaleY(state), 240f, 9f)
+        lift.go(ShiftIconPose.restLift(state), 210f, 8f, -speed)
     }
 
     private fun lockIn() {

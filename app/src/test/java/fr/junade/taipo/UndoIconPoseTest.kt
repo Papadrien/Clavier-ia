@@ -9,7 +9,7 @@ class UndoIconPoseTest {
 
     @Test
     fun `chaque appui ajoute un tour complet a l'envers`() {
-        assertEquals(0f, UndoIconPose.targetAngle(0))
+        assertEquals(0f, UndoIconPose.targetAngle(0), 0f) // avec delta : -0f (−360 × 0) vaut 0f, ce que assertEquals sans delta refuse
         assertEquals(-360f, UndoIconPose.targetAngle(1))
         assertEquals(-720f, UndoIconPose.targetAngle(2))
     }
