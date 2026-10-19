@@ -1,7 +1,6 @@
 package fr.junade.taipo
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import kotlin.math.abs
@@ -10,16 +9,18 @@ class KeyClickSynthTest {
 
     private val key = KeyClickSynth.render(KeyClickProfiles.KEY, seed = 1)
     private val space = KeyClickSynth.render(KeyClickProfiles.SPACE, seed = 1)
+    private val control = KeyClickSynth.render(KeyClickProfiles.CONTROL, seed = 1)
 
     @Test
     fun `un son dure 5 ms soit 220 echantillons`() {
         assertEquals(220, key.size)
         assertEquals(220, space.size)
+        assertEquals(220, control.size)
     }
 
     @Test
     fun `le pic est a 70 pour cent de la pleine echelle`() {
-        for (samples in listOf(key, space)) {
+        for (samples in listOf(key, space, control)) {
             val peak = samples.maxOf { abs(it.toInt()) }
             assertTrue(abs(peak - 22937) <= 2, "pic $peak")
         }
@@ -40,6 +41,11 @@ class KeyClickSynthTest {
     @Test
     fun `le son de la barre espace reproduit la reference Python`() {
         assertReference(space, listOf(0, 1101, 440, 1344, 5655, 7021), sumAbs = 889541, max = 22937, min = -17913)
+    }
+
+    @Test
+    fun `le son des touches de commande reproduit la reference Python`() {
+        assertReference(control, listOf(0, 484, 378, 650, 2950, 5458), sumAbs = 1107168, max = 22937, min = -10708)
     }
 
     @Test
@@ -75,13 +81,13 @@ class KeyClickSynthTest {
     }
 
     @Test
-    fun `les autres touches n'ont pas de son`() {
-        assertNull(KeySound.forAction(KeyAction.Backspace))
-        assertNull(KeySound.forAction(KeyAction.Enter))
-        assertNull(KeySound.forAction(KeyAction.Shift))
-        assertNull(KeySound.forAction(KeyAction.ToggleLayout))
-        assertNull(KeySound.forAction(KeyAction.SymbolPage))
-        assertNull(KeySound.forAction(KeyAction.Emoji))
+    fun `les touches de commande utilisent leur propre son`() {
+        assertEquals(KeySound.CONTROL, KeySound.forAction(KeyAction.Backspace))
+        assertEquals(KeySound.CONTROL, KeySound.forAction(KeyAction.Enter))
+        assertEquals(KeySound.CONTROL, KeySound.forAction(KeyAction.Shift))
+        assertEquals(KeySound.CONTROL, KeySound.forAction(KeyAction.ToggleLayout))
+        assertEquals(KeySound.CONTROL, KeySound.forAction(KeyAction.SymbolPage))
+        assertEquals(KeySound.CONTROL, KeySound.forAction(KeyAction.Emoji))
     }
 
     private fun assertReference(samples: ShortArray, first: List<Int>, sumAbs: Int, max: Int, min: Int) {

@@ -1,6 +1,7 @@
 package fr.junade.taipo
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 /** Dévoilement de la barre du haut : calculs purs (rognage du rideau, glissement, cascade). */
@@ -43,5 +44,29 @@ class BarRevealTest {
     @Test
     fun `le mode discret n'a pas de decalage`() {
         assertEquals(0L, BarReveal.startDelay(3, full = false))
+    }
+
+    @Test
+    fun `le ressort part de 0 et se pose sur 1`() {
+        assertEquals(0f, BarReveal.springProgress(0f), 0.0001f)
+        assertEquals(1f, BarReveal.springProgress(1f), 0.01f)
+    }
+
+    @Test
+    fun `le ressort depasse 1 avant de se poser`() {
+        val peak = (0..100).maxOf { BarReveal.springProgress(it / 100f) }
+        assertTrue(peak > 1.05f && peak < 1.3f, "dépassement attendu entre 5 % et 30 %, obtenu $peak")
+    }
+
+    @Test
+    fun `l'avancement du ressort hors bornes est ramene entre 0 et 1`() {
+        assertEquals(BarReveal.springProgress(1f), BarReveal.springProgress(3f), 0.0001f)
+        assertEquals(0f, BarReveal.springProgress(-1f), 0.0001f)
+    }
+
+    @Test
+    fun `la cascade du ressort decale chaque bouton de 45 ms sans premier delai`() {
+        assertEquals(0L, BarReveal.springStartDelay(0))
+        assertEquals(90L, BarReveal.springStartDelay(2))
     }
 }

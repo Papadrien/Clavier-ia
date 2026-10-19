@@ -36,7 +36,7 @@ data class ClickProfile(
     )
 }
 
-/** Profils retenus pour le clavier (maquettes « sec doux » I1 et I2 du 19/10/2026, 5 ms). */
+/** Profils retenus pour le clavier (maquettes « sec doux » I1 et I2 du 19/10/2026, 5 ms ; touches de commande × 0,62). */
 object KeyClickProfiles {
     private val SEC_DOUX = ClickProfile(
         lenMs = 5.0,
@@ -53,20 +53,30 @@ object KeyClickProfiles {
 
     /** Barre d'espace : « sec doux aigu » (I2, filtres et résonances × 1,35). */
     val SPACE = SEC_DOUX.scaled(1.35)
+
+    /** Touches de commande (Maj, Effacer, Entrée, bascules, emoji) : « sec doux » × 0,62, 5 ms, un peu plus grave que les lettres. */
+    val CONTROL = SEC_DOUX.scaled(0.62)
 }
 
-/** Son joué pour une touche : [KEY] pour les caractères, [SPACE] pour la barre d'espace. */
+/** Son joué pour une touche : [KEY] pour les caractères, [SPACE] pour la barre d'espace, [CONTROL] pour les autres touches. */
 enum class KeySound(val profile: ClickProfile) {
     KEY(KeyClickProfiles.KEY),
     SPACE(KeyClickProfiles.SPACE),
+    CONTROL(KeyClickProfiles.CONTROL),
     ;
 
     companion object {
-        /** Son d'une touche d'après son action ; null pour les touches sans son (Maj, Effacer, Entrée, bascules, emoji). */
-        fun forAction(action: KeyAction): KeySound? = when (action) {
+        /** Son d'une touche d'après son action : chaque touche du clavier en a un. */
+        fun forAction(action: KeyAction): KeySound = when (action) {
             is KeyAction.TypeChar -> KEY
             KeyAction.Space -> SPACE
-            else -> null
+            KeyAction.Shift,
+            KeyAction.Backspace,
+            KeyAction.Enter,
+            KeyAction.ToggleLayout,
+            KeyAction.SymbolPage,
+            KeyAction.Emoji,
+            -> CONTROL
         }
     }
 }

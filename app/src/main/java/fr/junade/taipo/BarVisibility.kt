@@ -128,7 +128,8 @@ internal object BarVisibility {
      * Panneau Smart Clipboard ouvert : la zone ne montre que le bouton Smart Clipboard (actif) et le bouton Annuler,
      * quel que soit l'état de saisie, et le menu « ··· » de gauche se cache. La roue crantée reste affichée : la
      * barre du haut ne change donc pas à l'ouverture (le panneau ne s'ouvre que depuis le bouton Smart Clipboard,
-     * donc déjà accompagné de la roue crantée).
+     * donc déjà accompagné de la roue crantée). Menu robot ouvert : le menu « ··· » de gauche est caché (il sort par la
+     * gauche de l'écran) et revient quand le menu robot se referme.
      */
     fun zoneContent(zoneState: SuggestionZoneState, clipboardPanelOpen: Boolean): ZoneContentVisibility {
         val zone = if (clipboardPanelOpen) SuggestionZoneState.Zone.CLIPBOARD else zoneState.zone
@@ -138,7 +139,8 @@ internal object BarVisibility {
             undoButton = zone == SuggestionZoneState.Zone.CLIPBOARD,
             pasteChip = zone == SuggestionZoneState.Zone.PASTE,
             inline = zone == SuggestionZoneState.Zone.INLINE,
-            menuButton = zoneState.menuButtonVisible && !clipboardPanelOpen,
+            // Menu robot ouvert : le menu « ··· » de gauche glisse hors de l'écran, les actions IA ont toute la barre.
+            menuButton = zoneState.menuButtonVisible && !clipboardPanelOpen && zone != SuggestionZoneState.Zone.ACTIONS,
             settingsButton = zoneState.settingsButtonVisible,
         )
     }

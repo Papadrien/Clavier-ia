@@ -3,7 +3,7 @@
 
 Le port Kotlin (`KeyClickSynth.kt`) reproduit ce script à l'arrondi près ; les valeurs de référence de
 `KeyClickSynthTest` viennent de `python3 tools/key_click_reference.py --check`.
-Usage : python3 tools/key_click_reference.py [dossier_de_sortie]   (écrit key.wav et space.wav)
+Usage : python3 tools/key_click_reference.py [dossier_de_sortie]   (écrit key.wav, space.wav et control.wav)
         python3 tools/key_click_reference.py --check               (affiche les valeurs de référence)
 Dépend de numpy.
 """
@@ -31,6 +31,7 @@ def scaled(p, s):
 
 KEY = scaled(BASE, 0.7)     # I1 : lettres, chiffres, symboles
 SPACE = scaled(BASE, 1.35)  # I2 : barre d'espace
+CONTROL = scaled(BASE, 0.62)  # touches de commande : Maj, Effacer, Entrée, bascules, emoji
 
 
 def lcg(seed):
@@ -82,10 +83,11 @@ def save(path, x):
 
 if __name__ == "__main__":
     if "--check" in sys.argv:
-        for name, p in (("KEY", KEY), ("SPACE", SPACE)):
+        for name, p in (("KEY", KEY), ("SPACE", SPACE), ("CONTROL", CONTROL)):
             q = np.round(render(p, 1) * 32767).astype(int)
             print(name, q[:6].tolist(), "sumAbs", int(np.abs(q).sum()), "max", int(q.max()), "min", int(q.min()))
     else:
         out_dir = sys.argv[1] if len(sys.argv) > 1 else "."
         save(f"{out_dir}/key.wav", render(KEY, 1))
         save(f"{out_dir}/space.wav", render(SPACE, 1))
+        save(f"{out_dir}/control.wav", render(CONTROL, 1))

@@ -584,7 +584,7 @@ class TaipoIme : InputMethodService() {
 
     private fun onKeyPressed(key: Key) {
         hapticFeedback.perform(hapticIntensity)
-        if (keySoundEnabled) KeySound.forAction(key.action)?.let(keySounds::play)
+        if (keySoundEnabled) keySounds.play(KeySound.forAction(key.action))
         suggestions.markTyping() // le curseur qui bouge ensuite suit la frappe (suggestions de complétion)
         clearHighlightIfNeeded()
 

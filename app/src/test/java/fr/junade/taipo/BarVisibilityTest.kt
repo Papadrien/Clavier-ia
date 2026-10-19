@@ -208,6 +208,16 @@ class BarVisibilityTest {
     }
 
     @Test
+    fun `menu robot ouvert cache le menu de gauche, qui revient a la fermeture`() {
+        val state = zoneWithText()
+        assertTrue(BarVisibility.zoneContent(state, false).menuButton)
+        state.toggleActionsMenu()
+        assertFalse(BarVisibility.zoneContent(state, false).menuButton)
+        state.toggleActionsMenu()
+        assertTrue(BarVisibility.zoneContent(state, false).menuButton)
+    }
+
+    @Test
     fun `panneau Smart Clipboard ouvert montre seulement le bouton actif, cache le menu et garde la roue crantee`() {
         val visible = BarVisibility.zoneContent(zoneWithText().apply { setPasteAvailable(true) }, true)
         assertTrue(visible.clipboardButton)

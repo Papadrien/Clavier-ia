@@ -165,6 +165,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         val paddingH = dimen(R.dimen.taipo_bar_padding_horizontal).toInt()
         val paddingV = dimen(R.dimen.taipo_bar_padding_vertical).toInt()
         setPadding(paddingH, paddingV, paddingH, paddingV)
+        clipToPadding = false // le menu « ··· » de gauche sort jusqu'au bord de l'écran quand le menu robot s'ouvre
 
         // Croix de fermeture du panneau Smart Clipboard, à l'extrémité gauche de la barre.
         style.styleBarIconButton(closeButton, R.drawable.ic_close)
@@ -467,9 +468,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private fun renderActionButtons(reveal: Boolean = false) {
         val visible = BarVisibility.actionButtons(voiceState, state, zoneState, clipboardPanelOpen, wordsShown || emojiShown)
         setRevealed(voiceButton, visible.voice, order = 0, full = reveal)
-        setRevealed(generateButton, visible.generate, order = 2, full = reveal)
-        setRevealed(aiTranscriptionButton, visible.aiTranscription && aiTranscriptionAvailable, order = 0, full = reveal)
-        setRevealed(correctButton, visible.correct, order = 1, full = reveal)
+        // Menu robot qui vient de s'ouvrir : les actions IA jaillissent du robot avec un effet ressort.
+        val spring = reveal && zoneState.zone == SuggestionZoneState.Zone.ACTIONS
+        setRevealed(generateButton, visible.generate, order = 2, full = reveal, spring = spring)
+        setRevealed(aiTranscriptionButton, visible.aiTranscription && aiTranscriptionAvailable, order = 0, full = reveal, spring = spring)
+        setRevealed(correctButton, visible.correct, order = 1, full = reveal, spring = spring)
         setRevealed(actionsMenuButton, visible.actionsMenu, order = 0, full = reveal)
         closeButton.visibility = View.GONE // remplacée par le bouton Smart Clipboard actif, qui referme le panneau
         anchorTrailingButtonsRight()
@@ -504,11 +507,23 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
      * Change la visibilité de [view] ; un bouton qui apparaît sur une barre déjà affichée s'anime ([BarReveal]) depuis la
      * droite, ou depuis la gauche quand [fromEnd] est faux ; un bouton qui disparaît interrompt son animation.
      */
-    private fun setRevealed(view: View, visible: Boolean, order: Int, full: Boolean, fromEnd: Boolean = true) {
+    private fun setRevealed(
+        view: View,
+        visible: Boolean,
+        order: Int,
+        full: Boolean,
+        fromEnd: Boolean = true,
+        spring: Boolean = false,
+        offsetPx: Float = BarReveal.SPRING_SLIDE_DP * resources.displayMetrics.density,
+    ) {
         val wasVisible = view.visibility == View.VISIBLE
         view.visibility = if (visible) View.VISIBLE else View.GONE
         if (visible && !wasVisible && isLaidOut) {
-            BarReveal.enter(view, fromEnd = fromEnd, order = order, full = full)
+            if (spring) {
+                BarReveal.enterSpring(view, fromEnd = fromEnd, order = order, offsetPx = offsetPx)
+            } else {
+                BarReveal.enter(view, fromEnd = fromEnd, order = order, full = full)
+            }
         } else if (!visible && wasVisible) {
             BarReveal.cancel(view)
         }
@@ -524,7 +539,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         renderActionButtons(reveal)
         val visible = BarVisibility.zoneContent(zoneState, clipboardPanelOpen)
         zoneView.render(visible, clipboardPanelOpen, reveal = reveal && isLaidOut)
-        setRevealed(menuButton, visible.menuButton, order = 0, full = reveal, fromEnd = false)
+        renderMenuButton(visible.menuButton, reveal)
         setRevealed(settingsButton, visible.settingsButton, order = 0, full = reveal, fromEnd = false)
         if (menuBackgroundExpanded != zoneState.menuExpanded) {
             menuBackgroundExpanded = zoneState.menuExpanded
@@ -535,6 +550,25 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             actionsMenuBackgroundExpanded = zoneState.actionsExpanded
             actionsMenuButton.background = actionsMenuBackgrounds.get(zoneState.actionsExpanded)
             robotIcon?.setActive(zoneState.actionsExpanded, animate = isLaidOut)
+        }
+    }
+
+    /**
+     * Menu « ··· » de gauche : quand le menu robot s'ouvre, il sort par la gauche de l'écran (avec un léger recul de
+     * ressort) ; quand le menu robot se referme, il revient en ressort depuis la gauche. Dans les autres cas (frappe,
+     * panneau Smart Clipboard, champ vidé), il apparaît ou disparaît comme avant.
+     */
+    private fun renderMenuButton(wanted: Boolean, reveal: Boolean) {
+        val exitDistance = (paddingLeft + dimen(R.dimen.taipo_bar_icon_button_width) + dimen(R.dimen.taipo_bar_gap))
+        when {
+            wanted -> {
+                // Une sortie en cours est terminée aussitôt (le bouton est alors masqué) : il ré-entre en ressort.
+                if (BarReveal.isExiting(menuButton)) BarReveal.cancel(menuButton)
+                setRevealed(menuButton, true, order = 0, full = reveal, fromEnd = false, spring = reveal, offsetPx = exitDistance)
+            }
+            menuButton.visibility == View.VISIBLE && reveal && isLaidOut && zoneState.actionsExpanded ->
+                if (!BarReveal.isExiting(menuButton)) BarReveal.exitOffscreen(menuButton, exitDistance)
+            !BarReveal.isExiting(menuButton) -> setRevealed(menuButton, false, order = 0, full = reveal, fromEnd = false)
         }
     }
 
