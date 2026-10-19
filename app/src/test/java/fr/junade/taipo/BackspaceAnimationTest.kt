@@ -4,15 +4,12 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import kotlin.random.Random
 
 /** Animation de l'icône retour arrière : déclenchements (appui, répétition, glissement, relâchement) et retour au repos. */
 class BackspaceAnimationTest {
 
     private fun animation(enabled: Boolean = true) =
-        BackspaceAnimation(density = 1f, animationsEnabled = { enabled }, random = Random(7))
-
-    private fun BackspaceAnimation.alive() = (0 until capacity).count { isSparkAlive(it) }
+        BackspaceAnimation(density = 1f, animationsEnabled = { enabled })
 
     private fun BackspaceAnimation.settle() = repeat(150) { step(0.02f) }
 
@@ -21,13 +18,12 @@ class BackspaceAnimationTest {
         val a = animation()
         assertFalse(a.isRunning)
         assertEquals(0f, a.iconAngle, 1e-6f)
-        assertEquals(0, a.alive())
     }
 
     @Test
     fun `un appui lance le balancier vers la gauche, l'icone passe a droite puis se calme`() {
         val a = animation()
-        a.onKey(100f, 50f, repeat = false, nowNanos = 1_000L)
+        a.onKey(repeat = false)
         assertTrue(a.isRunning)
         a.step(0f)
         assertEquals(BackspaceIconPose.SWING_TAP_DEGREES, a.iconAngle, 1e-3f)
@@ -43,64 +39,35 @@ class BackspaceAnimationTest {
     }
 
     @Test
-    fun `un appui lance cinq etincelles qui s'eteignent`() {
-        val a = animation()
-        a.onKey(100f, 50f, repeat = false, nowNanos = 1_000L)
-        assertEquals(5, a.alive())
-        a.step(0.2f)
-        (0 until a.capacity).filter { a.isSparkAlive(it) }.forEach {
-            assertTrue(a.sparkAlpha(it) in 0f..1f)
-            assertTrue(a.sparkRadius(it) in 0f..2f)
-        }
-        a.step(1f)
-        assertEquals(0, a.alive())
-    }
-
-    @Test
-    fun `l'appui maintenu espace ses gerbes d'etincelles`() {
-        val a = animation()
-        a.onKey(100f, 50f, repeat = false, nowNanos = 1_000_000_000L)
-        a.onKey(100f, 50f, repeat = true, nowNanos = 1_060_000_000L)
-        assertEquals(5, a.alive())
-        a.onKey(100f, 50f, repeat = true, nowNanos = 1_300_000_000L)
-        assertEquals(10, a.alive())
-    }
-
-    @Test
     fun `animations systeme coupees - rien ne se declenche`() {
         val a = animation(enabled = false)
-        a.onKey(100f, 50f, repeat = false, nowNanos = 1_000L)
+        a.onKey(repeat = false)
         a.onPress()
         a.onDrag(100f, 2)
         a.onSwipeRelease()
         assertFalse(a.isRunning)
-        assertEquals(0, a.alive())
     }
 
     @Test
-    fun `le glissement incline l'icone a gauche et la fait osciller par mot, sans etincelles`() {
+    fun `le glissement incline l'icone a gauche et la fait osciller par mot`() {
         val a = animation()
         a.onPress()
         a.onDrag(20f, 0)
-        assertEquals(0, a.alive())
         a.step(0.15f)
         assertTrue(a.iconAngle < 0f)
         a.onDrag(50f, 1)
-        assertEquals(0, a.alive())
         a.onDrag(52f, 1)
-        assertEquals(0, a.alive())
         assertTrue(a.isRunning)
     }
 
     @Test
-    fun `au relachement l'icone se redresse avec un rebond, sans etincelles`() {
+    fun `au relachement l'icone se redresse avec un rebond`() {
         val a = animation()
         a.onPress()
         a.onDrag(100f, 2)
         a.settle()
         assertEquals(BackspaceIconPose.DRAG_TILT_DEGREES, a.iconAngle, 0.5f)
         a.onSwipeRelease()
-        assertEquals(0, a.alive())
         a.settle()
         assertFalse(a.isRunning)
         assertEquals(0f, a.iconAngle, 1e-3f)
@@ -112,7 +79,6 @@ class BackspaceAnimationTest {
         a.onPress()
         a.onDrag(50f, 0)
         a.onSwipeCancel()
-        assertEquals(0, a.alive())
         a.settle()
         assertFalse(a.isRunning)
     }
@@ -120,17 +86,9 @@ class BackspaceAnimationTest {
     @Test
     fun `cancel coupe tout`() {
         val a = animation()
-        a.onKey(100f, 50f, repeat = false, nowNanos = 1_000L)
+        a.onKey(repeat = false)
         a.cancel()
         assertFalse(a.isRunning)
         assertEquals(0f, a.iconAngle, 1e-6f)
-        assertEquals(0, a.alive())
-    }
-
-    @Test
-    fun `le tampon est circulaire - jamais plus d'etincelles que sa capacite`() {
-        val a = animation()
-        repeat(30) { a.onKey(0f, 0f, repeat = false, nowNanos = it * 1_000L) }
-        assertEquals(a.capacity, a.alive())
     }
 }

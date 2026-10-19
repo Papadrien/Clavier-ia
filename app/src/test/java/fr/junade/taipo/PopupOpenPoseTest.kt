@@ -28,6 +28,23 @@ class PopupOpenPoseTest {
     }
 
     @Test
+    fun `l'ouverture est deux fois plus rapide`() {
+        fun framesToSettle(timeScale: Float): Int {
+            val spring = SpringValue(PopupOpenPose.START_SCALE)
+            var frames = 0
+            while (!spring.isSettled(1f) && frames < 1000) {
+                spring.step(1f, timeScale / 60f)
+                frames++
+            }
+            return frames
+        }
+        val normal = framesToSettle(1f)
+        val fast = framesToSettle(PopupOpenPose.TIME_SCALE)
+        assertEquals(2f, PopupOpenPose.TIME_SCALE)
+        assertTrue(fast in (normal / 2 - 1)..(normal / 2 + 1), "normal=$normal rapide=$fast")
+    }
+
+    @Test
     fun `le depassement est plafonne par la place disponible`() {
         // Bulle de 100 de large (de 100 à 200), pivot au milieu ; 2 de marge de chaque côté : 1,04 au plus.
         val max = PopupOpenPose.maxScale(

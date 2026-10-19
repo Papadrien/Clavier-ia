@@ -82,10 +82,7 @@ class AiTranscriptionController(
     fun onClick() {
         when (state) {
             AiTranscriptionBarState.IDLE -> start()
-            AiTranscriptionBarState.RECORDING -> {
-                host.hapticAi(AiHapticCue.TRANSCRIPTION_STOP) // appui qui termine l'enregistrement
-                stopAndTranscribe()
-            }
+            AiTranscriptionBarState.RECORDING -> stopAndTranscribe()
             AiTranscriptionBarState.PROCESSING -> cancelProcessing()
             AiTranscriptionBarState.CANCELLING -> host.showMessage(context.getString(R.string.ai_transcription_cancelling_wait))
         }
@@ -148,6 +145,8 @@ class AiTranscriptionController(
     }
 
     private fun stopAndTranscribe() {
+        // Fin de l'écoute : appui, limite de 2 minutes atteinte ou micro perdu, tous les cas vibrent pareil.
+        host.hapticAi(AiHapticCue.TRANSCRIPTION_STOP)
         val model = host.activeModel()
         setState(AiTranscriptionBarState.PROCESSING)
         val startedAt = SystemClock.elapsedRealtime()

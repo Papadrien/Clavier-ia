@@ -7,8 +7,8 @@ import kotlin.random.Random
 
 /**
  * Animation « Bond » de l'icône Maj. Transitions (la face de la touche ne change pas) :
- * - minuscule → majuscule : la flèche s'écrase, bondit en s'étirant et se remplit de bas en haut ; si la majuscule s'active
- *   toute seule (début de phrase), un second bond remplace la confirmation du doigt ;
+ * - minuscule → majuscule : la flèche s'écrase, bondit en s'étirant et se remplit de bas en haut, avec un seul rebond
+ *   (au doigt comme quand la majuscule s'active toute seule en début de phrase) ;
  * - majuscule → minuscule : la flèche s'étire, retombe et se vide ;
  * - verrouillage : une barre tombe sous la flèche avec un rebond, la flèche se raccourcit, deux étincelles de chaque côté ;
  * - déverrouillage : la barre s'efface vers le bas.
@@ -52,12 +52,11 @@ internal class ShiftAnimation(
     private var unit = 1f
     private var lastNanos = 0L
     private var lockInS = NONE
-    private var secondHopS = NONE
 
     private val springs = arrayOf(sx, sy, lift, fillSpring, barOpacitySpring, barScaleSpring, barOffsetSpring)
 
     val isRunning: Boolean
-        get() = lockInS >= 0f || secondHopS >= 0f || sparks.aliveCount > 0 || hasMovingSpring()
+        get() = lockInS >= 0f || sparks.aliveCount > 0 || hasMovingSpring()
 
     /** Pose directe (premier dessin, vue détachée, animations coupées). */
     fun snap(to: ShiftState) {
@@ -70,15 +69,15 @@ internal class ShiftAnimation(
         barScaleSpring.jump(ShiftIconPose.restBarScale(to))
         barOffsetSpring.jump(0f)
         lockInS = NONE
-        secondHopS = NONE
         sparks.clear()
         lastNanos = 0L
     }
 
     /**
      * L'état de Maj vient de changer. (cx, cy) : centre de l'icône dans la vue, [iconSizePx] : côté de l'icône ; [auto] :
-     * la majuscule s'est activée toute seule (aucun appui sur la touche).
+     * la majuscule s'est activée toute seule (aucun appui sur la touche) ; l'animation est la même dans les deux cas.
      */
+    @Suppress("UNUSED_PARAMETER")
     fun onState(to: ShiftState, auto: Boolean, cx: Float, cy: Float, iconSizePx: Float) {
         val from = state
         if (from == to) return
@@ -92,9 +91,9 @@ internal class ShiftAnimation(
         unit = iconSizePx / ShiftIconPose.GRID
         lockInS = NONE
         when (to) {
-            ShiftState.ON -> if (from == ShiftState.OFF) activate(auto) else unlock()
+            ShiftState.ON -> if (from == ShiftState.OFF) activate() else unlock()
             ShiftState.LOCK -> if (from == ShiftState.OFF) {
-                activate(auto)
+                activate()
                 lockInS = LOCK_AFTER_ACTIVATE_S
             } else {
                 lockIn()
@@ -117,10 +116,6 @@ internal class ShiftAnimation(
             lockInS -= dt
             if (lockInS < 0f) lockIn()
         }
-        if (secondHopS >= 0f) {
-            secondHopS -= dt
-            if (secondHopS < 0f) hop(SECOND_HOP_SPEED)
-        }
         for (spring in springs) spring.step(dt)
         sparks.step(dt)
     }
@@ -128,23 +123,13 @@ internal class ShiftAnimation(
     /** Coupe tout et revient à la pose de repos de l'état courant. */
     fun cancel() = snap(state)
 
-    private fun activate(auto: Boolean) {
+    private fun activate() {
         sx.jump(CROUCH_SCALE_X)
         sy.jump(CROUCH_SCALE_Y)
-        sx.go(1f, 240f, 9f)
-        sy.go(1f, 240f, 9f)
-        lift.go(0f, 200f, 8f, -FIRST_HOP_SPEED)
+        sx.go(1f, 240f, 13f)
+        sy.go(1f, 240f, 13f)
+        lift.go(0f, 200f, 13f, -FIRST_HOP_SPEED)
         fillSpring.go(1f, 150f, 15f)
-        if (auto) {
-            secondHopS = SECOND_HOP_AFTER_S
-        }
-    }
-
-    /** Second bond : la flèche retombe sur la pose de repos de l'état courant (verrouillée, elle est plus courte et plus haute). */
-    private fun hop(speed: Float) {
-        sy.jump(SECOND_CROUCH_SCALE_Y)
-        sy.go(ShiftIconPose.restScaleY(state), 240f, 9f)
-        lift.go(ShiftIconPose.restLift(state), 210f, 8f, -speed)
     }
 
     private fun lockIn() {
@@ -152,10 +137,10 @@ internal class ShiftAnimation(
         barScaleSpring.jump(LAND_BAR_SCALE)
         barOffsetSpring.jump(-BAR_DROP)
         sy.jump(LAND_SCALE_Y)
-        barOffsetSpring.go(0f, 260f, 11f)
-        barScaleSpring.go(1f, 260f, 11f)
-        sy.go(ShiftIconPose.LOCK_SCALE_Y, 240f, 9f)
-        lift.go(ShiftIconPose.LOCK_LIFT, 240f, 9f)
+        barOffsetSpring.go(0f, 260f, 14f)
+        barScaleSpring.go(1f, 260f, 14f)
+        sy.go(ShiftIconPose.LOCK_SCALE_Y, 240f, 13f)
+        lift.go(ShiftIconPose.LOCK_LIFT, 240f, 13f)
         fillSpring.go(1f, 150f, 15f)
         val left = gridX(ShiftIconPose.BAR_LEFT_X - BAR_SPARK_INSET)
         val right = gridX(ShiftIconPose.BAR_RIGHT_X + BAR_SPARK_INSET)
@@ -168,17 +153,16 @@ internal class ShiftAnimation(
     private fun unlock() {
         dropBar()
         sy.jump(UNLOCK_SCALE_Y)
-        sy.go(1f, 240f, 9f)
-        lift.go(0f, 220f, 9f, -UNLOCK_HOP_SPEED)
+        sy.go(1f, 240f, 13f)
+        lift.go(0f, 220f, 13f, -UNLOCK_HOP_SPEED)
     }
 
     private fun deactivate(from: ShiftState) {
-        secondHopS = NONE
         sx.jump(STRETCH_SCALE_X)
         sy.jump(STRETCH_SCALE_Y)
-        sx.go(1f, 240f, 10f)
-        sy.go(1f, 240f, 10f)
-        lift.go(0f, 220f, 9f, DROP_SPEED)
+        sx.go(1f, 240f, 14f)
+        sy.go(1f, 240f, 14f)
+        lift.go(0f, 220f, 13f, DROP_SPEED)
         fillSpring.go(0f, 170f, 22f)
         if (from == ShiftState.LOCK) dropBar()
     }
@@ -204,21 +188,18 @@ internal class ShiftAnimation(
         const val MAX_FRAME_S = 0.05f
         const val ICON_CENTER = 12f
         const val LOCK_AFTER_ACTIVATE_S = 0.23f
-        const val SECOND_HOP_AFTER_S = 0.38f
-        const val CROUCH_SCALE_X = 1.18f
-        const val CROUCH_SCALE_Y = 0.68f
-        const val SECOND_CROUCH_SCALE_Y = 0.8f
-        const val FIRST_HOP_SPEED = 75f
-        const val SECOND_HOP_SPEED = 60f
-        const val LAND_SCALE_Y = 0.8f
+        const val CROUCH_SCALE_X = 1.12f
+        const val CROUCH_SCALE_Y = 0.76f
+        const val FIRST_HOP_SPEED = 50f
+        const val LAND_SCALE_Y = 0.85f
         const val LAND_BAR_SCALE = 0.3f
         const val BAR_DROP = 10f
         const val BAR_FALL = 8f
-        const val UNLOCK_SCALE_Y = 0.9f
-        const val UNLOCK_HOP_SPEED = 40f
-        const val STRETCH_SCALE_X = 0.86f
-        const val STRETCH_SCALE_Y = 1.22f
-        const val DROP_SPEED = 70f
+        const val UNLOCK_SCALE_Y = 0.93f
+        const val UNLOCK_HOP_SPEED = 30f
+        const val STRETCH_SCALE_X = 0.9f
+        const val STRETCH_SCALE_Y = 1.15f
+        const val DROP_SPEED = 50f
         const val BAR_SPARKS = 2
         const val BAR_SPARK_INSET = 1f
         const val BAR_SPARK_RADIUS_DP = 16f

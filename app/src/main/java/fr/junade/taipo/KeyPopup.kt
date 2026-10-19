@@ -249,7 +249,7 @@ internal class KeyPopup(private val view: View) {
         val now = System.nanoTime()
         val dt = if (openLastFrameNanos == 0L) FIRST_FRAME_S else ((now - openLastFrameNanos) / NANOS_PER_SECOND).coerceIn(0f, MAX_FRAME_S)
         openLastFrameNanos = now
-        openSpring.step(1f, dt)
+        openSpring.step(1f, dt * PopupOpenPose.TIME_SCALE)
         view.postInvalidateOnAnimation()
         return openSpring.value.coerceIn(0f, openMaxScale)
     }

@@ -68,6 +68,10 @@ d'une génération, les messages d'erreur de l'IA, les préférences (`KeyboardP
 
 `VoiceRecorder.SILENCE_RMS_THRESHOLD` passe de 500 à 250 (RMS d'un bloc PCM16). Cause : à voix basse, les blocs de parole restent sous 500, le compteur de 20 s de silence (appui bref) n'était pas remis à zéro et la dictée s'arrêtait en pleine phrase. Le délai de 20 s ne change pas. Si la dictée s'arrête encore à voix très basse, descendre vers 150 ou mesurer le bruit ambiant au démarrage. À valider sur Pixel 9 (rien compilé ni exécuté).
 
+## Dictée : seuil de silence relevé à 350 (19/10/2026)
+
+`VoiceRecorder.SILENCE_RMS_THRESHOLD` passe de 250 à 350 (RMS d'un bloc PCM16). Cause : à 250, le bruit ambiant dépassait le seuil et l'arrêt de la parole n'était pas détecté (le compteur de 20 s ne démarrait pas). Compromis : à voix très basse (blocs sous 350), la dictée peut de nouveau s'arrêter en pleine phrase (cas qui avait motivé 500 → 250). À valider sur Pixel 9 (rien compilé ni exécuté) ; si les deux cas ne tiennent pas avec un seuil fixe, mesurer le bruit ambiant au démarrage.
+
 ## Icône Paramètres : rotation à l'ouverture de l'application (19/10/2026)
 
 `SpinIconDrawable` (enveloppe `ic_settings.xml`, rotation au Canvas) remplace l'icône du bouton roue crantée de la barre du haut (`CorrectionBarView`). À l'appui, l'angle visé avance de 540°/s et la roue le suit avec `SpringValue` (démarrage en douceur) tant que l'application s'ouvre : jusqu'à 2 s si le clavier reste affiché, puis elle se pose sur le prochain tour entier en dépassant un peu (`SpinIconPose`). Dès que le clavier est masqué (l'application est ouverte), la roue revient directement au repos : au retour du clavier elle est droite. Un nouvel appui relance la rotation. Animations système coupées : aucune rotation. Le fond rond du bouton ne tourne pas. Tests JVM : `SpinIconPoseTest`. Rendu à valider sur Pixel 9 (rien compilé ni exécuté).

@@ -214,7 +214,7 @@ class KeyboardView(context: Context) : View(context) {
     // distinct d'un simple appui long sur la touche.
     private val backspaceSwipe = BackspaceSwipeTracker(activationPx = dp(24f), stepPx = dp(40f))
 
-    // Animation de l'icône retour arrière (balancier, inclinaison, étincelles) : seule l'icône bouge, pas la touche.
+    // Animation de l'icône retour arrière (balancier, inclinaison) : seule l'icône bouge, pas la touche.
     private val backspaceAnimation = BackspaceAnimation(
         density = resources.displayMetrics.density,
         animationsEnabled = { ValueAnimator.areAnimatorsEnabled() },
@@ -371,7 +371,6 @@ class KeyboardView(context: Context) : View(context) {
         }
 
         sparkPainter.draw(canvas, shiftAnimation.sparks)
-        sparkPainter.draw(canvas, backspaceAnimation.sparks)
         drawPopup(canvas)
         drawPreview(canvas)
         if (backspaceAnimation.isRunning || shiftAnimation.isRunning || spaceBarAnimation.isRunning) postInvalidateOnAnimation()
@@ -533,13 +532,12 @@ class KeyboardView(context: Context) : View(context) {
         invalidate()
     }
 
-    /** Saisit [key] ; pour le retour arrière, lance aussi l'animation de l'icône (balancier et étincelles au centre de la touche). */
+    /** Saisit [key] ; pour le retour arrière, lance aussi l'animation de l'icône (balancier). */
     private fun deliverKey(key: Key, repeat: Boolean) {
         if (key.action is KeyAction.Shift) lastShiftTapNanos = System.nanoTime()
         keyListener?.onKey(key)
         if (key.action !is KeyAction.Backspace) return
-        val bounds = keyBounds(key) ?: return
-        backspaceAnimation.onKey(bounds.centerX(), bounds.centerY(), repeat, System.nanoTime())
+        backspaceAnimation.onKey(repeat)
         invalidate()
     }
 

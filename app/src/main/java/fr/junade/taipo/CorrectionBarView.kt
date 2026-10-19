@@ -59,6 +59,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     private val settingsIcon = SpinIconDrawable(context, R.drawable.ic_settings, context.dimen(R.dimen.taipo_icon_size).toInt())
     private var settingsListener: (() -> Unit)? = null
     private var menuClickListener: (() -> Unit)? = null
+    private var actionsMenuClickListener: (() -> Unit)? = null
 
     /** Story 2.1 : bouton « menu », visible pendant la saisie, qui donne accès au bouton Smart Clipboard. */
     private val menuButton = ImageButton(context)
@@ -255,6 +256,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         }
         actionsMenuButton.contentDescription = context.getString(R.string.actions_menu_description)
         actionsMenuButton.setOnClickListener {
+            actionsMenuClickListener?.invoke()
             zoneState.toggleActionsMenu()
             renderZone(reveal = true)
         }
@@ -287,6 +289,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     /** Touche sur le bouton « ··· » de gauche (chevron) : sert au retour haptique, le menu s'ouvre ou se ferme ensuite. */
     fun setOnMenuClickListener(listener: () -> Unit) {
         menuClickListener = listener
+    }
+
+    /** Touche sur le bouton Action IA (robot) : sert au retour haptique, le menu s'ouvre ou se ferme ensuite. */
+    fun setOnActionsMenuClickListener(listener: () -> Unit) {
+        actionsMenuClickListener = listener
     }
 
     fun setOnSettingsClickListener(listener: () -> Unit) {

@@ -60,8 +60,8 @@ class ShiftAnimationTest {
         val a = animation()
         a.go(ShiftState.ON)
         a.step(0f)
-        assertEquals(0.68f, a.scaleY, 1e-3f)
-        assertEquals(1.18f, a.scaleX, 1e-3f)
+        assertEquals(0.76f, a.scaleY, 1e-3f)
+        assertEquals(1.12f, a.scaleX, 1e-3f)
         var minLift = 0f
         var maxScaleY = 0f
         var fillRises = true
@@ -74,7 +74,7 @@ class ShiftAnimationTest {
             lastFill = a.fill
         }
         assertTrue(minLift < -1f, "la flèche monte pendant le bond")
-        assertTrue(maxScaleY > 1.05f, "la flèche s'étire en retombant")
+        assertTrue(maxScaleY > 1.03f, "la flèche s'étire en retombant")
         assertTrue(fillRises)
     }
 
@@ -90,19 +90,15 @@ class ShiftAnimationTest {
     }
 
     @Test
-    fun `l'automatique fait un second bond que l'activation au doigt n'a pas`() {
-        fun lateLift(auto: Boolean): Float {
+    fun `l'automatique n'a qu'un seul rebond, comme l'activation au doigt`() {
+        fun trajectory(auto: Boolean): List<Float> {
             val a = animation()
             a.go(ShiftState.ON, auto)
-            repeat(38) { a.step(0.01f) } // juste avant le second bond (0,38 s)
-            var minLift = 0f
-            repeat(30) {
-                a.step(0.01f)
-                if (a.arrowLift < minLift) minLift = a.arrowLift
-            }
-            return minLift
+            return List(150) { a.step(0.01f); a.arrowLift }
         }
-        assertTrue(lateLift(auto = true) < lateLift(auto = false) - 0.5f)
+        assertEquals(trajectory(auto = false), trajectory(auto = true))
+        // Après le premier rebond (0,38 s, l'ancien second bond), la flèche ne remonte plus franchement.
+        assertTrue(trajectory(auto = true).drop(38).all { it > -0.3f })
     }
 
     @Test
@@ -114,7 +110,7 @@ class ShiftAnimationTest {
         assertEquals(4, a.alive())
         assertEquals(1f, a.barOpacity, 1e-3f)
         assertTrue(a.barOffset < -5f, "la barre part du haut")
-        assertEquals(0.8f, a.scaleY, 1e-3f)
+        assertEquals(0.85f, a.scaleY, 1e-3f)
         a.settle()
         a.assertRest(ShiftState.LOCK)
         assertEquals(0, a.alive())
@@ -138,8 +134,8 @@ class ShiftAnimationTest {
         a.snap(ShiftState.LOCK)
         a.go(ShiftState.OFF)
         a.step(0f)
-        assertEquals(1.22f, a.scaleY, 1e-3f)
-        assertEquals(0.86f, a.scaleX, 1e-3f)
+        assertEquals(1.15f, a.scaleY, 1e-3f)
+        assertEquals(0.9f, a.scaleX, 1e-3f)
         a.step(0.15f)
         assertTrue(a.fill < 1f)
         assertTrue(a.barOffset > 0f, "la barre tombe")

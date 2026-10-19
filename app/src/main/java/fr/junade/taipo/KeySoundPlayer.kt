@@ -51,7 +51,7 @@ class KeySoundPlayer(private val context: Context) {
         val id = ids[Random.nextInt(ids.size)]
         if (id !in ready) return
         val rate = 1f + (Random.nextFloat() * 2f - 1f) * RATE_JITTER
-        soundPool.play(id, 1f, 1f, 1, 0, rate)
+        soundPool.play(id, VOLUME, VOLUME, 1, 0, rate)
     }
 
     @Synchronized
@@ -68,5 +68,8 @@ class KeySoundPlayer(private val context: Context) {
         const val MAX_STREAMS = 4
         const val VARIATION = 0.04
         const val RATE_JITTER = 0.03f
+
+        /** Volume de lecture (0 à 1) : le son d'origine baissé de 80 %. */
+        const val VOLUME = 0.2f
     }
 }

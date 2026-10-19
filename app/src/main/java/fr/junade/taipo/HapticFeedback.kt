@@ -58,7 +58,7 @@ enum class AiHapticCue {
     /** Fin de la saisie vocale (appui, ou arrêt automatique après silence ou micro perdu) : 6 ms, fort. */
     RECORDING_STOP,
 
-    /** Appui qui termine l'enregistrement de la transcription IA : deux impulsions de 6 ms, fortes. */
+    /** Fin de l'écoute de la transcription IA (appui, limite de 2 minutes ou micro perdu) : deux impulsions de 6 ms, fortes. */
     TRANSCRIPTION_STOP,
 
     /** Fin du traitement de la transcription IA ou de la correction IA : comme une frappe de touche (6 ms, niveau des paramètres). */

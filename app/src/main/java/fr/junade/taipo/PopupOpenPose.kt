@@ -8,6 +8,9 @@ package fr.junade.taipo
  */
 internal object PopupOpenPose {
 
+    /** Vitesse du ressort d'ouverture : 2 = bulle posée en deux fois moins de temps (même trajet, même dépassement). */
+    const val TIME_SCALE = 2f
+
     /** Taille de la bulle au premier dessin, avant le ressort. */
     const val START_SCALE = 0.25f
 

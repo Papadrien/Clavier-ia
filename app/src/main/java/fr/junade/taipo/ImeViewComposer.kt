@@ -133,6 +133,7 @@ class ImeViewComposer(
         correctionBar = CorrectionBarView(context)
         correctionBar.setOnCorrectListener { if (!blockedBySensitiveField()) host.onCorrectClicked() }
         correctionBar.setOnMenuClickListener { host.haptic() } // même vibration que le bouton Smart Clipboard
+        correctionBar.setOnActionsMenuClickListener { host.haptic() } // bouton Action IA (robot) : même vibration qu'une touche
         correctionBar.setOnUndoListener { host.onUndoClicked() }
         correctionBar.setOnCancelListener { host.onCancelCorrectionClicked() }
         correctionBar.setOnGenerateClickListener {
