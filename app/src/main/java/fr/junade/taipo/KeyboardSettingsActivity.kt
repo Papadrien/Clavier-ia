@@ -70,6 +70,14 @@ class KeyboardSettingsActivity : Activity() {
             Analytics.setting(this, "haptic", selected.storageKey)
         }
 
+        findViewById<CompoundButton>(R.id.switch_key_sound).apply {
+            isChecked = preferences.isKeySoundEnabled
+            setOnCheckedChangeListener { _, checked ->
+                preferences.isKeySoundEnabled = checked
+                Analytics.setting(this@KeyboardSettingsActivity, "key_sound", checked)
+            }
+        }
+
         val heightGroup = findViewById<RadioGroup>(R.id.radio_group_height)
         val heightIds = mapOf(
             KeyboardHeight.COMPACT to R.id.radio_height_compact,

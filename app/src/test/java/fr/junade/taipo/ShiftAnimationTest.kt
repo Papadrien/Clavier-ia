@@ -79,18 +79,14 @@ class ShiftAnimationTest {
     }
 
     @Test
-    fun `l'activation au doigt ne lance ni anneau ni etincelles, l'automatique lance un anneau`() {
-        val tap = animation()
-        tap.go(ShiftState.ON, auto = false)
-        assertFalse(tap.ringActive)
-        assertEquals(0, tap.alive())
-        val auto = animation()
-        auto.go(ShiftState.ON, auto = true)
-        assertTrue(auto.ringActive)
-        repeat(60) { auto.step(0.01f) }
-        assertTrue(auto.ringProgress in 0f..1f)
-        auto.settle()
-        assertFalse(auto.ringActive)
+    fun `l'activation, au doigt comme automatique, ne lance ni onde ni etincelles`() {
+        for (auto in listOf(false, true)) {
+            val a = animation()
+            a.go(ShiftState.ON, auto)
+            assertEquals(0, a.alive())
+            a.settle()
+            assertFalse(a.isRunning)
+        }
     }
 
     @Test
@@ -170,7 +166,6 @@ class ShiftAnimationTest {
         assertEquals(ShiftState.LOCK, a.state)
         a.assertRest(ShiftState.LOCK)
         assertEquals(0, a.alive())
-        assertFalse(a.ringActive)
     }
 
     @Test

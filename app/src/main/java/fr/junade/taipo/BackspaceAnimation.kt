@@ -1,12 +1,10 @@
 package fr.junade.taipo
 
-import kotlin.math.abs
 import kotlin.random.Random
 
 /**
  * État de l'animation de l'icône retour arrière du clavier : balancier à chaque suppression, inclinaison pendant le
- * glissement vers la gauche, et étincelles (une gerbe à chaque suppression, une traînée sous le doigt pendant le glissement,
- * une gerbe au relâchement). Le texte et le curseur appartiennent à l'application hôte : rien n'est animé dessus, tout se
+ * glissement vers la gauche, et étincelles (une gerbe à chaque appui ; aucune pendant le glissement). Le texte et le curseur appartiennent à l'application hôte : rien n'est animé dessus, tout se
  * passe dans le clavier. La touche elle-même n'est pas animée.
  *
  * Aucune dépendance à Android pour la logique (testée en JVM) : [KeyboardView] appelle [advance] une fois par image avant de
@@ -20,7 +18,7 @@ internal class BackspaceAnimation(
     random: Random = Random.Default,
 ) {
 
-    /** Étincelles en cours (gerbes et traînée), dessinées par la vue. */
+    /** Étincelles en cours (gerbe de chaque appui), dessinées par la vue. */
     val sparks = SparkField(density, random)
 
     /** Angle courant de l'icône en degrés (balancier + inclinaison), mis à jour par [advance]. */
@@ -36,7 +34,6 @@ internal class BackspaceAnimation(
     private var tiltTarget = 0f
     private var lastNanos = 0L
     private var lastBurstNanos = 0L
-    private var lastTrailX = 0f
     private var lastWords = 0
 
     /** Une touche retour arrière vient d'être saisie ; (x, y) = centre de l'icône dans la vue. [repeat] : répétition d'un appui maintenu. */
@@ -53,42 +50,27 @@ internal class BackspaceAnimation(
     }
 
     /** Doigt posé sur la touche : un nouveau geste commence. */
-    fun onPress(x: Float) {
-        lastTrailX = x
+    fun onPress() {
         lastWords = 0
         tiltTarget = 0f
     }
 
     /**
-     * Le glissement vers la gauche se poursuit : le doigt est en (x, y), à [distancePx] de son point d'appui, et [words] mots
-     * sont désormais surlignés dans l'application.
+     * Le glissement vers la gauche se poursuit : le doigt est à [distancePx] de son point d'appui, et [words] mots sont
+     * désormais surlignés dans l'application. L'icône s'incline et oscille à chaque mot, sans étincelles.
      */
-    fun onDrag(x: Float, y: Float, distancePx: Float, words: Int) {
+    fun onDrag(distancePx: Float, words: Int) {
         if (!animationsEnabled()) return
         tiltTarget = BackspaceIconPose.dragTilt(distancePx / density)
-        if (abs(x - lastTrailX) >= TRAIL_STEP_DP * density) {
-            lastTrailX = x
-            repeat(TRAIL_SPARKS) {
-                sparks.spawn(
-                    x, y + sparks.signed(TRAIL_SPREAD_DP) * density,
-                    sparks.between(TRAIL_DRIFT_MIN_DP, TRAIL_DRIFT_MAX_DP) * density, sparks.signed(TRAIL_FALL_DP) * density,
-                    TRAIL_LIFE_S,
-                )
-            }
-        }
-        if (words > lastWords) {
-            startSwing(BackspaceIconPose.SWING_WORD_DEGREES)
-            sparks.burst(x, y, WORD_SPARKS, WORD_RADIUS_DP, WORD_LIFE_S)
-        }
+        if (words > lastWords) startSwing(BackspaceIconPose.SWING_WORD_DEGREES)
         lastWords = words
     }
 
-    /** Doigt relâché après un glissement : la suppression part, une gerbe s'envole vers la gauche et l'icône oscille en se redressant. */
-    fun onSwipeRelease(x: Float, y: Float) {
+    /** Doigt relâché après un glissement : la suppression part et l'icône oscille en se redressant (sans étincelles). */
+    fun onSwipeRelease() {
         tiltTarget = 0f
         if (!animationsEnabled()) return
         startSwing(BackspaceIconPose.SWING_RELEASE_DEGREES)
-        sparks.burst(x, y, RELEASE_SPARKS, RELEASE_RADIUS_DP, RELEASE_LIFE_S, RELEASE_LEFT_BIAS_DP)
     }
 
     /** Geste interrompu par le système : l'icône se redresse, sans étincelles. */
@@ -147,19 +129,5 @@ internal class BackspaceAnimation(
         private const val TAP_SPARKS = 5
         private const val TAP_RADIUS_DP = 28f
         private const val TAP_LIFE_S = 0.48f
-        private const val TRAIL_STEP_DP = 12f
-        private const val TRAIL_SPARKS = 2
-        private const val TRAIL_SPREAD_DP = 8f
-        private const val TRAIL_FALL_DP = 16f
-        private const val TRAIL_DRIFT_MIN_DP = 6f
-        private const val TRAIL_DRIFT_MAX_DP = 24f
-        private const val TRAIL_LIFE_S = 0.48f
-        private const val WORD_SPARKS = 4
-        private const val WORD_RADIUS_DP = 24f
-        private const val WORD_LIFE_S = 0.45f
-        private const val RELEASE_SPARKS = 8
-        private const val RELEASE_RADIUS_DP = 36f
-        private const val RELEASE_LIFE_S = 0.55f
-        private const val RELEASE_LEFT_BIAS_DP = 12f
     }
 }

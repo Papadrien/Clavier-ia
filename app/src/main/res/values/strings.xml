@@ -113,6 +113,8 @@
     <string name="keyboard_settings_haptic_light">Light</string>
     <string name="keyboard_settings_haptic_medium">Medium</string>
     <string name="keyboard_settings_haptic_strong">Strong</string>
+    <string name="keyboard_settings_key_sound">Key sound</string>
+    <string name="keyboard_settings_key_sound_description">Plays a soft, dry tick on each key press (slightly higher for the space bar). Applies the next time the keyboard opens.</string>
     <string name="keyboard_settings_height_title">Keyboard height</string>
     <string name="keyboard_settings_height_compact">Extra compact (80%)</string>
     <string name="keyboard_settings_height_small">Compact (90%)</string>

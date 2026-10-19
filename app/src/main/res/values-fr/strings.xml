@@ -113,6 +113,8 @@
     <string name="keyboard_settings_haptic_light">Léger</string>
     <string name="keyboard_settings_haptic_medium">Moyen</string>
     <string name="keyboard_settings_haptic_strong">Fort</string>
+    <string name="keyboard_settings_key_sound">Son des touches</string>
+    <string name="keyboard_settings_key_sound_description">Joue un tic sec et doux à chaque frappe (un peu plus aigu pour la barre d\'espace). S\'applique à la prochaine ouverture du clavier.</string>
     <string name="keyboard_settings_height_title">Hauteur du clavier</string>
     <string name="keyboard_settings_height_compact">Très compacte (80 %)</string>
     <string name="keyboard_settings_height_small">Compacte (90 %)</string>

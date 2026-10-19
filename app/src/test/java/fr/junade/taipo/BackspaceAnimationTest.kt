@@ -70,36 +70,37 @@ class BackspaceAnimationTest {
     fun `animations systeme coupees - rien ne se declenche`() {
         val a = animation(enabled = false)
         a.onKey(100f, 50f, repeat = false, nowNanos = 1_000L)
-        a.onPress(300f)
-        a.onDrag(200f, 50f, 100f, 2)
-        a.onSwipeRelease(200f, 50f)
+        a.onPress()
+        a.onDrag(100f, 2)
+        a.onSwipeRelease()
         assertFalse(a.isRunning)
         assertEquals(0, a.alive())
     }
 
     @Test
-    fun `le glissement incline l'icone a gauche, laisse une trainee et une gerbe par mot`() {
+    fun `le glissement incline l'icone a gauche et la fait osciller par mot, sans etincelles`() {
         val a = animation()
-        a.onPress(300f)
-        a.onDrag(280f, 50f, 20f, 0)
-        assertEquals(2, a.alive()) // traînée : deux étincelles tous les 12 dp
+        a.onPress()
+        a.onDrag(20f, 0)
+        assertEquals(0, a.alive())
         a.step(0.15f)
         assertTrue(a.iconAngle < 0f)
-        a.onDrag(250f, 50f, 50f, 1)
-        assertEquals(2 + 2 + 4, a.alive()) // nouvelle traînée et gerbe du premier mot
-        a.onDrag(248f, 50f, 52f, 1)
-        assertEquals(8, a.alive()) // ni traînée (moins de 12 dp) ni gerbe (même nombre de mots)
+        a.onDrag(50f, 1)
+        assertEquals(0, a.alive())
+        a.onDrag(52f, 1)
+        assertEquals(0, a.alive())
+        assertTrue(a.isRunning)
     }
 
     @Test
-    fun `au relachement la gerbe part et l'icone se redresse avec un rebond`() {
+    fun `au relachement l'icone se redresse avec un rebond, sans etincelles`() {
         val a = animation()
-        a.onPress(300f)
-        a.onDrag(200f, 50f, 100f, 2)
+        a.onPress()
+        a.onDrag(100f, 2)
         a.settle()
         assertEquals(BackspaceIconPose.DRAG_TILT_DEGREES, a.iconAngle, 0.5f)
-        a.onSwipeRelease(200f, 50f)
-        assertEquals(8, a.alive())
+        a.onSwipeRelease()
+        assertEquals(0, a.alive())
         a.settle()
         assertFalse(a.isRunning)
         assertEquals(0f, a.iconAngle, 1e-3f)
@@ -108,11 +109,10 @@ class BackspaceAnimationTest {
     @Test
     fun `un geste interrompu redresse l'icone sans etincelles`() {
         val a = animation()
-        a.onPress(300f)
-        a.onDrag(250f, 50f, 50f, 0)
-        val before = a.alive()
+        a.onPress()
+        a.onDrag(50f, 0)
         a.onSwipeCancel()
-        assertEquals(before, a.alive())
+        assertEquals(0, a.alive())
         a.settle()
         assertFalse(a.isRunning)
     }

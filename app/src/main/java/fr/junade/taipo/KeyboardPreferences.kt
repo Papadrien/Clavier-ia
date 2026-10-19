@@ -30,6 +30,13 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putString(KEY_HAPTIC_INTENSITY, value.storageKey).apply()
         }
 
+    /** Son des touches (tic doux à chaque frappe, plus aigu pour la barre d'espace). Activé par défaut. */
+    var isKeySoundEnabled: Boolean
+        get() = prefs.getBoolean(KEY_KEY_SOUND, DEFAULT_KEY_SOUND)
+        set(value) {
+            prefs.edit().putBoolean(KEY_KEY_SOUND, value).apply()
+        }
+
     /** Hauteur du clavier (story 1.12). Normale (100 %) par défaut. */
     var keyboardHeight: KeyboardHeight
         get() = KeyboardHeight.fromStorageKey(prefs.getString(KEY_KEYBOARD_HEIGHT, null))
@@ -103,6 +110,8 @@ class KeyboardPreferences(context: Context) {
         private const val PREFS_NAME = "keyboard_prefs"
         private const val KEY_NUMBER_ROW = "number_row_enabled"
         const val DEFAULT_NUMBER_ROW = false
+        private const val KEY_KEY_SOUND = "key_sound_enabled"
+        const val DEFAULT_KEY_SOUND = true
         private const val KEY_HAPTIC_INTENSITY = "haptic_intensity"
         private const val KEY_KEYBOARD_HEIGHT = "keyboard_height"
         private const val KEY_LANGUAGE = "keyboard_language"

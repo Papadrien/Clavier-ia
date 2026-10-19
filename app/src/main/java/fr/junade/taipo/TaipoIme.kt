@@ -188,6 +188,7 @@ class TaipoIme : InputMethodService() {
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
     private val keyboardPreferences by lazy { KeyboardPreferences(applicationContext) }
     private val hapticFeedback by lazy { HapticFeedbackPlayer(applicationContext) }
+    private val keySounds by lazy { KeySoundPlayer(applicationContext) }
 
     // Story 1.5 : rangée de chiffres, relue à chaque ouverture de champ
     // (onStartInputView) pour prendre en compte un changement fait dans les paramètres.
@@ -195,6 +196,9 @@ class TaipoIme : InputMethodService() {
 
     // Story 1.11 : niveau de retour haptique, relu de la même façon.
     private var hapticIntensity = HapticIntensity.DEFAULT
+
+    // Son des touches (tic synthétisé), relu de la même façon.
+    private var keySoundEnabled = KeyboardPreferences.DEFAULT_KEY_SOUND
     private var keyboardHeight = KeyboardHeight.DEFAULT
 
     private val personalDictionary by lazy { PersonalDictionaryProvider.repository(applicationContext) }
@@ -299,6 +303,7 @@ class TaipoIme : InputMethodService() {
         preloadEmojiCatalog()
         numberRowEnabled = keyboardPreferences.isNumberRowEnabled
         hapticIntensity = keyboardPreferences.hapticIntensity
+        refreshKeySound()
         keyboardHeight = keyboardPreferences.keyboardHeight
     }
 
@@ -337,6 +342,7 @@ class TaipoIme : InputMethodService() {
         // défaut au premier lancement) n'a jamais généré de callback.
         numberRowEnabled = keyboardPreferences.isNumberRowEnabled
         hapticIntensity = keyboardPreferences.hapticIntensity
+        refreshKeySound()
         keyboardHeight = keyboardPreferences.keyboardHeight
         keyboardView.heightScale = keyboardHeight.scale
         emojiController.hidePanel(resync = false)
@@ -566,11 +572,19 @@ class TaipoIme : InputMethodService() {
         llmHost.close()
         voice.release()
         clipboard.release()
+        keySounds.release()
         serviceJob.cancel()
+    }
+
+    /** Relit le réglage du son des touches et prépare les sons (une seule fois) s'il est activé. */
+    private fun refreshKeySound() {
+        keySoundEnabled = keyboardPreferences.isKeySoundEnabled
+        if (keySoundEnabled) keySounds.prepare()
     }
 
     private fun onKeyPressed(key: Key) {
         hapticFeedback.perform(hapticIntensity)
+        if (keySoundEnabled) KeySound.forAction(key.action)?.let(keySounds::play)
         suggestions.markTyping() // le curseur qui bouge ensuite suit la frappe (suggestions de complétion)
         clearHighlightIfNeeded()
 

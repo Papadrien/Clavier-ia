@@ -8,13 +8,13 @@ import kotlin.random.Random
 /**
  * Animation « Bond » de l'icône Maj. Transitions (la face de la touche ne change pas) :
  * - minuscule → majuscule : la flèche s'écrase, bondit en s'étirant et se remplit de bas en haut ; si la majuscule s'active
- *   toute seule (début de phrase), un second bond et un anneau qui se propage remplacent la confirmation du doigt ;
+ *   toute seule (début de phrase), un second bond remplace la confirmation du doigt ;
  * - majuscule → minuscule : la flèche s'étire, retombe et se vide ;
  * - verrouillage : une barre tombe sous la flèche avec un rebond, la flèche se raccourcit, deux étincelles de chaque côté ;
  * - déverrouillage : la barre s'efface vers le bas.
  *
  * Même principe que [BackspaceAnimation] : logique pure (testée en JVM), la vue appelle [advance] avant le dessin puis
- * dessine l'icône avec [ShiftIconPainter] ; [sparks] et l'anneau ([ShiftRingPainter]) sont dessinés par-dessus les touches.
+ * dessine l'icône avec [ShiftIconPainter] ; [sparks] est dessiné par-dessus les touches.
  * Animations système coupées ([animationsEnabled] faux) : l'icône prend directement sa pose de repos.
  */
 internal class ShiftAnimation(
@@ -53,19 +53,11 @@ internal class ShiftAnimation(
     private var lastNanos = 0L
     private var lockInS = NONE
     private var secondHopS = NONE
-    private var ringAge = NONE
-
-    val ringActive: Boolean get() = ringAge >= 0f
-
-    /** Avancement de l'anneau de 0 à 1. */
-    val ringProgress: Float get() = (ringAge / RING_LIFE_S).coerceIn(0f, 1f)
-    val ringX: Float get() = centerX
-    val ringY: Float get() = centerY + (RING_CENTER_Y - ICON_CENTER) * unit
 
     private val springs = arrayOf(sx, sy, lift, fillSpring, barOpacitySpring, barScaleSpring, barOffsetSpring)
 
     val isRunning: Boolean
-        get() = lockInS >= 0f || secondHopS >= 0f || ringAge >= 0f || sparks.aliveCount > 0 || hasMovingSpring()
+        get() = lockInS >= 0f || secondHopS >= 0f || sparks.aliveCount > 0 || hasMovingSpring()
 
     /** Pose directe (premier dessin, vue détachée, animations coupées). */
     fun snap(to: ShiftState) {
@@ -79,7 +71,6 @@ internal class ShiftAnimation(
         barOffsetSpring.jump(0f)
         lockInS = NONE
         secondHopS = NONE
-        ringAge = NONE
         sparks.clear()
         lastNanos = 0L
     }
@@ -130,10 +121,6 @@ internal class ShiftAnimation(
             secondHopS -= dt
             if (secondHopS < 0f) hop(SECOND_HOP_SPEED)
         }
-        if (ringAge >= 0f) {
-            ringAge += dt
-            if (ringAge >= RING_LIFE_S) ringAge = NONE
-        }
         for (spring in springs) spring.step(dt)
         sparks.step(dt)
     }
@@ -149,7 +136,6 @@ internal class ShiftAnimation(
         lift.go(0f, 200f, 8f, -FIRST_HOP_SPEED)
         fillSpring.go(1f, 150f, 15f)
         if (auto) {
-            ringAge = 0f
             secondHopS = SECOND_HOP_AFTER_S
         }
     }
@@ -217,8 +203,6 @@ internal class ShiftAnimation(
         const val NANOS_PER_SECOND = 1_000_000_000f
         const val MAX_FRAME_S = 0.05f
         const val ICON_CENTER = 12f
-        const val RING_CENTER_Y = 11.25f
-        const val RING_LIFE_S = 0.52f
         const val LOCK_AFTER_ACTIVATE_S = 0.23f
         const val SECOND_HOP_AFTER_S = 0.38f
         const val CROUCH_SCALE_X = 1.18f
@@ -311,32 +295,6 @@ internal class ShiftIconPainter(color: Int) {
         const val ARROW_CENTER_X = 12f
         const val CLIP_MARGIN = 6f
         const val MIN_VISIBLE = 0.01f
-        const val ALPHA_FULL = 255f
-    }
-}
-
-/** Anneau qui se propage autour de l'icône quand la majuscule s'active toute seule (violet clair, de 0,5 à 1,9 fois 18 dp de rayon). */
-internal class ShiftRingPainter(color: Int, private val density: Float) {
-
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-        strokeWidth = STROKE_DP * density
-        this.color = color
-    }
-
-    fun draw(canvas: Canvas, animation: ShiftAnimation) {
-        if (!animation.ringActive) return
-        val p = animation.ringProgress
-        paint.alpha = (ALPHA_FULL * START_ALPHA * (1f - p)).toInt()
-        canvas.drawCircle(animation.ringX, animation.ringY, RADIUS_DP * density * (START_SCALE + SCALE_GAIN * BackspaceSparkPose.ease(p)), paint)
-    }
-
-    private companion object {
-        const val RADIUS_DP = 18f
-        const val STROKE_DP = 2f
-        const val START_SCALE = 0.5f
-        const val SCALE_GAIN = 1.4f
-        const val START_ALPHA = 0.8f
         const val ALPHA_FULL = 255f
     }
 }

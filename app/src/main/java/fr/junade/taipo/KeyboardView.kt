@@ -234,7 +234,6 @@ class KeyboardView(context: Context) : View(context) {
         density = resources.displayMetrics.density,
         animationsEnabled = { ValueAnimator.areAnimatorsEnabled() },
     )
-    private val shiftRing = ShiftRingPainter(context.themeColor(R.color.taipo_purple_light), resources.displayMetrics.density)
     private var shiftSeeded = false
     private var lastShiftTapNanos = 0L
 
@@ -371,7 +370,6 @@ class KeyboardView(context: Context) : View(context) {
             }
         }
 
-        shiftRing.draw(canvas, shiftAnimation)
         sparkPainter.draw(canvas, shiftAnimation.sparks)
         sparkPainter.draw(canvas, backspaceAnimation.sparks)
         drawPopup(canvas)
@@ -439,7 +437,7 @@ class KeyboardView(context: Context) : View(context) {
         if (pressedKey?.action is KeyAction.Space) spaceSwipe.onDown(x)
         if (pressedKey?.action is KeyAction.Backspace) {
             backspaceSwipe.onDown(x)
-            backspaceAnimation.onPress(x)
+            backspaceAnimation.onPress()
         }
         startRepeat(pressedKey)
         scheduleLongPress(pressedKey)
@@ -467,7 +465,7 @@ class KeyboardView(context: Context) : View(context) {
             if (backspaceSwipe.isActive) {
                 // Le glissement remplace la suppression caractère par caractère de l'appui maintenu (repeatRunnable).
                 stopRepeat()
-                backspaceAnimation.onDrag(x, y, backspaceSwipe.leftwardDistance(x), words)
+                backspaceAnimation.onDrag(backspaceSwipe.leftwardDistance(x), words)
                 invalidate()
                 if (words != deleteSwipeWords) {
                     deleteSwipeWords = words
@@ -520,7 +518,7 @@ class KeyboardView(context: Context) : View(context) {
             backspaceSwipe.reset()
             deleteSwipeWords = 0
             deleteSwipeListener?.onDeleteSwipeRelease()
-            backspaceAnimation.onSwipeRelease(x, y)
+            backspaceAnimation.onSwipeRelease()
             invalidate()
             return
         }
