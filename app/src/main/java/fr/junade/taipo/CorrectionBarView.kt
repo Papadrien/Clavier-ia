@@ -54,6 +54,9 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
 
     /** Roue crantée : ouvre la page d'accueil de l'application, visible hors saisie, ou quand le menu « ··· » de gauche est ouvert. */
     private val settingsButton = ImageButton(context)
+
+    /** Roue crantée qui tourne en ressort quand on touche le bouton, le temps que l'application s'ouvre. */
+    private val settingsIcon = SpinIconDrawable(context, R.drawable.ic_settings, context.dimen(R.dimen.taipo_icon_size).toInt())
     private var settingsListener: (() -> Unit)? = null
     private var menuClickListener: (() -> Unit)? = null
 
@@ -190,7 +193,11 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         // Bouton « roue crantée » entre le menu « ··· » et le bouton Smart Clipboard.
         style.styleRoundIconButton(settingsButton, R.drawable.ic_settings)
         settingsButton.contentDescription = context.getString(R.string.settings_button_description)
-        settingsButton.setOnClickListener { settingsListener?.invoke() }
+        settingsButton.setImageDrawable(settingsIcon) // même tracé que ic_settings au repos
+        settingsButton.setOnClickListener {
+            settingsIcon.spin()
+            settingsListener?.invoke()
+        }
         addView(
             settingsButton,
             LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },

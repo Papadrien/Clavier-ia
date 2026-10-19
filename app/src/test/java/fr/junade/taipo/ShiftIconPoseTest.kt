@@ -17,7 +17,7 @@ class ShiftIconPoseTest {
     }
 
     @Test
-    fun `minuscule : fleche creuse, droite, sans barre`() {
+    fun `minuscule - fleche creuse, droite, sans barre`() {
         assertEquals(0f, ShiftIconPose.restFill(ShiftState.OFF))
         assertEquals(1f, ShiftIconPose.restScaleY(ShiftState.OFF))
         assertEquals(0f, ShiftIconPose.restLift(ShiftState.OFF))
@@ -25,14 +25,14 @@ class ShiftIconPoseTest {
     }
 
     @Test
-    fun `majuscule : fleche pleine de taille normale, sans barre`() {
+    fun `majuscule - fleche pleine de taille normale, sans barre`() {
         assertEquals(1f, ShiftIconPose.restFill(ShiftState.ON))
         assertEquals(1f, ShiftIconPose.restScaleY(ShiftState.ON))
         assertEquals(0f, ShiftIconPose.restBarOpacity(ShiftState.ON))
     }
 
     @Test
-    fun `verrouillee : fleche pleine raccourcie et barre dessous`() {
+    fun `verrouillee - fleche pleine raccourcie et barre dessous`() {
         assertEquals(1f, ShiftIconPose.restFill(ShiftState.LOCK))
         assertEquals(1f, ShiftIconPose.restBarOpacity(ShiftState.LOCK))
         assertEquals(1f, ShiftIconPose.restBarScale(ShiftState.LOCK))

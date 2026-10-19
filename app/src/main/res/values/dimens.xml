@@ -123,6 +123,8 @@
     <dimen name="taipo_chat_follow_threshold">12dp</dimen>
     <!-- Apparition de la zone de chat : elle monte de cette distance avec un effet ressort. -->
     <dimen name="taipo_chat_rise_distance">40dp</dimen>
+    <!-- Apparition et disparition de la barre du mode chat (et de ses suggestions) : même ressort, course plus courte. -->
+    <dimen name="taipo_prompt_bar_rise_distance">16dp</dimen>
     <!-- Bouton « Ajouter le texte » sous une réponse. -->
     <dimen name="taipo_chat_action_text_size">13sp</dimen>
     <!-- Hauteur de la FACE du bouton. Lot 20 : la vue fait 48 dp (face + taipo_touch_slop de chaque côté, fond inséré), le rendu ne change pas. -->

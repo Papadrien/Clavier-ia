@@ -24,6 +24,7 @@ internal class RobotIconDrawable(private val sizePx: Int) : Drawable() {
         private set
 
     private var animator: ValueAnimator? = null
+    private var targetProgress = 0f
     private var tint: ColorStateList? = null
     private var alphaValue = 255
 
@@ -40,6 +41,7 @@ internal class RobotIconDrawable(private val sizePx: Int) : Drawable() {
     /** Passe à [active] ; [animate] faux (barre pas encore affichée) ou animations coupées : saut direct. */
     fun setActive(active: Boolean, animate: Boolean) {
         val target = if (active) 1f else 0f
+        targetProgress = target
         animator?.cancel()
         animator = null
         if (!animate || !ValueAnimator.areAnimatorsEnabled() || progress == target) {
@@ -58,10 +60,17 @@ internal class RobotIconDrawable(private val sizePx: Int) : Drawable() {
         }
     }
 
-    /** Arrête l'animation en cours (vue détachée) en gardant la pose actuelle. */
+    /**
+     * Arrête l'animation en cours (vue détachée) et prend aussitôt la pose d'arrivée : sinon une animation interrompue
+     * laisse le robot figé entre repos et actif, et rien ne la relance au retour (l'état n'a pas changé).
+     */
     fun cancel() {
         animator?.cancel()
         animator = null
+        if (progress != targetProgress) {
+            progress = targetProgress
+            invalidateSelf()
+        }
     }
 
     override fun draw(canvas: Canvas) {

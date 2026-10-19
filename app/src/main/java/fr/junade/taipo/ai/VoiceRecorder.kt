@@ -244,7 +244,7 @@ class VoiceRecorder(private val engine: VoiceEngine, private val scope: Coroutin
     companion object {
         private const val TAG = "VoiceRecorder"
         private const val SAMPLE_RATE = 16_000
-        private const val SILENCE_RMS_THRESHOLD = 500.0
+        private const val SILENCE_RMS_THRESHOLD = 250.0
         private const val SILENCE_TIMEOUT_MS = 20_000L
     }
 }

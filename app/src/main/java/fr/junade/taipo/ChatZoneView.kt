@@ -1,13 +1,11 @@
 package fr.junade.taipo
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.graphics.Rect
 import android.graphics.drawable.InsetDrawable
 import android.view.Gravity
 import android.view.View
-import android.view.animation.LinearInterpolator
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
@@ -87,60 +85,6 @@ class ChatZoneView(context: Context) : ScrollView(context) {
                 scrollTo(0, maxOf(0, bottom - top - height))
             }
         }
-    }
-
-    private val riseSpring = SpringValue()
-    private var riseTicker: ValueAnimator? = null
-    private var riseLastNanos = 0L
-
-    /**
-     * Apparition de la zone : elle sort du clavier en montant, avec un effet ressort (elle dépasse un peu sa place puis
-     * s'y pose), en apparaissant en fondu. À appeler juste après l'avoir rendue visible. Animations coupées dans les
-     * réglages système : pose directe.
-     */
-    fun playRise() {
-        cancelRise()
-        if (!ValueAnimator.areAnimatorsEnabled()) {
-            applyRise(1f)
-            return
-        }
-        riseSpring.snap(0f)
-        applyRise(0f)
-        riseLastNanos = System.nanoTime()
-        riseTicker = ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = RISE_TICK_MS
-            repeatCount = ValueAnimator.INFINITE
-            interpolator = LinearInterpolator()
-            addUpdateListener {
-                val now = System.nanoTime()
-                val dt = ((now - riseLastNanos) / NANOS_PER_SECOND).coerceIn(0f, MAX_FRAME_S)
-                riseLastNanos = now
-                riseSpring.step(1f, dt)
-                applyRise(riseSpring.value)
-                if (riseSpring.isSettled(1f)) {
-                    applyRise(1f)
-                    cancelRise()
-                }
-            }
-            start()
-        }
-    }
-
-    private fun cancelRise() {
-        riseTicker?.cancel()
-        riseTicker = null
-    }
-
-    /** [progress] : 0 = en bas et transparente, 1 = à sa place ; le ressort dépasse 1 un instant. */
-    private fun applyRise(progress: Float) {
-        translationY = (1f - progress) * dimen(R.dimen.taipo_chat_rise_distance)
-        alpha = (progress * RISE_FADE_GAIN).coerceIn(0f, 1f)
-    }
-
-    override fun onDetachedFromWindow() {
-        cancelRise()
-        applyRise(1f)
-        super.onDetachedFromWindow()
     }
 
     /** Ajoute le prompt de l'utilisateur (bulle à droite). */
@@ -366,10 +310,6 @@ class ChatZoneView(context: Context) : ScrollView(context) {
 
     private companion object {
         const val MAX_WIDTH_RATIO = 0.8f
-        const val RISE_TICK_MS = 1000L
-        const val RISE_FADE_GAIN = 2f
-        const val NANOS_PER_SECOND = 1_000_000_000f
-        const val MAX_FRAME_S = 0.05f
         val USER_COLOR = R.color.accent
         val MODEL_COLOR = R.color.surface_button
         val BUTTON_COLOR = R.color.surface_button

@@ -123,6 +123,14 @@ class PromptModeController(
     lateinit var suggestionBar: PromptSuggestionBarView
         private set
 
+    /**
+     * Apparition et disparition en ressort de la zone de chat, de la barre du prompt et de sa rangée de suggestions
+     * (créées avec les vues, voir [createViews]).
+     */
+    private lateinit var chatPresence: SpringPresence
+    private lateinit var barPresence: SpringPresence
+    private lateinit var suggestionPresence: SpringPresence
+
     /** Vrai tant que le mode prompt est actif (entré par « Générer », quitté par la croix « annuler »). */
     var active = false
         private set
@@ -171,12 +179,14 @@ class PromptModeController(
         chatZone.visibility = View.GONE
         chatZone.setOnAddTextClickListener { index -> onAddTextRequested(index) }
         chatZone.setOnReplaceTextClickListener { index -> onReplaceTextRequested(index) }
+        chatPresence = SpringPresence(chatZone) { context.dimen(R.dimen.taipo_chat_rise_distance) }
 
         // Barre du mode prompt (phase 5.1-4) ; stop et croix pendant la génération : phase 5.1-7.
         promptBar = PromptBarView(context)
         promptBar.modelLoading = llmHost.isLoading
         llmHost.setLoadingListener { loading -> mainHandler.post { onModelLoadingChanged(loading) } }
         promptBar.visibility = View.GONE
+        barPresence = SpringPresence(promptBar) { context.dimen(R.dimen.taipo_prompt_bar_rise_distance) }
         promptBar.setOnCancelClickListener { onCancelRequested() }
         promptBar.setOnSendClickListener {
             host.haptic()
@@ -200,6 +210,7 @@ class PromptModeController(
         // Suggestions de mots et d'emoji du prompt : mêmes actions que la bande de la barre du haut.
         suggestionBar = PromptSuggestionBarView(context)
         suggestionBar.visibility = View.GONE
+        suggestionPresence = SpringPresence(suggestionBar) { context.dimen(R.dimen.taipo_prompt_bar_rise_distance) }
         suggestionBar.setOnWordClickListener { suggestion -> host.onWordSuggestionTapped(suggestion) }
         suggestionBar.setOnEmojiClickListener { host.onEmojiSuggestionTapped() }
     }
@@ -552,27 +563,30 @@ class PromptModeController(
         chatAvailable = false
         chatShown = true
         if (this::chatZone.isInitialized) chatZone.clearBubbles()
-        applyViews()
+        applyViews(animate = false) // fermeture du clavier : rien à animer, une sortie en cours est menée à son terme
     }
 
     /**
      * Applique l'état du mode prompt aux vues : barre du prompt à la place de la barre du haut, barre
-     * d'emojis récents masquée (décision 12), zone de chat selon le bouton afficher/masquer.
+     * d'emojis récents masquée (décision 12), zone de chat selon le bouton afficher/masquer. La barre du prompt, ses
+     * suggestions et la zone de chat apparaissent et disparaissent en ressort ([SpringPresence]) ; [animate] faux
+     * (fermeture du clavier) : changements directs.
      */
-    fun applyViews() {
+    fun applyViews(animate: Boolean = true) {
         if (!this::promptBar.isInitialized || !host.barReady()) return
-        host.setNormalBarVisible(!active)
-        promptBar.visibility = if (active) View.VISIBLE else View.GONE
-        if (this::suggestionBar.isInitialized) {
-            suggestionBar.visibility = if (active) View.VISIBLE else View.GONE
+        if (active) {
+            host.setNormalBarVisible(false)
+            barPresence.show(animate)
+            suggestionPresence.show(animate)
+        } else {
+            // La barre normale ne revient qu'une fois la barre du prompt sortie : elles ne s'empilent jamais.
+            barPresence.hide(animate) { if (!active) host.setNormalBarVisible(true) }
+            suggestionPresence.hide(animate)
         }
         host.refreshRecentEmojiBar()
         val chatVisible = active && chatAvailable && chatShown
         if (this::chatZone.isInitialized) {
-            val wasVisible = chatZone.visibility == View.VISIBLE
-            chatZone.visibility = if (chatVisible) View.VISIBLE else View.GONE
-            // La zone sort du clavier en montant, avec un ressort, seulement quand elle vient d'apparaître.
-            if (chatVisible && !wasVisible) chatZone.playRise()
+            if (chatVisible) chatPresence.show(animate) else chatPresence.hide(animate)
         }
         promptBar.setChatToggleVisible(active && chatAvailable)
         promptBar.setChatShown(chatVisible)

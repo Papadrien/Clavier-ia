@@ -64,6 +64,22 @@ d'une génération, les messages d'erreur de l'IA, les préférences (`KeyboardP
 - [ ] `./gradlew :app:connectedDebugAndroidTest` vert sur le Pixel 9 (si un test de rendu échoue, noter lequel : certains reposent sur des détails du dessin non vérifiés).
 - [ ] Recette manuelle ci-dessus.
 
+## Dictée : seuil de silence abaissé (19/10/2026)
+
+`VoiceRecorder.SILENCE_RMS_THRESHOLD` passe de 500 à 250 (RMS d'un bloc PCM16). Cause : à voix basse, les blocs de parole restent sous 500, le compteur de 20 s de silence (appui bref) n'était pas remis à zéro et la dictée s'arrêtait en pleine phrase. Le délai de 20 s ne change pas. Si la dictée s'arrête encore à voix très basse, descendre vers 150 ou mesurer le bruit ambiant au démarrage. À valider sur Pixel 9 (rien compilé ni exécuté).
+
+## Icône Paramètres : rotation à l'ouverture de l'application (19/10/2026)
+
+`SpinIconDrawable` (enveloppe `ic_settings.xml`, rotation au Canvas) remplace l'icône du bouton roue crantée de la barre du haut (`CorrectionBarView`). À l'appui, l'angle visé avance de 540°/s et la roue le suit avec `SpringValue` (démarrage en douceur) tant que l'application s'ouvre : jusqu'à 2 s si le clavier reste affiché, puis elle se pose sur le prochain tour entier en dépassant un peu (`SpinIconPose`). Dès que le clavier est masqué (l'application est ouverte), la roue revient directement au repos : au retour du clavier elle est droite. Un nouvel appui relance la rotation. Animations système coupées : aucune rotation. Le fond rond du bouton ne tourne pas. Tests JVM : `SpinIconPoseTest`. Rendu à valider sur Pixel 9 (rien compilé ni exécuté).
+
+## Bulle de symboles : ouverture en ressort (19/10/2026)
+
+`KeyPopup` : à l'appui long, la bulle (accents, symboles, globe) sort de la touche appuyée au lieu d'apparaître d'un coup. Elle part à 25 % de sa taille, pivote autour du milieu du haut de la touche (le pivot est ramené dans la bulle si celle-ci est décalée près d'un bord), grandit avec `SpringValue` (~20 % de dépassement du trajet) et apparaît en fondu jusqu'à 60 % de sa taille (`PopupOpenPose`). Le dépassement est plafonné (`maxScale`) pour que la bulle ne sorte ni de la place au-dessus de la vue ni de la zone des touches. Les zones tactiles (cellules, zone de départ) sont celles de la bulle finale dès le premier instant : relâcher pendant l'animation saisit la bonne cellule. Animations système coupées : bulle directe. Tests JVM : `PopupOpenPoseTest`. Rendu à valider sur Pixel 9 (rien compilé ni exécuté).
+
+## Icône Annuler animée « Rembobinage » (19/10/2026)
+
+`UndoIconDrawable` (Canvas, même tracé que `ic_undo.xml`) remplace l'icône du bouton Annuler (`SuggestionZoneView`). À chaque appui, l'icône fait un tour complet à l'envers autour de son centre en s'écrasant à 70 % au départ, avec le ressort commun `SpringValue` (~20 % de dépassement) ; des appuis rapprochés cumulent les tours. Quand le bouton passe de grisé à actif (historique non vide), l'icône fait un petit « pop » (55 % → 1). La touche ne change pas (ni couleur ni forme), seule l'icône s'anime. L'animation s'arrête quand le bouton n'est pas visible ; animations système coupées : aucune animation. Test JVM : `UndoIconPoseTest`. Rendu à valider sur Pixel 9 (rien compilé ni exécuté).
+
 ## Icône robot animée (17/10/2026)
 
 `RobotIconDrawable` (Canvas, même tracé que `ic_robot.xml`) remplace l'icône du bouton robot : antenne qui raccourcit, yeux qui montent et se plissent, bouche qui apparaît quand le bouton passe à l'état actif (fond violet), et l'inverse au retour. 300 ms, `OvershootInterpolator(4)` (léger ressort dans les deux sens). Saut direct si la barre n'est pas encore affichée ou si les animations système sont coupées. Test JVM : `RobotIconPoseTest`. Rendu à valider sur Pixel 9 (rien compilé ni exécuté).
@@ -90,7 +106,7 @@ Le chevron du menu de gauche (`RotatingDrawable`) utilise le même ressort (`Ove
 
 - `ic_chat.xml` : bulle de discussion avec une étincelle pleine au centre, icône fixe (le bouton afficher/masquer le chat ne s'anime pas).
 - `SendIconDrawable` (Canvas, grille de 24, proposition A « Orbite ») remplace la roue du bouton rond d'envoi et les icônes `ic_send` / `ic_stop` (supprimées) : trois étincelles à quatre branches, de la taille des points de la maquette (4,5 sur la grille), tournent en orbite pendant le chargement du modèle ou l'arrêt d'une génération ; l'orbite se replie, puis la flèche remonte d'en bas avec un ressort. À l'envoi la flèche décolle en s'étirant, une onde part du bouton et le bouton rebondit ; l'icône suivante (carré stop pendant la génération, flèche sinon) remonte avec un ressort. Dessin coupé au cercle de la face. Animations système coupées : poses directes, orbite figée. Tests JVM : `SendIconPoseTest`.
-- `ChatZoneView.playRise()` : la zone de chat monte de 40 dp (`taipo_chat_rise_distance`) avec un ressort et un fondu quand elle devient visible (déclenché par `PromptModeController.applyViews`). Aussi rejoué à la recréation de la vue (rotation).
+- `SpringPresence` (remplace `ChatZoneView.playRise()`) : la zone de chat (40 dp, `taipo_chat_rise_distance`), la barre du prompt et sa rangée de suggestions (16 dp, `taipo_prompt_bar_rise_distance`) montent avec un ressort et un fondu quand elles deviennent visibles, et font le chemin inverse (ressort un peu ralenti, vue gardée affichée jusqu'à la fin puis `GONE`) quand elles disparaissent : sortie du mode (croix, appui dans le champ), bouton afficher/masquer le chat. La barre normale ne réapparaît qu'une fois la barre du prompt sortie (elles ne s'empilent jamais). Un retour pendant une sortie inverse le mouvement sans saut. Fermeture du clavier (`resetConversation`) : changements directs, sortie en cours terminée. Déclenché par `PromptModeController.applyViews`, aussi rejoué à la recréation de la vue (rotation). Tests JVM : `SpringPresencePoseTest`.
 - Rien compilé ni exécuté : rendu à valider sur Pixel 9 (taille des étincelles, coupe au cercle, rebond du bouton).
 
 ### Étincelle du bouton chat et icône Générer (18/10/2026, suite)

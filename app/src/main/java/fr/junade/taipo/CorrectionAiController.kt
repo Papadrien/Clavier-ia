@@ -355,6 +355,7 @@ class CorrectionAiController(
         scope.launch {
             try {
                 work()
+                host.hapticAi(AiHapticCue.PROCESSING_DONE) // fin du traitement, comme la transcription IA (pas si annulée ou en échec)
                 Analytics.aiAction(context, AnalyticsEvents.AiType.CORRECT, modelId, startedAt)
             } catch (e: CorrectionCancelledException) {
                 AppLog.i(TAG, "correction annulée par l'utilisateur")

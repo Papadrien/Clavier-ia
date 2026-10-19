@@ -56,7 +56,7 @@ class ShiftAnimationTest {
     }
 
     @Test
-    fun `minuscule vers majuscule : la fleche s'ecrase, bondit, s'etire et se remplit`() {
+    fun `minuscule vers majuscule - la fleche s'ecrase, bondit, s'etire et se remplit`() {
         val a = animation()
         a.go(ShiftState.ON)
         a.step(0f)
@@ -163,7 +163,7 @@ class ShiftAnimationTest {
     }
 
     @Test
-    fun `animations systeme coupees : pose directe, rien ne tourne`() {
+    fun `animations systeme coupees - pose directe, rien ne tourne`() {
         val a = animation(enabled = false)
         a.go(ShiftState.LOCK, auto = true)
         assertFalse(a.isRunning)

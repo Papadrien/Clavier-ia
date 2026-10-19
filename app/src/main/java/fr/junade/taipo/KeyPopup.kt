@@ -1,5 +1,6 @@
 package fr.junade.taipo
 
+import android.animation.ValueAnimator
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
@@ -46,6 +47,13 @@ internal class KeyPopup(private val view: View) {
 
     // Zone tactile élargie autour de la bulle : un doigt juste à côté sélectionne la cellule la plus proche.
     private val popupTouchRect = RectF()
+
+    // Ouverture en ressort : la bulle sort de la touche appuyée (pivot = milieu du haut de la touche) en grandissant.
+    private val openSpring = SpringValue(1f)
+    private var openLastFrameNanos = 0L
+    private var pivotX = 0f
+    private var pivotY = 0f
+    private var openMaxScale = 1f
 
     val isShown: Boolean get() = key != null
 
@@ -120,6 +128,15 @@ internal class KeyPopup(private val view: View) {
         popupSelectedCol = popupDefaultCol
         popupGrid = grid
         key = pressed
+
+        pivotX = bounds.centerX().coerceIn(popupRect.left, popupRect.right)
+        pivotY = bounds.top
+        openMaxScale = PopupOpenPose.maxScale(
+            pivotX, pivotY, popupRect.left, popupRect.right, popupRect.top,
+            content.leftPx + margin / 2f, content.rightPx - margin / 2f, -headroom,
+        )
+        openLastFrameNanos = 0L
+        openSpring.snap(if (ValueAnimator.areAnimatorsEnabled()) PopupOpenPose.START_SCALE else 1f)
         view.invalidate()
     }
 
@@ -130,6 +147,7 @@ internal class KeyPopup(private val view: View) {
         popupSelectedCol = -1
         popupDefaultRow = -1
         popupDefaultCol = -1
+        openSpring.snap(1f)
         view.invalidate()
     }
 
@@ -187,6 +205,11 @@ internal class KeyPopup(private val view: View) {
         globeIcon: Drawable,
     ) {
         if (key == null) return
+        val openScale = advanceOpening()
+        canvas.save()
+        canvas.scale(openScale, openScale, pivotX, pivotY)
+        val alpha = (255 * PopupOpenPose.alpha(openScale)).roundToInt()
+        if (alpha < 255) canvas.saveLayerAlpha(popupRect, alpha)
         canvas.drawRoundRect(popupRect, cornerRadius, cornerRadius, popupPaint)
 
         if (popupTextPaint.textSize != textSize) popupTextPaint.textSize = textSize
@@ -213,11 +236,31 @@ internal class KeyPopup(private val view: View) {
                 canvas.drawText(charBuffer, 0, 1, cx, cy + baselineOffset, popupTextPaint)
             }
         }
+        if (alpha < 255) canvas.restore()
+        canvas.restore()
+    }
+
+    /** Fait avancer le ressort d'ouverture jusqu'à maintenant et demande l'image suivante tant qu'il n'est pas posé. */
+    private fun advanceOpening(): Float {
+        if (openSpring.isSettled(1f)) {
+            openSpring.snap(1f)
+            return 1f
+        }
+        val now = System.nanoTime()
+        val dt = if (openLastFrameNanos == 0L) FIRST_FRAME_S else ((now - openLastFrameNanos) / NANOS_PER_SECOND).coerceIn(0f, MAX_FRAME_S)
+        openLastFrameNanos = now
+        openSpring.step(1f, dt)
+        view.postInvalidateOnAnimation()
+        return openSpring.value.coerceIn(0f, openMaxScale)
     }
 
     companion object {
         /** Caractère fictif (zone d'usage privé) qui représente la touche globe dans la bulle d'Entrée ; jamais saisi. */
         const val GLOBE_SYMBOL = '\uE000'
+
+        private const val NANOS_PER_SECOND = 1_000_000_000f
+        private const val FIRST_FRAME_S = 1f / 60f
+        private const val MAX_FRAME_S = 0.05f
 
         /** Grille de la bulle d'Entrée : une seule cellule, le globe. */
         val ENTER_GRID: List<List<Char>> = listOf(listOf(GLOBE_SYMBOL))

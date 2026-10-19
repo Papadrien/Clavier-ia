@@ -67,7 +67,7 @@ class BackspaceAnimationTest {
     }
 
     @Test
-    fun `animations systeme coupees : rien ne se declenche`() {
+    fun `animations systeme coupees - rien ne se declenche`() {
         val a = animation(enabled = false)
         a.onKey(100f, 50f, repeat = false, nowNanos = 1_000L)
         a.onPress(300f)
@@ -128,7 +128,7 @@ class BackspaceAnimationTest {
     }
 
     @Test
-    fun `le tampon est circulaire : jamais plus d'etincelles que sa capacite`() {
+    fun `le tampon est circulaire - jamais plus d'etincelles que sa capacite`() {
         val a = animation()
         repeat(30) { a.onKey(0f, 0f, repeat = false, nowNanos = it * 1_000L) }
         assertEquals(a.capacity, a.alive())

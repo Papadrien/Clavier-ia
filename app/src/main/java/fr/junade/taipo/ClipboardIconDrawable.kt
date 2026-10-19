@@ -142,11 +142,21 @@ internal class ClipboardIconDrawable(private val sizePx: Int) : Drawable() {
         canvas.restore()
     }
 
+    /**
+     * Bouton masqué : l'animation s'arrête et l'icône prend aussitôt sa pose d'arrivée. Sans cela un ressort interrompu en
+     * plein vol (clavier fermé, barre masquée) laisse l'icône figée entre deux poses au retour, car rien ne la relance.
+     */
+    private fun settle() {
+        spring.snap(if (active) 1f else 0f)
+        invalidateSelf()
+    }
+
     /** L'animation ne tourne que tant que le bouton est visible : elle s'arrête quand la barre est masquée ou détachée. */
     override fun setVisible(visible: Boolean, restart: Boolean): Boolean {
         val changed = super.setVisible(visible, restart)
         if (!visible) {
             cancel()
+            settle()
         } else if (active && ValueAnimator.areAnimatorsEnabled()) {
             ensureTicking()
         }

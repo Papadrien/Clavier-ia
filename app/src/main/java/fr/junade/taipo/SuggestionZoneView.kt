@@ -33,6 +33,9 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
 
     /** Bouton Annuler (icône « annuler »), juste à droite du bouton Smart Clipboard : défait la dernière action. */
     private val undoButton = ImageButton(context)
+
+    /** Icône « annuler » animée (« Rembobinage ») : un tour à l'envers, en ressort, à chaque appui. */
+    private val undoIcon = UndoIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
     private var undoListener: (() -> Unit)? = null
     private var undoEnabled = false
 
@@ -62,7 +65,11 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
 
         style.styleBarIconButton(undoButton, R.drawable.ic_undo)
         undoButton.contentDescription = context.getString(R.string.undo_button)
-        undoButton.setOnClickListener { undoListener?.invoke() }
+        undoButton.setImageDrawable(undoIcon) // même tracé que ic_undo au repos
+        undoButton.setOnClickListener {
+            undoIcon.play()
+            undoListener?.invoke()
+        }
         undoButton.isEnabled = false
         undoButton.alpha = undoRestingAlpha()
 
@@ -164,6 +171,7 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
 
     /** Une action est annulable ([enabled]) ou non : le bouton Annuler est actif ou grisé (et non touchable). */
     fun setUndoEnabled(enabled: Boolean) {
+        if (enabled && !undoEnabled && isLaidOut) undoIcon.pop()
         undoEnabled = enabled
         undoButton.isEnabled = enabled
         undoButton.alpha = undoRestingAlpha()

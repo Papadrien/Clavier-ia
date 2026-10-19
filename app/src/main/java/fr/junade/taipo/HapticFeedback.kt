@@ -45,7 +45,7 @@ data class HapticPulse(val delayMs: Long, val durationMs: Long, val amplitude: I
 /**
  * Retours haptiques des actions IA (saisie vocale, transcription IA, correction, mode chat). « Fort », « moyen » et « faible »
  * reprennent les amplitudes des niveaux du clavier ([HapticIntensity.STRONG], [HapticIntensity.MEDIUM], [HapticIntensity.LIGHT]), quel que soit le niveau choisi
- * dans les paramètres ; seul [PROCESSING_DONE] suit ce niveau (comme une frappe de touche). Si les vibrations sont
+ * dans les paramètres ; seul [PROCESSING_DONE] (fin de transcription ou de correction) suit ce niveau (comme une frappe de touche). Si les vibrations sont
  * désactivées dans les paramètres ([HapticIntensity.OFF]), aucune de ces vibrations n'est jouée.
  */
 enum class AiHapticCue {
@@ -61,7 +61,7 @@ enum class AiHapticCue {
     /** Appui qui termine l'enregistrement de la transcription IA : deux impulsions de 6 ms, fortes. */
     TRANSCRIPTION_STOP,
 
-    /** Fin du traitement de la transcription IA : comme une frappe de touche (6 ms, niveau des paramètres). */
+    /** Fin du traitement de la transcription IA ou de la correction IA : comme une frappe de touche (6 ms, niveau des paramètres). */
     PROCESSING_DONE,
 
     /** Mode chat : un mot de la réponse vient d'être généré : 6 ms, faible. */
