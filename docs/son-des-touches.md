@@ -17,8 +17,11 @@ résonances amorties + impulsion de bruit filtré, générés au premier afficha
 | Boutons robot, Chat (Générer), Corriger (lancer ou annuler) et Transcription IA | « triple montée » grave : trois clics de plus en plus aigus, 48 ms (maquette « actions IA » du 20/10/2026, hauteur grave, version robot) | `SwitchClickSynth.AI` (`KeySound.AI_BUTTON`) |
 
 - Code : `KeyClickSynth.kt` (synthèse pure, testée sur JVM), `KeySoundPlayer.kt` (WAV dans `cacheDir/key_sounds/` + `SoundPool`),
-  branchement dans `TaipoIme.onKeyPressed`. Réglage « Son des touches » dans les paramètres du clavier (activé par défaut,
-  relu à chaque ouverture de champ).
+  branchement dans `TaipoIme.onKeyPressed`. Deux réglages dans les paramètres du clavier, activés par défaut et relus à chaque
+  ouverture de champ : « Son du clavier » (`KeySound.KEY`, `SPACE`, `CONTROL`, via `isKeySoundEnabled`) et « Sons de la barre
+  supérieure » (`BAR_BUTTON`, `AI_BUTTON`, `VOICE_START/END` et les trois sons de transcription, via `isBarSoundEnabled`).
+  Tant que le second n'a jamais été réglé, il reprend l'ancien réglage unique « Son des touches ».
+- Volume de lecture (`KeySoundPlayer.VOLUME` = 0,2857, commun à tous les sons) : pic à 20 % de la pleine échelle.
 - Trois variantes par son (graines 1 à 3, hauteur ± 4 %) et un décalage de vitesse aléatoire de ± 3 % à la lecture évitent l'effet répétitif.
 - Référence : `tools/key_click_reference.py` ; `python3 tools/key_click_reference.py --check` redonne les valeurs figées dans `KeyClickSynthTest`.
 - Changer le caractère d'un son : modifier le facteur de `scaled(...)` ou le profil `SEC_DOUX` des deux côtés (Kotlin et Python), puis refaire `--check`.

@@ -30,11 +30,26 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putString(KEY_HAPTIC_INTENSITY, value.storageKey).apply()
         }
 
-    /** Son des touches (tic doux à chaque frappe, plus aigu pour la barre d'espace). Activé par défaut. */
+    /** Son du clavier (tic doux à chaque frappe, plus aigu pour la barre d'espace). Activé par défaut. */
     var isKeySoundEnabled: Boolean
         get() = prefs.getBoolean(KEY_KEY_SOUND, DEFAULT_KEY_SOUND)
         set(value) {
             prefs.edit().putBoolean(KEY_KEY_SOUND, value).apply()
+        }
+
+    /**
+     * Sons des actions de la barre supérieure (Paramètres, Smart Clipboard, Annuler, robot, Chat, Corriger, saisie
+     * vocale, transcription IA). Activé par défaut ; tant qu'il n'a jamais été réglé, il reprend l'ancien réglage
+     * unique « Son des touches », pour ne pas réactiver des sons qu'on avait coupés.
+     */
+    var isBarSoundEnabled: Boolean
+        get() = if (prefs.contains(KEY_BAR_SOUND)) {
+            prefs.getBoolean(KEY_BAR_SOUND, DEFAULT_BAR_SOUND)
+        } else {
+            prefs.getBoolean(KEY_KEY_SOUND, DEFAULT_BAR_SOUND)
+        }
+        set(value) {
+            prefs.edit().putBoolean(KEY_BAR_SOUND, value).apply()
         }
 
     /** Hauteur du clavier (story 1.12). Normale (100 %) par défaut. */
@@ -112,6 +127,8 @@ class KeyboardPreferences(context: Context) {
         const val DEFAULT_NUMBER_ROW = false
         private const val KEY_KEY_SOUND = "key_sound_enabled"
         const val DEFAULT_KEY_SOUND = true
+        private const val KEY_BAR_SOUND = "bar_sound_enabled"
+        const val DEFAULT_BAR_SOUND = true
         private const val KEY_HAPTIC_INTENSITY = "haptic_intensity"
         private const val KEY_KEYBOARD_HEIGHT = "keyboard_height"
         private const val KEY_LANGUAGE = "keyboard_language"

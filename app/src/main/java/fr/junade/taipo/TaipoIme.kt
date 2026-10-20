@@ -85,16 +85,16 @@ class TaipoIme : InputMethodService() {
 
         override fun haptic() = this@TaipoIme.hapticFeedback.perform(this@TaipoIme.hapticIntensity)
         override fun playBarButtonSound() {
-            if (this@TaipoIme.keySoundEnabled) this@TaipoIme.keySounds.play(KeySound.BAR_BUTTON)
+            if (this@TaipoIme.barSoundEnabled) this@TaipoIme.keySounds.play(KeySound.BAR_BUTTON)
         }
         override fun playAiButtonSound() {
-            if (this@TaipoIme.keySoundEnabled) this@TaipoIme.keySounds.play(KeySound.AI_BUTTON)
+            if (this@TaipoIme.barSoundEnabled) this@TaipoIme.keySounds.play(KeySound.AI_BUTTON)
         }
         override fun playSound(sound: KeySound) {
-            if (this@TaipoIme.keySoundEnabled) this@TaipoIme.keySounds.play(sound)
+            if (this@TaipoIme.barSoundEnabled) this@TaipoIme.keySounds.play(sound)
         }
         override fun playVoiceSound(start: Boolean) {
-            if (this@TaipoIme.keySoundEnabled) {
+            if (this@TaipoIme.barSoundEnabled) {
                 this@TaipoIme.keySounds.play(if (start) KeySound.VOICE_START else KeySound.VOICE_END)
             }
         }
@@ -213,6 +213,7 @@ class TaipoIme : InputMethodService() {
 
     // Son des touches (tic synthétisé), relu de la même façon.
     private var keySoundEnabled = KeyboardPreferences.DEFAULT_KEY_SOUND
+    private var barSoundEnabled = KeyboardPreferences.DEFAULT_BAR_SOUND
     private var keyboardHeight = KeyboardHeight.DEFAULT
 
     private val personalDictionary by lazy { PersonalDictionaryProvider.repository(applicationContext) }
@@ -590,10 +591,11 @@ class TaipoIme : InputMethodService() {
         serviceJob.cancel()
     }
 
-    /** Relit le réglage du son des touches et prépare les sons (une seule fois) s'il est activé. */
+    /** Relit les réglages du son du clavier et des sons de la barre supérieure ; prépare les sons (une seule fois) si l'un est activé. */
     private fun refreshKeySound() {
         keySoundEnabled = keyboardPreferences.isKeySoundEnabled
-        if (keySoundEnabled) keySounds.prepare()
+        barSoundEnabled = keyboardPreferences.isBarSoundEnabled
+        if (keySoundEnabled || barSoundEnabled) keySounds.prepare()
     }
 
     private fun onKeyPressed(key: Key) {

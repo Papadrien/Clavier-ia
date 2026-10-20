@@ -78,6 +78,14 @@ class KeyboardSettingsActivity : Activity() {
             }
         }
 
+        findViewById<CompoundButton>(R.id.switch_bar_sound).apply {
+            isChecked = preferences.isBarSoundEnabled
+            setOnCheckedChangeListener { _, checked ->
+                preferences.isBarSoundEnabled = checked
+                Analytics.setting(this@KeyboardSettingsActivity, "bar_sound", checked)
+            }
+        }
+
         val heightGroup = findViewById<RadioGroup>(R.id.radio_group_height)
         val heightIds = mapOf(
             KeyboardHeight.COMPACT to R.id.radio_height_compact,

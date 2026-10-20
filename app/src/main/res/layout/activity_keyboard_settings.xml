@@ -156,6 +156,20 @@
             android:text="@string/keyboard_settings_key_sound_description"
             android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
 
+        <Switch
+            android:id="@+id/switch_bar_sound"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_lg"
+            android:text="@string/keyboard_settings_bar_sound" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/keyboard_settings_bar_sound_description"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+
         <TextView
             style="@style/TaipoText.Section"
             android:layout_width="wrap_content"

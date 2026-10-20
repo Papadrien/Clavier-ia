@@ -69,7 +69,10 @@ class KeySoundPlayer(private val context: Context) {
         const val VARIATION = 0.04
         const val RATE_JITTER = 0.03f
 
-        /** Volume de lecture (0 à 1) : le son d'origine baissé de 80 %. */
-        const val VOLUME = 0.2f
+        /**
+         * Volume de lecture (0 à 1), commun à tous les sons. Les échantillons étant plafonnés à 0,7, 0,2857 donne un
+         * pic à 20 % de la pleine échelle (0,2 donnait 14 %).
+         */
+        const val VOLUME = 0.2857f
     }
 }
