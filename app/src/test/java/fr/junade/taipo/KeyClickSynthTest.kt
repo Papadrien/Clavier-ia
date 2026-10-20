@@ -49,6 +49,57 @@ class KeyClickSynthTest {
     }
 
     @Test
+    fun `le son des boutons de la barre du haut reproduit la reference Python`() {
+        val bar = SwitchClickSynth.render(SwitchClickSynth.BAR, seed = 1, variation = 0.03)
+        assertEquals(1411, bar.size) // 32 ms
+        assertTrue(abs(bar.maxOf { abs(it.toInt()) } - 19660) <= 2) // pic à 60 % de la pleine échelle
+        assertReference(bar, listOf(0, 488, 2234, 3042, 5891, 9378), sumAbs = 2214951, max = 15968, min = -19660)
+    }
+
+    @Test
+    fun `le son des boutons IA reproduit la reference Python`() {
+        val ai = SwitchClickSynth.render(SwitchClickSynth.AI, seed = 1, variation = 0.03)
+        assertEquals(2116, ai.size) // 48 ms
+        assertTrue(abs(ai.maxOf { abs(it.toInt()) } - 19660) <= 2) // même pic que le son de la barre
+        assertReference(ai, listOf(0, 405, 1969, 2475, 5318, 9295), sumAbs = 3478231, max = 19660, min = -19545)
+    }
+
+    @Test
+    fun `les sons de debut et de fin de saisie vocale reproduisent la reference Python`() {
+        val start = SwitchClickSynth.render(SwitchClickSynth.VOICE_START, seed = 1, variation = 0.03)
+        val end = SwitchClickSynth.render(SwitchClickSynth.VOICE_END, seed = 1, variation = 0.03)
+        assertEquals(3969, start.size) // 90 ms
+        assertEquals(3969, end.size)
+        assertReference(start, listOf(0, 488, 2234, 3042, 5891, 9378), sumAbs = 2532307, max = 18695, min = -19660)
+        assertReference(end, listOf(0, 576, 2477, 3466, 5989, 8568), sumAbs = 2126598, max = 16700, min = -19660)
+    }
+
+    @Test
+    fun `les sons de la transcription IA reproduisent la reference Python`() {
+        fun render(preset: SwitchClickSynth.Preset) = SwitchClickSynth.render(preset, seed = 1, variation = 0.03)
+        val start = render(SwitchClickSynth.TRANSCRIPTION_START)
+        val listenEnd = render(SwitchClickSynth.TRANSCRIPTION_LISTEN_END)
+        val done = render(SwitchClickSynth.TRANSCRIPTION_DONE)
+        for (samples in listOf(start, listenEnd, done)) assertEquals(4233, samples.size) // 96 ms
+        assertReference(start, listOf(0, 395, 1918, 2410, 5178, 9050), sumAbs = 3756304, max = 19660, min = -19031)
+        assertReference(listenEnd, listOf(0, 498, 2257, 3100, 5892, 9217), sumAbs = 3243793, max = 17546, min = -19660)
+        assertReference(done, listOf(0, 391, 1898, 2386, 5126, 8959), sumAbs = 3767855, max = 19516, min = -19660)
+    }
+
+    @Test
+    fun `chaque son de bouton a un rendu non vide et deterministe`() {
+        val sounds = listOf(
+            KeySound.BAR_BUTTON, KeySound.AI_BUTTON, KeySound.VOICE_START, KeySound.VOICE_END,
+            KeySound.TRANSCRIPTION_START, KeySound.TRANSCRIPTION_LISTEN_END, KeySound.TRANSCRIPTION_DONE,
+        )
+        for (sound in sounds) {
+            val first = sound.render(seed = 2, variation = 0.04)
+            assertTrue(first.isNotEmpty())
+            assertTrue(first.contentEquals(sound.render(seed = 2, variation = 0.04)))
+        }
+    }
+
+    @Test
     fun `la barre espace est plus aigue que les touches`() {
         // Énergie de la dérivée rapportée à l'énergie du signal : croît avec la brillance.
         fun brightness(s: ShortArray): Double {

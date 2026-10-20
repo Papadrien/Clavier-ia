@@ -69,6 +69,9 @@ class VoiceController(
 
         fun setVoiceBarState(state: VoiceBarState)
 
+        /** Son de début ([start] vrai) ou de fin de l'écoute. */
+        fun playVoiceSound(start: Boolean)
+
         /** Niveau sonore de l'écoute (0 à 1), pour la jauge de l'icône micro. */
         fun setVoiceLevel(level: Float)
 
@@ -254,6 +257,7 @@ class VoiceController(
                 listeningStartedAt = SystemClock.elapsedRealtime()
                 host.setVoiceBarState(VoiceBarState.RECORDING) // le micro capte vraiment, à partir de maintenant
                 host.hapticAi(AiHapticCue.LOADING_DONE)
+                host.playVoiceSound(start = true) // le micro est ouvert : on peut parler
                 voiceStartJob = null
                 // Insertion au fur et à mesure : chaque nouvelle hypothèse remplace
                 // entièrement la précédente (le décodeur streaming peut réviser des
@@ -293,6 +297,7 @@ class VoiceController(
             host.setVoiceBarState(VoiceBarState.IDLE)
             return
         }
+        host.playVoiceSound(start = false) // seulement si l'écoute avait réellement commencé (donc son de début joué)
         voiceRecorder = null
         isRecording = false
         host.setVoiceBarState(VoiceBarState.TRANSCRIBING)

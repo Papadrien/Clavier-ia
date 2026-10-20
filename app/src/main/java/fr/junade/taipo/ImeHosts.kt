@@ -61,6 +61,18 @@ internal interface ImeHostContext {
     fun haptic()
     fun hapticCursorMove()
 
+    /** Son « interrupteur » d'un bouton de la barre du haut (Paramètres, Smart Clipboard, Annuler), si le son des touches est activé. */
+    fun playBarButtonSound()
+
+    /** Son « triple montée » d'un bouton d'action IA de la barre du haut (robot, Chat, Corriger, Transcription IA). */
+    fun playAiButtonSound()
+
+    /** Son de début ([start] vrai) ou de fin de la saisie vocale, si le son des touches est activé. */
+    fun playVoiceSound(start: Boolean)
+
+    /** Joue [sound] si le son des touches est activé (sons de la transcription IA). */
+    fun playSound(sound: KeySound)
+
     /** Retour haptique d'une action IA (voir [AiHapticCue]). */
     fun hapticAi(cue: AiHapticCue)
     fun clearHighlight()
@@ -300,6 +312,8 @@ internal class VoiceHost(private val ime: ImeHostContext) : VoiceController.Host
         ime.correctionBar.voiceState = state
         ime.prompt.setVoiceState(state) // le bouton micro de la barre du prompt suit le même état
     }
+    override fun playVoiceSound(start: Boolean) = ime.playVoiceSound(start)
+
     override fun setVoiceLevel(level: Float) {
         ime.correctionBar.setVoiceLevel(level)
         ime.prompt.setVoiceLevel(level)
@@ -329,6 +343,7 @@ internal class AiTranscriptionHost(private val ime: ImeHostContext) : AiTranscri
     }
     override fun setLevel(level: Float) = ime.correctionBar.setAiTranscriptionLevel(level)
     override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
+    override fun playSound(sound: KeySound) = ime.playSound(sound)
 }
 
 /** Glissement de suppression depuis la touche retour arrière (story 1.9) : voir [DeleteSwipeController]. */
@@ -371,12 +386,15 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
     override fun onDeleteSwipeCancel() = ime.deleteSwipe.onCancel()
     override fun onRecentEmojiClicked(emoji: String) = ime.emoji.onRecentBarTapped(emoji)
     override fun haptic() = ime.haptic()
+    override fun playBarButtonSound() = ime.playBarButtonSound()
+    override fun playAiButtonSound() = ime.playAiButtonSound()
     override fun onCorrectClicked() = ime.correction.onCorrectClicked()
     override fun onCancelCorrectionClicked() = ime.correction.onCancelClicked()
     override fun onUndoClicked() {
         // Correction ou dictée en cours : le texte bouge encore, l'annulation attend.
         if (ime.isCorrectionInProgress() || ime.isRecording()) return
         ime.haptic() // même vibration que le bouton Smart Clipboard
+        ime.playBarButtonSound()
         ime.undo.onUndoClicked()
     }
     override fun onVoiceTouch(event: MotionEvent): Boolean = ime.voice.onButtonTouch(event)

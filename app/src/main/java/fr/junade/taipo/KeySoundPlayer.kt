@@ -37,7 +37,7 @@ class KeySoundPlayer(private val context: Context) {
         for (sound in KeySound.entries) {
             sampleIds[sound] = IntArray(VARIANTS) { variant ->
                 val file = File(dir, "${sound.name.lowercase()}_$variant.wav")
-                val samples = KeyClickSynth.render(sound.profile, seed = (variant + 1).toLong(), variation = VARIATION)
+                val samples = sound.render(seed = (variant + 1).toLong(), variation = VARIATION)
                 file.writeBytes(KeyClickSynth.toWav(samples))
                 soundPool.load(file.absolutePath, 1)
             }

@@ -84,6 +84,20 @@ class TaipoIme : InputMethodService() {
         override fun protectedWordsIn(text: String): List<String> = this@TaipoIme.protectedWordsIn(text)
 
         override fun haptic() = this@TaipoIme.hapticFeedback.perform(this@TaipoIme.hapticIntensity)
+        override fun playBarButtonSound() {
+            if (this@TaipoIme.keySoundEnabled) this@TaipoIme.keySounds.play(KeySound.BAR_BUTTON)
+        }
+        override fun playAiButtonSound() {
+            if (this@TaipoIme.keySoundEnabled) this@TaipoIme.keySounds.play(KeySound.AI_BUTTON)
+        }
+        override fun playSound(sound: KeySound) {
+            if (this@TaipoIme.keySoundEnabled) this@TaipoIme.keySounds.play(sound)
+        }
+        override fun playVoiceSound(start: Boolean) {
+            if (this@TaipoIme.keySoundEnabled) {
+                this@TaipoIme.keySounds.play(if (start) KeySound.VOICE_START else KeySound.VOICE_END)
+            }
+        }
         override fun hapticCursorMove() =
             this@TaipoIme.hapticFeedback.perform(this@TaipoIme.hapticIntensity.cursorMoveFeedback())
         override fun hapticAi(cue: AiHapticCue) = this@TaipoIme.hapticFeedback.perform(cue, this@TaipoIme.hapticIntensity)

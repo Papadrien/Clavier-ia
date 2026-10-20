@@ -3,7 +3,7 @@
 
 Le port Kotlin (`KeyClickSynth.kt`) reproduit ce script à l'arrondi près ; les valeurs de référence de
 `KeyClickSynthTest` viennent de `python3 tools/key_click_reference.py --check`.
-Usage : python3 tools/key_click_reference.py [dossier_de_sortie]   (écrit key.wav, space.wav et control.wav)
+Usage : python3 tools/key_click_reference.py [dossier_de_sortie]   (écrit key.wav, space.wav, control.wav et bar_button.wav et ai_button.wav, voice_start.wav, voice_end.wav et transcription_*.wav)
         python3 tools/key_click_reference.py --check               (affiche les valeurs de référence)
 Dépend de numpy.
 """
@@ -73,6 +73,64 @@ def render(p, seed=1, var=0.03):
     return out / np.max(np.abs(out)) * 0.7
 
 
+def render_clicks(clicks, len_ms, pitch, seed=1, var=0.03):
+    """Suite de clics « interrupteur » (SwitchClickSynth.kt) : chaque clic = (début en ms, gain, facteur de hauteur)."""
+    r = lcg(seed)
+    f = pitch * (1 + var * next(r))
+    n = int(SR * len_ms / 1000)
+    x = np.zeros(n)
+
+    def click(t0_ms, g, ff):
+        i0 = int(SR * t0_ms / 1000)
+        m = n - i0
+        tt = np.arange(m) / SR
+        w = np.array([next(r) for _ in range(m)])
+        body = g * np.exp(-tt / 0.002) * np.sin(2 * np.pi * 1200 * ff * tt) \
+            + g * 0.5 * np.exp(-tt / 0.0012) * np.sin(2 * np.pi * 2600 * ff * tt)
+        x[i0:] += body + one_pole(w, 1500 * ff, True) * np.exp(-tt / 0.0012) * g * 0.5
+
+    for t0, g, fac in clicks:
+        click(t0, g, f * fac)
+    atk = max(1, int(SR * 0.4 / 1000))
+    x[:atk] *= np.linspace(0, 1, atk)
+    rel = int(SR * 4.0 / 1000)
+    x[-rel:] *= np.linspace(1, 0, rel)
+    x = np.tanh(one_pole(x, 7000.0) * 1.2)
+    return x / np.max(np.abs(x)) * 0.6
+
+
+def render_switch(seed=1, var=0.03):
+    """Boutons Paramètres, Smart Clipboard et Annuler : double clic de 32 ms, hauteur × 1,25 (BAR_BUTTON)."""
+    return render_clicks([(0.0, 1.0, 1.0), (14.0, 0.6, 0.8)], 32.0, 1.25, seed, var)
+
+
+def render_ai(seed=1, var=0.03):
+    """Boutons IA (robot, Chat, Corriger, Transcription IA) : « triple montée » grave de 48 ms (AI_BUTTON)."""
+    return render_clicks([(0.0, 1.0, 1.0), (11.0, 0.8, 1.2), (22.0, 0.65, 1.45)], 48.0, 1.0, seed, var)
+
+
+def render_voice_start(seed=1, var=0.03):
+    """Début de la saisie vocale (VOICE_START) : deux clics espacés de 70 ms, le second plus aigu."""
+    return render_clicks([(0.0, 1.0, 1.0), (70.0, 0.85, 1.25)], 90.0, 1.25, seed, var)
+
+
+def render_voice_end(seed=1, var=0.03):
+    """Fin de la saisie vocale (VOICE_END) : deux clics espacés de 70 ms, le second plus grave et plus faible."""
+    return render_clicks([(0.0, 1.0, 1.25), (70.0, 0.6, 0.8)], 90.0, 1.25, seed, var)
+
+
+TRANSCRIPTION = {  # « rapprochés d'abord » : tic-tic (16 ms) puis tac (60 ms plus tard), hauteur × 1,0
+    "TRANSCRIPTION_START": [(0.0, 1.0, 1.0), (16.0, 0.8, 1.15), (76.0, 0.9, 1.4)],
+    "TRANSCRIPTION_LISTEN_END": [(0.0, 1.0, 1.3), (16.0, 0.7, 1.15), (76.0, 0.6, 0.8)],
+    "TRANSCRIPTION_DONE": [(0.0, 1.0, 1.0), (16.0, 0.8, 1.2), (76.0, 0.95, 1.6)],
+}
+
+
+def render_transcription(name, seed=1, var=0.03):
+    """Sons de la transcription IA : démarrage, fin d'écoute, fin de traitement (96 ms)."""
+    return render_clicks(TRANSCRIPTION[name], 96.0, 1.0, seed, var)
+
+
 def save(path, x):
     with wave.open(path, "wb") as w:
         w.setnchannels(1)
@@ -86,8 +144,24 @@ if __name__ == "__main__":
         for name, p in (("KEY", KEY), ("SPACE", SPACE), ("CONTROL", CONTROL)):
             q = np.round(render(p, 1) * 32767).astype(int)
             print(name, q[:6].tolist(), "sumAbs", int(np.abs(q).sum()), "max", int(q.max()), "min", int(q.min()))
+        q = np.round(render_switch(1) * 32767).astype(int)
+        print("BAR_BUTTON", len(q), q[:6].tolist(), "sumAbs", int(np.abs(q).sum()), "max", int(q.max()), "min", int(q.min()))
+        q = np.round(render_ai(1) * 32767).astype(int)
+        for name, fn in (("VOICE_START", render_voice_start), ("VOICE_END", render_voice_end)):
+            v = np.round(fn(1) * 32767).astype(int)
+            print(name, len(v), v[:6].tolist(), "sumAbs", int(np.abs(v).sum()), "max", int(v.max()), "min", int(v.min()))
+        for name in TRANSCRIPTION:
+            v = np.round(render_transcription(name, 1) * 32767).astype(int)
+            print(name, len(v), v[:6].tolist(), "sumAbs", int(np.abs(v).sum()), "max", int(v.max()), "min", int(v.min()))
+        print("AI_BUTTON", len(q), q[:6].tolist(), "sumAbs", int(np.abs(q).sum()), "max", int(q.max()), "min", int(q.min()))
     else:
         out_dir = sys.argv[1] if len(sys.argv) > 1 else "."
         save(f"{out_dir}/key.wav", render(KEY, 1))
         save(f"{out_dir}/space.wav", render(SPACE, 1))
         save(f"{out_dir}/control.wav", render(CONTROL, 1))
+        save(f"{out_dir}/bar_button.wav", render_switch(1))
+        save(f"{out_dir}/ai_button.wav", render_ai(1))
+        save(f"{out_dir}/voice_start.wav", render_voice_start(1))
+        save(f"{out_dir}/voice_end.wav", render_voice_end(1))
+        for name in TRANSCRIPTION:
+            save(f"{out_dir}/{name.lower()}.wav", render_transcription(name, 1))

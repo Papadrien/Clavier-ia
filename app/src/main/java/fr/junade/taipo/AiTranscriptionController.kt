@@ -60,6 +60,9 @@ class AiTranscriptionController(
 
         /** Niveau sonore (0 à 1) pendant l'enregistrement : il fait monter et descendre les barres de l'icône. */
         fun setLevel(level: Float)
+
+        /** Joue un son de la transcription IA (démarrage, fin d'écoute, fin de traitement). */
+        fun playSound(sound: KeySound)
     }
 
     private val recorder = AiTranscriptionRecorder(scope)
@@ -131,6 +134,7 @@ class AiTranscriptionController(
         insertAllowed = true
         cancelled = false
         host.hapticAi(AiHapticCue.ACTION_START)
+        host.playSound(KeySound.TRANSCRIPTION_START) // le micro est ouvert : on peut parler
         setState(AiTranscriptionBarState.RECORDING)
     }
 
@@ -147,6 +151,7 @@ class AiTranscriptionController(
     private fun stopAndTranscribe() {
         // Fin de l'écoute : appui, limite de 2 minutes atteinte ou micro perdu, tous les cas vibrent pareil.
         host.hapticAi(AiHapticCue.TRANSCRIPTION_STOP)
+        host.playSound(KeySound.TRANSCRIPTION_LISTEN_END)
         val model = host.activeModel()
         setState(AiTranscriptionBarState.PROCESSING)
         val startedAt = SystemClock.elapsedRealtime()
@@ -170,6 +175,7 @@ class AiTranscriptionController(
                     insertAllowed -> {
                         host.insertText(text)
                         host.hapticAi(AiHapticCue.PROCESSING_DONE) // fin du traitement : texte inséré
+                        host.playSound(KeySound.TRANSCRIPTION_DONE)
                         Analytics.aiAction(context, AnalyticsEvents.AiType.TRANSCRIBE, model.id, startedAt)
                     }
                 }

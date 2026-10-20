@@ -58,12 +58,29 @@ object KeyClickProfiles {
     val CONTROL = SEC_DOUX.scaled(0.62)
 }
 
-/** Son joué pour une touche : [KEY] pour les caractères, [SPACE] pour la barre d'espace, [CONTROL] pour les autres touches. */
-enum class KeySound(val profile: ClickProfile) {
-    KEY(KeyClickProfiles.KEY),
-    SPACE(KeyClickProfiles.SPACE),
-    CONTROL(KeyClickProfiles.CONTROL),
+/**
+ * Son joué pour une touche : [KEY] pour les caractères, [SPACE] pour la barre d'espace, [CONTROL] pour les autres touches
+ * du clavier. [BAR_BUTTON] et [AI_BUTTON] ne viennent pas d'une touche : ce sont les sons des boutons de la barre du haut,
+ * Paramètres, Smart Clipboard et Annuler pour le premier, robot, Chat, Corriger et Transcription IA pour le second.
+ * [VOICE_START] et [VOICE_END] marquent le début et la fin de la saisie vocale ; [TRANSCRIPTION_START],
+ * [TRANSCRIPTION_LISTEN_END] et [TRANSCRIPTION_DONE] le démarrage, la fin d'écoute et la fin de traitement de la
+ * transcription IA (voir [SwitchClickSynth]).
+ */
+enum class KeySound(private val renderer: (seed: Long, variation: Double) -> ShortArray) {
+    KEY({ seed, variation -> KeyClickSynth.render(KeyClickProfiles.KEY, seed, variation) }),
+    SPACE({ seed, variation -> KeyClickSynth.render(KeyClickProfiles.SPACE, seed, variation) }),
+    CONTROL({ seed, variation -> KeyClickSynth.render(KeyClickProfiles.CONTROL, seed, variation) }),
+    BAR_BUTTON({ seed, variation -> SwitchClickSynth.render(SwitchClickSynth.BAR, seed, variation) }),
+    AI_BUTTON({ seed, variation -> SwitchClickSynth.render(SwitchClickSynth.AI, seed, variation) }),
+    VOICE_START({ seed, variation -> SwitchClickSynth.render(SwitchClickSynth.VOICE_START, seed, variation) }),
+    VOICE_END({ seed, variation -> SwitchClickSynth.render(SwitchClickSynth.VOICE_END, seed, variation) }),
+    TRANSCRIPTION_START({ seed, variation -> SwitchClickSynth.render(SwitchClickSynth.TRANSCRIPTION_START, seed, variation) }),
+    TRANSCRIPTION_LISTEN_END({ seed, variation -> SwitchClickSynth.render(SwitchClickSynth.TRANSCRIPTION_LISTEN_END, seed, variation) }),
+    TRANSCRIPTION_DONE({ seed, variation -> SwitchClickSynth.render(SwitchClickSynth.TRANSCRIPTION_DONE, seed, variation) }),
     ;
+
+    /** Échantillons PCM 16 bits mono du son pour la [seed] donnée ; [variation] décale légèrement la hauteur. */
+    fun render(seed: Long, variation: Double): ShortArray = renderer(seed, variation)
 
     companion object {
         /** Son d'une touche d'après son action : chaque touche du clavier en a un. */
@@ -158,7 +175,7 @@ object KeyClickSynth {
         return bytes
     }
 
-    private fun onePole(input: DoubleArray, cutoffHz: Double, highPass: Boolean): DoubleArray {
+    internal fun onePole(input: DoubleArray, cutoffHz: Double, highPass: Boolean): DoubleArray {
         val a = exp(-2.0 * PI * cutoffHz / SAMPLE_RATE)
         val out = DoubleArray(input.size)
         var z = 0.0
@@ -170,7 +187,7 @@ object KeyClickSynth {
     }
 
     /** Générateur congruentiel linéaire 32 bits : suite de valeurs dans [-1 ; 1[ identique d'une plateforme à l'autre. */
-    private class Lcg(seed: Long) {
+    internal class Lcg(seed: Long) {
         private var state = seed and 0xFFFFFFFFL
 
         fun next(): Double {

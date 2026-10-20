@@ -50,6 +50,12 @@ class ImeViewComposer(
         /** Retour haptique d'une touche (niveau des paramètres), pour le bouton « ··· » de gauche. */
         fun haptic()
 
+        /** Son « interrupteur » des boutons Paramètres et Smart Clipboard (Annuler le joue dans [onUndoClicked]). */
+        fun playBarButtonSound()
+
+        /** Son des boutons d'action IA : robot, Chat, Corriger (lancer ou annuler) et Transcription IA. */
+        fun playAiButtonSound()
+
         /** Nouvelle touche sur Corriger pendant le chargement ou la correction : l'annuler. */
         fun onCancelCorrectionClicked()
 
@@ -131,13 +137,24 @@ class ImeViewComposer(
         recentEmojiBar.setOnEmojiClickListener { emoji -> host.onRecentEmojiClicked(emoji) }
 
         correctionBar = CorrectionBarView(context)
-        correctionBar.setOnCorrectListener { if (!blockedBySensitiveField()) host.onCorrectClicked() }
+        correctionBar.setOnCorrectListener {
+            if (blockedBySensitiveField()) return@setOnCorrectListener
+            host.playAiButtonSound()
+            host.onCorrectClicked()
+        }
         correctionBar.setOnMenuClickListener { host.haptic() } // même vibration que le bouton Smart Clipboard
-        correctionBar.setOnActionsMenuClickListener { host.haptic() } // bouton Action IA (robot) : même vibration qu'une touche
+        correctionBar.setOnActionsMenuClickListener { // bouton Action IA (robot) : même vibration qu'une touche
+            host.haptic()
+            host.playAiButtonSound()
+        }
         correctionBar.setOnUndoListener { host.onUndoClicked() }
-        correctionBar.setOnCancelListener { host.onCancelCorrectionClicked() }
+        correctionBar.setOnCancelListener {
+            host.playAiButtonSound()
+            host.onCancelCorrectionClicked()
+        }
         correctionBar.setOnGenerateClickListener {
             if (blockedBySensitiveField()) return@setOnGenerateClickListener
+            host.playAiButtonSound()
             prompt.enter()
         }
         val voiceTouchListener = View.OnTouchListener { view, event ->
@@ -163,6 +180,7 @@ class ImeViewComposer(
         }
         correctionBar.aiTranscriptionButton.setOnClickListener {
             if (blockedBySensitiveField()) return@setOnClickListener
+            host.playAiButtonSound()
             host.onAiTranscriptionClick()
         }
         // Le bouton micro de la barre du prompt déclenche la même dictée (appui bref : marche/arrêt, appui long : tant que maintenu).
@@ -174,12 +192,14 @@ class ImeViewComposer(
         // Le même bouton ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme.
         correctionBar.setOnClipboardClickListener {
             if (blockedBySensitiveField()) return@setOnClipboardClickListener
+            host.playBarButtonSound()
             clipboard.onPanelButtonClicked()
         }
         correctionBar.setOnClipboardCloseClickListener {
             clipboard.hidePanel()
         }
         correctionBar.setOnSettingsClickListener {
+            host.playBarButtonSound()
             host.openAppHome()
         }
         correctionBar.setOnPasteClickListener {
