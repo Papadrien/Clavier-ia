@@ -52,6 +52,16 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putBoolean(KEY_BAR_SOUND, value).apply()
         }
 
+    /**
+     * Volume des sons du clavier et de la barre supérieure, en pourcentage (0 à 100, voir [KeySoundVolume]). 40 % par
+     * défaut : le volume d'avant l'ajout du curseur. Relu à chaque ouverture de champ.
+     */
+    var keySoundVolumePercent: Int
+        get() = KeySoundVolume.clamp(prefs.getInt(KEY_SOUND_VOLUME, KeySoundVolume.DEFAULT_PERCENT))
+        set(value) {
+            prefs.edit().putInt(KEY_SOUND_VOLUME, KeySoundVolume.clamp(value)).apply()
+        }
+
     /** Hauteur du clavier (story 1.12). Normale (100 %) par défaut. */
     var keyboardHeight: KeyboardHeight
         get() = KeyboardHeight.fromStorageKey(prefs.getString(KEY_KEYBOARD_HEIGHT, null))
@@ -127,6 +137,7 @@ class KeyboardPreferences(context: Context) {
         const val DEFAULT_NUMBER_ROW = false
         private const val KEY_KEY_SOUND = "key_sound_enabled"
         const val DEFAULT_KEY_SOUND = true
+        private const val KEY_SOUND_VOLUME = "key_sound_volume_percent"
         private const val KEY_BAR_SOUND = "bar_sound_enabled"
         const val DEFAULT_BAR_SOUND = true
         private const val KEY_HAPTIC_INTENSITY = "haptic_intensity"

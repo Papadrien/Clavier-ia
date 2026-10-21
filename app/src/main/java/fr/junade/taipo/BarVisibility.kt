@@ -75,6 +75,10 @@ internal object BarVisibility {
      * quand il n'y en a aucune. Il reste visible dès que son état n'est plus au repos (chargement, correction en
      * cours) : le bouton sert alors d'annulation ou d'indicateur et ne doit pas disparaître.
      * [wordSuggestionsShown] : la bande de mots affiche au moins un mot ou un emoji.
+     *
+     * Transcription IA reste visible, en petit (icône seule), entre Corriger et le menu « robot » tant que
+     * [aiTranscription] vaut [AiTranscriptionBarState.PROCESSING], même menu fermé : l'utilisateur voit ainsi que la
+     * transcription tourne encore et n'a pas été annulée.
      */
     fun actionButtons(
         voice: VoiceBarState,
@@ -82,6 +86,7 @@ internal object BarVisibility {
         zoneState: SuggestionZoneState,
         clipboardPanelOpen: Boolean,
         wordSuggestionsShown: Boolean = false,
+        aiTranscription: AiTranscriptionBarState = AiTranscriptionBarState.IDLE,
     ): ActionButtonsVisibility {
         val busy = isBusy(voice, correction)
         // Une écoute (ou sa transcription) ne change pas la rangée : le menu « robot » reste en place et Transcription IA
@@ -92,7 +97,7 @@ internal object BarVisibility {
             suggestionsDisplayed(zoneState, clipboardPanelOpen, wordSuggestionsShown)
         return ActionButtonsVisibility(
             voice = true,
-            aiTranscription = actionsVisible,
+            aiTranscription = actionsVisible || aiTranscription == AiTranscriptionBarState.PROCESSING,
             generate = actionsVisible && !busy,
             correct = (actionsVisible || zoneState.zone == SuggestionZoneState.Zone.WORDS) &&
                 correction != CorrectionBarState.HIDDEN && !hiddenBySuggestion,

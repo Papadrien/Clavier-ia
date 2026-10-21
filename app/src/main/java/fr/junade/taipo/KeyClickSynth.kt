@@ -36,7 +36,7 @@ data class ClickProfile(
     )
 }
 
-/** Profils retenus pour le clavier (maquettes « sec doux » I1 et I2 du 19/10/2026, 5 ms ; touches de commande × 0,62). */
+/** Profils retenus pour le clavier (maquettes « sec doux » I1 et I2 du 19/10/2026, 5 ms ; touches de commande × 0,62). Effacer a son propre son : [EraserClickSynth]. */
 object KeyClickProfiles {
     private val SEC_DOUX = ClickProfile(
         lenMs = 5.0,
@@ -54,13 +54,14 @@ object KeyClickProfiles {
     /** Barre d'espace : « sec doux aigu » (I2, filtres et résonances × 1,35). */
     val SPACE = SEC_DOUX.scaled(1.35)
 
-    /** Touches de commande (Maj, Effacer, Entrée, bascules, emoji) : « sec doux » × 0,62, 5 ms, un peu plus grave que les lettres. */
+    /** Touches de commande (Maj, Entrée, bascules, emoji ; Effacer a son propre son) : « sec doux » × 0,62, 5 ms, un peu plus grave que les lettres. */
     val CONTROL = SEC_DOUX.scaled(0.62)
 }
 
 /**
- * Son joué pour une touche : [KEY] pour les caractères, [SPACE] pour la barre d'espace, [CONTROL] pour les autres touches
- * du clavier. [BAR_BUTTON] et [AI_BUTTON] ne viennent pas d'une touche : ce sont les sons des boutons de la barre du haut,
+ * Son joué pour une touche : [KEY] pour les caractères, [SPACE] pour la barre d'espace, [BACKSPACE] pour Effacer (la
+ * « gomme », voir [EraserClickSynth]), [CONTROL] pour les autres touches du clavier. [CURSOR_MOVE] ne vient pas d'une touche : c'est le cran « goutte » joué à chaque
+ * déplacement du curseur au glissement sur la barre d'espace (voir [CursorClickSynth]). [BAR_BUTTON] et [AI_BUTTON] ne viennent pas d'une touche : ce sont les sons des boutons de la barre du haut,
  * Paramètres, Smart Clipboard et Annuler pour le premier, robot, Chat, Corriger et Transcription IA pour le second.
  * [VOICE_START] et [VOICE_END] marquent le début et la fin de la saisie vocale ; [TRANSCRIPTION_START],
  * [TRANSCRIPTION_LISTEN_END] et [TRANSCRIPTION_DONE] le démarrage, la fin d'écoute et la fin de traitement de la
@@ -70,6 +71,8 @@ enum class KeySound(private val renderer: (seed: Long, variation: Double) -> Sho
     KEY({ seed, variation -> KeyClickSynth.render(KeyClickProfiles.KEY, seed, variation) }),
     SPACE({ seed, variation -> KeyClickSynth.render(KeyClickProfiles.SPACE, seed, variation) }),
     CONTROL({ seed, variation -> KeyClickSynth.render(KeyClickProfiles.CONTROL, seed, variation) }),
+    BACKSPACE({ seed, variation -> EraserClickSynth.render(seed, variation) }),
+    CURSOR_MOVE({ seed, variation -> CursorClickSynth.render(seed, variation) }),
     BAR_BUTTON({ seed, variation -> SwitchClickSynth.render(SwitchClickSynth.BAR, seed, variation) }),
     AI_BUTTON({ seed, variation -> SwitchClickSynth.render(SwitchClickSynth.AI, seed, variation) }),
     VOICE_START({ seed, variation -> SwitchClickSynth.render(SwitchClickSynth.VOICE_START, seed, variation) }),
@@ -87,8 +90,8 @@ enum class KeySound(private val renderer: (seed: Long, variation: Double) -> Sho
         fun forAction(action: KeyAction): KeySound = when (action) {
             is KeyAction.TypeChar -> KEY
             KeyAction.Space -> SPACE
+            KeyAction.Backspace -> BACKSPACE
             KeyAction.Shift,
-            KeyAction.Backspace,
             KeyAction.Enter,
             KeyAction.ToggleLayout,
             KeyAction.SymbolPage,

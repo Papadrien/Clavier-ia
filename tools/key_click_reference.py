@@ -3,7 +3,7 @@
 
 Le port Kotlin (`KeyClickSynth.kt`) reproduit ce script à l'arrondi près ; les valeurs de référence de
 `KeyClickSynthTest` viennent de `python3 tools/key_click_reference.py --check`.
-Usage : python3 tools/key_click_reference.py [dossier_de_sortie]   (écrit key.wav, space.wav, control.wav et bar_button.wav et ai_button.wav, voice_start.wav, voice_end.wav et transcription_*.wav)
+Usage : python3 tools/key_click_reference.py [dossier_de_sortie]   (écrit key.wav, space.wav, control.wav, backspace.wav, cursor_move.wav, bar_button.wav, ai_button.wav, voice_start.wav, voice_end.wav et transcription_*.wav)
         python3 tools/key_click_reference.py --check               (affiche les valeurs de référence)
 Dépend de numpy.
 """
@@ -71,6 +71,44 @@ def render(p, seed=1, var=0.03):
     out[-rel:] *= np.linspace(1, 0, rel)
     out = np.tanh(one_pole(out, p["lp"]) * p["drive"]) * gv
     return out / np.max(np.abs(out)) * 0.7
+
+
+def render_eraser(seed=1, var=0.03):
+    """Touche Effacer « gomme » (EraserClickSynth.kt) : glissando descendant doux de 14 ms (900 vers 260 Hz) + grain de bruit."""
+    r = lcg(seed)
+    det = 1 + var * next(r)
+    gv = 1 + 0.08 * next(r)
+    n = int(SR * 14.0 / 1000)
+    t = np.arange(n) / SR
+    f = (900.0 + (260.0 - 900.0) * (1 - np.exp(-t / 0.005))) * det
+    ph = 2 * np.pi * np.cumsum(f) / SR
+    body = np.exp(-t / 0.005) * (np.sin(ph) * 0.6 + np.sin(2.01 * ph) * 0.2)
+    w = np.array([next(r) for _ in range(n)])
+    w = one_pole(one_pole(w, 900.0, True), 3500.0) * np.exp(-t / 0.0015) * 1.2
+    out = body + w
+    atk = int(SR * 0.0006)
+    out[:atk] *= np.linspace(0, 1, atk)
+    rel = int(SR * 0.005)
+    out[-rel:] *= np.linspace(1, 0, rel)
+    out = np.tanh(one_pole(out, 4200.0) * 1.2) * gv
+    return out / np.max(np.abs(out)) * 0.7
+
+
+def render_cursor(seed=1, var=0.03):
+    """Cran de curseur « goutte » (CursorClickSynth.kt, proposition D du 21/10/2026) : petite montée douce de 6 ms (450 vers 900 Hz)."""
+    r = lcg(seed)
+    det = 1 + var * next(r)
+    n = int(SR * 6.0 / 1000)
+    t = np.arange(n) / SR
+    f = (450.0 + (900.0 - 450.0) * (1 - np.exp(-t / 0.002))) * det
+    ph = 2 * np.pi * np.cumsum(f) / SR
+    out = np.exp(-t / 0.002) * (np.sin(ph) * 0.7 + np.sin(2.0 * ph) * 0.1)
+    atk = int(SR * 0.8 / 1000)
+    out[:atk] *= np.linspace(0, 1, atk)
+    rel = int(SR * 2.5 / 1000)
+    out[-rel:] *= np.linspace(1, 0, rel)
+    out = np.tanh(one_pole(out, 3500.0) * 1.1)
+    return out / np.max(np.abs(out)) * 0.30
 
 
 def render_clicks(clicks, len_ms, pitch, seed=1, var=0.03):
@@ -144,6 +182,10 @@ if __name__ == "__main__":
         for name, p in (("KEY", KEY), ("SPACE", SPACE), ("CONTROL", CONTROL)):
             q = np.round(render(p, 1) * 32767).astype(int)
             print(name, q[:6].tolist(), "sumAbs", int(np.abs(q).sum()), "max", int(q.max()), "min", int(q.min()))
+        q = np.round(render_eraser(1) * 32767).astype(int)
+        print("BACKSPACE", len(q), q[:6].tolist(), "sumAbs", int(np.abs(q).sum()), "max", int(q.max()), "min", int(q.min()))
+        q = np.round(render_cursor(1) * 32767).astype(int)
+        print("CURSOR_MOVE", len(q), q[:6].tolist(), "sumAbs", int(np.abs(q).sum()), "max", int(q.max()), "min", int(q.min()))
         q = np.round(render_switch(1) * 32767).astype(int)
         print("BAR_BUTTON", len(q), q[:6].tolist(), "sumAbs", int(np.abs(q).sum()), "max", int(q.max()), "min", int(q.min()))
         q = np.round(render_ai(1) * 32767).astype(int)
@@ -159,6 +201,8 @@ if __name__ == "__main__":
         save(f"{out_dir}/key.wav", render(KEY, 1))
         save(f"{out_dir}/space.wav", render(SPACE, 1))
         save(f"{out_dir}/control.wav", render(CONTROL, 1))
+        save(f"{out_dir}/backspace.wav", render_eraser(1))
+        save(f"{out_dir}/cursor_move.wav", render_cursor(1))
         save(f"{out_dir}/bar_button.wav", render_switch(1))
         save(f"{out_dir}/ai_button.wav", render_ai(1))
         save(f"{out_dir}/voice_start.wav", render_voice_start(1))

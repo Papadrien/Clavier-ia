@@ -114,9 +114,12 @@
     <string name="keyboard_settings_haptic_medium">Medium</string>
     <string name="keyboard_settings_haptic_strong">Strong</string>
     <string name="keyboard_settings_key_sound">Keyboard sound</string>
-    <string name="keyboard_settings_key_sound_description">Plays a soft, dry tick on each key press (slightly higher for the space bar). Applies the next time the keyboard opens.</string>
+    <string name="keyboard_settings_key_sound_description">Plays a soft, dry tick on each key press (slightly higher for the space bar), when you pick an emoji and when you tap a Smart Clipboard item. Applies the next time the keyboard opens.</string>
+    <string name="keyboard_settings_sound_volume">Sound volume</string>
+    <string name="keyboard_settings_sound_volume_value">Sound volume: %1$d%%</string>
+    <string name="keyboard_settings_sound_volume_description">Sets the volume of the keyboard and top bar sounds. Applies the next time the keyboard opens.</string>
     <string name="keyboard_settings_bar_sound">Top bar sounds</string>
-    <string name="keyboard_settings_bar_sound_description">Plays a small click when you tap the top bar buttons (Settings, Smart Clipboard, Undo, AI) and when voice typing and transcription start and end. Applies the next time the keyboard opens.</string>
+    <string name="keyboard_settings_bar_sound_description">Plays a small click when you tap the top bar buttons (menu, Settings, Smart Clipboard, Undo, AI) and when voice typing and transcription start and end. Applies the next time the keyboard opens.</string>
     <string name="keyboard_settings_height_title">Keyboard height</string>
     <string name="keyboard_settings_height_compact">Extra compact (80%)</string>
     <string name="keyboard_settings_height_small">Compact (90%)</string>

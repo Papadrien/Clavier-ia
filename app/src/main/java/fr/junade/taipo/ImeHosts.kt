@@ -73,6 +73,9 @@ internal interface ImeHostContext {
     /** Joue [sound] si le son des touches est activé (sons de la transcription IA). */
     fun playSound(sound: KeySound)
 
+    /** Joue [sound] si le réglage « Son du clavier » est activé (panneau emoji, cartes du Smart Clipboard). */
+    fun playKeySound(sound: KeySound)
+
     /** Retour haptique d'une action IA (voir [AiHapticCue]). */
     fun hapticAi(cue: AiHapticCue)
     fun clearHighlight()
@@ -169,6 +172,7 @@ internal class ClipboardHost(private val ime: ImeHostContext) : ClipboardControl
     override fun showMessage(message: String) = ime.showMessage(message)
     override fun inputConnection() = ime.inputConnection()
     override fun haptic() = ime.haptic()
+    override fun playKeySound(sound: KeySound) = ime.playKeySound(sound)
     override fun clearHighlight() = ime.clearHighlight()
     override fun recordUndoEdit(inserted: String, original: String) = ime.recordUndoEdit(inserted, original)
     override fun clearPendingAutocorrection() = ime.clearPendingAutocorrection()
@@ -388,6 +392,8 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
     override fun haptic() = ime.haptic()
     override fun playBarButtonSound() = ime.playBarButtonSound()
     override fun playAiButtonSound() = ime.playAiButtonSound()
+    override fun playSound(sound: KeySound) = ime.playSound(sound)
+    override fun playKeySound(sound: KeySound) = ime.playKeySound(sound)
     override fun onCorrectClicked() = ime.correction.onCorrectClicked()
     override fun onCancelCorrectionClicked() = ime.correction.onCancelClicked()
     override fun onUndoClicked() {

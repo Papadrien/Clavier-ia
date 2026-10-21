@@ -49,6 +49,38 @@ class KeyClickSynthTest {
     }
 
     @Test
+    fun `le son de la touche Effacer reproduit la reference Python`() {
+        val eraser = EraserClickSynth.render(seed = 1)
+        assertEquals(617, eraser.size)
+        assertReference(eraser, listOf(0, 290, 264, 578, 2092, 3600), sumAbs = 2584380, max = 20546, min = -22937)
+    }
+
+    @Test
+    fun `le son de la touche Effacer differe de celui des touches de commande`() {
+        val eraser = KeySound.BACKSPACE.render(seed = 1, variation = 0.03)
+        val control = KeySound.CONTROL.render(seed = 1, variation = 0.03)
+        assertTrue(eraser.size > control.size * 2)
+        assertTrue(eraser.isNotEmpty() && eraser.contentEquals(KeySound.BACKSPACE.render(seed = 1, variation = 0.03)))
+        assertTrue(eraser.max() <= 22937 && eraser.min() >= -22937) // reste sous le pic de 0,7
+    }
+
+    @Test
+    fun `le son du cran de curseur reproduit la reference Python`() {
+        val cursor = CursorClickSynth.render(seed = 1)
+        assertEquals(264, cursor.size) // 6 ms
+        assertReference(cursor, listOf(0, 37, 133, 298, 538, 851), sumAbs = 789744, max = 9394, min = -9830)
+    }
+
+    @Test
+    fun `le cran de curseur est plus faible que les touches et deterministe`() {
+        val cursor = KeySound.CURSOR_MOVE.render(seed = 2, variation = 0.04)
+        assertTrue(cursor.isNotEmpty() && cursor.contentEquals(KeySound.CURSOR_MOVE.render(seed = 2, variation = 0.04)))
+        val peak = cursor.maxOf { abs(it.toInt()) }
+        assertTrue(abs(peak - 9830) <= 3, "pic $peak") // 0,30 de la pleine échelle
+        assertTrue(peak < key.maxOf { abs(it.toInt()) } / 2)
+    }
+
+    @Test
     fun `le son des boutons de la barre du haut reproduit la reference Python`() {
         val bar = SwitchClickSynth.render(SwitchClickSynth.BAR, seed = 1, variation = 0.03)
         assertEquals(1411, bar.size) // 32 ms
@@ -132,8 +164,12 @@ class KeyClickSynthTest {
     }
 
     @Test
+    fun `la touche Effacer utilise son propre son gomme`() {
+        assertEquals(KeySound.BACKSPACE, KeySound.forAction(KeyAction.Backspace))
+    }
+
+    @Test
     fun `les touches de commande utilisent leur propre son`() {
-        assertEquals(KeySound.CONTROL, KeySound.forAction(KeyAction.Backspace))
         assertEquals(KeySound.CONTROL, KeySound.forAction(KeyAction.Enter))
         assertEquals(KeySound.CONTROL, KeySound.forAction(KeyAction.Shift))
         assertEquals(KeySound.CONTROL, KeySound.forAction(KeyAction.ToggleLayout))

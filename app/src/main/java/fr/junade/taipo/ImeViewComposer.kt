@@ -53,6 +53,12 @@ class ImeViewComposer(
         /** Son « interrupteur » des boutons Paramètres et Smart Clipboard (Annuler le joue dans [onUndoClicked]). */
         fun playBarButtonSound()
 
+        /** Joue [sound] si le réglage « Sons de la barre supérieure » est activé (menu « ··· » de gauche). */
+        fun playSound(sound: KeySound)
+
+        /** Joue [sound] si le réglage « Son du clavier » est activé (choix d'un emoji dans le panneau). */
+        fun playKeySound(sound: KeySound)
+
         /** Son des boutons d'action IA : robot, Chat, Corriger (lancer ou annuler) et Transcription IA. */
         fun playAiButtonSound()
 
@@ -142,7 +148,10 @@ class ImeViewComposer(
             host.playAiButtonSound()
             host.onCorrectClicked()
         }
-        correctionBar.setOnMenuClickListener { host.haptic() } // même vibration que le bouton Smart Clipboard
+        correctionBar.setOnMenuClickListener { // menu « ··· » de gauche : même vibration que le bouton Smart Clipboard
+            host.haptic()
+            host.playSound(KeySound.KEY) // clic de touche, avec les sons de la barre supérieure
+        }
         correctionBar.setOnActionsMenuClickListener { // bouton Action IA (robot) : même vibration qu'une touche
             host.haptic()
             host.playAiButtonSound()
@@ -211,7 +220,10 @@ class ImeViewComposer(
 
         emojiPanel = EmojiPanelView(context)
         emojiPanel.visibility = View.GONE
-        emojiPanel.setOnEmojiSelectedListener { emoji -> host.onEmojiSelected(emoji) }
+        emojiPanel.setOnEmojiSelectedListener { emoji ->
+            host.playKeySound(KeySound.KEY) // tic de clavier à chaque emoji choisi dans le panneau
+            host.onEmojiSelected(emoji)
+        }
         emojiPanel.setOnBackspaceListener { host.onEmojiBackspace() }
         emojiPanel.setOnCloseListener { host.onEmojiPanelClose() }
 

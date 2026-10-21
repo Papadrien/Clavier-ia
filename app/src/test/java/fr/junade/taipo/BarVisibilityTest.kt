@@ -47,6 +47,29 @@ class BarVisibilityTest {
     }
 
     @Test
+    fun `pendant le traitement d une transcription IA le bouton reste visible menu robot ferme`() {
+        val zone = zoneWithText() // suggestions de mots, menu « robot » fermé
+        val processing = BarVisibility.actionButtons(
+            VoiceBarState.IDLE, CorrectionBarState.IDLE, zone, false,
+            aiTranscription = AiTranscriptionBarState.PROCESSING,
+        )
+        assertTrue(processing.aiTranscription)
+        assertTrue(processing.actionsMenu) // le menu « robot » reste en place, le bouton s'insère à sa gauche
+        assertFalse(processing.generate) // seul Transcription IA est rangé hors du menu : Générer reste derrière
+    }
+
+    @Test
+    fun `hors traitement la transcription IA reste rangee derriere le menu robot ferme`() {
+        for (state in listOf(AiTranscriptionBarState.IDLE, AiTranscriptionBarState.RECORDING, AiTranscriptionBarState.CANCELLING)) {
+            val visible = BarVisibility.actionButtons(
+                VoiceBarState.IDLE, CorrectionBarState.IDLE, zoneWithText(), false,
+                aiTranscription = state,
+            )
+            assertFalse(visible.aiTranscription, "état $state")
+        }
+    }
+
+    @Test
     fun `pendant les suggestions de mots Corriger reste cache tant que son etat est HIDDEN`() {
         val visible = BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.HIDDEN, zoneWithText(), false)
         assertFalse(visible.correct)

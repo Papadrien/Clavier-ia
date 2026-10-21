@@ -19,6 +19,10 @@ class KeySoundPlayer(private val context: Context) {
     private val sampleIds = HashMap<KeySound, IntArray>()
     private val ready = ConcurrentHashMap.newKeySet<Int>()
 
+    /** Volume de lecture en pourcentage (voir [KeySoundVolume]) ; modifiable à tout moment, pris en compte au son suivant. */
+    @Volatile
+    var volumePercent: Int = KeySoundVolume.DEFAULT_PERCENT
+
     /** Prépare les sons (une seule fois) ; à appeler quand le son des touches est activé. */
     @Synchronized
     fun prepare() {
@@ -50,8 +54,10 @@ class KeySoundPlayer(private val context: Context) {
         val ids = sampleIds[sound] ?: return
         val id = ids[Random.nextInt(ids.size)]
         if (id !in ready) return
+        val volume = KeySoundVolume.gain(volumePercent)
+        if (volume <= 0f) return
         val rate = 1f + (Random.nextFloat() * 2f - 1f) * RATE_JITTER
-        soundPool.play(id, VOLUME, VOLUME, 1, 0, rate)
+        soundPool.play(id, volume, volume, 1, 0, rate)
     }
 
     @Synchronized
@@ -68,11 +74,5 @@ class KeySoundPlayer(private val context: Context) {
         const val MAX_STREAMS = 4
         const val VARIATION = 0.04
         const val RATE_JITTER = 0.03f
-
-        /**
-         * Volume de lecture (0 à 1), commun à tous les sons. Les échantillons étant plafonnés à 0,7, 0,2857 donne un
-         * pic à 20 % de la pleine échelle (0,2 donnait 14 %).
-         */
-        const val VOLUME = 0.2857f
     }
 }

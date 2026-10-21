@@ -171,6 +171,28 @@
             android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
 
         <TextView
+            android:id="@+id/text_sound_volume"
+            style="@style/TaipoText.Section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_lg" />
+
+        <SeekBar
+            android:id="@+id/seek_sound_volume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+            android:max="100"
+            android:contentDescription="@string/keyboard_settings_sound_volume" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/keyboard_settings_sound_volume_description"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+
+        <TextView
             style="@style/TaipoText.Section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

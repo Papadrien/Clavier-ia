@@ -143,6 +143,8 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         set(value) {
             field = value
             renderAiTranscription()
+            // Pendant le traitement, le bouton reste visible (en petit) même menu « robot » fermé : voir BarVisibility.actionButtons.
+            renderActionButtons()
         }
 
     /** La bande de mots affiche au moins un mot (ou un emoji) : le bouton Corriger est alors caché (voir [BarVisibility.actionButtons]). */
@@ -466,7 +468,14 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
      * cascade depuis le menu robot (le plus proche en premier), sinon ils se fondent simplement ([BarReveal]).
      */
     private fun renderActionButtons(reveal: Boolean = false) {
-        val visible = BarVisibility.actionButtons(voiceState, state, zoneState, clipboardPanelOpen, wordsShown || emojiShown)
+        val visible = BarVisibility.actionButtons(
+            voiceState,
+            state,
+            zoneState,
+            clipboardPanelOpen,
+            wordsShown || emojiShown,
+            aiTranscriptionState,
+        )
         setRevealed(voiceButton, visible.voice, order = 0, full = reveal)
         // Menu robot qui vient de s'ouvrir : les actions IA jaillissent du robot avec un effet ressort.
         val spring = reveal && zoneState.zone == SuggestionZoneState.Zone.ACTIONS

@@ -32,3 +32,11 @@ Dire la phrase, vérifier le texte inséré.
 
 Si le modèle commente (« Voici la transcription… »), met des guillemets ou du Markdown, ou répond à la question : durcir la phrase
 correspondante du prompt (page « Prompts système », sans recompiler), puis reporter la version qui marche dans `TranscriptionPrompt.kt`.
+
+## Bouton dans la barre du haut pendant le traitement
+
+Tant que la transcription est en cours de traitement (`AiTranscriptionBarState.PROCESSING`), le bouton Transcription IA
+reste visible **en petit** (icône seule, fond violet), entre Corriger et le menu « robot », même quand ce menu est fermé
+(suggestions de mots) : l'utilisateur voit que la transcription tourne encore et n'a pas été annulée. Il se range de
+nouveau derrière le menu à la fin du traitement. Règle : `BarVisibility.actionButtons(..., aiTranscription = …)` ;
+le rendu est relancé par `CorrectionBarView.aiTranscriptionState`.

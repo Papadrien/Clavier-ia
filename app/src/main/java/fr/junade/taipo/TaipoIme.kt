@@ -93,6 +93,9 @@ class TaipoIme : InputMethodService() {
         override fun playSound(sound: KeySound) {
             if (this@TaipoIme.barSoundEnabled) this@TaipoIme.keySounds.play(sound)
         }
+        override fun playKeySound(sound: KeySound) {
+            if (this@TaipoIme.keySoundEnabled) this@TaipoIme.keySounds.play(sound)
+        }
         override fun playVoiceSound(start: Boolean) {
             if (this@TaipoIme.barSoundEnabled) {
                 this@TaipoIme.keySounds.play(if (start) KeySound.VOICE_START else KeySound.VOICE_END)
@@ -595,6 +598,7 @@ class TaipoIme : InputMethodService() {
     private fun refreshKeySound() {
         keySoundEnabled = keyboardPreferences.isKeySoundEnabled
         barSoundEnabled = keyboardPreferences.isBarSoundEnabled
+        keySounds.volumePercent = keyboardPreferences.keySoundVolumePercent
         if (keySoundEnabled || barSoundEnabled) keySounds.prepare()
     }
 
@@ -953,6 +957,7 @@ class TaipoIme : InputMethodService() {
     private fun onCursorMoved(steps: Int) {
         if (prompt.active) {
             hapticFeedback.perform(hapticIntensity.cursorMoveFeedback())
+            if (keySoundEnabled) keySounds.play(KeySound.CURSOR_MOVE)
             prompt.buffer.moveCursor(steps)
             prompt.refreshInput()
             syncAutoCapitalization()
@@ -968,6 +973,7 @@ class TaipoIme : InputMethodService() {
         pendingAutocorrection = null
         val keyCode = if (steps < 0) KeyEvent.KEYCODE_DPAD_LEFT else KeyEvent.KEYCODE_DPAD_RIGHT
         hapticFeedback.perform(hapticIntensity.cursorMoveFeedback()) // toujours faible, absent si désactivé
+        if (keySoundEnabled) keySounds.play(KeySound.CURSOR_MOVE) // un cran « goutte » par déplacement, pas aux bords du texte
         repeat(allowed) {
             ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, keyCode))
             ic.sendKeyEvent(KeyEvent(KeyEvent.ACTION_UP, keyCode))

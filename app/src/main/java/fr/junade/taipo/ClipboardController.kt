@@ -42,6 +42,9 @@ class ClipboardController(
         /** Retour haptique d'un appui. */
         fun haptic()
 
+        /** Son de touche (réglage « Son du clavier ») : appui sur une carte du panneau. */
+        fun playKeySound(sound: KeySound)
+
         fun clearHighlight()
 
         /** Oublie l'autocorrection en attente (le texte collé la rend caduque). */
@@ -233,6 +236,7 @@ class ClipboardController(
     private fun onItemTapped(item: ClipboardItems.Item) {
         val ic = host.inputConnection() ?: return
         host.haptic()
+        host.playKeySound(KeySound.KEY)
         host.clearHighlight()
         host.clearPendingAutocorrection()
         val replaced = ic.getSelectedText(0)?.toString().orEmpty()

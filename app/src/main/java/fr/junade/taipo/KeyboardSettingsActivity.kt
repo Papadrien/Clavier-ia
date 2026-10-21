@@ -13,7 +13,9 @@ import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.LinearLayout
 import android.widget.RadioGroup
+import android.widget.SeekBar
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsPreferences
@@ -32,6 +34,9 @@ class KeyboardSettingsActivity : Activity() {
 
     /** État des dictionnaires des langues utilisées (téléchargement automatique, Réessayer). */
     private lateinit var dictionaries: DictionaryStatusSection
+
+    /** Lecteur d'aperçu du curseur de volume (préparé au premier toucher du curseur). */
+    private val previewPlayer by lazy { KeySoundPlayer(applicationContext) }
 
     // Thème de la V1 : toujours sombre (voir KeyboardTheme).
     override fun attachBaseContext(newBase: Context) {
@@ -85,6 +90,7 @@ class KeyboardSettingsActivity : Activity() {
                 Analytics.setting(this@KeyboardSettingsActivity, "bar_sound", checked)
             }
         }
+        setUpSoundVolume(preferences)
 
         val heightGroup = findViewById<RadioGroup>(R.id.radio_group_height)
         val heightIds = mapOf(
@@ -120,6 +126,43 @@ class KeyboardSettingsActivity : Activity() {
     override fun onStop() {
         dictionaries.stop()
         super.onStop()
+    }
+
+    override fun onDestroy() {
+        previewPlayer.release()
+        super.onDestroy()
+    }
+
+    /**
+     * Curseur du volume des sons (0 à 100 %). Au relâchement, un tic de lettre est joué au nouveau volume pour
+     * l'entendre ; le réglage est écrit au fil du déplacement et relu par le clavier à l'ouverture du prochain champ.
+     */
+    private fun setUpSoundVolume(preferences: KeyboardPreferences) {
+        val seekBar = findViewById<SeekBar>(R.id.seek_sound_volume)
+        val label = findViewById<TextView>(R.id.text_sound_volume)
+        fun showValue(percent: Int) {
+            label.text = getString(R.string.keyboard_settings_sound_volume_value, percent)
+            seekBar.contentDescription = label.text
+        }
+        seekBar.max = KeySoundVolume.MAX_PERCENT
+        seekBar.progress = preferences.keySoundVolumePercent
+        showValue(seekBar.progress)
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(bar: SeekBar, progress: Int, fromUser: Boolean) {
+                showValue(progress)
+                if (fromUser) preferences.keySoundVolumePercent = progress
+            }
+
+            override fun onStartTrackingTouch(bar: SeekBar) {
+                previewPlayer.prepare() // synthèse des sons avant le relâchement
+            }
+
+            override fun onStopTrackingTouch(bar: SeekBar) {
+                previewPlayer.volumePercent = bar.progress
+                previewPlayer.play(KeySound.KEY)
+                Analytics.setting(this@KeyboardSettingsActivity, "sound_volume", bar.progress)
+            }
+        })
     }
 
     /**
