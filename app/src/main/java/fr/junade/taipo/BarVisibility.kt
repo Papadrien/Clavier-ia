@@ -13,22 +13,24 @@ internal const val RESTRICTED_ALPHA = 0.4f
 
 internal data class ActionButtonsVisibility(
     val voice: Boolean,
-    /** Transcription IA : visible avec les actions IA (rangée derrière le menu « robot » pendant les suggestions de mots). */
+    /** Transcription IA : rangée du menu ouvert, ou petite pendant son traitement (menu fermé). */
     val aiTranscription: Boolean,
     val generate: Boolean,
     val correct: Boolean,
-    val actionsMenu: Boolean,
 )
 
-internal data class ZoneContentVisibility(
+/** Ce que montre la barre : quelle rangée, et le contenu variable de la rangée de saisie et de la rangée normale. */
+internal data class BarContentVisibility(
+    val normalRow: Boolean,
+    val typingRow: Boolean,
+    /** Robot (menu de gauche) : ancré à gauche de la rangée de saisie. */
+    val robot: Boolean,
     val words: Boolean,
-    val clipboardButton: Boolean,
-    /** Bouton Annuler : juste à droite du bouton Smart Clipboard, visible avec lui. */
-    val undoButton: Boolean,
-    val pasteChip: Boolean,
     val inline: Boolean,
-    val menuButton: Boolean,
-    val settingsButton: Boolean,
+    /** Puce de collage : rangée normale, à côté du bouton Smart Clipboard. */
+    val pasteChip: Boolean,
+    /** Paramètres, Smart Clipboard et Annuler de la rangée de saisie : seulement menu ouvert. */
+    val menuUtilityButtons: Boolean,
 )
 
 /** Apparence du bouton Corriger (état [CorrectionBarState.HIDDEN] : aucun changement d'apparence). */
@@ -63,92 +65,81 @@ internal object BarVisibility {
     fun isBusy(voice: VoiceBarState, correction: CorrectionBarState): Boolean =
         voice != VoiceBarState.IDLE ||
             correction == CorrectionBarState.LOADING || correction == CorrectionBarState.CORRECTING ||
-                correction == CorrectionBarState.CANCELLING
+            correction == CorrectionBarState.CANCELLING
 
     /**
-     * Vocal est toujours visible, à droite du menu « robot ». Transcription IA et « Générer » sont rangés derrière ce
-     * menu tant que la bande de mots est affichée, sauf pendant une écoute, une transcription ou une correction. Corriger, lui, est visible (à gauche du
-     * menu « robot ») dès que du texte permet de corriger, sauf tant qu'une suggestion est affichée. « Générer »
-     * disparaît quand [isBusy] (le moteur est partagé : pas de génération en parallèle).
+     * État de barre affiché. Une correction ou une transcription IA en cours rend la barre de saisie même si le champ est
+     * vide (leur bouton sert d'arrêt ou d'indicateur et doit rester visible), sauf panneau Smart Clipboard ouvert : la
+     * barre ne change alors pas.
+     */
+    fun mode(
+        zoneState: SuggestionZoneState,
+        correction: CorrectionBarState,
+        aiTranscription: AiTranscriptionBarState,
+    ): BarMode {
+        if (zoneState.mode == BarMode.TYPING || zoneState.clipboardPanelOpen) return zoneState.mode
+        val working = isBusy(VoiceBarState.IDLE, correction) || aiTranscription != AiTranscriptionBarState.IDLE
+        return if (working) BarMode.TYPING else BarMode.NORMAL
+    }
+
+    fun content(zoneState: SuggestionZoneState, mode: BarMode): BarContentVisibility {
+        val typing = mode == BarMode.TYPING
+        val menuOpen = typing && zoneState.menuOpen
+        return BarContentVisibility(
+            normalRow = !typing,
+            typingRow = typing,
+            robot = typing,
+            words = typing && !menuOpen && !zoneState.inlineAvailable,
+            inline = typing && !menuOpen && zoneState.inlineAvailable,
+            pasteChip = !typing && zoneState.pasteAvailable,
+            menuUtilityButtons = menuOpen,
+        )
+    }
+
+    /**
+     * Vocal est toujours visible, fixé à droite. Dans la rangée de saisie : Corriger est visible dès que du texte permet de
+     * corriger, sauf tant qu'une suggestion est affichée ; Transcription IA et Chat sont rangés derrière le robot (menu
+     * ouvert). Chat disparaît quand [isBusy] (le moteur est partagé : pas de génération en parallèle). Corriger reste visible
+     * dès que son état n'est plus au repos (chargement, correction en cours) : il sert alors d'annulation ou d'indicateur.
      *
-     * Corriger se cache tant qu'une suggestion est affichée dans la barre ([suggestionsDisplayed]) et réapparaît
-     * quand il n'y en a aucune. Il reste visible dès que son état n'est plus au repos (chargement, correction en
-     * cours) : le bouton sert alors d'annulation ou d'indicateur et ne doit pas disparaître.
+     * Transcription IA reste visible, en petit (icône seule), tant que [aiTranscription] vaut
+     * [AiTranscriptionBarState.PROCESSING], même menu fermé : l'utilisateur voit que la transcription tourne encore.
      * [wordSuggestionsShown] : la bande de mots affiche au moins un mot ou un emoji.
-     *
-     * Transcription IA reste visible, en petit (icône seule), entre Corriger et le menu « robot » tant que
-     * [aiTranscription] vaut [AiTranscriptionBarState.PROCESSING], même menu fermé : l'utilisateur voit ainsi que la
-     * transcription tourne encore et n'a pas été annulée.
      */
     fun actionButtons(
         voice: VoiceBarState,
         correction: CorrectionBarState,
         zoneState: SuggestionZoneState,
-        clipboardPanelOpen: Boolean,
+        mode: BarMode,
         wordSuggestionsShown: Boolean = false,
         aiTranscription: AiTranscriptionBarState = AiTranscriptionBarState.IDLE,
     ): ActionButtonsVisibility {
+        val typing = mode == BarMode.TYPING
+        val menuOpen = typing && zoneState.menuOpen
         val busy = isBusy(voice, correction)
-        // Une écoute (ou sa transcription) ne change pas la rangée : le menu « robot » reste en place et Transcription IA
-        // n'apparaît pas à sa place. Seule une correction en cours fait disparaître le menu (Corriger sert alors d'arrêt).
-        val rowBusy = isBusy(VoiceBarState.IDLE, correction)
-        val actionsVisible = zoneState.actionButtonsVisible(rowBusy)
         val hiddenBySuggestion = correction == CorrectionBarState.IDLE &&
-            suggestionsDisplayed(zoneState, clipboardPanelOpen, wordSuggestionsShown)
+            suggestionsDisplayed(zoneState, mode, wordSuggestionsShown)
         return ActionButtonsVisibility(
             voice = true,
-            aiTranscription = actionsVisible || aiTranscription == AiTranscriptionBarState.PROCESSING,
-            generate = actionsVisible && !busy,
-            correct = (actionsVisible || zoneState.zone == SuggestionZoneState.Zone.WORDS) &&
-                correction != CorrectionBarState.HIDDEN && !hiddenBySuggestion,
-            actionsMenu = !clipboardPanelOpen && zoneState.actionsMenuButtonVisible(rowBusy),
+            aiTranscription = typing && (menuOpen || aiTranscription == AiTranscriptionBarState.PROCESSING),
+            generate = menuOpen && !busy,
+            correct = typing && correction != CorrectionBarState.HIDDEN && !hiddenBySuggestion,
         )
     }
 
     /**
-     * Une suggestion est affichée dans la zone de gauche : mots ou emoji de la bande (zone des mots, au moins un
-     * emplacement rempli, [wordSuggestionsShown]) ou suggestions d'auto-remplissage en ligne. Ni la puce de collage, ni le
-     * bouton Smart Clipboard, ni le menu robot ouvert (la bande est alors effacée), ni le panneau Smart Clipboard
-     * ouvert ne comptent.
+     * Une suggestion est affichée dans la rangée de saisie : mots ou emoji de la bande ([wordSuggestionsShown]) ou
+     * suggestions d'auto-remplissage en ligne. Ni la barre normale ni le menu ouvert (la bande est alors effacée) ne comptent.
      */
     fun suggestionsDisplayed(
         zoneState: SuggestionZoneState,
-        clipboardPanelOpen: Boolean,
+        mode: BarMode,
         wordSuggestionsShown: Boolean,
-    ): Boolean = !clipboardPanelOpen && when (zoneState.zone) {
-        SuggestionZoneState.Zone.WORDS -> wordSuggestionsShown
-        SuggestionZoneState.Zone.INLINE -> true
-        else -> false
-    }
+    ): Boolean = mode == BarMode.TYPING && !zoneState.menuOpen && (zoneState.inlineAvailable || wordSuggestionsShown)
 
-    /**
-     * Menu « robot » ouvert (zone [SuggestionZoneState.Zone.ACTIONS]) : les actions IA s'affichent en pilules icône + texte.
-     * Dans toutes les autres zones (suggestions de mots, Smart Clipboard, puce de collage, auto-remplissage) ou panneau
-     * Smart Clipboard ouvert, elles restent des boutons ronds à icône seule. Vocal n'a jamais de texte.
-     */
-    fun labeledActions(zoneState: SuggestionZoneState, clipboardPanelOpen: Boolean): Boolean =
-        !clipboardPanelOpen && zoneState.zone == SuggestionZoneState.Zone.ACTIONS
-
-    /**
-     * Panneau Smart Clipboard ouvert : la zone ne montre que le bouton Smart Clipboard (actif) et le bouton Annuler,
-     * quel que soit l'état de saisie, et le menu « ··· » de gauche se cache. La roue crantée reste affichée : la
-     * barre du haut ne change donc pas à l'ouverture (le panneau ne s'ouvre que depuis le bouton Smart Clipboard,
-     * donc déjà accompagné de la roue crantée). Menu robot ouvert : le menu « ··· » de gauche est caché (il sort par la
-     * gauche de l'écran) et revient quand le menu robot se referme.
-     */
-    fun zoneContent(zoneState: SuggestionZoneState, clipboardPanelOpen: Boolean): ZoneContentVisibility {
-        val zone = if (clipboardPanelOpen) SuggestionZoneState.Zone.CLIPBOARD else zoneState.zone
-        return ZoneContentVisibility(
-            words = zone == SuggestionZoneState.Zone.WORDS,
-            clipboardButton = zone == SuggestionZoneState.Zone.CLIPBOARD,
-            undoButton = zone == SuggestionZoneState.Zone.CLIPBOARD,
-            pasteChip = zone == SuggestionZoneState.Zone.PASTE,
-            inline = zone == SuggestionZoneState.Zone.INLINE,
-            // Menu robot ouvert : le menu « ··· » de gauche glisse hors de l'écran, les actions IA ont toute la barre.
-            menuButton = zoneState.menuButtonVisible && !clipboardPanelOpen && zone != SuggestionZoneState.Zone.ACTIONS,
-            settingsButton = zoneState.settingsButtonVisible,
-        )
-    }
+    /** Menu ouvert : Chat, Corriger et Transcription passent en pilules icône + texte, si la rangée tient (voir CorrectionBarView). */
+    fun labeledActions(zoneState: SuggestionZoneState, mode: BarMode): Boolean =
+        mode == BarMode.TYPING && zoneState.menuOpen
 
     fun correctAppearance(state: CorrectionBarState): CorrectAppearance? = when (state) {
         CorrectionBarState.HIDDEN -> null

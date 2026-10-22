@@ -336,9 +336,10 @@ voir `docs/performance.md`. Non compilé ici.
 story qui le touche. Non compilé ici.
 
 - [ ] `./gradlew assembleDebug testDebugUnitTest`.
-- [ ] Sur l'appareil, barre du haut : champ vide (bouton presse-papiers + roue crantée), saisie (mots, menu « ··· » gauche
-      et droite), puce de collage, panneau presse-papiers ouvert (bouton coloré qui referme), suggestions d'auto-remplissage,
-      dictée (bouton rouge, Générer masqué), correction IA (bouton grisé « Correction… »).
+- [ ] Sur l'appareil, barre du haut : champ vide (Paramètres, presse-papiers, Annuler, Vocal), saisie (robot, mots, Corriger,
+      Vocal), menu du robot ouvert (huit boutons à espacement égal, pilules si la largeur le permet), puce de collage à côté du
+      bouton presse-papiers, panneau presse-papiers ouvert (barre inchangée, bouton coloré), suggestions d'auto-remplissage,
+      transition champ vide ↔ saisie, dictée (bouton rouge, Chat masqué), correction IA (bouton grisé « Correction… »).
 
 ## README et références documentaires (lot 4.3, 04/10/2026)
 

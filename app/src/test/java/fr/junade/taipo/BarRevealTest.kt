@@ -69,4 +69,18 @@ class BarRevealTest {
         assertEquals(0L, BarReveal.springStartDelay(0))
         assertEquals(90L, BarReveal.springStartDelay(2))
     }
+
+    @Test
+    fun `le glissement en ressort part de l ecart et se pose sur zero`() {
+        assertEquals(-40f, BarReveal.glideOffset(-40f, 0f), 0.001f)
+        assertEquals(0f, BarReveal.glideOffset(-40f, 1f), 0.5f)
+        assertEquals(0f, BarReveal.glideOffset(0f, 0.5f), 0.001f)
+    }
+
+    @Test
+    fun `le glissement en ressort depasse sa destination avant de s y poser`() {
+        // Parti de la gauche (négatif), le bouton dépasse d'abord sa place (valeur positive) avant de se poser.
+        val overshoot = (0..100).maxOf { BarReveal.glideOffset(-40f, it / 100f) }
+        assertTrue(overshoot > 1f, "dépassement attendu, obtenu $overshoot")
+    }
 }

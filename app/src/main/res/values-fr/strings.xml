@@ -142,8 +142,7 @@
 
     <string name="clipboard_button">Presse-papiers</string>
     <string name="settings_button_description">Ouvrir les réglages de l\'application</string>
-    <string name="clipboard_menu_description">Menu : afficher le presse-papiers</string>
-    <string name="actions_menu_description">Menu : génération, saisie vocale et correction</string>
+    <string name="actions_menu_description">Menu : paramètres, presse-papiers, annuler, chat, correction et transcription</string>
     <!-- Textes des pilules d'action IA (menu « robot » ouvert) ; Vocal reste sans texte. -->
     <string name="action_pill_chat">Chat</string>
     <string name="action_pill_transcription">Transcription</string>
@@ -173,7 +172,6 @@
     <string name="inference_error_text_too_long">Le texte est trop long pour ce modèle. Raccourcissez-le ou sélectionnez une partie plus courte.</string>
     <string name="inference_error_unexpected">Une erreur inattendue est survenue. Réessayez.</string>
     <string name="clipboard_empty">Rien à coller pour le moment.</string>
-    <string name="clipboard_panel_close_description">Fermer le presse-papiers</string>
     <string name="clipboard_paste_description">Coller : %1$s</string>
     <string name="clipboard_paste_description_masked">Coller le texte copié (aperçu masqué)</string>
     <string name="clipboard_pinned_description">Épinglé</string>

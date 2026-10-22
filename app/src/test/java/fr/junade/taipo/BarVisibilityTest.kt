@@ -6,10 +6,26 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/** Lot 4.2 : règles d'affichage de la barre du haut, extraites de CorrectionBarView sans changement de comportement. */
+/** Règles d'affichage de la barre du haut à deux états (lot 4.2, refonte « normale / saisie »). */
 class BarVisibilityTest {
 
-    private fun zoneWithText(): SuggestionZoneState = SuggestionZoneState().apply { onFieldTextChanged(true) }
+    private fun typing(): SuggestionZoneState = SuggestionZoneState().apply { onFieldTextChanged(true) }
+
+    private fun typingMenuOpen(): SuggestionZoneState = typing().apply { toggleMenu() }
+
+    private fun actions(
+        zone: SuggestionZoneState,
+        correction: CorrectionBarState = CorrectionBarState.IDLE,
+        voice: VoiceBarState = VoiceBarState.IDLE,
+        wordsShown: Boolean = false,
+        aiTranscription: AiTranscriptionBarState = AiTranscriptionBarState.IDLE,
+    ): ActionButtonsVisibility {
+        val mode = BarVisibility.mode(zone, correction, aiTranscription)
+        return BarVisibility.actionButtons(voice, correction, zone, mode, wordsShown, aiTranscription)
+    }
+
+    private fun content(zone: SuggestionZoneState, correction: CorrectionBarState = CorrectionBarState.IDLE): BarContentVisibility =
+        BarVisibility.content(zone, BarVisibility.mode(zone, correction, AiTranscriptionBarState.IDLE))
 
     @Test
     fun `occupe pendant une ecoute une transcription ou une correction, pas au repos`() {
@@ -23,242 +39,153 @@ class BarVisibilityTest {
     }
 
     @Test
-    fun `le bouton Annuler suit le bouton Smart Clipboard`() {
-        // Champ vide : le bouton Smart Clipboard est affiché, Annuler juste à sa droite.
-        assertTrue(BarVisibility.zoneContent(SuggestionZoneState(), false).undoButton)
-        // Panneau Smart Clipboard ouvert : le bouton reste affiché (actif), Annuler aussi.
-        assertTrue(BarVisibility.zoneContent(zoneWithText(), true).undoButton)
-        // Menu « ··· » de gauche ouvert pendant la saisie : le bouton Smart Clipboard est affiché, donc Annuler aussi.
-        assertTrue(BarVisibility.zoneContent(zoneWithText().apply { toggleMenu() }, false).undoButton)
-        // Suggestions de mots (saisie) : ni bouton Smart Clipboard, ni Annuler.
-        assertFalse(BarVisibility.zoneContent(zoneWithText(), false).undoButton)
-        // Puce de collage à la place du bouton Smart Clipboard : pas d'Annuler non plus.
-        assertFalse(BarVisibility.zoneContent(SuggestionZoneState().apply { setPasteAvailable(true) }, false).undoButton)
+    fun `barre normale montre seulement sa rangee avec Parametres Smart Clipboard Annuler et Vocal`() {
+        val zone = SuggestionZoneState()
+        val shown = content(zone, CorrectionBarState.HIDDEN)
+        assertTrue(shown.normalRow)
+        assertFalse(shown.typingRow)
+        assertFalse(shown.robot)
+        assertFalse(shown.words)
+        assertFalse(shown.menuUtilityButtons)
+        val buttons = actions(zone, CorrectionBarState.HIDDEN)
+        assertTrue(buttons.voice)
+        assertFalse(buttons.correct)
+        assertFalse(buttons.generate)
+        assertFalse(buttons.aiTranscription)
     }
 
     @Test
-    fun `pendant les suggestions de mots Transcription IA et Generer sont ranges derriere le menu, Vocal et Corriger restent visibles`() {
-        val visible = BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.IDLE, zoneWithText(), false)
-        assertTrue(visible.voice)
-        assertFalse(visible.aiTranscription)
-        assertFalse(visible.generate)
-        assertTrue(visible.correct)
-        assertTrue(visible.actionsMenu)
+    fun `la puce de collage est dans la rangee normale a cote du bouton Smart Clipboard`() {
+        val zone = SuggestionZoneState().apply { setPasteAvailable(true) }
+        assertTrue(content(zone, CorrectionBarState.HIDDEN).pasteChip)
+        // Pendant la saisie, la puce n'est plus affichée (elle revient quand le champ est vide).
+        zone.onFieldTextChanged(true)
+        assertFalse(content(zone).pasteChip)
     }
 
     @Test
-    fun `pendant le traitement d une transcription IA le bouton reste visible menu robot ferme`() {
-        val zone = zoneWithText() // suggestions de mots, menu « robot » fermé
-        val processing = BarVisibility.actionButtons(
-            VoiceBarState.IDLE, CorrectionBarState.IDLE, zone, false,
-            aiTranscription = AiTranscriptionBarState.PROCESSING,
-        )
-        assertTrue(processing.aiTranscription)
-        assertTrue(processing.actionsMenu) // le menu « robot » reste en place, le bouton s'insère à sa gauche
-        assertFalse(processing.generate) // seul Transcription IA est rangé hors du menu : Générer reste derrière
+    fun `saisie menu ferme montre le robot et les mots, Vocal et Corriger`() {
+        val zone = typing()
+        val shown = content(zone)
+        assertTrue(shown.typingRow)
+        assertFalse(shown.normalRow)
+        assertTrue(shown.robot)
+        assertTrue(shown.words)
+        assertFalse(shown.inline)
+        assertFalse(shown.menuUtilityButtons)
+        val buttons = actions(zone)
+        assertTrue(buttons.voice)
+        assertTrue(buttons.correct)
+        assertFalse(buttons.generate)
+        assertFalse(buttons.aiTranscription)
     }
 
     @Test
-    fun `hors traitement la transcription IA reste rangee derriere le menu robot ferme`() {
-        for (state in listOf(AiTranscriptionBarState.IDLE, AiTranscriptionBarState.RECORDING, AiTranscriptionBarState.CANCELLING)) {
-            val visible = BarVisibility.actionButtons(
-                VoiceBarState.IDLE, CorrectionBarState.IDLE, zoneWithText(), false,
-                aiTranscription = state,
-            )
-            assertFalse(visible.aiTranscription, "état $state")
-        }
+    fun `menu ouvert la bande est effacee et la rangee devient Robot Parametres Clipboard Annuler Chat Corriger Transcription`() {
+        val zone = typingMenuOpen()
+        val shown = content(zone)
+        assertTrue(shown.robot)
+        assertFalse(shown.words)
+        assertTrue(shown.menuUtilityButtons)
+        val buttons = actions(zone)
+        assertTrue(buttons.voice)
+        assertTrue(buttons.generate)
+        assertTrue(buttons.correct)
+        assertTrue(buttons.aiTranscription)
     }
 
     @Test
-    fun `pendant les suggestions de mots Corriger reste cache tant que son etat est HIDDEN`() {
-        val visible = BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.HIDDEN, zoneWithText(), false)
-        assertFalse(visible.correct)
-    }
-
-    @Test
-    fun `champ vide Vocal et Generer sont visibles, Corriger seulement s il y a du texte`() {
-        val empty = SuggestionZoneState()
-        val hidden = BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.HIDDEN, empty, false)
-        assertTrue(hidden.voice)
-        assertTrue(hidden.aiTranscription)
-        assertTrue(hidden.generate)
-        assertFalse(hidden.correct)
-        assertFalse(hidden.actionsMenu)
-
-        val idle = BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.IDLE, empty, false)
-        assertTrue(idle.correct)
-    }
-
-    @Test
-    fun `pendant une ecoute le menu robot reste, Transcription IA n apparait pas et Generer disparait`() {
-        for (voice in listOf(VoiceBarState.LOADING, VoiceBarState.RECORDING, VoiceBarState.TRANSCRIBING)) {
-            val visible = BarVisibility.actionButtons(voice, CorrectionBarState.IDLE, zoneWithText(), false)
-            assertTrue(visible.voice)
-            assertFalse(visible.generate)
-            assertFalse(visible.aiTranscription)
-            assertTrue(visible.correct)
-            assertTrue(visible.actionsMenu)
-        }
-    }
-
-    @Test
-    fun `pendant une correction le menu robot disparait et Transcription IA apparait`() {
-        val visible = BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.CORRECTING, zoneWithText(), false)
-        assertTrue(visible.correct)
-        assertTrue(visible.aiTranscription)
-        assertFalse(visible.actionsMenu)
+    fun `Corriger reste cache tant que son etat est HIDDEN`() {
+        assertFalse(actions(typing(), CorrectionBarState.HIDDEN).correct)
     }
 
     @Test
     fun `Corriger se cache tant qu une suggestion de mots est affichee et revient sans suggestion`() {
-        val withSuggestion = BarVisibility.actionButtons(
-            VoiceBarState.IDLE, CorrectionBarState.IDLE, zoneWithText(), false, wordSuggestionsShown = true,
-        )
-        assertFalse(withSuggestion.correct)
-        assertTrue(withSuggestion.actionsMenu)
-        assertTrue(withSuggestion.voice)
-
-        val without = BarVisibility.actionButtons(
-            VoiceBarState.IDLE, CorrectionBarState.IDLE, zoneWithText(), false, wordSuggestionsShown = false,
-        )
-        assertTrue(without.correct)
+        val zone = typing()
+        assertFalse(actions(zone, wordsShown = true).correct)
+        assertTrue(actions(zone, wordsShown = false).correct)
     }
 
     @Test
     fun `Corriger reste visible hors du repos meme avec une suggestion affichee`() {
-        for (state in listOf(
-            CorrectionBarState.LOADING,
-            CorrectionBarState.CORRECTING,
-            CorrectionBarState.CANCELLING,
-        )) {
-            val visible = BarVisibility.actionButtons(VoiceBarState.IDLE, state, zoneWithText(), false, wordSuggestionsShown = true)
-            assertTrue(visible.correct, "état $state")
+        val zone = typing()
+        for (state in listOf(CorrectionBarState.LOADING, CorrectionBarState.CORRECTING, CorrectionBarState.CANCELLING)) {
+            assertTrue(actions(zone, state, wordsShown = true).correct, "état $state")
         }
     }
 
     @Test
-    fun `menu robot ouvert la bande est effacee donc Corriger est visible`() {
-        val zone = zoneWithText().apply { toggleActionsMenu() }
-        val visible = BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.IDLE, zone, false, wordSuggestionsShown = true)
-        assertTrue(visible.correct)
+    fun `menu ouvert Corriger est visible meme avec des mots proposes`() {
+        assertTrue(actions(typingMenuOpen(), wordsShown = true).correct)
     }
 
     @Test
-    fun `les suggestions d auto-remplissage en ligne cachent Corriger, la puce de collage non`() {
-        val inline = zoneWithText().apply { setInlineAvailable(true) }
-        assertFalse(BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.IDLE, inline, false).correct)
-
-        val paste = SuggestionZoneState().apply { setPasteAvailable(true) } // champ vide : la puce est affichée
-        assertTrue(BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.IDLE, paste, false).correct)
+    fun `les suggestions d auto-remplissage cachent Corriger et remplacent la bande`() {
+        val zone = typing().apply { setInlineAvailable(true) }
+        val shown = content(zone)
+        assertTrue(shown.inline)
+        assertFalse(shown.words)
+        assertFalse(actions(zone).correct)
     }
 
     @Test
-    fun `suggestionsDisplayed ne compte ni le panneau Smart Clipboard ni le champ vide`() {
-        assertTrue(BarVisibility.suggestionsDisplayed(zoneWithText(), clipboardPanelOpen = false, wordSuggestionsShown = true))
-        assertFalse(BarVisibility.suggestionsDisplayed(zoneWithText(), clipboardPanelOpen = true, wordSuggestionsShown = true))
-        assertFalse(BarVisibility.suggestionsDisplayed(SuggestionZoneState(), clipboardPanelOpen = false, wordSuggestionsShown = true))
-        assertFalse(BarVisibility.suggestionsDisplayed(zoneWithText(), clipboardPanelOpen = false, wordSuggestionsShown = false))
+    fun `l auto-remplissage sur un champ vide donne la rangee de saisie`() {
+        val zone = SuggestionZoneState().apply { setInlineAvailable(true) }
+        val shown = content(zone, CorrectionBarState.HIDDEN)
+        assertTrue(shown.typingRow)
+        assertTrue(shown.inline)
+        assertTrue(shown.robot)
     }
 
     @Test
-    fun `les actions IA passent en pilules seulement quand le menu robot est ouvert`() {
-        val typing = zoneWithText()
-        assertFalse(BarVisibility.labeledActions(typing, false)) // suggestions de mots : icônes seules
-        typing.toggleActionsMenu()
-        assertTrue(BarVisibility.labeledActions(typing, false)) // menu robot ouvert : pilules
-        assertFalse(BarVisibility.labeledActions(typing, true)) // panneau Smart Clipboard ouvert
-        assertFalse(BarVisibility.labeledActions(SuggestionZoneState(), false)) // champ vide : icônes seules
+    fun `suggestionsDisplayed ne compte ni la barre normale ni le menu ouvert`() {
+        val normal = SuggestionZoneState()
+        assertFalse(BarVisibility.suggestionsDisplayed(normal, BarMode.NORMAL, wordSuggestionsShown = true))
+        val menu = typingMenuOpen()
+        assertFalse(BarVisibility.suggestionsDisplayed(menu, BarMode.TYPING, wordSuggestionsShown = true))
+        assertTrue(BarVisibility.suggestionsDisplayed(typing(), BarMode.TYPING, wordSuggestionsShown = true))
+        assertFalse(BarVisibility.suggestionsDisplayed(typing(), BarMode.TYPING, wordSuggestionsShown = false))
     }
 
     @Test
-    fun `panneau Smart Clipboard ouvert cache le menu de droite, Vocal reste visible`() {
-        val visible = BarVisibility.actionButtons(VoiceBarState.IDLE, CorrectionBarState.IDLE, zoneWithText(), true)
-        assertFalse(visible.actionsMenu)
-        assertTrue(visible.voice)
+    fun `pendant le traitement d une transcription IA le bouton reste visible menu ferme`() {
+        val zone = typing()
+        val processing = actions(zone, aiTranscription = AiTranscriptionBarState.PROCESSING)
+        assertTrue(processing.aiTranscription)
+        assertFalse(processing.generate) // seul Transcription IA reste hors du menu : Chat reste derrière
+        assertFalse(actions(zone, aiTranscription = AiTranscriptionBarState.RECORDING).aiTranscription)
+        assertFalse(actions(zone).aiTranscription)
     }
 
     @Test
-    fun `zone en saisie montre les mots, le menu de gauche et pas la roue crantee`() {
-        val visible = BarVisibility.zoneContent(zoneWithText(), false)
-        assertTrue(visible.words)
-        assertFalse(visible.clipboardButton)
-        assertFalse(visible.pasteChip)
-        assertFalse(visible.inline)
-        assertTrue(visible.menuButton)
-        assertFalse(visible.settingsButton)
+    fun `pendant une ecoute Chat disparait et le menu reste`() {
+        val zone = typingMenuOpen()
+        val buttons = actions(zone, voice = VoiceBarState.RECORDING)
+        assertTrue(buttons.voice)
+        assertFalse(buttons.generate)
+        assertTrue(buttons.aiTranscription)
+        assertTrue(content(zone).robot)
     }
 
     @Test
-    fun `menu de gauche ouvert pendant la saisie montre le bouton Smart Clipboard et la roue crantee`() {
-        val visible = BarVisibility.zoneContent(zoneWithText().apply { toggleMenu() }, false)
-        assertTrue(visible.clipboardButton)
-        assertFalse(visible.words)
-        assertTrue(visible.menuButton)
-        assertTrue(visible.settingsButton)
+    fun `une correction en cours rend la barre de saisie meme sur un champ vide`() {
+        val zone = SuggestionZoneState()
+        assertEquals(BarMode.TYPING, BarVisibility.mode(zone, CorrectionBarState.CORRECTING, AiTranscriptionBarState.IDLE))
+        assertEquals(BarMode.TYPING, BarVisibility.mode(zone, CorrectionBarState.IDLE, AiTranscriptionBarState.PROCESSING))
+        assertEquals(BarMode.NORMAL, BarVisibility.mode(zone, CorrectionBarState.IDLE, AiTranscriptionBarState.IDLE))
     }
 
     @Test
-    fun `zone avant saisie montre le bouton Smart Clipboard et la roue crantee`() {
-        val visible = BarVisibility.zoneContent(SuggestionZoneState(), false)
-        assertTrue(visible.clipboardButton)
-        assertFalse(visible.words)
-        assertFalse(visible.menuButton)
-        assertTrue(visible.settingsButton)
+    fun `panneau Smart Clipboard ouvert la barre ne change pas meme pendant une correction`() {
+        val zone = SuggestionZoneState().apply { setClipboardPanelOpen(true) }
+        assertEquals(BarMode.NORMAL, BarVisibility.mode(zone, CorrectionBarState.CORRECTING, AiTranscriptionBarState.IDLE))
     }
 
     @Test
-    fun `puce de collage sur champ vide et suggestions en ligne prennent la place de la bande de mots`() {
-        val paste = SuggestionZoneState().apply { setPasteAvailable(true) }
-        assertTrue(BarVisibility.zoneContent(paste, false).pasteChip)
-        val typing = zoneWithText().apply { setPasteAvailable(true) }
-        assertFalse(BarVisibility.zoneContent(typing, false).pasteChip) // pendant la saisie, les mots gardent la place
-        assertTrue(BarVisibility.zoneContent(typing, false).words)
-
-        val inline = zoneWithText().apply { setInlineAvailable(true) }
-        val inlineVisible = BarVisibility.zoneContent(inline, false)
-        assertTrue(inlineVisible.inline)
-        assertFalse(inlineVisible.words)
-    }
-
-    @Test
-    fun `menu de droite ouvert vide la zone`() {
-        val state = zoneWithText().apply { toggleActionsMenu() }
-        val visible = BarVisibility.zoneContent(state, false)
-        assertFalse(visible.words)
-        assertFalse(visible.clipboardButton)
-        assertFalse(visible.pasteChip)
-        assertFalse(visible.inline)
-    }
-
-    @Test
-    fun `menu robot ouvert cache le menu de gauche, qui revient a la fermeture`() {
-        val state = zoneWithText()
-        assertTrue(BarVisibility.zoneContent(state, false).menuButton)
-        state.toggleActionsMenu()
-        assertFalse(BarVisibility.zoneContent(state, false).menuButton)
-        state.toggleActionsMenu()
-        assertTrue(BarVisibility.zoneContent(state, false).menuButton)
-    }
-
-    @Test
-    fun `panneau Smart Clipboard ouvert montre seulement le bouton actif, cache le menu et garde la roue crantee`() {
-        val visible = BarVisibility.zoneContent(zoneWithText().apply { setPasteAvailable(true) }, true)
-        assertTrue(visible.clipboardButton)
-        assertFalse(visible.words)
-        assertFalse(visible.pasteChip)
-        assertFalse(visible.menuButton)
-    }
-
-    @Test
-    fun `ouvrir le panneau Smart Clipboard ne fait pas disparaitre la roue crantee`() {
-        // Avant saisie : la roue crantée est affichée avec le bouton Smart Clipboard, avant comme après l'ouverture.
-        val empty = SuggestionZoneState()
-        assertTrue(BarVisibility.zoneContent(empty, false).settingsButton)
-        assertTrue(BarVisibility.zoneContent(empty, true).settingsButton)
-        // Pendant la saisie, menu de gauche ouvert : même chose.
-        val withMenu = zoneWithText().apply { toggleMenu() }
-        assertTrue(BarVisibility.zoneContent(withMenu, false).settingsButton)
-        assertTrue(BarVisibility.zoneContent(withMenu, true).settingsButton)
+    fun `les actions IA passent en pilules seulement quand le menu est ouvert`() {
+        assertTrue(BarVisibility.labeledActions(typingMenuOpen(), BarMode.TYPING))
+        assertFalse(BarVisibility.labeledActions(typing(), BarMode.TYPING))
+        assertFalse(BarVisibility.labeledActions(SuggestionZoneState(), BarMode.NORMAL))
     }
 
     @Test

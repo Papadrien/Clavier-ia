@@ -73,6 +73,8 @@
     <dimen name="taipo_bar_padding_vertical">6dp</dimen>
     <!-- Espacement entre deux boutons voisins. -->
     <dimen name="taipo_bar_gap">8dp</dimen>
+    <!-- Écart minimal entre deux boutons d'une rangée à espacement égal (menu ouvert) ; en dessous, les boutons ronds rétrécissent. -->
+    <dimen name="taipo_bar_min_gap">4dp</dimen>
     <!-- Rayon des boutons, pilules et puces des barres. -->
     <dimen name="taipo_button_corner_radius">18dp</dimen>
     <dimen name="taipo_bar_icon_button_width">40dp</dimen>
@@ -82,8 +84,8 @@
     <dimen name="taipo_bar_text_button_max_width">136dp</dimen>
     <!-- Texte des boutons à libellé de la barre du haut (Corriger). -->
     <dimen name="taipo_bar_button_text_size">14sp</dimen>
-    <!-- Menu « robot » ouvert : boutons d'action IA en pilule (icône + texte). Valeurs resserrées pour que Chat, Correction,
-         Transcription, le robot et Vocal tiennent sur une barre de 412 dp ; si la rangée ne tient pas, les textes se retirent. -->
+    <!-- Menu ouvert : Chat, Correction et Transcription en pilule (icône + texte) quand toute la rangée (8 boutons) tient dans la
+         largeur de l'écran ; sinon ce sont des boutons ronds. -->
     <dimen name="taipo_bar_pill_text_size">11sp</dimen>
     <dimen name="taipo_bar_pill_padding_horizontal">8dp</dimen>
     <dimen name="taipo_bar_pill_icon_size">18dp</dimen>
@@ -108,8 +110,6 @@
     <dimen name="taipo_suggestion_chip_text_size">15sp</dimen>
     <dimen name="taipo_suggestion_chip_padding">14dp</dimen>
     <dimen name="taipo_suggestion_chip_gap">6dp</dimen>
-    <!-- Largeur du bouton presse-papiers de la zone de suggestions. -->
-    <dimen name="taipo_suggestion_icon_button_width">48dp</dimen>
 
     <!-- ===== Chat IA ===== -->
     <dimen name="taipo_chat_padding_horizontal">12dp</dimen>

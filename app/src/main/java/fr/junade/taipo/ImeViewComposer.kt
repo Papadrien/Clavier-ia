@@ -53,7 +53,7 @@ class ImeViewComposer(
         /** Son « interrupteur » des boutons Paramètres et Smart Clipboard (Annuler le joue dans [onUndoClicked]). */
         fun playBarButtonSound()
 
-        /** Joue [sound] si le réglage « Sons de la barre supérieure » est activé (menu « ··· » de gauche). */
+        /** Joue [sound] si le réglage « Sons de la barre supérieure » est activé (robot, menu de gauche). */
         fun playSound(sound: KeySound)
 
         /** Joue [sound] si le réglage « Son du clavier » est activé (choix d'un emoji dans le panneau). */
@@ -148,11 +148,7 @@ class ImeViewComposer(
             host.playAiButtonSound()
             host.onCorrectClicked()
         }
-        correctionBar.setOnMenuClickListener { // menu « ··· » de gauche : même vibration que le bouton Smart Clipboard
-            host.haptic()
-            host.playSound(KeySound.KEY) // clic de touche, avec les sons de la barre supérieure
-        }
-        correctionBar.setOnActionsMenuClickListener { // bouton Action IA (robot) : même vibration qu'une touche
+        correctionBar.setOnActionsMenuClickListener { // robot (menu de gauche) : même vibration qu'une touche
             host.haptic()
             host.playAiButtonSound()
         }

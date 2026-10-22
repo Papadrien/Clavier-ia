@@ -1,48 +1,23 @@
 package fr.junade.taipo
 
 import android.content.Context
-import android.content.res.ColorStateList
-import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
-import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import fr.junade.taipo.dictionary.WordSuggestion
 
 /**
- * Zone de gauche de la barre du haut (lot 4.2, extraite de [CorrectionBarView] sans changement de
- * comportement) : superpose la bande de suggestions de mots, le bouton Smart Clipboard, la puce de collage
- * le bouton Annuler (à droite du bouton Smart Clipboard) et les suggestions d'auto-remplissage en ligne ; [render] n'en montre qu'une à la fois, selon
- * [BarVisibility.zoneContent] (décidé par [SuggestionZoneState]).
+ * Zone de suggestions de la rangée de saisie (entre le robot et Corriger) : superpose la bande de suggestions de mots et les
+ * suggestions d'auto-remplissage en ligne ; [render] n'en montre qu'une à la fois, selon [BarContentVisibility]. La bande
+ * partage elle-même sa largeur à parts égales entre ses trois mots ([SuggestionStripView]).
  */
-internal class SuggestionZoneView(context: Context, private val style: BarStyle) : FrameLayout(context) {
+internal class SuggestionZoneView(context: Context) : FrameLayout(context) {
 
     /** Stories 1.16/1.17 : bande de suggestions (3 mots + 1 emoji). */
     private val suggestionStrip = SuggestionStripView(context)
-
-    /** Story 2.1 : bouton Smart Clipboard (icône « coller »). */
-    private val clipboardButton = ImageButton(context)
-
-    /** Icône « coller » animée : panneau ouvert, le presse-papiers s'incline et des étincelles jaillissent. */
-    private val clipboardIcon = ClipboardIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
-
-    /** Bouton Annuler (icône « annuler »), juste à droite du bouton Smart Clipboard : défait la dernière action. */
-    private val undoButton = ImageButton(context)
-
-    /** Icône « annuler » animée (« Rembobinage ») : un tour à l'envers, en ressort, à chaque appui. */
-    private val undoIcon = UndoIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
-    private var undoListener: (() -> Unit)? = null
-    private var undoEnabled = false
-
-    /** Story 2.2 : puce de collage : icône « coller » (celle du Smart Clipboard) puis aperçu du texte copié récemment. */
-    private val pasteChip = LinearLayout(context)
-    private val pasteIcon = ImageView(context)
-    private val pasteText = TextView(context)
 
     /**
      * Suggestions d'auto-remplissage en ligne (gestionnaire de mots de passe) : des vues fournies par
@@ -51,55 +26,7 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
     private val inlineRow = LinearLayout(context)
     private val inlineScroll = HorizontalScrollView(context)
 
-    private var clipboardListener: CorrectionBarView.OnClipboardClickListener? = null
-    private var pasteListener: CorrectionBarView.OnPasteClickListener? = null
-    private var clipboardButtonActiveBackground: Boolean? = null
-    private val clipboardButtonBackgrounds = style.toggleBackgrounds() // lot 21 : un Drawable par état, jamais recréé
-
     init {
-        // Bouton Smart Clipboard : icône « coller » à la place du texte.
-        style.styleBarIconButton(clipboardButton, R.drawable.ic_paste)
-        clipboardButton.setImageDrawable(clipboardIcon) // même tracé que ic_paste au repos
-        clipboardButton.contentDescription = context.getString(R.string.clipboard_button)
-        clipboardButton.setOnClickListener { clipboardListener?.onClipboardClick() }
-
-        style.styleBarIconButton(undoButton, R.drawable.ic_undo)
-        undoButton.contentDescription = context.getString(R.string.undo_button)
-        undoButton.setImageDrawable(undoIcon) // même tracé que ic_undo au repos
-        undoButton.setOnClickListener {
-            undoIcon.play()
-            undoListener?.invoke()
-        }
-        undoButton.isEnabled = false
-        undoButton.alpha = undoRestingAlpha()
-
-        pasteIcon.setImageResource(R.drawable.ic_paste)
-        pasteIcon.imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
-        pasteIcon.scaleType = ImageView.ScaleType.CENTER_INSIDE
-        pasteIcon.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-
-        pasteText.setTextColor(context.themeColor(R.color.text_primary))
-        pasteText.setFixedTextSizeRes(R.dimen.taipo_suggestion_chip_text_size)
-        pasteText.useTaipoFont()
-        pasteText.gravity = Gravity.CENTER_VERTICAL
-        pasteText.maxLines = 1
-        pasteText.ellipsize = TextUtils.TruncateAt.END
-        pasteText.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-
-        pasteChip.orientation = LinearLayout.HORIZONTAL
-        pasteChip.gravity = Gravity.CENTER_VERTICAL
-        val chipPadding = dimen(R.dimen.taipo_suggestion_chip_padding).toInt()
-        val iconSize = dimen(R.dimen.taipo_icon_size).toInt()
-        val iconGap = dimen(R.dimen.taipo_suggestion_chip_gap).toInt()
-        // Icône à gauche du texte ; le contenu se centre sur la face du fond : marge basse = épaisseur d'ombre.
-        pasteChip.addView(pasteIcon, LinearLayout.LayoutParams(iconSize, iconSize).apply { marginEnd = iconGap })
-        pasteChip.addView(pasteText, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT))
-        pasteChip.setPadding(chipPadding, 0, chipPadding, dimen(R.dimen.taipo_key_shadow_height).toInt())
-        pasteChip.background = style.pillBackground(R.color.surface_button)
-        pasteChip.setOnClickListener { pasteListener?.onPasteClick() }
-        pasteChip.announceAsButton() // lot 20
-        pasteChip.visibility = View.GONE
-
         inlineRow.orientation = LinearLayout.HORIZONTAL
         inlineRow.gravity = Gravity.CENTER_VERTICAL
         inlineScroll.isHorizontalScrollBarEnabled = false
@@ -111,21 +38,6 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
         inlineScroll.visibility = View.GONE
 
         addView(suggestionStrip, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
-        val iconButtonWidth = dimen(R.dimen.taipo_suggestion_icon_button_width).toInt()
-        addView(
-            clipboardButton,
-            LayoutParams(iconButtonWidth, LayoutParams.MATCH_PARENT, Gravity.START),
-        )
-        addView(
-            undoButton,
-            LayoutParams(iconButtonWidth, LayoutParams.MATCH_PARENT, Gravity.START).apply {
-                marginStart = iconButtonWidth + dimen(R.dimen.taipo_bar_gap).toInt()
-            },
-        )
-        addView(
-            pasteChip,
-            LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, Gravity.START),
-        )
         addView(
             inlineScroll,
             LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT),
@@ -148,58 +60,6 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
 
     fun setOnWordSuggestionClickListener(listener: SuggestionStripView.OnWordClickListener) {
         suggestionStrip.setOnWordClickListener(listener)
-    }
-
-    /** Story 10.1 : champ sensible, le bouton Smart Clipboard est grisé (il reste touchable pour afficher la raison). */
-    fun setClipboardButtonRestricted(restricted: Boolean) {
-        clipboardRestricted = restricted
-        clipboardButton.alpha = clipboardRestingAlpha()
-    }
-
-    private var clipboardRestricted = false
-
-    /** Opacité de repos du bouton Smart Clipboard : l'animation d'apparition la relit au lieu de mémoriser celle du départ. */
-    private fun clipboardRestingAlpha(): Float = if (clipboardRestricted) RESTRICTED_ALPHA else 1f
-
-    fun setOnClipboardClickListener(listener: CorrectionBarView.OnClipboardClickListener) {
-        clipboardListener = listener
-    }
-
-    fun setOnUndoClickListener(listener: () -> Unit) {
-        undoListener = listener
-    }
-
-    /** Une action est annulable ([enabled]) ou non : le bouton Annuler est actif ou grisé (et non touchable). */
-    fun setUndoEnabled(enabled: Boolean) {
-        if (enabled && !undoEnabled && isLaidOut) undoIcon.pop()
-        undoEnabled = enabled
-        undoButton.isEnabled = enabled
-        undoButton.alpha = undoRestingAlpha()
-    }
-
-    /** Opacité de repos du bouton Annuler : l'animation d'apparition la relit au lieu de mémoriser celle du départ. */
-    private fun undoRestingAlpha(): Float = if (undoEnabled) 1f else RESTRICTED_ALPHA
-
-    fun setOnPasteClickListener(listener: CorrectionBarView.OnPasteClickListener) {
-        pasteListener = listener
-    }
-
-    /**
-     * Texte de la puce de collage : [preview] (déjà mis en forme, éventuellement masqué) ; [sensitive] :
-     * l'aperçu est masqué, la description d'accessibilité ne révèle donc pas non plus le texte.
-     * null vide la puce.
-     */
-    fun setPasteText(preview: String?, sensitive: Boolean) {
-        if (preview == null) {
-            pasteText.text = ""
-            return
-        }
-        pasteText.text = preview
-        pasteChip.contentDescription = if (sensitive) {
-            context.getString(R.string.clipboard_paste_description_masked)
-        } else {
-            context.getString(R.string.clipboard_paste_description, preview)
-        }
     }
 
     /**
@@ -238,28 +98,19 @@ internal class SuggestionZoneView(context: Context, private val style: BarStyle)
     }
 
     /**
-     * Montre le contenu décidé par [visibility] ; le bouton Smart Clipboard est coloré tant que le panneau est ouvert.
-     * Ce qui apparaît s'anime depuis la gauche ([BarReveal]) : dévoilement complet si [reveal] (appui sur le menu de
-     * gauche), sinon fondu discret (frappe, nouvelle copie) ; rien tant que la barre n'est pas affichée.
+     * Montre la bande de mots ([words]) ou les suggestions d'auto-remplissage ([inline]). Ce qui apparaît se fond
+     * ([BarReveal]) ; rien tant que la barre n'est pas affichée.
      */
-    fun render(visibility: ZoneContentVisibility, clipboardPanelOpen: Boolean, reveal: Boolean = false) {
-        show(suggestionStrip, visibility.words, reveal)
-        show(clipboardButton, visibility.clipboardButton, reveal, ::clipboardRestingAlpha)
-        show(undoButton, visibility.undoButton, reveal, ::undoRestingAlpha)
-        show(pasteChip, visibility.pasteChip, reveal)
-        show(inlineScroll, visibility.inline, reveal)
-        if (clipboardButtonActiveBackground != clipboardPanelOpen) {
-            clipboardButtonActiveBackground = clipboardPanelOpen
-            clipboardButton.background = clipboardButtonBackgrounds.get(clipboardPanelOpen)
-            clipboardIcon.setActive(clipboardPanelOpen, animate = isLaidOut)
-        }
+    fun render(words: Boolean, inline: Boolean) {
+        show(suggestionStrip, words)
+        show(inlineScroll, inline)
     }
 
-    private fun show(view: View, visible: Boolean, reveal: Boolean, restingAlpha: (() -> Float)? = null) {
+    private fun show(view: View, visible: Boolean) {
         val wasVisible = view.visibility == View.VISIBLE
         view.visibility = if (visible) View.VISIBLE else View.GONE
         if (visible && !wasVisible && isLaidOut) {
-            BarReveal.enter(view, fromEnd = false, full = reveal, restingAlpha = restingAlpha)
+            BarReveal.enter(view, fromEnd = false, full = false)
         } else if (!visible && wasVisible) {
             BarReveal.cancel(view)
         }

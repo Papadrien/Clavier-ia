@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.graphics.Rect
 import android.view.View
-import android.view.animation.AnticipateInterpolator
 import android.view.animation.LinearInterpolator
 import android.view.animation.PathInterpolator
 import java.util.WeakHashMap
@@ -24,6 +23,7 @@ import kotlin.math.sqrt
  *   que la barre ne ralentisse jamais la saisie.
  * - Un nouvel appel, ou [cancel], interrompt l'animation en cours et rend la vue à son état normal (opacité d'origine,
  *   pas de rognage, pas de décalage) : un second appui inverse donc le mouvement sans saut.
+ * - [glideX] : un bouton déjà affiché qui change de place (espacement égal de la rangée) glisse en ressort jusqu'à sa nouvelle position.
  * - Aucune animation si le système a coupé les animations (échelle de durée à 0).
  *
  * Les calculs ([visibleSpan], [slideOffset]) sont purs et testés en JVM.
@@ -51,14 +51,9 @@ internal object BarReveal {
     /** Part de la durée sur laquelle l'opacité monte de 0 à son niveau de repos. */
     private const val SPRING_FADE_FRACTION = 0.3f
 
-    /** Sortie hors écran (bouton menu de gauche) : durée, intensité du recul initial, début du fondu (part de la durée). */
-    const val EXIT_DURATION_MS = 280L
-    private const val EXIT_ANTICIPATION = 1.6f
-    private const val EXIT_FADE_START = 0.6f
-
     private val easing by lazy { PathInterpolator(0.2f, 0f, 0f, 1f) } // paresseux : l'objet reste utilisable en test JVM
     private val running = WeakHashMap<View, Animator>()
-    private val exiting = WeakHashMap<View, Animator>()
+    private val gliding = WeakHashMap<View, Animator>()
 
     /**
      * Bornes horizontales (gauche, droite) de la partie visible d'une vue de [width] px à l'avancement [progress]
@@ -189,44 +184,37 @@ internal object BarReveal {
         animator.start()
     }
 
-    /** [view] est en train de sortir par [exitOffscreen] (elle reste affichée jusqu'à la fin de la sortie). */
-    fun isExiting(view: View): Boolean = exiting.containsKey(view)
+    /** Décalage horizontal restant (px) d'un glissement en ressort parti de [fromPx] à la [fraction] (0 à 1) de la durée. */
+    fun glideOffset(fromPx: Float, fraction: Float): Float = fromPx * (1f - springProgress(fraction))
+
+    /** [view] joue une animation d'apparition (ressort ou rideau) : elle ne glisse pas en plus, son décalage est déjà animé. */
+    fun isEntering(view: View): Boolean = running.containsKey(view) && !gliding.containsKey(view)
 
     /**
-     * Sortie de [view] vers la gauche (ou la droite quand [toEnd]) sur [distancePx], avec un léger recul avant de partir
-     * (effet ressort), puis la vue passe [View.GONE]. Une interruption ([cancel], nouvelle animation) termine aussitôt la
-     * sortie : la vue est alors masquée et remise à l'état normal, prête à ré-apparaître.
+     * [view] vient d'être placée à un autre endroit par la rangée : elle part de [fromPx] (écart entre son ancienne et sa
+     * nouvelle position, négatif si elle venait de la gauche) et glisse en ressort jusqu'à 0. Un glissement en cours est
+     * remplacé : l'écart donné doit déjà tenir compte de son décalage courant. Aucune animation si le système les a coupées.
      */
-    fun exitOffscreen(view: View, distancePx: Float, toEnd: Boolean = false) {
+    fun glideX(view: View, fromPx: Float) {
         cancel(view)
-        val baseAlpha = view.alpha
-        val direction = if (toEnd) 1f else -1f
-        if (!ValueAnimator.areAnimatorsEnabled()) {
-            view.visibility = View.GONE
-            return
-        }
+        if (!ValueAnimator.areAnimatorsEnabled() || fromPx == 0f) return
+        view.translationX = fromPx
         val animator = ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = EXIT_DURATION_MS
-            interpolator = AnticipateInterpolator(EXIT_ANTICIPATION)
-            addUpdateListener { update ->
-                val progress = update.animatedValue as Float
-                view.translationX = direction * distancePx * progress
-                view.alpha = baseAlpha * (1f - (update.animatedFraction - EXIT_FADE_START).coerceAtLeast(0f) / (1f - EXIT_FADE_START))
-            }
+            duration = SPRING_DURATION_MS
+            interpolator = LinearInterpolator()
+            addUpdateListener { update -> view.translationX = glideOffset(fromPx, update.animatedValue as Float) }
             addListener(
                 object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         running.remove(view)
-                        exiting.remove(view)
-                        view.visibility = View.GONE
-                        view.alpha = baseAlpha
+                        gliding.remove(view)
                         view.translationX = 0f
                     }
                 },
             )
         }
         running[view] = animator
-        exiting[view] = animator
+        gliding[view] = animator
         animator.start()
     }
 

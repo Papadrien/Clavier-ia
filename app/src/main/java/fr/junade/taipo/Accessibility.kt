@@ -42,15 +42,22 @@ internal fun View.announceAsButton() {
  * les boutons), comme le fait le `TouchDelegate` du système, mais pour plusieurs enfants à la fois. Les coordonnées sont
  * ramenées dans le bouton choisi ; un doigt qui s'éloigne au-delà de [slopPx] annule l'appui (comme sur un bouton ordinaire).
  */
-internal class ExpandedTouchDelegate(private val host: ViewGroup, private val slopPx: Int) : TouchDelegate(Rect(), host) {
+internal class ExpandedTouchDelegate(
+    private val host: ViewGroup,
+    private val slopPx: Int,
+    /** Vues cibles à la place des enfants directs de [host] (barre dont les boutons sont dans des rangées imbriquées). */
+    private val targets: (() -> List<View>)? = null,
+) : TouchDelegate(Rect(), host) {
 
     private var target: View? = null
+    private val scratch = Rect()
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (event.actionMasked == MotionEvent.ACTION_DOWN) target = nearestChild(event.x, event.y)
         val view = target ?: return false
-        val x = event.x - view.left
-        val y = event.y - view.top
+        val bounds = boundsInHost(view)
+        val x = event.x - bounds.left
+        val y = event.y - bounds.top
         val inReach = distanceToView(view, event.x, event.y) <= slopPx
         val forwarded = MotionEvent.obtain(event)
         if (inReach) {
@@ -70,8 +77,8 @@ internal class ExpandedTouchDelegate(private val host: ViewGroup, private val sl
     private fun nearestChild(x: Float, y: Float): View? {
         var best: View? = null
         var bestDistance = Float.MAX_VALUE
-        for (index in 0 until host.childCount) {
-            val child = host.getChildAt(index)
+        val candidates = targets?.invoke() ?: List(host.childCount) { host.getChildAt(it) }
+        for (child in candidates) {
             if (child.visibility != View.VISIBLE || !child.isEnabled) continue
             if (!child.isClickable && child !is ViewGroup) continue
             val distance = distanceToView(child, x, y)
@@ -85,9 +92,21 @@ internal class ExpandedTouchDelegate(private val host: ViewGroup, private val sl
 
     /** Distance (en pixels) entre le point (x, y), en coordonnées de la barre, et le rectangle de [view] ; 0 s'il est dedans. */
     private fun distanceToView(view: View, x: Float, y: Float): Float {
-        val dx = maxOf(view.left - x, 0f, x - view.right)
-        val dy = maxOf(view.top - y, 0f, y - view.bottom)
+        val bounds = boundsInHost(view)
+        val dx = maxOf(bounds.left - x, 0f, x - bounds.right)
+        val dy = maxOf(bounds.top - y, 0f, y - bounds.bottom)
         return maxOf(dx, dy)
+    }
+
+    /** Rectangle de [view] en coordonnées de la barre (une vue imbriquée, ou décalée par une animation, est bien placée). */
+    private fun boundsInHost(view: View): Rect {
+        scratch.set(0, 0, view.width, view.height)
+        if (view.parent === host) {
+            scratch.offset(view.left, view.top)
+        } else {
+            host.offsetDescendantRectToMyCoords(view, scratch)
+        }
+        return scratch
     }
 
     private companion object {
@@ -95,7 +114,10 @@ internal class ExpandedTouchDelegate(private val host: ViewGroup, private val sl
     }
 }
 
-/** Étend la zone tactile des boutons enfants de cette barre à 48 dp (voir [ExpandedTouchDelegate]). */
-internal fun ViewGroup.expandChildTouchTargets() {
-    touchDelegate = ExpandedTouchDelegate(this, resources.getDimension(R.dimen.taipo_touch_slop).toInt())
+/**
+ * Étend la zone tactile des boutons enfants de cette barre à 48 dp (voir [ExpandedTouchDelegate]) ; [targets] donne les
+ * boutons à étendre quand ils ne sont pas les enfants directs de la barre.
+ */
+internal fun ViewGroup.expandChildTouchTargets(targets: (() -> List<View>)? = null) {
+    touchDelegate = ExpandedTouchDelegate(this, resources.getDimension(R.dimen.taipo_touch_slop).toInt(), targets)
 }

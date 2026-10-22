@@ -1,360 +1,145 @@
 package fr.junade.taipo
 
-import fr.junade.taipo.SuggestionZoneState.Zone
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/** Story 2.1 : bouton Smart Clipboard visible « avant saisie », caché dans le menu dès qu'il y a du texte. */
+/** Les deux états de la barre du haut (normale / saisie), le menu de gauche (robot) et le panneau Smart Clipboard. */
 class SuggestionZoneStateTest {
 
+    private fun typing(): SuggestionZoneState = SuggestionZoneState().apply { onFieldTextChanged(true) }
+
     @Test
-    fun `champ vide (avant saisie) le bouton Smart Clipboard est visible et pas le menu`() {
+    fun `champ vide la barre est normale et sans robot`() {
         val state = SuggestionZoneState()
-        assertEquals(Zone.CLIPBOARD, state.zone)
+        assertEquals(BarMode.NORMAL, state.mode)
         assertFalse(state.menuButtonVisible)
+        assertFalse(state.menuOpen)
     }
 
     @Test
-    fun `des qu il y a du texte le bouton est cache, la zone montre les mots et le menu apparait`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
-        assertEquals(Zone.WORDS, state.zone)
+    fun `des qu il y a du texte la barre passe en saisie avec le robot`() {
+        val state = typing()
+        assertEquals(BarMode.TYPING, state.mode)
         assertTrue(state.menuButtonVisible)
+        assertFalse(state.menuOpen)
     }
 
     @Test
-    fun `le menu redonne acces au bouton pendant la saisie et se referme en le retouchant`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
+    fun `le robot ouvre puis ferme le menu pendant la saisie`() {
+        val state = typing()
         state.toggleMenu()
-        assertEquals(Zone.CLIPBOARD, state.zone)
-        assertTrue(state.menuExpanded)
+        assertTrue(state.menuOpen)
         state.toggleMenu()
-        assertEquals(Zone.WORDS, state.zone)
-        assertFalse(state.menuExpanded)
+        assertFalse(state.menuOpen)
     }
 
     @Test
-    fun `le menu se referme des le debut de la frappe`() {
+    fun `le robot est sans effet dans la barre normale`() {
         val state = SuggestionZoneState()
+        state.toggleMenu()
+        assertFalse(state.menuOpen)
         state.onFieldTextChanged(true)
+        assertFalse(state.menuOpen) // le toucher ignoré ne reste pas en attente
+    }
+
+    @Test
+    fun `la frappe referme le menu`() {
+        val state = typing()
         state.toggleMenu()
         state.onTyping()
-        assertEquals(Zone.WORDS, state.zone)
+        assertFalse(state.menuOpen)
+        assertEquals(BarMode.TYPING, state.mode)
     }
 
     @Test
-    fun `un champ vide ne garde jamais le menu ouvert, meme apres un nouveau texte`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
+    fun `apres la frappe le menu peut etre rouvert`() {
+        val state = typing()
+        state.toggleMenu()
+        state.onTyping()
+        state.toggleMenu()
+        assertTrue(state.menuOpen)
+    }
+
+    @Test
+    fun `un champ vide ramene la barre normale et referme le menu`() {
+        val state = typing()
         state.toggleMenu()
         state.onFieldTextChanged(false)
-        assertFalse(state.menuExpanded)
+        assertEquals(BarMode.NORMAL, state.mode)
+        assertFalse(state.menuOpen)
         state.onFieldTextChanged(true)
-        assertEquals(Zone.WORDS, state.zone)
-    }
-
-    @Test
-    fun `le menu est sans effet sur un champ vide`() {
-        val state = SuggestionZoneState()
-        state.toggleMenu()
-        assertFalse(state.menuExpanded)
-        assertEquals(Zone.CLIPBOARD, state.zone)
+        assertFalse(state.menuOpen) // le menu ne revient pas tout seul
     }
 
     @Test
     fun `un texte qui reste present ne referme pas le menu`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
-        state.toggleMenu()
-        state.onFieldTextChanged(true) // ex. déplacement du curseur : le texte est toujours là
-        assertEquals(Zone.CLIPBOARD, state.zone)
-    }
-}
-
-/** Story 2.2 : la puce de collage prend la place des mots / du bouton, le menu reste accessible. */
-class SuggestionZoneStatePasteTest {
-
-    @Test
-    fun `aucune puce par defaut`() {
-        assertFalse(SuggestionZoneState().pasteAvailable)
-    }
-
-    @Test
-    fun `champ vide avec un collage propose la puce remplace le bouton et le menu est visible`() {
-        val state = SuggestionZoneState()
-        state.setPasteAvailable(true)
-        assertEquals(Zone.PASTE, state.zone)
-        assertTrue(state.menuButtonVisible)
-    }
-
-    @Test
-    fun `pendant la saisie les mots gardent la place et la puce revient quand le champ est vide`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
-        state.setPasteAvailable(true)
-        assertEquals(Zone.WORDS, state.zone)
-        assertTrue(state.menuButtonVisible)
-        state.onFieldTextChanged(false)
-        assertEquals(Zone.PASTE, state.zone)
-        state.onFieldTextChanged(true)
-        assertEquals(Zone.WORDS, state.zone)
-    }
-
-    @Test
-    fun `le menu donne acces au bouton a la place de la puce et la puce revient en le retouchant`() {
-        val state = SuggestionZoneState()
-        state.setPasteAvailable(true)
-        state.toggleMenu()
-        assertEquals(Zone.CLIPBOARD, state.zone)
-        state.toggleMenu()
-        assertEquals(Zone.PASTE, state.zone)
-    }
-
-    @Test
-    fun `la puce retiree sur un champ vide referme le menu et le cache`() {
-        val state = SuggestionZoneState()
-        state.setPasteAvailable(true)
-        state.toggleMenu()
-        state.setPasteAvailable(false)
-        assertFalse(state.menuExpanded)
-        assertFalse(state.menuButtonVisible)
-        assertEquals(Zone.CLIPBOARD, state.zone)
-    }
-
-    @Test
-    fun `la puce retiree pendant la saisie redonne les mots et garde le menu`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
-        state.setPasteAvailable(true)
-        state.setPasteAvailable(false)
-        assertEquals(Zone.WORDS, state.zone)
-        assertTrue(state.menuButtonVisible)
-    }
-
-    @Test
-    fun `le menu ouvert sur la puce reste ouvert si le champ se vide`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
-        state.setPasteAvailable(true)
-        state.toggleMenu()
-        state.onFieldTextChanged(false)
-        assertEquals(Zone.CLIPBOARD, state.zone)
-        assertTrue(state.menuExpanded)
-    }
-
-    @Test
-    fun `le debut de la frappe referme le menu puis la puce ecartee redonne les mots`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
-        state.setPasteAvailable(true)
-        state.toggleMenu()
-        state.onTyping()
-        state.setPasteAvailable(false)
-        assertEquals(Zone.WORDS, state.zone)
-    }
-}
-
-/** Story 2.4 : retour aux suggestions de mots dès la frappe, menu « ··· » refermé. */
-class SuggestionZoneStateTypingTest {
-
-    @Test
-    fun `menu ouvert sur champ vide avec la puce puis frappe le menu se referme`() {
-        val state = SuggestionZoneState()
-        state.setPasteAvailable(true)
-        state.toggleMenu()
-        assertEquals(Zone.CLIPBOARD, state.zone)
-        state.onTyping()
-        state.setPasteAvailable(false) // la frappe écarte aussi la puce
-        state.onFieldTextChanged(true) // le champ contient maintenant du texte
-        assertFalse(state.menuExpanded)
-        assertEquals(Zone.WORDS, state.zone)
-    }
-
-    @Test
-    fun `menu ouvert avec la puce pendant la saisie puis frappe redonne les mots`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
-        state.setPasteAvailable(true)
-        state.toggleMenu()
-        state.onTyping()
-        state.setPasteAvailable(false)
-        assertEquals(Zone.WORDS, state.zone)
-        assertFalse(state.menuExpanded)
-    }
-
-    @Test
-    fun `apres la frappe le menu peut etre rouvert pendant la saisie`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
-        state.toggleMenu()
-        state.onTyping()
-        state.toggleMenu()
-        assertEquals(Zone.CLIPBOARD, state.zone)
-    }
-
-    @Test
-    fun `sans menu ouvert la frappe ne change pas la zone`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
-        state.onTyping()
-        assertEquals(Zone.WORDS, state.zone)
-        val paste = SuggestionZoneState()
-        paste.setPasteAvailable(true)
-        paste.onTyping()
-        assertEquals(Zone.PASTE, paste.zone) // c'est l'appelant qui retire la puce (état de la copie)
-    }
-
-    @Test
-    fun `un champ vide apres la frappe avec le menu ouvert ne garde pas le menu sans puce`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
-        state.toggleMenu()
-        state.onFieldTextChanged(false) // champ vidé (toutes les lettres effacées), pas de puce
-        assertFalse(state.menuExpanded)
-        assertEquals(Zone.CLIPBOARD, state.zone)
-    }
-}
-
-/** Menu de droite : Vocal et Corriger sont rangés derrière lui tant que la bande de mots est affichée. */
-class SuggestionZoneStateActionsTest {
-
-    private fun typing() = SuggestionZoneState().also { it.onFieldTextChanged(true) }
-
-    @Test
-    fun `pendant les suggestions de mots Vocal et Corriger sont caches et le menu de droite visible`() {
         val state = typing()
-        assertEquals(Zone.WORDS, state.zone)
-        assertFalse(state.actionButtonsVisible(busy = false))
-        assertTrue(state.actionsMenuButtonVisible(busy = false))
-    }
-
-    @Test
-    fun `le menu de droite ouvre puis referme Vocal et Corriger`() {
-        val state = typing()
-        state.toggleActionsMenu()
-        assertEquals(Zone.ACTIONS, state.zone)
-        assertTrue(state.actionButtonsVisible(busy = false))
-        assertTrue(state.actionsMenuButtonVisible(busy = false))
-        state.toggleActionsMenu()
-        assertEquals(Zone.WORDS, state.zone)
-        assertFalse(state.actionButtonsVisible(busy = false))
-    }
-
-    @Test
-    fun `la frappe referme le menu de droite`() {
-        val state = typing()
-        state.toggleActionsMenu()
-        state.onTyping()
-        assertEquals(Zone.WORDS, state.zone)
-        assertFalse(state.actionButtonsVisible(busy = false))
-    }
-
-    @Test
-    fun `ouvrir un menu referme l'autre`() {
-        val state = typing()
-        state.toggleActionsMenu()
         state.toggleMenu()
-        assertEquals(Zone.CLIPBOARD, state.zone)
-        assertFalse(state.actionsExpanded)
-        state.toggleMenu() // referme le menu de gauche : le menu de droite n'est pas rouvert
-        assertEquals(Zone.WORDS, state.zone)
-    }
-
-    @Test
-    fun `sans suggestions de mots le menu de droite n'existe pas et Vocal reste visible`() {
-        val empty = SuggestionZoneState() // champ vide : bouton Smart Clipboard
-        assertTrue(empty.actionButtonsVisible(busy = false))
-        assertFalse(empty.actionsMenuButtonVisible(busy = false))
-        empty.toggleActionsMenu()
-        assertFalse(empty.actionsExpanded)
-    }
-
-    @Test
-    fun `la puce de collage ou le menu de gauche gardent Vocal et Corriger visibles`() {
-        val paste = SuggestionZoneState() // champ vide : la puce remplace le bouton Smart Clipboard
-        paste.setPasteAvailable(true)
-        assertEquals(Zone.PASTE, paste.zone)
-        assertTrue(paste.actionButtonsVisible(busy = false))
-        assertFalse(paste.actionsMenuButtonVisible(busy = false))
-
-        val clipboard = typing()
-        clipboard.toggleMenu()
-        assertTrue(clipboard.actionButtonsVisible(busy = false))
-        assertFalse(clipboard.actionsMenuButtonVisible(busy = false))
-    }
-
-    @Test
-    fun `un champ vide referme le menu de droite, une puce de collage disponible non`() {
-        val paste = typing()
-        paste.toggleActionsMenu()
-        paste.setPasteAvailable(true)
-        assertTrue(paste.actionsExpanded) // la puce reste en attente tant que le texte est affiché
-
-        val cleared = typing()
-        cleared.toggleActionsMenu()
-        cleared.onFieldTextChanged(false)
-        assertFalse(cleared.actionsExpanded)
-    }
-
-    @Test
-    fun `une ecoute ou une correction en cours garde Vocal et Corriger visibles sans menu`() {
-        val state = typing() // ex. texte dicté inséré : la zone repasse aux mots
-        assertEquals(Zone.WORDS, state.zone)
-        assertTrue(state.actionButtonsVisible(busy = true))
-        assertFalse(state.actionsMenuButtonVisible(busy = true))
-    }
-
-    @Test
-    fun `la roue crantee est visible hors saisie ou menu de gauche ouvert, cachee sinon pendant la saisie`() {
-        val state = SuggestionZoneState()
-        assertTrue(state.settingsButtonVisible) // champ vide : bouton Smart Clipboard
-        state.setPasteAvailable(true)
-        assertTrue(state.settingsButtonVisible) // puce de collage
-        state.setPasteAvailable(false)
         state.onFieldTextChanged(true)
-        assertFalse(state.settingsButtonVisible) // saisie : bande de mots
-        state.toggleMenu()
-        assertTrue(state.settingsButtonVisible) // menu de gauche ouvert pendant la saisie
-        state.toggleMenu()
-        assertFalse(state.settingsButtonVisible) // menu refermé : retour à la bande de mots
-        state.toggleMenu()
-        state.onTyping()
-        assertFalse(state.settingsButtonVisible) // la frappe referme le menu
-        state.onFieldTextChanged(false)
-        assertTrue(state.settingsButtonVisible)
+        assertTrue(state.menuOpen)
     }
 
     @Test
-    fun `les suggestions d auto-remplissage remplacent mots, bouton Smart Clipboard et puce de collage`() {
+    fun `la puce de collage ne change pas l etat de la barre`() {
+        val state = SuggestionZoneState()
+        state.setPasteAvailable(true)
+        assertEquals(BarMode.NORMAL, state.mode)
+        state.onFieldTextChanged(true)
+        assertEquals(BarMode.TYPING, state.mode)
+        assertTrue(state.pasteAvailable) // elle reste proposée, et revient quand le champ est vide
+    }
+
+    @Test
+    fun `l auto-remplissage en ligne rend la barre de saisie meme sur un champ vide`() {
         val state = SuggestionZoneState()
         state.setInlineAvailable(true)
-        assertEquals(Zone.INLINE, state.zone) // champ vide
-        state.onFieldTextChanged(true)
-        assertEquals(Zone.INLINE, state.zone) // saisie
-        state.setPasteAvailable(true)
-        assertEquals(Zone.INLINE, state.zone) // puce de collage
-    }
-
-    @Test
-    fun `sans suggestion d auto-remplissage la zone redevient celle d avant`() {
-        val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
-        state.setInlineAvailable(true)
+        assertEquals(BarMode.TYPING, state.mode)
+        assertTrue(state.menuButtonVisible)
         state.setInlineAvailable(false)
-        assertEquals(Zone.WORDS, state.zone)
+        assertEquals(BarMode.NORMAL, state.mode)
     }
 
     @Test
-    fun `le menu de gauche ouvert garde la priorite sur l auto-remplissage et Vocal reste visible`() {
+    fun `la fin de l auto-remplissage sur un champ vide referme le menu`() {
         val state = SuggestionZoneState()
-        state.onFieldTextChanged(true)
         state.setInlineAvailable(true)
-        assertTrue(state.actionButtonsVisible(busy = false))
-        assertFalse(state.actionsMenuButtonVisible(busy = false))
         state.toggleMenu()
-        assertEquals(Zone.CLIPBOARD, state.zone)
+        assertTrue(state.menuOpen)
+        state.setInlineAvailable(false)
+        assertFalse(state.menuOpen)
+    }
+
+    @Test
+    fun `panneau Smart Clipboard ouvert depuis la barre normale la barre reste normale`() {
+        val state = SuggestionZoneState()
+        state.setClipboardPanelOpen(true)
+        state.onFieldTextChanged(true) // texte collé depuis le panneau
+        assertEquals(BarMode.NORMAL, state.mode)
+        state.setClipboardPanelOpen(false)
+        assertEquals(BarMode.TYPING, state.mode) // la barre suit de nouveau l'état réel
+    }
+
+    @Test
+    fun `panneau Smart Clipboard ouvert depuis le menu la barre garde le menu ouvert`() {
+        val state = typing()
+        state.toggleMenu()
+        state.setClipboardPanelOpen(true)
+        state.onTyping() // la frappe referme le menu réel, pas l'affichage figé
+        assertTrue(state.menuOpen)
+        assertEquals(BarMode.TYPING, state.mode)
+        state.setClipboardPanelOpen(false)
+        assertFalse(state.menuOpen)
+    }
+
+    @Test
+    fun `panneau ferme les changements reprennent`() {
+        val state = typing()
+        state.setClipboardPanelOpen(true)
+        state.onFieldTextChanged(false)
+        assertEquals(BarMode.TYPING, state.mode)
+        state.setClipboardPanelOpen(false)
+        assertEquals(BarMode.NORMAL, state.mode)
     }
 }

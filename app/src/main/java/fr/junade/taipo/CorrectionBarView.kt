@@ -1,33 +1,38 @@
 package fr.junade.taipo
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.Gravity
 import android.view.View
+import android.view.animation.LinearInterpolator
+import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import fr.junade.taipo.dictionary.WordSuggestion
 
 /**
- * Barre au-dessus du clavier contenant les boutons Corriger et Vocal.
+ * Barre au-dessus du clavier, à deux états ([BarMode], règles dans [SuggestionZoneState] et [BarVisibility]).
  *
- * Décision 3.3 : le bouton Corriger n'est visible que si du texte est
- * présent dans le champ. Décision 7.1/7.2 : le bouton Vocal, lui, est
- * toujours visible. Décision 8.7 : un état "chargement" distinct est affiché
- * si le modèle de correction doit être rechargé.
+ * - **Normale** (champ vide) : Paramètres, Smart Clipboard (puce de collage à côté), Annuler ; Vocal fixé à droite.
+ * - **Saisie** : le robot (menu de gauche) est ancré à gauche, la bande de mots (ou l'auto-remplissage) prend la place
+ *   entre lui et les boutons de droite, Corriger (quand aucune suggestion n'est affichée) et Vocal sont ancrés à droite.
+ *   Robot touché : la bande s'efface et la rangée devient Robot (actif), Paramètres, Smart Clipboard, Annuler, Chat,
+ *   Corriger, Transcription et Vocal, à espacement égal ([SpaceBetweenRow]) ; Chat, Corriger et Transcription passent en
+ *   pilules icône + texte quand la largeur de l'écran le permet, en boutons ronds sinon.
+ * - Panneau Smart Clipboard ouvert : la barre ne change pas, le bouton Smart Clipboard est coloré.
  *
- * Simplification assumée pour ce prototype : l'animation "labyrinthe" prévue
- * dans les décisions de design n'est pas implémentée ici (l'asset de motif
- * vectoriel de référence n'est pas disponible dans cet environnement) ; les
- * états "en cours" sont indiqués simplement par un texte de bouton différent
- * et un bouton désactivé (ou une couleur différente pour l'écoute vocale).
+ * Décision 3.3 : Corriger n'est visible que si du texte est présent. Décision 8.7 : un état « chargement » distinct est
+ * affiché si le modèle de correction doit être rechargé. Le bouton Vocal est posé par-dessus les deux rangées : il ne bouge
+ * jamais, mais compte comme dernier élément de leur répartition.
  *
- * Lot 4.2 : les règles d'affichage sont dans [BarVisibility] (logique pure testée), le style commun dans
- * [BarStyle] et la zone de gauche (mots, Smart Clipboard, puce de collage, auto-remplissage) dans
- * [SuggestionZoneView] ; cette classe garde l'assemblage, les boutons d'action et les écouteurs.
+ * Animations : un seul ressort ([BarReveal.springProgress]). Normale vers saisie : la rangée normale monte et sort par le haut
+ * de la barre, la rangée de saisie monte depuis le bas à sa suite et le robot entre par la gauche ; le sens inverse fait le
+ * chemin contraire. Un bouton qui change de place glisse en ressort ([SpaceBetweenRow]).
  */
 @SuppressLint("ViewConstructor")
-class CorrectionBarView(context: Context) : LinearLayout(context) {
+class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     fun interface OnCorrectListener {
         fun onCorrectClicked()
@@ -44,67 +49,58 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     }
 
     private val style = BarStyle(context)
-    private val correctButton = LabeledIconButton(context, style)
+    private val barHeight = dimen(R.dimen.taipo_bar_height).toInt()
+    private val iconButtonWidth = dimen(R.dimen.taipo_bar_icon_button_width).toInt()
+    private val minGap = dimen(R.dimen.taipo_bar_min_gap).toInt()
+    private val fillGap = dimen(R.dimen.taipo_bar_gap).toInt()
+    private val paddingH = dimen(R.dimen.taipo_bar_padding_horizontal).toInt()
+    private val paddingV = dimen(R.dimen.taipo_bar_padding_vertical).toInt()
+    private val keyInset = dimen(R.dimen.taipo_key_inset).toInt()
 
-    /**
-     * Zone de gauche : bande de mots, bouton Smart Clipboard, puce de collage ou suggestions
-     * d'auto-remplissage selon [zoneState] (barre « avant saisie » ou saisie en cours).
-     */
-    private val zoneView = SuggestionZoneView(context, style)
+    private val zoneState = SuggestionZoneState()
 
-    /** Roue crantée : ouvre la page d'accueil de l'application, visible hors saisie, ou quand le menu « ··· » de gauche est ouvert. */
-    private val settingsButton = ImageButton(context)
+    /** Rangée de la barre normale (champ vide) et rangée de saisie, superposées. */
+    private val normalRow = SpaceBetweenRow(context)
+    private val typingRow = SpaceBetweenRow(context)
 
-    /** Roue crantée qui tourne en ressort quand on touche le bouton, le temps que l'application s'ouvre. */
-    private val settingsIcon = SpinIconDrawable(context, R.drawable.ic_settings, context.dimen(R.dimen.taipo_icon_size).toInt())
-    private var settingsListener: (() -> Unit)? = null
-    private var menuClickListener: (() -> Unit)? = null
-    private var actionsMenuClickListener: (() -> Unit)? = null
+    /** Paramètres, Smart Clipboard et Annuler existent en deux jeux : rangée normale, et menu ouvert de la rangée de saisie. */
+    private val normalButtons = UtilityButtons(context, style)
+    private val menuButtons = UtilityButtons(context, style)
+    private val pasteChip = PasteChipView(context, style)
 
-    /** Story 2.1 : bouton « menu », visible pendant la saisie, qui donne accès au bouton Smart Clipboard. */
-    private val menuButton = ImageButton(context)
-    private var menuChevron: RotatingDrawable? = null
+    /** Bande de mots (ou suggestions d'auto-remplissage), entre le robot et les boutons de droite. */
+    private val zoneView = SuggestionZoneView(context)
 
-    /**
-     * Menu « robot » : range Transcription IA et Générer pendant les suggestions de mots (Corriger, à sa gauche, n'est visible
-     * que si aucune suggestion n'est affichée) ; Vocal, à sa droite, est toujours visible. Ouvert, il met les actions IA en pilules icône + texte.
-     */
-    private val actionsMenuButton = ImageButton(context)
-
-    /** Icône robot animée (antenne, yeux, bouche) : repos ↔ actif (fond violet), 300 ms avec léger ressort. */
+    /** Robot : menu de gauche de la rangée de saisie. Repos ↔ actif (fond violet, icône animée). */
+    private val robotButton = ImageButton(context)
+    private val robotBackgrounds = style.toggleBackgrounds()
     private var robotIcon: RobotIconDrawable? = null
+    private var robotActive: Boolean? = null
 
-    /** Croix de fermeture du panneau Smart Clipboard (à gauche de la barre) : visible seulement tant qu'il est ouvert. */
-    private val closeButton = ImageButton(context)
-    private var clipboardPanelOpen = false
-    private var clipboardCloseListener: (() -> Unit)? = null
-    private var actionsMenuBackgroundExpanded: Boolean? = null
-
-    // Lot 21 : fonds des boutons à bascule et du bouton vocal créés une fois (un Drawable par état), jamais recréés.
-    private val menuBackgrounds = style.toggleBackgrounds()
-    private val actionsMenuBackgrounds = style.toggleBackgrounds()
-    private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
     private val micIcon = MicIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
     private val aiTranscriptionIcon = WaveIconDrawable(
         context.dimen(R.dimen.taipo_icon_size).toInt(),
         context.getColor(R.color.taipo_purple_light),
     )
     private val correctIcon = CorrectIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
+    private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
+
+    /** Story 5.1 : bouton « Chat » (icône), qui bascule la barre en mode prompt. */
+    private val generateButton = LabeledIconButton(context, style)
+    private val correctButton = LabeledIconButton(context, style)
+
+    /** Story 14.5 : transcription IA (enregistrement envoyé à un modèle Gemma 4). */
+    internal val aiTranscriptionButton = LabeledIconButton(context, style)
+    val voiceButton = ImageButton(context)
+
+    private var listener: OnCorrectListener? = null
+    private var cancelListener: (() -> Unit)? = null
+    private var generateListener: (() -> Unit)? = null
+    private var actionsMenuClickListener: (() -> Unit)? = null
+    private var clipboardCloseListener: (() -> Unit)? = null
 
     /** État précédent du bouton Corriger : CORRECTING → IDLE (correction réussie) déclenche le retracé de la coche. */
     private var previousCorrectState = CorrectionBarState.HIDDEN
-    private val zoneState = SuggestionZoneState()
-    private var menuBackgroundExpanded: Boolean? = null
-    val voiceButton = ImageButton(context)
-    private var listener: OnCorrectListener? = null
-    private var cancelListener: (() -> Unit)? = null
-
-    /** Story 5.1 : bouton « Générer » (icône, mode chat), qui bascule la barre en mode prompt ; rangé avec Vocal derrière le menu de droite. */
-    private val generateButton = LabeledIconButton(context, style)
-    private var generateListener: (() -> Unit)? = null
-
-    /** Story 14.5 : transcription IA (enregistrement envoyé à un modèle Gemma 4), entre Corriger et le menu « robot », visible avec les actions IA. */
-    internal val aiTranscriptionButton = LabeledIconButton(context, style)
 
     var state: CorrectionBarState = CorrectionBarState.HIDDEN
         set(value) {
@@ -119,97 +115,81 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         }
 
     /**
-     * Story 10.1 : faux dans un champ sensible (mot de passe) : Corriger, Générer, Vocal, Transcription IA et le bouton Smart
+     * Story 10.1 : faux dans un champ sensible (mot de passe) : Corriger, Chat, Vocal, Transcription IA et le bouton Smart
      * Clipboard sont grisés (opacité réduite) mais restent touchables : l'IME explique alors la raison.
      */
     var aiActionsAllowed: Boolean = true
         set(value) {
             if (field == value) return
             field = value
-            zoneView.setClipboardButtonRestricted(!value)
+            normalButtons.setClipboardRestricted(!value)
+            menuButtons.setClipboardRestricted(!value)
             renderCorrect()
             renderVoice()
             renderAiTranscription()
         }
 
-    /** Faux si le modèle actif n'a pas d'entrée audio (Ultra-léger, Léger) : le bouton Transcription IA n'est alors pas affiché. */
+    /** Faux si le modèle actif n'a pas d'entrée audio (Fourmi, Colibri) : le bouton Transcription IA n'est alors pas affiché. */
     var aiTranscriptionAvailable: Boolean = false
         set(value) {
             field = value
-            renderActionButtons()
+            render()
         }
 
     var aiTranscriptionState: AiTranscriptionBarState = AiTranscriptionBarState.IDLE
         set(value) {
             field = value
             renderAiTranscription()
-            // Pendant le traitement, le bouton reste visible (en petit) même menu « robot » fermé : voir BarVisibility.actionButtons.
-            renderActionButtons()
         }
 
     /** La bande de mots affiche au moins un mot (ou un emoji) : le bouton Corriger est alors caché (voir [BarVisibility.actionButtons]). */
     private var wordsShown = false
     private var emojiShown = false
 
-    /** Menu « robot » ouvert : les actions IA (Chat, Transcription, Correction) passent en pilules icône + texte, si la rangée tient. */
+    /** Menu ouvert : Chat, Corriger et Transcription passent en pilules icône + texte, si la rangée tient. */
     private var labelsWanted = false
 
-    /** Vocal, toujours visible, est le dernier bouton de la barre : celle-ci se cale sur le bord droit des touches. */
-    private var voiceAnchoredRight = false
+    /** État de barre affiché (ou vers lequel la transition en cours se dirige) et la transition elle-même. */
+    private var shownMode = BarMode.NORMAL
+    private var modeAnimator: ValueAnimator? = null
 
     init {
-        orientation = HORIZONTAL
-        gravity = Gravity.END or Gravity.CENTER_VERTICAL
         // Fond transparent : la barre laisse voir le fond commun du clavier (KeyboardBackgroundDrawable).
-        val barHeight = dimen(R.dimen.taipo_bar_height).toInt()
-        val iconButtonWidth = dimen(R.dimen.taipo_bar_icon_button_width).toInt()
-        val gap = dimen(R.dimen.taipo_bar_gap).toInt()
-        val paddingH = dimen(R.dimen.taipo_bar_padding_horizontal).toInt()
-        val paddingV = dimen(R.dimen.taipo_bar_padding_vertical).toInt()
-        setPadding(paddingH, paddingV, paddingH, paddingV)
-        clipToPadding = false // le menu « ··· » de gauche sort jusqu'au bord de l'écran quand le menu robot s'ouvre
-
-        // Croix de fermeture du panneau Smart Clipboard, à l'extrémité gauche de la barre.
-        style.styleBarIconButton(closeButton, R.drawable.ic_close)
-        closeButton.contentDescription = context.getString(R.string.clipboard_panel_close_description)
-        closeButton.setOnClickListener { clipboardCloseListener?.invoke() }
-        closeButton.visibility = View.GONE
-        addView(
-            closeButton,
-            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
-        )
-
-        style.styleBarIconButton(menuButton, R.drawable.ic_keyboard_right)
-        menuChevron = RotatingDrawable(menuButton.drawable).also {
-            menuButton.setImageDrawable(it) // le chevron pivote d'un demi-tour quand le menu s'ouvre
+        val rowHeight = barHeight + 2 * paddingV
+        for (row in listOf(normalRow, typingRow)) {
+            row.minGapPx = minGap
+            row.fillGapPx = fillGap
+            row.reservedEndPx = iconButtonWidth
+            row.setPadding(paddingH, paddingV, paddingH, paddingV)
         }
-        menuButton.contentDescription = context.getString(R.string.clipboard_menu_description)
-        menuButton.setOnClickListener {
-            menuClickListener?.invoke()
+
+        // Rangée normale : Paramètres, Smart Clipboard, puce de collage, Annuler (puis Vocal, posé par-dessus).
+        normalRow.addView(normalButtons.settingsButton, roundParams())
+        normalRow.addView(normalButtons.clipboardButton, roundParams())
+        pasteChip.visibility = View.GONE
+        normalRow.addView(pasteChip, SpaceBetweenRow.LayoutParams(LayoutParams.WRAP_CONTENT, barHeight, RowRole.SHRINK))
+        normalRow.addView(normalButtons.undoButton, roundParams())
+
+        // Rangée de saisie : Robot, [menu ouvert : Paramètres, Smart Clipboard, Annuler, Chat], bande, Corriger, Transcription.
+        style.styleBarIconButton(robotButton, R.drawable.ic_robot)
+        robotIcon = RobotIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt()).also {
+            robotButton.setImageDrawable(it) // même tracé que ic_robot, animé quand le menu s'ouvre
+        }
+        robotButton.contentDescription = context.getString(R.string.actions_menu_description)
+        robotButton.setOnClickListener {
+            actionsMenuClickListener?.invoke()
+            // Panneau Smart Clipboard ouvert : la barre est figée, le panneau se referme (la barre suit alors l'état réel).
+            if (zoneState.clipboardPanelOpen) clipboardCloseListener?.invoke()
             zoneState.toggleMenu()
-            renderZone(reveal = true)
+            render(reveal = true)
         }
-        addView(
-            menuButton,
-            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
-        )
-
-        // Bouton « roue crantée » entre le menu « ··· » et le bouton Smart Clipboard.
-        style.styleRoundIconButton(settingsButton, R.drawable.ic_settings)
-        settingsButton.contentDescription = context.getString(R.string.settings_button_description)
-        settingsButton.setImageDrawable(settingsIcon) // même tracé que ic_settings au repos
-        settingsButton.setOnClickListener {
-            settingsIcon.spin()
-            settingsListener?.invoke()
+        typingRow.addView(robotButton, roundParams())
+        for (view in menuButtons.views) {
+            view.visibility = View.GONE
+            typingRow.addView(view, roundParams())
         }
-        addView(
-            settingsButton,
-            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
-        )
 
-        addView(zoneView, LayoutParams(0, barHeight, 1f).apply { marginEnd = gap })
-
-        // Story 5.1 : « Générer » (mode chat), le bouton le plus à gauche des actions. Icône seule (40 dp) pour ménager la place de la zone de gauche.
+        // Story 5.1 : « Chat » (mode prompt). Icône seule (bouton rond) ou pilule selon la largeur.
         style.styleRoundIconButton(generateButton, R.drawable.ic_rate_review)
         generateButton.contentDescription = context.getString(R.string.generate_button_description)
         generateButton.label = context.getString(R.string.action_pill_chat)
@@ -217,10 +197,10 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             collapseMenu()
             generateListener?.invoke()
         }
-        addView(
-            generateButton,
-            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
-        )
+        generateButton.visibility = View.GONE
+        typingRow.addView(generateButton, roundParams())
+
+        typingRow.addView(zoneView, SpaceBetweenRow.LayoutParams(0, barHeight, RowRole.FILL))
 
         // Icône seule, grise comme Vocal ; l'état (chargement, correction…) passe par la transparence et la description d'accessibilité.
         style.styleRoundIconButton(correctButton, R.drawable.ic_spellcheck)
@@ -236,40 +216,22 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
                 else -> Unit
             }
         }
-        addView(
-            correctButton,
-            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
-        )
+        typingRow.addView(correctButton, roundParams())
 
-        // Story 14.5 : bouton « voix vers texte », entre Corriger et le menu « robot ». Le clic est relié par l'IME.
+        // Story 14.5 : bouton « voix vers texte ». Le clic est relié par l'IME.
         style.styleRoundIconButton(aiTranscriptionButton, R.drawable.ic_speech_to_text)
         aiTranscriptionButton.setImageDrawable(aiTranscriptionIcon) // trois barres : onde au repos et à l'écoute, lignes pendant le traitement
         aiTranscriptionButton.contentDescription = context.getString(R.string.ai_transcription_button_description)
         aiTranscriptionButton.label = context.getString(R.string.action_pill_transcription)
-        addView(
-            aiTranscriptionButton,
-            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
-        )
+        aiTranscriptionButton.visibility = View.GONE
+        typingRow.addView(aiTranscriptionButton, roundParams())
 
-        // Menu « robot » : pendant les suggestions de mots, il range derrière lui Transcription IA et Générer (Corriger reste
-        // visible à sa gauche) ; Vocal, à sa droite, n'en dépend pas.
-        style.styleBarIconButton(actionsMenuButton, R.drawable.ic_robot)
-        robotIcon = RobotIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt()).also {
-            actionsMenuButton.setImageDrawable(it) // même tracé que ic_robot, animé quand le menu s'ouvre
-        }
-        actionsMenuButton.contentDescription = context.getString(R.string.actions_menu_description)
-        actionsMenuButton.setOnClickListener {
-            actionsMenuClickListener?.invoke()
-            zoneState.toggleActionsMenu()
-            renderZone(reveal = true)
-        }
-        addView(
-            actionsMenuButton,
-            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
-        )
+        addView(normalRow, LayoutParams(LayoutParams.MATCH_PARENT, rowHeight))
+        addView(typingRow, LayoutParams(LayoutParams.MATCH_PARENT, rowHeight))
+        typingRow.visibility = View.GONE
 
-        // Lot 08 : Vocal devient un bouton rond à icône micro ; son état (écoute, chargement…) passe par la couleur,
-        // la transparence et la description d'accessibilité, plus par le texte.
+        // Lot 08 : Vocal est un bouton rond à icône micro ; son état (écoute, chargement…) passe par la couleur,
+        // la transparence et la description d'accessibilité, plus par le texte. Posé par-dessus les rangées, à droite.
         style.styleRoundIconButton(voiceButton, R.drawable.ic_mic)
         voiceButton.setImageDrawable(micIcon) // même tracé que ic_mic ; la capsule s'anime (chargement, écoute)
         // Le geste réel passe par setOnTouchListener (côté appelant, qui consomme tout toucher) ; le clic, lui, n'est déclenché
@@ -277,72 +239,87 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         voiceButton.setOnClickListener { }
         addView(
             voiceButton,
-            LayoutParams(iconButtonWidth, barHeight).apply { marginEnd = gap },
+            LayoutParams(iconButtonWidth, barHeight, Gravity.END or Gravity.TOP).apply {
+                topMargin = paddingV
+                marginEnd = paddingH
+            },
         )
 
         // Lot 20 : zone tactile des boutons étendue à 48 dp (36 dp dessinés), sans changer le rendu.
-        expandChildTouchTargets()
+        expandChildTouchTargets(this::touchTargets)
 
         renderCorrect()
         renderVoice()
-        renderZone()
     }
 
-    /** Touche sur la roue crantée : ouvrir la page d'accueil de l'application. */
-    /** Touche sur le bouton « ··· » de gauche (chevron) : sert au retour haptique, le menu s'ouvre ou se ferme ensuite. */
-    fun setOnMenuClickListener(listener: () -> Unit) {
-        menuClickListener = listener
+    private fun roundParams() = SpaceBetweenRow.LayoutParams(iconButtonWidth, barHeight, RowRole.ROUND)
+
+    /** Boutons que la zone tactile étendue peut viser : ceux des rangées affichées, et Vocal. */
+    private fun touchTargets(): List<View> {
+        val targets = ArrayList<View>()
+        for (row in listOf(normalRow, typingRow)) {
+            if (row.visibility != View.VISIBLE) continue
+            for (index in 0 until row.childCount) targets.add(row.getChildAt(index))
+        }
+        targets.add(voiceButton)
+        return targets
     }
 
-    /** Touche sur le bouton Action IA (robot) : sert au retour haptique, le menu s'ouvre ou se ferme ensuite. */
+    /** Touche sur le robot (menu de gauche) : sert au retour haptique et au son, le menu s'ouvre ou se ferme ensuite. */
     fun setOnActionsMenuClickListener(listener: () -> Unit) {
         actionsMenuClickListener = listener
     }
 
+    /** Touche sur la roue crantée : ouvrir la page d'accueil de l'application. */
     fun setOnSettingsClickListener(listener: () -> Unit) {
-        settingsListener = listener
+        normalButtons.setOnSettingsClickListener(listener)
+        menuButtons.setOnSettingsClickListener(listener)
     }
 
-    /** Touche sur « Générer » : entrer en mode prompt (story 5.1). */
+    /** Touche sur « Chat » : entrer en mode prompt (story 5.1). */
     fun setOnGenerateClickListener(listener: () -> Unit) {
         generateListener = listener
     }
 
-    /** Touche sur la croix : le panneau Smart Clipboard doit se fermer. */
+    /** Le panneau Smart Clipboard doit se fermer (robot touché pendant qu'il est ouvert). */
     fun setOnClipboardCloseClickListener(listener: () -> Unit) {
         clipboardCloseListener = listener
     }
 
     /**
-     * Le panneau Smart Clipboard est ouvert (ou refermé) : le bouton Smart Clipboard reste affiché,
-     * coloré (actif), seul dans la zone de gauche, et un nouvel appui dessus referme le panneau. Le
-     * menu « ··· » de gauche (il n'a plus d'objet) se cache ; la roue crantée reste affichée.
+     * Le panneau Smart Clipboard est ouvert (ou refermé) : la barre ne change pas, le bouton Smart Clipboard est coloré (actif)
+     * et un nouvel appui dessus referme le panneau.
      */
     fun setClipboardPanelOpen(open: Boolean) {
-        if (clipboardPanelOpen == open) return
-        clipboardPanelOpen = open
-        renderZone()
+        if (zoneState.clipboardPanelOpen == open) return
+        zoneState.setClipboardPanelOpen(open)
+        render()
     }
 
-    /**
-     * Story 1.14 : en classe de largeur large (≥ 600 dp), les boutons restent alignés sur la zone
-     * centrée des touches (le fond de la barre garde toute la largeur).
-     */
     override fun onDetachedFromWindow() {
         robotIcon?.cancel()
+        modeAnimator?.cancel()
         super.onDetachedFromWindow()
     }
 
+    /**
+     * Story 1.14 : en classe de largeur large (≥ 600 dp), les boutons restent alignés sur la zone centrée des touches (le
+     * fond de la barre garde toute la largeur). Vocal, toujours dernier, se cale sur le bord droit des touches (inset de touche).
+     */
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val available = MeasureSpec.getSize(widthMeasureSpec).toFloat()
-        val content = KeyboardWidth.forAvailableWidth(available, resources.displayMetrics.density)
-        val side = dimen(R.dimen.taipo_bar_padding_horizontal).toInt() + content.leftPx.toInt()
-        val endInset = if (voiceAnchoredRight) dimen(R.dimen.taipo_key_inset).toInt() else dimen(R.dimen.taipo_bar_padding_horizontal).toInt()
-        val sideEnd = endInset + content.leftPx.toInt()
-        if (paddingLeft != side || paddingRight != sideEnd) {
-            setPadding(side, paddingTop, sideEnd, paddingBottom)
+        val available = MeasureSpec.getSize(widthMeasureSpec)
+        val content = KeyboardWidth.forAvailableWidth(available.toFloat(), resources.displayMetrics.density)
+        val side = paddingH + content.leftPx.toInt()
+        val sideEnd = keyInset + content.leftPx.toInt()
+        for (row in listOf(normalRow, typingRow)) {
+            if (row.paddingLeft != side || row.paddingRight != sideEnd) row.setPadding(side, paddingV, sideEnd, paddingV)
         }
-        val showLabels = labelsWanted && labeledRowFits(MeasureSpec.getSize(widthMeasureSpec) - side - sideEnd)
+        val voiceParams = voiceButton.layoutParams as LayoutParams
+        if (voiceParams.marginEnd != sideEnd) {
+            voiceParams.marginEnd = sideEnd
+            voiceButton.layoutParams = voiceParams
+        }
+        val showLabels = labelsWanted && labeledRowFits(available - side - sideEnd)
         generateButton.labeled = showLabels
         correctButton.labeled = showLabels
         aiTranscriptionButton.labeled = showLabels
@@ -350,31 +327,30 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     }
 
     /**
-     * Les pilules icône + texte tiennent-elles dans [availableWidth] avec les autres boutons visibles (robot, Vocal) et les
-     * écarts ? Sinon (écran étroit, grande police), les actions restent en icônes seules : le texte ne déborde jamais.
+     * Les pilules icône + texte tiennent-elles dans [availableWidth] avec les autres boutons du menu ouvert, Vocal et l'écart
+     * minimal ? Sinon (écran étroit, grande police), les actions restent des boutons ronds : le texte ne déborde jamais.
      */
     private fun labeledRowFits(availableWidth: Int): Boolean {
-        val gap = dimen(R.dimen.taipo_bar_gap).toInt()
-        val iconWidth = dimen(R.dimen.taipo_bar_icon_button_width).toInt()
-        var total = gap // marge de fin de la zone de gauche (vide quand le menu est ouvert)
-        var count = 0
-        for (button in listOf(generateButton, correctButton, aiTranscriptionButton, actionsMenuButton, voiceButton)) {
-            if (button.visibility != View.VISIBLE) continue
-            total += if (button is LabeledIconButton) button.labeledWidth() else iconWidth
+        var total = iconButtonWidth // Vocal
+        var count = 1
+        for (index in 0 until typingRow.childCount) {
+            val child = typingRow.getChildAt(index)
+            if (child === zoneView || child.visibility == View.GONE) continue
+            total += if (child is LabeledIconButton) child.labeledWidth() else iconButtonWidth
             count++
         }
-        total += (count - 1).coerceAtLeast(0) * gap
+        total += (count - 1) * minGap
         return total <= availableWidth
     }
 
     /**
-     * Affiche les [views] d'auto-remplissage en ligne à la place des suggestions de mots ; une liste
-     * vide retire les suggestions et rend la zone aux suggestions habituelles.
+     * Affiche les [views] d'auto-remplissage en ligne à la place des suggestions de mots ; une liste vide retire les
+     * suggestions. Des suggestions en ligne rendent la barre de saisie, même sur un champ vide.
      */
     fun setInlineSuggestions(views: List<View>) {
         zoneView.setInlineViews(views)
         zoneState.setInlineAvailable(views.isNotEmpty())
-        renderZone()
+        render()
     }
 
     /** Story 1.16 : propose [emoji] dans le 4e emplacement de la bande de suggestions (null = aucun). */
@@ -383,7 +359,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         val shown = emoji != null
         if (emojiShown != shown) {
             emojiShown = shown
-            renderActionButtons() // Corriger se cache tant qu'une suggestion est affichée
+            render() // Corriger se cache tant qu'une suggestion est affichée
         }
     }
 
@@ -397,7 +373,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         val shown = words.any { it != null }
         if (wordsShown != shown) {
             wordsShown = shown
-            renderActionButtons() // Corriger se cache tant qu'une suggestion est affichée
+            render() // Corriger se cache tant qu'une suggestion est affichée
         }
     }
 
@@ -409,14 +385,16 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         this.listener = listener
     }
 
-    /** Touche sur le bouton Annuler (à droite du bouton Smart Clipboard) : défaire la dernière action. */
+    /** Touche sur le bouton Annuler : défaire la dernière action. */
     fun setOnUndoListener(listener: () -> Unit) {
-        zoneView.setOnUndoClickListener(listener)
+        normalButtons.setOnUndoClickListener(listener)
+        menuButtons.setOnUndoClickListener(listener)
     }
 
     /** Le bouton Annuler est actif quand au moins une action est annulable, grisé sinon. */
     fun setUndoAvailable(available: Boolean) {
-        zoneView.setUndoEnabled(available)
+        normalButtons.setUndoEnabled(available, animate = isLaidOut)
+        menuButtons.setUndoEnabled(available, animate = isLaidOut)
     }
 
     /** Nouvelle touche sur Corriger pendant le chargement ou la correction : abandonner la correction en cours. */
@@ -425,17 +403,17 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
     }
 
     fun setOnClipboardClickListener(listener: OnClipboardClickListener) {
-        zoneView.setOnClipboardClickListener(listener)
+        normalButtons.setOnClipboardClickListener { listener.onClipboardClick() }
+        menuButtons.setOnClipboardClickListener { listener.onClipboardClick() }
     }
 
     fun setOnPasteClickListener(listener: OnPasteClickListener) {
-        zoneView.setOnPasteClickListener(listener)
+        pasteChip.setOnPasteClickListener { listener.onPasteClick() }
     }
 
     /**
-     * Story 2.2 : propose le collage avec l'aperçu [preview] (déjà mis en forme, éventuellement
-     * masqué), ou retire la puce si [preview] est null. [sensitive] : l'aperçu est masqué, la
-     * description d'accessibilité ne révèle donc pas non plus le texte.
+     * Story 2.2 : propose le collage avec l'aperçu [preview] (déjà mis en forme, éventuellement masqué), ou retire la puce
+     * si [preview] est null. [sensitive] : l'aperçu est masqué, la description d'accessibilité ne révèle donc pas non plus le texte.
      */
     fun setPasteSuggestion(preview: String?, sensitive: Boolean) {
         if (preview == null) {
@@ -444,141 +422,182 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         } else {
             zoneState.setPasteAvailable(true)
         }
-        zoneView.setPasteText(preview, sensitive)
-        renderZone()
+        pasteChip.setPasteText(preview, sensitive)
+        render()
     }
 
-    /**
-     * Story 2.1 : le champ contient du texte (barre de saisie : suggestions de mots, bouton
-     * « menu ») ou est vide (barre « avant saisie » : bouton Smart Clipboard).
-     */
+    /** Le champ contient du texte (barre de saisie) ou est vide (barre normale). */
     fun setFieldHasText(hasText: Boolean) {
         zoneState.onFieldTextChanged(hasText)
-        renderZone()
+        render()
     }
 
     /** Story 2.1/2.4 : début de la frappe, retour aux suggestions de mots (le menu se referme). */
     fun collapseMenu() {
         zoneState.onTyping()
-        renderZone()
+        render()
     }
 
     /**
-     * [reveal] : l'appel vient d'un appui sur un menu « ··· » ; les boutons qui apparaissent se dévoilent alors en
-     * cascade depuis le menu robot (le plus proche en premier), sinon ils se fondent simplement ([BarReveal]).
+     * Met à jour toute la barre d'après l'état courant : rangée affichée (avec sa transition), boutons visibles, robot actif,
+     * bouton Smart Clipboard actif. [reveal] : l'appel vient d'un appui sur le robot ; les boutons qui apparaissent jaillissent
+     * alors du robot en ressort, sinon (frappe, copie…) ils se fondent simplement ([BarReveal]).
      */
-    private fun renderActionButtons(reveal: Boolean = false) {
-        val visible = BarVisibility.actionButtons(
+    private fun render(reveal: Boolean = false) {
+        val mode = BarVisibility.mode(zoneState, state, aiTranscriptionState)
+        val content = BarVisibility.content(zoneState, mode)
+        val actions = BarVisibility.actionButtons(
             voiceState,
             state,
             zoneState,
-            clipboardPanelOpen,
+            mode,
             wordsShown || emojiShown,
             aiTranscriptionState,
         )
-        setRevealed(voiceButton, visible.voice, order = 0, full = reveal)
-        // Menu robot qui vient de s'ouvrir : les actions IA jaillissent du robot avec un effet ressort.
-        val spring = reveal && zoneState.zone == SuggestionZoneState.Zone.ACTIONS
-        setRevealed(generateButton, visible.generate, order = 2, full = reveal, spring = spring)
-        setRevealed(aiTranscriptionButton, visible.aiTranscription && aiTranscriptionAvailable, order = 0, full = reveal, spring = spring)
-        setRevealed(correctButton, visible.correct, order = 1, full = reveal, spring = spring)
-        setRevealed(actionsMenuButton, visible.actionsMenu, order = 0, full = reveal)
-        closeButton.visibility = View.GONE // remplacée par le bouton Smart Clipboard actif, qui referme le panneau
-        anchorTrailingButtonsRight()
+        val wantLabels = BarVisibility.labeledActions(zoneState, mode)
+        if (labelsWanted != wantLabels) {
+            labelsWanted = wantLabels
+            requestLayout() // onMeasure décide si la rangée tient en pilules
+        }
+        showMode(mode)
+
+        // Rangée de saisie.
+        robotButton.visibility = View.VISIBLE
+        zoneView.render(content.words, content.inline)
+        setRevealed(zoneView, content.words || content.inline, order = 0, full = reveal, row = typingRow)
+        val spring = reveal && content.menuUtilityButtons
+        setRevealed(menuButtons.settingsButton, content.menuUtilityButtons, order = 0, full = reveal, row = typingRow, spring = spring)
+        setRevealed(
+            menuButtons.clipboardButton, content.menuUtilityButtons, order = 1, full = reveal, row = typingRow, spring = spring,
+            restingAlpha = menuButtons::clipboardRestingAlpha,
+        )
+        setRevealed(
+            menuButtons.undoButton, content.menuUtilityButtons, order = 2, full = reveal, row = typingRow, spring = spring,
+            restingAlpha = menuButtons::undoRestingAlpha,
+        )
+        setRevealed(generateButton, actions.generate, order = 3, full = reveal, row = typingRow, spring = spring)
+        setRevealed(correctButton, actions.correct, order = 4, full = reveal, row = typingRow, spring = spring)
+        setRevealed(
+            aiTranscriptionButton, actions.aiTranscription && aiTranscriptionAvailable, order = 5, full = reveal,
+            row = typingRow, spring = spring,
+        )
+
+        // Rangée normale : la puce de collage apparaît à côté du bouton Smart Clipboard.
+        setRevealed(pasteChip, content.pasteChip, order = 0, full = false, row = normalRow)
+
+        val menuOpen = mode == BarMode.TYPING && zoneState.menuOpen
+        if (robotActive != menuOpen) {
+            robotActive = menuOpen
+            robotButton.background = robotBackgrounds.get(menuOpen)
+            robotIcon?.setActive(menuOpen, animate = isLaidOut)
+        }
+        normalButtons.setClipboardActive(zoneState.clipboardPanelOpen, animate = isLaidOut)
+        menuButtons.setClipboardActive(zoneState.clipboardPanelOpen, animate = isLaidOut)
+        applyFieldRestriction()
     }
 
     /**
-     * Ordre de droite à gauche : Vocal (toujours visible, hors du groupe des actions IA), menu « robot » (quand il existe),
-     * Transcription IA, Corriger, Générer. L'écart [R.dimen.taipo_bar_gap] sépare chaque bouton visible du suivant ; le
-     * dernier bouton visible (Vocal) n'a pas de marge de fin et se cale sur le bord droit des touches (inset de touche)
-     * au lieu de la marge de la barre.
-     */
-    private fun anchorTrailingButtonsRight() {
-        val gap = dimen(R.dimen.taipo_bar_gap).toInt()
-        val row = listOf(generateButton, correctButton, aiTranscriptionButton, actionsMenuButton, voiceButton)
-        val lastVisible = row.lastOrNull { it.visibility == View.VISIBLE }
-        row.forEach { button ->
-            val params = button.layoutParams as LayoutParams
-            val endMargin = if (button === lastVisible) 0 else gap
-            if (params.marginEnd != endMargin) {
-                params.marginEnd = endMargin
-                button.layoutParams = params
-            }
-        }
-        val voiceIsLast = lastVisible === voiceButton
-        if (voiceAnchoredRight != voiceIsLast) {
-            voiceAnchoredRight = voiceIsLast
-            requestLayout() // onMeasure recalcule la marge droite de la barre
-        }
-    }
-
-    /**
-     * Change la visibilité de [view] ; un bouton qui apparaît sur une barre déjà affichée s'anime ([BarReveal]) depuis la
-     * droite, ou depuis la gauche quand [fromEnd] est faux ; un bouton qui disparaît interrompt son animation.
+     * Change la visibilité de [view], enfant de [row] ; un bouton qui apparaît sur une barre déjà affichée s'anime
+     * ([BarReveal]) : en ressort depuis le robot si [spring], sinon rideau ([full]) ou fondu. Aucune animation tant que sa
+     * rangée n'est pas affichée ou qu'une transition de rangée est en cours (elle porte déjà le mouvement). Un bouton qui
+     * disparaît interrompt son animation.
      */
     private fun setRevealed(
         view: View,
         visible: Boolean,
         order: Int,
         full: Boolean,
-        fromEnd: Boolean = true,
+        row: View,
         spring: Boolean = false,
-        offsetPx: Float = BarReveal.SPRING_SLIDE_DP * resources.displayMetrics.density,
+        restingAlpha: (() -> Float)? = null,
     ) {
         val wasVisible = view.visibility == View.VISIBLE
         view.visibility = if (visible) View.VISIBLE else View.GONE
-        if (visible && !wasVisible && isLaidOut) {
+        val animate = isLaidOut && row.visibility == View.VISIBLE && row.isLaidOut && modeAnimator == null
+        if (visible && !wasVisible && animate) {
             if (spring) {
-                BarReveal.enterSpring(view, fromEnd = fromEnd, order = order, offsetPx = offsetPx)
+                val offset = BarReveal.SPRING_SLIDE_DP * resources.displayMetrics.density
+                BarReveal.enterSpring(view, fromEnd = false, order = order, offsetPx = offset, restingAlpha = restingAlpha)
             } else {
-                BarReveal.enter(view, fromEnd = fromEnd, order = order, full = full)
+                BarReveal.enter(view, fromEnd = false, order = order, full = full, restingAlpha = restingAlpha)
             }
         } else if (!visible && wasVisible) {
             BarReveal.cancel(view)
         }
     }
 
-    /** [reveal] : appui sur un menu « ··· » (dévoilement complet) ; sinon (frappe, copie…) simple fondu. */
-    private fun renderZone(reveal: Boolean = false) {
-        val wanted = BarVisibility.labeledActions(zoneState, clipboardPanelOpen)
-        if (labelsWanted != wanted) {
-            labelsWanted = wanted
-            requestLayout() // onMeasure décide si la rangée tient en pilules
+    /** Passe à la rangée de [mode], avec la transition en ressort (sans animation tant que la barre n'est pas affichée). */
+    private fun showMode(mode: BarMode) {
+        if (mode == shownMode) return
+        modeAnimator?.cancel()
+        modeAnimator = null
+        settleRows(shownMode)
+        shownMode = mode
+        val barHeightPx = height.toFloat()
+        if (!isLaidOut || barHeightPx <= 0f || !ValueAnimator.areAnimatorsEnabled()) {
+            settleRows(mode)
+            return
         }
-        renderActionButtons(reveal)
-        val visible = BarVisibility.zoneContent(zoneState, clipboardPanelOpen)
-        zoneView.render(visible, clipboardPanelOpen, reveal = reveal && isLaidOut)
-        renderMenuButton(visible.menuButton, reveal)
-        setRevealed(settingsButton, visible.settingsButton, order = 0, full = reveal, fromEnd = false)
-        if (menuBackgroundExpanded != zoneState.menuExpanded) {
-            menuBackgroundExpanded = zoneState.menuExpanded
-            menuButton.background = menuBackgrounds.get(zoneState.menuExpanded)
-            menuChevron?.rotateTo(if (zoneState.menuExpanded) 180f else 0f, animate = isLaidOut)
+        val toTyping = mode == BarMode.TYPING
+        val enterRow = if (toTyping) typingRow else normalRow
+        val leaveRow = if (toTyping) normalRow else typingRow
+        enterRow.forgetPositions()
+        enterRow.visibility = View.VISIBLE
+        enterRow.alpha = 0f
+        // La rangée de saisie arrive du bas, la rangée normale du haut ; la rangée normale sort par le haut, l'autre par le bas.
+        val enterFromY = if (toTyping) barHeightPx else -barHeightPx
+        val leaveToY = if (toTyping) -barHeightPx else barHeightPx
+        val robotTravel = (typingRow.paddingLeft + iconButtonWidth).toFloat()
+        val total = BarReveal.SPRING_DURATION_MS + ROW_ENTER_DELAY_MS
+        val animator = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = total
+            interpolator = LinearInterpolator()
+            addUpdateListener { update ->
+                val elapsed = (update.animatedValue as Float) * total
+                val leave = (elapsed / BarReveal.SPRING_DURATION_MS).coerceIn(0f, 1f)
+                val enter = ((elapsed - ROW_ENTER_DELAY_MS) / BarReveal.SPRING_DURATION_MS).coerceIn(0f, 1f)
+                enterRow.translationY = BarReveal.glideOffset(enterFromY, enter)
+                enterRow.alpha = (enter / ROW_FADE_IN).coerceIn(0f, 1f)
+                leaveRow.translationY = leaveToY * BarReveal.springProgress(leave)
+                leaveRow.alpha = 1f - (leave / ROW_FADE_OUT).coerceIn(0f, 1f)
+                // Le robot entre par la gauche de l'écran (ou y retourne) pendant que sa rangée monte (ou descend).
+                robotButton.translationX = if (toTyping) {
+                    BarReveal.glideOffset(-robotTravel, enter)
+                } else {
+                    -robotTravel * BarReveal.springProgress(leave)
+                }
+            }
+            addListener(
+                object : AnimatorListenerAdapter() {
+                    private var cancelled = false
+
+                    override fun onAnimationCancel(animation: Animator) {
+                        cancelled = true
+                    }
+
+                    override fun onAnimationEnd(animation: Animator) {
+                        if (cancelled) return
+                        modeAnimator = null
+                        settleRows(shownMode)
+                    }
+                },
+            )
         }
-        if (actionsMenuBackgroundExpanded != zoneState.actionsExpanded) {
-            actionsMenuBackgroundExpanded = zoneState.actionsExpanded
-            actionsMenuButton.background = actionsMenuBackgrounds.get(zoneState.actionsExpanded)
-            robotIcon?.setActive(zoneState.actionsExpanded, animate = isLaidOut)
-        }
+        modeAnimator = animator
+        animator.start()
     }
 
-    /**
-     * Menu « ··· » de gauche : quand le menu robot s'ouvre, il sort par la gauche de l'écran (avec un léger recul de
-     * ressort) ; quand le menu robot se referme, il revient en ressort depuis la gauche. Dans les autres cas (frappe,
-     * panneau Smart Clipboard, champ vidé), il apparaît ou disparaît comme avant.
-     */
-    private fun renderMenuButton(wanted: Boolean, reveal: Boolean) {
-        val exitDistance = (paddingLeft + dimen(R.dimen.taipo_bar_icon_button_width) + dimen(R.dimen.taipo_bar_gap))
-        when {
-            wanted -> {
-                // Une sortie en cours est terminée aussitôt (le bouton est alors masqué) : il ré-entre en ressort.
-                if (BarReveal.isExiting(menuButton)) BarReveal.cancel(menuButton)
-                setRevealed(menuButton, true, order = 0, full = reveal, fromEnd = false, spring = reveal, offsetPx = exitDistance)
-            }
-            menuButton.visibility == View.VISIBLE && reveal && isLaidOut && zoneState.actionsExpanded ->
-                if (!BarReveal.isExiting(menuButton)) BarReveal.exitOffscreen(menuButton, exitDistance)
-            !BarReveal.isExiting(menuButton) -> setRevealed(menuButton, false, order = 0, full = reveal, fromEnd = false)
+    /** Rangée de [mode] seule affichée, à sa place : plus aucun décalage, opacité pleine. */
+    private fun settleRows(mode: BarMode) {
+        val typing = mode == BarMode.TYPING
+        normalRow.visibility = if (typing) View.GONE else View.VISIBLE
+        typingRow.visibility = if (typing) View.VISIBLE else View.GONE
+        for (row in listOf(normalRow, typingRow)) {
+            row.translationY = 0f
+            row.alpha = 1f
+            if (row.visibility != View.VISIBLE) row.forgetPositions()
         }
+        robotButton.translationX = 0f
     }
 
     private fun renderCorrect() {
@@ -595,8 +614,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         correctIcon.setWorking(appearance?.loading == true, animate = isLaidOut)
         if (state == CorrectionBarState.IDLE && previousCorrectState == CorrectionBarState.CORRECTING) correctIcon.playDone()
         previousCorrectState = state
-        renderActionButtons()
-        applyFieldRestriction()
+        render()
     }
 
     /** Niveau sonore de l'écoute (0 à 1) : fait monter et descendre la jauge de la capsule du micro. */
@@ -608,8 +626,7 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         voiceButton.background = voiceBackgrounds.getOrPut(appearance.background) { style.roundBackground(appearance.background) }
         voiceButton.alpha = appearance.alpha
         micIcon.setMode(MicIconMode.of(voiceState), animate = isLaidOut)
-        renderActionButtons()
-        applyFieldRestriction()
+        render()
     }
 
     /** Niveau sonore de l'enregistrement (0 à 1) : fait monter et descendre les barres de l'icône Transcription IA. */
@@ -628,12 +645,13 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
         aiTranscriptionButton.face = appearance.face
         aiTranscriptionButton.alpha = appearance.alpha
         aiTranscriptionIcon.setMode(WaveIconMode.of(aiTranscriptionState), animate = isLaidOut)
-        applyFieldRestriction()
+        // Pendant le traitement, le bouton reste visible (en petit) même menu fermé : voir BarVisibility.actionButtons.
+        render()
     }
 
     /**
      * Story 10.1 : dans un champ sensible, les boutons d'action IA sont grisés par-dessus leur apparence normale (appelé en
-     * dernier par chaque rendu, qui réécrit l'opacité). Hors champ sensible, « Générer » reprend son opacité pleine.
+     * dernier par chaque rendu, qui réécrit l'opacité). Hors champ sensible, « Chat » reprend son opacité pleine.
      */
     private fun applyFieldRestriction() {
         if (aiActionsAllowed) {
@@ -641,5 +659,14 @@ class CorrectionBarView(context: Context) : LinearLayout(context) {
             return
         }
         listOf(correctButton, voiceButton, generateButton, aiTranscriptionButton).forEach { it.alpha = RESTRICTED_ALPHA }
+    }
+
+    private companion object {
+        /** La rangée de saisie (ou la rangée normale) arrive juste après le départ de l'autre. */
+        const val ROW_ENTER_DELAY_MS = 60L
+
+        /** Part de la durée sur laquelle la rangée qui arrive se fond (entrée) ou disparaît (sortie). */
+        const val ROW_FADE_IN = 0.3f
+        const val ROW_FADE_OUT = 0.5f
     }
 }

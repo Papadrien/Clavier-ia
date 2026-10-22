@@ -142,8 +142,7 @@
 
     <string name="clipboard_button">Clipboard</string>
     <string name="settings_button_description">Open the app settings</string>
-    <string name="clipboard_menu_description">Menu: show the clipboard</string>
-    <string name="actions_menu_description">Menu: generation, voice input and correction</string>
+    <string name="actions_menu_description">Menu: settings, clipboard, undo, chat, correction and transcription</string>
     <string name="action_pill_chat">Chat</string>
     <string name="action_pill_transcription">Transcription</string>
     <string name="action_pill_correction">Correction</string>
@@ -173,7 +172,6 @@
     <string name="inference_error_text_too_long">The text is too long for this model. Shorten it or select a shorter part.</string>
     <string name="inference_error_unexpected">An unexpected error occurred. Try again.</string>
     <string name="clipboard_empty">Nothing to paste yet.</string>
-    <string name="clipboard_panel_close_description">Close the clipboard</string>
     <string name="clipboard_paste_description">Paste: %1$s</string>
     <string name="clipboard_paste_description_masked">Paste the copied text (preview hidden)</string>
     <string name="clipboard_pinned_description">Pinned</string>

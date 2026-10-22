@@ -1,113 +1,73 @@
 package fr.junade.taipo
 
+/** Les deux états de la barre du haut : « normale » (champ vide) et « saisie » (texte présent ou auto-remplissage proposé). */
+enum class BarMode { NORMAL, TYPING }
+
 /**
- * Stories 2.1 et 2.2 : que montre la zone de gauche de la barre du haut : les suggestions de mots
- * (pendant la saisie), le bouton Smart Clipboard (barre « avant saisie ») ou la puce de collage
- * (une copie récente est proposée) ?
+ * État de la barre du haut, en deux états.
  *
- * - Champ vide (« avant saisie ») : le bouton Smart Clipboard est visible dans la barre.
- * - Dès qu'il y a du texte : le bouton est caché et la zone montre les suggestions de mots. Il reste
- *   accessible par le bouton « menu » (à gauche de la barre, visible seulement quand il y a du
- *   texte), qui bascule la zone vers l'affichage « avant saisie ».
- * - Story 2.2 : tant qu'un collage est proposé et que le champ est vide, la puce prend la place du
- *   bouton Smart Clipboard. Le bouton « menu » est alors visible : il donne accès au bouton Smart
- *   Clipboard à la place de la puce, et la puce revient en le retouchant. Dès qu'il y a du texte, la
- *   bande de mots reprend la place ; la puce reste proposée (10 minutes après la copie) et revient
- *   chaque fois que le champ est de nouveau vide.
- * - Retour automatique aux suggestions de mots dès le début de la frappe (story 2.4, déjà gérée ici
- *   par [onTyping]) ; le menu ne reste jamais ouvert quand le bouton « menu » n'est pas visible.
- *
- * - Deux menus « ··· » : celui de gauche (ci-dessus) donne accès au bouton Smart Clipboard ; celui de
- *   droite (menu « robot ») n'existe que pendant les suggestions de mots et range derrière lui les boutons
- *   Transcription IA et Générer ([actionButtonsVisible], [toggleActionsMenu]) ; Corriger, lui, se cache tant qu'une
- *   suggestion est affichée, et Vocal, à droite du menu, est toujours visible (voir [BarVisibility.actionButtons]). Un seul est ouvert à la fois ; la frappe
- *   referme les deux.
- *
- * - Suggestions d'auto-remplissage en ligne (gestionnaire de mots de passe, identifiants) : tant
- *   que le service d'auto-remplissage en propose, elles remplacent la bande de mots, le bouton
- *   Smart Clipboard et la puce de collage ; seul le menu de gauche ouvert (bouton Smart Clipboard
- *   demandé explicitement) garde la priorité. Vocal et Corriger restent visibles à côté.
+ * - [BarMode.NORMAL] (champ vide) : Paramètres, Smart Clipboard (avec la puce de collage à côté quand une copie récente est
+ *   proposée), Annuler, et Vocal fixé à droite.
+ * - [BarMode.TYPING] (du texte est présent, ou le service d'auto-remplissage propose des suggestions en ligne) : le robot est
+ *   ancré à gauche, suivi de la bande de mots (ou des suggestions d'auto-remplissage), puis Corriger (quand aucune suggestion
+ *   n'est affichée) et Vocal à droite.
+ * - Menu de gauche (le robot) ouvert, pendant la saisie seulement : la bande disparaît, la rangée devient Robot (actif),
+ *   Paramètres, Smart Clipboard, Annuler, Chat, Corriger, Transcription et Vocal, à espacement égal.
+ * - Panneau Smart Clipboard ouvert : la barre du haut ne change pas. Son état d'affichage est figé à l'ouverture et repris
+ *   tel quel jusqu'à la fermeture, même si le texte du champ change entre-temps.
+ * - Le début de la frappe referme le menu ([onTyping]) ; un champ vidé (sans auto-remplissage) ramène à la barre normale.
  *
  * Logique pure (sans Android), testée en JVM.
  */
 class SuggestionZoneState {
 
-    enum class Zone { WORDS, CLIPBOARD, PASTE, ACTIONS, INLINE }
+    private data class Shown(val mode: BarMode, val menuOpen: Boolean)
 
     var fieldHasText: Boolean = false
-        private set
-
-    var menuExpanded: Boolean = false
         private set
 
     /** Story 2.2 : un collage est proposé (copie récente, non collée, non écartée). */
     var pasteAvailable: Boolean = false
         private set
 
-    /**
-     * Menu de droite : les boutons Vocal et Corriger, rangés derrière lui tant que la bande de mots
-     * est affichée, sont ouverts (la bande de mots s'efface alors, la zone reste vide).
-     */
-    var actionsExpanded: Boolean = false
-        private set
-
     /** Le service d'auto-remplissage propose des suggestions en ligne (identifiants, mots de passe). */
     var inlineAvailable: Boolean = false
         private set
 
-    val zone: Zone
-        get() = when {
-            menuExpanded -> Zone.CLIPBOARD
-            inlineAvailable -> Zone.INLINE
-            !fieldHasText && pasteAvailable -> Zone.PASTE
-            !fieldHasText -> Zone.CLIPBOARD
-            actionsExpanded -> Zone.ACTIONS
-            else -> Zone.WORDS
-        }
+    /** Le panneau Smart Clipboard est ouvert : l'affichage de la barre est figé. */
+    var clipboardPanelOpen: Boolean = false
+        private set
 
-    /**
-     * Le bouton « menu » existe pendant la saisie (le champ contient du texte) et tant qu'un collage
-     * est proposé (la puce a pris la place du bouton Smart Clipboard).
-     */
+    private var liveMenuOpen: Boolean = false
+    private var frozen: Shown? = null
+
+    private val liveMode: BarMode
+        get() = if (fieldHasText || inlineAvailable) BarMode.TYPING else BarMode.NORMAL
+
+    /** État de barre affiché (celui de l'ouverture du panneau Smart Clipboard tant qu'il est ouvert). */
+    val mode: BarMode
+        get() = frozen?.mode ?: liveMode
+
+    /** Menu de gauche (robot) ouvert ; jamais vrai dans la barre normale. */
+    val menuOpen: Boolean
+        get() = mode == BarMode.TYPING && (frozen?.menuOpen ?: liveMenuOpen)
+
+    /** Le robot existe pendant la saisie seulement. */
     val menuButtonVisible: Boolean
-        get() = fieldHasText || pasteAvailable
+        get() = mode == BarMode.TYPING
 
-    /**
-     * Le bouton « réglages » (roue crantée, accès à l'accueil de l'application) est affiché hors saisie :
-     * champ vide, bouton Smart Clipboard ou puce de collage. Pendant la saisie il est caché, sauf quand le menu
-     * de gauche est ouvert : la zone montre alors le bouton Smart Clipboard, comme hors saisie, et la roue
-     * crantée réapparaît avec lui.
-     */
-    val settingsButtonVisible: Boolean
-        get() = !fieldHasText || menuExpanded
-
-    /**
-     * Les boutons Vocal et Corriger sont rangés derrière le menu de droite tant que la bande de mots
-     * est affichée. Ils restent visibles dans les autres zones (bouton Smart Clipboard, puce de
-     * collage, menu de droite ouvert) et quand [busy] : écoute, transcription ou correction en cours,
-     * où le bouton sert d'arrêt ou d'indicateur d'avancement.
-     */
-    fun actionButtonsVisible(busy: Boolean): Boolean = busy || zone != Zone.WORDS
-
-    /**
-     * Le menu de droite n'existe que pendant les suggestions de mots (fermé ou ouvert) : avec le
-     * bouton Smart Clipboard ou la puce, Vocal et Corriger sont déjà visibles, et pendant une
-     * écoute ou une correction ils sont affichés d'office.
-     */
-    fun actionsMenuButtonVisible(busy: Boolean): Boolean =
-        !busy && (zone == Zone.WORDS || zone == Zone.ACTIONS)
-
-    /** Touche sur le menu de droite : sans effet quand il n'est pas visible. */
-    fun toggleActionsMenu() {
-        if (zone == Zone.WORDS) {
-            actionsExpanded = true
-        } else if (zone == Zone.ACTIONS) {
-            actionsExpanded = false
-        }
+    /** Touche sur le robot : sans effet dans la barre normale. */
+    fun toggleMenu() {
+        if (liveMode != BarMode.TYPING) return
+        liveMenuOpen = !liveMenuOpen
     }
 
+    /** Début (ou poursuite) de la frappe : le menu se referme, retour aux suggestions de mots. */
+    fun onTyping() {
+        liveMenuOpen = false
+    }
 
-    /** Le champ contient (ou non) du texte : un champ vidé referme le menu, sauf si la puce le garde visible. */
+    /** Le champ contient (ou non) du texte. */
     fun onFieldTextChanged(hasText: Boolean) {
         fieldHasText = hasText
         closeMenuIfUnavailable()
@@ -116,30 +76,22 @@ class SuggestionZoneState {
     /** Des suggestions d'auto-remplissage en ligne sont (ou ne sont plus) disponibles. */
     fun setInlineAvailable(available: Boolean) {
         inlineAvailable = available
+        closeMenuIfUnavailable()
     }
 
     /** Story 2.2 : un collage est (ou n'est plus) proposé. */
     fun setPasteAvailable(available: Boolean) {
         pasteAvailable = available
-        closeMenuIfUnavailable()
     }
 
-    /** Touche sur le bouton « menu » : sans effet quand il n'est pas visible. */
-    fun toggleMenu() {
-        if (!menuButtonVisible) return
-        menuExpanded = !menuExpanded
-        if (menuExpanded) actionsExpanded = false // un seul menu ouvert à la fois
-    }
-
-    /** Début (ou poursuite) de la frappe : retour aux suggestions de mots. */
-    fun onTyping() {
-        menuExpanded = false
-        actionsExpanded = false
+    /** Le panneau Smart Clipboard s'ouvre (l'affichage actuel est figé) ou se ferme (l'affichage suit de nouveau l'état réel). */
+    fun setClipboardPanelOpen(open: Boolean) {
+        if (clipboardPanelOpen == open) return
+        clipboardPanelOpen = open
+        frozen = if (open) Shown(liveMode, liveMenuOpen && liveMode == BarMode.TYPING) else null
     }
 
     private fun closeMenuIfUnavailable() {
-        if (!menuButtonVisible) menuExpanded = false
-        // Le menu de droite n'existe que pendant les suggestions de mots (texte présent).
-        if (!fieldHasText) actionsExpanded = false
+        if (liveMode != BarMode.TYPING) liveMenuOpen = false
     }
 }

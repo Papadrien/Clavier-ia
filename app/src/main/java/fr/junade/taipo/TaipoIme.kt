@@ -732,7 +732,7 @@ class TaipoIme : InputMethodService() {
 
     /**
      * Story 2.4 : point d'entrée unique pour tout texte saisi ou supprimé par l'utilisateur (touche,
-     * emoji, suggestion, collage, suppression, dictée). Il referme le menu « ··· » : retour aux
+     * emoji, suggestion, collage, suppression, dictée). Il referme le menu du robot : retour aux
      * suggestions de mots dès la frappe (la puce de collage n'est pas écartée : elle revient quand le champ est vide). Les
      * touches sans texte (Maj, changement de disposition) et les simples déplacements du curseur ne
      * l'appellent pas. L'appelant met la barre à jour ensuite (updateCorrectionBarVisibility).
