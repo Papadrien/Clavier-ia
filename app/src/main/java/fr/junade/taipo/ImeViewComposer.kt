@@ -184,7 +184,7 @@ class ImeViewComposer(
             host.onVoiceClick()
         }
         correctionBar.setOnAiTranscriptionClickListener {
-            if (blockedBySensitiveField()) return@setOnClickListener
+            if (blockedBySensitiveField()) return@setOnAiTranscriptionClickListener
             host.playAiButtonSound()
             host.onAiTranscriptionClick()
         }
