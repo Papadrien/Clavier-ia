@@ -16,13 +16,6 @@
             android:text="@string/voice_model_title"
             android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
 
-        <TextView
-            style="@style/TaipoText.Body"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/voice_model_description"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_xl" />
-
         <LinearLayout
             android:id="@+id/voice_model_file_list"
             android:layout_width="match_parent"

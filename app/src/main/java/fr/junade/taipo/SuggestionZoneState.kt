@@ -7,7 +7,7 @@ enum class BarMode { NORMAL, TYPING }
  * État de la barre du haut, en deux états.
  *
  * - [BarMode.NORMAL] (champ vide) : Paramètres, Smart Clipboard (avec la puce de collage à côté quand une copie récente est
- *   proposée), Annuler, et Vocal fixé à droite.
+ *   proposée), Annuler, les actions IA (Chat, Corriger grisé, Transcription IA) et Vocal fixé à droite.
  * - [BarMode.TYPING] (du texte est présent, ou le service d'auto-remplissage propose des suggestions en ligne) : le robot est
  *   ancré à gauche, suivi de la bande de mots (ou des suggestions d'auto-remplissage), puis Corriger (quand aucune suggestion
  *   n'est affichée) et Vocal à droite.

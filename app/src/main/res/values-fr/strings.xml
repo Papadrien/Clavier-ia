@@ -26,7 +26,6 @@
 
     <string name="button_system_prompts">Prompts système</string>
     <string name="system_prompts_title">Prompts système</string>
-    <string name="system_prompts_description">Consignes envoyées au modèle IA avant chaque demande. Chaque champ affiche le prompt actuellement utilisé : modifiez-le puis enregistrez, ou revenez au prompt par défaut. Une modification s\'applique à la prochaine utilisation (pour le mode prompt, à la prochaine conversation).</string>
     <string name="system_prompt_correction_title">Correction</string>
     <string name="system_prompt_correction_description">Consigne envoyée au modèle pour l\'action « Corriger ».</string>
     <string name="system_prompt_generation_title">Mode prompt (chat)</string>
@@ -56,7 +55,6 @@
 
     <string name="button_voice_model_settings">Modèle vocal</string>
     <string name="voice_model_title">Modèle vocal</string>
-    <string name="voice_model_description">Debug : fournissez à la main les 4 fichiers du modèle de transcription vocale (Nemotron 3.5 ASR Streaming, export sherpa-onnx) depuis le stockage du téléphone. En version publiée, le modèle vocal se télécharge depuis l\'écran « Modèle vocal ».</string>
     <string name="voice_model_pick_file">Choisir le fichier</string>
     <string name="voice_model_current_file">Fichier actuel : %1$s</string>
     <string name="voice_model_no_file">Aucun fichier fourni.</string>
@@ -85,7 +83,6 @@
 
     <string name="button_personal_dictionary">Dictionnaire personnel</string>
     <string name="personal_dictionary_title">Dictionnaire personnel</string>
-    <string name="personal_dictionary_description">Ajoutez ici vos noms propres, pseudos ou termes spécifiques : l\'autocorrection ne les modifiera plus et pourra même corriger une faute de frappe vers eux. Aucun mot n\'est ajouté automatiquement.</string>
     <string name="personal_dictionary_hint">Nouveau mot</string>
     <string name="personal_dictionary_add">Ajouter</string>
     <string name="personal_dictionary_empty">Aucun mot personnel pour le moment.</string>
@@ -101,32 +98,26 @@
     <string name="button_keyboard_settings">Paramètres du clavier</string>
     <string name="keyboard_settings_title">Paramètres du clavier</string>
     <string name="keyboard_settings_number_row">Rangée de chiffres</string>
-    <string name="keyboard_settings_number_row_description">Affiche une rangée de chiffres (1 à 0) au-dessus des lettres. Désactivée, les chiffres restent accessibles via la touche « 123 ». S\'applique à la prochaine ouverture du clavier.</string>
     <string name="keyboard_settings_language_title">Langue du clavier</string>
     <string name="keyboard_settings_language_auto">Automatique (langue du téléphone)</string>
-    <string name="keyboard_settings_language_description">Choisit la disposition des touches, les accents de l\'appui long, le dictionnaire et l\'autocorrection. Automatique suit la langue du téléphone si le clavier la gère, sinon l\'anglais. S\'applique à la prochaine ouverture du clavier.</string>
     <string name="keyboard_settings_multilingual_switch">Clavier multilingue</string>
     <string name="keyboard_settings_multilingual_min">Sélectionnez au moins deux langues pour activer le changement de langue.</string>
-    <string name="keyboard_settings_multilingual_description">Écrivez en plusieurs langues sans ouvrir les paramètres. Choisissez vos langues, puis faites un appui long sur la touche Entrée du clavier et glissez vers le haut jusqu\'au globe pour changer de langue. Avec deux langues, le changement est immédiat ; avec plus, vous choisissez dans une liste.</string>
+    <string name="keyboard_settings_multilingual_description">Écrivez en plusieurs langues sans ouvrir les paramètres. Choisissez vos langues, puis faites un appui long sur la touche Entrée du clavier et glissez vers le haut jusqu\'au globe pour changer de langue.</string>
     <string name="keyboard_settings_haptic_title">Retour haptique</string>
     <string name="keyboard_settings_haptic_off">Désactivé</string>
     <string name="keyboard_settings_haptic_light">Léger</string>
     <string name="keyboard_settings_haptic_medium">Moyen</string>
     <string name="keyboard_settings_haptic_strong">Fort</string>
     <string name="keyboard_settings_key_sound">Son du clavier</string>
-    <string name="keyboard_settings_key_sound_description">Joue un tic sec et doux à chaque frappe (un peu plus aigu pour la barre d\'espace), quand on choisit un emoji et quand on touche un élément du Smart Clipboard. S\'applique à la prochaine ouverture du clavier.</string>
     <string name="keyboard_settings_sound_volume">Volume des sons</string>
     <string name="keyboard_settings_sound_volume_value">Volume des sons : %1$d %%</string>
-    <string name="keyboard_settings_sound_volume_description">Règle le volume des sons du clavier et de la barre supérieure. S\'applique à la prochaine ouverture du clavier.</string>
     <string name="keyboard_settings_bar_sound">Sons de la barre supérieure</string>
-    <string name="keyboard_settings_bar_sound_description">Joue un petit clic quand on appuie sur les boutons de la barre du haut (menu, Paramètres, Smart Clipboard, Annuler, IA) et au début et à la fin de la saisie vocale et de la transcription. S\'applique à la prochaine ouverture du clavier.</string>
     <string name="keyboard_settings_height_title">Hauteur du clavier</string>
     <string name="keyboard_settings_height_compact">Très compacte (80 %)</string>
     <string name="keyboard_settings_height_small">Compacte (90 %)</string>
     <string name="keyboard_settings_height_normal">Normale (100 %)</string>
     <string name="keyboard_settings_height_large">Grande (110 %)</string>
     <string name="keyboard_settings_height_extra_large">Très grande (120 %)</string>
-    <string name="keyboard_settings_height_description">Ajuste la hauteur des touches. S\'applique à la prochaine ouverture du clavier.</string>
     <string name="keyboard_settings_habits_title">Apprentissage</string>
     <string name="keyboard_settings_habits_switch">Apprendre de mes habitudes</string>
     <string name="keyboard_settings_habits_description">Le clavier compte, sur cet appareil, les corrections que vous annulez ou laissez en place, les mots que vous validez et les adresses e-mail que vous tapez, pour s\'adapter à vous et vous proposer vos adresses dès que vous en commencez une. Seuls des compteurs de mots et de corrections, et vos adresses e-mail, sont conservés, chiffrés, jamais de phrases. Rien n\'est compté dans les champs sensibles ni en navigation privée ; les adresses e-mail sont aussi retenues dans les champs d\'adresse, jamais dans les mots de passe.</string>
@@ -310,7 +301,7 @@
     <string name="home_row_model_download_subtitle">Télécharger et choisir le modèle de correction et de génération</string>
     <string name="home_status_to_download">À télécharger</string>
     <string name="model_download_title">Modèle IA</string>
-    <string name="model_download_description">Téléchargez un modèle pour activer la correction et la génération de texte. Le modèle est ensuite utilisé sur votre appareil, sans connexion. Le téléchargement se fait en Wi-Fi par défaut.</string>
+    <string name="model_download_description">Téléchargez un modèle pour activer les actions IA. Le modèle est ensuite utilisé sur votre appareil, sans connexion. Le téléchargement se fait en Wi-Fi par défaut.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
     <string name="model_download_limited_features">Certaines fonctions ne sont pas disponibles avec ce modèle (transcription IA).</string>
     <string name="model_download_badge_active">Actif</string>
@@ -389,8 +380,6 @@
     <string name="licenses_usage_kotlin">Langage de programmation et bibliothèque de coroutines utilisés pour écrire Taipo.</string>
     <string name="licenses_usage_aptabase">Statistiques d\'usage anonymes, que vous pouvez désactiver dans les réglages.</string>
     <string name="licenses_usage_opensans">Police des écrans de Taipo.</string>
-    <string name="model_download_license_gemma">Licence : conditions d\'utilisation Gemma</string>
-    <string name="model_download_license_apache">Licence : Apache 2.0</string>
     <string name="model_license_dialog_title">Licence du modèle %1$s</string>
     <string name="model_license_dialog_message">Ce modèle (%1$s) est distribué par Google sous les Gemma Terms of Use. Son usage est soumis à ces conditions et à la Prohibited Use Policy, qui interdisent certains usages. Elles sont reprises dans les conditions d\'utilisation de Taipo. En continuant, vous reconnaissez les avoir lues et vous engagez à les respecter.</string>
     <string name="model_license_dialog_accept">Accepter et télécharger</string>
@@ -403,7 +392,6 @@
     <string name="backup_title">Sauvegarde et restauration</string>
     <string name="backup_intro">Pour changer d\'appareil, exportez vos données dans un fichier, puis restaurez-le sur le nouvel appareil. Le fichier contient votre dictionnaire personnel, vos éléments épinglés du Smart Clipboard (avec leurs étiquettes) et vos réglages (clavier, modèle choisi, prompts personnalisés). Il ne contient pas les modèles IA, à télécharger de nouveau, ni l\'historique du presse-papiers, ni ce que le clavier a appris de votre saisie.</string>
     <string name="backup_export_title">Exporter mes données</string>
-    <string name="backup_export_body">Enregistre un fichier à l\'emplacement de votre choix, sur l\'appareil ou dans un espace de stockage en ligne.</string>
     <string name="backup_export_button">Exporter</string>
     <string name="backup_export_warning_title">Fichier non chiffré</string>
     <string name="backup_export_warning_message">Le fichier n\'est pas chiffré : toute personne qui l\'ouvre peut lire votre dictionnaire et vos éléments épinglés, qui peuvent contenir des informations personnelles (adresses, numéros, messages types). Rangez-le en lieu sûr et supprimez-le une fois la restauration faite.</string>
@@ -412,7 +400,6 @@
     <string name="backup_export_done_message">Le fichier contient %1$s, %2$s et vos réglages. Il n\'est pas chiffré : gardez-le en lieu sûr.</string>
     <string name="backup_export_failed">L\'export a échoué. Réessayez, ou choisissez un autre emplacement.</string>
     <string name="backup_restore_title">Restaurer depuis un fichier</string>
-    <string name="backup_restore_body">Ajoute le contenu du fichier à ce qui est déjà sur l\'appareil : rien n\'est supprimé. Les réglages du fichier remplacent les réglages actuels.</string>
     <string name="backup_restore_button">Choisir un fichier</string>
     <string name="backup_restore_confirm_title">Restaurer ce fichier ?</string>
     <string name="backup_restore_confirm_message">Le fichier contient %1$s, %2$s et des réglages. Ils seront ajoutés à cet appareil, et les réglages du fichier remplaceront les réglages actuels.</string>
@@ -501,7 +488,6 @@
 
     <!-- Story 8.15 : téléchargement du modèle vocal (écran « Modèle vocal », séparé de « Modèle IA »). -->
     <string name="model_download_voice_section_title">Modèle vocal</string>
-    <string name="model_download_voice_description">Nécessaire pour la dictée (bouton Vocal). Le modèle est téléchargé en plusieurs fichiers, puis la transcription se fait sur votre appareil, sans connexion.</string>
     <string name="model_download_voice_name">Modèle vocal</string>
     <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
     <string name="model_download_voice_status_debug_unverified">Non installé. Debug : empreintes SHA-256 non figées, elles seront relevées dans logcat (tag VoiceModelDownloadWorker).</string>
@@ -561,7 +547,6 @@
     <string name="voice_file_error_cannot_open">Impossible d\'ouvrir le fichier %1$s (permission perdue ? à re-sélectionner).</string>
     <string name="voice_file_error_cannot_finalize">Impossible de finaliser la copie du fichier %1$s.</string>
     <string name="keyboard_settings_dictionaries_title">Dictionnaires</string>
-    <string name="keyboard_settings_dictionaries_description">Le dictionnaire de chaque langue utilisée (correction et suggestions) se télécharge automatiquement, quelques Mo par langue, puis fonctionne sans connexion.</string>
     <string name="dictionary_status_downloading">Téléchargement… %1$d %%</string>
     <string name="dictionary_status_queued">En attente de connexion…</string>
     <string name="dictionary_status_installed">Installé</string>

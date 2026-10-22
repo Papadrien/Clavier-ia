@@ -183,7 +183,7 @@ class ImeViewComposer(
             if (blockedBySensitiveField()) return@setOnClickListener
             host.onVoiceClick()
         }
-        correctionBar.aiTranscriptionButton.setOnClickListener {
+        correctionBar.setOnAiTranscriptionClickListener {
             if (blockedBySensitiveField()) return@setOnClickListener
             host.playAiButtonSound()
             host.onAiTranscriptionClick()
@@ -192,6 +192,7 @@ class ImeViewComposer(
         prompt.promptBar.voiceButton.setOnTouchListener(voiceTouchListener)
         prompt.promptBar.voiceButton.setOnClickListener { host.onVoiceClick() }
         correctionBar.setOnEmojiSuggestionClickListener {
+            host.playKeySound(KeySound.KEY) // tic de clavier à chaque suggestion choisie
             host.onEmojiSuggestionClicked()
         }
         // Le même bouton ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme.
@@ -211,6 +212,7 @@ class ImeViewComposer(
             clipboard.onPasteTapped()
         }
         correctionBar.setOnWordSuggestionClickListener { suggestion ->
+            host.playKeySound(KeySound.KEY)
             host.onWordSuggestionClicked(suggestion)
         }
 

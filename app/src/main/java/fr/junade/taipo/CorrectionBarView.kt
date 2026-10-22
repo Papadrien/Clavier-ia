@@ -15,7 +15,8 @@ import fr.junade.taipo.dictionary.WordSuggestion
 /**
  * Barre au-dessus du clavier, à deux états ([BarMode], règles dans [SuggestionZoneState] et [BarVisibility]).
  *
- * - **Normale** (champ vide) : Paramètres, Smart Clipboard (puce de collage à côté), Annuler ; Vocal fixé à droite.
+ * - **Normale** (champ vide) : Paramètres, Smart Clipboard (puce de collage à côté), Annuler, Chat, Corriger (grisé : rien à
+ *   corriger) et Transcription IA, en boutons ronds ; Vocal fixé à droite.
  * - **Saisie** : le robot (menu de gauche) est ancré à gauche, la bande de mots (ou l'auto-remplissage) prend la place
  *   entre lui et les boutons de droite, Corriger (quand aucune suggestion n'est affichée) et Vocal sont ancrés à droite.
  *   Robot touché : la bande s'efface et la rangée devient Robot (actif), Paramètres, Smart Clipboard, Annuler, Chat,
@@ -78,19 +79,15 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     private var robotActive: Boolean? = null
 
     private val micIcon = MicIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
-    private val aiTranscriptionIcon = WaveIconDrawable(
-        context.dimen(R.dimen.taipo_icon_size).toInt(),
-        context.getColor(R.color.taipo_purple_light),
-    )
-    private val correctIcon = CorrectIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
     private val voiceBackgrounds = HashMap<Int, RoundKeyDrawable>()
 
-    /** Story 5.1 : bouton « Chat » (icône), qui bascule la barre en mode prompt. */
-    private val generateButton = LabeledIconButton(context, style)
-    private val correctButton = LabeledIconButton(context, style)
-
-    /** Story 14.5 : transcription IA (enregistrement envoyé à un modèle Gemma 4). */
-    internal val aiTranscriptionButton = LabeledIconButton(context, style)
+    /**
+     * Chat (story 5.1, bascule la barre en mode prompt), Corriger et Transcription IA (story 14.5, enregistrement envoyé à un
+     * modèle Gemma 4) existent en deux jeux : rangée normale (boutons ronds, icône seule) et menu ouvert de la rangée de
+     * saisie (pilules icône + texte si la rangée tient).
+     */
+    private val normalActions = AiActionButtons(context, style)
+    private val menuActions = AiActionButtons(context, style)
     val voiceButton = ImageButton(context)
 
     private var listener: OnCorrectListener? = null
@@ -169,6 +166,8 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         pasteChip.visibility = View.GONE
         normalRow.addView(pasteChip, SpaceBetweenRow.LayoutParams(LayoutParams.WRAP_CONTENT, barHeight, RowRole.SHRINK))
         normalRow.addView(normalButtons.undoButton, roundParams())
+        // Actions IA de la barre normale : Chat, Corriger, Transcription IA (avant Vocal, posé par-dessus).
+        for (view in normalActions.views) normalRow.addView(view, roundParams())
 
         // Rangée de saisie : Robot, [menu ouvert : Paramètres, Smart Clipboard, Annuler, Chat], bande, Corriger, Transcription.
         style.styleBarIconButton(robotButton, R.drawable.ic_robot)
@@ -190,41 +189,36 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         }
 
         // Story 5.1 : « Chat » (mode prompt). Icône seule (bouton rond) ou pilule selon la largeur.
-        style.styleRoundIconButton(generateButton, R.drawable.ic_rate_review)
-        generateButton.contentDescription = context.getString(R.string.generate_button_description)
-        generateButton.label = context.getString(R.string.action_pill_chat)
-        generateButton.setOnClickListener {
-            collapseMenu()
-            generateListener?.invoke()
+        for (button in listOf(normalActions.generateButton, menuActions.generateButton)) {
+            button.setOnClickListener {
+                collapseMenu()
+                generateListener?.invoke()
+            }
         }
-        generateButton.visibility = View.GONE
-        typingRow.addView(generateButton, roundParams())
+        menuActions.generateButton.visibility = View.GONE
+        typingRow.addView(menuActions.generateButton, roundParams())
 
         typingRow.addView(zoneView, SpaceBetweenRow.LayoutParams(0, barHeight, RowRole.FILL))
 
         // Icône seule, grise comme Vocal ; l'état (chargement, correction…) passe par la transparence et la description d'accessibilité.
-        style.styleRoundIconButton(correctButton, R.drawable.ic_spellcheck)
-        correctButton.setImageDrawable(correctIcon) // même tracé que ic_spellcheck ; animé pendant la correction
-        correctButton.setOnClickListener {
-            when (state) {
-                CorrectionBarState.IDLE -> {
-                    collapseMenu()
-                    listener?.onCorrectClicked()
+        for (button in listOf(normalActions.correctButton, menuActions.correctButton)) {
+            button.setOnClickListener {
+                when (state) {
+                    CorrectionBarState.IDLE -> {
+                        collapseMenu()
+                        listener?.onCorrectClicked()
+                    }
+                    // Chargement ou correction en cours : le même bouton l'annule.
+                    CorrectionBarState.LOADING -> cancelListener?.invoke()
+                    else -> Unit
                 }
-                // Chargement ou correction en cours : le même bouton l'annule.
-                CorrectionBarState.LOADING -> cancelListener?.invoke()
-                else -> Unit
             }
         }
-        typingRow.addView(correctButton, roundParams())
+        typingRow.addView(menuActions.correctButton, roundParams())
 
         // Story 14.5 : bouton « voix vers texte ». Le clic est relié par l'IME.
-        style.styleRoundIconButton(aiTranscriptionButton, R.drawable.ic_speech_to_text)
-        aiTranscriptionButton.setImageDrawable(aiTranscriptionIcon) // trois barres : onde au repos et à l'écoute, lignes pendant le traitement
-        aiTranscriptionButton.contentDescription = context.getString(R.string.ai_transcription_button_description)
-        aiTranscriptionButton.label = context.getString(R.string.action_pill_transcription)
-        aiTranscriptionButton.visibility = View.GONE
-        typingRow.addView(aiTranscriptionButton, roundParams())
+        menuActions.transcriptionButton.visibility = View.GONE
+        typingRow.addView(menuActions.transcriptionButton, roundParams())
 
         addView(normalRow, LayoutParams(LayoutParams.MATCH_PARENT, rowHeight))
         addView(typingRow, LayoutParams(LayoutParams.MATCH_PARENT, rowHeight))
@@ -276,6 +270,12 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         menuButtons.setOnSettingsClickListener(listener)
     }
 
+    /** Touche sur Transcription IA (barre normale ou menu ouvert) : relié par l'IME. */
+    fun setOnAiTranscriptionClickListener(listener: () -> Unit) {
+        normalActions.transcriptionButton.setOnClickListener { listener() }
+        menuActions.transcriptionButton.setOnClickListener { listener() }
+    }
+
     /** Touche sur « Chat » : entrer en mode prompt (story 5.1). */
     fun setOnGenerateClickListener(listener: () -> Unit) {
         generateListener = listener
@@ -320,9 +320,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             voiceButton.layoutParams = voiceParams
         }
         val showLabels = labelsWanted && labeledRowFits(available - side - sideEnd)
-        generateButton.labeled = showLabels
-        correctButton.labeled = showLabels
-        aiTranscriptionButton.labeled = showLabels
+        for (button in menuActions.views) button.labeled = showLabels
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
@@ -475,15 +473,25 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             menuButtons.undoButton, content.menuUtilityButtons, order = 2, full = reveal, row = typingRow, spring = spring,
             restingAlpha = menuButtons::undoRestingAlpha,
         )
-        setRevealed(generateButton, actions.generate, order = 3, full = reveal, row = typingRow, spring = spring)
-        setRevealed(correctButton, actions.correct, order = 4, full = reveal, row = typingRow, spring = spring)
+        setRevealed(menuActions.generateButton, actions.generate, order = 3, full = reveal, row = typingRow, spring = spring)
+        setRevealed(menuActions.correctButton, actions.correct, order = 4, full = reveal, row = typingRow, spring = spring)
         setRevealed(
-            aiTranscriptionButton, actions.aiTranscription && aiTranscriptionAvailable, order = 5, full = reveal,
+            menuActions.transcriptionButton, actions.aiTranscription && aiTranscriptionAvailable, order = 5, full = reveal,
             row = typingRow, spring = spring,
         )
 
-        // Rangée normale : la puce de collage apparaît à côté du bouton Smart Clipboard.
+        // Rangée normale : la puce de collage apparaît à côté du bouton Smart Clipboard, suivie des actions IA.
         setRevealed(pasteChip, content.pasteChip, order = 0, full = false, row = normalRow)
+        val normal = BarVisibility.normalRowActions(voiceState, state, mode)
+        setRevealed(normalActions.generateButton, normal.generate, order = 3, full = false, row = normalRow)
+        setRevealed(
+            normalActions.correctButton, normal.correct, order = 4, full = false, row = normalRow,
+            restingAlpha = ::normalCorrectRestingAlpha,
+        )
+        setRevealed(
+            normalActions.transcriptionButton, normal.aiTranscription && aiTranscriptionAvailable, order = 5, full = false,
+            row = normalRow,
+        )
 
         val menuOpen = mode == BarMode.TYPING && zoneState.menuOpen
         if (robotActive != menuOpen) {
@@ -602,17 +610,27 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     private fun renderCorrect() {
         val appearance = BarVisibility.correctAppearance(state)
-        appearance?.let {
-            correctButton.isEnabled = it.enabled
-            correctButton.alpha = it.alpha
-            correctButton.face = it.face
-            correctButton.contentDescription = context.getString(it.label)
-            correctButton.label = context.getString(R.string.action_pill_correction)
+        for (actions in listOf(menuActions, normalActions)) {
+            val button = actions.correctButton
+            appearance?.let {
+                button.isEnabled = it.enabled
+                button.alpha = it.alpha
+                button.face = it.face
+                button.contentDescription = context.getString(it.label)
+                button.label = context.getString(R.string.action_pill_correction)
+            }
+            // Chargement du modèle ou correction : un faisceau balaie l'icône (le bouton reste désactivé). Correction réussie
+            // (CORRECTING puis IDLE) : la coche se retrace avec un rebond. Annulation ou erreur : retour direct au repos.
+            actions.correctIcon.setWorking(appearance?.loading == true, animate = isLaidOut)
+            if (state == CorrectionBarState.IDLE && previousCorrectState == CorrectionBarState.CORRECTING) actions.correctIcon.playDone()
         }
-        // Chargement du modèle ou correction : un faisceau balaie l'icône (le bouton reste désactivé). Correction réussie
-        // (CORRECTING puis IDLE) : la coche se retrace avec un rebond. Annulation ou erreur : retour direct au repos.
-        correctIcon.setWorking(appearance?.loading == true, animate = isLaidOut)
-        if (state == CorrectionBarState.IDLE && previousCorrectState == CorrectionBarState.CORRECTING) correctIcon.playDone()
+        // Barre normale (champ vide) : rien à corriger, le bouton reste visible mais grisé et inactif.
+        if (appearance == null) {
+            normalActions.correctButton.isEnabled = false
+            normalActions.correctButton.alpha = RESTRICTED_ALPHA
+            normalActions.correctButton.face = R.color.surface_button
+            normalActions.correctButton.contentDescription = context.getString(R.string.correction_button_idle)
+        }
         previousCorrectState = state
         render()
     }
@@ -630,10 +648,13 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     }
 
     /** Niveau sonore de l'enregistrement (0 à 1) : fait monter et descendre les barres de l'icône Transcription IA. */
-    fun setAiTranscriptionLevel(level: Float) = aiTranscriptionIcon.setLevel(level)
+    fun setAiTranscriptionLevel(level: Float) {
+        menuActions.transcriptionIcon.setLevel(level)
+        normalActions.transcriptionIcon.setLevel(level)
+    }
 
     private fun renderAiTranscription() {
-        aiTranscriptionButton.contentDescription = context.getString(
+        val description = context.getString(
             when (aiTranscriptionState) {
                 AiTranscriptionBarState.IDLE -> R.string.ai_transcription_button_description
                 AiTranscriptionBarState.RECORDING -> R.string.ai_transcription_button_recording
@@ -642,9 +663,12 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             },
         )
         val appearance = BarVisibility.aiTranscriptionAppearance(aiTranscriptionState)
-        aiTranscriptionButton.face = appearance.face
-        aiTranscriptionButton.alpha = appearance.alpha
-        aiTranscriptionIcon.setMode(WaveIconMode.of(aiTranscriptionState), animate = isLaidOut)
+        for (actions in listOf(menuActions, normalActions)) {
+            actions.transcriptionButton.contentDescription = description
+            actions.transcriptionButton.face = appearance.face
+            actions.transcriptionButton.alpha = appearance.alpha
+            actions.transcriptionIcon.setMode(WaveIconMode.of(aiTranscriptionState), animate = isLaidOut)
+        }
         // Pendant le traitement, le bouton reste visible (en petit) même menu fermé : voir BarVisibility.actionButtons.
         render()
     }
@@ -655,11 +679,17 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
      */
     private fun applyFieldRestriction() {
         if (aiActionsAllowed) {
-            generateButton.alpha = 1f
+            menuActions.generateButton.alpha = 1f
+            normalActions.generateButton.alpha = 1f
             return
         }
-        listOf(correctButton, voiceButton, generateButton, aiTranscriptionButton).forEach { it.alpha = RESTRICTED_ALPHA }
+        val restricted = listOf(voiceButton) + menuActions.views + normalActions.views
+        restricted.forEach { it.alpha = RESTRICTED_ALPHA }
     }
+
+    /** Opacité de repos de Corriger dans la barre normale : grisé tant que le champ est vide (état HIDDEN). */
+    private fun normalCorrectRestingAlpha(): Float =
+        BarVisibility.correctAppearance(state)?.alpha ?: RESTRICTED_ALPHA
 
     private companion object {
         /** La rangée de saisie (ou la rangée normale) arrive juste après le départ de l'autre. */

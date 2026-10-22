@@ -23,13 +23,6 @@
             android:text="@string/keyboard_settings_number_row" />
 
         <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_number_row_description"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
-
-        <TextView
             style="@style/TaipoText.Section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,13 +35,6 @@
             android:id="@+id/spinner_language"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
-        <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_language_description"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
 
         <Switch
             android:id="@+id/switch_multilingual"
@@ -87,13 +73,6 @@
             android:layout_height="wrap_content"
             android:text="@string/keyboard_settings_dictionaries_title"
             android:layout_marginTop="@dimen/taipo_settings_gap_xxl" />
-
-        <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_dictionaries_description"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
 
         <!-- Une ligne par langue utilisée, remplie par DictionaryStatusSection. -->
         <LinearLayout
@@ -149,26 +128,12 @@
             android:layout_marginTop="@dimen/taipo_settings_gap_lg"
             android:text="@string/keyboard_settings_key_sound" />
 
-        <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_key_sound_description"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
-
         <Switch
             android:id="@+id/switch_bar_sound"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/taipo_settings_gap_lg"
             android:text="@string/keyboard_settings_bar_sound" />
-
-        <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_bar_sound_description"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
 
         <TextView
             android:id="@+id/text_sound_volume"
@@ -184,13 +149,6 @@
             android:layout_marginTop="@dimen/taipo_settings_gap_xs"
             android:max="100"
             android:contentDescription="@string/keyboard_settings_sound_volume" />
-
-        <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_sound_volume_description"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
 
         <TextView
             style="@style/TaipoText.Section"
@@ -237,13 +195,6 @@
                 android:text="@string/keyboard_settings_height_extra_large" />
 
         </RadioGroup>
-
-        <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_height_description"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
 
         <TextView
             style="@style/TaipoText.Section"

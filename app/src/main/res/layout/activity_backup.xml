@@ -40,13 +40,6 @@
                 android:textStyle="bold"
                 android:text="@string/backup_export_title" />
 
-            <TextView
-                style="@style/TaipoText.Info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/taipo_settings_gap_sm"
-                android:text="@string/backup_export_body" />
-
             <Button
                 style="@style/TaipoButton.Primary"
                 android:id="@+id/backup_export_button"
@@ -69,13 +62,6 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="@string/backup_restore_title" />
-
-            <TextView
-                style="@style/TaipoText.Info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/taipo_settings_gap_sm"
-                android:text="@string/backup_restore_body" />
 
             <Button
                 style="@style/TaipoButton.Secondary"

@@ -39,7 +39,7 @@ class BarVisibilityTest {
     }
 
     @Test
-    fun `barre normale montre seulement sa rangee avec Parametres Smart Clipboard Annuler et Vocal`() {
+    fun `barre normale montre sa rangee avec Parametres Smart Clipboard Annuler les actions IA et Vocal`() {
         val zone = SuggestionZoneState()
         val shown = content(zone, CorrectionBarState.HIDDEN)
         assertTrue(shown.normalRow)
@@ -52,6 +52,23 @@ class BarVisibilityTest {
         assertFalse(buttons.correct)
         assertFalse(buttons.generate)
         assertFalse(buttons.aiTranscription)
+        // Les actions IA de la barre normale sont des boutons à part (jeu propre à la rangée normale).
+        val normalActions = BarVisibility.normalRowActions(VoiceBarState.IDLE, CorrectionBarState.HIDDEN, BarMode.NORMAL)
+        assertTrue(normalActions.generate)
+        assertTrue(normalActions.correct)
+        assertTrue(normalActions.aiTranscription)
+    }
+
+    @Test
+    fun `Chat disparait de la barre normale pendant une ecoute et la rangee de saisie n a pas les actions normales`() {
+        val listening = BarVisibility.normalRowActions(VoiceBarState.RECORDING, CorrectionBarState.HIDDEN, BarMode.NORMAL)
+        assertFalse(listening.generate)
+        assertTrue(listening.correct)
+        assertTrue(listening.aiTranscription)
+        val typing = BarVisibility.normalRowActions(VoiceBarState.IDLE, CorrectionBarState.IDLE, BarMode.TYPING)
+        assertFalse(typing.generate)
+        assertFalse(typing.correct)
+        assertFalse(typing.aiTranscription)
     }
 
     @Test

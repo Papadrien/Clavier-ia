@@ -389,6 +389,8 @@ class VoiceController(
     private class InputConnectionVoiceField(private val ic: InputConnection) : VoiceField {
         override fun textBeforeCursor(length: Int): String? = ic.getTextBeforeCursor(length, 0)?.toString()
 
+        override fun textAfterCursor(length: Int): String? = ic.getTextAfterCursor(length, 0)?.toString()
+
         override fun deleteBeforeCursor(length: Int) {
             ic.deleteSurroundingText(length, 0)
         }

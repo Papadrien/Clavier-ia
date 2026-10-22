@@ -12,13 +12,6 @@
         android:text="@string/personal_dictionary_title"
         android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
 
-    <TextView
-        style="@style/TaipoText.Body"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/personal_dictionary_description"
-        android:layout_marginBottom="@dimen/taipo_settings_gap_lg" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

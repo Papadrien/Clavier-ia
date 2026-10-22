@@ -86,7 +86,7 @@ class VoiceTextSyncTest {
         sync.applyPartial(field, "bonjour tout")
         assertEquals("bonjour", field.text)
         sync.finish(field, "bonjour tout le monde")
-        assertEquals("bonjour tout le monde", field.text)
+        assertEquals("bonjour tout le monde ", field.text)
     }
 
     @Test
@@ -94,7 +94,59 @@ class VoiceTextSyncTest {
         val field = FakeField()
         sync.applyPartial(field, "bonjour tout")
         sync.finish(field, "Bonjour tout.")
-        assertEquals("Bonjour tout.", field.text)
+        assertEquals("Bonjour tout. ", field.text)
+    }
+
+    @Test
+    fun `une espace est ajoutee apres la dictee s il n y en a pas`() {
+        val field = FakeField()
+        sync.applyPartial(field, "bonjour")
+        sync.finish(field, "bonjour")
+        assertEquals("bonjour ", field.text)
+        assertEquals("bonjour ", sync.insertedText)
+    }
+
+    @Test
+    fun `pas de deuxieme espace si le texte final finit deja par un blanc`() {
+        val field = FakeField()
+        sync.finish(field, "bonjour ")
+        assertEquals("bonjour ", field.text)
+    }
+
+    @Test
+    fun `pas d espace pendant l ecoute, seulement au texte final`() {
+        val field = FakeField()
+        sync.applyPartial(field, "bonjour")
+        assertEquals("bonjour", field.text)
+    }
+
+    @Test
+    fun `pas d espace si un blanc ou une ponctuation suit deja le curseur`() {
+        class Field(val after: String) : VoiceField {
+            var text = ""
+            override fun textBeforeCursor(length: Int): String? = text.takeLast(length)
+            override fun textAfterCursor(length: Int): String? = after.take(length)
+            override fun deleteBeforeCursor(length: Int) { text = text.dropLast(length) }
+            override fun commit(text: String) { this.text += text }
+            override fun beginBatchEdit() = Unit
+            override fun endBatchEdit() = Unit
+        }
+        for (after in listOf(" suite", ",", ".", "\n")) {
+            val field = Field(after)
+            VoiceTextSync(hasSelection = { false }, onTextInserted = {}).finish(field, "bonjour")
+            assertEquals("bonjour", field.text, "suite : '$after'")
+        }
+        val before = Field("monde")
+        VoiceTextSync(hasSelection = { false }, onTextInserted = {}).finish(before, "bonjour")
+        assertEquals("bonjour ", before.text)
+    }
+
+    @Test
+    fun `l annulation n ajoute aucune espace`() {
+        val field = FakeField("avant ")
+        sync.applyPartial(field, "bonjour")
+        sync.finish(field, null)
+        assertEquals("avant ", field.text)
     }
 
     @Test

@@ -21,7 +21,7 @@ class PromptBufferVoiceFieldTest {
         sync.applyPartial(field, "bonjour à tous")
         assertEquals("bonjour à tous", buffer.text)
         sync.finish(field, "Bonjour à tous.")
-        assertEquals("Bonjour à tous.", buffer.text)
+        assertEquals("Bonjour à tous. ", buffer.text)
         assertEquals(buffer.text.length, buffer.cursor)
     }
 
@@ -31,8 +31,8 @@ class PromptBufferVoiceFieldTest {
         buffer.moveCursor(-1)
         sync.applyPartial(field, "x")
         sync.finish(field, "xy")
-        assertEquals("axyb", buffer.text)
-        assertEquals(3, buffer.cursor)
+        assertEquals("axy b", buffer.text) // un mot suit le curseur : l'espace finale le sépare de la dictée
+        assertEquals(4, buffer.cursor)
     }
 
     @Test

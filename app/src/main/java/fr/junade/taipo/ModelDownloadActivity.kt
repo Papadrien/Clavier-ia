@@ -14,7 +14,6 @@ import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.model.ActiveModelAfterDeletion
 import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.model.ModelFileResolver
-import fr.junade.taipo.model.ModelLicense
 import fr.junade.taipo.model.ModelLicenseAcceptance
 import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.ModelRecommendation
@@ -109,12 +108,6 @@ class ModelDownloadActivity : ModelScreenActivity() {
         } else {
             technicalLine + "\n" + getString(R.string.model_download_limited_features)
         }
-        views.license.setText(
-            when (model.license) {
-                ModelLicense.GEMMA_TERMS -> R.string.model_download_license_gemma
-                ModelLicense.APACHE_2 -> R.string.model_download_license_apache
-            },
-        )
 
         // Pastille : « Actif » pour le modèle choisi, « Installé » pour les autres modèles présents, sinon
         // « Recommandé » sur le modèle conseillé pour la RAM (8.2), s'il n'est pas déjà installé.

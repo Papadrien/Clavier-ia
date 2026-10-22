@@ -19,6 +19,14 @@ internal data class ActionButtonsVisibility(
     val correct: Boolean,
 )
 
+/** Actions IA de la rangée normale (champ vide) : boutons ronds, juste avant Vocal. */
+internal data class NormalRowActions(
+    val generate: Boolean,
+    /** Visible mais grisé et inactif tant que le champ est vide (rien à corriger). */
+    val correct: Boolean,
+    val aiTranscription: Boolean,
+)
+
 /** Ce que montre la barre : quelle rangée, et le contenu variable de la rangée de saisie et de la rangée normale. */
 internal data class BarContentVisibility(
     val normalRow: Boolean,
@@ -124,6 +132,19 @@ internal object BarVisibility {
             aiTranscription = typing && (menuOpen || aiTranscription == AiTranscriptionBarState.PROCESSING),
             generate = menuOpen && !busy,
             correct = typing && correction != CorrectionBarState.HIDDEN && !hiddenBySuggestion,
+        )
+    }
+
+    /**
+     * Actions IA de la barre normale : Chat (sauf [isBusy] : le moteur est partagé, pas de génération en parallèle),
+     * Corriger et Transcription IA (le bouton n'est réellement affiché que si le modèle actif a une entrée audio).
+     */
+    fun normalRowActions(voice: VoiceBarState, correction: CorrectionBarState, mode: BarMode): NormalRowActions {
+        val normal = mode == BarMode.NORMAL
+        return NormalRowActions(
+            generate = normal && !isBusy(voice, correction),
+            correct = normal,
+            aiTranscription = normal,
         )
     }
 

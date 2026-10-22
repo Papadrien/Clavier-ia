@@ -8,6 +8,12 @@ interface VoiceField {
     /** Jusqu'à [length] caractères avant le curseur, ou null si le champ ne les fournit pas. */
     fun textBeforeCursor(length: Int): String?
 
+    /**
+     * Jusqu'à [length] caractères après le curseur, ou null si le champ ne les fournit pas (la dictée ajoute alors son espace
+     * final comme en fin de texte).
+     */
+    fun textAfterCursor(length: Int): String? = null
+
     fun deleteBeforeCursor(length: Int)
 
     fun commit(text: String)
@@ -77,6 +83,9 @@ class VoiceTextSync(
      * de la partie figée, est insérée à l'endroit où se trouve maintenant le curseur. Ainsi la reprise
      * de la dictée n'efface rien d'imprévu et ne réinsère pas ce que l'utilisateur a supprimé.
      * Tant qu'une sélection existe (l'utilisateur copie ou remplace du texte), la mise à jour attend.
+     *
+     * Au texte final, une espace est ajoutée après la dictée s'il n'y en a pas déjà une (voir [needsTrailingSpace]) : on peut
+     * enchaîner les mots à la main ou relancer la dictée sans coller le texte au précédent.
      */
     private fun sync(field: VoiceField, hypothesis: String?, isFinal: Boolean) {
         if (!isFinal && hasSelection()) return
@@ -105,6 +114,7 @@ class VoiceTextSync(
                 val last = field.textBeforeCursor(1)?.lastOrNull()
                 if (last == null || last.isWhitespace()) display = display.trimStart(' ')
             }
+            if (isFinal && needsTrailingSpace(field, display)) display += " "
             if (display.isNotEmpty()) field.commit(display)
             insertedText = display
             lastHypothesis = hypothesis
@@ -112,5 +122,16 @@ class VoiceTextSync(
         } finally {
             field.endBatchEdit()
         }
+    }
+
+    /**
+     * Vrai si [display] (fin de la dictée) doit être suivi d'une espace : il ne finit pas déjà par un blanc, et ce qui suit
+     * le curseur n'est ni un blanc ni une ponctuation (« , » ou « . » déjà en place), mais un mot ou la fin du texte.
+     */
+    private fun needsTrailingSpace(field: VoiceField, display: String): Boolean {
+        val last = display.lastOrNull() ?: return false
+        if (last.isWhitespace()) return false
+        val next = field.textAfterCursor(1)?.firstOrNull() ?: return true
+        return next.isLetterOrDigit()
     }
 }

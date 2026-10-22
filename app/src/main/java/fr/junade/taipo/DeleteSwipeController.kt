@@ -44,6 +44,13 @@ class DeleteSwipeController(private val host: Host) {
         /** Un cran à chaque changement de zone : toujours faible, absent si les vibrations sont désactivées. */
         fun hapticCursorMove()
 
+        /**
+         * Joue [sound] si le réglage « Son du clavier » est activé. Pendant le glissement la touche n'est jamais saisie
+         * (donc jamais jouée par la frappe) : le contrôleur joue lui-même un cran à chaque changement de zone et la
+         * « gomme » à la suppression.
+         */
+        fun playKeySound(sound: KeySound)
+
         fun clearHighlight()
 
         /** Oublie l'autocorrection en attente (le geste la rend caduque). */
@@ -96,6 +103,7 @@ class DeleteSwipeController(private val host: Host) {
         if (length == state.length) return
         state.length = length
         host.hapticCursorMove()
+        host.playKeySound(KeySound.CURSOR_MOVE)
         ic.setSelection(state.base - length, state.end)
     }
 
@@ -120,6 +128,7 @@ class DeleteSwipeController(private val host: Host) {
             return
         }
         host.haptic()
+        host.playKeySound(KeySound.BACKSPACE)
         host.onUserTyped()
         ic.beginBatchEdit()
         try {
@@ -199,6 +208,7 @@ class DeleteSwipeController(private val host: Host) {
         if (length == state.length) return
         state.length = length
         host.hapticCursorMove()
+        host.playKeySound(KeySound.CURSOR_MOVE)
     }
 
     private fun onPromptRelease() {
@@ -207,6 +217,7 @@ class DeleteSwipeController(private val host: Host) {
         swipe.active = false
         if (swipe.length == 0) return
         host.haptic()
+        host.playKeySound(KeySound.BACKSPACE)
         host.promptDeleteBefore(swipe.length)
         host.syncAutoCapitalization()
         host.applyState()

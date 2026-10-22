@@ -28,6 +28,11 @@ class PromptBufferVoiceField(
         return buffer.textBeforeCursor.takeLast(length.coerceAtLeast(0))
     }
 
+    override fun textAfterCursor(length: Int): String? {
+        if (!isActive()) return null
+        return buffer.textAfterCursor.take(length.coerceAtLeast(0))
+    }
+
     override fun deleteBeforeCursor(length: Int) {
         if (!isActive()) return
         if (buffer.deleteBefore(length) > 0) changed()

@@ -26,7 +26,6 @@
 
     <string name="button_system_prompts">System prompts</string>
     <string name="system_prompts_title">System prompts</string>
-    <string name="system_prompts_description">Instructions sent to the AI model before each request. Each field shows the prompt currently in use: edit it and save, or go back to the default prompt. A change applies the next time it is used (for prompt mode, from the next conversation).</string>
     <string name="system_prompt_correction_title">Correction</string>
     <string name="system_prompt_correction_description">Instruction sent to the model for the “Correct” action.</string>
     <string name="system_prompt_generation_title">Prompt mode (chat)</string>
@@ -56,7 +55,6 @@
 
     <string name="button_voice_model_settings">Voice model</string>
     <string name="voice_model_title">Voice model</string>
-    <string name="voice_model_description">Debug: manually provide the 4 files of the speech transcription model (Nemotron 3.5 ASR Streaming, sherpa-onnx export) from the phone\'s storage. In the published version, the voice model is downloaded from the “Voice model” screen.</string>
     <string name="voice_model_pick_file">Choose the file</string>
     <string name="voice_model_current_file">Current file: %1$s</string>
     <string name="voice_model_no_file">No file provided.</string>
@@ -85,7 +83,6 @@
 
     <string name="button_personal_dictionary">Personal dictionary</string>
     <string name="personal_dictionary_title">Personal dictionary</string>
-    <string name="personal_dictionary_description">Add your proper names, nicknames or specific terms here: autocorrect will no longer change them and may even correct a typo into them. No word is added automatically.</string>
     <string name="personal_dictionary_hint">New word</string>
     <string name="personal_dictionary_add">Add</string>
     <string name="personal_dictionary_empty">No personal words yet.</string>
@@ -101,32 +98,26 @@
     <string name="button_keyboard_settings">Keyboard settings</string>
     <string name="keyboard_settings_title">Keyboard settings</string>
     <string name="keyboard_settings_number_row">Number row</string>
-    <string name="keyboard_settings_number_row_description">Shows a row of digits (1 to 0) above the letters. When off, digits remain available via the “123” key. Applies the next time the keyboard opens.</string>
     <string name="keyboard_settings_language_title">Keyboard language</string>
     <string name="keyboard_settings_language_auto">Automatic (phone language)</string>
-    <string name="keyboard_settings_language_description">Sets the key layout, long-press accents, dictionary and autocorrect. Automatic follows the phone\'s language if the keyboard supports it, otherwise English. Applies the next time the keyboard opens.</string>
     <string name="keyboard_settings_multilingual_switch">Multilingual keyboard</string>
     <string name="keyboard_settings_multilingual_min">Select at least two languages to turn on language switching.</string>
-    <string name="keyboard_settings_multilingual_description">Type in several languages without opening the settings. Choose your languages, then long-press the Enter key on the keyboard and slide up to the globe to switch language. With two languages it switches right away; with more, you pick one from a list.</string>
+    <string name="keyboard_settings_multilingual_description">Type in several languages without opening the settings. Choose your languages, then long-press the Enter key on the keyboard and slide up to the globe to switch language.</string>
     <string name="keyboard_settings_haptic_title">Haptic feedback</string>
     <string name="keyboard_settings_haptic_off">Off</string>
     <string name="keyboard_settings_haptic_light">Light</string>
     <string name="keyboard_settings_haptic_medium">Medium</string>
     <string name="keyboard_settings_haptic_strong">Strong</string>
     <string name="keyboard_settings_key_sound">Keyboard sound</string>
-    <string name="keyboard_settings_key_sound_description">Plays a soft, dry tick on each key press (slightly higher for the space bar), when you pick an emoji and when you tap a Smart Clipboard item. Applies the next time the keyboard opens.</string>
     <string name="keyboard_settings_sound_volume">Sound volume</string>
     <string name="keyboard_settings_sound_volume_value">Sound volume: %1$d%%</string>
-    <string name="keyboard_settings_sound_volume_description">Sets the volume of the keyboard and top bar sounds. Applies the next time the keyboard opens.</string>
     <string name="keyboard_settings_bar_sound">Top bar sounds</string>
-    <string name="keyboard_settings_bar_sound_description">Plays a small click when you tap the top bar buttons (menu, Settings, Smart Clipboard, Undo, AI) and when voice typing and transcription start and end. Applies the next time the keyboard opens.</string>
     <string name="keyboard_settings_height_title">Keyboard height</string>
     <string name="keyboard_settings_height_compact">Extra compact (80%)</string>
     <string name="keyboard_settings_height_small">Compact (90%)</string>
     <string name="keyboard_settings_height_normal">Normal (100%)</string>
     <string name="keyboard_settings_height_large">Large (110%)</string>
     <string name="keyboard_settings_height_extra_large">Extra large (120%)</string>
-    <string name="keyboard_settings_height_description">Adjusts the height of the keys. Applies the next time the keyboard opens.</string>
     <string name="keyboard_settings_habits_title">Learning</string>
     <string name="keyboard_settings_habits_switch">Learn from my habits</string>
     <string name="keyboard_settings_habits_description">On this device, the keyboard counts the corrections you undo or keep, the words you accept and the email addresses you type, so it can adapt to you and suggest your addresses as soon as you start typing one. Only word and correction counters, and your email addresses, are kept, encrypted, never sentences. Nothing is counted in sensitive fields or in private browsing; email addresses are also remembered in address fields, never in password fields.</string>
@@ -303,7 +294,7 @@
     <string name="home_row_model_download_subtitle">Download and choose the correction and generation model</string>
     <string name="home_status_to_download">To download</string>
     <string name="model_download_title">AI model</string>
-    <string name="model_download_description">Download a model to enable text correction and generation. The model then runs on your device, offline. Downloads use Wi-Fi by default.</string>
+    <string name="model_download_description">Download a model to enable AI actions. The model then runs on your device, offline. Downloads use Wi-Fi by default.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
     <string name="model_download_limited_features">Some features are not available with this model (AI transcription).</string>
     <string name="model_download_badge_active">Active</string>
@@ -381,8 +372,6 @@
     <string name="licenses_usage_kotlin">Programming language and coroutines library used to write Taipo.</string>
     <string name="licenses_usage_aptabase">Anonymous usage statistics, which you can turn off in the settings.</string>
     <string name="licenses_usage_opensans">Typeface of Taipo\'s screens.</string>
-    <string name="model_download_license_gemma">License: Gemma Terms of Use</string>
-    <string name="model_download_license_apache">License: Apache 2.0</string>
     <string name="model_license_dialog_title">%1$s model license</string>
     <string name="model_license_dialog_message">This model (%1$s) is distributed by Google under the Gemma Terms of Use. Its use is subject to these terms and to the Prohibited Use Policy, which forbid certain uses. They are repeated in Taipo\'s terms of use. By continuing, you acknowledge that you have read them and agree to comply with them.</string>
     <string name="model_license_dialog_accept">Accept and download</string>
@@ -394,7 +383,6 @@
     <string name="backup_title">Backup and restore</string>
     <string name="backup_intro">To switch devices, export your data to a file, then restore it on the new device. The file contains your personal dictionary, your pinned Smart Clipboard items (with their labels) and your settings (keyboard, chosen model, custom prompts). It does not contain the AI models, which must be downloaded again, nor the clipboard history, nor what the keyboard has learned from your typing.</string>
     <string name="backup_export_title">Export my data</string>
-    <string name="backup_export_body">Saves a file to the location of your choice, on the device or in online storage.</string>
     <string name="backup_export_button">Export</string>
     <string name="backup_export_warning_title">Unencrypted file</string>
     <string name="backup_export_warning_message">The file is not encrypted: anyone who opens it can read your dictionary and pinned items, which may contain personal information (addresses, numbers, canned messages). Keep it somewhere safe and delete it once the restore is done.</string>
@@ -403,7 +391,6 @@
     <string name="backup_export_done_message">The file contains %1$s, %2$s and your settings. It is not encrypted: keep it somewhere safe.</string>
     <string name="backup_export_failed">The export failed. Try again, or choose another location.</string>
     <string name="backup_restore_title">Restore from a file</string>
-    <string name="backup_restore_body">Adds the file\'s content to what is already on the device: nothing is deleted. The settings in the file replace the current settings.</string>
     <string name="backup_restore_button">Choose a file</string>
     <string name="backup_restore_confirm_title">Restore this file?</string>
     <string name="backup_restore_confirm_message">The file contains %1$s, %2$s and settings. They will be added to this device, and the settings in the file will replace the current settings.</string>
@@ -489,7 +476,6 @@
     <string name="home_status_update">Update</string>
 
     <string name="model_download_voice_section_title">Voice model</string>
-    <string name="model_download_voice_description">Required for dictation (Voice button). The model is downloaded as several files, then transcription runs on your device, offline.</string>
     <string name="model_download_voice_name">Voice model</string>
     <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
     <string name="model_download_voice_status_debug_unverified">Not installed. Debug: SHA-256 checksums not pinned, they will be logged in logcat (tag VoiceModelDownloadWorker).</string>
@@ -546,7 +532,6 @@
     <string name="voice_file_error_cannot_open">Couldn\'t open the %1$s file (permission lost? select it again).</string>
     <string name="voice_file_error_cannot_finalize">Couldn\'t finalize the copy of the %1$s file.</string>
     <string name="keyboard_settings_dictionaries_title">Dictionaries</string>
-    <string name="keyboard_settings_dictionaries_description">The dictionary of each language in use (correction and suggestions) downloads automatically, a few MB per language, then works offline.</string>
     <string name="dictionary_status_downloading">Downloading… %1$d %%</string>
     <string name="dictionary_status_queued">Waiting for a connection…</string>
     <string name="dictionary_status_installed">Installed</string>

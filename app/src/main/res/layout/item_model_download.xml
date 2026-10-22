@@ -55,13 +55,6 @@
         android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
 
     <TextView
-        style="@style/TaipoText.Caption"
-        android:id="@+id/model_license"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
-
-    <TextView
         style="@style/TaipoText.Info"
         android:id="@+id/model_status"
         android:layout_width="match_parent"

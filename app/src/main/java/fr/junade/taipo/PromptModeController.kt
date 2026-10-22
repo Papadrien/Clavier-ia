@@ -48,6 +48,9 @@ class PromptModeController(
 
         fun haptic()
 
+        /** Joue [sound] si le réglage « Son du clavier » est activé (tic de clavier à chaque suggestion choisie). */
+        fun playKeySound(sound: KeySound)
+
         /** Retour haptique du mode chat (un mot généré, fin de génération). */
         fun hapticAi(cue: AiHapticCue)
 
@@ -211,8 +214,14 @@ class PromptModeController(
         suggestionBar = PromptSuggestionBarView(context)
         suggestionBar.visibility = View.GONE
         suggestionPresence = SpringPresence(suggestionBar) { context.dimen(R.dimen.taipo_prompt_bar_rise_distance) }
-        suggestionBar.setOnWordClickListener { suggestion -> host.onWordSuggestionTapped(suggestion) }
-        suggestionBar.setOnEmojiClickListener { host.onEmojiSuggestionTapped() }
+        suggestionBar.setOnWordClickListener { suggestion ->
+            host.playKeySound(KeySound.KEY) // tic de clavier à chaque suggestion choisie
+            host.onWordSuggestionTapped(suggestion)
+        }
+        suggestionBar.setOnEmojiClickListener {
+            host.playKeySound(KeySound.KEY)
+            host.onEmojiSuggestionTapped()
+        }
     }
 
     /** État du bouton micro de la barre du prompt (écoute, chargement…), suivi depuis la dictée. */

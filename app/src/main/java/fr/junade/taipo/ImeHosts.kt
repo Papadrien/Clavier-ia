@@ -234,6 +234,7 @@ internal class MessagePopupHost(private val ime: ImeHostContext) : MessagePopup.
 internal class PromptHost(private val ime: ImeHostContext) : PromptModeController.Host {
     override fun showMessage(message: String) = ime.showMessage(message)
     override fun haptic() = ime.haptic()
+    override fun playKeySound(sound: KeySound) = ime.playKeySound(sound)
     override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
     override fun onPromptCursorMoved() {
         ime.hapticCursorMove()
@@ -364,6 +365,7 @@ internal class DeleteSwipeHost(private val ime: ImeHostContext) : DeleteSwipeCon
     }
     override fun haptic() = ime.haptic()
     override fun hapticCursorMove() = ime.hapticCursorMove()
+    override fun playKeySound(sound: KeySound) = ime.playKeySound(sound)
     override fun clearHighlight() = ime.clearHighlight()
     override fun clearPendingAutocorrection() = ime.clearPendingAutocorrection()
     override fun onUserTyped() = ime.onUserTyped()

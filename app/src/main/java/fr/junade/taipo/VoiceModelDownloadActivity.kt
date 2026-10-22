@@ -83,7 +83,6 @@ class VoiceModelDownloadActivity : ModelScreenActivity() {
             getString(R.string.model_download_voice_technical_name),
             Formatter.formatFileSize(this, VoiceModelFile.totalApproxBytes()),
         )
-        views.license.visibility = View.GONE
         views.badge.visibility = if (present) View.VISIBLE else View.GONE
         if (present) {
             views.badge.setText(R.string.model_download_badge_installed)
