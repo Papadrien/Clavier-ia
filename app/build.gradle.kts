@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("com.google.devtools.ksp")
@@ -39,7 +41,7 @@ android {
     // ANDROID_KEY_PROPERTIES). À défaut, variables d'environnement TAIPO_KEYSTORE_PATH / _PASSWORD / TAIPO_KEY_ALIAS /
     // TAIPO_KEY_PASSWORD. Jamais dans le dépôt (key.properties doit être dans .gitignore). Sans aucune des deux (build
     // local), l'APK release n'est simplement pas signé. Voir docs/release.md.
-    val keyProperties = java.util.Properties().apply {
+    val keyProperties = Properties().apply {
         val file = rootProject.file("key.properties")
         if (file.isFile) file.inputStream().use { load(it) }
     }

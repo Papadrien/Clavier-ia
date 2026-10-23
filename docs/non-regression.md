@@ -144,3 +144,7 @@ Le robot est désormais le bouton du menu de gauche lui-même (le chevron et `Ro
 ## Puce de collage sans icône (23/10/2026)
 
 - `PasteChipView` n'affiche plus l'icône « coller » : seul l'aperçu du texte copié reste, avec le même fond et les mêmes marges. Le bouton Smart Clipboard, à côté, garde son icône. Rendu à valider sur Pixel 9 (rien compilé ni exécuté).
+
+## Correctif build : `java.util` introuvable dans app/build.gradle.kts (23/10/2026)
+
+- Dans le bloc `android { }`, `java` désigne l'extension Gradle du même nom, pas le package : `java.util.Properties()` ne compilait pas (7 erreurs, dont « Unresolved reference 'util' »). Remplacé par `import java.util.Properties` en tête du fichier et `Properties()`. Rien d'autre ne change (signature release inchangée).
