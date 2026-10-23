@@ -410,6 +410,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     fun setOnPasteClickListener(listener: OnPasteClickListener) {
         pasteChip.setOnPasteClickListener { listener.onPasteClick() }
+        zoneView.setOnPasteClickListener { listener.onPasteClick() }
     }
 
     /**
@@ -424,6 +425,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             zoneState.setPasteAvailable(true)
         }
         pasteChip.setPasteText(preview, sensitive)
+        zoneView.setPasteSuggestion(preview, sensitive)
         render()
     }
 

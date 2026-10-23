@@ -1,6 +1,5 @@
 package fr.junade.taipo.dictionary
 
-import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.database.ContentObserver
@@ -119,7 +118,13 @@ class SystemUserDictionary private constructor(private val appContext: Context) 
                 instance ?: SystemUserDictionary(context.applicationContext).also { instance = it }
             }
 
+        /**
+         * Permission de lecture du dictionnaire utilisateur du système. Elle n'a pas de constante dans `android.Manifest`
+         * (SDK public) : on la désigne par son nom, le même que dans AndroidManifest.xml.
+         */
+        const val READ_PERMISSION = "android.permission.READ_USER_DICTIONARY"
+
         fun isAccessGranted(context: Context): Boolean =
-            context.checkSelfPermission(Manifest.permission.READ_USER_DICTIONARY) == PackageManager.PERMISSION_GRANTED
+            context.checkSelfPermission(READ_PERMISSION) == PackageManager.PERMISSION_GRANTED
     }
 }

@@ -53,6 +53,15 @@ internal class SuggestionZoneView(context: Context) : FrameLayout(context) {
         suggestionStrip.setOnEmojiClickListener(listener)
     }
 
+    /** Pilule « coller » à droite de la bande : aperçu de la copie récente ([preview], null = aucune pilule). */
+    fun setPasteSuggestion(preview: String?, sensitive: Boolean) {
+        suggestionStrip.setPaste(preview, sensitive)
+    }
+
+    fun setOnPasteClickListener(listener: () -> Unit) {
+        suggestionStrip.setOnPasteClickListener(listener)
+    }
+
     /** Story 1.17 : remplit les 3 emplacements de mots (liste vide ou null = emplacement vide). */
     fun setWordSuggestions(words: List<WordSuggestion?>) {
         suggestionStrip.setWords(words)

@@ -107,6 +107,8 @@
     <dimen name="taipo_suggestion_slot_gap">6dp</dimen>
     <dimen name="taipo_suggestion_emoji_text_size">22sp</dimen>
     <dimen name="taipo_suggestion_emoji_slot_width">48dp</dimen>
+    <!-- Pilule « coller » de la bande de suggestions : largeur maximale (au-delà, l'aperçu est tronqué). -->
+    <dimen name="taipo_suggestion_paste_slot_max_width">120dp</dimen>
     <dimen name="taipo_suggestion_chip_text_size">15sp</dimen>
     <dimen name="taipo_suggestion_chip_padding">14dp</dimen>
     <dimen name="taipo_suggestion_chip_gap">6dp</dimen>

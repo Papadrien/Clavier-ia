@@ -24,6 +24,8 @@ import fr.junade.taipo.dictionary.WordSuggestion
  * pastille ni fond ; l'emplacement emoji est un bouton secondaire, dont le fond « face + ombre » est créé une fois
  * ([BarStyle.pillBackground]), sans allocation à chaque frappe.
  *
+ * La copie récente proposée au collage (pilule à droite, après l'emoji) vient aussi dans la bande, tant qu'elle est proposée.
+ *
  * Un mot trop long pour son emplacement est tronqué au début (« …ement ») : le début est déjà tapé, la fin est ce qui
  * distingue les suggestions.
  */
@@ -42,9 +44,13 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
     private val style = BarStyle(context)
     private val wordSlots = List(WORD_SLOT_COUNT) { TextView(context) }
     private val emojiSlot = TextView(context)
+
+    /** Copie récente à coller (à droite de la bande, après l'emoji) : aperçu du texte copié, sans icône. */
+    private val pasteSlot = TextView(context)
     private val slotGap = dimen(R.dimen.taipo_suggestion_slot_gap).toInt()
     private var emojiListener: OnEmojiClickListener? = null
     private var wordListener: OnWordClickListener? = null
+    private var pasteListener: (() -> Unit)? = null
 
     /** Contenu des emplacements de mots (null = emplacement vide), au plus [WORD_SLOT_COUNT]. */
     var words: List<WordSuggestion?> = emptyList()
@@ -86,6 +92,47 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         emojiSlot.announceAsButton() // lot 20
         val emojiWidth = dimen(R.dimen.taipo_suggestion_emoji_slot_width).toInt()
         addView(emojiSlot, LayoutParams(emojiWidth, LayoutParams.MATCH_PARENT))
+
+        val chipPadding = dimen(R.dimen.taipo_suggestion_chip_padding).toInt()
+        pasteSlot.setTextColor(context.themeColor(R.color.text_primary))
+        pasteSlot.setFixedTextSizeRes(R.dimen.taipo_suggestion_chip_text_size)
+        pasteSlot.useTaipoFont()
+        pasteSlot.gravity = Gravity.CENTER
+        pasteSlot.maxLines = 1
+        pasteSlot.ellipsize = TextUtils.TruncateAt.END
+        pasteSlot.maxWidth = dimen(R.dimen.taipo_suggestion_paste_slot_max_width).toInt()
+        pasteSlot.background = style.pillBackground(R.color.surface_button)
+        pasteSlot.setPadding(chipPadding, 0, chipPadding, shadow)
+        pasteSlot.visibility = View.GONE
+        pasteSlot.setOnClickListener { pasteListener?.invoke() }
+        pasteSlot.announceAsButton() // lot 20
+        addView(pasteSlot, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT))
+    }
+
+    fun setOnPasteClickListener(listener: () -> Unit) {
+        pasteListener = listener
+    }
+
+    /**
+     * Propose le collage de la copie récente avec l'aperçu [preview] (déjà mis en forme, éventuellement masqué), ou retire
+     * la pilule si [preview] est null. [sensitive] : l'aperçu est masqué, la description d'accessibilité ne révèle donc pas le texte.
+     */
+    fun setPaste(preview: String?, sensitive: Boolean) {
+        if (preview == null) {
+            if (pasteSlot.visibility == View.GONE) return
+            pasteSlot.text = ""
+            pasteSlot.visibility = View.GONE
+            updateGaps()
+            return
+        }
+        pasteSlot.text = preview
+        pasteSlot.contentDescription = if (sensitive) {
+            context.getString(R.string.clipboard_paste_description_masked)
+        } else {
+            context.getString(R.string.clipboard_paste_description, preview)
+        }
+        pasteSlot.visibility = View.VISIBLE
+        updateGaps()
     }
 
     fun setOnEmojiClickListener(listener: OnEmojiClickListener) {
@@ -140,7 +187,7 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
      */
     private fun updateGaps() {
         var first = true
-        val visible = wordSlots + emojiSlot
+        val visible = wordSlots + emojiSlot + pasteSlot
         for (view in visible) {
             if (view.visibility != View.VISIBLE) continue
             val params = view.layoutParams as LayoutParams

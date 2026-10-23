@@ -148,3 +148,13 @@ Le robot est désormais le bouton du menu de gauche lui-même (le chevron et `Ro
 ## Correctif build : `java.util` introuvable dans app/build.gradle.kts (23/10/2026)
 
 - Dans le bloc `android { }`, `java` désigne l'extension Gradle du même nom, pas le package : `java.util.Properties()` ne compilait pas (7 erreurs, dont « Unresolved reference 'util' »). Remplacé par `import java.util.Properties` en tête du fichier et `Properties()`. Rien d'autre ne change (signature release inchangée).
+
+## Correctif build : `Manifest.permission.READ_USER_DICTIONARY` introuvable (23/10/2026)
+
+- `READ_USER_DICTIONARY` n'a pas de constante dans `android.Manifest` du SDK public (compileSdk 37) : `PersonalDictionaryActivity` et `SystemUserDictionary` ne compilaient pas. Remplacée par `SystemUserDictionary.READ_PERMISSION` (`"android.permission.READ_USER_DICTIONARY"`, le même nom que dans AndroidManifest.xml). Comportement inchangé.
+
+## Pilule « coller » aussi dans la bande de suggestions (23/10/2026)
+
+- Pendant la saisie (champ avec du texte, menu fermé), la copie récente proposée au collage s'affiche aussi dans la bande de suggestions, en pilule tout à droite (après l'emoji) : aperçu du texte copié, sans icône, largeur plafonnée à 120 dp (`taipo_suggestion_paste_slot_max_width`, aperçu tronqué au-delà). Elle suit exactement la puce de la barre normale : même délai (10 minutes après la copie), même aperçu masqué si le contenu est sensible, même touche (`onPasteTapped`). Dès que la copie est collée (depuis la pilule, la puce ou le panneau Smart Clipboard), elle est considérée comme utilisée et disparaît des deux endroits (`ClipboardSuggestionState.onPasted`).
+- Corriger n'est pas masqué par la pilule (elle ne compte pas comme une suggestion de mots). Les mots se partagent la largeur restante.
+- Code : `SuggestionStripView.setPaste`, `SuggestionZoneView.setPasteSuggestion`, appelés par `CorrectionBarView.setPasteSuggestion`. Rendu à valider sur Pixel 9 (rien compilé ni exécuté), en particulier la largeur des trois mots quand la pilule et l'emoji sont affichés ensemble.

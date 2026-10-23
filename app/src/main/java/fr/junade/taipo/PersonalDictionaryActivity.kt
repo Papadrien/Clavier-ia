@@ -14,7 +14,6 @@ import fr.junade.taipo.dictionary.PersonalDictionary
 import fr.junade.taipo.dictionary.PersonalDictionaryProvider
 import fr.junade.taipo.dictionary.PersonalDictionaryRepository
 import fr.junade.taipo.dictionary.SystemUserDictionary
-import android.Manifest
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -68,7 +67,7 @@ class PersonalDictionaryActivity : Activity() {
         systemAllow = findViewById(R.id.personal_dictionary_system_allow)
         // Permission runtime : une IME ne peut pas la demander, mais cet écran est une Activity.
         systemAllow.setOnClickListener {
-            requestPermissions(arrayOf(Manifest.permission.READ_USER_DICTIONARY), REQUEST_SYSTEM_DICTIONARY)
+            requestPermissions(arrayOf(SystemUserDictionary.READ_PERMISSION), REQUEST_SYSTEM_DICTIONARY)
         }
 
         scope.launch { repository.words.collect { render(it) } }
