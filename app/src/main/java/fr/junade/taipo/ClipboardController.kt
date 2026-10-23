@@ -91,6 +91,9 @@ class ClipboardController(
     private val reader by lazy { ClipboardReader(context.applicationContext) { onClipboardChanged() } }
     private var currentPasteSuggestion: ClipboardSuggestionState.Suggestion? = null
 
+    /** Vrai entre l'ouverture et la fermeture d'un champ de texte ([startListening] / [stopListening]). */
+    private var inputActive = false
+
     // Story 2.5 : éléments épinglés (base chiffrée séparée de celle du dictionnaire personnel).
     // Le dépôt est instancié dès la création du service : l'ouverture de la base (Keystore) est
     // asynchrone et doit être terminée avant la première ouverture du panneau.
@@ -119,6 +122,10 @@ class ClipboardController(
     fun start() {
         pinnedRepository
         historyRepository
+        // Les copies s'enregistrent dans l'historique pendant toute la vie du service, même sans champ actif : le clavier
+        // par défaut peut lire le presse-papiers en arrière-plan, et sans cela une copie remplacée par la suivante
+        // (faite hors d'un champ de texte) n'était jamais vue, donc absente du Smart Clipboard.
+        reader.start()
         ClipboardEditBridge.onLastClipEdited = { text -> onLastClipEdited(text) } // story 2.6
     }
 
@@ -145,14 +152,16 @@ class ClipboardController(
         return view
     }
 
-    /** Écoute des copies tant que le clavier est actif, et relecture à l'ouverture du champ (le processus a pu être tué). */
+    /** Un champ est actif : la puce et le panneau suivent les copies. Relecture à l'ouverture (le processus a pu être tué). */
     fun startListening() {
-        reader.start()
+        inputActive = true
+        reader.start() // déjà démarré par [start] ; sans effet sauf si l'écoute avait été coupée
         readClipboard()
     }
 
+    /** Plus de champ actif : les copies continuent d'être enregistrées dans l'historique, mais plus de puce à rafraîchir. */
     fun stopListening() {
-        reader.stop()
+        inputActive = false
         mainHandler.removeCallbacks(pasteExpiryRunnable)
     }
 
@@ -384,9 +393,10 @@ class ClipboardController(
     // Puce de collage après une copie récente (stories 2.2 et 2.3)
     // ------------------------------------------------------------------
 
-    /** Une copie vient d'être faite (écoute active tant que le clavier est affiché). */
+    /** Une copie vient d'être faite (écoute active pendant toute la vie du service, champ de texte actif ou non). */
     private fun onClipboardChanged() {
         readClipboard()
+        if (!inputActive) return // copie faite hors d'un champ : historique à jour, rien à afficher
         refreshPasteSuggestion()
         refreshPanel() // story 2.5 : une copie faite pendant que le panneau est ouvert s'y ajoute
     }

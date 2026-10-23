@@ -9,8 +9,9 @@ import fr.junade.taipo.AppLog
 /**
  * Story 2.2 : lecture du presse-papiers système pour la puce de collage.
  *
- * - [start] / [stop] : écoute des changements pendant que le clavier est actif (entre l'ouverture
- *   et la fermeture d'un champ) ; [onChanged] est appelé à chaque nouvelle copie.
+ * - [start] / [stop] : écoute des changements pendant toute la vie du service du clavier (champ de texte actif
+ *   ou non : le clavier par défaut peut lire le presse-papiers en arrière-plan, ce qui évite de perdre une copie
+ *   remplacée par la suivante) ; [onChanged] est appelé à chaque nouvelle copie.
  * - [read] : lecture ponctuelle, utilisée aussi à l'ouverture d'un champ au cas où le processus du
  *   clavier aurait été tué entre-temps (copie manquée). Elle ne renvoie que du texte, avec
  *   l'horodatage de la copie ([ClipDescription.getTimestamp], API 26) et, sur Android 13+, le
