@@ -76,19 +76,11 @@ internal object BarVisibility {
             correction == CorrectionBarState.CANCELLING
 
     /**
-     * État de barre affiché. Une correction ou une transcription IA en cours rend la barre de saisie même si le champ est
-     * vide (leur bouton sert d'arrêt ou d'indicateur et doit rester visible), sauf panneau Smart Clipboard ouvert : la
-     * barre ne change alors pas.
+     * État de barre affiché : celui de la zone de suggestions, quelle que soit l'action en cours (correction, écoute,
+     * transcription IA). Une action qui démarre depuis la barre normale ne la change donc pas : ses boutons restent à leur
+     * place et servent d'arrêt ou d'indicateur (voir [normalRowActions]).
      */
-    fun mode(
-        zoneState: SuggestionZoneState,
-        correction: CorrectionBarState,
-        aiTranscription: AiTranscriptionBarState,
-    ): BarMode {
-        if (zoneState.mode == BarMode.TYPING || zoneState.clipboardPanelOpen) return zoneState.mode
-        val working = isBusy(VoiceBarState.IDLE, correction) || aiTranscription != AiTranscriptionBarState.IDLE
-        return if (working) BarMode.TYPING else BarMode.NORMAL
-    }
+    fun mode(zoneState: SuggestionZoneState): BarMode = zoneState.mode
 
     fun content(zoneState: SuggestionZoneState, mode: BarMode): BarContentVisibility {
         val typing = mode == BarMode.TYPING
@@ -110,8 +102,9 @@ internal object BarVisibility {
      * ouvert). Chat disparaît quand [isBusy] (le moteur est partagé : pas de génération en parallèle). Corriger reste visible
      * dès que son état n'est plus au repos (chargement, correction en cours) : il sert alors d'annulation ou d'indicateur.
      *
-     * Transcription IA reste visible, en petit (icône seule), tant que [aiTranscription] vaut
-     * [AiTranscriptionBarState.PROCESSING], même menu fermé : l'utilisateur voit que la transcription tourne encore.
+     * Transcription IA reste visible, en petit (icône seule), tant que [aiTranscription] n'est pas au repos (écoute,
+     * traitement, annulation), même menu fermé : c'est le bouton qui arrête l'écoute ou annule le traitement, il ne doit
+     * jamais disparaître avant la fin.
      * [wordSuggestionsShown] : la bande de mots affiche au moins un mot ou un emoji.
      */
     fun actionButtons(
@@ -129,20 +122,21 @@ internal object BarVisibility {
             suggestionsDisplayed(zoneState, mode, wordSuggestionsShown)
         return ActionButtonsVisibility(
             voice = true,
-            aiTranscription = typing && (menuOpen || aiTranscription == AiTranscriptionBarState.PROCESSING),
+            aiTranscription = typing && (menuOpen || aiTranscription != AiTranscriptionBarState.IDLE),
             generate = menuOpen && !busy,
             correct = typing && correction != CorrectionBarState.HIDDEN && !hiddenBySuggestion,
         )
     }
 
     /**
-     * Actions IA de la barre normale : Chat (sauf [isBusy] : le moteur est partagé, pas de génération en parallèle),
-     * Corriger et Transcription IA (le bouton n'est réellement affiché que si le modèle actif a une entrée audio).
+     * Actions IA de la barre normale : Chat, Corriger et Transcription IA (le bouton n'est réellement affiché que si le
+     * modèle actif a une entrée audio). Les trois restent affichés pendant une action (la barre normale ne change pas) ;
+     * Chat est alors sans effet, le moteur étant partagé (pas de génération en parallèle : voir [isBusy]).
      */
-    fun normalRowActions(voice: VoiceBarState, correction: CorrectionBarState, mode: BarMode): NormalRowActions {
+    fun normalRowActions(mode: BarMode): NormalRowActions {
         val normal = mode == BarMode.NORMAL
         return NormalRowActions(
-            generate = normal && !isBusy(voice, correction),
+            generate = normal,
             correct = normal,
             aiTranscription = normal,
         )

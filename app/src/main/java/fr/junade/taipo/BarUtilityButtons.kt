@@ -1,12 +1,10 @@
 package fr.junade.taipo
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 
@@ -49,12 +47,12 @@ internal class UtilityButtons(private val context: Context, style: BarStyle) {
             settingsListener?.invoke()
         }
 
-        style.styleBarIconButton(clipboardButton, R.drawable.ic_paste)
+        style.styleRoundIconButton(clipboardButton, R.drawable.ic_paste)
         clipboardButton.setImageDrawable(clipboardIcon) // même tracé que ic_paste au repos
         clipboardButton.contentDescription = context.getString(R.string.clipboard_button)
         clipboardButton.setOnClickListener { clipboardListener?.invoke() }
 
-        style.styleBarIconButton(undoButton, R.drawable.ic_undo)
+        style.styleRoundIconButton(undoButton, R.drawable.ic_undo)
         undoButton.contentDescription = context.getString(R.string.undo_button)
         undoButton.setImageDrawable(undoIcon) // même tracé que ic_undo au repos
         undoButton.setOnClickListener {
@@ -106,19 +104,13 @@ internal class UtilityButtons(private val context: Context, style: BarStyle) {
     }
 }
 
-/** Story 2.2 : puce de collage : icône « coller » puis aperçu du texte copié récemment, à côté du bouton Smart Clipboard. */
+/** Story 2.2 : puce de collage : aperçu du texte copié récemment (sans icône), à côté du bouton Smart Clipboard. */
 internal class PasteChipView(context: Context, style: BarStyle) : LinearLayout(context) {
 
-    private val icon = ImageView(context)
     private val text = TextView(context)
     private var listener: (() -> Unit)? = null
 
     init {
-        icon.setImageResource(R.drawable.ic_paste)
-        icon.imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
-        icon.scaleType = ImageView.ScaleType.CENTER_INSIDE
-        icon.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-
         text.setTextColor(context.themeColor(R.color.text_primary))
         text.setFixedTextSizeRes(R.dimen.taipo_suggestion_chip_text_size)
         text.useTaipoFont()
@@ -130,10 +122,7 @@ internal class PasteChipView(context: Context, style: BarStyle) : LinearLayout(c
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
         val chipPadding = dimen(R.dimen.taipo_suggestion_chip_padding).toInt()
-        val iconSize = dimen(R.dimen.taipo_icon_size).toInt()
-        val iconGap = dimen(R.dimen.taipo_suggestion_chip_gap).toInt()
-        // Icône à gauche du texte ; le contenu se centre sur la face du fond : marge basse = épaisseur d'ombre.
-        addView(icon, LayoutParams(iconSize, iconSize).apply { marginEnd = iconGap })
+        // Le contenu se centre sur la face du fond : marge basse = épaisseur d'ombre.
         addView(text, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
         setPadding(chipPadding, 0, chipPadding, dimen(R.dimen.taipo_key_shadow_height).toInt())
         background = style.pillBackground(R.color.surface_button)

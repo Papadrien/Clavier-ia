@@ -35,8 +35,8 @@ correspondante du prompt (page « Prompts système », sans recompiler), puis re
 
 ## Bouton dans la barre du haut pendant le traitement
 
-Tant que la transcription est en cours de traitement (`AiTranscriptionBarState.PROCESSING`), le bouton Transcription IA
-reste visible **en petit** (icône seule, fond violet), entre Corriger et le menu « robot », même quand ce menu est fermé
-(suggestions de mots) : l'utilisateur voit que la transcription tourne encore et n'a pas été annulée. Il se range de
-nouveau derrière le menu à la fin du traitement. Règle : `BarVisibility.actionButtons(..., aiTranscription = …)` ;
+Tant que la transcription n'est pas au repos (écoute, traitement `PROCESSING`, annulation), le bouton Transcription IA
+reste visible **en petit** (icône seule) dans la barre de saisie, entre Corriger et le menu « robot », même quand ce menu
+est fermé (suggestions de mots) : c'est lui qui arrête l'écoute ou annule le traitement. Il se range de nouveau derrière
+le menu à la fin. Lancée depuis la barre normale (champ vide), l'écoute laisse la barre normale affichée. Règle : `BarVisibility.actionButtons(..., aiTranscription = …)` ;
 le rendu est relancé par `CorrectionBarView.aiTranscriptionState`.

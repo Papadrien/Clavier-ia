@@ -15,6 +15,9 @@ enum class BarMode { NORMAL, TYPING }
  *   Paramètres, Smart Clipboard, Annuler, Chat, Corriger, Transcription et Vocal, à espacement égal.
  * - Panneau Smart Clipboard ouvert : la barre du haut ne change pas. Son état d'affichage est figé à l'ouverture et repris
  *   tel quel jusqu'à la fermeture, même si le texte du champ change entre-temps.
+ * - Une écoute (Vocal, Transcription IA) lancée depuis la barre normale la garde affichée jusqu'à sa fin ([holdNormalWhile]) :
+ *   le texte que la dictée insère au fil de l'eau ne fait donc pas basculer la barre en saisie, et les boutons qui servent
+ *   d'arrêt restent à leur place.
  * - Le début de la frappe referme le menu ([onTyping]) ; un champ vidé (sans auto-remplissage) ramène à la barre normale.
  *
  * Logique pure (sans Android), testée en JVM.
@@ -40,6 +43,9 @@ class SuggestionZoneState {
 
     private var liveMenuOpen: Boolean = false
     private var frozen: Shown? = null
+
+    /** Une écoute lancée depuis la barre normale est en cours : la barre normale reste affichée. */
+    private var heldByAction: Boolean = false
 
     private val liveMode: BarMode
         get() = if (fieldHasText || inlineAvailable) BarMode.TYPING else BarMode.NORMAL
@@ -88,7 +94,29 @@ class SuggestionZoneState {
     fun setClipboardPanelOpen(open: Boolean) {
         if (clipboardPanelOpen == open) return
         clipboardPanelOpen = open
-        frozen = if (open) Shown(liveMode, liveMenuOpen && liveMode == BarMode.TYPING) else null
+        refreezeDisplay()
+    }
+
+    /**
+     * Une écoute ([active]) est en cours : si elle a démarré depuis la barre normale, celle-ci reste affichée jusqu'à la fin
+     * de l'écoute, même si du texte arrive dans le champ entre-temps (dictée au fil de l'eau). Démarrée pendant la saisie,
+     * l'écoute ne fige rien : la barre de saisie reste de toute façon affichée tant que le champ contient du texte.
+     * À la fin, la barre suit de nouveau l'état réel (donc passe en saisie si le texte dicté est dans le champ).
+     */
+    fun holdNormalWhile(active: Boolean) {
+        if (active == heldByAction) return
+        if (active && mode != BarMode.NORMAL) return
+        heldByAction = active
+        refreezeDisplay()
+    }
+
+    /** Recalcule l'affichage figé : par le panneau Smart Clipboard (état au moment de l'ouverture) ou par une écoute (barre normale). */
+    private fun refreezeDisplay() {
+        frozen = when {
+            clipboardPanelOpen -> frozen ?: Shown(liveMode, liveMenuOpen && liveMode == BarMode.TYPING)
+            heldByAction -> Shown(BarMode.NORMAL, menuOpen = false)
+            else -> null
+        }
     }
 
     private fun closeMenuIfUnavailable() {

@@ -39,6 +39,21 @@
     </LinearLayout>
 
     <TextView
+        style="@style/TaipoText.Body"
+        android:id="@+id/personal_dictionary_system_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_lg" />
+
+    <Button
+        style="@style/TaipoButton.Secondary"
+        android:id="@+id/personal_dictionary_system_allow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+        android:text="@string/personal_dictionary_system_allow" />
+
+    <TextView
         style="@style/TaipoText.Label"
         android:id="@+id/personal_dictionary_count"
         android:layout_width="match_parent"

@@ -34,16 +34,23 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    // Signature release : lue dans des variables d'environnement (secrets CI), jamais dans le dépôt.
-    // Sans elles (build local), l'APK release n'est simplement pas signé. Voir docs/release.md.
-    val keystorePath = System.getenv("TAIPO_KEYSTORE_PATH")
+    // Signature release : fichier `key.properties` à la racine du dépôt (clés storePassword, keyPassword, keyAlias,
+    // storeFile ; storeFile relatif au dossier app/), comme AnimalTimer (secrets GitHub ANDROID_KEYSTORE_BASE64 et
+    // ANDROID_KEY_PROPERTIES). À défaut, variables d'environnement TAIPO_KEYSTORE_PATH / _PASSWORD / TAIPO_KEY_ALIAS /
+    // TAIPO_KEY_PASSWORD. Jamais dans le dépôt (key.properties doit être dans .gitignore). Sans aucune des deux (build
+    // local), l'APK release n'est simplement pas signé. Voir docs/release.md.
+    val keyProperties = java.util.Properties().apply {
+        val file = rootProject.file("key.properties")
+        if (file.isFile) file.inputStream().use { load(it) }
+    }
+    val keystorePath = keyProperties.getProperty("storeFile") ?: System.getenv("TAIPO_KEYSTORE_PATH")
     if (keystorePath != null) {
         signingConfigs {
             create("release") {
                 storeFile = file(keystorePath)
-                storePassword = System.getenv("TAIPO_KEYSTORE_PASSWORD")
-                keyAlias = System.getenv("TAIPO_KEY_ALIAS")
-                keyPassword = System.getenv("TAIPO_KEY_PASSWORD")
+                storePassword = keyProperties.getProperty("storePassword") ?: System.getenv("TAIPO_KEYSTORE_PASSWORD")
+                keyAlias = keyProperties.getProperty("keyAlias") ?: System.getenv("TAIPO_KEY_ALIAS")
+                keyPassword = keyProperties.getProperty("keyPassword") ?: System.getenv("TAIPO_KEY_PASSWORD")
             }
         }
     }

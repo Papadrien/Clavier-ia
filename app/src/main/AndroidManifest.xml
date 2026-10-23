@@ -6,6 +6,13 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <!--
+        Dictionnaire utilisateur du système (mots ajoutés via le souligné rouge) : lecture seule, pour que
+        l'autocorrection ne les corrige pas et les propose. Permission runtime demandée depuis l'écran du
+        dictionnaire personnel ; sans elle, rien ne change. Voir SystemUserDictionary.
+    -->
+    <uses-permission android:name="android.permission.READ_USER_DICTIONARY" />
+
+    <!--
         Épopée 8 : téléchargement des modèles IA (HTTPS, un fichier de modèle) et mesure d'usage anonyme Aptabase (UE,
         désactivable dans les paramètres : docs/analytics.md). Aucun texte saisi, copié ou dicté n'est envoyé. Un téléchargement de plusieurs Go reste actif écran
         éteint : service au premier plan de type dataSync (WorkManager) avec notification (Android 13+ : permission

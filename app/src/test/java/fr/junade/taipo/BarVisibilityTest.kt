@@ -20,12 +20,12 @@ class BarVisibilityTest {
         wordsShown: Boolean = false,
         aiTranscription: AiTranscriptionBarState = AiTranscriptionBarState.IDLE,
     ): ActionButtonsVisibility {
-        val mode = BarVisibility.mode(zone, correction, aiTranscription)
+        val mode = BarVisibility.mode(zone)
         return BarVisibility.actionButtons(voice, correction, zone, mode, wordsShown, aiTranscription)
     }
 
     private fun content(zone: SuggestionZoneState, correction: CorrectionBarState = CorrectionBarState.IDLE): BarContentVisibility =
-        BarVisibility.content(zone, BarVisibility.mode(zone, correction, AiTranscriptionBarState.IDLE))
+        BarVisibility.content(zone, BarVisibility.mode(zone))
 
     @Test
     fun `occupe pendant une ecoute une transcription ou une correction, pas au repos`() {
@@ -53,19 +53,20 @@ class BarVisibilityTest {
         assertFalse(buttons.generate)
         assertFalse(buttons.aiTranscription)
         // Les actions IA de la barre normale sont des boutons à part (jeu propre à la rangée normale).
-        val normalActions = BarVisibility.normalRowActions(VoiceBarState.IDLE, CorrectionBarState.HIDDEN, BarMode.NORMAL)
+        val normalActions = BarVisibility.normalRowActions(BarMode.NORMAL)
         assertTrue(normalActions.generate)
         assertTrue(normalActions.correct)
         assertTrue(normalActions.aiTranscription)
     }
 
     @Test
-    fun `Chat disparait de la barre normale pendant une ecoute et la rangee de saisie n a pas les actions normales`() {
-        val listening = BarVisibility.normalRowActions(VoiceBarState.RECORDING, CorrectionBarState.HIDDEN, BarMode.NORMAL)
-        assertFalse(listening.generate)
-        assertTrue(listening.correct)
-        assertTrue(listening.aiTranscription)
-        val typing = BarVisibility.normalRowActions(VoiceBarState.IDLE, CorrectionBarState.IDLE, BarMode.TYPING)
+    fun `la barre normale garde ses boutons pendant une action et la rangee de saisie n a pas les actions normales`() {
+        // Aucun paramètre d'état : écoute, correction ou transcription IA en cours ne changent pas les boutons de la barre normale.
+        val normal = BarVisibility.normalRowActions(BarMode.NORMAL)
+        assertTrue(normal.generate)
+        assertTrue(normal.correct)
+        assertTrue(normal.aiTranscription)
+        val typing = BarVisibility.normalRowActions(BarMode.TYPING)
         assertFalse(typing.generate)
         assertFalse(typing.correct)
         assertFalse(typing.aiTranscription)
@@ -165,12 +166,14 @@ class BarVisibilityTest {
     }
 
     @Test
-    fun `pendant le traitement d une transcription IA le bouton reste visible menu ferme`() {
+    fun `pendant l ecoute et le traitement d une transcription IA le bouton reste visible menu ferme`() {
         val zone = typing()
         val processing = actions(zone, aiTranscription = AiTranscriptionBarState.PROCESSING)
         assertTrue(processing.aiTranscription)
         assertFalse(processing.generate) // seul Transcription IA reste hors du menu : Chat reste derrière
-        assertFalse(actions(zone, aiTranscription = AiTranscriptionBarState.RECORDING).aiTranscription)
+        // L'écoute aussi : c'est le bouton qui l'arrête.
+        assertTrue(actions(zone, aiTranscription = AiTranscriptionBarState.RECORDING).aiTranscription)
+        assertTrue(actions(zone, aiTranscription = AiTranscriptionBarState.CANCELLING).aiTranscription)
         assertFalse(actions(zone).aiTranscription)
     }
 
@@ -185,17 +188,15 @@ class BarVisibilityTest {
     }
 
     @Test
-    fun `une correction en cours rend la barre de saisie meme sur un champ vide`() {
+    fun `une action en cours ne change pas la barre sur un champ vide`() {
         val zone = SuggestionZoneState()
-        assertEquals(BarMode.TYPING, BarVisibility.mode(zone, CorrectionBarState.CORRECTING, AiTranscriptionBarState.IDLE))
-        assertEquals(BarMode.TYPING, BarVisibility.mode(zone, CorrectionBarState.IDLE, AiTranscriptionBarState.PROCESSING))
-        assertEquals(BarMode.NORMAL, BarVisibility.mode(zone, CorrectionBarState.IDLE, AiTranscriptionBarState.IDLE))
+        assertEquals(BarMode.NORMAL, BarVisibility.mode(zone))
     }
 
     @Test
-    fun `panneau Smart Clipboard ouvert la barre ne change pas meme pendant une correction`() {
+    fun `panneau Smart Clipboard ouvert la barre reste normale`() {
         val zone = SuggestionZoneState().apply { setClipboardPanelOpen(true) }
-        assertEquals(BarMode.NORMAL, BarVisibility.mode(zone, CorrectionBarState.CORRECTING, AiTranscriptionBarState.IDLE))
+        assertEquals(BarMode.NORMAL, BarVisibility.mode(zone))
     }
 
     @Test

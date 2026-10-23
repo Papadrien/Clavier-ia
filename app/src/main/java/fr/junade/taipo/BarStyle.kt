@@ -46,12 +46,12 @@ internal class BarStyle(private val context: Context) {
     )
 
     /**
-     * Lot 21 : fonds « au repos » / « actif » (violet) d'un bouton à bascule (menu, Smart Clipboard), créés à la demande puis
+     * Lot 21 : fonds ronds « au repos » / « actif » (violet) d'un bouton à bascule (menu, Smart Clipboard), créés à la demande puis
      * réutilisés : un changement d'état pose un fond existant au lieu d'en allouer un nouveau. Un jeu par bouton (un
      * Drawable n'appartient qu'à une seule vue).
      */
     fun toggleBackgrounds(): ToggleBackgrounds = ToggleBackgrounds { active ->
-        pillBackground(if (active) R.color.accent else R.color.surface_button)
+        roundBackground(if (active) R.color.accent else R.color.surface_button) // ronds, comme les autres boutons de la barre
     }
 
     /**

@@ -94,6 +94,9 @@
     <string name="personal_dictionary_invalid">Invalid word: 2 to 40 characters, letters, apostrophes or hyphens only (no spaces or digits).</string>
     <string name="personal_dictionary_error">The personal dictionary is temporarily unavailable. Try again.</string>
     <string name="personal_dictionary_full">Dictionary full (%1$d words maximum).</string>
+    <string name="personal_dictionary_system_off">The Android system dictionary (words you add by tapping a word underlined in red) is not used. Allow access so those words are not corrected and can be suggested. Taipo only reads it and never changes it.</string>
+    <string name="personal_dictionary_system_on">The Android system dictionary is used: %1$d word(s) read. Taipo only reads it and never changes it. You can withdraw access in the Android settings.</string>
+    <string name="personal_dictionary_system_allow">Allow access</string>
 
     <string name="button_keyboard_settings">Keyboard settings</string>
     <string name="keyboard_settings_title">Keyboard settings</string>

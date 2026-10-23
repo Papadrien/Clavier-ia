@@ -33,6 +33,8 @@ import fr.junade.taipo.suggestion.NextWordRepository
 import fr.junade.taipo.suggestion.SuggestionPolicy
 import fr.junade.taipo.suggestion.WordText
 import fr.junade.taipo.dictionary.PersonalDictionaryProvider
+import fr.junade.taipo.dictionary.SystemDictionaryWords
+import fr.junade.taipo.dictionary.SystemUserDictionary
 import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.model.ModelAvailability
 import fr.junade.taipo.model.ModelPreferences
@@ -40,6 +42,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.abs
 
 class TaipoIme : InputMethodService() {
@@ -80,7 +83,7 @@ class TaipoIme : InputMethodService() {
         override fun hasSelection(): Boolean = this@TaipoIme.hasSelection()
         override fun activeModel(): AiModel? =
             ModelAvailability.usable(this@TaipoIme.modelPreferences.activeModel(), this@TaipoIme.modelPreferences::isInstalled)
-        override fun personalWords(): List<String> = this@TaipoIme.personalDictionary.snapshot()
+        override fun personalWords(): List<String> = this@TaipoIme.knownPersonalWords()
         override fun protectedWordsIn(text: String): List<String> = this@TaipoIme.protectedWordsIn(text)
 
         override fun haptic() = this@TaipoIme.hapticFeedback.perform(this@TaipoIme.hapticIntensity)
@@ -220,6 +223,30 @@ class TaipoIme : InputMethodService() {
     private var keyboardHeight = KeyboardHeight.DEFAULT
 
     private val personalDictionary by lazy { PersonalDictionaryProvider.repository(applicationContext) }
+
+    // Dictionnaire utilisateur du système (lecture seule, permission READ_USER_DICTIONARY) : ses mots s'ajoutent à
+    // ceux du dictionnaire personnel pour l'autocorrection (jamais corrigés, proposés comme candidats).
+    private val systemDictionary by lazy { SystemUserDictionary.get(applicationContext) }
+    private val personalWordsCache = SystemDictionaryWords.MergeCache()
+    private var systemDictionaryGranted = false
+
+    /** Mots de Taipo + mots du dictionnaire système pour la langue active : appelé à chaque frappe, sans blocage. */
+    private fun knownPersonalWords(): List<String> =
+        personalWordsCache.merge(personalDictionary.snapshot(), systemDictionary.words(controller.state.language))
+
+    /**
+     * (Re)lit le dictionnaire système si la permission vient d'être accordée ou retirée (réglée dans l'écran du
+     * dictionnaire personnel, donc entre deux ouvertures du clavier) ; la lecture se fait hors du thread principal.
+     */
+    private fun refreshSystemDictionaryIfNeeded() {
+        val granted = SystemUserDictionary.isAccessGranted(applicationContext)
+        if (granted == systemDictionaryGranted) return
+        systemDictionaryGranted = granted
+        serviceScope.launch(Dispatchers.IO) {
+            systemDictionary.refresh()
+            withContext(Dispatchers.Main) { suggestions.invalidate() }
+        }
+    }
 
     // Correction IA : voir CorrectionAiController (lot 2.3 de la revue).
     private val correction: CorrectionAiController by lazy {
@@ -389,6 +416,7 @@ class TaipoIme : InputMethodService() {
             fieldType.autoCapitalizes && FieldType.requestsCapitalization(info?.inputType ?: 0),
         )
         suggestions.invalidate()
+        refreshSystemDictionaryIfNeeded()
         controller.setLanguage(currentKeyboardLanguage())
         trackKeyboardLanguage()
         suggestions.preloadDictionaries() // la langue a pu changer dans les paramètres : charge son dictionnaire si besoin
@@ -1233,7 +1261,7 @@ class TaipoIme : InputMethodService() {
 
     /** Mots du dictionnaire personnel présents dans [text] : signalés à l'IA pour qu'elle ne les corrige pas. */
     private fun protectedWordsIn(text: String): List<String> =
-        ProtectedWords.inText(text, personalDictionary.snapshot())
+        ProtectedWords.inText(text, knownPersonalWords())
 
     /** Appelée avant toute action de l'utilisateur (touche, Corriger, Vocal) : le surlignage disparaît. */
     private fun clearHighlightIfNeeded() = correction.clearHighlightIfNeeded()

@@ -1,5 +1,6 @@
 package fr.junade.taipo
 
+import android.graphics.Rect
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
@@ -170,7 +171,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         for (view in normalActions.views) normalRow.addView(view, roundParams())
 
         // Rangée de saisie : Robot, [menu ouvert : Paramètres, Smart Clipboard, Annuler, Chat], bande, Corriger, Transcription.
-        style.styleBarIconButton(robotButton, R.drawable.ic_robot)
+        style.styleRoundIconButton(robotButton, R.drawable.ic_robot)
         robotIcon = RobotIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt()).also {
             robotButton.setImageDrawable(it) // même tracé que ic_robot, animé quand le menu s'ouvre
         }
@@ -191,6 +192,8 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         // Story 5.1 : « Chat » (mode prompt). Icône seule (bouton rond) ou pilule selon la largeur.
         for (button in listOf(normalActions.generateButton, menuActions.generateButton)) {
             button.setOnClickListener {
+                // Le moteur est partagé : pas de génération pendant une écoute, une correction ou une transcription IA.
+                if (BarVisibility.isBusy(voiceState, state) || aiTranscriptionState != AiTranscriptionBarState.IDLE) return@setOnClickListener
                 collapseMenu()
                 generateListener?.invoke()
             }
@@ -442,7 +445,9 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
      * alors du robot en ressort, sinon (frappe, copie…) ils se fondent simplement ([BarReveal]).
      */
     private fun render(reveal: Boolean = false) {
-        val mode = BarVisibility.mode(zoneState, state, aiTranscriptionState)
+        // Une écoute lancée depuis la barre normale la garde affichée jusqu'à sa fin (la dictée insère du texte au fil de l'eau).
+        zoneState.holdNormalWhile(voiceState != VoiceBarState.IDLE || aiTranscriptionState != AiTranscriptionBarState.IDLE)
+        val mode = BarVisibility.mode(zoneState)
         val content = BarVisibility.content(zoneState, mode)
         val actions = BarVisibility.actionButtons(
             voiceState,
@@ -482,7 +487,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
         // Rangée normale : la puce de collage apparaît à côté du bouton Smart Clipboard, suivie des actions IA.
         setRevealed(pasteChip, content.pasteChip, order = 0, full = false, row = normalRow)
-        val normal = BarVisibility.normalRowActions(voiceState, state, mode)
+        val normal = BarVisibility.normalRowActions(mode)
         setRevealed(normalActions.generateButton, normal.generate, order = 3, full = false, row = normalRow)
         setRevealed(
             normalActions.correctButton, normal.correct, order = 4, full = false, row = normalRow,
@@ -557,6 +562,10 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         val leaveToY = if (toTyping) -barHeightPx else barHeightPx
         val robotTravel = (typingRow.paddingLeft + iconButtonWidth).toFloat()
         val total = BarReveal.SPRING_DURATION_MS + ROW_ENTER_DELAY_MS
+        // Pendant la transition, les rangées ne dépassent ni en haut (barre d'emojis récents) ni en bas (clavier) : elles
+        // disparaissent sous le bord de la barre. La racine du clavier ne coupe pas ses enfants (clipChildren = false, pour la
+        // bulle d'accents), et le rognage des rangées par la barre n'a lieu qu'à ce prix : on rogne donc la barre elle-même.
+        clipBounds = Rect(-SIDE_CLIP_MARGIN_PX, 0, width + SIDE_CLIP_MARGIN_PX, height)
         val animator = ValueAnimator.ofFloat(0f, 1f).apply {
             duration = total
             interpolator = LinearInterpolator()
@@ -597,6 +606,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     /** Rangée de [mode] seule affichée, à sa place : plus aucun décalage, opacité pleine. */
     private fun settleRows(mode: BarMode) {
+        clipBounds = null
         val typing = mode == BarMode.TYPING
         normalRow.visibility = if (typing) View.GONE else View.VISIBLE
         typingRow.visibility = if (typing) View.VISIBLE else View.GONE
@@ -698,5 +708,8 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         /** Part de la durée sur laquelle la rangée qui arrive se fond (entrée) ou disparaît (sortie). */
         const val ROW_FADE_IN = 0.3f
         const val ROW_FADE_OUT = 0.5f
+
+        /** Marge latérale du rognage de transition : large, car seuls le haut et le bas de la barre doivent couper. */
+        const val SIDE_CLIP_MARGIN_PX = 2000
     }
 }

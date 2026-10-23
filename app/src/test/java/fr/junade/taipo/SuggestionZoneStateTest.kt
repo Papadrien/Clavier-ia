@@ -142,4 +142,44 @@ class SuggestionZoneStateTest {
         state.setClipboardPanelOpen(false)
         assertEquals(BarMode.NORMAL, state.mode)
     }
+    @Test
+    fun `une ecoute lancee depuis la barre normale la garde meme si du texte arrive`() {
+        val state = SuggestionZoneState()
+        state.holdNormalWhile(true)
+        state.onFieldTextChanged(true) // dictée au fil de l'eau
+        assertEquals(BarMode.NORMAL, state.mode)
+        assertFalse(state.menuButtonVisible)
+        state.holdNormalWhile(false)
+        assertEquals(BarMode.TYPING, state.mode)
+    }
+
+    @Test
+    fun `une ecoute sans texte dicte laisse la barre normale a la fin`() {
+        val state = SuggestionZoneState()
+        state.holdNormalWhile(true)
+        state.holdNormalWhile(false)
+        assertEquals(BarMode.NORMAL, state.mode)
+    }
+
+    @Test
+    fun `une ecoute lancee pendant la saisie ne fige rien`() {
+        val state = typing()
+        state.holdNormalWhile(true)
+        state.onFieldTextChanged(false)
+        assertEquals(BarMode.NORMAL, state.mode)
+        state.holdNormalWhile(false)
+        assertEquals(BarMode.NORMAL, state.mode)
+    }
+
+    @Test
+    fun `fin du panneau Smart Clipboard pendant une ecoute la barre normale reste`() {
+        val state = SuggestionZoneState()
+        state.holdNormalWhile(true)
+        state.setClipboardPanelOpen(true)
+        state.onFieldTextChanged(true)
+        state.setClipboardPanelOpen(false)
+        assertEquals(BarMode.NORMAL, state.mode)
+        state.holdNormalWhile(false)
+        assertEquals(BarMode.TYPING, state.mode)
+    }
 }

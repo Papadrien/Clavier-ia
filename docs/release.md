@@ -4,24 +4,17 @@
 - **R8** (`isMinifyEnabled` + `isShrinkResources`) sur le build release, règles dans `app/proguard-rules.pro`
   (JNI sherpa-onnx, LiteRT-LM, SQLCipher conservés). Règles larges par prudence, non encore validées sur appareil.
 - **versionCode** : variable `VERSION_CODE`, sinon `GITHUB_RUN_NUMBER` (automatique sur GitHub Actions), sinon 1.
-- **Signature** : seulement si `TAIPO_KEYSTORE_PATH` est défini ; sinon l'APK release n'est pas signé.
+- **Signature** : seulement si `key.properties` (racine du dépôt) ou `TAIPO_KEYSTORE_PATH` est défini ; sinon l'APK release n'est pas signé.
 - **Gradle** : `org.gradle.caching=true`. Versions de Room (unique) et de `litertlm-android` (figée à 0.17.1) dans `gradle/libs.versions.toml`.
 
-## Secrets GitHub à créer pour signer (décision D6 : Play App Signing recommandé, clé d'**upload**)
-`TAIPO_KEYSTORE_BASE64` (keystore encodé en base64), `TAIPO_KEYSTORE_PASSWORD`, `TAIPO_KEY_ALIAS`, `TAIPO_KEY_PASSWORD`.
+## Secrets GitHub pour signer (décision D6 : Play App Signing recommandé, clé d'**upload**)
+Les mêmes que AnimalTimer : `ANDROID_KEYSTORE_BASE64` (keystore encodé en base64) et `ANDROID_KEY_PROPERTIES`
+(contenu de `key.properties` : `storePassword`, `keyPassword`, `keyAlias`, `storeFile=keystore.jks`).
 
-Étape à ajouter dans `.github/workflows/android.yml` avant `./gradlew assembleRelease` :
-
-```yaml
-- name: Préparer la signature
-  if: steps.variant.outputs.variant == 'release'   # adapter au nom réel de l'étape qui fixe la variante
-  run: |
-    echo "${{ secrets.TAIPO_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/taipo.jks"
-    echo "TAIPO_KEYSTORE_PATH=$RUNNER_TEMP/taipo.jks" >> "$GITHUB_ENV"
-    echo "TAIPO_KEYSTORE_PASSWORD=${{ secrets.TAIPO_KEYSTORE_PASSWORD }}" >> "$GITHUB_ENV"
-    echo "TAIPO_KEY_ALIAS=${{ secrets.TAIPO_KEY_ALIAS }}" >> "$GITHUB_ENV"
-    echo "TAIPO_KEY_PASSWORD=${{ secrets.TAIPO_KEY_PASSWORD }}" >> "$GITHUB_ENV"
-```
+L'étape « Setup Android signing » de `.github/workflows/android.yml` (variante release uniquement) écrit
+`app/keystore.jks` et `key.properties` à la racine ; `app/build.gradle.kts` les lit. Sans secrets, l'étape génère un
+keystore de secours (`taipo-debug`) : l'APK est alors signé avec une clé jetable, à ne jamais diffuser.
+Les variables `TAIPO_KEYSTORE_*` restent acceptées en repli pour un build local.
 
 ## Checklist de validation d'un build release (à faire avant toute diffusion)
 Play exige un **AAB** : `./gradlew bundleRelease` (sortie `app/build/outputs/bundle/release/`). Pour tester sur appareil,
@@ -47,7 +40,7 @@ Play exige un **AAB** : `./gradlew bundleRelease` (sortie `app/build/outputs/bun
 - **Debug** : signé avec `app/debug.keystore` (versionné, mot de passe public `android`, sans valeur de sécurité),
   identique en local et en CI. Les APK debug se mettent donc à jour par-dessus. Ne jamais supprimer ni régénérer
   ce fichier : changer la clé impose une dernière réinstallation sur chaque appareil.
-- **Release** : mise à jour possible tant que la clé (secrets `TAIPO_KEYSTORE_*`) reste la même et que le
+- **Release** : mise à jour possible tant que la clé (secrets `ANDROID_KEYSTORE_BASE64` / `ANDROID_KEY_PROPERTIES`) reste la même et que le
   `versionCode` augmente (numéro d'exécution GitHub Actions). Si les secrets sont absents, l'APK n'est pas signé
   donc non installable.
 - **Passer de debug à release (ou l'inverse)** : signatures différentes, donc désinstallation obligatoire

@@ -13,7 +13,11 @@ import android.widget.Toast
 import fr.junade.taipo.dictionary.PersonalDictionary
 import fr.junade.taipo.dictionary.PersonalDictionaryProvider
 import fr.junade.taipo.dictionary.PersonalDictionaryRepository
+import fr.junade.taipo.dictionary.SystemUserDictionary
+import android.Manifest
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -36,6 +40,8 @@ class PersonalDictionaryActivity : Activity() {
     private lateinit var input: EditText
     private lateinit var list: LinearLayout
     private lateinit var countView: TextView
+    private lateinit var systemStatus: TextView
+    private lateinit var systemAllow: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +64,40 @@ class PersonalDictionaryActivity : Activity() {
             }
         }
 
+        systemStatus = findViewById(R.id.personal_dictionary_system_status)
+        systemAllow = findViewById(R.id.personal_dictionary_system_allow)
+        // Permission runtime : une IME ne peut pas la demander, mais cet écran est une Activity.
+        systemAllow.setOnClickListener {
+            requestPermissions(arrayOf(Manifest.permission.READ_USER_DICTIONARY), REQUEST_SYSTEM_DICTIONARY)
+        }
+
         scope.launch { repository.words.collect { render(it) } }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshSystemDictionary()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_SYSTEM_DICTIONARY) refreshSystemDictionary()
+    }
+
+    /** Relit le dictionnaire système (hors thread principal) puis met à jour l'état affiché. */
+    private fun refreshSystemDictionary() {
+        val dictionary = SystemUserDictionary.get(this)
+        scope.launch {
+            withContext(Dispatchers.IO) { dictionary.refresh() }
+            val granted = dictionary.isAccessGranted()
+            systemStatus.text = if (granted) {
+                getString(R.string.personal_dictionary_system_on, dictionary.count())
+            } else {
+                getString(R.string.personal_dictionary_system_off)
+            }
+            systemAllow.visibility = if (granted) android.view.View.GONE else android.view.View.VISIBLE
+            systemStatus.applyTaipoFontToTree()
+        }
     }
 
     override fun onDestroy() {
@@ -147,4 +186,8 @@ class PersonalDictionaryActivity : Activity() {
     }
 
     private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+
+    private companion object {
+        const val REQUEST_SYSTEM_DICTIONARY = 1
+    }
 }
