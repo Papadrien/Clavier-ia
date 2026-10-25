@@ -49,7 +49,8 @@ android {
     if (keystorePath != null) {
         signingConfigs {
             create("release") {
-                storeFile = file(keystorePath)
+                // Relatif à app/ ; à défaut, relatif à la racine du dépôt (le workflow peut décoder le keystore là).
+                storeFile = file(keystorePath).takeIf { it.isAbsolute || it.exists() } ?: rootProject.file(keystorePath)
                 storePassword = keyProperties.getProperty("storePassword") ?: System.getenv("TAIPO_KEYSTORE_PASSWORD")
                 keyAlias = keyProperties.getProperty("keyAlias") ?: System.getenv("TAIPO_KEY_ALIAS")
                 keyPassword = keyProperties.getProperty("keyPassword") ?: System.getenv("TAIPO_KEY_PASSWORD")
