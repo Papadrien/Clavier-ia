@@ -179,7 +179,9 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         robotButton.setOnClickListener {
             actionsMenuClickListener?.invoke()
             // Panneau Smart Clipboard ouvert : la barre est figée, le panneau se referme (la barre suit alors l'état réel).
-            if (zoneState.clipboardPanelOpen) clipboardCloseListener?.invoke()
+            val panelWasOpen = zoneState.clipboardPanelOpen
+            if (panelWasOpen) clipboardCloseListener?.invoke()
+            // Le menu reste ouvert pendant le panneau (réellement comme à l'affichage) : ce robot referme le panneau, puis le menu.
             zoneState.toggleMenu()
             render(reveal = true)
         }
@@ -193,7 +195,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         for (button in listOf(normalActions.generateButton, menuActions.generateButton)) {
             button.setOnClickListener {
                 // Le moteur est partagé : pas de génération pendant une écoute, une correction ou une transcription IA.
-                if (BarVisibility.isBusy(voiceState, state) || aiTranscriptionState != AiTranscriptionBarState.IDLE) return@setOnClickListener
+                if (generateBlocked()) return@setOnClickListener
                 collapseMenu()
                 generateListener?.invoke()
             }
@@ -206,6 +208,8 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         // Icône seule, grise comme Vocal ; l'état (chargement, correction…) passe par la transparence et la description d'accessibilité.
         for (button in listOf(normalActions.correctButton, menuActions.correctButton)) {
             button.setOnClickListener {
+                // Transcription en cours (Vocal ou Transcription IA) : le bouton est grisé, l'appui est ignoré.
+                if (transcribing()) return@setOnClickListener
                 when (state) {
                     CorrectionBarState.IDLE -> {
                         collapseMenu()
@@ -480,24 +484,33 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             menuButtons.undoButton, content.menuUtilityButtons, order = 2, full = reveal, row = typingRow, spring = spring,
             restingAlpha = menuButtons::undoRestingAlpha,
         )
-        setRevealed(menuActions.generateButton, actions.generate, order = 3, full = reveal, row = typingRow, spring = spring)
-        setRevealed(menuActions.correctButton, actions.correct, order = 4, full = reveal, row = typingRow, spring = spring)
+        setRevealed(
+            menuActions.generateButton, actions.generate, order = 3, full = reveal, row = typingRow, spring = spring,
+            restingAlpha = ::generateRestingAlpha,
+        )
+        setRevealed(
+            menuActions.correctButton, actions.correct, order = 4, full = reveal, row = typingRow, spring = spring,
+            restingAlpha = ::correctRestingAlpha,
+        )
         setRevealed(
             menuActions.transcriptionButton, actions.aiTranscription && aiTranscriptionAvailable, order = 5, full = reveal,
-            row = typingRow, spring = spring,
+            row = typingRow, spring = spring, restingAlpha = ::transcriptionRestingAlpha,
         )
 
         // Rangée normale : la puce de collage apparaît à côté du bouton Smart Clipboard, suivie des actions IA.
         setRevealed(pasteChip, content.pasteChip, order = 0, full = false, row = normalRow)
         val normal = BarVisibility.normalRowActions(mode)
-        setRevealed(normalActions.generateButton, normal.generate, order = 3, full = false, row = normalRow)
+        setRevealed(
+            normalActions.generateButton, normal.generate, order = 3, full = false, row = normalRow,
+            restingAlpha = ::generateRestingAlpha,
+        )
         setRevealed(
             normalActions.correctButton, normal.correct, order = 4, full = false, row = normalRow,
-            restingAlpha = ::normalCorrectRestingAlpha,
+            restingAlpha = ::correctRestingAlpha,
         )
         setRevealed(
             normalActions.transcriptionButton, normal.aiTranscription && aiTranscriptionAvailable, order = 5, full = false,
-            row = normalRow,
+            row = normalRow, restingAlpha = ::transcriptionRestingAlpha,
         )
 
         val menuOpen = mode == BarMode.TYPING && zoneState.menuOpen
@@ -621,7 +634,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     }
 
     private fun renderCorrect() {
-        val appearance = BarVisibility.correctAppearance(state)
+        val appearance = BarVisibility.correctAppearance(state, transcribing())
         for (actions in listOf(menuActions, normalActions)) {
             val button = actions.correctButton
             appearance?.let {
@@ -651,12 +664,13 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     fun setVoiceLevel(level: Float) = micIcon.setLevel(level)
 
     private fun renderVoice() {
-        val appearance = BarVisibility.voiceAppearance(voiceState)
+        val appearance = BarVisibility.voiceAppearance(voiceState, aiTranscriptionState)
         voiceButton.contentDescription = context.getString(appearance.label)
         voiceButton.background = voiceBackgrounds.getOrPut(appearance.background) { style.roundBackground(appearance.background) }
         voiceButton.alpha = appearance.alpha
         micIcon.setMode(MicIconMode.of(voiceState), animate = isLaidOut)
-        render()
+        applyAiTranscriptionAppearance() // Transcription IA est grisée pendant une saisie vocale
+        renderCorrect() // Corriger est grisé pendant une transcription (rend la barre à la fin)
     }
 
     /** Niveau sonore de l'enregistrement (0 à 1) : fait monter et descendre les barres de l'icône Transcription IA. */
@@ -666,6 +680,13 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     }
 
     private fun renderAiTranscription() {
+        // Pendant le traitement, le bouton reste visible (en petit) même menu fermé : voir BarVisibility.actionButtons.
+        // Vocal, Corriger et Chat sont grisés tant qu'une transcription IA est en cours (renderVoice rend la barre à la fin).
+        renderVoice()
+    }
+
+    /** Face, opacité, description et icône de Transcription IA ; grisée et inactive pendant une saisie vocale. */
+    private fun applyAiTranscriptionAppearance() {
         val description = context.getString(
             when (aiTranscriptionState) {
                 AiTranscriptionBarState.IDLE -> R.string.ai_transcription_button_description
@@ -674,15 +695,15 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
                 AiTranscriptionBarState.CANCELLING -> R.string.ai_transcription_button_cancelling
             },
         )
-        val appearance = BarVisibility.aiTranscriptionAppearance(aiTranscriptionState)
+        val appearance = BarVisibility.aiTranscriptionAppearance(aiTranscriptionState, voiceState)
+        val blocked = BarVisibility.aiTranscriptionBlocked(voiceState, aiTranscriptionState)
         for (actions in listOf(menuActions, normalActions)) {
             actions.transcriptionButton.contentDescription = description
             actions.transcriptionButton.face = appearance.face
             actions.transcriptionButton.alpha = appearance.alpha
+            actions.transcriptionButton.isEnabled = !blocked
             actions.transcriptionIcon.setMode(WaveIconMode.of(aiTranscriptionState), animate = isLaidOut)
         }
-        // Pendant le traitement, le bouton reste visible (en petit) même menu fermé : voir BarVisibility.actionButtons.
-        render()
     }
 
     /**
@@ -690,18 +711,35 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
      * dernier par chaque rendu, qui réécrit l'opacité). Hors champ sensible, « Chat » reprend son opacité pleine.
      */
     private fun applyFieldRestriction() {
-        if (aiActionsAllowed) {
-            menuActions.generateButton.alpha = 1f
-            normalActions.generateButton.alpha = 1f
-            return
+        // Chat est grisé et inactif pendant une écoute, une transcription ou une correction : le moteur est partagé.
+        val blocked = generateBlocked()
+        // Un bouton qui joue son animation d'apparition (en attente de son tour, donc encore transparent) garde l'opacité que
+        // l'animation lui donne : la lui rendre ici le ferait surgir, petit, avant les autres boutons du menu.
+        for (button in listOf(menuActions.generateButton, normalActions.generateButton)) {
+            button.isEnabled = !blocked
+            if (!BarReveal.isEntering(button)) button.alpha = generateRestingAlpha()
         }
+        if (aiActionsAllowed) return
         val restricted = listOf(voiceButton) + menuActions.views + normalActions.views
-        restricted.forEach { it.alpha = RESTRICTED_ALPHA }
+        restricted.filterNot { BarReveal.isEntering(it) }.forEach { it.alpha = RESTRICTED_ALPHA }
     }
 
-    /** Opacité de repos de Corriger dans la barre normale : grisé tant que le champ est vide (état HIDDEN). */
-    private fun normalCorrectRestingAlpha(): Float =
-        BarVisibility.correctAppearance(state)?.alpha ?: RESTRICTED_ALPHA
+    /** Transcription en cours (Vocal ou Transcription IA) : Vocal, Corriger et Chat sont grisés et inactifs. */
+    private fun transcribing(): Boolean = BarVisibility.transcriptionInProgress(voiceState, aiTranscriptionState)
+
+    /** Opacité de repos de Corriger : grisé tant que le champ est vide (état HIDDEN) ou qu'une transcription est en cours. */
+    private fun correctRestingAlpha(): Float =
+        BarVisibility.correctAppearance(state, transcribing())?.alpha ?: RESTRICTED_ALPHA
+
+    /** Chat est grisé et inactif : voir [BarVisibility.generateBlocked]. */
+    private fun generateBlocked(): Boolean = BarVisibility.generateBlocked(voiceState, state, aiTranscriptionState)
+
+    /** Opacité de repos de Chat : grisé pendant une écoute, une transcription ou une correction. */
+    private fun generateRestingAlpha(): Float = if (generateBlocked()) RESTRICTED_ALPHA else 1f
+
+    /** Opacité de repos de Transcription IA : grisée pendant une saisie vocale. */
+    private fun transcriptionRestingAlpha(): Float =
+        BarVisibility.aiTranscriptionAppearance(aiTranscriptionState, voiceState).alpha
 
     private companion object {
         /** La rangée de saisie (ou la rangée normale) arrive juste après le départ de l'autre. */

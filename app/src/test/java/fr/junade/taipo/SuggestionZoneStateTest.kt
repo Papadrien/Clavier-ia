@@ -134,6 +134,18 @@ class SuggestionZoneStateTest {
     }
 
     @Test
+    fun `panneau ouvert puis ferme sans frappe le menu reste ouvert`() {
+        val state = typing()
+        state.toggleMenu()
+        state.setClipboardPanelOpen(true)
+        assertTrue(state.menuOpen)
+        state.setClipboardPanelOpen(false)
+        assertTrue(state.menuOpen) // le menu n'a pas été refermé à l'ouverture du panneau
+        state.onTyping() // la frappe (ou le collage d'une carte) le referme
+        assertFalse(state.menuOpen)
+    }
+
+    @Test
     fun `panneau ferme les changements reprennent`() {
         val state = typing()
         state.setClipboardPanelOpen(true)

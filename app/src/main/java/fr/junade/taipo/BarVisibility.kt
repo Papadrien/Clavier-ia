@@ -69,6 +69,29 @@ internal data class VoiceAppearance(
 
 internal object BarVisibility {
 
+    /**
+     * Transcription en cours : traitement de la dictée Vocal ([VoiceBarState.TRANSCRIBING]) ou Transcription IA (écoute,
+     * traitement ou annulation). Vocal, Corriger et Chat sont alors grisés et inactifs (le moteur et le micro sont pris).
+     */
+    fun transcriptionInProgress(
+        voice: VoiceBarState,
+        aiTranscription: AiTranscriptionBarState = AiTranscriptionBarState.IDLE,
+    ): Boolean = voice == VoiceBarState.TRANSCRIBING || aiTranscription != AiTranscriptionBarState.IDLE
+
+    /** Chat est grisé et inactif : écoute, transcription, correction ou Transcription IA en cours (le moteur est partagé). */
+    fun generateBlocked(
+        voice: VoiceBarState,
+        correction: CorrectionBarState,
+        aiTranscription: AiTranscriptionBarState = AiTranscriptionBarState.IDLE,
+    ): Boolean = isBusy(voice, correction) || aiTranscription != AiTranscriptionBarState.IDLE
+
+    /**
+     * Transcription IA grisée et inactive pendant une saisie vocale (chargement, écoute, transcription) : le micro est pris.
+     * Une Transcription IA déjà en cours reste active (c'est le bouton qui l'arrête).
+     */
+    fun aiTranscriptionBlocked(voice: VoiceBarState, aiTranscription: AiTranscriptionBarState): Boolean =
+        voice != VoiceBarState.IDLE && aiTranscription == AiTranscriptionBarState.IDLE
+
     /** Écoute, transcription ou correction en cours : les boutons concernés servent d'arrêt ou d'indicateur. */
     fun isBusy(voice: VoiceBarState, correction: CorrectionBarState): Boolean =
         voice != VoiceBarState.IDLE ||
@@ -99,12 +122,13 @@ internal object BarVisibility {
     /**
      * Vocal est toujours visible, fixé à droite. Dans la rangée de saisie : Corriger est visible dès que du texte permet de
      * corriger, sauf tant qu'une suggestion est affichée ; Transcription IA et Chat sont rangés derrière le robot (menu
-     * ouvert). Chat disparaît quand [isBusy] (le moteur est partagé : pas de génération en parallèle). Corriger reste visible
+     * ouvert). Chat reste affiché mais grisé et inactif quand [generateBlocked] (le moteur est partagé : pas de génération en parallèle). Corriger reste visible
      * dès que son état n'est plus au repos (chargement, correction en cours) : il sert alors d'annulation ou d'indicateur.
      *
      * Transcription IA reste visible, en petit (icône seule), tant que [aiTranscription] n'est pas au repos (écoute,
      * traitement, annulation), même menu fermé : c'est le bouton qui arrête l'écoute ou annule le traitement, il ne doit
-     * jamais disparaître avant la fin.
+     * jamais disparaître avant la fin. Pendant une saisie vocale ([voice] hors repos), Chat et Transcription IA restent aussi
+     * affichés, grisés et inactifs, même menu fermé (la dictée referme le menu en insérant du texte).
      * [wordSuggestionsShown] : la bande de mots affiche au moins un mot ou un emoji.
      */
     fun actionButtons(
@@ -117,13 +141,15 @@ internal object BarVisibility {
     ): ActionButtonsVisibility {
         val typing = mode == BarMode.TYPING
         val menuOpen = typing && zoneState.menuOpen
-        val busy = isBusy(voice, correction)
+        // Une saisie vocale (chargement, écoute, transcription) referme le menu en insérant du texte : Chat et Transcription IA
+        // restent alors affichés (grisés, icône seule) au lieu de disparaître.
+        val voiceActive = voice != VoiceBarState.IDLE
         val hiddenBySuggestion = correction == CorrectionBarState.IDLE &&
             suggestionsDisplayed(zoneState, mode, wordSuggestionsShown)
         return ActionButtonsVisibility(
             voice = true,
-            aiTranscription = typing && (menuOpen || aiTranscription != AiTranscriptionBarState.IDLE),
-            generate = menuOpen && !busy,
+            aiTranscription = typing && (menuOpen || aiTranscription != AiTranscriptionBarState.IDLE || voiceActive),
+            generate = typing && (menuOpen || voiceActive),
             correct = typing && correction != CorrectionBarState.HIDDEN && !hiddenBySuggestion,
         )
     }
@@ -156,9 +182,15 @@ internal object BarVisibility {
     fun labeledActions(zoneState: SuggestionZoneState, mode: BarMode): Boolean =
         mode == BarMode.TYPING && zoneState.menuOpen
 
-    fun correctAppearance(state: CorrectionBarState): CorrectAppearance? = when (state) {
+    /** [transcribing] (voir [transcriptionInProgress]) : au repos, le bouton est grisé et inactif. */
+    fun correctAppearance(state: CorrectionBarState, transcribing: Boolean = false): CorrectAppearance? = when (state) {
         CorrectionBarState.HIDDEN -> null
-        CorrectionBarState.IDLE -> CorrectAppearance(R.string.correction_button_idle, enabled = true, alpha = 1f)
+        CorrectionBarState.IDLE ->
+            if (transcribing) {
+                CorrectAppearance(R.string.correction_button_idle, enabled = false, alpha = RESTRICTED_ALPHA)
+            } else {
+                CorrectAppearance(R.string.correction_button_idle, enabled = true, alpha = 1f)
+            }
         // Chargement ou correction en cours : un nouvel appui sur le bouton annule la correction.
         CorrectionBarState.LOADING -> CorrectAppearance(R.string.correction_button_loading, enabled = true, alpha = 1f, loading = true)
         // Traitement en cours : fond violet, opacité pleine (le bouton reste désactivé).
@@ -166,16 +198,31 @@ internal object BarVisibility {
         CorrectionBarState.CANCELLING -> CorrectAppearance(R.string.correction_button_cancelling, enabled = false, alpha = 0.6f, loading = true)
     }
 
-    fun voiceAppearance(state: VoiceBarState): VoiceAppearance = when (state) {
-        VoiceBarState.IDLE -> VoiceAppearance(R.string.voice_button_idle, R.color.surface_button, 1f)
+    /** [aiTranscription] : une Transcription IA est en cours, Vocal est grisé (le micro est pris). */
+    fun voiceAppearance(
+        state: VoiceBarState,
+        aiTranscription: AiTranscriptionBarState = AiTranscriptionBarState.IDLE,
+    ): VoiceAppearance = when (state) {
+        VoiceBarState.IDLE -> VoiceAppearance(
+            R.string.voice_button_idle,
+            R.color.surface_button,
+            if (aiTranscription != AiTranscriptionBarState.IDLE) RESTRICTED_ALPHA else 1f,
+        )
         VoiceBarState.LOADING -> VoiceAppearance(R.string.voice_button_loading, R.color.surface_button, 0.6f, loading = true)
         VoiceBarState.RECORDING -> VoiceAppearance(R.string.voice_button_recording, R.color.action_danger, 1f)
-        // Transcription en cours de traitement : fond violet, opacité pleine.
-        VoiceBarState.TRANSCRIBING -> VoiceAppearance(R.string.voice_button_transcribing, R.color.accent, 1f)
+        // Transcription en cours de traitement : fond violet, grisé (un nouvel appui est ignoré jusqu'à la fin).
+        VoiceBarState.TRANSCRIBING -> VoiceAppearance(R.string.voice_button_transcribing, R.color.accent, RESTRICTED_ALPHA)
     }
 
-    fun aiTranscriptionAppearance(state: AiTranscriptionBarState): AiTranscriptionAppearance = when (state) {
-        AiTranscriptionBarState.IDLE -> AiTranscriptionAppearance(R.color.surface_button, 1f)
+    /** [voice] : une saisie vocale est en cours, le bouton au repos est grisé (voir [aiTranscriptionBlocked]). */
+    fun aiTranscriptionAppearance(
+        state: AiTranscriptionBarState,
+        voice: VoiceBarState = VoiceBarState.IDLE,
+    ): AiTranscriptionAppearance = when (state) {
+        AiTranscriptionBarState.IDLE -> AiTranscriptionAppearance(
+            R.color.surface_button,
+            if (aiTranscriptionBlocked(voice, state)) RESTRICTED_ALPHA else 1f,
+        )
         AiTranscriptionBarState.RECORDING -> AiTranscriptionAppearance(R.color.action_danger, 1f)
         // Traitement par le modèle : fond violet, opacité pleine. L'annulation (arrêt natif en cours) reste grisée.
         AiTranscriptionBarState.PROCESSING -> AiTranscriptionAppearance(R.color.accent, 1f)

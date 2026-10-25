@@ -55,6 +55,9 @@ class CorrectionAiController(
         /** Une génération (mode prompt) est en cours : le moteur est pris, la correction est refusée. */
         fun generationBusy(): Boolean
 
+        /** Une transcription est en cours (traitement de la dictée Vocal ou Transcription IA) : le moteur est pris, la correction est refusée. */
+        fun transcriptionInProgress(): Boolean
+
         /** Modèle de correction actif, ou null si aucun n'est choisi. */
         fun activeModel(): AiModel?
 
@@ -174,6 +177,10 @@ class CorrectionAiController(
 
     fun onCorrectClicked() {
         if (inProgress) return
+        if (host.transcriptionInProgress()) { // le moteur et le micro sont pris par la transcription
+            host.showMessage(context.getString(R.string.ai_action_busy))
+            return
+        }
         if (host.generationBusy()) { // le moteur est pris par la génération
             host.showMessage(context.getString(R.string.generation_busy))
             return

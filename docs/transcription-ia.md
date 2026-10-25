@@ -40,3 +40,31 @@ reste visible **en petit** (icône seule) dans la barre de saisie, entre Corrige
 est fermé (suggestions de mots) : c'est lui qui arrête l'écoute ou annule le traitement. Il se range de nouveau derrière
 le menu à la fin. Lancée depuis la barre normale (champ vide), l'écoute laisse la barre normale affichée. Règle : `BarVisibility.actionButtons(..., aiTranscription = …)` ;
 le rendu est relancé par `CorrectionBarView.aiTranscriptionState`.
+
+## Blocage pendant une transcription
+
+Tant qu'une transcription est en cours (traitement de la dictée Vocal, ou Transcription IA : écoute, traitement, annulation),
+Vocal, Corriger et Chat sont grisés (`RESTRICTED_ALPHA`) et leur action est refusée, y compris côté contrôleur :
+`VoiceController.startBlocked`, `CorrectionAiController.onCorrectClicked` (`transcriptionInProgress`) et
+`PromptModeController.enter` (`isTranscriptionInProgress`) ; l'état commun est `ImeHostContext.isTranscriptionInProgress()`.
+Un second arrêt de dictée (arrêt automatique, puis relâchement du doigt en mode maintenu) ne remet plus le bouton Vocal au
+repos pendant la transcription. Le toucher sur Vocal grisé n'affiche plus l'état « pressé ».
+
+## Smart Clipboard et menu du robot
+
+Ouvrir le panneau Smart Clipboard depuis le menu du robot ne referme plus ce menu : la barre le garde affiché pendant le
+panneau et le retrouve ouvert à la fermeture (bouton Smart Clipboard ou croix). Il se referme à la frappe ou au collage d'une
+carte. Le robot, touché pendant le panneau, referme le panneau puis le menu.
+
+## Chat et Transcription IA pendant une saisie vocale
+
+La dictée (Vocal) referme le menu du robot en insérant du texte. Tant que la saisie vocale n'est pas au repos (chargement,
+écoute, transcription), Chat et Transcription IA restent affichés dans la barre de saisie, en icône seule, grisés et
+inactifs, au lieu de disparaître avec le menu. Ils se rangent de nouveau derrière le robot à la fin. Règle :
+`BarVisibility.actionButtons` ; test : `BarVisibilityTest`.
+
+## Apparition de Chat à l'ouverture du menu
+
+`CorrectionBarView.applyFieldRestriction` (appelé à la fin de chaque rendu) ne réécrit plus l'opacité d'un bouton qui joue son
+animation d'apparition (`BarReveal.isEntering`) : Chat, de rang 3 dans la cascade, surgissait sinon petit et visible dès
+l'ouverture du menu, avant Paramètres, Smart Clipboard et Annuler.

@@ -64,6 +64,9 @@ class PromptModeController(
 
         fun isCorrectionInProgress(): Boolean
 
+        /** Une transcription est en cours (traitement de la dictée Vocal ou Transcription IA) : le mode chat ne s'ouvre pas. */
+        fun isTranscriptionInProgress(): Boolean
+
         /** La barre normale du haut est créée. */
         fun barReady(): Boolean
 
@@ -257,7 +260,7 @@ class PromptModeController(
     /** Touche sur « Générer » : la barre du haut devient la zone de saisie du prompt (décision 1). */
     fun enter() {
         if (active || !this::promptBar.isInitialized) return
-        if (host.isRecording() || host.isCorrectionInProgress() || generationBusy()) {
+        if (host.isRecording() || host.isCorrectionInProgress() || host.isTranscriptionInProgress() || generationBusy()) {
             host.showMessage(context.getString(R.string.ai_action_busy))
             return
         }

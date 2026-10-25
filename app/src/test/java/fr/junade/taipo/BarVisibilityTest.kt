@@ -178,13 +178,29 @@ class BarVisibilityTest {
     }
 
     @Test
-    fun `pendant une ecoute Chat disparait et le menu reste`() {
+    fun `pendant une ecoute Chat reste affiche (grise) et le menu reste`() {
         val zone = typingMenuOpen()
         val buttons = actions(zone, voice = VoiceBarState.RECORDING)
         assertTrue(buttons.voice)
-        assertFalse(buttons.generate)
+        assertTrue(buttons.generate)
         assertTrue(buttons.aiTranscription)
         assertTrue(content(zone).robot)
+    }
+
+    @Test
+    fun `pendant une saisie vocale Chat et Transcription IA restent affiches meme menu ferme`() {
+        val zone = typing() // menu refermé par le texte dicté
+        for (voice in listOf(VoiceBarState.LOADING, VoiceBarState.RECORDING, VoiceBarState.TRANSCRIBING)) {
+            val buttons = actions(zone, voice = voice)
+            assertTrue(buttons.generate, "Chat affiché pendant $voice")
+            assertTrue(buttons.aiTranscription, "Transcription IA affichée pendant $voice")
+            assertTrue(BarVisibility.generateBlocked(voice, CorrectionBarState.IDLE), "Chat grisé pendant $voice")
+            assertTrue(BarVisibility.aiTranscriptionBlocked(voice, AiTranscriptionBarState.IDLE), "Transcription IA grisée pendant $voice")
+        }
+        // Au repos, menu fermé : ils se rangent de nouveau derrière le robot.
+        val idle = actions(zone)
+        assertFalse(idle.generate)
+        assertFalse(idle.aiTranscription)
     }
 
     @Test
@@ -266,6 +282,68 @@ class BarVisibilityTest {
         }
         assertEquals(1f, BarVisibility.voiceAppearance(VoiceBarState.IDLE).alpha)
         assertEquals(0.6f, BarVisibility.voiceAppearance(VoiceBarState.LOADING).alpha)
-        assertEquals(1f, BarVisibility.voiceAppearance(VoiceBarState.TRANSCRIBING).alpha)
+        // Transcription en cours : le bouton est grisé (un nouvel appui est ignoré).
+        assertEquals(RESTRICTED_ALPHA, BarVisibility.voiceAppearance(VoiceBarState.TRANSCRIBING).alpha)
+    }
+
+    @Test
+    fun `Chat est grise pendant une ecoute, une transcription, une correction ou une transcription IA`() {
+        assertFalse(BarVisibility.generateBlocked(VoiceBarState.IDLE, CorrectionBarState.IDLE))
+        for (voice in listOf(VoiceBarState.LOADING, VoiceBarState.RECORDING, VoiceBarState.TRANSCRIBING)) {
+            assertTrue(BarVisibility.generateBlocked(voice, CorrectionBarState.IDLE), "grisé pendant $voice")
+        }
+        for (correction in listOf(CorrectionBarState.LOADING, CorrectionBarState.CORRECTING, CorrectionBarState.CANCELLING)) {
+            assertTrue(BarVisibility.generateBlocked(VoiceBarState.IDLE, correction), "grisé pendant $correction")
+        }
+        assertTrue(
+            BarVisibility.generateBlocked(VoiceBarState.IDLE, CorrectionBarState.IDLE, AiTranscriptionBarState.PROCESSING),
+        )
+    }
+
+    @Test
+    fun `Transcription IA est grisee pendant une saisie vocale mais reste active pendant sa propre action`() {
+        for (voice in listOf(VoiceBarState.LOADING, VoiceBarState.RECORDING, VoiceBarState.TRANSCRIBING)) {
+            assertTrue(BarVisibility.aiTranscriptionBlocked(voice, AiTranscriptionBarState.IDLE), "bloquée pendant $voice")
+            assertEquals(RESTRICTED_ALPHA, BarVisibility.aiTranscriptionAppearance(AiTranscriptionBarState.IDLE, voice).alpha)
+        }
+        assertFalse(BarVisibility.aiTranscriptionBlocked(VoiceBarState.IDLE, AiTranscriptionBarState.IDLE))
+        assertEquals(1f, BarVisibility.aiTranscriptionAppearance(AiTranscriptionBarState.IDLE).alpha)
+        // Une Transcription IA en cours reste active : c'est le bouton qui l'arrête ou l'annule.
+        assertFalse(BarVisibility.aiTranscriptionBlocked(VoiceBarState.IDLE, AiTranscriptionBarState.RECORDING))
+    }
+
+    @Test
+    fun `transcription en cours pour Vocal et pour Transcription IA`() {
+        assertFalse(BarVisibility.transcriptionInProgress(VoiceBarState.IDLE))
+        for (state in listOf(VoiceBarState.LOADING, VoiceBarState.RECORDING)) {
+            assertFalse(BarVisibility.transcriptionInProgress(state), "pas de transcription pendant $state")
+        }
+        assertTrue(BarVisibility.transcriptionInProgress(VoiceBarState.TRANSCRIBING))
+        for (state in listOf(AiTranscriptionBarState.RECORDING, AiTranscriptionBarState.PROCESSING, AiTranscriptionBarState.CANCELLING)) {
+            assertTrue(BarVisibility.transcriptionInProgress(VoiceBarState.IDLE, state), "transcription IA $state")
+        }
+        assertFalse(BarVisibility.transcriptionInProgress(VoiceBarState.IDLE, AiTranscriptionBarState.IDLE))
+    }
+
+    @Test
+    fun `Vocal est grise pendant une transcription IA`() {
+        for (state in listOf(AiTranscriptionBarState.RECORDING, AiTranscriptionBarState.PROCESSING, AiTranscriptionBarState.CANCELLING)) {
+            assertEquals(RESTRICTED_ALPHA, BarVisibility.voiceAppearance(VoiceBarState.IDLE, state).alpha, "grisé pendant $state")
+        }
+        assertEquals(1f, BarVisibility.voiceAppearance(VoiceBarState.IDLE, AiTranscriptionBarState.IDLE).alpha)
+    }
+
+    @Test
+    fun `Corriger est grise et inactif pendant une transcription`() {
+        val idle = BarVisibility.correctAppearance(CorrectionBarState.IDLE, transcribing = true)!!
+        assertFalse(idle.enabled)
+        assertEquals(RESTRICTED_ALPHA, idle.alpha)
+        assertEquals(R.string.correction_button_idle, idle.label)
+        // Sans transcription, l'apparence de repos est inchangée.
+        val normal = BarVisibility.correctAppearance(CorrectionBarState.IDLE, transcribing = false)!!
+        assertTrue(normal.enabled)
+        assertEquals(1f, normal.alpha)
+        // Champ vide : rien à corriger, aucune apparence (la barre normale le grise elle-même).
+        assertNull(BarVisibility.correctAppearance(CorrectionBarState.HIDDEN, transcribing = true))
     }
 }

@@ -171,7 +171,8 @@ class ImeViewComposer(
             // Rendu seul (lot 08) : l'écouteur consomme l'événement, la vue ne passerait pas à « pressée » sans cela.
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
-                    view.isPressed = true
+                    // Transcription en cours : le bouton est grisé, il ne passe pas à « pressé » (l'appui est ignoré par la dictée).
+                    view.isPressed = !BarVisibility.transcriptionInProgress(correctionBar.voiceState, correctionBar.aiTranscriptionState)
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> view.isPressed = false
             }

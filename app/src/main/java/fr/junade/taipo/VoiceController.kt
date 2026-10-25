@@ -52,6 +52,9 @@ class VoiceController(
         /** Une génération (mode prompt) est en cours : la dictée est refusée. */
         fun generationBusy(): Boolean
 
+        /** Une Transcription IA est en cours (écoute, traitement ou annulation) : le micro est pris, la dictée ne démarre pas. */
+        fun aiTranscriptionActive(): Boolean
+
         /** Fait disparaître le surlignage de correction (action de l'utilisateur). */
         fun clearHighlight()
 
@@ -101,6 +104,10 @@ class VoiceController(
         private set
     private var isHoldModeRecording = false
 
+    /** Texte final en cours de transcription (après l'arrêt de l'écoute) : une nouvelle dictée ne peut pas démarrer. */
+    var isTranscribing = false
+        private set
+
     /** Instant (SystemClock.elapsedRealtime) où le micro a réellement commencé à capter, pour la durée d'écoute mesurée. */
     private var listeningStartedAt = 0L
     private var longPressTriggered = false
@@ -149,7 +156,8 @@ class VoiceController(
     fun onButtonTouch(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                if (!isRecording) {
+                // Démarrage bloqué (transcription en cours) : pas d'appui long armé, son relâchement n'arrêterait rien.
+                if (!isRecording && !startBlocked()) {
                     longPressTriggered = false
                     mainHandler.postDelayed(longPressRunnable, ViewConfiguration.getLongPressTimeout().toLong())
                 }
@@ -186,8 +194,12 @@ class VoiceController(
         return true
     }
 
+    /** Transcription en cours (la sienne ou une Transcription IA) : le bouton Vocal est grisé, l'appui est ignoré. */
+    private fun startBlocked(): Boolean = isTranscribing || host.aiTranscriptionActive()
+
     private fun startRecording() {
         if (isRecording) return
+        if (startBlocked()) return
         if (host.generationBusy()) {
             host.showMessage(context.getString(R.string.generation_busy))
             return
@@ -290,6 +302,9 @@ class VoiceController(
     fun stopRecording() {
         host.hapticAi(AiHapticCue.RECORDING_STOP)
         val recorder = voiceRecorder ?: run {
+            // Écoute déjà arrêtée (arrêt automatique puis relâchement du doigt en mode maintenu) : la transcription suit son
+            // cours, le bouton reste grisé jusqu'à sa fin (finally de la première demande d'arrêt).
+            if (isTranscribing) return
             // Arrêt demandé pendant le chargement : on abandonne le démarrage, rien n'a été enregistré.
             voiceStartJob?.cancel()
             voiceStartJob = null
@@ -300,6 +315,7 @@ class VoiceController(
         host.playVoiceSound(start = false) // seulement si l'écoute avait réellement commencé (donc son de début joué)
         voiceRecorder = null
         isRecording = false
+        isTranscribing = true
         host.setVoiceBarState(VoiceBarState.TRANSCRIBING)
         val holdMode = isHoldModeRecording
         val listenedSeconds = (SystemClock.elapsedRealtime() - listeningStartedAt) / 1000L
@@ -324,6 +340,7 @@ class VoiceController(
                 AppLog.e(TAG, "Échec de la transcription vocale", t)
                 host.showMessage(context.getString(R.string.voice_error, t.message ?: t.javaClass.simpleName))
             } finally {
+                isTranscribing = false
                 host.setVoiceBarState(VoiceBarState.IDLE)
                 host.updateCorrectionBarVisibility()
                 host.syncAutoCapitalization() // relance la suggestion d'emoji, coupée pendant l'écoute
@@ -334,6 +351,8 @@ class VoiceController(
     /** Utilisé quand le clavier disparaît pendant un enregistrement (décision de sécurité, pas de fuite audio). */
     fun cancelRecording() {
         val recorder = voiceRecorder ?: run {
+            // Transcription du texte final en cours : le bouton reste grisé jusqu'à sa fin.
+            if (isTranscribing) return
             // Clavier fermé pendant le chargement : on abandonne le démarrage.
             voiceStartJob?.cancel()
             voiceStartJob = null

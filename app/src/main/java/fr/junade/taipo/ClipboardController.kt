@@ -183,12 +183,13 @@ class ClipboardController(
         if (host.isRecording() || host.isCorrectionInProgress()) return
         val view = panel ?: return
         host.haptic()
-        host.collapseMenu() // story 2.4 : au retour des touches, mots ou puce, pas le menu ouvert
         host.hideEmojiPanel()
         view.configure(host.keyboardBottomInsetPx())
         host.setKeyboardVisible(false)
         view.visibility = View.VISIBLE
-        host.setClipboardPanelOpen(true)
+        host.setClipboardPanelOpen(true) // fige l'affichage de la barre, menu ouvert compris
+        // Le menu du robot n'est pas refermé à l'ouverture : la barre le garde affiché pendant le panneau, et le retrouve ouvert
+        // à sa fermeture (croix, bouton Smart Clipboard). Il se referme à la frappe ou au collage d'une carte (voir onItemTapped).
         host.refreshRecentEmojiBar()
         host.clearSuggestions()
         // Stories 2.5 et 2.9 : les cartes suivent les éléments épinglés et l'historique tant que le

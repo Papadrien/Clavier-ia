@@ -115,6 +115,10 @@ internal interface ImeHostContext {
 
     fun isCorrectionInProgress(): Boolean = correction.inProgress
 
+    /** Transcription en cours (traitement de la dictée Vocal, ou Transcription IA : écoute, traitement, annulation). */
+    fun isTranscriptionInProgress(): Boolean =
+        voice.isTranscribing || (viewComposer.isComposed && correctionBar.aiTranscriptionState != AiTranscriptionBarState.IDLE)
+
     /** Après une action qui a pu changer le texte : majuscule automatique, touches, visibilité de la barre. */
     fun resyncKeyboard() {
         syncAutoCapitalization()
@@ -246,6 +250,7 @@ internal class PromptHost(private val ime: ImeHostContext) : PromptModeControlle
         if (ime.voice.isRecording) ime.voice.cancelRecording()
     }
     override fun isCorrectionInProgress(): Boolean = ime.isCorrectionInProgress()
+    override fun isTranscriptionInProgress(): Boolean = ime.isTranscriptionInProgress()
     override fun barReady(): Boolean = ime.barReady()
     override fun setNormalBarVisible(visible: Boolean) {
         ime.correctionBar.visibility = if (visible) View.VISIBLE else View.GONE
@@ -276,6 +281,7 @@ internal class CorrectionHost(private val ime: ImeHostContext) : CorrectionAiCon
     override fun showMessage(message: String) = ime.showMessage(message)
     override fun inputConnection() = ime.inputConnection()
     override fun generationBusy(): Boolean = ime.prompt.isGenerating // le moteur est pris par la génération
+    override fun transcriptionInProgress(): Boolean = ime.isTranscriptionInProgress()
     override fun activeModel() = ime.activeModel()
     override fun protectedWords(text: String): List<String> = ime.protectedWordsIn(text)
     override fun setCorrectionBarState(state: CorrectionBarState) {
@@ -307,6 +313,8 @@ internal class UndoHost(private val ime: ImeHostContext) : UndoController.Host {
 internal class VoiceHost(private val ime: ImeHostContext) : VoiceController.Host {
     override fun showMessage(message: String) = ime.showMessage(message)
     override fun generationBusy(): Boolean = ime.prompt.generationBusy()
+    override fun aiTranscriptionActive(): Boolean =
+        ime.viewComposer.isComposed && ime.correctionBar.aiTranscriptionState != AiTranscriptionBarState.IDLE
     override fun clearHighlight() = ime.clearHighlight()
     override fun clearSuggestions() = ime.clearSuggestions()
     override fun refreshPasteSuggestion() = ime.clipboard.refreshPasteSuggestion()
@@ -339,7 +347,9 @@ internal class VoiceHost(private val ime: ImeHostContext) : VoiceController.Host
 /** Épopée 14 : transcription IA par modèle multimodal, voir [AiTranscriptionController]. */
 internal class AiTranscriptionHost(private val ime: ImeHostContext) : AiTranscriptionController.Host {
     override fun showMessage(message: String) = ime.showMessage(message)
-    override fun voiceRecording(): Boolean = ime.isRecording()
+    // Saisie vocale en cours, y compris pendant la transcription du texte dicté (le micro et le moteur sont pris).
+    override fun voiceRecording(): Boolean =
+        ime.isRecording() || (ime.viewComposer.isComposed && ime.correctionBar.voiceState != VoiceBarState.IDLE)
     override fun aiBusy(): Boolean = ime.prompt.generationBusy() || ime.isCorrectionInProgress()
     override fun activeModel() = ime.activeModel()
     override fun insertText(text: String): Boolean = ime.insertGeneratedText(text)
