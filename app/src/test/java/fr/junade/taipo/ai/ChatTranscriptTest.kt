@@ -39,7 +39,7 @@ class ChatTranscriptTest {
             ChatExchange("b", "ligne 1\nligne 2"),
         )
         val result = ChatTranscript.build(history, "c")
-        assertTrue(result.contains("Assistant : \n"))
+        assertTrue(result.contains("Assistant: \n"))
         assertTrue(result.contains("ligne 1\nligne 2"))
     }
 }

@@ -94,6 +94,9 @@ class ImeViewComposer(
 
         fun onEmojiPanelClose()
 
+        /** Appui sur un onglet de catégorie du panneau emoji : retour haptique. */
+        fun onEmojiTabSelected()
+
         /** Les vues sont toutes créées et assemblées : l'IME peut les mettre à jour (état des touches...). */
         fun onViewsCreated()
     }
@@ -225,6 +228,7 @@ class ImeViewComposer(
         }
         emojiPanel.setOnBackspaceListener { host.onEmojiBackspace() }
         emojiPanel.setOnCloseListener { host.onEmojiPanelClose() }
+        emojiPanel.setOnTabTappedListener { host.onEmojiTabSelected() }
 
         val clipboardPanel = clipboard.createPanel()
 

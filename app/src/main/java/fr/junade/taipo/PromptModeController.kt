@@ -7,6 +7,7 @@ import fr.junade.taipo.ai.ChatExchange
 import fr.junade.taipo.ai.InferenceFailureClassifier
 import fr.junade.taipo.ai.messageRes
 import fr.junade.taipo.ai.FieldContext
+import fr.junade.taipo.ai.GenerationPrompt
 import fr.junade.taipo.ai.GenerationPromptPreferences
 import fr.junade.taipo.ai.GenerationSession
 import fr.junade.taipo.ai.LlmEngineHost
@@ -45,6 +46,9 @@ class PromptModeController(
     /** Ce que le mode prompt demande à l'IME. */
     interface Host {
         fun showMessage(message: String)
+
+        /** Langue active du clavier : la langue dans laquelle le modèle répond. */
+        fun keyboardLanguage(): KeyboardLanguage
 
         fun haptic()
 
@@ -169,7 +173,11 @@ class PromptModeController(
     // Session de génération créée au premier envoi seulement (elle s'enregistre auprès du moteur partagé).
     private val generationSessionLazy = lazy {
         val promptPreferences = GenerationPromptPreferences(context)
-        GenerationSession(llmHost, systemPrompt = { promptPreferences.get() })
+        // La langue de réponse du modèle suit la langue du clavier (les textes de l'interface suivent celle du système).
+        GenerationSession(
+            llmHost,
+            systemPrompt = { GenerationPrompt.withLanguage(promptPreferences.get(), host.keyboardLanguage()) },
+        )
     }
     private val generationSession: GenerationSession get() = generationSessionLazy.value
     private var generationJob: Job? = null

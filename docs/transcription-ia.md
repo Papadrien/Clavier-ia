@@ -68,3 +68,9 @@ inactifs, au lieu de disparaître avec le menu. Ils se rangent de nouveau derri�
 `CorrectionBarView.applyFieldRestriction` (appelé à la fin de chaque rendu) ne réécrit plus l'opacité d'un bouton qui joue son
 animation d'apparition (`BarReveal.isEntering`) : Chat, de rang 3 dans la cascade, surgissait sinon petit et visible dès
 l'ouverture du menu, avant Paramètres, Smart Clipboard et Annuler.
+
+## Retour haptique du panneau emoji
+
+Chaque bouton du panneau emoji vibre à l'appui, avec la vibration d'une touche du clavier (réglage d'intensité des paramètres) :
+emoji (`EmojiController.onSelected`), retour arrière (`onBackspace`, à chaque répétition), touche ABC (`ViewComposerHost.onEmojiPanelClose`)
+et onglets de catégories (`EmojiPanelView.setOnTabTappedListener`).

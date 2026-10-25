@@ -237,6 +237,7 @@ internal class MessagePopupHost(private val ime: ImeHostContext) : MessagePopup.
 /** Mode prompt (conversation, génération, zone de chat) : voir [PromptModeController]. */
 internal class PromptHost(private val ime: ImeHostContext) : PromptModeController.Host {
     override fun showMessage(message: String) = ime.showMessage(message)
+    override fun keyboardLanguage(): KeyboardLanguage = ime.keyboardLanguage
     override fun haptic() = ime.haptic()
     override fun playKeySound(sound: KeySound) = ime.playKeySound(sound)
     override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
@@ -427,7 +428,11 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
     override fun openAppHome() = ime.openAppHome()
     override fun onEmojiSelected(emoji: String) = ime.emoji.onSelected(emoji)
     override fun onEmojiBackspace() = ime.emoji.onBackspace()
-    override fun onEmojiPanelClose() = ime.emoji.hidePanel()
+    override fun onEmojiPanelClose() {
+        ime.haptic() // touche ABC : même vibration qu'une touche du clavier
+        ime.emoji.hidePanel()
+    }
+    override fun onEmojiTabSelected() = ime.haptic()
     override fun onViewsCreated() = ime.applyState()
 }
 

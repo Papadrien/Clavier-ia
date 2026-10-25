@@ -152,8 +152,8 @@
     <string name="prompt_loading_model">Loading the model…</string>
     <string name="prompt_response_interrupted">Generation interrupted.</string>
     <string name="prompt_response_empty">The model returned no response.</string>
-    <!-- Envoyé au modèle comme un prompt : volontairement non traduit. -->
-    <string name="prompt_field_context_header" translatable="false">Texte actuellement présent dans le champ de saisie de l\'utilisateur :</string>
+    <!-- Envoyé au modèle comme un prompt : volontairement non traduit (anglais neutre ; la langue de réponse suit le clavier). -->
+    <string name="prompt_field_context_header" translatable="false">Text currently in the user\'s input field:</string>
     <string name="prompt_add_text">Add the text</string>
     <string name="prompt_replace_text">Replace the text</string>
     <string name="prompt_replace_text_unavailable">Can\'t replace the text: no input field is active.</string>

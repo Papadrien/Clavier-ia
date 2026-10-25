@@ -49,3 +49,12 @@ Gemma 4 ; WorkManager + service au premier plan, SHA-256 embarqué par modèle).
   s'affiche hors installation Google Play (debug, APK installé à la main) : test prévu en release, correctifs ensuite si besoin.
 - Confidentialité : la fenêtre est affichée par Google Play, Taipo ne reçoit ni la note ni le commentaire (texte de la section 2
   de l'écran Confidentialité mis à jour). Aucune permission ajoutée.
+
+## Mode chat : langue de réponse du modèle
+
+Les textes de l'interface du mode chat suivent la langue du système (ressources `values` / `values-fr`). La langue de **réponse
+du modèle** suit la langue du **clavier** : `GenerationPrompt.withLanguage` ajoute au prompt système (par défaut ou modifié dans la
+page « Prompts système ») « Always write your answer in <langue> », sauf demande explicite d'une autre langue (traduction). Les
+textes d'encadrement envoyés au modèle (historique `ChatTranscript`, en-tête du texte du champ `prompt_field_context_header`)
+sont en anglais neutre, pour ne pas orienter la réponse vers le français. `GenerationSession` rouvre la conversation (historique
+rejoué) quand le prompt système change, donc quand la langue du clavier change en cours de conversation.

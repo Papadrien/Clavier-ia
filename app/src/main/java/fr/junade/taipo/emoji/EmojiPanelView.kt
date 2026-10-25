@@ -54,6 +54,7 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
 
     private var closeListener: OnCloseListener? = null
     private var backspaceListener: OnBackspaceListener? = null
+    private var tabTappedListener: (() -> Unit)? = null
     private var sectionIds: List<EmojiCategoryId> = emptyList()
 
     private val repeatHandler = Handler(Looper.getMainLooper())
@@ -81,6 +82,7 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
         addView(bottomSpacer, LayoutParams(LayoutParams.MATCH_PARENT, 0))
 
         tabs.setOnTabSelectedListener { index ->
+            tabTappedListener?.invoke() // retour haptique à chaque appui sur une catégorie
             tabs.selectedIndex = index
             grid.showSection(index, animate = true)
         }
@@ -93,6 +95,11 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
 
     fun setOnEmojiSelectedListener(listener: EmojiGridView.OnEmojiSelectedListener) {
         grid.setOnEmojiSelectedListener(listener)
+    }
+
+    /** Appui sur un onglet de catégorie : l'IME y joue le retour haptique. */
+    fun setOnTabTappedListener(listener: () -> Unit) {
+        tabTappedListener = listener
     }
 
     fun setOnBackspaceListener(listener: OnBackspaceListener) {

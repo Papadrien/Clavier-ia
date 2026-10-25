@@ -16,13 +16,14 @@ object ChatTranscript {
     fun build(history: List<ChatExchange>, prompt: String): String {
         if (history.isEmpty()) return prompt
         return buildString {
-            append("Voici les échanges précédents de cette conversation.\n")
+            // Texte d'encadrement en anglais, neutre : la langue de réponse est fixée par le prompt système (langue du clavier).
+            append("Here are the previous exchanges of this conversation.\n")
             for (exchange in history) {
-                append("\nUtilisateur : ").append(exchange.prompt)
-                append("\nAssistant : ").append(exchange.response)
+                append("\nUser: ").append(exchange.prompt)
+                append("\nAssistant: ").append(exchange.response)
                 append('\n')
             }
-            append("\nNouveau message de l'utilisateur : ").append(prompt)
+            append("\nNew message from the user: ").append(prompt)
         }
     }
 }

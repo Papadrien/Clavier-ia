@@ -1,5 +1,7 @@
 package fr.junade.taipo.ai
 
+import fr.junade.taipo.KeyboardLanguage
+
 /**
  * Prompt système du mode prompt (épopée 5) : réponses courtes par défaut, en texte brut, sans mise en page Markdown.
  *
@@ -18,4 +20,25 @@ Write in plain text, with no formatting at all. Never use Markdown or HTML: no h
 Answer in the user's language.
 When the user asks for a text to send or paste elsewhere (message, e-mail, reply, caption), return only that text, ready to use, with no comment around it and no quotation marks.
 If you do not know, or if the request is too vague, say so in one sentence."""
+
+    /**
+     * Prompt système envoyé au modèle : [systemPrompt] (par défaut ou modifié par l'utilisateur) suivi de la langue de réponse,
+     * qui est celle du clavier ([language]) et non celle du texte joint ou de l'historique. Elle l'emporte sur « Answer in
+     * the user's language » ; seule une demande explicite d'une autre langue (traduction) la change.
+     */
+    fun withLanguage(systemPrompt: String, language: KeyboardLanguage): String =
+        systemPrompt.trimEnd() + "\nAlways write your answer in " + englishName(language) +
+            ", the language of the user's keyboard, even if the question, the text provided or the earlier messages are in another " +
+            "language. Use another language only if the user explicitly asks for it (for example to translate a text)."
+
+    /** Nom anglais de la langue du clavier, tel que le modèle le comprend le mieux. */
+    fun englishName(language: KeyboardLanguage): String = when (language) {
+        KeyboardLanguage.FR -> "French"
+        KeyboardLanguage.EN -> "English"
+        KeyboardLanguage.ES -> "Spanish"
+        KeyboardLanguage.DE -> "German"
+        KeyboardLanguage.IT -> "Italian"
+        KeyboardLanguage.PT -> "Portuguese"
+        KeyboardLanguage.NL -> "Dutch"
+    }
 }

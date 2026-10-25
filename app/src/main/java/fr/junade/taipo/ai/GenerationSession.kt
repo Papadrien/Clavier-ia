@@ -56,6 +56,9 @@ class GenerationSession(
 
     @Volatile private var conversation: Conversation? = null
 
+    /** Prompt système avec lequel la conversation ouverte a été créée. */
+    private var conversationSystem: String? = null
+
     /** Nombre d'échanges (prompt + réponse) que la conversation ouverte a déjà traités. */
     private var exchangesInConversation = 0
 
@@ -91,7 +94,9 @@ class GenerationSession(
             val engine = host.ensureLoaded(model, onLoading)
             if (stopRequested) return@withLock GenerationOutcome("", completed = false)
 
-            val reusable = conversation != null && exchangesInConversation == history.size
+            // Prompt système lu à chaque envoi : un changement de langue du clavier (ou de prompt) rouvre la conversation.
+            val system = systemPrompt()
+            val reusable = conversation != null && exchangesInConversation == history.size && conversationSystem == system
             val userTurn: String
             val active: Conversation
             if (reusable) {
@@ -100,9 +105,10 @@ class GenerationSession(
             } else {
                 closeConversation()
                 active = engine.createConversation(
-                    ConversationConfig(systemInstruction = Contents.of(systemPrompt())),
+                    ConversationConfig(systemInstruction = Contents.of(system)),
                 )
                 conversation = active
+                conversationSystem = system
                 userTurn = ChatTranscript.build(history, prompt)
             }
 
