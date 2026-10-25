@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Épopée 14 : icône « voix vers texte », dessinée dans la charte Taipo (trait de 2 sur une grille de 24, extrémités et angles arrondis, blanc de la charte), inspirée du principe de l'icône Material « Speech to Text » (tête qui parle, onde, lignes de texte) : tracé original, pas une copie. Taille : taipo_icon_size. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/taipo_icon_size"
+    android:height="@dimen/taipo_icon_size"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Tête -->
+    <path
+        android:pathData="M5.5,5.5 a2.5,2.5 0 1 1 0,5 a2.5,2.5 0 1 1 0,-5 Z"
+        android:strokeColor="@color/taipo_text"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <!-- Épaules -->
+    <path
+        android:pathData="M2,19 a3.5,3.5 0 0 1 7,0"
+        android:strokeColor="@color/taipo_text"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <!-- Onde de voix -->
+    <path
+        android:pathData="M10.5,6.5 a2.5,2.5 0 0 1 0,4"
+        android:strokeColor="@color/taipo_text"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <!-- Lignes de texte -->
+    <path
+        android:pathData="M15,6 H21 M15,11 H21 M15,16 H19"
+        android:strokeColor="@color/taipo_text"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

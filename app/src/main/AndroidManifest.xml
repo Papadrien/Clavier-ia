@@ -1,14 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!--
+        Dictionnaire utilisateur du système (mots ajoutés via le souligné rouge) : lecture seule, pour que
+        l'autocorrection ne les corrige pas et les propose. Permission runtime demandée depuis l'écran du
+        dictionnaire personnel ; sans elle, rien ne change. Voir SystemUserDictionary.
+    -->
+    <uses-permission android:name="android.permission.READ_USER_DICTIONARY" />
+
+    <!--
+        Épopée 8 : téléchargement des modèles IA (HTTPS, un fichier de modèle) et mesure d'usage anonyme Aptabase (UE,
+        désactivable dans les paramètres : docs/analytics.md). Aucun texte saisi, copié ou dicté n'est envoyé. Un téléchargement de plusieurs Go reste actif écran
+        éteint : service au premier plan de type dataSync (WorkManager) avec notification (Android 13+ : permission
+        POST_NOTIFICATIONS demandée au premier téléchargement, le téléchargement marche aussi si elle est refusée).
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!--
+        Lot 3.4 (S2) : sauvegarde déclarée explicitement. Elle reste activée (réglages du clavier), mais tout ce
+        qui est chiffré avec une clé Keystore, ainsi que les modèles IA, est exclu : voir res/xml/backup_rules.xml
+        et data_extraction_rules.xml (testé par BackupRulesTest).
+
+        Direct boot (décision D5) : le clavier n'est volontairement PAS directBootAware. Avant le premier
+        déverrouillage après un redémarrage, Android affiche son clavier système ; Taipo reprend ensuite.
+        Raison : ses données (dictionnaire personnel, presse-papiers, mot suivant, modèles) sont dans le
+        stockage protégé par les identifiants, indisponible avant déverrouillage. Voir docs/securite.md.
+    -->
     <application
+        android:name=".TaipoApplication"
+        android:allowBackup="true"
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:theme="@style/AppTheme">
 
         <activity
             android:name=".MainActivity"
+            android:theme="@style/Theme.Taipo.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,8 +55,98 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".KeyboardSettingsActivity"
+            android:label="@string/keyboard_settings_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".ModelDownloadActivity"
+            android:label="@string/model_download_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".VoiceModelDownloadActivity"
+            android:label="@string/model_download_voice_section_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".TermsActivity"
+            android:label="@string/terms_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".BackupActivity"
+            android:label="@string/backup_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".PrivacyActivity"
+            android:label="@string/privacy_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".LicensesActivity"
+            android:label="@string/licenses_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".ModelSettingsActivity"
+            android:label="@string/model_settings_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".SystemPromptsActivity"
+            android:label="@string/system_prompts_title"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false" />
+
+        <activity
+            android:name=".VoiceModelSettingsActivity"
+            android:label="@string/voice_model_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".PersonalDictionaryActivity"
+            android:label="@string/personal_dictionary_title"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false" />
+
+        <activity
+            android:name=".VoicePermissionActivity"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true"
+            android:taskAffinity="" />
+
+        <!-- Story 2.6 : modification d'un élément du Smart Clipboard (fenêtre de dialogue lancée par le clavier). -->
+        <activity
+            android:name=".ClipboardEditActivity"
+            android:exported="false"
+            android:theme="@style/EditDialogTheme"
+            android:windowSoftInputMode="adjustResize|stateVisible"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:taskAffinity="" />
+
+        <!-- Stories 2.7 et 2.8 : étiquette d'un élément épinglé du Smart Clipboard (fenêtre de dialogue lancée par le clavier). -->
+        <activity
+            android:name=".ClipboardLabelActivity"
+            android:exported="false"
+            android:theme="@style/EditDialogTheme"
+            android:windowSoftInputMode="adjustResize|stateVisible"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:excludeFromRecents="true"
+            android:taskAffinity="" />
+
+        <!-- Le service de WorkManager déclare ici son type de service au premier plan (obligatoire dès Android 14). -->
         <service
-            android:name=".ClavierIme"
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="dataSync"
+            tools:node="merge" />
+
+        <service
+            android:name=".TaipoIme"
             android:label="@string/ime_name"
             android:permission="android.permission.BIND_INPUT_METHOD"
             android:exported="true">

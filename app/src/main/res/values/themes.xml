@@ -1,6 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
-        <item name="android:colorAccent">#5A7FD4</item>
+    <!-- Open Sans (lot 02) : police par défaut des composants standards. Les vues du clavier la posent
+         explicitement (voir TaipoType), car elles ne reçoivent pas ce thème. -->
+    <!-- Thème de la V1 : sombre, quel que soit le thème du système (voir KeyboardTheme). La palette claire
+         est prévue pour la V2. forceDarkAllowed=false : le système n'a pas à réassombrir un thème déjà sombre. -->
+
+    <!-- Pas de barre d'action framework : chaque écran affiche déjà son propre titre dans la page,
+         et la barre d'action se superposait au contenu en mode bord à bord. -->
+    <style name="AppTheme" parent="android:Theme.Material.NoActionBar">
+        <!-- Lot 16 : fond des écrans = fond du clavier (#0E0E0E). Visible aussi sous les barres système (bord à bord). -->
+        <item name="android:windowBackground">@color/keyboard_background</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:fontFamily">@font/open_sans</item>
+        <!-- Lot 17 : contrôles standards aux couleurs de la charte (styles : styles.xml). -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_hint</item>
+        <item name="android:textColorHint">@color/text_hint</item>
+        <item name="android:colorControlNormal">@color/control_unchecked</item>
+        <item name="android:colorControlActivated">@color/control_checked</item>
+        <item name="android:editTextStyle">@style/TaipoInput</item>
+        <item name="android:switchStyle">@style/TaipoSwitch</item>
+        <item name="android:radioButtonStyle">@style/TaipoRadioButton</item>
+        <item name="android:spinnerStyle">@style/TaipoSpinner</item>
+        <item name="android:buttonStyle">@style/TaipoButton.Secondary</item>
+    </style>
+
+    <!-- Splashscreen (logo Junadé) : thème de MainActivity au lancement à froid, remplacé par AppTheme dès que
+         MainActivity appelle installSplashScreen() (postSplashScreenTheme). Fond = fond de l'app (#0E0E0E) pour
+         que la transition vers l'accueil ne montre aucun saut de couleur. -->
+    <style name="Theme.Taipo.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/keyboard_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    </style>
+
+    <!-- Story 2.6 : fenêtre de modification d'un élément du presse-papiers. -->
+    <style name="EditDialogTheme" parent="android:Theme.Material.Dialog.NoActionBar">
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:fontFamily">@font/open_sans</item>
+        <!-- Lot 17 : contrôles standards aux couleurs de la charte (styles : styles.xml). -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_hint</item>
+        <item name="android:textColorHint">@color/text_hint</item>
+        <item name="android:colorControlNormal">@color/control_unchecked</item>
+        <item name="android:colorControlActivated">@color/control_checked</item>
+        <item name="android:editTextStyle">@style/TaipoInput</item>
+        <item name="android:switchStyle">@style/TaipoSwitch</item>
+        <item name="android:radioButtonStyle">@style/TaipoRadioButton</item>
+        <item name="android:spinnerStyle">@style/TaipoSpinner</item>
+        <item name="android:buttonStyle">@style/TaipoButton.Secondary</item>
+        <!-- Lot 17 : fenêtre aux couleurs et au rayon des boîtes du Smart Clipboard, écran assombri derrière. -->
+        <item name="android:windowBackground">@drawable/bg_dialog</item>
+        <item name="android:backgroundDimAmount">@dimen/taipo_dialog_dim</item>
+    </style>
+
+    <!-- Pop-up d'information du clavier (remplace les toasts). -->
+    <style name="MessageDialogTheme" parent="android:Theme.Material.Dialog.Alert">
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:fontFamily">@font/open_sans</item>
+        <!-- Lot 17 : contrôles standards aux couleurs de la charte (styles : styles.xml). -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorHint">@color/text_hint</item>
+        <item name="android:colorControlNormal">@color/control_unchecked</item>
+        <item name="android:colorControlActivated">@color/control_checked</item>
+        <item name="android:editTextStyle">@style/TaipoInput</item>
+        <item name="android:switchStyle">@style/TaipoSwitch</item>
+        <item name="android:radioButtonStyle">@style/TaipoRadioButton</item>
+        <item name="android:spinnerStyle">@style/TaipoSpinner</item>
+        <item name="android:buttonStyle">@style/TaipoButton.Secondary</item>
+        <!-- Lot 17 : fenêtre aux couleurs et au rayon des boîtes du Smart Clipboard, écran assombri derrière. -->
+        <item name="android:windowBackground">@drawable/bg_dialog</item>
+        <item name="android:backgroundDimAmount">@dimen/taipo_dialog_dim</item>
+        <!-- Boutons du pop-up : action positive violette, les autres grises (même face + ombre que les écrans). -->
+        <item name="android:buttonBarPositiveButtonStyle">@style/TaipoButton.Primary</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/TaipoButton.Secondary</item>
+        <item name="android:buttonBarNeutralButtonStyle">@style/TaipoButton.Secondary</item>
+        <!-- Le message d'un AlertDialog est en textColorSecondary : blanc ici, pour rester lisible. -->
+        <item name="android:textColorSecondary">@color/text_primary</item>
     </style>
 </resources>

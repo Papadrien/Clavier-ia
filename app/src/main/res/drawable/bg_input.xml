@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fond des champs de saisie (lot 17) : fond sombre, trait fin au repos, trait violet épais au focus. Couleurs et
+     dimensions : colors.xml / dimens.xml. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/input_background" />
+            <stroke android:width="@dimen/taipo_input_stroke_width_focused" android:color="@color/input_stroke_focused" />
+            <corners android:radius="@dimen/taipo_input_corner_radius" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/input_background" />
+            <stroke android:width="@dimen/taipo_input_stroke_width" android:color="@color/input_stroke" />
+            <corners android:radius="@dimen/taipo_input_corner_radius" />
+        </shape>
+    </item>
+</selector>

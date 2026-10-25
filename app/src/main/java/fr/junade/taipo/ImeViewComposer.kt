@@ -1,0 +1,310 @@
+package fr.junade.taipo
+
+import android.content.Context
+import android.view.MotionEvent
+import android.view.View
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import fr.junade.taipo.dictionary.WordSuggestion
+import fr.junade.taipo.emoji.EmojiPanelView
+import fr.junade.taipo.emoji.RecentEmojiBarView
+
+/**
+ * Construction de la vue du clavier (`onCreateInputView`) : clavier, barre du haut, barre des emojis récents,
+ * panneau emoji, et assemblage avec la zone de chat, la barre et les suggestions du mode prompt et le
+ * panneau Smart Clipboard. Extrait de `TaipoIme` au lot 2.3 de la revue de code (A4), sans changement de
+ * comportement : chaque écouteur de vue renvoie vers [Host], l'IME reste seul à décider quoi faire.
+ *
+ * Le mode prompt et le presse-papiers fournissent eux-mêmes leurs vues (`createViews`, `createPanel`) :
+ * ils sont passés directement. Toutes les méthodes sont à appeler depuis le thread principal.
+ */
+class ImeViewComposer(
+    private val context: Context,
+    private val prompt: PromptModeController,
+    private val clipboard: ClipboardController,
+    private val host: Host,
+) {
+
+    /** Ce que les vues demandent à l'IME. */
+    interface Host {
+        /** Échelle de hauteur du clavier (réglage « hauteur »), relue à chaque création. */
+        fun heightScale(): Float
+
+        fun onKey(key: Key)
+
+        fun onCursorMoved(steps: Int)
+
+        /** Touche globe de la bulle d'Entrée (clavier multilingue) relâchée : changement de langue. */
+        fun onGlobeSelected()
+
+        fun onDeleteSwipeUpdate(words: Int)
+
+        fun onDeleteSwipeRelease()
+
+        fun onDeleteSwipeCancel()
+
+        fun onRecentEmojiClicked(emoji: String)
+
+        fun onCorrectClicked()
+
+        /** Retour haptique d'une touche (niveau des paramètres), pour le bouton « ··· » de gauche. */
+        fun haptic()
+
+        /** Son « interrupteur » des boutons Paramètres et Smart Clipboard (Annuler le joue dans [onUndoClicked]). */
+        fun playBarButtonSound()
+
+        /** Joue [sound] si le réglage « Sons de la barre supérieure » est activé (robot, menu de gauche). */
+        fun playSound(sound: KeySound)
+
+        /** Joue [sound] si le réglage « Son du clavier » est activé (choix d'un emoji dans le panneau). */
+        fun playKeySound(sound: KeySound)
+
+        /** Son des boutons d'action IA : robot, Chat, Corriger (lancer ou annuler) et Transcription IA. */
+        fun playAiButtonSound()
+
+        /** Nouvelle touche sur Corriger pendant le chargement ou la correction : l'annuler. */
+        fun onCancelCorrectionClicked()
+
+        /** Bouton Annuler (à droite du bouton Smart Clipboard) : défait la dernière action. */
+        fun onUndoClicked()
+
+        fun onVoiceTouch(event: MotionEvent): Boolean
+
+        /** Lot 20 : activation du bouton Vocal par l'accessibilité (TalkBack, double appui) : bascule l'écoute. */
+        fun onVoiceClick()
+
+        /** Story 10.1 : le champ est sensible (mot de passe) : actions IA et Smart Clipboard grisés. */
+        fun sensitiveField(): Boolean
+
+        /** Story 10.1 : message court qui explique pourquoi le bouton touché est grisé. */
+        fun showSensitiveFieldMessage()
+
+        /** Story 14.5 : touche sur le bouton « voix vers texte » (transcription IA). */
+        fun onAiTranscriptionClick()
+
+        fun onEmojiSuggestionClicked()
+
+        fun onWordSuggestionClicked(suggestion: WordSuggestion)
+
+        fun openAppHome()
+
+        fun onEmojiSelected(emoji: String)
+
+        fun onEmojiBackspace()
+
+        fun onEmojiPanelClose()
+
+        /** Appui sur un onglet de catégorie du panneau emoji : retour haptique. */
+        fun onEmojiTabSelected()
+
+        /** Les vues sont toutes créées et assemblées : l'IME peut les mettre à jour (état des touches...). */
+        fun onViewsCreated()
+    }
+
+    lateinit var keyboardView: KeyboardView
+        private set
+
+    lateinit var correctionBar: CorrectionBarView
+        private set
+
+    /** Story 1.15 : panneau emoji, superposé au clavier (même taille) tant qu'il est affiché. */
+    lateinit var emojiPanel: EmojiPanelView
+        private set
+
+    /** Barre des emojis récents (champs de messagerie), au-dessus de la barre du haut. */
+    lateinit var recentEmojiBar: RecentEmojiBarView
+        private set
+
+    /** Vrai dès que les vues ont été créées une première fois (elles sont recréées, par exemple à la rotation). */
+    var isComposed = false
+        private set
+
+    /** Crée toutes les vues et renvoie la racine à afficher. */
+    /** Story 10.1 : vrai (avec le message) si le champ est sensible : l'action demandée n'est pas lancée. */
+    private fun blockedBySensitiveField(): Boolean {
+        if (!host.sensitiveField()) return false
+        host.showSensitiveFieldMessage()
+        return true
+    }
+
+    fun compose(): View {
+        keyboardView = KeyboardView(context)
+        keyboardView.heightScale = host.heightScale()
+        keyboardView.setOnKeyListener { key -> host.onKey(key) }
+        keyboardView.setOnCursorMoveListener { steps -> host.onCursorMoved(steps) }
+        keyboardView.setOnGlobeSelectedListener { host.onGlobeSelected() }
+        keyboardView.setOnDeleteSwipeListener(object : KeyboardView.OnDeleteSwipeListener {
+            override fun onDeleteSwipeUpdate(words: Int) = host.onDeleteSwipeUpdate(words)
+            override fun onDeleteSwipeRelease() = host.onDeleteSwipeRelease()
+            override fun onDeleteSwipeCancel() = host.onDeleteSwipeCancel()
+        })
+
+        prompt.createViews() // zone de chat, barre du prompt et bande de suggestions (masquées)
+
+        recentEmojiBar = RecentEmojiBarView(context)
+        recentEmojiBar.visibility = View.GONE
+        recentEmojiBar.setOnEmojiClickListener { emoji -> host.onRecentEmojiClicked(emoji) }
+
+        correctionBar = CorrectionBarView(context)
+        correctionBar.setOnCorrectListener {
+            if (blockedBySensitiveField()) return@setOnCorrectListener
+            host.playAiButtonSound()
+            host.onCorrectClicked()
+        }
+        correctionBar.setOnActionsMenuClickListener { // robot (menu de gauche) : même vibration qu'une touche
+            host.haptic()
+            host.playAiButtonSound()
+        }
+        correctionBar.setOnUndoListener { host.onUndoClicked() }
+        correctionBar.setOnCancelListener {
+            host.playAiButtonSound()
+            host.onCancelCorrectionClicked()
+        }
+        correctionBar.setOnGenerateClickListener {
+            if (blockedBySensitiveField()) return@setOnGenerateClickListener
+            host.playAiButtonSound()
+            prompt.enter()
+        }
+        val voiceTouchListener = View.OnTouchListener { view, event ->
+            // Story 10.1 : champ sensible, le bouton est grisé ; le message s'affiche au relâchement.
+            if (host.sensitiveField()) {
+                if (event.actionMasked == MotionEvent.ACTION_UP) host.showSensitiveFieldMessage()
+                return@OnTouchListener true
+            }
+            // Rendu seul (lot 08) : l'écouteur consomme l'événement, la vue ne passerait pas à « pressée » sans cela.
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    // Transcription en cours : le bouton est grisé, il ne passe pas à « pressé » (l'appui est ignoré par la dictée).
+                    view.isPressed = !BarVisibility.transcriptionInProgress(correctionBar.voiceState, correctionBar.aiTranscriptionState)
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> view.isPressed = false
+            }
+            host.onVoiceTouch(event)
+        }
+        // Lot 20 : l'écouteur tactile ci-dessus consomme tout toucher, le clic n'arrive donc que de l'accessibilité.
+        correctionBar.voiceButton.setOnTouchListener(voiceTouchListener)
+        correctionBar.voiceButton.setOnClickListener {
+            if (blockedBySensitiveField()) return@setOnClickListener
+            host.onVoiceClick()
+        }
+        correctionBar.setOnAiTranscriptionClickListener {
+            if (blockedBySensitiveField()) return@setOnAiTranscriptionClickListener
+            host.playAiButtonSound()
+            host.onAiTranscriptionClick()
+        }
+        // Le bouton micro de la barre du prompt déclenche la même dictée (appui bref : marche/arrêt, appui long : tant que maintenu).
+        prompt.promptBar.voiceButton.setOnTouchListener(voiceTouchListener)
+        prompt.promptBar.voiceButton.setOnClickListener { host.onVoiceClick() }
+        correctionBar.setOnEmojiSuggestionClickListener {
+            host.playKeySound(KeySound.KEY) // tic de clavier à chaque suggestion choisie
+            host.onEmojiSuggestionClicked()
+        }
+        // Le même bouton ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme.
+        correctionBar.setOnClipboardClickListener {
+            if (blockedBySensitiveField()) return@setOnClipboardClickListener
+            host.playBarButtonSound()
+            clipboard.onPanelButtonClicked()
+        }
+        correctionBar.setOnClipboardCloseClickListener {
+            clipboard.hidePanel()
+        }
+        correctionBar.setOnSettingsClickListener {
+            host.playBarButtonSound()
+            host.openAppHome()
+        }
+        correctionBar.setOnPasteClickListener {
+            clipboard.onPasteTapped()
+        }
+        correctionBar.setOnWordSuggestionClickListener { suggestion ->
+            host.playKeySound(KeySound.KEY)
+            host.onWordSuggestionClicked(suggestion)
+        }
+
+        emojiPanel = EmojiPanelView(context)
+        emojiPanel.visibility = View.GONE
+        emojiPanel.setOnEmojiSelectedListener { emoji ->
+            host.playKeySound(KeySound.KEY) // tic de clavier à chaque emoji choisi dans le panneau
+            host.onEmojiSelected(emoji)
+        }
+        emojiPanel.setOnBackspaceListener { host.onEmojiBackspace() }
+        emojiPanel.setOnCloseListener { host.onEmojiPanelClose() }
+        emojiPanel.setOnTabTappedListener { host.onEmojiTabSelected() }
+
+        val clipboardPanel = clipboard.createPanel()
+
+        val root = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            // Fond commun à la barre du haut et au clavier (les vues enfants sont transparentes) :
+            // les animations de fond futures se dessineront dans ce seul drawable.
+            background = KeyboardBackgroundDrawable(context.themeColor(R.color.keyboard_background))
+            // Story 1.8 : la bulle d'accents des touches du haut est dessinée par le clavier
+            // au-dessus de sa propre zone, par-dessus la barre d'actions.
+            clipChildren = false
+            // Phase 5.1-2 : la zone de chat est le premier enfant, au-dessus de la barre d'emojis
+            // récents et de la barre du haut (décisions 3 et 12).
+            addView(
+                prompt.chatZone,
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
+            )
+            addView(
+                recentEmojiBar,
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
+            )
+            addView(
+                correctionBar,
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
+            )
+            // Phase 5.1-4 : la barre du mode prompt prend la place de la barre du haut (masquée en dehors du mode).
+            addView(
+                prompt.promptBar,
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
+            )
+            // Suggestions du prompt, entre la pilule de saisie et les touches (masquées en dehors du mode).
+            addView(
+                prompt.suggestionBar,
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
+            )
+            // Les panneaux (emoji, Smart Clipboard) recouvrent exactement le clavier (le clavier reste
+            // mesuré, seulement masqué) : la hauteur est celle du clavier et ne change pas en
+            // basculant, même si le contenu d'un panneau est plus haut (rotation et réglage compris).
+            addView(
+                KeyboardStackLayout(context).apply {
+                    clipChildren = false
+                    addView(
+                        keyboardView,
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT,
+                        ),
+                    )
+                    addView(
+                        emojiPanel,
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                        ),
+                    )
+                    addView(
+                        clipboardPanel,
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                        ),
+                    )
+                },
+                LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                ),
+            )
+        }
+
+        // Le plafond de la zone de chat (moitié de la hauteur du clavier) se mesure sur la pile
+        // clavier + panneaux, dernier enfant de la racine.
+        prompt.chatZone.heightReference = root.getChildAt(root.childCount - 1)
+        isComposed = true
+        prompt.applyViews() // la vue est recréée (rotation...) alors que le mode prompt peut être actif
+        host.onViewsCreated()
+        return root
+    }
+}

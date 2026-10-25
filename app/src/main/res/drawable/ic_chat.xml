@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Charte Taipo (lot 09) : icône au trait de 2 sur une grille de 24, extrémités et angles arrondis, blanc de la charte. Taille : taipo_icon_size.
+     Bulle de discussion avec une étincelle d'IA (pleine) en son centre. Icône fixe (le bouton de la barre du prompt a sa version animée : ChatIconDrawable). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/taipo_icon_size"
+    android:height="@dimen/taipo_icon_size"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M20,15 a2,2 0 0 1 -2,2 H8 L4,21 V5 a2,2 0 0 1 2,-2 H18 a2,2 0 0 1 2,2 Z"
+        android:strokeColor="@color/taipo_text"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="@color/taipo_text"
+        android:pathData="M12,5.8 C12.3,8.3 13.7,9.7 16.2,10 C13.7,10.3 12.3,11.7 12,14.2 C11.7,11.7 10.3,10.3 7.8,10 C10.3,9.7 11.7,8.3 12,5.8 Z" />
+</vector>

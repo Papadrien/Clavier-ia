@@ -1,0 +1,31 @@
+# Lot 4.1 (B8) : réglages detekt, par-dessus la configuration par défaut (--build-upon-default-config).
+# Choisis pour un projet d'interface (vues dessinées à la main, beaucoup de constantes de mise en page) :
+# on désactive seulement les règles qui y feraient surtout du bruit. La dette existante est dans
+# quality/detekt-baseline.xml ; toute nouvelle alerte fait échouer la tâche.
+build:
+  maxIssues: 0
+
+style:
+  MagicNumber:
+    active: false
+  MaxLineLength:
+    maxLineLength: 160
+  ReturnCount:
+    active: false
+  ThrowsCount:
+    active: false
+
+complexity:
+  TooManyFunctions:
+    active: false
+  LongParameterList:
+    functionThreshold: 8
+    constructorThreshold: 10
+  CyclomaticComplexMethod:
+    threshold: 20
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated: ['Test']
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][A-Za-z0-9_]*'

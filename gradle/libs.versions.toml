@@ -1,0 +1,46 @@
+# Catalogue de versions (lot 2.1 de la revue, B5). Room : le plugin Gradle et les artefacts
+# androidx.room doivent avoir exactement la même version. litertlm : version figée (lot 1.2) pour
+# des builds reproductibles. Les autres dépendances restent déclarées dans app/build.gradle.kts
+# et pourront migrer ici progressivement.
+[versions]
+room = "2.8.4"
+# Activity Result API (lot 3.5) : ComponentActivity + registerForActivityResult.
+activity = "1.10.1"
+# ExploreByTouchHelper (lot 20 de la refonte graphique) : arbre d'accessibilité virtuel des vues dessinées au Canvas
+# (touches du clavier, onglets et grille d'emojis). Version 1.1.0, la dernière stable ancienne et éprouvée.
+customview = "1.1.0"
+# Profil de démarrage (lot 3.6).
+profileinstaller = "1.4.1"
+# Splashscreen (logo Junadé) : API SplashScreen unifiée, rétroportée jusqu'à l'API 23 (minSdk 26 ici).
+splashscreen = "1.0.1"
+# Module macrobenchmark (lot 3.6) : benchmark-macro-junit4, UI Automator.
+benchmark = "1.4.1"
+uiautomator = "2.3.0"
+# LiteRT-LM figé à 0.17.1 (compilé avec Kotlin 2.4.0, d'où le surclassement du KGP dans build.gradle.kts).
+litertlm = "0.17.1"
+# Téléchargement des modèles (épopée 8) : WorkManager, travail au premier plan. À confirmer au premier build.
+work = "2.10.0"
+
+# Demande d'avis intégrée (bottom sheet Google Play In-App Review) : voir fr.junade.taipo.review.
+play-review = "2.0.2"
+
+# SDK Kotlin d'Aptabase (JitPack). 0.1.0 : compilé contre l'API 37 et Kotlin stdlib 2.2, minSdk 16 (la doc du site cite encore 0.0.8).
+aptabase = "0.1.0"
+
+[libraries]
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-activity = { module = "androidx.activity:activity", version.ref = "activity" }
+androidx-customview = { module = "androidx.customview:customview", version.ref = "customview" }
+androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }
+androidx-benchmark-macro ={ module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
+androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
+aptabase-kotlin = { module = "com.github.aptabase:aptabase-kotlin", version.ref = "aptabase" }
+play-review = { module = "com.google.android.play:review", version.ref = "play-review" }
+litertlm-android = { module = "com.google.ai.edge.litertlm:litertlm-android", version.ref = "litertlm" }
+
+[plugins]
+room = { id = "androidx.room", version.ref = "room" }

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/taipo_settings_screen_padding">
+
+        <TextView
+            style="@style/TaipoText.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/model_settings_title"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+        <TextView
+            style="@style/TaipoText.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/model_settings_description"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_xl" />
+
+        <TextView
+            style="@style/TaipoText.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/model_settings_spinner_label"
+            android:layout_marginBottom="@dimen/taipo_settings_label_gap" />
+
+        <Spinner
+            android:id="@+id/spinner_model"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_lg" />
+
+        <TextView
+            style="@style/TaipoText.Info"
+            android:id="@+id/text_model_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_settings_card"
+            android:padding="@dimen/taipo_settings_card_padding"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_lg" />
+
+        <Button
+            style="@style/TaipoButton.Primary"
+            android:id="@+id/button_pick_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/model_settings_pick_file" />
+
+        <TextView
+            style="@style/TaipoText.Info"
+            android:id="@+id/text_current_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md" />
+
+        <TextView
+            style="@style/TaipoText.Info"
+            android:id="@+id/text_size_warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/settings_warning_text"
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm" />
+
+        <TextView
+            style="@style/TaipoText.Small"
+            android:id="@+id/text_checksum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm" />
+
+        <Button
+            style="@style/TaipoButton.Secondary"
+            android:id="@+id/button_forget_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_lg"
+            android:text="@string/model_settings_forget_file" />
+
+    </LinearLayout>
+</ScrollView>

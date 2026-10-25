@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/taipo_settings_screen_padding">
+
+    <TextView
+        style="@style/TaipoText.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/personal_dictionary_title"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/personal_dictionary_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/personal_dictionary_hint"
+            android:inputType="textNoSuggestions|textVisiblePassword"
+            android:imeOptions="actionDone"
+            android:maxLength="40"
+            android:singleLine="true" />
+
+        <Button
+            style="@style/TaipoButton.Primary"
+            android:id="@+id/personal_dictionary_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/taipo_settings_gap_sm"
+            android:text="@string/personal_dictionary_add" />
+    </LinearLayout>
+
+    <TextView
+        style="@style/TaipoText.Body"
+        android:id="@+id/personal_dictionary_system_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_lg" />
+
+    <Button
+        style="@style/TaipoButton.Secondary"
+        android:id="@+id/personal_dictionary_system_allow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+        android:text="@string/personal_dictionary_system_allow" />
+
+    <TextView
+        style="@style/TaipoText.Label"
+        android:id="@+id/personal_dictionary_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_lg"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_xs" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/personal_dictionary_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+</LinearLayout>

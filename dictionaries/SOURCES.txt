@@ -1,0 +1,111 @@
+Listes de mots avec fréquences (fr.txt, en.txt) : extraites des listes de fréquence FrequencyWords
+(hermitdave/FrequencyWords, contenu 2018, dérivé du corpus OpenSubtitles2018),
+via le miroir Hugging Face StephanAkkerman/frequency-words-2018 (fr_50k.txt, en_50k.txt).
+Licence du contenu : CC-BY-SA 4.0 (dépôt d'origine) — attribution requise, à reprendre
+dans l'écran "Licences" de l'app (fait : mention CC BY-SA 4.0 avec les modifications apportées).
+
+Format : une ligne par mot, "mot fréquence" (nombre d'occurrences dans le corpus), triées par
+fréquence décroissante. La fréquence sert à départager les corrections (story 1.14).
+
+Nettoyage (fr.txt ~49 500 mots, en.txt ~48 650 mots, soit les 50 000 mots des listes d'origine moins
+les entrées non retenues) :
+- retirés : fragments issus de la tokenisation (l', j', 's, 't...), abréviations avec point (mr., u.s.),
+  entrées contenant chiffres ou autres caractères, lettres isolées sauf a / à / y (fr) et a / i (en) ;
+- contractions ajoutées à la main dans l'ancienne version (j'ai, c'est, don't...) conservées ; leur
+  fréquence est estimée à partir des fragments du corpus (min des deux fragments) ;
+- formes sans apostrophe de ces contractions (jai, cest, dont, im...) retirées : ce sont des fautes
+  du corpus, corrigées automatiquement vers la contraction.
+Non nettoyé : fautes de frappe et noms propres rares du corpus (ex. "helo") restent dans les listes.
+
+Limites connues des listes, compensées par le code (Dictionary / InflectionRules) et non par le fichier :
+- pluriels et féminins absents (« durée » présent, « durées » absent) : reconnus par des règles régulières
+  (s, x, aux ; règles anglaises pour en.txt) ; les conjugaisons irrégulières ne sont pas couvertes ;
+- fautes sans accent présentes dans fr.txt (« ca », « etait », « etre », « tres », « meme »...) : corrigées
+  quand la forme accentuée est au moins 10 fois plus fréquente ; « a »/« à », « ou »/« où », « la »/« là »
+  restent intacts. Une meilleure solution à terme : un lexique français complet avec formes fléchies.
+
+
+=== Liste française complète (fr.txt) et liste de secours (fr_50k.txt) — 05/10/2026 ===
+fr.txt : liste française COMPLÈTE de la même source (FrequencyWords, OpenSubtitles2018, fr_full.txt,
+834 768 lignes), nettoyée comme décrit plus haut : 766 833 mots. Retirés : fragments d'élision (l', j'...),
+abréviations avec point, entrées avec chiffres, caractères non latins ou en début/fin de mot, lettres isolées
+sauf a / à / y, débris en majuscules. Les 90 contractions écrites à la main (j'ai, c'est, qu'il, l'homme...)
+sont rajoutées (fréquence = max entre l'ancienne valeur et celle du corpus) et leurs formes sans apostrophe
+(jai, cest, quil...) retirées, comme pour la liste de 50 000 mots.
+fr_50k.txt : l'ancienne liste française de ~50 000 mots (49 468), conservée telle quelle en SECOURS : le
+chargeur (DictionaryLoader) bascule dessus si fr.txt ne peut pas être chargé (mémoire, fichier illisible) ;
+pour l'utiliser en permanence, changer FR_ASSET dans DictionaryLoader.
+Seuils appliqués au chargement de fr.txt (voir DictionaryLoader) : mots vus au moins 5 fois seulement
+(~242 000 mots retenus, le reste étant surtout des fautes de frappe du corpus), et mots de fréquence >= 100
+seuls proposés en correction ou en complétion (~50 000 mots, comme avant). Mesure sur 16 000 fautes de frappe
+aléatoires : 12,7 % tombent sur un mot valide en gardant toute la liste, 6,0 % avec le seuil 5, 2,5 % avec
+la liste de 50 000 mots.
+
+=== Nettoyage des fautes de frappe du corpus — 10/10/2026 ===
+fr.txt : 36 302 lignes retirées (766 833 -> 730 531) par tools/PruneDictionaryTypos.kt. Une ligne est retirée si le mot
+est rare (moins de 100 occurrences : il n'est donc jamais proposé), à une seule modification d'un mot au moins 1 000
+fois plus fréquent, et si cette modification est une faute plausible au clavier AZERTY de Taipo (touche voisine, lettre
+oubliée, doublée ou effleurée, inversion). Exemples retirés : « oeux », « eet », « beacoup », « maintenat ».
+Sans cela, ces mots « valides » empêchaient l'autocorrection (« eet » restait « eet » au lieu de devenir « est »).
+Conservés volontairement : les vrais mots rares (« hêtre », « jurais », « coupa », « uni ») et les différences d'accent
+seules (« commenté » / « commente »), traitées par Dictionary.
+Retirées à la main (tranche 100 à 1 000 occurrences, fautes évidentes) : quo, pouquoi, plis, troi, notres, votres,
+maitenant, bein, estce, pourait, touts, ajussi, vosu, ètait, içi, ést, qué, voss, ête, dûr.
+Pour relancer : voir l'en-tête de tools/PruneDictionaryTypos.kt. fr_50k.txt (secours) n'est pas modifié.
+
+
+=== Listes complètes des autres langues (en, es, de, it, pt, nl) — 12/10/2026 ===
+Le clavier gère aussi l'anglais, l'espagnol, l'allemand, l'italien, le portugais et le néerlandais (réglage « Langue du
+clavier »). Chaque langue a, comme le français : <code>.txt = liste COMPLÈTE, <code>_50k.txt = liste de secours d'environ
+50 000 mots (DictionaryLoader bascule dessus si la liste complète ne peut pas être chargée). Fichiers : en.txt, en_50k.txt,
+es.txt, es_50k.txt, de.txt, de_50k.txt, it.txt, it_50k.txt, pt.txt, pt_50k.txt, nl.txt, nl_50k.txt.
+Source : les listes <code>_full.txt de FrequencyWords (hermitdave/FrequencyWords, contenu 2018, OpenSubtitles2018,
+CC-BY-SA 4.0 : attribution reprise dans l'écran « Licences »), nettoyées par tools/fetch_dictionaries.py
+(python3 tools/fetch_dictionaries.py --from=DOSSIER_DES_FICHIERS_full) :
+- minuscules, forme NFC ; seuls les mots faits des lettres de l'alphabet de la langue (avec jusqu'à 3 apostrophes ou
+  traits d'union au milieu) sont gardés : débris d'encodage et caractères d'autres alphabets retirés ;
+- lettres isolées retirées sauf les vrais mots (en : a i ; es : a e o u y ; de : a i o ; it : a e i o u è ;
+  pt : a e o é à ; nl : e u) ; mots vus moins de 5 fois retirés (fautes de frappe, jamais utilisés par le chargeur).
+Tailles : en 341 538 mots, es 339 762, de 241 779, it 239 101, pt 240 057, nl 247 547.
+<code>_50k.txt : les 50 000 mots les plus fréquents de la liste complète nettoyée (es, de, it, pt, nl). en_50k.txt : l'ancienne
+liste anglaise de ~48 650 mots, conservée telle quelle en secours.
+Anglais : le corpus sépare les contractions (don + 't). Les 45 contractions écrites à la main de l'ancienne liste (it's,
+don't, can't...) sont reprises dans en.txt et leurs formes sans apostrophe qui ne sont pas des mots (dont, im, thats, ive...)
+sont retirées, comme pour le français.
+Italien : le corpus sépare aussi les élisions (l' + ho, dell' + acqua) : elles sont gérées par le code (Dictionary :
+seul le mot qui suit l'apostrophe est examiné), pas par la liste. Débris « e'o », « e'ato » (è mal saisi) retirés.
+Seuils appliqués au chargement (voir DictionaryLoader) : mots vus au moins 5 fois (déjà garanti par le fichier) et mots
+proposés en correction ou en complétion seulement au-dessus de la fréquence du 50 000e mot de chaque liste : en 149, es 183,
+de 61, it 102, pt 91, nl 77 (fr : 100).
+Non fait pour ces langues : le retrait des fautes de frappe du corpus (tools/PruneDictionaryTypos.kt, propre au clavier
+AZERTY français) ; des fautes rares restent donc des mots « valides » qui peuvent empêcher une autocorrection.
+
+
+=== Nettoyage complémentaire des fautes de frappe — 14/10/2026 ===
+Les 7 listes complètes et leurs listes de secours ont été passées par un filtre heuristique conservateur :
+retrait des formes rares (fréquence <= 99) lorsqu'un mot à une seule modification est au moins 1 000 fois
+plus fréquent et que la modification est compatible avec une faute de saisie (remplacement par une touche voisine,
+lettre oubliée/ajoutée/doublée ou inversion). Les paires qui ne diffèrent que par les accents sont conservées.
+Quelques fautes évidentes déjà identifiées ont également été retirées manuellement.
+
+Lignes retirées des listes complètes (fr/en/es/de/it/pt/nl) : 1 439 / 6 153 / 3 824 / 1 290 / 2 157 / 1 885 / 1 920.
+Lignes retirées des listes de secours : 20 / 7 / 5 / 56 / 3 / 15 / 36.
+
+Important : ce filtre ne prouve pas qu'un mot est absent de la langue. Les corpus de sous-titres contiennent des noms
+propres, de l'argot, des emprunts et des formes régionales ; les formes rares sans voisin fréquent restent donc
+possibles. Le filtre privilégie la réduction des faux mots qui bloquent l'autocorrection sans prétendre remplacer
+un dictionnaire lexicographique validé pour chaque langue.
+
+
+=== Prénoms (names/<code>.txt) — 16/10/2026 ===
+Les listes de fréquence sont TOUTES en minuscules : elles ne disent pas qu'« adrien » est un prénom, donc aucune majuscule
+n'était mise et les prénoms rares (sous le seuil de candidats) n'étaient jamais proposés en correction.
+names/<code>.txt : prénoms courants de chaque langue (fr, en, es, de, it, nl, pt) avec leur majuscule et leurs accents, un
+par ligne (« # » = commentaire). Liste écrite à la main pour l'application (pas de source externe, pas de licence à
+reprendre) ; elle n'est pas exhaustive : les prénoms absents se règlent par le dictionnaire personnel.
+Effet (Dictionary.properNameForm) : « adrien » -> « Adrien », « adrein » -> « Adrien », « eric » -> « Éric » (mot tapé en
+minuscules sans accent) ; un nom déjà bien écrit ou présent dans le dictionnaire personnel n'est pas touché ; un mot tapé avec
+une majuscule garde sa graphie (« Eric » reste « Eric »). Les prénoms rares sont aussi proposés en correction (« Mathide » -> « Mathilde »).
+Règle de la liste : jamais un prénom qui est aussi un mot courant de la langue (fr : pierre, jean, rose, claire, marine, jade,
+noël, clément ; en : will, mark, bill, rose, grace, hope, april, may, june, jack ; es : alba, pilar, ángel, tomás ; it : rosa,
+aurora ; nl : roos, wil, iris...), sinon un mot ordinaire serait mis en majuscule à tort.

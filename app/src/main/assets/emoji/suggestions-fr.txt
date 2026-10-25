@@ -1,0 +1,128 @@
+# Suggestions d'emoji (story 1.16), français : un emoji puis les mots qui le déclenchent.
+# Ordre de priorité = ordre du fichier : si un mot apparaît deux fois, la première ligne l'emporte.
+# Les mots sont comparés sans accent ni majuscule ; le pluriel en « s » est reconnu automatiquement.
+# Aucun apprentissage : liste fixe, maintenue à la main.
+😀 sourire content contente heureux heureuse joyeux joyeuse
+😂 mdr lol ptdr hilarant drole marrant marrante rire
+😍 adore adorer adorable magnifique canon
+😘 bisou bisous bise bises
+❤️ amour coeur aime aimer amoureux amoureuse
+😢 triste tristesse chagrin
+😭 pleurer pleure larmes sanglots
+😡 colere furieux furieuse enerve enervee
+😴 dormir fatigue fatiguee fatigues sommeil dodo
+👍 ok okay accord top parfait nickel
+👏 bravo applaudir felicitations
+🙏 merci svp plait priere
+👋 salut coucou bonjour hello
+🎉 fete felicitation
+🎂 anniversaire
+🎁 cadeau
+🎄 noel
+🎃 halloween
+🐣 paques
+🔥 feu flamme chaud
+❄️ froid hiver
+⛄ neige
+☀️ soleil ete
+🌧️ pluie
+🌈 arcenciel
+🌙 lune nuit
+⭐ etoile
+🌍 terre planete
+🍕 pizza
+🍔 burger hamburger
+🍟 frites
+🍝 pates spaghetti
+🍣 sushi
+🥐 croissant
+🥖 baguette pain
+🧀 fromage
+🍷 vin
+🍺 biere
+☕ cafe
+🍵 the
+🍰 gateau
+🍫 chocolat
+🍦 glace
+🍎 pomme
+🍌 banane
+🍓 fraise
+🍇 raisin
+🍉 pasteque
+🥕 carotte
+🍅 tomate
+🥑 avocat
+🥚 oeuf
+🥩 viande
+🍗 poulet
+🥗 salade
+🍽️ dejeuner diner repas appetit
+🐱 chat chaton
+🐶 chien chiot
+🐭 souris
+🐰 lapin
+🐻 ours
+🦊 renard
+🐼 panda
+🐴 cheval
+🐷 cochon
+🐮 vache
+🐔 poule
+🐟 poisson
+🐢 tortue
+🐍 serpent
+🦁 lion
+🐯 tigre
+🐵 singe
+🐦 oiseau
+🦋 papillon
+🐝 abeille
+🌹 rose roses
+🌻 tournesol
+🌸 fleur fleurs
+🌳 arbre
+🚗 voiture auto
+🚲 velo
+🚌 bus
+🚆 train
+✈️ avion voyage
+🚀 fusee
+🏠 maison
+🏢 immeuble
+🏖️ plage vacances
+🏔️ montagne
+⚽ foot football
+🏀 basket
+🎾 tennis
+🏊 natation piscine
+🎮 jeu jeux jouer
+🎵 musique chanson
+🎸 guitare
+🎬 film cinema
+📚 livre livres lire
+📱 telephone portable
+💻 ordinateur
+📷 photo
+💡 idee
+💰 argent
+📅 rdv
+⏰ reveil
+🔑 cle
+📞 appeler
+📧 mail email
+💼 travail boulot
+✅ termine
+❌ erreur
+💪 muscu force courage
+🤔 reflechir peutetre hmm
+😅 oups desole
+😔 desolee dommage
+🙈 honte
+😱 peur effrayant
+🤒 malade
+😎 cool
+🤗 calin calins
+🤩 genial
+🏆 victoire gagner champion
+🎓 diplome

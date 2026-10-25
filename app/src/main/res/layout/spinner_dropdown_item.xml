@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ligne d'une liste déroulante ouverte (lot 17) : 48dp de haut, grise à l'appui. -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/TaipoText.Lead"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/taipo_spinner_item_min_height"
+    android:gravity="center_vertical"
+    android:paddingStart="@dimen/taipo_spinner_item_padding_horizontal"
+    android:paddingEnd="@dimen/taipo_spinner_item_padding_horizontal"
+    android:background="@drawable/bg_popup_item"
+    android:ellipsize="end"
+    android:singleLine="true" />

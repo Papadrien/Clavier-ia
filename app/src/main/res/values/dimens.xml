@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DIMENSIONS TAIPO (refonte graphique, lot 03).
+     Point d'entrée unique des dimensions de la charte : rayons, ombres, marges, espacements, tailles de texte
+     et d'icônes, hauteurs de barres. Chaque valeur reprend EXACTEMENT ce que le code utilisait avant ce lot
+     (rendu identique). Les valeurs sont à ajuster ici, après les premiers screenshots (lots 04 à 24), sans
+     toucher au Kotlin. Le panneau emoji est branché sur ce fichier (lot 14) ; le panneau presse-papiers aussi (lot 15) ; les écrans de
+     réglages aussi (lot 16). Les seuils des gestes (glissement espace / retour arrière) ne sont
+     pas des dimensions graphiques : ils restent dans KeyboardView. -->
+<resources>
+
+    <!-- ===== Accessibilité (lot 20) ===== -->
+    <!-- Zone tactile minimale recommandée par Android et Material (48 dp). Les boutons des barres du haut dessinent 36 dp de face :
+         leur zone tactile est étendue à ce minimum par ExpandedTouchDelegate, sans changer le rendu (taipo_touch_slop). -->
+    <dimen name="taipo_touch_target_min">48dp</dimen>
+    <!-- Débord tactile autour des boutons des barres : (48 - 36) / 2 = 6 dp en hauteur ; sur la largeur, il est limité à la moitié
+         de l'espace entre deux boutons voisins (le plus proche gagne). -->
+    <dimen name="taipo_touch_slop">6dp</dimen>
+    <!-- Échelle de police maximale appliquée aux textes de hauteur fixe (barres du haut, suggestions, panneau emoji) : au-delà de 130 %
+         le texte ne tiendrait plus dans ses 36 dp. Les écrans de réglages, les cartes et le chat, eux, suivent la police du système. -->
+    <item name="taipo_max_font_scale" type="dimen" format="float">1.3</item>
+
+    <!-- ===== Touches du clavier (KeyboardView) ===== -->
+    <!-- Rayon des touches (et de la bulle d'agrandissement). -->
+    <dimen name="taipo_key_corner_radius">8dp</dimen>
+    <!-- Marge d'insertion de chaque côté d'une touche : espace visible entre deux touches. -->
+    <dimen name="taipo_key_inset">3dp</dimen>
+    <!-- Ombre visible des touches (lot 04 : au repos ; lot 05 : pressée, la touche s'enfonce de la différence).
+         Valeurs de départ à ajuster sur screenshot. -->
+    <dimen name="taipo_key_shadow_height">2dp</dimen>
+    <dimen name="taipo_key_shadow_pressed_height">1dp</dimen>
+
+    <!-- Texte des touches. -->
+    <dimen name="taipo_key_text_size">22sp</dimen>
+    <dimen name="taipo_key_text_size_large">26sp</dimen>
+    <!-- Lot 20 : en dp (et non en sp). L'indice est une aide redondante (le chiffre reste annoncé par TalkBack et accessible par appui
+         long) ; s'il suivait la taille de police, il recouvrirait le libellé de la touche dès 130 % (voir docs/accessibilite.md). -->
+    <dimen name="taipo_key_hint_text_size">10dp</dimen>
+    <!-- Indice (chiffre d'appui long) : décalage depuis le coin haut droit de la touche. -->
+    <dimen name="taipo_key_hint_margin_end">7dp</dimen>
+    <dimen name="taipo_key_hint_margin_top">3dp</dimen>
+
+    <!-- Icônes (lot 09) : une seule taille pour toutes les icônes VectorDrawable (touches du clavier et boutons
+         des barres) ; le trait (2 sur 24) et les couleurs sont dans les drawables. Plafonnée sur les touches basses. -->
+    <dimen name="taipo_icon_size">24dp</dimen>
+    <!-- Barre de la touche espace. -->
+    <dimen name="taipo_space_bar_length">22dp</dimen>
+    <!-- Demi-longueur ci-dessus ; épaisseur (lot 06 : 6 px fixes avant, soit ~2,3 dp sur Pixel 9). -->
+    <dimen name="taipo_space_bar_thickness">3dp</dimen>
+
+    <!-- ===== Bulle d'accents (appui long) ===== -->
+    <dimen name="taipo_popup_corner_radius">20dp</dimen>
+    <dimen name="taipo_popup_margin">4dp</dimen>
+    <dimen name="taipo_popup_gap">4dp</dimen>
+    <dimen name="taipo_popup_padding">8dp</dimen>
+    <dimen name="taipo_popup_padding_extra_vertical">4dp</dimen>
+    <dimen name="taipo_popup_cell_max">44dp</dimen>
+    <dimen name="taipo_popup_cell_min_height">24dp</dimen>
+    <dimen name="taipo_popup_selection_inset">1dp</dimen>
+    <dimen name="taipo_popup_clip_margin">4dp</dimen>
+    <!-- Marge tactile autour de la bulle de symboles : la cellule la plus proche reste sélectionnée. -->
+    <dimen name="taipo_popup_touch_margin">20dp</dimen>
+    <dimen name="taipo_popup_text_size">22sp</dimen>
+
+    <!-- ===== Bulle d'agrandissement (touche pressée) ===== -->
+    <dimen name="taipo_preview_max_width">72dp</dimen>
+    <dimen name="taipo_preview_gap">4dp</dimen>
+    <!-- Taille avant réduction par PREVIEW_SCALE (0,6) (voir KeyboardView). -->
+    <dimen name="taipo_preview_text_size">30sp</dimen>
+
+    <!-- ===== Barres du haut (correction, prompt, suggestions) ===== -->
+    <dimen name="taipo_bar_height">36dp</dimen>
+    <dimen name="taipo_bar_padding_horizontal">12dp</dimen>
+    <dimen name="taipo_bar_padding_vertical">6dp</dimen>
+    <!-- Espacement entre deux boutons voisins. -->
+    <dimen name="taipo_bar_gap">8dp</dimen>
+    <!-- Écart minimal entre deux boutons d'une rangée à espacement égal (menu ouvert) ; en dessous, les boutons ronds rétrécissent. -->
+    <dimen name="taipo_bar_min_gap">4dp</dimen>
+    <!-- Rayon des boutons, pilules et puces des barres. -->
+    <dimen name="taipo_button_corner_radius">18dp</dimen>
+    <dimen name="taipo_bar_icon_button_width">40dp</dimen>
+    <dimen name="taipo_bar_text_button_padding">16dp</dimen>
+    <!-- Largeur maximale (marges comprises) du bouton à libellé (lot 19) : « Chargement du modèle… » en Open Sans gras mesure
+         environ 208dp avec ses marges, ce qui sort de la barre à 320 et 360dp ; au-delà, le libellé est tronqué par « … ». -->
+    <dimen name="taipo_bar_text_button_max_width">136dp</dimen>
+    <!-- Texte des boutons à libellé de la barre du haut (Corriger). -->
+    <dimen name="taipo_bar_button_text_size">14sp</dimen>
+    <!-- Menu ouvert : Chat, Correction et Transcription en pilule (icône + texte) quand toute la rangée (8 boutons) tient dans la
+         largeur de l'écran ; sinon ce sont des boutons ronds. -->
+    <dimen name="taipo_bar_pill_text_size">11sp</dimen>
+    <dimen name="taipo_bar_pill_padding_horizontal">8dp</dimen>
+    <dimen name="taipo_bar_pill_icon_size">18dp</dimen>
+    <dimen name="taipo_bar_pill_icon_gap">4dp</dimen>
+    <!-- Bouton rond d'envoi / stop et sa roue de chargement. -->
+    <dimen name="taipo_bar_round_button_size">36dp</dimen>
+    <dimen name="taipo_bar_spinner_size">20dp</dimen>
+    <!-- Épaisseur du trait de la roue de chargement posée en icône d'un bouton (bouton Vocal). -->
+    <dimen name="taipo_bar_spinner_stroke">2dp</dimen>
+    <!-- Pilule de saisie du prompt. -->
+    <dimen name="taipo_prompt_text_size">15sp</dimen>
+    <dimen name="taipo_prompt_input_padding_start">14dp</dimen>
+    <dimen name="taipo_prompt_input_padding_end">14dp</dimen>
+
+    <!-- ===== Suggestions ===== -->
+    <dimen name="taipo_suggestion_text_size">16sp</dimen>
+    <dimen name="taipo_suggestion_slot_padding">4dp</dimen>
+    <!-- Espace entre deux emplacements de la bande (lot 11) : laisse voir le fond de chacun. -->
+    <dimen name="taipo_suggestion_slot_gap">6dp</dimen>
+    <dimen name="taipo_suggestion_emoji_text_size">22sp</dimen>
+    <dimen name="taipo_suggestion_emoji_slot_width">48dp</dimen>
+    <!-- Pilule « coller » de la bande de suggestions : largeur maximale (au-delà, l'aperçu est tronqué). -->
+    <dimen name="taipo_suggestion_paste_slot_max_width">120dp</dimen>
+    <dimen name="taipo_suggestion_chip_text_size">15sp</dimen>
+    <dimen name="taipo_suggestion_chip_padding">14dp</dimen>
+    <dimen name="taipo_suggestion_chip_gap">6dp</dimen>
+
+    <!-- ===== Chat IA ===== -->
+    <dimen name="taipo_chat_padding_horizontal">12dp</dimen>
+    <dimen name="taipo_chat_padding_vertical">8dp</dimen>
+    <dimen name="taipo_chat_bubble_corner_radius">16dp</dimen>
+    <dimen name="taipo_chat_bubble_padding_horizontal">12dp</dimen>
+    <dimen name="taipo_chat_bubble_padding_vertical">8dp</dimen>
+    <dimen name="taipo_chat_bubble_text_size">15sp</dimen>
+    <dimen name="taipo_chat_bubble_gap">6dp</dimen>
+    <dimen name="taipo_chat_waiting_size">36dp</dimen>
+    <dimen name="taipo_chat_follow_threshold">12dp</dimen>
+    <!-- Apparition de la zone de chat : elle monte de cette distance avec un effet ressort. -->
+    <dimen name="taipo_chat_rise_distance">40dp</dimen>
+    <!-- Apparition et disparition de la barre du mode chat (et de ses suggestions) : même ressort, course plus courte. -->
+    <dimen name="taipo_prompt_bar_rise_distance">16dp</dimen>
+    <!-- Bouton « Ajouter le texte » sous une réponse. -->
+    <dimen name="taipo_chat_action_text_size">13sp</dimen>
+    <!-- Hauteur de la FACE du bouton. Lot 20 : la vue fait 48 dp (face + taipo_touch_slop de chaque côté, fond inséré), le rendu ne change pas. -->
+    <dimen name="taipo_chat_action_min_height">36dp</dimen>
+    <dimen name="taipo_chat_action_padding_horizontal">14dp</dimen>
+    <dimen name="taipo_chat_action_padding_vertical">6dp</dimen>
+    <dimen name="taipo_chat_action_margin_top">4dp</dimen>
+
+    <!-- ===== Panneau emoji (lot 14) ===== -->
+    <!-- Onglets des catégories : pastille de l'onglet sélectionné (face violette sur ombre), marge autour d'elle,
+         taille maximale du glyphe d'onglet, filet sous la rangée. -->
+    <dimen name="taipo_emoji_tab_icon_size">22dp</dimen>
+    <dimen name="taipo_emoji_tab_pill_inset">3dp</dimen>
+    <dimen name="taipo_emoji_tab_divider_thickness">0.5dp</dimen>
+    <!-- Grille : côté minimal d'une cellule (fixe le nombre de colonnes : 9 sur 412 dp), hauteur et texte des titres
+         de catégorie, marge gauche des titres et du message « aucun récent » (= marge des barres), retrait et rayon
+         de la cellule pressée. -->
+    <dimen name="taipo_emoji_cell_min_size">42dp</dimen>
+    <dimen name="taipo_emoji_header_height">30dp</dimen>
+    <dimen name="taipo_emoji_header_text_size">13sp</dimen>
+    <dimen name="taipo_emoji_message_text_size">14sp</dimen>
+    <dimen name="taipo_emoji_cell_pressed_inset">2dp</dimen>
+    <!-- Rangée du bas (ABC, retour arrière) : textes de touche. L'icône de retour arrière est celle du clavier
+         (lot 09, taipo_icon_size) ; marges, rayon et ombre sont ceux des touches (taipo_key_*). -->
+    <dimen name="taipo_emoji_key_text_size">18sp</dimen>
+    <!-- Hauteurs de l'onglet et de la barre basse du panneau, bande des emojis récents : hauteur, largeur de case, taille (lot 18, valeurs inchangées). -->
+    <dimen name="taipo_emoji_tabs_height">36dp</dimen>
+    <dimen name="taipo_emoji_bottom_bar_height">44dp</dimen>
+    <dimen name="taipo_emoji_recent_bar_height">40dp</dimen>
+    <dimen name="taipo_emoji_recent_cell_width">44dp</dimen>
+    <dimen name="taipo_emoji_recent_text_size">22sp</dimen>
+
+    <!-- ===== Panneau Smart Clipboard (lot 15) ===== -->
+    <!-- Liste : marge autour de la grille de cartes, marge de chaque côté d'une carte, message « rien à coller ». -->
+    <dimen name="taipo_clip_list_padding">4dp</dimen>
+    <dimen name="taipo_clip_card_margin">4dp</dimen>
+    <dimen name="taipo_clip_empty_text_size">16sp</dimen>
+    <!-- Cartes (face + ombre : l'ombre est taipo_key_shadow_height) : rayon, hauteur minimale, marges internes (le
+         côté de l'épingle est plus large), texte d'aperçu. -->
+    <dimen name="taipo_clip_card_corner_radius">10dp</dimen>
+    <dimen name="taipo_clip_card_min_height">64dp</dimen>
+    <dimen name="taipo_clip_card_padding_horizontal">12dp</dimen>
+    <dimen name="taipo_clip_card_padding_vertical">10dp</dimen>
+    <dimen name="taipo_clip_card_padding_end_pinned">28dp</dimen>
+    <dimen name="taipo_clip_card_text_size">14sp</dimen>
+    <!-- Étiquette (pastille violette au-dessus du texte) et épingle (glyphe en haut à droite). -->
+    <dimen name="taipo_clip_label_text_size">11sp</dimen>
+    <dimen name="taipo_clip_label_corner_radius">10dp</dimen>
+    <dimen name="taipo_clip_label_padding_horizontal">8dp</dimen>
+    <dimen name="taipo_clip_label_padding_vertical">2dp</dimen>
+    <dimen name="taipo_clip_label_margin_bottom">6dp</dimen>
+    <dimen name="taipo_clip_pin_text_size">12sp</dimen>
+    <dimen name="taipo_clip_pin_margin_top">6dp</dimen>
+    <dimen name="taipo_clip_pin_margin_end">8dp</dimen>
+    <!-- Menu d'appui long et confirmation : largeurs des boîtes, rayon, hauteur et texte des entrées, marges. -->
+    <dimen name="taipo_clip_dialog_corner_radius">12dp</dimen>
+    <dimen name="taipo_clip_menu_width">220dp</dimen>
+    <dimen name="taipo_clip_confirm_width">260dp</dimen>
+    <dimen name="taipo_clip_entry_height">48dp</dimen>
+    <dimen name="taipo_clip_entry_text_size">16sp</dimen>
+    <dimen name="taipo_clip_entry_padding_horizontal">18dp</dimen>
+    <dimen name="taipo_clip_confirm_padding_top">16dp</dimen>
+    <dimen name="taipo_clip_confirm_padding_bottom">8dp</dimen>
+    <!-- Action principale du menu (« Épingler ») : bouton violet à ombre, marges autour de sa face. -->
+    <dimen name="taipo_clip_primary_margin_horizontal">8dp</dimen>
+    <dimen name="taipo_clip_primary_margin_vertical">4dp</dimen>
+
+    <!-- ===== Écrans de paramètres (lot 16) ===== -->
+    <!-- Marge de page et échelle d'espacements verticaux des écrans (xs à xxl) ; label_gap : entre un libellé et son champ. -->
+    <dimen name="taipo_settings_screen_padding">24dp</dimen>
+    <!-- Logo horizontal de l'accueil (lot UX 1) : largeur maximale ; le logo se redimensionne dessous. -->
+    <dimen name="taipo_home_logo_max_width">280dp</dimen>
+    <!-- Étapes de l'accueil (lot UX 2) : pastille numérotée / cochée, contour, taille de la coche, opacité d'une étape verrouillée. -->
+    <dimen name="taipo_step_badge_size">32dp</dimen>
+    <dimen name="taipo_step_badge_stroke">2dp</dimen>
+    <dimen name="taipo_step_badge_check_size">20dp</dimen>
+    <item name="taipo_step_locked_alpha" type="dimen" format="float">0.6</item>
+    <!-- Pastille de statut d'un modèle sur l'accueil (lot UX 4) : rayon des coins et marges internes. -->
+    <dimen name="taipo_status_badge_corner_radius">12dp</dimen>
+    <dimen name="taipo_status_badge_padding_horizontal">10dp</dimen>
+    <dimen name="taipo_status_badge_padding_vertical">4dp</dimen>
+    <dimen name="taipo_settings_gap_xs">4dp</dimen>
+    <dimen name="taipo_settings_label_gap">6dp</dimen>
+    <dimen name="taipo_settings_gap_sm">8dp</dimen>
+    <dimen name="taipo_settings_gap_md">12dp</dimen>
+    <dimen name="taipo_settings_gap_lg">16dp</dimen>
+    <dimen name="taipo_settings_gap_xl">20dp</dimen>
+    <dimen name="taipo_settings_gap_xxl">24dp</dimen>
+    <!-- Textes : titre d'accueil, titre d'écran, titre de section, texte d'introduction (accueil / autres écrans), texte courant,
+         légende, note (checksum), statut. -->
+    <dimen name="taipo_settings_text_display">28sp</dimen>
+    <dimen name="taipo_settings_text_title">22sp</dimen>
+    <dimen name="taipo_settings_text_section">18sp</dimen>
+    <dimen name="taipo_settings_text_lead">16sp</dimen>
+    <dimen name="taipo_settings_text_body">15sp</dimen>
+    <dimen name="taipo_settings_text_caption">14sp</dimen>
+    <dimen name="taipo_settings_text_status">13sp</dimen>
+    <dimen name="taipo_settings_text_small">12sp</dimen>
+    <item name="taipo_settings_line_spacing" type="dimen" format="float">1.2</item>
+    <!-- Boutons : hauteur minimale, rayon (celui des touches), texte, marge interne, ombre (celle des touches) et course
+         de l'enfoncement (ombre au repos moins ombre pressée). -->
+    <dimen name="taipo_button_min_height">48dp</dimen>
+    <dimen name="taipo_settings_button_corner_radius">@dimen/taipo_key_corner_radius</dimen>
+    <dimen name="taipo_button_text_size">16sp</dimen>
+    <dimen name="taipo_button_padding_horizontal">16dp</dimen>
+    <dimen name="taipo_button_shadow_height">@dimen/taipo_key_shadow_height</dimen>
+    <dimen name="taipo_button_shadow_pressed_height">@dimen/taipo_key_shadow_pressed_height</dimen>
+    <dimen name="taipo_button_press_travel">1dp</dimen>
+    <!-- Cartes d'information et zone de saisie multiligne : rayon, marge interne. Filet de séparation : épaisseur. -->
+    <dimen name="taipo_settings_card_corner_radius">10dp</dimen>
+    <dimen name="taipo_settings_card_padding">12dp</dimen>
+    <dimen name="taipo_settings_divider_thickness">1dp</dimen>
+
+    <!-- ===== Dialogues et contrôles Android (lot 17) ===== -->
+    <!-- Fenêtres de dialogue (pop-up d'information, modification et étiquette du presse-papiers) : rayon des coins
+         (même rayon que les boîtes du Smart Clipboard) et assombrissement de l'écran derrière (= couleur « scrim »). -->
+    <dimen name="taipo_dialog_corner_radius">@dimen/taipo_clip_dialog_corner_radius</dimen>
+    <item name="taipo_dialog_dim" type="dimen" format="float">0.6</item>
+    <dimen name="taipo_dialog_content_padding_horizontal">20dp</dimen>
+    <dimen name="taipo_dialog_content_padding_vertical">18dp</dimen>
+    <dimen name="taipo_dialog_content_padding_bottom">12dp</dimen>
+    <dimen name="taipo_dialog_title_text_size">18sp</dimen>
+    <dimen name="taipo_dialog_gap">12dp</dimen>
+    <!-- Champs de saisie : rayon (celui des cartes), traits au repos et au focus, texte. -->
+    <dimen name="taipo_input_corner_radius">@dimen/taipo_settings_card_corner_radius</dimen>
+    <dimen name="taipo_input_stroke_width">1dp</dimen>
+    <dimen name="taipo_input_stroke_width_focused">2dp</dimen>
+    <dimen name="taipo_input_text_size">16sp</dimen>
+    <!-- Ligne de commutateur ou de bouton radio : hauteur minimale de la zone tactile (lot 18, auparavant 48dp dans chaque ligne). -->
+    <dimen name="taipo_settings_row_min_height">48dp</dimen>
+    <!-- Commutateur : piste, pastille (la zone tactile reste celle de la ligne, 48dp au minimum) et écart au bord. -->
+    <dimen name="taipo_switch_track_width">52dp</dimen>
+    <dimen name="taipo_switch_track_height">26dp</dimen>
+    <dimen name="taipo_switch_thumb_size">20dp</dimen>
+    <dimen name="taipo_switch_thumb_inset">3dp</dimen>
+    <!-- Liste déroulante : réserve à droite pour la flèche, marge de la flèche, lignes de la liste ouverte. -->
+    <dimen name="taipo_spinner_padding_end">44dp</dimen>
+    <dimen name="taipo_spinner_arrow_margin">12dp</dimen>
+    <dimen name="taipo_spinner_item_min_height">48dp</dimen>
+    <dimen name="taipo_spinner_item_padding_horizontal">16dp</dimen>
+</resources>

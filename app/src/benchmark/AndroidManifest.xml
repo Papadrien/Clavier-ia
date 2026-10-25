@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Lot 3.6 : uniquement dans la variante « benchmark » (jamais dans la release). « profileable » permet aux
+    macrobenchmarks de tracer une application non déboguable, comme la release.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application>
+        <profileable
+            android:shell="true"
+            tools:targetApi="q" />
+    </application>
+</manifest>

@@ -1,38 +1,369 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Lot 19 : l'écran défile (paysage, petit téléphone, polices agrandies : le contenu dépasse la hauteur de l'écran). -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:padding="24dp">
+    android:padding="@dimen/taipo_settings_screen_padding">
+
+    <!-- Lot UX 1 : logo horizontal en tête de l'accueil (image décorative de marque : le titre juste dessous porte le sens,
+         mais le nom « Taipo » reste annoncé par TalkBack via la description). Largeur plafonnée pour les tablettes. -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxWidth="@dimen/taipo_home_logo_max_width"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/taipo_logo_horizontal"
+        android:contentDescription="@string/app_name"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_xl" />
 
     <TextView
-        android:layout_width="wrap_content"
+        style="@style/TaipoText.Display"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="@string/main_title"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="12dp"
-        android:contentDescription="@null" />
+        android:layout_marginBottom="@dimen/taipo_settings_gap_xxl" />
+
+    <LinearLayout
+        android:id="@+id/step1_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/bg_settings_card"
+        android:padding="@dimen/taipo_settings_card_padding"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_md">
+
+        <TextView
+            android:id="@+id/step1_badge"
+            android:layout_width="@dimen/taipo_step_badge_size"
+            android:layout_height="@dimen/taipo_step_badge_size"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="@dimen/taipo_settings_text_caption"
+            android:textColor="@color/text_primary"
+            android:importantForAccessibility="no" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/taipo_settings_gap_md"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/TaipoText.Section"
+                android:id="@+id/step1_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:id="@+id/step1_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+
+            <Button
+                style="@style/TaipoButton.Primary"
+                android:id="@+id/button_enable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_md"
+                android:text="@string/button_enable" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/step2_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/bg_settings_card"
+        android:padding="@dimen/taipo_settings_card_padding"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_md">
+
+        <TextView
+            android:id="@+id/step2_badge"
+            android:layout_width="@dimen/taipo_step_badge_size"
+            android:layout_height="@dimen/taipo_step_badge_size"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="@dimen/taipo_settings_text_caption"
+            android:textColor="@color/text_primary"
+            android:importantForAccessibility="no" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/taipo_settings_gap_md"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/TaipoText.Section"
+                android:id="@+id/step2_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:id="@+id/step2_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+
+            <Button
+                style="@style/TaipoButton.Primary"
+                android:id="@+id/button_select"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_md"
+                android:text="@string/button_select" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/step3_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/bg_settings_card"
+        android:padding="@dimen/taipo_settings_card_padding"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_xl">
+
+        <TextView
+            android:id="@+id/step3_badge"
+            android:layout_width="@dimen/taipo_step_badge_size"
+            android:layout_height="@dimen/taipo_step_badge_size"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="@dimen/taipo_settings_text_caption"
+            android:textColor="@color/text_primary"
+            android:importantForAccessibility="no" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/taipo_settings_gap_md"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/TaipoText.Section"
+                android:id="@+id/step3_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:id="@+id/step3_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+
+            <EditText
+                style="@style/TaipoInput"
+                android:id="@+id/onboarding_try_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_md"
+                android:hint="@string/onboarding_try_hint"
+                android:inputType="textMultiLine|textCapSentences"
+                android:minLines="2"
+                android:gravity="top|start" />
+        </LinearLayout>
+    </LinearLayout>
 
     <TextView
+        style="@style/TaipoText.Section"
+        android:id="@+id/section_keyboard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/main_description"
-        android:textSize="16sp"
-        android:lineSpacingMultiplier="1.2"
-        android:layout_marginBottom="24dp" />
+        android:text="@string/home_section_keyboard"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
 
-    <Button
-        android:id="@+id/button_enable"
+    <!-- clipToOutline : les retours visuels des lignes suivent les coins arrondis de la carte. -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/button_enable" />
+        android:orientation="vertical"
+        android:background="@drawable/bg_settings_card"
+        android:clipToOutline="true"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_xl">
 
-    <Button
-        android:id="@+id/button_select"
+        <include
+            android:id="@+id/button_keyboard_settings"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
+            android:id="@+id/button_personal_dictionary"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <TextView
+        style="@style/TaipoText.Section"
+        android:id="@+id/section_ai"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/button_select" />
+        android:text="@string/home_section_ai"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+    <!-- clipToOutline : les retours visuels des lignes suivent les coins arrondis de la carte. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_settings_card"
+        android:clipToOutline="true"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_sm">
+
+        <include
+            android:id="@+id/button_model_download"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Story 8.12 : ce séparateur et la ligne « Modèle IA local » ne sont visibles qu'en build debug (MainActivity). -->
+        <View
+            android:id="@+id/divider_model_settings"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
+            android:id="@+id/button_model_settings"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
+            android:id="@+id/button_voice_model_settings"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Story 8.15 : ce séparateur et la ligne « Modèle vocal local » ne sont visibles qu'en build debug (MainActivity). -->
+        <View
+            android:id="@+id/divider_voice_model_local"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
+            android:id="@+id/button_voice_model_local"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
+            android:id="@+id/button_system_prompts"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <TextView
+        style="@style/TaipoText.Section"
+        android:id="@+id/section_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/home_section_data"
+        android:layout_marginTop="@dimen/taipo_settings_gap_xl"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_settings_card"
+        android:clipToOutline="true">
+
+        <include
+            android:id="@+id/button_backup"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <TextView
+        style="@style/TaipoText.Section"
+        android:id="@+id/section_about"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/home_section_about"
+        android:layout_marginTop="@dimen/taipo_settings_gap_xl"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_settings_card"
+        android:clipToOutline="true">
+
+        <include
+            android:id="@+id/button_terms"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
+            android:id="@+id/button_licenses"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
+            android:id="@+id/button_privacy"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
 </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pastille d'étape faite (lot UX 2) : disque violet avec coche. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/accent" />
+        </shape>
+    </item>
+    <item
+        android:width="@dimen/taipo_step_badge_check_size"
+        android:height="@dimen/taipo_step_badge_check_size"
+        android:gravity="center"
+        android:drawable="@drawable/ic_check" />
+</layer-list>

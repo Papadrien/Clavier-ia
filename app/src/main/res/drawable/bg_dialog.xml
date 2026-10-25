@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fond des fenêtres de dialogue et des listes déroulantes ouvertes (lot 17) : même gris et même rayon que les boîtes
+     du Smart Clipboard (clip_dialog, taipo_clip_dialog_corner_radius). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/dialog_background" />
+    <corners android:radius="@dimen/taipo_dialog_corner_radius" />
+</shape>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Story 8.11 : mention de licence affichée avant le premier téléchargement d'un modèle Gemma 3, avec les liens vers
+     les conditions et la politique d'usage interdit. Boutons Accepter / Annuler posés par l'AlertDialog. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/taipo_settings_card_padding"
+    android:paddingEnd="@dimen/taipo_settings_card_padding"
+    android:paddingTop="@dimen/taipo_settings_gap_sm">
+
+    <TextView
+        style="@style/TaipoText.Body"
+        android:id="@+id/license_dialog_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        style="@style/TaipoButton.Secondary"
+        android:id="@+id/license_dialog_link_terms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_md"
+        android:text="@string/licenses_link_gemma_terms" />
+
+    <Button
+        style="@style/TaipoButton.Secondary"
+        android:id="@+id/license_dialog_link_policy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+        android:text="@string/licenses_link_gemma_policy" />
+
+    <Button
+        style="@style/TaipoButton.Secondary"
+        android:id="@+id/license_dialog_link_conditions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+        android:text="@string/model_license_dialog_link_terms" />
+</LinearLayout>

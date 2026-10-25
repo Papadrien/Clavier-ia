@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ligne de réglage de l'accueil (lot UX 3) : titre, sous-titre, pastille de statut (lot UX 4, masquée par défaut), chevron.
+     Zone tactile d'au moins 48 dp. Les textes sont posés par MainActivity (row_title, row_subtitle, row_badge) ;
+     l'id de la ligne est donné par le <include>. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/taipo_settings_row_min_height"
+    android:paddingStart="@dimen/taipo_settings_card_padding"
+    android:paddingEnd="@dimen/taipo_settings_gap_sm"
+    android:paddingTop="@dimen/taipo_settings_gap_md"
+    android:paddingBottom="@dimen/taipo_settings_gap_md"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/TaipoText.Lead"
+            android:id="@+id/row_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:id="@+id/row_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+    </LinearLayout>
+
+    <!-- Statut d'un modèle (lot UX 4) : texte, fond et couleur posés par MainActivity.renderModelStatuses. -->
+    <TextView
+        style="@style/TaipoText.Small"
+        android:id="@+id/row_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/taipo_settings_gap_sm"
+        android:paddingStart="@dimen/taipo_status_badge_padding_horizontal"
+        android:paddingEnd="@dimen/taipo_status_badge_padding_horizontal"
+        android:paddingTop="@dimen/taipo_status_badge_padding_vertical"
+        android:paddingBottom="@dimen/taipo_status_badge_padding_vertical"
+        android:maxLines="1"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <ImageView
+        android:layout_width="@dimen/taipo_icon_size"
+        android:layout_height="@dimen/taipo_icon_size"
+        android:layout_marginStart="@dimen/taipo_settings_gap_sm"
+        android:src="@drawable/ic_chevron_right"
+        android:importantForAccessibility="no" />
+</LinearLayout>

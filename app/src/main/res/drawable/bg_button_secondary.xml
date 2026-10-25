@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fond du bouton secondaire des écrans de réglages (lot 16) : face + ombre, comme les touches du clavier.
+     Au repos, la face laisse voir l'ombre en dessous ; à l'appui, l'ombre s'amincit et la face descend. Couleurs et
+     dimensions : colors.xml / dimens.xml. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/button_secondary_shadow" />
+                    <corners android:radius="@dimen/taipo_settings_button_corner_radius" />
+                </shape>
+            </item>
+            <item android:top="@dimen/taipo_button_press_travel" android:bottom="@dimen/taipo_button_shadow_pressed_height">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/button_secondary" />
+                    <corners android:radius="@dimen/taipo_settings_button_corner_radius" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/button_secondary_shadow" />
+                    <corners android:radius="@dimen/taipo_settings_button_corner_radius" />
+                </shape>
+            </item>
+            <item android:top="0dp" android:bottom="@dimen/taipo_button_shadow_height">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/button_secondary" />
+                    <corners android:radius="@dimen/taipo_settings_button_corner_radius" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>
