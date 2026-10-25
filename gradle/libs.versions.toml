@@ -6,6 +6,9 @@
 room = "2.8.4"
 # Activity Result API (lot 3.5) : ComponentActivity + registerForActivityResult.
 activity = "1.10.1"
+# Fragment : une dépendance transitive tire une version < 1.3.0 (lint InvalidFragmentVersionForActivityResult).
+# Utilisé comme contrainte dans app/build.gradle.kts : aucune dépendance ajoutée, seule la version est relevée.
+fragment = "1.8.9"
 # ExploreByTouchHelper (lot 20 de la refonte graphique) : arbre d'accessibilité virtuel des vues dessinées au Canvas
 # (touches du clavier, onglets et grille d'emojis). Version 1.1.0, la dernière stable ancienne et éprouvée.
 customview = "1.1.0"
@@ -32,6 +35,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-activity = { module = "androidx.activity:activity", version.ref = "activity" }
+androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "fragment" }
 androidx-customview = { module = "androidx.customview:customview", version.ref = "customview" }
 androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splashscreen" }

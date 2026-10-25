@@ -141,6 +141,12 @@ dependencies {
     // Lot 3.5 (U3) : Activity Result API (ComponentActivity) pour les sélecteurs de fichier des écrans modèle.
     implementation(libs.androidx.activity)
 
+    // Lint (release) : une dépendance transitive amène Fragment < 1.3.0, incompatible avec registerForActivityResult.
+    // Contrainte (pas de dépendance ajoutée) : relève Fragment si, et seulement si, il est dans le graphe.
+    constraints {
+        implementation(libs.androidx.fragment) { because("Fragment >= 1.3.0 requis par l'Activity Result API (lint)") }
+    }
+
     // Lot 20 (accessibilité) : ExploreByTouchHelper, pour exposer à TalkBack les touches du clavier et la grille d'emojis,
     // dessinées au Canvas (aucune vue enfant). Pas de dépendance transitive garantie : déclarée explicitement.
     implementation(libs.androidx.customview)
