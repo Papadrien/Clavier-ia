@@ -64,12 +64,12 @@ jobs:
             echo "✅ Signing debug stable (sans secrets)"
           fi
 
-      - name: Build APK (${{ steps.variant.outputs.variant }})
+      - name: Build APK + AAB (${{ steps.variant.outputs.variant }})
         run: |
           if [ "${{ steps.variant.outputs.variant }}" = "release" ]; then
-            ./gradlew assembleRelease
+            ./gradlew assembleRelease bundleRelease
           else
-            ./gradlew assembleDebug
+            ./gradlew assembleDebug bundleDebug
           fi
 
       - name: Upload APK
@@ -77,4 +77,11 @@ jobs:
         with:
           name: apk-${{ steps.variant.outputs.variant }}
           path: app/build/outputs/apk/*/*.apk
+          if-no-files-found: error
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v7
+        with:
+          name: aab-${{ steps.variant.outputs.variant }}
+          path: app/build/outputs/bundle/*/*.aab
           if-no-files-found: error
