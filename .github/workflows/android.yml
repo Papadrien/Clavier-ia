@@ -42,7 +42,7 @@ jobs:
       # Même mécanisme et mêmes secrets qu'AnimalTimer :
       #   ANDROID_KEYSTORE_BASE64 et ANDROID_KEY_PROPERTIES
       # Projet Android natif : key.properties à la racine, keystore dans app/
-      # (storeFile=keystore.jks est résolu relativement au module app).
+      # (storeFile est résolu relativement au module app ; le keystore est décodé sous ce nom).
       - name: Setup Android signing
         if: steps.variant.outputs.variant == 'release'
         env:
@@ -50,8 +50,13 @@ jobs:
           KEY_PROPERTIES: ${{ secrets.ANDROID_KEY_PROPERTIES }}
         run: |
           if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "$KEYSTORE_BASE64" | base64 --decode > app/keystore.jks
             echo "$KEY_PROPERTIES" > key.properties
+            STORE_FILE=$(grep -E '^storeFile=' key.properties | head -n1 | cut -d= -f2- | tr -d '\r' | xargs)
+            if [ -z "$STORE_FILE" ]; then
+              echo "❌ storeFile absent de ANDROID_KEY_PROPERTIES"; exit 1
+            fi
+            echo "$KEYSTORE_BASE64" | base64 --decode > "app/$STORE_FILE"
+            test -s "app/$STORE_FILE" || { echo "❌ keystore vide : app/$STORE_FILE"; exit 1; }
             echo "✅ Signing release (secrets)"
           else
             keytool -genkey -v -keystore app/keystore.jks -alias taipo-debug -keyalg RSA -keysize 2048 -validity 10000 -storepass taipo-debug-pwd -keypass taipo-debug-pwd -dname "CN=Taipo Debug, OU=Dev, O=Taipo, L=Paris, C=FR" 2>/dev/null
