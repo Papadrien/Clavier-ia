@@ -5,8 +5,9 @@ import android.text.InputType
 /**
  * Stories 1.16 et 1.17 : dans quels champs la barre propose des suggestions (emoji et mots). Comme sur Gboard
  * (décision « adaptation selon le type de champ »), rien n'est proposé dans les champs qui ne sont
- * pas du texte libre (mot de passe, e-mail, adresse web, filtre, champ numérique, téléphone,
- * date). L'indicateur `NO_SUGGESTIONS` posé par l'application est volontairement ignoré (Google Keep,
+ * pas du texte libre (mot de passe, e-mail, filtre, champ numérique, téléphone, date). Les champs d'adresse
+ * web (barre d'adresse et de recherche d'un navigateur) reçoivent des suggestions de mots, sans autocorrection (voir
+ * `FieldType.URL`), sans apprentissage ni emoji (voir [allowsLearning], [allowsEmojiSuggestions]). L'indicateur `NO_SUGGESTIONS` posé par l'application est volontairement ignoré (Google Keep,
  * par exemple, le pose alors que les suggestions y sont utiles) : il vise la correction orthographe
  * du clavier système. Logique pure : elle ne lit que des constantes.
  */
@@ -20,12 +21,24 @@ object SuggestionPolicy {
             InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD,
             InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS,
             InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS,
-            InputType.TYPE_TEXT_VARIATION_URI,
             InputType.TYPE_TEXT_VARIATION_FILTER,
             -> false
             else -> true
         }
     }
+
+    private fun isWebAddress(inputType: Int): Boolean =
+        inputType and InputType.TYPE_MASK_CLASS == InputType.TYPE_CLASS_TEXT &&
+            inputType and InputType.TYPE_MASK_VARIATION == InputType.TYPE_TEXT_VARIATION_URI
+
+    /**
+     * Apprentissage des mots et des habitudes (prédiction du mot suivant, départage des corrections) : jamais dans une
+     * adresse web, où l'on tape des adresses et des recherches qui n'ont pas à être retenues.
+     */
+    fun allowsLearning(inputType: Int): Boolean = allowsSuggestions(inputType) && !isWebAddress(inputType)
+
+    /** Emoji suggérés d'après le mot tapé : pas dans une adresse web, où ils n'ont aucun sens. */
+    fun allowsEmojiSuggestions(inputType: Int): Boolean = allowsSuggestions(inputType) && !isWebAddress(inputType)
 
     /**
      * Adresses e-mail déjà tapées (apprentissage et suggestions) : tout champ de texte, y compris les champs

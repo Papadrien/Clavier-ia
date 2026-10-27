@@ -165,3 +165,41 @@ Le robot est désormais le bouton du menu de gauche lui-même (le chevron et `Ro
 - **Cause** : l'écoute du presse-papiers (`ClipboardReader`) n'était active que pendant qu'un champ de texte était ouvert (`startListening` / `stopListening`). Une copie faite ailleurs (page web, lecteur de PDF, autre appli sans champ actif) puis remplacée par une autre n'était jamais lue : à l'ouverture du champ suivant, seule la dernière copie existait encore. Le dépôt d'historique (`ClipHistoryDao.record`) n'écrase rien : un texte différent donne une nouvelle ligne.
 - **Correctif** : l'écoute démarre avec le service (`ClipboardController.start`) et dure toute sa vie ; chaque copie entre dans l'historique même hors champ. Le drapeau `inputActive` limite la mise à jour de la puce et du panneau aux moments où un champ est actif. Le clavier par défaut peut lire le presse-papiers en arrière-plan (Android 10 et plus).
 - **Limites** : si le système tue le processus du clavier, les copies faites pendant ce temps sont perdues (comme avant) ; deux copies enchaînées en quelques millisecondes peuvent encore n'en laisser lire qu'une, le système ne conservant que la dernière. À valider sur Pixel 9 : copier un texte A dans une page web, puis B, ouvrir un champ, vérifier que A et B sont dans le Smart Clipboard (rien compilé ni exécuté).
+
+## Dictée : corriger un mot touché pendant l'écoute (27/10/2026)
+
+Pendant une dictée, toucher un mot du texte (curseur posé dans ou contre un mot) fait afficher ses 3 alternatives dans la bande de mots (même calcul que pour un mot déjà écrit : `placementSlotsFor`). Rien n'est proposé automatiquement, et le post-traitement de la dictée n'est pas modifié. Un appui sur une alternative remplace le mot sans arrêter le micro, puis le curseur retourne là où la dictée en était (décalé de la correction), pour que la suite s'écrive au bout du texte. Si on parle sans choisir d'alternative, la dictée reprend au curseur (comportement existant de `VoiceTextSync`) et la bande se vide. Pas d'emoji, d'adresse ni de prédiction du mot suivant pendant l'écoute ; la frappe au clavier n'est pas prise pour un toucher.
+
+Code : `VoiceWordPick` (logique pure, testée : `VoiceWordPickTest`), `VoiceController.onCursorMoved` / `onWordReplaced`, `SuggestionController.refresh` (`voiceWordPick`), `TaipoIme.onWordSuggestionTapped`. Dictée lancée sur un champ vide (barre normale) : la barre de saisie prend le relais le temps d'afficher les alternatives (`CorrectionBarView.render`).
+
+À valider sur Pixel 9 (rien compilé ni exécuté) :
+1. Dicter « bonjour ses amis », toucher « ses » : 3 alternatives affichées, micro toujours actif.
+2. Appuyer sur une alternative : le mot est remplacé, la bande se vide, puis continuer à parler : la suite s'écrit après « amis », pas après le mot corrigé.
+3. Toucher un mot puis parler sans rien choisir : la dictée reprend au curseur, la bande se vide.
+4. Toucher une zone vide ou une espace entre deux mots : aucune suggestion.
+5. Même test sur un champ vide au départ (barre normale) : la barre de saisie apparaît avec les alternatives.
+6. Mode prompt : sans changement (un toucher dans le champ ferme le mode).
+
+## Autocorrection : retrouver le mot tapé en touchant le mot corrigé (27/10/2026)
+
+Touchez un mot corrigé automatiquement : l'emplacement de gauche de la bande propose le mot tel que tapé au départ (`placementSlotsFor` avec `previousForm`, nourri par `CorrectionHistory`). Cause du défaut corrigé : l'autocorrection ne remplace que la fin des mots qui changent (« cafe » -> « café » ne remplace que « e » par « é »), et l'historique enregistrait ce fragment (« e » -> « é ») au lieu des mots entiers : le mot d'origine n'était retrouvé que si la première lettre changeait. `CorrectionHistory.recordEdit` relit le début du mot dans le texte avant le curseur ; utilisé par `SuggestionController.recordCorrection(textBeforeCursor, edit)` (champ et prompt). Tests JVM : `CorrectionHistoryTest`.
+
+Limites : l'historique garde les 64 corrections les plus récentes, une seule forme d'origine par mot corrigé (la plus récente), et il est vidé au changement de champ.
+
+À valider sur Pixel 9 (rien compilé ni exécuté) :
+1. Taper « cafe » puis espace : « café ». Toucher « café » : « cafe » apparaît à gauche de la bande ; l'appuyer remet « cafe ».
+2. Même test avec une faute en milieu de mot (« bonjuor » -> « bonjour »).
+3. Français : « a » corrigé en « à » par le contexte : toucher « à » propose « a ».
+
+## Champs d'adresse web : mots proposés, rien de remplacé tout seul (27/10/2026)
+
+Dans un champ `TYPE_TEXT_VARIATION_URI` (barre d'adresse et de recherche d'un navigateur comme Brave), la bande propose maintenant des mots (complétions et correction), mais l'autocorrection ne remplace rien : `FieldType.URL` avait déjà `autoCorrects = false`, `SuggestionPolicy.allowsSuggestions` ne l'exclut plus. Pas d'apprentissage dans ces champs (`SuggestionPolicy.allowsLearning` : ni prédiction du mot suivant, ni habitudes, pour ne pas retenir adresses et recherches), pas d'emoji suggérés (`allowsEmojiSuggestions`), et ils ne comptent jamais comme champ de messagerie (`MessagingFieldPolicy`). Comme l'espace ne remplace rien, la correction du dictionnaire est affichée en poids normal comme une simple suggestion (`SuggestionController.autocorrectsInField`, jamais en gras « remplacé à l'espace »). Mots de passe, e-mail, filtre, nombre, téléphone : inchangés (rien). L'indicateur `NO_SUGGESTIONS` reste ignoré, comme avant.
+
+Compromis connu : appuyer sur une suggestion ajoute une espace après le mot, comme ailleurs ; dans une adresse, il faut la supprimer si on continue l'adresse.
+
+Tests JVM : `SuggestionPolicyTest`, `MessagingFieldPolicyTest`. À valider sur Pixel 9 (rien compilé ni exécuté) :
+1. Brave, barre d'adresse : taper « gogle » : des mots sont proposés, aucun n'est en gras, l'espace ne change pas « gogle ».
+2. Appuyer sur une suggestion : le mot est remplacé (une espace suit).
+3. Aucun emoji proposé, aucune prédiction après une espace, même après plusieurs recherches.
+4. Champ de mot de passe et champ e-mail : toujours aucune suggestion.
+5. Texte libre (Notes, messagerie) : rien ne change (autocorrection en gras au centre, emoji, prédictions).

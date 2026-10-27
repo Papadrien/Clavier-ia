@@ -19,18 +19,35 @@ class SuggestionPolicyTest {
     }
 
     @Test
-    fun `mots de passe, e-mail, URL et filtre sont exclus`() {
+    fun `mots de passe, e-mail et filtre sont exclus`() {
         listOf(
             InputType.TYPE_TEXT_VARIATION_PASSWORD,
             InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,
             InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD,
             InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS,
             InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS,
-            InputType.TYPE_TEXT_VARIATION_URI,
             InputType.TYPE_TEXT_VARIATION_FILTER,
         ).forEach { variation ->
             assertFalse(SuggestionPolicy.allowsSuggestions(text or variation), "variation $variation")
         }
+    }
+
+    @Test
+    fun `une adresse web recoit des mots, mais ni apprentissage ni emoji`() {
+        val uri = text or InputType.TYPE_TEXT_VARIATION_URI
+        assertTrue(SuggestionPolicy.allowsSuggestions(uri))
+        assertTrue(SuggestionPolicy.allowsSuggestions(uri or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS))
+        assertFalse(SuggestionPolicy.allowsLearning(uri))
+        assertFalse(SuggestionPolicy.allowsEmojiSuggestions(uri))
+    }
+
+    @Test
+    fun `le texte libre garde l apprentissage et les emoji, les mots de passe aucun`() {
+        assertTrue(SuggestionPolicy.allowsLearning(text))
+        assertTrue(SuggestionPolicy.allowsEmojiSuggestions(text))
+        assertFalse(SuggestionPolicy.allowsLearning(text or InputType.TYPE_TEXT_VARIATION_PASSWORD))
+        assertFalse(SuggestionPolicy.allowsEmojiSuggestions(text or InputType.TYPE_TEXT_VARIATION_PASSWORD))
+        assertFalse(SuggestionPolicy.allowsLearning(InputType.TYPE_CLASS_NUMBER))
     }
 
     @Test

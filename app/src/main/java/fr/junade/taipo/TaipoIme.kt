@@ -396,6 +396,7 @@ class TaipoIme : InputMethodService() {
         suggestions.suggestionsAllowed = SuggestionPolicy.allowsSuggestions(info?.inputType ?: 0)
         // IME_FLAG_NO_PERSONALIZED_LEARNING : navigation privée, champ confidentiel... rien n'est appris ni proposé.
         suggestions.learningAllowed = suggestions.suggestionsAllowed &&
+            SuggestionPolicy.allowsLearning(info?.inputType ?: 0) &&
             (info?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING == 0
         suggestions.refreshHabitLearning(keyboardPreferences.isHabitLearningEnabled)
         // Adresses e-mail : proposées et apprises aussi dans les champs d'adresse (là où les mots ne le sont pas), jamais en navigation privée.
@@ -403,6 +404,9 @@ class TaipoIme : InputMethodService() {
             (info?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING == 0
         clipboard.pasteAllowedInField = SuggestionPolicy.allowsPasteSuggestion(info?.inputType ?: 0)
         fieldType = FieldType.of(info?.inputType ?: 0)
+        // Adresse web (barre d'adresse et de recherche d'un navigateur) : mots proposés, mais rien n'est remplacé tout seul.
+        suggestions.emojiAllowed = SuggestionPolicy.allowsEmojiSuggestions(info?.inputType ?: 0)
+        suggestions.autocorrectsInField = autocorrectionAllowed()
         // Story 10.1 : champ de mot de passe, actions IA et Smart Clipboard grisés (touchables, avec un message).
         sensitiveField = SensitiveFieldPolicy.isSensitive(info?.inputType ?: 0)
         Analytics.sensitiveFieldActive = sensitiveField // mesure d'usage coupée tant qu'un champ de mot de passe est affiché
@@ -593,6 +597,8 @@ class TaipoIme : InputMethodService() {
         if (viewComposer.isComposed && prompt.active && selectionMoved && !correction.isSelfEditEcho()) {
             prompt.onFieldTapped()
         }
+        // Dictée en cours : un toucher sur un mot du champ (à corriger) ou l'écho de nos insertions.
+        if (isRecording) voice.onCursorMoved(oldSelEnd, newSelStart, newSelEnd, suggestions.typedRecently())
         correction.onSelectionUpdated(newSelStart, newSelEnd)
         if (!correctionInProgress && viewComposer.isComposed) {
             updateCorrectionBarVisibility()
@@ -846,7 +852,7 @@ class TaipoIme : InputMethodService() {
         prompt.buffer.deleteBefore(edit.deleteCount)
         prompt.buffer.insert(edit.insert)
         val original = before.takeLast(edit.deleteCount)
-        suggestions.recordCorrection(original, edit.insert)
+        suggestions.recordCorrection(before, edit)
         return AppliedAutocorrection(original = original, corrected = edit.insert, textBefore = before)
     }
 
@@ -1070,7 +1076,8 @@ class TaipoIme : InputMethodService() {
             return
         }
         if (suggestion !in currentWordSuggestions) return
-        if (isRecording || correctionInProgress || hasSelection()) return
+        // Pendant la dictée, seules les alternatives d'un mot touché pour le corriger sont proposées (voir VoiceWordPick).
+        if ((isRecording && !voice.wordPickActive) || correctionInProgress || hasSelection()) return
         val ic = currentInputConnection ?: return
         if (suggestion.kind == WordSuggestion.Kind.PREDICTION) {
             insertPredictedWord(ic, suggestion.text)
@@ -1095,18 +1102,24 @@ class TaipoIme : InputMethodService() {
         onUserTyped()
         clearHighlightIfNeeded()
 
+        val cursorBefore = lastSelectionEnd // avant la modification : sert à replacer le curseur d'une dictée en cours
+        var lengthDelta = 0
         ic.beginBatchEdit()
         // Le mot tel que tapé peut différer du mot affiché à gauche : forme d'origine d'un mot déjà corrigé.
         if (suggestion.kind != WordSuggestion.Kind.TYPED || wordAfter.isNotEmpty() || suggestion.text != typed) {
             ic.deleteSurroundingText(typedBefore.length, wordAfter.length + if (spaceAfter) 1 else 0)
             ic.commitText("${suggestion.text}$separator", 1)
+            lengthDelta = "${suggestion.text}$separator".length - (typedBefore.length + wordAfter.length + if (spaceAfter) 1 else 0)
             recordUndoEdit(inserted = "${suggestion.text}$separator", original = typedBefore + wordAfter + if (spaceAfter) " " else "")
         } else if (separator.isNotEmpty()) {
             if (spaceAfter) ic.deleteSurroundingText(0, 1)
             ic.commitText(separator, 1)
+            lengthDelta = separator.length - if (spaceAfter) 1 else 0
             recordUndoEdit(inserted = separator, original = if (spaceAfter) " " else "")
         }
         ic.endBatchEdit()
+        // Mot corrigé pendant la dictée : le curseur retourne où elle en était, la suite s'écrit au bout du texte.
+        if (isRecording) voice.onWordReplaced(cursorBefore, lengthDelta)
 
         pendingAutocorrection = if (suggestion.replacesOnSpace) {
             suggestions.recordCorrection(typed, suggestion.text)
@@ -1194,7 +1207,7 @@ class TaipoIme : InputMethodService() {
         ic.commitText(edit.insert, 1)
         ic.endBatchEdit()
         val original = before.takeLast(edit.deleteCount)
-        suggestions.recordCorrection(original, edit.insert)
+        suggestions.recordCorrection(before, edit)
         return AppliedAutocorrection(original = original, corrected = edit.insert, textBefore = before)
     }
 

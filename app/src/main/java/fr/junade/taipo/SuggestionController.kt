@@ -92,6 +92,9 @@ class SuggestionController(
 
         /** Vide les deux barres, et fait suivre la puce de collage. */
         fun clearBars()
+
+        /** Un mot touché pendant la dictée attend sa correction : la bande propose ses alternatives malgré l'écoute. */
+        fun voiceWordPicked(): Boolean = false
     }
 
     private val appContext = context.applicationContext
@@ -207,6 +210,15 @@ class SuggestionController(
     /** Faux dans les champs sans suggestions (mot de passe, e-mail, URL, nombre...), relu à chaque champ. */
     var suggestionsAllowed = true
 
+    /** Faux dans les champs sans emoji suggérés (adresse web...), relu à chaque champ. */
+    var emojiAllowed = true
+
+    /**
+     * Faux dans les champs où les mots sont proposés sans autocorrection (adresse web...), relu à chaque champ : la correction
+     * y est affichée comme une simple suggestion (poids normal), qui ne remplace rien à l'espace. Le mode prompt n'est pas concerné.
+     */
+    var autocorrectsInField = true
+
     // Story 1.17 : mots suggérés d'après le mot en cours de frappe (3 premiers emplacements).
     var currentWordSuggestions: List<WordSuggestion?> = emptyList()
         private set
@@ -247,8 +259,25 @@ class SuggestionController(
         lastEmailRecorded = null
     }
 
+    private fun plainIfNoAutocorrect(words: List<WordSuggestion?>, promptActive: Boolean): List<WordSuggestion?> {
+        if (autocorrectsInField || promptActive) return words
+        return words.map {
+            if (it != null && it.kind == WordSuggestion.Kind.AUTOCORRECTION) it.copy(kind = WordSuggestion.Kind.COMPLETION) else it
+        }
+    }
+
+    /** Une touche du clavier a été pressée il y a peu : le curseur suit la frappe, il n'a pas été posé par un toucher. */
+    fun typedRecently(): Boolean = SystemClock.uptimeMillis() - lastTypingAt <= TYPING_WINDOW_MS
+
     /** Retient qu'[original] (tel que tapé) a été remplacé par [corrected] (voir [CorrectionHistory.record]). */
     fun recordCorrection(original: String, corrected: String) = correctionHistory.record(original, corrected)
+
+    /**
+     * Retient une autocorrection qui vient d'être appliquée à [textBeforeCursor] (voir [CorrectionHistory.recordEdit]) :
+     * [edit] ne couvre que la fin des mots modifiés, l'historique garde les mots entiers tels que tapés.
+     */
+    fun recordCorrection(textBeforeCursor: String, edit: AutocorrectionEdit) =
+        correctionHistory.recordEdit(textBeforeCursor, edit.deleteCount, edit.insert)
 
     /** Oublie la dernière entrée : la prochaine demande recalcule tout (nouveau champ). */
     fun invalidate() {
@@ -274,13 +303,15 @@ class SuggestionController(
         val language = host.language()
         // Le prompt est un champ de texte libre : ni le type du champ de l'application ni sa sélection n'y comptent.
         val promptActive = host.promptActive()
-        val idle = !host.isRecording() && !host.isCorrectionInProgress() &&
+        // Mot touché pendant la dictée : la bande propose ses alternatives (pas d'emoji, d'adresse ni de mot suivant).
+        val voiceWordPick = host.isRecording() && host.voiceWordPicked()
+        val idle = (!host.isRecording() || voiceWordPick) && !host.isCorrectionInProgress() &&
             !host.isEmojiPanelVisible() && !host.isClipboardPanelVisible() && (promptActive || !host.hasSelection())
         val available = (promptActive || suggestionsAllowed) && idle
-        val emailAvailable = emailsAllowed && idle
+        val emailAvailable = emailsAllowed && idle && !voiceWordPick
         val wordAfter = if (available) wordAfterCursor() else ""
         // Curseur dans un mot, ou posé là sans frappe récente : le mot est déjà écrit, on propose des alternatives.
-        val placement = wordAfter.isNotEmpty() || SystemClock.uptimeMillis() - lastTypingAt > TYPING_WINDOW_MS
+        val placement = voiceWordPick || wordAfter.isNotEmpty() || SystemClock.uptimeMillis() - lastTypingAt > TYPING_WINDOW_MS
         val input = SuggestionInput(textBeforeCursor, language, available, wordAfter, placement, emailAvailable)
         if (input == lastSuggestionInput) return
         lastSuggestionInput = input
@@ -293,7 +324,7 @@ class SuggestionController(
         if (publishExclusiveEmails(emailChoice)) return
         val emailSuggestion = emailChoice?.suggestions?.first()
 
-        var emoji = if (available) emojiSuggester.suggest(textBeforeCursor, language) else null
+        var emoji = if (available && emojiAllowed && !voiceWordPick) emojiSuggester.suggest(textBeforeCursor, language) else null
         val typed = if (available) typedWordForSuggestions(textBeforeCursor, wordAfter) else ""
         if (typed.isNotEmpty()) {
             // Mot en cours de frappe : complétions et autocorrection du dictionnaire, calculées hors du
@@ -322,14 +353,14 @@ class SuggestionController(
                     }
                 }
                 withContext(Dispatchers.Main) {
-                    if (sequence == suggestionSequence && promptActive == host.promptActive()) publishWords(withEmail(words, emailSuggestion))
+                    if (sequence == suggestionSequence && promptActive == host.promptActive()) publishWords(withEmail(plainIfNoAutocorrect(words, promptActive), emailSuggestion))
                 }
             }
             return
         }
 
         var words: List<WordSuggestion?> = emptyList()
-        if (available) {
+        if (available && !voiceWordPick) {
             // Aucun mot en cours de frappe : mots (et emoji, si l'emoji du mot précédent n'en propose pas)
             // qui suivent le plus souvent ce qui précède, d'après les habitudes d'écriture.
             val prediction = predictNext(textBeforeCursor, wordAfter)

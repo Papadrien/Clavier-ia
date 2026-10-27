@@ -18,7 +18,7 @@ android {
         // Lot 2.1 : versionCode croissant en CI (VERSION_CODE, sinon le numéro d'exécution GitHub
         // Actions) ; 1 en local. Play refuse un versionCode déjà publié.
         versionCode = (System.getenv("VERSION_CODE") ?: System.getenv("GITHUB_RUN_NUMBER"))?.toIntOrNull() ?: 1
-        versionName = "1.0.0"
+        versionName = "2.0.0"
 
         // Mesure d'usage anonyme (SDK Aptabase, serveur UE). Une clé d'application Aptabase n'est pas un secret : elle ne permet
         // que d'envoyer des événements, et figure de toute façon dans l'APK. Voir docs/analytics.md.
@@ -49,7 +49,8 @@ android {
     if (keystorePath != null) {
         signingConfigs {
             create("release") {
-                storeFile = file(keystorePath)
+                // Relatif à app/ ; à défaut, relatif à la racine du dépôt (le workflow peut décoder le keystore là).
+                storeFile = file(keystorePath).takeIf { it.isAbsolute || it.exists() } ?: rootProject.file(keystorePath)
                 storePassword = keyProperties.getProperty("storePassword") ?: System.getenv("TAIPO_KEYSTORE_PASSWORD")
                 keyAlias = keyProperties.getProperty("keyAlias") ?: System.getenv("TAIPO_KEY_ALIAS")
                 keyPassword = keyProperties.getProperty("keyPassword") ?: System.getenv("TAIPO_KEY_PASSWORD")
@@ -139,6 +140,12 @@ dependencies {
 
     // Lot 3.5 (U3) : Activity Result API (ComponentActivity) pour les sélecteurs de fichier des écrans modèle.
     implementation(libs.androidx.activity)
+
+    // Lint (release) : une dépendance transitive amène Fragment < 1.3.0, incompatible avec registerForActivityResult.
+    // Contrainte (pas de dépendance ajoutée) : relève Fragment si, et seulement si, il est dans le graphe.
+    constraints {
+        implementation(libs.androidx.fragment) { because("Fragment >= 1.3.0 requis par l'Activity Result API (lint)") }
+    }
 
     // Lot 20 (accessibilité) : ExploreByTouchHelper, pour exposer à TalkBack les touches du clavier et la grille d'emojis,
     // dessinées au Canvas (aucune vue enfant). Pas de dépendance transitive garantie : déclarée explicitement.

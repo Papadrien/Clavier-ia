@@ -452,7 +452,11 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
      */
     private fun render(reveal: Boolean = false) {
         // Une écoute lancée depuis la barre normale la garde affichée jusqu'à sa fin (la dictée insère du texte au fil de l'eau).
-        zoneState.holdNormalWhile(voiceState != VoiceBarState.IDLE || aiTranscriptionState != AiTranscriptionBarState.IDLE)
+        // Sauf si un mot touché pour le corriger affiche ses alternatives (seul cas où la bande de mots est publiée pendant
+        // la dictée) : la barre de saisie, qui porte la bande, prend alors le relais.
+        zoneState.holdNormalWhile(
+            (voiceState != VoiceBarState.IDLE && !wordsShown) || aiTranscriptionState != AiTranscriptionBarState.IDLE,
+        )
         val mode = BarVisibility.mode(zoneState)
         val content = BarVisibility.content(zoneState, mode)
         val actions = BarVisibility.actionButtons(

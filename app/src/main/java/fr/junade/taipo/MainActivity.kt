@@ -13,6 +13,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
+import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.ModelStatus
 import fr.junade.taipo.model.VoiceModelFile
@@ -55,6 +56,8 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
         findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
+        // Mesure du nombre de nouveaux utilisateurs : événement envoyé une seule fois par installation.
+        Analytics.firstOpen(this)
 
         step1 = stepViews(1, R.id.step1_card, R.id.step1_badge, R.id.step1_title, R.id.step1_hint, R.id.button_enable)
         step2 = stepViews(2, R.id.step2_card, R.id.step2_badge, R.id.step2_title, R.id.step2_hint, R.id.button_select)

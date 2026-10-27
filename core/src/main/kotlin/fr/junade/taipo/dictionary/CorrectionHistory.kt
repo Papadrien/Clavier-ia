@@ -31,6 +31,22 @@ class CorrectionHistory(private val capacity: Int = DEFAULT_CAPACITY) {
         }
     }
 
+    /**
+     * Comme [record], pour une modification du texte : [deleteCount] caractères supprimés avant le curseur, puis [insert]
+     * inséré. Une modification ne couvre que la fin des mots qui changent (« cafe » -> « café » ne remplace que « e » par
+     * « é »), mais l'historique doit retenir les mots entiers : le début du mot, resté en place, est donc relu dans
+     * [textBeforeCursor] et remis devant les deux textes.
+     */
+    fun recordEdit(textBeforeCursor: String, deleteCount: Int, insert: String) {
+        val start = (textBeforeCursor.length - deleteCount).coerceIn(0, textBeforeCursor.length)
+        var wordStart = start
+        while (wordStart > 0 && WordText.isWordChar(textBeforeCursor[wordStart - 1])) wordStart--
+        record(
+            original = textBeforeCursor.substring(wordStart),
+            corrected = textBeforeCursor.substring(wordStart, start) + insert,
+        )
+    }
+
     /** Le mot tel qu'il avait été tapé avant d'être corrigé en [word] (insensible à la casse), ou null. */
     fun originalOf(word: String): String? = forms[word.lowercase()]
 

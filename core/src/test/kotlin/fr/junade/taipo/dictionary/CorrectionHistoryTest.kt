@@ -70,4 +70,35 @@ class CorrectionHistoryTest {
         history.clear()
         assertNull(history.originalOf("écoute"))
     }
+
+    @Test
+    fun `une modification de fin de mot retient le mot entier tel que tape`() {
+        val history = CorrectionHistory()
+        // « cafe » -> « café » : la modification ne remplace que « e » par « é » (début du mot resté en place).
+        history.recordEdit("il boit un cafe", deleteCount = 1, insert = "é")
+        assertEquals("cafe", history.originalOf("café"))
+        assertNull(history.originalOf("é"))
+    }
+
+    @Test
+    fun `une modification qui commence au debut du mot fonctionne aussi`() {
+        val history = CorrectionHistory()
+        history.recordEdit("elle ecoute", deleteCount = "ecoute".length, insert = "écoute")
+        assertEquals("ecoute", history.originalOf("écoute"))
+    }
+
+    @Test
+    fun `une correction de contexte sur un mot court retient le mot tel que tape`() {
+        val history = CorrectionHistory()
+        history.recordEdit("il est alle a", deleteCount = 1, insert = "à")
+        assertEquals("a", history.originalOf("à"))
+    }
+
+    @Test
+    fun `une modification en milieu de mot garde le debut du mot`() {
+        val history = CorrectionHistory()
+        // « bonjuor » -> « bonjour » : « uor » devient « our », le début « bonj » reste en place.
+        history.recordEdit("dire bonjuor", deleteCount = 3, insert = "our")
+        assertEquals("bonjuor", history.originalOf("bonjour"))
+    }
 }

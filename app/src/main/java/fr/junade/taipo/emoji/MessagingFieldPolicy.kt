@@ -37,6 +37,8 @@ object MessagingFieldPolicy {
 
     fun isMessagingField(packageName: String?, inputType: Int): Boolean {
         if (!SuggestionPolicy.allowsSuggestions(inputType)) return false
+        // Adresse web : les suggestions de mots y sont permises, mais ce n'est jamais un champ de messagerie.
+        if (inputType and InputType.TYPE_MASK_VARIATION == InputType.TYPE_TEXT_VARIATION_URI) return false
         return when (inputType and InputType.TYPE_MASK_VARIATION) {
             InputType.TYPE_TEXT_VARIATION_SHORT_MESSAGE,
             InputType.TYPE_TEXT_VARIATION_LONG_MESSAGE,
