@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 class FirstOpenPolicyTest {
 
     @Test
-    fun `installation neuve jamais comptee : on envoie`() {
+    fun `installation neuve jamais comptee, on envoie`() {
         assertEquals(Decision.SEND, FirstOpenPolicy.decide(alreadyHandled = false, firstInstallTime = 1_000, lastUpdateTime = 1_000))
     }
 
@@ -20,7 +20,7 @@ class FirstOpenPolicyTest {
     }
 
     @Test
-    fun `application mise a jour : rien n est envoye mais on memorise`() {
+    fun `application mise a jour, rien n est envoye mais on memorise`() {
         assertEquals(
             Decision.SKIP_AND_REMEMBER,
             FirstOpenPolicy.decide(false, 1_000, 1_000 + FirstOpenPolicy.UPDATE_THRESHOLD_MILLIS + 1),
@@ -28,7 +28,7 @@ class FirstOpenPolicyTest {
     }
 
     @Test
-    fun `deja traitee : rien a faire`() {
+    fun `deja traitee, rien a faire`() {
         assertEquals(Decision.NOTHING, FirstOpenPolicy.decide(true, 1_000, 1_000))
         assertEquals(Decision.NOTHING, FirstOpenPolicy.decide(true, 1_000, 999_999_999))
     }
