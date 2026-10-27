@@ -17,11 +17,22 @@ data class KeyboardMetrics(val rowHeightDp: Float, val bottomMarginDp: Float, va
     fun rowsHeightDp(rowCount: Int, heightScale: Float): Float =
         rowHeightDp * effectiveScale(heightScale) * rowCount
 
+    /**
+     * Marge basse effective, en dp. [navBarInsetDp] est l'inset réel de la barre de navigation fourni
+     * par le système (0 si la barre de geste est masquée) ; null tant qu'il n'est pas connu, auquel
+     * cas on garde la valeur de repli [bottomMarginDp].
+     */
+    fun resolvedBottomMarginDp(navBarInsetDp: Float?): Float =
+        if (navBarInsetDp == null) bottomMarginDp else navBarInsetDp.coerceAtLeast(0f) + MIN_BOTTOM_GAP_DP
+
     /** Hauteur totale de la vue clavier (rangées + marge basse), en dp. */
     fun totalHeightDp(rowCount: Int, heightScale: Float): Float =
         rowsHeightDp(rowCount, heightScale) + bottomMarginDp
 
     companion object {
+        /** Espace minimal sous les touches, même sans barre système. */
+        const val MIN_BOTTOM_GAP_DP = 8f
+
         val PORTRAIT = KeyboardMetrics(rowHeightDp = 51.6f, bottomMarginDp = 60f, maxHeightScale = Float.MAX_VALUE)
         val LANDSCAPE = KeyboardMetrics(rowHeightDp = 36f, bottomMarginDp = 28f, maxHeightScale = 1.0f)
 
