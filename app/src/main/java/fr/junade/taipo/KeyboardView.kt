@@ -14,7 +14,6 @@ import android.view.View
 import android.view.ViewConfiguration
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import kotlin.math.roundToInt
 
 @SuppressLint("ViewConstructor")
@@ -100,6 +99,16 @@ class KeyboardView(context: Context) : View(context) {
         context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     private fun metrics(): KeyboardMetrics = KeyboardMetrics.forOrientation(isLandscape)
+
+    /** Marge sous les touches en portrait, en dp (réglage « Marge inférieure », [KeyboardBottomMargin]). */
+    var bottomMarginDp: Int = KeyboardBottomMargin.DEFAULT_DP
+        set(value) {
+            val clamped = KeyboardBottomMargin.clamp(value)
+            if (field == clamped) return
+            field = clamped
+            requestLayout()
+            invalidate()
+        }
 
     var isShifted: Boolean = false
         set(value) {
@@ -249,22 +258,7 @@ class KeyboardView(context: Context) : View(context) {
     init {
         keyRenderer.shiftAnimation = shiftAnimation
         keyRenderer.spaceBarAnimation = spaceBarAnimation
-        // Marge basse = hauteur réelle de la zone système (barre de navigation / geste) fournie par
-        // le système, et non une valeur fixe : sur un appareil dont la barre de geste est masquée
-        // (OnePlus...), l'inset vaut ~0 et l'espace sous les touches doit rester réduit.
-        ViewCompat.setOnApplyWindowInsetsListener(this) { _, insets ->
-            val bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
-            if (bottom != navBarInsetPx) {
-                navBarInsetPx = bottom
-                requestLayout()
-                invalidate()
-            }
-            insets
-        }
     }
-
-    /** Inset bas de la barre de navigation, en px ; null tant que le système ne l'a pas fourni. */
-    private var navBarInsetPx: Int? = null
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
@@ -743,9 +737,8 @@ class KeyboardView(context: Context) : View(context) {
 
     private fun rowsHeightPx(): Float =
         dp(metrics().rowsHeightDp(maxOf(layout.rows.size, minRowCount), heightScale))
-    private fun bottomMarginPx(): Float = dp(
-        metrics().resolvedBottomMarginDp(navBarInsetPx?.let { it / resources.displayMetrics.density }),
-    )
+    private fun bottomMarginPx(): Float =
+        dp(if (isLandscape) metrics().bottomMarginDp else bottomMarginDp.toFloat())
     private fun usableHeightPx(): Float = (height - bottomMarginPx()).coerceAtLeast(0f)
 
     /** Story 1.14 : zone horizontale des touches (plein écran en Compact, plafonnée et centrée en large). */

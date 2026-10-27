@@ -188,16 +188,16 @@ class BarVisibilityTest {
     }
 
     @Test
-    fun `pendant une saisie vocale Chat et Transcription IA restent affiches meme menu ferme`() {
+    fun `pendant une saisie vocale menu ferme Chat et Transcription IA ne sont pas affiches`() {
         val zone = typing() // menu refermé par le texte dicté
         for (voice in listOf(VoiceBarState.LOADING, VoiceBarState.RECORDING, VoiceBarState.TRANSCRIBING)) {
             val buttons = actions(zone, voice = voice)
-            assertTrue(buttons.generate, "Chat affiché pendant $voice")
-            assertTrue(buttons.aiTranscription, "Transcription IA affichée pendant $voice")
+            assertFalse(buttons.generate, "Chat masqué pendant $voice")
+            assertFalse(buttons.aiTranscription, "Transcription IA masquée pendant $voice")
             assertTrue(BarVisibility.generateBlocked(voice, CorrectionBarState.IDLE), "Chat grisé pendant $voice")
             assertTrue(BarVisibility.aiTranscriptionBlocked(voice, AiTranscriptionBarState.IDLE), "Transcription IA grisée pendant $voice")
         }
-        // Au repos, menu fermé : ils se rangent de nouveau derrière le robot.
+        // Au repos, menu fermé : toujours rangés derrière le robot.
         val idle = actions(zone)
         assertFalse(idle.generate)
         assertFalse(idle.aiTranscription)

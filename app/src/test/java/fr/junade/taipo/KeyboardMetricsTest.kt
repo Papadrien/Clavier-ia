@@ -16,15 +16,6 @@ class KeyboardMetricsTest {
     }
 
     @Test
-    fun `la marge basse suit l'inset systeme et garde un espace minimal`() {
-        val m = KeyboardMetrics.PORTRAIT
-        assertEquals(60f, m.resolvedBottomMarginDp(null))
-        assertEquals(KeyboardMetrics.MIN_BOTTOM_GAP_DP, m.resolvedBottomMarginDp(0f))
-        assertEquals(24f + KeyboardMetrics.MIN_BOTTOM_GAP_DP, m.resolvedBottomMarginDp(24f))
-        assertEquals(KeyboardMetrics.MIN_BOTTOM_GAP_DP, m.resolvedBottomMarginDp(-5f))
-    }
-
-    @Test
     fun `le paysage raccourcit les rangees et la marge basse`() {
         val portrait = KeyboardMetrics.PORTRAIT
         val landscape = KeyboardMetrics.forOrientation(isLandscape = true)

@@ -390,6 +390,7 @@ class TaipoIme : InputMethodService() {
         refreshKeySound()
         keyboardHeight = keyboardPreferences.keyboardHeight
         keyboardView.heightScale = keyboardHeight.scale
+        keyboardView.bottomMarginDp = keyboardPreferences.bottomMarginDp
         emojiController.hidePanel(resync = false)
         clipboard.hidePanel(resync = false)
         correctionBar.collapseMenu()

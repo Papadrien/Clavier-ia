@@ -53,7 +53,7 @@ internal class SuggestionZoneView(context: Context) : FrameLayout(context) {
         suggestionStrip.setOnEmojiClickListener(listener)
     }
 
-    /** Pilule « coller » à droite de la bande : aperçu de la copie récente ([preview], null = aucune pilule). */
+    /** Pilule « coller » dans la bande (place du 3e mot, ou toute la largeur sans mot) : aperçu de la copie récente ([preview], null = aucune pilule). */
     fun setPasteSuggestion(preview: String?, sensitive: Boolean) {
         suggestionStrip.setPaste(preview, sensitive)
     }
