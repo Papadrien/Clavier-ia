@@ -39,11 +39,29 @@ de l'appareil** (la doc du SDK le cite ; l'ancien client maison ne l'envoyait pa
 | `undo_used` | aucune | `UndoController` |
 | `keyboard_language` | `lang`, `layout` (`azerty`, `qwerty`, `qwertz`), `auto` | `TaipoIme.startInputView`, une fois par changement de langue |
 | `setting_changed` | `key`, `value` (`true` / `false` ou mot-clé) | `KeyboardSettingsActivity` |
+| `first_open` | aucune | `MainActivity.onCreate` via `Analytics.firstOpen`, une fois par installation |
 
 Tranches de durée : `ai_action` `lt_1s`, `1_3s`, `3_10s`, `10_30s`, `gt_30s` ; `voice_input` `lt_5s`, `5_15s`, `15_60s`, `gt_60s`.
 
 `ai_action` n'est pas envoyé pour une action annulée par l'utilisateur ni pour une génération interrompue (partielle).
 Le mode chat est la génération par prompt : il compte sous `type = generate`.
+
+## Compter les nouveaux utilisateurs (`first_open`)
+
+Aptabase n'a pas d'identifiant d'appareil : le nombre d'événements `first_open` du tableau de bord EST le nombre de nouvelles
+installations ouvertes (filtrer par période, version de l'app, langue ou pays du tableau de bord pour le détail).
+
+- Envoyé à la première ouverture de l'application (écran d'accueil), une seule fois : le réglage `first_open_handled`
+  (`AnalyticsPreferences`) est mémorisé après l'envoi. Règles pures dans `FirstOpenPolicy` (`:core`, testées).
+- **Mise à jour** : si l'écart entre la date d'installation et la dernière mise à jour dépasse 60 s, l'application est
+  considérée comme déjà installée avant l'événement : rien n'est envoyé (sinon tous les utilisateurs existants seraient comptés
+  comme nouveaux), et le réglage est mémorisé.
+- **Mesure désactivée ou SDK absent** : rien n'est envoyé ni mémorisé ; la prochaine ouverture réessaie.
+- **Limites** : une désinstallation puis réinstallation sans restauration de sauvegarde recompte l'utilisateur (pas
+  d'identifiant pour le reconnaître) ; le réglage suit la sauvegarde automatique d'Android, donc un changement de téléphone
+  avec restauration ne recompte pas. Une personne qui active le clavier sans jamais ouvrir l'application n'est pas comptée.
+- **Tester** : désinstaller puis réinstaller (les dates d'installation et de mise à jour doivent être égales) ; « Effacer les
+  données » ou une mise à jour par-dessus ne rejoue pas l'événement, car l'application est alors vue comme mise à jour.
 
 ## Pas encore là
 
@@ -62,9 +80,11 @@ Le mode chat est la génération par prompt : il compte sous `type = generate`.
 
 0. Au premier build : la résolution de `com.github.aptabase:aptabase-kotlin:0.1.0` sur JitPack, et les imports `com.aptabase.*`
    (`Aptabase`, `InitOptions`, `TrackingMode`) dans `Analytics.kt`, écrits sans avoir pu lire le code du SDK. Le comportement hors ligne
-   du SDK (réessai ou non) n'est pas documenté : le test 5 ci-dessous le dira.
+   du SDK (réessai ou non) n'est pas documenté : le test 6 ci-dessous le dira.
 1. Installer le debug, faire une correction IA, un collage, un Annuler, changer un réglage.
 2. Ouvrir le tableau de bord Aptabase en mode debug : les événements doivent apparaître sous quelques secondes.
 3. Désactiver la mesure, refaire une action : plus aucun événement.
 4. Ouvrir un champ de mot de passe, utiliser le clavier : aucun événement.
-5. Mode avion, faire des actions, rétablir le réseau, faire une action : les événements en attente partent.
+5. (first_open) Désinstaller le debug, le réinstaller, l'ouvrir : un événement `first_open` dans le tableau de bord debug ; le
+   fermer et le rouvrir : aucun second événement.
+6. Mode avion, faire des actions, rétablir le réseau, faire une action : les événements en attente partent.

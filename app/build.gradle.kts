@@ -18,7 +18,7 @@ android {
         // Lot 2.1 : versionCode croissant en CI (VERSION_CODE, sinon le numéro d'exécution GitHub
         // Actions) ; 1 en local. Play refuse un versionCode déjà publié.
         versionCode = (System.getenv("VERSION_CODE") ?: System.getenv("GITHUB_RUN_NUMBER"))?.toIntOrNull() ?: 1
-        versionName = "1.0.0"
+        versionName = "2.0.0"
 
         // Mesure d'usage anonyme (SDK Aptabase, serveur UE). Une clé d'application Aptabase n'est pas un secret : elle ne permet
         // que d'envoyer des événements, et figure de toute façon dans l'APK. Voir docs/analytics.md.

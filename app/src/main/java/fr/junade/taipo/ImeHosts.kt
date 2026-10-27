@@ -220,6 +220,7 @@ internal class SuggestionHost(private val ime: ImeHostContext) : SuggestionContr
     override fun showWords(words: List<WordSuggestion?>) {
         if (ime.prompt.active) ime.prompt.setSuggestionWords(words) else ime.correctionBar.setWordSuggestions(words)
     }
+    override fun voiceWordPicked(): Boolean = ime.voice.wordPickActive
     override fun clearBars() {
         ime.correctionBar.setEmojiSuggestion(null)
         ime.correctionBar.setWordSuggestions(emptyList())

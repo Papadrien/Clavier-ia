@@ -15,6 +15,7 @@ import fr.junade.taipo.ai.VoiceEngine
 import fr.junade.taipo.ai.VoiceField
 import fr.junade.taipo.ai.VoiceRecorder
 import fr.junade.taipo.ai.VoiceTextSync
+import fr.junade.taipo.ai.VoiceWordPick
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.model.VoiceModelPreferences
@@ -117,6 +118,12 @@ class VoiceController(
     private var recordingInPrompt = false
 
     private var voicePartialJob: Job? = null
+
+    // Mot touché dans le champ pendant l'écoute, pour le corriger (voir [VoiceWordPick]).
+    private val wordPick = VoiceWordPick()
+
+    /** Un mot touché pendant l'écoute attend sa correction : la bande de suggestions montre ses alternatives. */
+    val wordPickActive: Boolean get() = wordPick.active
 
     // Démarrage en cours (chargement du modèle puis ouverture du micro) : annulable tant que
     // l'écoute n'a pas réellement commencé (second appui, relâchement en mode maintenu, clavier fermé).
@@ -224,6 +231,7 @@ class VoiceController(
         recordingInPrompt = host.promptActive()
         isRecording = true
         host.clearSuggestions()
+        wordPick.reset()
         textSync.reset()
         // Le bouton n'affiche « Écoute… » qu'une fois le micro réellement ouvert : tant que le modèle
         // se charge (premier usage, ou rechargé après libération), il affiche « Chargement… ».
@@ -285,6 +293,7 @@ class VoiceController(
                 voiceStartJob = null
                 voiceRecorder = null // un recorder dont start() a échoué n'a rien à arrêter ni à libérer
                 isRecording = false
+                wordPick.reset()
                 host.setVoiceBarState(VoiceBarState.IDLE)
                 host.refreshPasteSuggestion()
                 host.showMessage(
@@ -309,12 +318,14 @@ class VoiceController(
             voiceStartJob?.cancel()
             voiceStartJob = null
             isRecording = false
+            wordPick.reset()
             host.setVoiceBarState(VoiceBarState.IDLE)
             return
         }
         host.playVoiceSound(start = false) // seulement si l'écoute avait réellement commencé (donc son de début joué)
         voiceRecorder = null
         isRecording = false
+        wordPick.reset()
         isTranscribing = true
         host.setVoiceBarState(VoiceBarState.TRANSCRIBING)
         val holdMode = isHoldModeRecording
@@ -357,11 +368,13 @@ class VoiceController(
             voiceStartJob?.cancel()
             voiceStartJob = null
             isRecording = false
+            wordPick.reset()
             host.setVoiceBarState(VoiceBarState.IDLE)
             return
         }
         voiceRecorder = null
         isRecording = false
+        wordPick.reset()
         host.setVoiceBarState(VoiceBarState.IDLE)
         scope.launch {
             voicePartialJob?.cancelAndJoin()
@@ -376,6 +389,28 @@ class VoiceController(
             // valide si le champ a déjà perdu le focus à ce stade).
             replaceInsertedPartialText(null)
         }
+    }
+
+    /**
+     * Le curseur du champ a bougé pendant l'écoute : un toucher de l'utilisateur sur un mot (à corriger), ou l'écho d'une
+     * insertion de la dictée. Sans effet dans le mode prompt (un toucher dans le champ y ferme le mode).
+     */
+    fun onCursorMoved(oldEnd: Int, newStart: Int, newEnd: Int, typedRecently: Boolean) {
+        if (!isRecording || recordingInPrompt) return
+        val inserted = textSync.insertedText
+        val atDictationEnd = inserted.isNotEmpty() &&
+            host.inputConnection()?.getTextBeforeCursor(inserted.length, 0)?.toString() == inserted
+        wordPick.onCursorMoved(oldEnd, newEnd, collapsed = newStart == newEnd, atDictationEnd = atDictationEnd, typedRecently = typedRecently)
+    }
+
+    /**
+     * Le mot touché vient d'être remplacé par une suggestion : le curseur retourne où la dictée en était, pour que la suite de
+     * ce qui est dit s'écrive au bout du texte. [cursorBefore] : position du curseur avant le remplacement ; [lengthDelta] :
+     * variation de longueur du texte.
+     */
+    fun onWordReplaced(cursorBefore: Int, lengthDelta: Int) {
+        val target = wordPick.onWordReplaced(cursorBefore, lengthDelta) ?: return
+        host.inputConnection()?.setSelection(target, target)
     }
 
     /**

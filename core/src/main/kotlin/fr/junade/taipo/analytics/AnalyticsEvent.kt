@@ -22,6 +22,7 @@ object AnalyticsEvents {
     const val UNDO_USED = "undo_used"
     const val KEYBOARD_LANGUAGE = "keyboard_language"
     const val SETTING_CHANGED = "setting_changed"
+    const val FIRST_OPEN = "first_open"
 
     /** Types d'action IA de la propriété `type`. */
     object AiType {

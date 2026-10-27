@@ -53,20 +53,45 @@ class KeyboardPreferences(context: Context) {
         }
 
     /**
-     * Volume des sons du clavier et de la barre supérieure, en pourcentage (0 à 100, voir [KeySoundVolume]). 40 % par
+     * Volume des sons du clavier et de la barre supérieure, en pourcentage (0 à 100, voir [KeySoundVolume]). 80 % par
      * défaut : le volume d'avant l'ajout du curseur. Relu à chaque ouverture de champ.
      */
     var keySoundVolumePercent: Int
-        get() = KeySoundVolume.clamp(prefs.getInt(KEY_SOUND_VOLUME, KeySoundVolume.DEFAULT_PERCENT))
+        get() {
+            migrateVolumeScale()
+            return KeySoundVolume.clamp(prefs.getInt(KEY_SOUND_VOLUME, KeySoundVolume.DEFAULT_PERCENT))
+        }
         set(value) {
+            migrateVolumeScale()
             prefs.edit().putInt(KEY_SOUND_VOLUME, KeySoundVolume.clamp(value)).apply()
         }
+
+    /**
+     * Le maximum du curseur de volume a été divisé par deux (l'ancien 50 % est devenu 100 %) : une valeur enregistrée
+     * avec l'ancienne échelle est doublée (plafonnée à 100) une seule fois, pour garder le même volume.
+     */
+    private fun migrateVolumeScale() {
+        if (prefs.getBoolean(KEY_VOLUME_RESCALED, false)) return
+        prefs.edit().apply {
+            if (prefs.contains(KEY_SOUND_VOLUME)) {
+                putInt(KEY_SOUND_VOLUME, KeySoundVolume.clamp(prefs.getInt(KEY_SOUND_VOLUME, 0) * 2))
+            }
+            putBoolean(KEY_VOLUME_RESCALED, true)
+        }.apply()
+    }
 
     /** Hauteur du clavier (story 1.12). Normale (100 %) par défaut. */
     var keyboardHeight: KeyboardHeight
         get() = KeyboardHeight.fromStorageKey(prefs.getString(KEY_KEYBOARD_HEIGHT, null))
         set(value) {
             prefs.edit().putString(KEY_KEYBOARD_HEIGHT, value.storageKey).apply()
+        }
+
+    /** Marge sous les touches en portrait, en dp ([KeyboardBottomMargin]). 60 dp par défaut. Relue à chaque ouverture de champ. */
+    var bottomMarginDp: Int
+        get() = KeyboardBottomMargin.clamp(prefs.getInt(KEY_BOTTOM_MARGIN, KeyboardBottomMargin.DEFAULT_DP))
+        set(value) {
+            prefs.edit().putInt(KEY_BOTTOM_MARGIN, KeyboardBottomMargin.clamp(value)).apply()
         }
 
     /**
@@ -138,10 +163,12 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_KEY_SOUND = "key_sound_enabled"
         const val DEFAULT_KEY_SOUND = true
         private const val KEY_SOUND_VOLUME = "key_sound_volume_percent"
+        private const val KEY_VOLUME_RESCALED = "key_sound_volume_rescaled"
         private const val KEY_BAR_SOUND = "bar_sound_enabled"
         const val DEFAULT_BAR_SOUND = true
         private const val KEY_HAPTIC_INTENSITY = "haptic_intensity"
         private const val KEY_KEYBOARD_HEIGHT = "keyboard_height"
+        private const val KEY_BOTTOM_MARGIN = "bottom_margin_dp"
         private const val KEY_LANGUAGE = "keyboard_language"
         private const val KEY_MULTILINGUAL = "multilingual_enabled"
         private const val KEY_MULTILINGUAL_LANGUAGES = "multilingual_languages"

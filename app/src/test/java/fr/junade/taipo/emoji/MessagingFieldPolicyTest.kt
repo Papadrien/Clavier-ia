@@ -7,6 +7,13 @@ import org.junit.jupiter.api.Test
 
 class MessagingFieldPolicyTest {
 
+    @Test
+    fun `une adresse web n'est jamais un champ de messagerie, meme dans une messagerie connue`() {
+        val uri = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
+        assertFalse(MessagingFieldPolicy.isMessagingField("com.whatsapp", uri))
+        assertFalse(MessagingFieldPolicy.isMessagingField("com.brave.browser", uri))
+    }
+
     private val text = InputType.TYPE_CLASS_TEXT
 
     @Test

@@ -59,8 +59,8 @@ carte. Le robot, touché pendant le panneau, referme le panneau puis le menu.
 ## Chat et Transcription IA pendant une saisie vocale
 
 La dictée (Vocal) referme le menu du robot en insérant du texte. Tant que la saisie vocale n'est pas au repos (chargement,
-écoute, transcription), Chat et Transcription IA restent affichés dans la barre de saisie, en icône seule, grisés et
-inactifs, au lieu de disparaître avec le menu. Ils se rangent de nouveau derrière le robot à la fin. Règle :
+écoute, transcription), Chat et Transcription IA ne sont pas affichés dans la barre de saisie (menu fermé) : ils ne
+réapparaissent qu'à la réouverture du menu. Menu ouvert au démarrage de la dictée, ils y restent, grisés et inactifs. Règle :
 `BarVisibility.actionButtons` ; test : `BarVisibilityTest`.
 
 ## Apparition de Chat à l'ouverture du menu

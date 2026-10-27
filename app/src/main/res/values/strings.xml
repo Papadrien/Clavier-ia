@@ -112,6 +112,8 @@
     <string name="keyboard_settings_haptic_medium">Medium</string>
     <string name="keyboard_settings_haptic_strong">Strong</string>
     <string name="keyboard_settings_key_sound">Keyboard sound</string>
+    <string name="keyboard_settings_bottom_margin">Bottom margin</string>
+    <string name="keyboard_settings_bottom_margin_value">Bottom margin: %1$d dp</string>
     <string name="keyboard_settings_sound_volume">Sound volume</string>
     <string name="keyboard_settings_sound_volume_value">Sound volume: %1$d%%</string>
     <string name="keyboard_settings_bar_sound">Top bar sounds</string>

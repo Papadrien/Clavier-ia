@@ -197,6 +197,21 @@
         </RadioGroup>
 
         <TextView
+            android:id="@+id/text_bottom_margin"
+            style="@style/TaipoText.Section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_lg" />
+
+        <SeekBar
+            android:id="@+id/seek_bottom_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+            android:max="100"
+            android:contentDescription="@string/keyboard_settings_bottom_margin" />
+
+        <TextView
             style="@style/TaipoText.Section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

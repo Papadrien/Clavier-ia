@@ -91,6 +91,7 @@ class KeyboardSettingsActivity : Activity() {
             }
         }
         setUpSoundVolume(preferences)
+        setUpBottomMargin(preferences)
 
         val heightGroup = findViewById<RadioGroup>(R.id.radio_group_height)
         val heightIds = mapOf(
@@ -161,6 +162,31 @@ class KeyboardSettingsActivity : Activity() {
                 previewPlayer.volumePercent = bar.progress
                 previewPlayer.play(KeySound.KEY)
                 Analytics.setting(this@KeyboardSettingsActivity, "sound_volume", bar.progress)
+            }
+        })
+    }
+
+    /** Curseur « Marge inférieure » (0 à 100 dp) : écrit au fil du déplacement, relu par le clavier à l'ouverture du prochain champ. */
+    private fun setUpBottomMargin(preferences: KeyboardPreferences) {
+        val seekBar = findViewById<SeekBar>(R.id.seek_bottom_margin)
+        val label = findViewById<TextView>(R.id.text_bottom_margin)
+        fun showValue(dp: Int) {
+            label.text = getString(R.string.keyboard_settings_bottom_margin_value, dp)
+            seekBar.contentDescription = label.text
+        }
+        seekBar.max = KeyboardBottomMargin.MAX_DP
+        seekBar.progress = preferences.bottomMarginDp
+        showValue(seekBar.progress)
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(bar: SeekBar, progress: Int, fromUser: Boolean) {
+                showValue(progress)
+                if (fromUser) preferences.bottomMarginDp = progress
+            }
+
+            override fun onStartTrackingTouch(bar: SeekBar) = Unit
+
+            override fun onStopTrackingTouch(bar: SeekBar) {
+                Analytics.setting(this@KeyboardSettingsActivity, "bottom_margin", bar.progress)
             }
         })
     }

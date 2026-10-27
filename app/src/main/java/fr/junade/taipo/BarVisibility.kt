@@ -127,8 +127,8 @@ internal object BarVisibility {
      *
      * Transcription IA reste visible, en petit (icône seule), tant que [aiTranscription] n'est pas au repos (écoute,
      * traitement, annulation), même menu fermé : c'est le bouton qui arrête l'écoute ou annule le traitement, il ne doit
-     * jamais disparaître avant la fin. Pendant une saisie vocale ([voice] hors repos), Chat et Transcription IA restent aussi
-     * affichés, grisés et inactifs, même menu fermé (la dictée referme le menu en insérant du texte).
+     * jamais disparaître avant la fin. Pendant une saisie vocale, menu fermé (la dictée referme le menu en insérant du texte), Chat et
+     * Transcription IA ne sont pas affichés : ils ne reviennent qu'à l'ouverture du menu.
      * [wordSuggestionsShown] : la bande de mots affiche au moins un mot ou un emoji.
      */
     fun actionButtons(
@@ -141,15 +141,12 @@ internal object BarVisibility {
     ): ActionButtonsVisibility {
         val typing = mode == BarMode.TYPING
         val menuOpen = typing && zoneState.menuOpen
-        // Une saisie vocale (chargement, écoute, transcription) referme le menu en insérant du texte : Chat et Transcription IA
-        // restent alors affichés (grisés, icône seule) au lieu de disparaître.
-        val voiceActive = voice != VoiceBarState.IDLE
         val hiddenBySuggestion = correction == CorrectionBarState.IDLE &&
             suggestionsDisplayed(zoneState, mode, wordSuggestionsShown)
         return ActionButtonsVisibility(
             voice = true,
-            aiTranscription = typing && (menuOpen || aiTranscription != AiTranscriptionBarState.IDLE || voiceActive),
-            generate = typing && (menuOpen || voiceActive),
+            aiTranscription = typing && (menuOpen || aiTranscription != AiTranscriptionBarState.IDLE),
+            generate = typing && menuOpen,
             correct = typing && correction != CorrectionBarState.HIDDEN && !hiddenBySuggestion,
         )
     }

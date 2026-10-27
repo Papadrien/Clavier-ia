@@ -100,6 +100,16 @@ class KeyboardView(context: Context) : View(context) {
 
     private fun metrics(): KeyboardMetrics = KeyboardMetrics.forOrientation(isLandscape)
 
+    /** Marge sous les touches en portrait, en dp (réglage « Marge inférieure », [KeyboardBottomMargin]). */
+    var bottomMarginDp: Int = KeyboardBottomMargin.DEFAULT_DP
+        set(value) {
+            val clamped = KeyboardBottomMargin.clamp(value)
+            if (field == clamped) return
+            field = clamped
+            requestLayout()
+            invalidate()
+        }
+
     var isShifted: Boolean = false
         set(value) {
             field = value
@@ -727,7 +737,8 @@ class KeyboardView(context: Context) : View(context) {
 
     private fun rowsHeightPx(): Float =
         dp(metrics().rowsHeightDp(maxOf(layout.rows.size, minRowCount), heightScale))
-    private fun bottomMarginPx(): Float = dp(metrics().bottomMarginDp)
+    private fun bottomMarginPx(): Float =
+        dp(if (isLandscape) metrics().bottomMarginDp else bottomMarginDp.toFloat())
     private fun usableHeightPx(): Float = (height - bottomMarginPx()).coerceAtLeast(0f)
 
     /** Story 1.14 : zone horizontale des touches (plein écran en Compact, plafonnée et centrée en large). */

@@ -45,10 +45,39 @@ object Analytics {
     }
 
     fun track(context: Context, name: String, props: AnalyticsProps) {
-        if (!initialized || sensitiveFieldActive) return
-        if (!AnalyticsPreferences(context.applicationContext).isEnabled) return
+        send(context, name, props)
+    }
+
+    /** Envoie l'événement au SDK ; renvoie false s'il a été ignoré (SDK absent, champ sensible, mesure désactivée). */
+    private fun send(context: Context, name: String, props: AnalyticsProps): Boolean {
+        if (!initialized || sensitiveFieldActive) return false
+        if (!AnalyticsPreferences(context.applicationContext).isEnabled) return false
         val values = props.forSdk()
         if (values.isEmpty()) Aptabase.instance.trackEvent(name) else Aptabase.instance.trackEvent(name, values)
+        return true
+    }
+
+    /**
+     * Première ouverture de l'application : envoie [AnalyticsEvents.FIRST_OPEN] une seule fois par installation (nombre de
+     * nouveaux utilisateurs). À appeler à l'ouverture de l'écran d'accueil. Règles dans [FirstOpenPolicy] : une application
+     * mise à jour (déjà installée avant cette version) n'est pas comptée. Si l'envoi est ignoré (mesure désactivée, SDK
+     * absent), rien n'est mémorisé et la prochaine ouverture réessaie.
+     */
+    fun firstOpen(context: Context) {
+        val appContext = context.applicationContext
+        val preferences = AnalyticsPreferences(appContext)
+        if (preferences.firstOpenHandled) return
+        val info = try {
+            appContext.packageManager.getPackageInfo(appContext.packageName, 0)
+        } catch (e: android.content.pm.PackageManager.NameNotFoundException) {
+            return
+        }
+        when (FirstOpenPolicy.decide(preferences.firstOpenHandled, info.firstInstallTime, info.lastUpdateTime)) {
+            FirstOpenPolicy.Decision.NOTHING -> Unit
+            FirstOpenPolicy.Decision.SKIP_AND_REMEMBER -> preferences.firstOpenHandled = true
+            FirstOpenPolicy.Decision.SEND ->
+                if (send(appContext, AnalyticsEvents.FIRST_OPEN, AnalyticsProps.EMPTY)) preferences.firstOpenHandled = true
+        }
     }
 
     /** Raccourci : `track(context, name, "cle" to valeur, ...)`. */

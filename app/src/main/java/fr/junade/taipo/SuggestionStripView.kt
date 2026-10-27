@@ -24,7 +24,9 @@ import fr.junade.taipo.dictionary.WordSuggestion
  * pastille ni fond ; l'emplacement emoji est un bouton secondaire, dont le fond « face + ombre » est créé une fois
  * ([BarStyle.pillBackground]), sans allocation à chaque frappe.
  *
- * La copie récente proposée au collage (pilule à droite, après l'emoji) vient aussi dans la bande, tant qu'elle est proposée.
+ * La copie récente proposée au collage vient aussi dans la bande, tant qu'elle est proposée : la pilule a le même poids qu'un
+ * emplacement de mot et se place après les mots (avant l'emoji). Avec trois mots, elle prend la place du 3e ; sans aucun mot,
+ * elle occupe toute la largeur disponible.
  *
  * Un mot trop long pour son emplacement est tronqué au début (« …ement ») : le début est déjà tapé, la fin est ce qui
  * distingue les suggestions.
@@ -45,7 +47,7 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
     private val wordSlots = List(WORD_SLOT_COUNT) { TextView(context) }
     private val emojiSlot = TextView(context)
 
-    /** Copie récente à coller (à droite de la bande, après l'emoji) : aperçu du texte copié, sans icône. */
+    /** Copie récente à coller (après les mots, avant l'emoji) : aperçu du texte copié, sans icône. */
     private val pasteSlot = TextView(context)
     private val slotGap = dimen(R.dimen.taipo_suggestion_slot_gap).toInt()
     private var emojiListener: OnEmojiClickListener? = null
@@ -90,8 +92,6 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         emojiSlot.visibility = View.GONE
         emojiSlot.setOnClickListener { emoji?.let { emojiListener?.onEmojiClick(it) } }
         emojiSlot.announceAsButton() // lot 20
-        val emojiWidth = dimen(R.dimen.taipo_suggestion_emoji_slot_width).toInt()
-        addView(emojiSlot, LayoutParams(emojiWidth, LayoutParams.MATCH_PARENT))
 
         val chipPadding = dimen(R.dimen.taipo_suggestion_chip_padding).toInt()
         pasteSlot.setTextColor(context.themeColor(R.color.text_primary))
@@ -100,13 +100,17 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         pasteSlot.gravity = Gravity.CENTER
         pasteSlot.maxLines = 1
         pasteSlot.ellipsize = TextUtils.TruncateAt.END
-        pasteSlot.maxWidth = dimen(R.dimen.taipo_suggestion_paste_slot_max_width).toInt()
         pasteSlot.background = style.pillBackground(R.color.surface_button)
         pasteSlot.setPadding(chipPadding, 0, chipPadding, shadow)
         pasteSlot.visibility = View.GONE
         pasteSlot.setOnClickListener { pasteListener?.invoke() }
         pasteSlot.announceAsButton() // lot 20
-        addView(pasteSlot, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT))
+        // Même poids qu'un emplacement de mot : la pilule prend la place du 3e mot, ou toute la bande s'il n'y a aucun mot.
+        addView(pasteSlot, LayoutParams(0, LayoutParams.MATCH_PARENT, 1f))
+
+        // L'emoji reste tout à droite, après la pilule.
+        val emojiWidth = dimen(R.dimen.taipo_suggestion_emoji_slot_width).toInt()
+        addView(emojiSlot, LayoutParams(emojiWidth, LayoutParams.MATCH_PARENT))
     }
 
     fun setOnPasteClickListener(listener: () -> Unit) {
@@ -122,6 +126,7 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
             if (pasteSlot.visibility == View.GONE) return
             pasteSlot.text = ""
             pasteSlot.visibility = View.GONE
+            refreshWordSlotsVisibility()
             updateGaps()
             return
         }
@@ -132,7 +137,18 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
             context.getString(R.string.clipboard_paste_description, preview)
         }
         pasteSlot.visibility = View.VISIBLE
+        refreshWordSlotsVisibility()
         updateGaps()
+    }
+
+    /** Le dernier emplacement de mot cède sa place à la pilule de collage tant qu'elle est affichée. */
+    private fun isWordSlotShown(index: Int, suggestion: WordSuggestion?): Boolean =
+        suggestion != null && !(index == WORD_SLOT_COUNT - 1 && pasteSlot.visibility == View.VISIBLE)
+
+    private fun refreshWordSlotsVisibility() {
+        wordSlots.forEachIndexed { index, slot ->
+            slot.visibility = if (isWordSlotShown(index, words.getOrNull(index))) View.VISIBLE else View.GONE
+        }
     }
 
     fun setOnEmojiClickListener(listener: OnEmojiClickListener) {
@@ -170,7 +186,7 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
             // Adresse e-mail trop longue : « … » à la fin (c'est son début, déjà tapé, qui identifie l'adresse, mais la fin se lit aussi).
             slot.ellipsize = if (suggestion?.kind == WordSuggestion.Kind.EMAIL) TextUtils.TruncateAt.END else TextUtils.TruncateAt.START
             slot.useTaipoFont(if (suggestion?.replacesOnSpace == true) TaipoType.Weight.BOLD else TaipoType.Weight.REGULAR)
-            slot.visibility = if (suggestion == null) View.GONE else View.VISIBLE
+            slot.visibility = if (isWordSlotShown(index, suggestion)) View.VISIBLE else View.GONE
             // Lot 20 : TalkBack lit le mot sans les guillemets du mot tapé, et dit lequel remplacera le mot à l'espace.
             slot.contentDescription = suggestion?.text
             ViewCompat.setStateDescription(
@@ -187,7 +203,7 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
      */
     private fun updateGaps() {
         var first = true
-        val visible = wordSlots + emojiSlot + pasteSlot
+        val visible = wordSlots + pasteSlot + emojiSlot
         for (view in visible) {
             if (view.visibility != View.VISIBLE) continue
             val params = view.layoutParams as LayoutParams
