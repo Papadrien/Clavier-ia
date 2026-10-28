@@ -466,8 +466,11 @@ class KeyboardLayoutTest {
             fr.rows.flatten().filter { it.defaultPopupChar != null }.forEach { key ->
                 assertTrue(key.defaultPopupChar in key.popup.flatten(), key.id)
             }
-            // Sans accents : pas de bulle, donc pas de choix par défaut.
-            assertEquals(null, letterKey(fr, 'r').defaultPopupChar)
+            // Sans accents hors rangée du haut : pas de bulle, donc pas de choix par défaut.
+            assertEquals(null, letterKey(fr, 'd').defaultPopupChar)
+            // Rangée du haut sans accents : le chiffre en appui long est le choix par défaut
+            // uniquement quand la rangée de chiffres est désactivée.
+            assertEquals(if (numberRow) null else '4', letterKey(fr, 'r').defaultPopupChar)
         }
         val en = Keyboards.layoutOf(LayoutId.LETTERS, KeyboardLanguage.EN, numberRow = false)
         assertEquals('é', letterKey(en, 'e').defaultPopupChar)
