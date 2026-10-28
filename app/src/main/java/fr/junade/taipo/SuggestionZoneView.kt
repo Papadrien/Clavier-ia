@@ -1,12 +1,15 @@
 package fr.junade.taipo
 
 import android.content.Context
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import fr.junade.taipo.dictionary.WordSuggestion
 
 /**
@@ -26,6 +29,9 @@ internal class SuggestionZoneView(context: Context) : FrameLayout(context) {
     private val inlineRow = LinearLayout(context)
     private val inlineScroll = HorizontalScrollView(context)
 
+    /** Tip (ampoule + texte) affiché à la place de la bande de mots : voir [SuggestionZoneState.showTip]. */
+    private val tipView = LinearLayout(context)
+
     init {
         inlineRow.orientation = LinearLayout.HORIZONTAL
         inlineRow.gravity = Gravity.CENTER_VERTICAL
@@ -37,11 +43,35 @@ internal class SuggestionZoneView(context: Context) : FrameLayout(context) {
         )
         inlineScroll.visibility = View.GONE
 
+        tipView.orientation = LinearLayout.HORIZONTAL
+        tipView.gravity = Gravity.CENTER
+        tipView.visibility = View.GONE
+        val iconSize = dimen(R.dimen.taipo_icon_size).toInt()
+        val tipIcon = ImageView(context).apply {
+            setImageResource(R.drawable.ic_tip_bulb)
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }
+        val tipText = TextView(context).apply {
+            setText(R.string.digit_swipe_tip)
+            setTextColor(context.themeColor(R.color.text_primary))
+            setFixedTextSizeRes(R.dimen.taipo_suggestion_text_size)
+            useTaipoFont()
+            maxLines = 1
+            ellipsize = TextUtils.TruncateAt.END
+        }
+        tipView.addView(tipIcon, LinearLayout.LayoutParams(iconSize, iconSize))
+        tipView.addView(
+            tipText,
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                .apply { marginStart = dimen(R.dimen.taipo_suggestion_slot_gap).toInt() },
+        )
+
         addView(suggestionStrip, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
         addView(
             inlineScroll,
             LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT),
         )
+        addView(tipView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
     }
 
     /** Story 1.16 : propose [emoji] dans le 4e emplacement de la bande de suggestions (null = aucun). */
@@ -107,12 +137,13 @@ internal class SuggestionZoneView(context: Context) : FrameLayout(context) {
     }
 
     /**
-     * Montre la bande de mots ([words]) ou les suggestions d'auto-remplissage ([inline]). Ce qui apparaît se fond
-     * ([BarReveal]) ; rien tant que la barre n'est pas affichée.
+     * Montre la bande de mots ([words]), les suggestions d'auto-remplissage ([inline]) ou le tip ([tip]). Ce qui apparaît
+     * se fond ([BarReveal]) ; rien tant que la barre n'est pas affichée.
      */
-    fun render(words: Boolean, inline: Boolean) {
+    fun render(words: Boolean, inline: Boolean, tip: Boolean = false) {
         show(suggestionStrip, words)
         show(inlineScroll, inline)
+        show(tipView, tip)
     }
 
     private fun show(view: View, visible: Boolean) {

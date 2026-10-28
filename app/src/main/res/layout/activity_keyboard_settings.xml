@@ -215,6 +215,35 @@
             style="@style/TaipoText.Section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/keyboard_settings_touch_title"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+        <Switch
+            android:id="@+id/switch_adaptive_touch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/keyboard_settings_touch_switch" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/keyboard_settings_touch_description"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+
+        <Switch
+            android:id="@+id/switch_touch_zones_debug"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md"
+            android:text="@string/keyboard_settings_touch_zones_debug"
+            android:visibility="gone" />
+
+        <TextView
+            style="@style/TaipoText.Section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/keyboard_settings_habits_title"
             android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
             android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />

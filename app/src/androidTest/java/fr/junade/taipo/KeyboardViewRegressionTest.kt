@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewConfiguration
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import fr.junade.taipo.dictionary.NextLetterModel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -129,6 +130,57 @@ class KeyboardViewRegressionTest {
         }
 
     // --- Rendu ------------------------------------------------------------------------------------------------
+
+    // --- Zones de frappe adaptatives : le toucher se juge sur des zones qui suivent la prédiction ---
+
+    private fun letterSlot(char: Char): KeySlot = slots().first { (it.key.action as? KeyAction.TypeChar)?.char == char }
+
+    private fun tapAt(x: Float, y: Float) {
+        val t = SystemClock.uptimeMillis()
+        send(MotionEvent.ACTION_DOWN, x, y, t)
+        send(MotionEvent.ACTION_UP, x, y, t)
+    }
+
+    private fun predictionAfterTim() =
+        NextLetterModel.fromFrequencies(mapOf("time" to 80L, "timber" to 10L, "timid" to 10L)).probabilitiesAfter("tim")
+
+    @Test
+    fun apresTimLaZoneDuEDebordeSurLeZSansChangerLaToucheDessinee() {
+        val z = letterSlot('z')
+        val y = z.bounds.exactCenterY()
+        val nearEdge = z.bounds.right - 0.1f * z.bounds.width() // dans le z dessiné, tout près du e
+
+        // Sans prédiction : zones nominales, c'est le z.
+        tapAt(nearEdge, y)
+        assertEquals('z', (typed.last().action as KeyAction.TypeChar).char)
+
+        // Après « tim » : le e attend, sa zone déborde un peu sur le z.
+        onMain { view.setNextLetterPrediction(predictionAfterTim()) }
+        tapAt(nearEdge, y)
+        assertEquals('e', (typed.last().action as KeyAction.TypeChar).char)
+
+        // Le cœur du z lui reste : viser son centre saisit toujours le z.
+        tapAt(z.bounds.exactCenterX(), y)
+        assertEquals('z', (typed.last().action as KeyAction.TypeChar).char)
+
+        // Les touches dessinées n'ont pas bougé.
+        assertEquals(z.bounds, letterSlot('z').bounds)
+
+        // Retour aux zones nominales.
+        onMain { view.setNextLetterPrediction(null) }
+        tapAt(nearEdge, y)
+        assertEquals('z', (typed.last().action as KeyAction.TypeChar).char)
+    }
+
+    @Test
+    fun lesZonesAdaptativesNeTouchentNiLesSymbolesNiLaRangeeDuBas() {
+        onMain { view.setNextLetterPrediction(predictionAfterTim()) }
+        show(Keyboards.symbols)
+        for (slot in slots().filter { it.key.action is KeyAction.TypeChar }) {
+            tap(slot)
+            assertEquals(slot.key, typed.last())
+        }
+    }
 
     @Test
     fun toutesLesDispositionsSeDessinentSansErreurEtLaissentUneTrace() {

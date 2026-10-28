@@ -23,6 +23,16 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putBoolean(KEY_NUMBER_ROW, value).apply()
         }
 
+    /**
+     * Vrai dès que l'utilisateur a saisi un chiffre par glissement vers le bas sur une touche du haut : le tip « Swipe vers le
+     * bas » (affiché après un chiffre saisi par appui long) ne s'affiche plus.
+     */
+    var hasUsedDigitSwipe: Boolean
+        get() = prefs.getBoolean(KEY_DIGIT_SWIPE_USED, false)
+        set(value) {
+            prefs.edit().putBoolean(KEY_DIGIT_SWIPE_USED, value).apply()
+        }
+
     /** Retour haptique au toucher des touches (story 1.11). Moyen par défaut. */
     var hapticIntensity: HapticIntensity
         get() = HapticIntensity.fromStorageKey(prefs.getString(KEY_HAPTIC_INTENSITY, null))
@@ -156,10 +166,32 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putBoolean(KEY_HABIT_LEARNING, value).apply()
         }
 
+    /**
+     * Zones de frappe adaptatives : la zone de toucher des lettres les plus probables d'après le mot en cours grandit un
+     * peu, sans changer les touches dessinées. Par défaut actif dans le build debug (validation sur appareil, voir
+     * docs/zones-de-frappe-simulation.md), désactivé en release tant qu'il n'est pas validé.
+     */
+    var isAdaptiveTouchEnabled: Boolean
+        get() = prefs.getBoolean(KEY_ADAPTIVE_TOUCH, DEFAULT_ADAPTIVE_TOUCH)
+        set(value) {
+            prefs.edit().putBoolean(KEY_ADAPTIVE_TOUCH, value).apply()
+        }
+
+    /** Debug seulement : dessine les bords des zones de frappe adaptatives sur le clavier. */
+    var showTouchZones: Boolean
+        get() = BuildConfig.DEBUG && prefs.getBoolean(KEY_SHOW_TOUCH_ZONES, false)
+        set(value) {
+            prefs.edit().putBoolean(KEY_SHOW_TOUCH_ZONES, value).apply()
+        }
+
     companion object {
         private const val PREFS_NAME = "keyboard_prefs"
+        private const val KEY_ADAPTIVE_TOUCH = "adaptive_touch_enabled"
+        private const val KEY_SHOW_TOUCH_ZONES = "show_touch_zones"
         private const val KEY_NUMBER_ROW = "number_row_enabled"
         const val DEFAULT_NUMBER_ROW = false
+        val DEFAULT_ADAPTIVE_TOUCH: Boolean = BuildConfig.DEBUG
+        private const val KEY_DIGIT_SWIPE_USED = "digit_swipe_used"
         private const val KEY_KEY_SOUND = "key_sound_enabled"
         const val DEFAULT_KEY_SOUND = true
         private const val KEY_SOUND_VOLUME = "key_sound_volume_percent"

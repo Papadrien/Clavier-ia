@@ -37,6 +37,12 @@ class ImeViewComposer(
         /** Touche globe de la bulle d'Entrée (clavier multilingue) relâchée : changement de langue. */
         fun onGlobeSelected()
 
+        /** Chiffre d'une touche du haut saisi par appui long : le tip « Swipe vers le bas » peut s'afficher. */
+        fun onDigitLongPressed()
+
+        /** Chiffre d'une touche du haut saisi par glissement vers le bas : le geste est connu, le tip n'est plus utile. */
+        fun onDigitSwiped()
+
         fun onDeleteSwipeUpdate(words: Int)
 
         fun onDeleteSwipeRelease()
@@ -133,6 +139,10 @@ class ImeViewComposer(
         keyboardView.setOnKeyListener { key -> host.onKey(key) }
         keyboardView.setOnCursorMoveListener { steps -> host.onCursorMoved(steps) }
         keyboardView.setOnGlobeSelectedListener { host.onGlobeSelected() }
+        keyboardView.setOnDigitHintListener(object : KeyboardView.OnDigitHintListener {
+            override fun onLongPressDigit() = host.onDigitLongPressed()
+            override fun onSwipeDigit() = host.onDigitSwiped()
+        })
         keyboardView.setOnDeleteSwipeListener(object : KeyboardView.OnDeleteSwipeListener {
             override fun onDeleteSwipeUpdate(words: Int) = host.onDeleteSwipeUpdate(words)
             override fun onDeleteSwipeRelease() = host.onDeleteSwipeRelease()

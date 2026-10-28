@@ -5,6 +5,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputConnection
 import fr.junade.taipo.ai.VoiceField
+import fr.junade.taipo.dictionary.NextLetterModel
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.emoji.EmojiPanelView
 import fr.junade.taipo.emoji.RecentEmojiBarView
@@ -221,6 +222,7 @@ internal class SuggestionHost(private val ime: ImeHostContext) : SuggestionContr
         if (ime.prompt.active) ime.prompt.setSuggestionWords(words) else ime.correctionBar.setWordSuggestions(words)
     }
     override fun voiceWordPicked(): Boolean = ime.voice.wordPickActive
+    override fun showNextLetters(prediction: NextLetterModel.Probabilities?) = ime.keyboardView.setNextLetterPrediction(prediction)
     override fun clearBars() {
         ime.correctionBar.setEmojiSuggestion(null)
         ime.correctionBar.setWordSuggestions(emptyList())
@@ -399,6 +401,15 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
     override fun onKey(key: Key) = ime.onKeyPressed(key)
     override fun onCursorMoved(steps: Int) = ime.onCursorMoved(steps)
     override fun onGlobeSelected() = ime.onGlobeSelected()
+    override fun onDigitLongPressed() {
+        // Le tip remplace les suggestions de la barre du haut : pas dans le mode chat, et plus une fois le glissement adopté.
+        if (ime.prompt.active || ime.keyboardPreferences.hasUsedDigitSwipe) return
+        ime.correctionBar.showDigitTip()
+    }
+    override fun onDigitSwiped() {
+        ime.keyboardPreferences.hasUsedDigitSwipe = true
+        ime.correctionBar.hideDigitTip()
+    }
     override fun onDeleteSwipeUpdate(words: Int) = ime.deleteSwipe.onUpdate(words)
     override fun onDeleteSwipeRelease() = ime.deleteSwipe.onRelease()
     override fun onDeleteSwipeCancel() = ime.deleteSwipe.onCancel()

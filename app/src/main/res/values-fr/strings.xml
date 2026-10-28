@@ -563,4 +563,10 @@
     <string name="dictionary_failed_no_space">Espace insuffisant sur l\'appareil pour ce dictionnaire.</string>
     <string name="dictionary_failed_system_stop">Android a interrompu le téléchargement. Appuyez sur Réessayer.</string>
     <string name="dictionary_failed_other">Le téléchargement a échoué. Réessayez.</string>
+    <!-- Tip affiché à la place des suggestions après un chiffre saisi par appui long (rangée de chiffres désactivée) -->
+    <string name="digit_swipe_tip">Swipe vers le bas</string>
+    <string name="keyboard_settings_touch_title">Précision de frappe</string>
+    <string name="keyboard_settings_touch_switch">Zones de frappe adaptatives</string>
+    <string name="keyboard_settings_touch_description">La zone de toucher des lettres les plus probables d\'après le mot en cours grandit un peu : un appui légèrement décentré tombe quand même sur la bonne touche. Les touches gardent leur aspect et leur taille. Calculé sur l\'appareil à partir du mot que vous tapez, rien n\'est conservé ni envoyé. Inactif dans les champs de mot de passe, d\'adresse e-mail et d\'adresse web.</string>
+    <string name="keyboard_settings_touch_zones_debug">Afficher les zones de frappe (debug)</string>
 </resources>

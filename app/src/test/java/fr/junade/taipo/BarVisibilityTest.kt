@@ -346,4 +346,43 @@ class BarVisibilityTest {
         // Champ vide : rien à corriger, aucune apparence (la barre normale le grise elle-même).
         assertNull(BarVisibility.correctAppearance(CorrectionBarState.HIDDEN, transcribing = true))
     }
+
+    // Tip « Swipe vers le bas » : remplace les suggestions de la rangée de saisie après un chiffre saisi par appui long.
+
+    @Test
+    fun `le tip remplace la bande de mots en saisie`() {
+        val zone = typing().apply { showTip() }
+        val shown = content(zone)
+        assertTrue(shown.tip)
+        assertFalse(shown.words)
+        assertFalse(shown.inline)
+    }
+
+    @Test
+    fun `sans tip la bande de mots reste affichee`() {
+        val shown = content(typing())
+        assertFalse(shown.tip)
+        assertTrue(shown.words)
+    }
+
+    @Test
+    fun `la frappe efface le tip et rend la bande de mots`() {
+        val zone = typing().apply { showTip(); onTyping() }
+        val shown = content(zone)
+        assertFalse(shown.tip)
+        assertTrue(shown.words)
+    }
+
+    @Test
+    fun `hideTip retire le tip`() {
+        val zone = typing().apply { showTip(); hideTip() }
+        assertFalse(content(zone).tip)
+    }
+
+    @Test
+    fun `le tip n apparait ni menu ouvert ni dans la barre normale ni avec l auto-remplissage`() {
+        assertFalse(content(typingMenuOpen().apply { showTip() }).tip)
+        assertFalse(content(SuggestionZoneState().apply { showTip() }).tip)
+        assertFalse(content(typing().apply { setInlineAvailable(true); showTip() }).tip)
+    }
 }

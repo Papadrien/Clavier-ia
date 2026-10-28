@@ -441,7 +441,24 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     /** Story 2.1/2.4 : début de la frappe, retour aux suggestions de mots (le menu se referme). */
     fun collapseMenu() {
+        removeCallbacks(hideDigitTipRunnable)
         zoneState.onTyping()
+        render()
+    }
+
+    private val hideDigitTipRunnable = Runnable { hideDigitTip() }
+
+    /** Tip « Swipe vers le bas » à la place des suggestions, jusqu'à la prochaine frappe ou [DIGIT_TIP_DURATION_MS]. */
+    fun showDigitTip() {
+        zoneState.showTip()
+        render()
+        removeCallbacks(hideDigitTipRunnable)
+        postDelayed(hideDigitTipRunnable, DIGIT_TIP_DURATION_MS)
+    }
+
+    fun hideDigitTip() {
+        removeCallbacks(hideDigitTipRunnable)
+        zoneState.hideTip()
         render()
     }
 
@@ -476,8 +493,8 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
         // Rangée de saisie.
         robotButton.visibility = View.VISIBLE
-        zoneView.render(content.words, content.inline)
-        setRevealed(zoneView, content.words || content.inline, order = 0, full = reveal, row = typingRow)
+        zoneView.render(content.words, content.inline, content.tip)
+        setRevealed(zoneView, content.words || content.inline || content.tip, order = 0, full = reveal, row = typingRow)
         val spring = reveal && content.menuUtilityButtons
         setRevealed(menuButtons.settingsButton, content.menuUtilityButtons, order = 0, full = reveal, row = typingRow, spring = spring)
         setRevealed(
@@ -746,6 +763,9 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         BarVisibility.aiTranscriptionAppearance(aiTranscriptionState, voiceState).alpha
 
     private companion object {
+        /** Durée d'affichage du tip « Swipe vers le bas » si l'utilisateur ne tape rien ensuite. */
+        const val DIGIT_TIP_DURATION_MS = 5000L
+
         /** La rangée de saisie (ou la rangée normale) arrive juste après le départ de l'autre. */
         const val ROW_ENTER_DELAY_MS = 60L
 

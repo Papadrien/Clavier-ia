@@ -8,6 +8,7 @@ import fr.junade.taipo.dictionary.CorrectionHabitsProvider
 import fr.junade.taipo.dictionary.CorrectionHistory
 import fr.junade.taipo.dictionary.Dictionary
 import fr.junade.taipo.dictionary.DictionaryFiles
+import fr.junade.taipo.dictionary.NextLetterModel
 import fr.junade.taipo.dictionary.DictionaryLoader
 import fr.junade.taipo.dictionary.download.DictionaryDownloadScheduler
 import fr.junade.taipo.dictionary.download.DictionaryDownloadState
@@ -95,6 +96,9 @@ class SuggestionController(
 
         /** Un mot touché pendant la dictée attend sa correction : la bande propose ses alternatives malgré l'écoute. */
         fun voiceWordPicked(): Boolean = false
+
+        /** Ce qui peut suivre le mot en cours de frappe (null : aucune prédiction), pour les zones de frappe adaptatives. */
+        fun showNextLetters(prediction: NextLetterModel.Probabilities?) {}
     }
 
     private val appContext = context.applicationContext
@@ -210,6 +214,33 @@ class SuggestionController(
     /** Faux dans les champs sans suggestions (mot de passe, e-mail, URL, nombre...), relu à chaque champ. */
     var suggestionsAllowed = true
 
+    /**
+     * Zones de frappe adaptatives permises dans ce champ (réglage actif, hors champ sensible, e-mail et adresse web),
+     * relu à chaque champ. Faux : aucune prédiction de lettre, le clavier garde ses zones nominales.
+     */
+    var nextLettersAllowed = false
+
+    // Une prédiction non nulle a été transmise au clavier : à retirer quand elle n'est plus permise.
+    private var nextLettersPublished = false
+
+    /**
+     * Transmet au clavier la prédiction de la lettre suivante d'après [textBeforeCursor] : synchrone, avant la frappe
+     * suivante, sur le thread principal. Rien tant que le modèle de la langue n'est pas construit (le préchargement le
+     * construit en arrière-plan, voir [preloadDictionaries]) : la construction ne se fait jamais ici.
+     */
+    private fun updateNextLetters(textBeforeCursor: String) {
+        val model = if (nextLettersAllowed) DictionaryLoader.peek(host.language())?.nextLetterModelIfBuilt else null
+        val prediction = model?.let { NextLetterContext.predict(it, textBeforeCursor) }
+        if (prediction == null && !nextLettersPublished) return
+        nextLettersPublished = prediction != null
+        host.showNextLetters(prediction)
+    }
+
+    // Construit le modèle de la lettre suivante hors du thread principal, si les zones adaptatives sont permises.
+    private fun warmNextLetterModel(language: KeyboardLanguage) {
+        if (nextLettersAllowed) DictionaryLoader.peek(language)?.let { it.nextLetterModel }
+    }
+
     /** Faux dans les champs sans emoji suggérés (adresse web...), relu à chaque champ. */
     var emojiAllowed = true
 
@@ -299,6 +330,7 @@ class SuggestionController(
      * mot reste proposé après lui (story 1.16) ; à défaut, l'emoji qui suit habituellement ce contexte.
      */
     fun refresh(textBeforeCursor: String) {
+        updateNextLetters(textBeforeCursor)
         if (!host.barReady()) return
         val language = host.language()
         // Le prompt est un champ de texte libre : ni le type du champ de l'application ni sa sélection n'y comptent.
@@ -449,7 +481,16 @@ class SuggestionController(
      */
     fun preloadDictionaries() {
         val language = host.language()
-        if (DictionaryLoader.peek(language) != null) return
+        if (DictionaryLoader.peek(language) != null) {
+            // Dictionnaire déjà là : seul le modèle de la lettre suivante peut manquer (réglage activé depuis).
+            if (nextLettersAllowed && DictionaryLoader.peek(language)?.nextLetterModelIfBuilt == null) {
+                scope.launch(Dispatchers.Default) {
+                    warmNextLetterModel(language)
+                    withContext(Dispatchers.Main) { onDictionariesLoaded() }
+                }
+            }
+            return
+        }
         // Les dictionnaires ne sont plus dans l'APK : langue pas encore téléchargée (première utilisation, ou mise à jour
         // depuis une version qui les embarquait) = on lance le téléchargement ; le chargement suit à son arrivée.
         if (!DictionaryFiles.isInstalled(appContext.filesDir, language)) {
@@ -459,6 +500,7 @@ class SuggestionController(
         scope.launch(Dispatchers.IO) {
             try {
                 DictionaryLoader.forLanguage(appContext, language)
+                warmNextLetterModel(language)
             } catch (e: CancellationException) {
                 throw e
             } catch (t: Throwable) {

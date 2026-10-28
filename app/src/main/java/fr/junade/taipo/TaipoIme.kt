@@ -391,6 +391,7 @@ class TaipoIme : InputMethodService() {
         keyboardHeight = keyboardPreferences.keyboardHeight
         keyboardView.heightScale = keyboardHeight.scale
         keyboardView.bottomMarginDp = keyboardPreferences.bottomMarginDp
+        keyboardView.showTouchZones = keyboardPreferences.showTouchZones
         emojiController.hidePanel(resync = false)
         clipboard.hidePanel(resync = false)
         correctionBar.collapseMenu()
@@ -411,6 +412,10 @@ class TaipoIme : InputMethodService() {
         // Story 10.1 : champ de mot de passe, actions IA et Smart Clipboard grisés (touchables, avec un message).
         sensitiveField = SensitiveFieldPolicy.isSensitive(info?.inputType ?: 0)
         Analytics.sensitiveFieldActive = sensitiveField // mesure d'usage coupée tant qu'un champ de mot de passe est affiché
+        // Zones de frappe adaptatives : jamais dans un champ sensible, d'adresse e-mail ou web (lettres hors langage courant).
+        suggestions.nextLettersAllowed = keyboardPreferences.isAdaptiveTouchEnabled && suggestions.suggestionsAllowed &&
+            !sensitiveField && fieldType != FieldType.URL
+        keyboardView.setNextLetterPrediction(null) // le nouveau champ repart sans prédiction, la suivante vient du texte du champ
         correctionBar.aiActionsAllowed = !sensitiveField
         // Story 14.5 : le bouton Transcription IA n'existe que si le modèle actif (installé) a une entrée audio.
         correctionBar.aiTranscriptionAvailable =

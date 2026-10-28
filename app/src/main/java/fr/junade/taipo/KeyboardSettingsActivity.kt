@@ -115,6 +115,16 @@ class KeyboardSettingsActivity : Activity() {
                 Analytics.setting(this@KeyboardSettingsActivity, "habit_learning", checked)
             }
         }
+        findViewById<CompoundButton>(R.id.switch_adaptive_touch).apply {
+            isChecked = preferences.isAdaptiveTouchEnabled
+            setOnCheckedChangeListener { _, checked -> preferences.isAdaptiveTouchEnabled = checked }
+        }
+        findViewById<CompoundButton>(R.id.switch_touch_zones_debug).apply {
+            // Calque des zones de frappe : réglage de debug, absent de la release.
+            visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
+            isChecked = preferences.showTouchZones
+            setOnCheckedChangeListener { _, checked -> preferences.showTouchZones = checked }
+        }
         setUpAnalyticsSwitch()
         findViewById<Button>(R.id.button_habit_clear).setOnClickListener { confirmClearHabits() }
     }

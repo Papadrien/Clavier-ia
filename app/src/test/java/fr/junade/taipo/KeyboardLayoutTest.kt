@@ -399,10 +399,24 @@ class KeyboardLayoutTest {
         assertEquals('3', popupItems(letterKey(fr, 'e')).first())
         assertEquals("3éèê", popupItems(letterKey(fr, 'e')).take(4).joinToString(""))
         assertEquals('3', letterKey(fr, 'e').longPressChar)
-        // Sans accents : pas de bulle, l'appui long saisit directement le chiffre (story 1.6).
         assertTrue(letterKey(fr, 'z').popup.isNotEmpty()) // z a des variantes (ž)
-        assertTrue(letterKey(fr, 'r').popup.isEmpty())
+        // Sans accents : la bulle ne contient que le chiffre, présélectionné.
+        assertEquals(listOf(listOf('4')), letterKey(fr, 'r').popup)
+        assertEquals('4', letterKey(fr, 'r').defaultPopupChar)
         assertEquals('4', letterKey(fr, 'r').longPressChar)
+        // Avec accents, le choix par défaut reste l'accent le plus courant.
+        assertEquals('é', letterKey(fr, 'e').defaultPopupChar)
+    }
+
+    @Test
+    fun `sans rangee de chiffres toutes les touches du haut ont une bulle`() {
+        languages.forEach { language ->
+            val topRow = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow = false).rows.first()
+            topRow.forEach { key ->
+                assertTrue(key.popup.isNotEmpty(), "${language} ${key.id} : bulle attendue")
+                assertEquals(key.longPressChar, popupItems(key).first(), "${language} ${key.id}")
+            }
+        }
     }
 
     @Test

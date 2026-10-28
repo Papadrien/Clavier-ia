@@ -5,6 +5,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.os.Handler
@@ -14,6 +15,7 @@ import android.view.View
 import android.view.ViewConfiguration
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import fr.junade.taipo.dictionary.NextLetterModel
 import kotlin.math.roundToInt
 
 @SuppressLint("ViewConstructor")
@@ -65,6 +67,7 @@ class KeyboardView(context: Context) : View(context) {
         set(value) {
             field = value
             slotCache = null
+            zones = computeZones()
             accessibility.invalidateRoot()
             invalidate()
             requestLayout()
@@ -153,6 +156,10 @@ class KeyboardView(context: Context) : View(context) {
     // doit alors pas saisir aussi la lettre).
     private var longPressCommitted = false
 
+    // Position de l'appui en cours : sert au glissement vers le bas qui saisit le chiffre d'une touche du haut (DigitSwipe).
+    private var downX = 0f
+    private var downY = 0f
+
     // Story 1.10 : bulle d'agrandissement de la touche pressée (retour visuel de frappe), affichée
     // au-dessus de la touche tant qu'elle est maintenue. Réservée aux touches qui saisissent un
     // caractère (lettres/chiffres/symboles) : les touches de fonction (espace, maj, retour arrière,
@@ -206,6 +213,60 @@ class KeyboardView(context: Context) : View(context) {
 
     fun setOnKeyListener(listener: OnKeyListener) {
         keyListener = listener
+    }
+
+    /** Chiffre d'une touche du haut saisi par appui long (bulle) ou par glissement vers le bas (rangée de chiffres désactivée). */
+    interface OnDigitHintListener {
+        fun onLongPressDigit()
+        fun onSwipeDigit()
+    }
+
+    private var digitHintListener: OnDigitHintListener? = null
+
+    // --- Zones de frappe adaptatives : les zones de toucher des lettres probables grandissent, les touches dessinées non. ---
+
+    /** Bords des zones de toucher de chaque rangée, en unités de poids depuis son début ; null : zones nominales. */
+    private class TouchZones(val rows: Array<FloatArray?>)
+
+    private var nextLetters: NextLetterModel.Probabilities? = null
+    private var zones: TouchZones? = null
+
+    // Zones figées à l'appui : le glissement et le relâchement de ce toucher se jugent sur les mêmes zones que son appui.
+    private var pressZones: TouchZones? = null
+
+    /** Debug seulement : dessine les bords des zones de toucher adaptatives (réglage des paramètres). */
+    var showTouchZones = false
+        set(value) {
+            if (field == value) return
+            field = value
+            invalidate()
+        }
+
+    /**
+     * Ce qui peut suivre le mot en cours de frappe (null : zones nominales). Appelé après chaque changement du texte, avant
+     * la frappe suivante ; les zones sont calculées ici (quelques sommes sur une rangée), pas au moment du toucher.
+     */
+    fun setNextLetterPrediction(prediction: NextLetterModel.Probabilities?) {
+        if (prediction == null && nextLetters == null) return
+        nextLetters = prediction
+        zones = computeZones()
+        if (showTouchZones) invalidate()
+    }
+
+    private fun computeZones(): TouchZones? {
+        val prediction = nextLetters ?: return null
+        val rows = layout.rows
+        if (rows.none { TouchTargets.hasAdaptiveKey(it) }) return null
+        return TouchZones(
+            Array(rows.size) { i ->
+                // Une rangée sans lettre (bas du clavier, symboles) garde ses zones nominales.
+                rows[i].takeIf { TouchTargets.hasAdaptiveKey(it) }?.let { TouchTargets.rowEdges(it, prediction) }
+            },
+        )
+    }
+
+    fun setOnDigitHintListener(listener: OnDigitHintListener) {
+        digitHintListener = listener
     }
 
     fun setOnCursorMoveListener(listener: OnCursorMoveListener) {
@@ -381,6 +442,7 @@ class KeyboardView(context: Context) : View(context) {
         }
 
         sparkPainter.draw(canvas, shiftAnimation.sparks)
+        drawTouchZones(canvas)
         drawPopup(canvas)
         drawPreview(canvas)
         if (backspaceAnimation.isRunning || shiftAnimation.isRunning || spaceBarAnimation.isRunning) postInvalidateOnAnimation()
@@ -423,6 +485,7 @@ class KeyboardView(context: Context) : View(context) {
                 if (event.getPointerId(index) == activePointerId) {
                     activePointerId = MotionEvent.INVALID_POINTER_ID
                     releaseTouch(event.getX(index), event.getY(index))
+                    pressZones = null
                 }
                 return true
             }
@@ -438,6 +501,9 @@ class KeyboardView(context: Context) : View(context) {
 
     private fun pressStart(x: Float, y: Float) {
         longPressCommitted = false
+        downX = x
+        downY = y
+        pressZones = zones
         spaceSwipe.reset()
         backspaceSwipe.reset()
         deleteSwipeWords = 0
@@ -484,6 +550,7 @@ class KeyboardView(context: Context) : View(context) {
                 return
             }
         }
+        if (commitDigitSwipe(x, y)) return
         val current = keyAt(x, y)
         if (current != pressedKey) {
             cancelKeyLongPress()
@@ -492,6 +559,25 @@ class KeyboardView(context: Context) : View(context) {
             startRepeat(current)
             invalidate()
         }
+    }
+
+    /**
+     * Glissement vers le bas sur une touche du haut (rangée de chiffres désactivée : seules ces touches ont un
+     * [Key.longPressChar]) : saisit son chiffre dès que le seuil est franchi, le relâchement ne saisit plus la lettre.
+     */
+    private fun commitDigitSwipe(x: Float, y: Float): Boolean {
+        val key = pressedKey ?: return false
+        val digit = key.longPressChar ?: return false
+        val keyHeight = keyBounds(key)?.height() ?: return false
+        val slop = ViewConfiguration.get(context).scaledTouchSlop.toFloat()
+        if (!DigitSwipe.isTriggered(x - downX, y - downY, DigitSwipe.threshold(keyHeight, slop))) return false
+        cancelKeyLongPress()
+        longPressCommitted = true
+        keyPreview.key = null
+        keyListener?.onKey(Key("longpress_$digit", digit.toString(), KeyAction.TypeChar(digit)))
+        digitHintListener?.onSwipeDigit()
+        invalidate()
+        return true
     }
 
     /** Relâchement du doigt actif en (x, y) : saisit la touche, le symbole de la bulle, ou rien. */
@@ -504,12 +590,15 @@ class KeyboardView(context: Context) : View(context) {
             // Relâcher sur un symbole le saisit ; relâcher ailleurs ferme la bulle sans rien saisir.
             keyPopup.updateSelection(x, y)
             val symbol = keyPopup.selectedSymbol()
+            val popupKey = keyPopup.key
             dismissPopup()
             pressedKey = null
             if (symbol == KeyPopup.GLOBE_SYMBOL) {
                 globeListener?.run()
             } else if (symbol != null) {
                 keyListener?.onKey(Key("popup_$symbol", symbol.toString(), KeyAction.TypeChar(symbol)))
+                // Le chiffre de la touche du haut a été choisi dans la bulle : l'IME peut suggérer le glissement vers le bas.
+                if (symbol == popupKey?.longPressChar) digitHintListener?.onLongPressDigit()
             }
             invalidate()
             return
@@ -592,6 +681,7 @@ class KeyboardView(context: Context) : View(context) {
         spaceSwipe.reset()
         backspaceSwipe.reset()
         pressedKey = null
+        pressZones = null
         invalidate()
     }
 
@@ -618,6 +708,31 @@ class KeyboardView(context: Context) : View(context) {
         val bounds = pressedKey?.let { keyBounds(it) } ?: return 0f
         val half = resources.getDimension(R.dimen.taipo_space_bar_length)
         return (bounds.width() / 2f - half - dp(SPACE_BAR_EDGE_MARGIN_DP)).coerceAtLeast(dp(SPACE_BAR_EDGE_MARGIN_DP))
+    }
+
+    private val touchZonePaint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = dp(TOUCH_ZONE_STROKE_DP)
+            color = TOUCH_ZONE_COLOR
+        }
+    }
+
+    /** Debug : un trait à chaque bord de zone de toucher adaptatif (entre deux touches voisines d'une rangée adaptative). */
+    private fun drawTouchZones(canvas: Canvas) {
+        if (!BuildConfig.DEBUG || !showTouchZones) return
+        val rows = (pressZones ?: zones)?.rows ?: return
+        val rowHeight = usableHeightPx() / layout.rows.size.toFloat()
+        val content = keyboardWidth()
+        val unit = content.widthPx / layout.referenceUnits
+        layout.rows.forEachIndexed { rowIndex, row ->
+            val edges = rows.getOrNull(rowIndex) ?: return@forEachIndexed
+            val left = content.leftPx + layout.rowStartUnits(row) * unit
+            for (i in 1 until edges.size - 1) {
+                val x = left + edges[i] * unit
+                canvas.drawLine(x, rowIndex * rowHeight, x, (rowIndex + 1) * rowHeight, touchZonePaint)
+            }
+        }
     }
 
     private fun keyBounds(target: Key): RectF? {
@@ -694,7 +809,11 @@ class KeyboardView(context: Context) : View(context) {
         if (content.leftPx > 0f && (x < content.leftPx || x >= content.rightPx)) return null
         // Rangée plus courte que la référence (centrée) : un appui dans la marge revient à la touche la plus proche.
         val unit = content.widthPx / layout.referenceUnits
-        var acc = content.leftPx + layout.rowStartUnits(row) * unit
+        val rowStart = content.leftPx + layout.rowStartUnits(row) * unit
+        // Zones adaptatives : mêmes règles aux extrémités (au-delà du premier ou du dernier bord, la touche la plus proche).
+        val edges = (pressZones ?: zones)?.rows?.getOrNull(rowIndex)
+        if (edges != null) return row[TouchTargets.indexAt(edges, (x - rowStart) / unit)]
+        var acc = rowStart
         for (key in row) {
             acc += unit * key.weight
             if (x < acc) return key
@@ -754,6 +873,10 @@ class KeyboardView(context: Context) : View(context) {
 
         /** Marge entre le bout du trait et le bord de la barre espace quand le trait est au bout de sa course. */
         private const val SPACE_BAR_EDGE_MARGIN_DP = 8f
+
+        // Calque de debug des zones de toucher adaptatives.
+        private const val TOUCH_ZONE_STROKE_DP = 1.5f
+        private const val TOUCH_ZONE_COLOR = 0xCCFF00AA.toInt()
 
         /** Part du délai système d'appui long utilisée pour les touches à pop-up ou à chiffre (−20 %). */
         const val LONG_PRESS_DELAY_RATIO = 0.8f

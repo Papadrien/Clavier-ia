@@ -71,6 +71,20 @@ class Dictionary private constructor(
     }
     internal val candidateFrequencies: LongArray = LongArray(candidateWords.size) { frequencies.getValue(candidateWords[it]) }
 
+    /**
+     * Probabilité de la lettre suivante d'après le début du mot tapé (zones de frappe adaptatives), sur les candidats.
+     * Construit à la première demande (tri de la liste : quelques dizaines de millisecondes) : la première demande se fait
+     * en arrière-plan, avec le préchargement du dictionnaire, jamais sur le thread principal.
+     */
+    val nextLetterModel: NextLetterModel get() = nextLetterLazy.value
+
+    private val nextLetterLazy = lazy(LazyThreadSafetyMode.PUBLICATION) {
+        NextLetterModel.fromCandidates(candidateWords, candidateFrequencies)
+    }
+
+    /** Le modèle de la lettre suivante s'il est déjà construit, sinon null, sans jamais le construire : pour le thread principal. */
+    val nextLetterModelIfBuilt: NextLetterModel? get() = if (nextLetterLazy.isInitialized()) nextLetterLazy.value else null
+
     // Masque des lettres de chaque candidat (voir [letterMask]) : pré-filtre bon marché de la recherche par distance
     // d'édition. 8 octets par candidat (~400 Ko pour 50 000 mots).
     internal val candidateMasks: LongArray = LongArray(candidateWords.size) { letterMask(candidateWords[it]) }

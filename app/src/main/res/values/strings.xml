@@ -548,4 +548,10 @@
     <string name="dictionary_failed_no_space">Not enough space on the device for this dictionary.</string>
     <string name="dictionary_failed_system_stop">Android interrupted the download. Tap Retry.</string>
     <string name="dictionary_failed_other">The download failed. Try again.</string>
+    <!-- Tip affiché à la place des suggestions après un chiffre saisi par appui long (rangée de chiffres désactivée) -->
+    <string name="digit_swipe_tip">Swipe down</string>
+    <string name="keyboard_settings_touch_title">Typing accuracy</string>
+    <string name="keyboard_settings_touch_switch">Adaptive key areas</string>
+    <string name="keyboard_settings_touch_description">The touch area of the letters most likely to come next grows a little, so a slightly off-center tap still lands on the right key. The keys keep their look and size. Computed on this device from the word you are typing; nothing is stored or sent. Not used in password, email or web address fields.</string>
+    <string name="keyboard_settings_touch_zones_debug">Show key areas (debug)</string>
 </resources>

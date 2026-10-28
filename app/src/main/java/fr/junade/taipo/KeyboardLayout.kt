@@ -284,8 +284,9 @@ object Keyboards {
 
     /**
      * Story 1.6 : quand la rangée de chiffres est désactivée, les 10 touches de la rangée du haut
-     * saisissent 1 à 0 (dans l'ordre) par appui long, comme sur Gboard. Story 1.8 : quand la touche
-     * a aussi des accents, le chiffre est le premier choix de la bulle, suivi des accents.
+     * saisissent 1 à 0 (dans l'ordre) par appui long, comme sur Gboard. Le chiffre est toujours le
+     * premier choix d'une bulle, suivi des accents s'il y en a : une touche sans accents affiche une
+     * bulle à une seule cellule (le chiffre), présélectionnée pour que relâcher le saisisse.
      */
     private fun KeyboardLayout.withTopRowLongPressDigits() = copy(
         rows = listOf(
@@ -293,7 +294,8 @@ object Keyboards {
                 val digit = NUMBER_ROW_CHARS[i]
                 key.copy(
                     longPressChar = digit,
-                    popup = if (key.popup.isEmpty()) key.popup else popupGrid(listOf(digit) + popupItems(key.popup)),
+                    popup = popupGrid(listOf(digit) + popupItems(key.popup)),
+                    defaultPopupChar = key.defaultPopupChar ?: digit,
                 )
             },
         ) + rows.drop(1),
