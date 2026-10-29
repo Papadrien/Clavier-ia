@@ -106,7 +106,10 @@
     <string name="keyboard_settings_show_emoji_key">Afficher la touche emoji</string>
     <string name="keyboard_settings_show_comma_key">Afficher la touche virgule</string>
     <string name="keyboard_settings_show_period_key">Afficher la touche point</string>
-    <string name="keyboard_settings_bottom_row_description">Une touche masquée cède sa largeur à la barre d\'espace. Sans la touche point, les symboles de son appui long ne sont plus accessibles. Dans les champs e-mail et adresse web, la touche « @ » ou « / » reste toujours affichée.</string>
+    <string name="keyboard_settings_screenshots_title">Captures d\'écran</string>
+    <string name="keyboard_settings_screenshots_switch">Proposer les captures d\'écran récentes</string>
+    <string name="keyboard_settings_screenshots_description">Dans le Smart Clipboard, propose de coller votre dernière capture d\'écran (prise il y a moins de 10 minutes) dans les applications qui acceptent les images. Le clavier vérifie seulement qu\'une capture existe : l\'image elle-même est lue sur votre appareil quand vous touchez la suggestion, et n\'est jamais envoyée. Demande l\'accès à vos photos.</string>
+    <string name="keyboard_settings_screenshots_denied">L\'accès aux photos a été refusé. Autorisez-le dans les réglages Android pour utiliser cette option.</string>
     <string name="keyboard_settings_language_title">Langue du clavier</string>
     <string name="keyboard_settings_language_auto">Automatique (langue du téléphone)</string>
     <string name="keyboard_settings_multilingual_switch">Clavier multilingue</string>
@@ -176,6 +179,9 @@
     <string name="clipboard_empty">Rien à coller pour le moment.</string>
     <string name="clipboard_paste_description">Coller : %1$s</string>
     <string name="clipboard_paste_description_masked">Coller le texte copié (aperçu masqué)</string>
+    <string name="clipboard_screenshot_chip">Capture d\'écran</string>
+    <string name="clipboard_screenshot_error">Impossible de préparer la capture d\'écran.</string>
+    <string name="clipboard_screenshot_refused">Ce champ n\'a pas accepté la capture d\'écran.</string>
     <string name="clipboard_pinned_description">Épinglé</string>
     <string name="clipboard_menu_pin">Épingler</string>
     <string name="clipboard_menu_delete">Supprimer</string>
@@ -447,7 +453,7 @@
     <string name="button_privacy">Confidentialité</string>
     <string name="home_row_privacy_subtitle">Ce qui reste sur votre appareil et ce qui se connecte</string>
     <string name="privacy_title">Confidentialité</string>
-    <string name="privacy_updated">Dernière mise à jour : 17 octobre 2026</string>
+    <string name="privacy_updated">Dernière mise à jour : 29 octobre 2026</string>
     <string name="privacy_section_1_title">1. Traitement sur votre appareil</string>
     <string name="privacy_section_1_body">La correction, la génération de texte, la saisie vocale et la transcription IA sont exécutées sur votre appareil par des modèles installés localement. Le texte que vous saisissez, copiez ou dictez et l\'audio de vos enregistrements ne sont envoyés à aucun serveur. L\'audio d\'une transcription IA reste en mémoire le temps du traitement : il n\'est jamais enregistré dans un fichier.</string>
     <string name="privacy_section_2_title">2. Connexions Internet</string>
@@ -457,7 +463,7 @@
     <string name="privacy_section_4_title">4. Champs de mot de passe</string>
     <string name="privacy_section_4_body">Dans un champ de mot de passe ou de code secret, les actions IA (Corriger, Générer, Vocal, Transcription IA) et le Smart Clipboard sont désactivés : le contenu du champ n\'est pas lu et le micro n\'est pas ouvert.</string>
     <string name="privacy_section_5_title">5. Ce qui est conservé sur l\'appareil</string>
-    <string name="privacy_section_5_body">Votre dictionnaire personnel, les éléments du Smart Clipboard et vos réglages restent sur votre appareil, dans des bases chiffrées. Les désinstaller supprime ces données. Vous pouvez aussi les exporter dans un fichier non chiffré (Mes données > Sauvegarde et restauration) : ce fichier ne quitte l\'appareil que si vous le déplacez vous-même.</string>
+    <string name="privacy_section_5_body">Votre dictionnaire personnel, les éléments du Smart Clipboard et vos réglages restent sur votre appareil, dans des bases chiffrées. Les désinstaller supprime ces données. Vous pouvez aussi les exporter dans un fichier non chiffré (Mes données > Sauvegarde et restauration) : ce fichier ne quitte l\'appareil que si vous le déplacez vous-même. Si vous activez la proposition des captures d\'écran (Paramètres du clavier), Taipo demande l\'accès à vos photos : il vérifie seulement qu\'une capture récente existe, et lit l\'image elle-même, sur votre appareil, quand vous touchez la suggestion. Une copie temporaire reste dans le cache de l\'application une heure au plus et n\'est jamais envoyée.</string>
     <string name="button_terms">Conditions d\'utilisation</string>
     <string name="home_row_terms_subtitle">Règles d\'usage de Taipo et de l\'IA</string>
     <string name="terms_title">Conditions d\'utilisation</string>

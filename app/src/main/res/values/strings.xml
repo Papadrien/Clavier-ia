@@ -106,7 +106,10 @@
     <string name="keyboard_settings_show_emoji_key">Show the emoji key</string>
     <string name="keyboard_settings_show_comma_key">Show the comma key</string>
     <string name="keyboard_settings_show_period_key">Show the period key</string>
-    <string name="keyboard_settings_bottom_row_description">A hidden key gives its width to the space bar. Without the period key, its long-press symbols are no longer available. In email and web address fields, the \'@\' or \'/\' key always stays.</string>
+    <string name="keyboard_settings_screenshots_title">Screenshots</string>
+    <string name="keyboard_settings_screenshots_switch">Suggest recent screenshots</string>
+    <string name="keyboard_settings_screenshots_description">In Smart Clipboard, offers to paste your latest screenshot (taken less than 10 minutes ago) in apps that accept images. The keyboard only checks that a screenshot exists: the image itself is read on your device when you tap the suggestion, and is never sent anywhere. Requires access to your photos.</string>
+    <string name="keyboard_settings_screenshots_denied">Access to photos was denied. Allow it in the Android settings to use this option.</string>
     <string name="keyboard_settings_language_title">Keyboard language</string>
     <string name="keyboard_settings_language_auto">Automatic (phone language)</string>
     <string name="keyboard_settings_multilingual_switch">Multilingual keyboard</string>
@@ -176,6 +179,9 @@
     <string name="clipboard_empty">Nothing to paste yet.</string>
     <string name="clipboard_paste_description">Paste: %1$s</string>
     <string name="clipboard_paste_description_masked">Paste the copied text (preview hidden)</string>
+    <string name="clipboard_screenshot_chip">Screenshot</string>
+    <string name="clipboard_screenshot_error">Couldn\'t prepare the screenshot.</string>
+    <string name="clipboard_screenshot_refused">This field didn\'t accept the screenshot.</string>
     <string name="clipboard_pinned_description">Pinned</string>
     <string name="clipboard_menu_pin">Pin</string>
     <string name="clipboard_menu_delete">Delete</string>
@@ -438,7 +444,7 @@
     <string name="button_privacy">Privacy</string>
     <string name="home_row_privacy_subtitle">What stays on your device and what connects</string>
     <string name="privacy_title">Privacy</string>
-    <string name="privacy_updated">Last updated: October 17, 2026</string>
+    <string name="privacy_updated">Last updated: October 29, 2026</string>
     <string name="privacy_section_1_title">1. On-device processing</string>
     <string name="privacy_section_1_body">Correction, text generation, voice input and AI transcription run on your device using locally installed models. The text you type, copy or dictate and the audio of your recordings are not sent to any server. The audio of an AI transcription stays in memory while it is processed: it is never saved to a file.</string>
     <string name="privacy_section_2_title">2. Internet connections</string>
@@ -448,7 +454,7 @@
     <string name="privacy_section_4_title">4. Password fields</string>
     <string name="privacy_section_4_body">In a password or secret code field, AI actions (Correct, Generate, Voice, AI transcription) and the Smart Clipboard are disabled: the field\'s content is not read and the microphone is not opened.</string>
     <string name="privacy_section_5_title">5. What is stored on the device</string>
-    <string name="privacy_section_5_body">Your personal dictionary, Smart Clipboard items and settings stay on your device, in encrypted databases. Uninstalling the app deletes this data. You can also export it to an unencrypted file (My data > Backup and restore): this file only leaves the device if you move it yourself.</string>
+    <string name="privacy_section_5_body">Your personal dictionary, Smart Clipboard items and settings stay on your device, in encrypted databases. Uninstalling the app deletes this data. You can also export it to an unencrypted file (My data > Backup and restore): this file only leaves the device if you move it yourself. If you turn on screenshot suggestions (Keyboard settings), Taipo asks for access to your photos: it only checks that a recent screenshot exists, and reads the image itself, on your device, when you tap the suggestion. A temporary copy is kept in the app cache for at most one hour and is never sent anywhere.</string>
     <string name="button_terms">Terms of use</string>
     <string name="home_row_terms_subtitle">Rules for using Taipo and the AI</string>
     <string name="terms_title">Terms of use</string>

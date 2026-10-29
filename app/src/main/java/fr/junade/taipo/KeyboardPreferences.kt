@@ -59,6 +59,17 @@ class KeyboardPreferences(context: Context) {
         get() = BottomRowKeys(emoji = isEmojiKeyShown, comma = isCommaKeyShown, period = isPeriodKeyShown)
 
     /**
+     * Smart Clipboard : propose de coller la capture d'écran récente (moins de 10 minutes) dans les champs qui acceptent les
+     * images. Désactivé par défaut : il demande la permission d'images, accordée depuis l'écran des paramètres. Sans cette
+     * permission le réglage reste sans effet, même activé (elle peut être retirée dans les réglages Android).
+     */
+    var isScreenshotSuggestionEnabled: Boolean
+        get() = prefs.getBoolean(KEY_SCREENSHOT_SUGGESTION, DEFAULT_SCREENSHOT_SUGGESTION)
+        set(value) {
+            prefs.edit().putBoolean(KEY_SCREENSHOT_SUGGESTION, value).apply()
+        }
+
+    /**
      * Vrai dès que l'utilisateur a saisi un chiffre par glissement vers le bas sur une touche du haut : le tip « Swipe vers le
      * bas » (affiché après un chiffre saisi par appui long) ne s'affiche plus.
      */
@@ -232,6 +243,8 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_SHOW_COMMA_KEY = "show_comma_key"
         private const val KEY_SHOW_PERIOD_KEY = "show_period_key"
         const val DEFAULT_SHOW_BOTTOM_KEY = true
+        private const val KEY_SCREENSHOT_SUGGESTION = "screenshot_suggestion_enabled"
+        const val DEFAULT_SCREENSHOT_SUGGESTION = false
         private const val KEY_DIGIT_SWIPE_USED = "digit_swipe_used"
         private const val KEY_KEY_SOUND = "key_sound_enabled"
         const val DEFAULT_KEY_SOUND = true

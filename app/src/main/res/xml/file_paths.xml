@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dossier du cache où la capture d'écran est copiée avant d'être confiée au champ de saisie (ScreenshotFinder.CACHE_DIR). -->
+<paths>
+    <cache-path
+        name="shared_screenshots"
+        path="shared_screenshots/" />
+</paths>

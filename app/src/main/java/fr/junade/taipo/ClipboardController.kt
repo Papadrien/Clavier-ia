@@ -1,10 +1,15 @@
 package fr.junade.taipo
 
+import android.content.ClipDescription
 import android.content.Context
 import android.content.Intent
+import android.database.ContentObserver
 import android.os.Handler
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
+import androidx.core.view.inputmethod.InputConnectionCompat
+import androidx.core.view.inputmethod.InputContentInfoCompat
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.clipboard.ClipboardEditBridge
@@ -14,12 +19,19 @@ import fr.junade.taipo.clipboard.ClipboardPreview
 import fr.junade.taipo.clipboard.ClipboardProvider
 import fr.junade.taipo.clipboard.ClipboardReader
 import fr.junade.taipo.clipboard.ClipboardSuggestionState
+import fr.junade.taipo.clipboard.ImageAcceptance
+import fr.junade.taipo.clipboard.PasteChipChoice
+import fr.junade.taipo.clipboard.ScreenshotFinder
+import fr.junade.taipo.clipboard.ScreenshotSuggestionState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
- * Smart Clipboard (épopée 2) : puce de collage après une copie récente (stories 2.2 et 2.3), panneau
+ * Smart Clipboard (épopée 2) : puce de collage après une copie récente (stories 2.2 et 2.3) ou une capture d'écran récente
+ * (réglage optionnel, permission d'images ; la plus récente des deux est proposée), panneau
  * des copies récentes et des éléments épinglés (2.1, 2.5 à 2.9). Extrait de `TaipoIme` au lot 2.3
  * de la revue de code, sans changement de comportement.
  *
@@ -38,6 +50,9 @@ class ClipboardController(
         fun showMessage(message: String)
 
         fun inputConnection(): InputConnection?
+
+        /** Le champ de saisie courant (collage d'une capture d'écran : `commitContent` en a besoin). */
+        fun editorInfo(): EditorInfo?
 
         /** Retour haptique d'un appui. */
         fun haptic()
@@ -91,6 +106,27 @@ class ClipboardController(
     private val reader by lazy { ClipboardReader(context.applicationContext) { onClipboardChanged() } }
     private var currentPasteSuggestion: ClipboardSuggestionState.Suggestion? = null
 
+    // Capture d'écran récente proposée au collage (réglage « Proposer les captures d'écran récentes »). Une seule puce est
+    // affichée : la plus récente entre la copie de texte et la capture.
+    private val screenshotState = ScreenshotSuggestionState(clock = { System.currentTimeMillis() })
+    private val screenshotFinder by lazy { ScreenshotFinder(context.applicationContext) }
+    private val keyboardPreferences by lazy { KeyboardPreferences(context.applicationContext) }
+    private var currentScreenshotChip: ScreenshotSuggestionState.Shot? = null
+    private var screenshotObserverRegistered = false
+    private var screenshotJob: Job? = null
+    private var screenshotPasteJob: Job? = null
+    private val screenshotRefreshRunnable = Runnable { refreshScreenshot() }
+    private val screenshotObserver = object : ContentObserver(mainHandler) {
+        override fun onChange(selfChange: Boolean) {
+            // Plusieurs notifications par capture (fichier en cours d'écriture puis terminé) : une seule recherche, un peu après.
+            mainHandler.removeCallbacks(screenshotRefreshRunnable)
+            mainHandler.postDelayed(screenshotRefreshRunnable, SCREENSHOT_REFRESH_DELAY_MS)
+        }
+    }
+
+    /** Types d'images acceptés par le champ courant (`EditorInfo.contentMimeTypes`), relus à chaque champ ; vide = texte seulement. */
+    var fieldImageMimeTypes: List<String> = emptyList()
+
     /** Vrai entre l'ouverture et la fermeture d'un champ de texte ([startListening] / [stopListening]). */
     private var inputActive = false
 
@@ -132,6 +168,8 @@ class ClipboardController(
     /** Destruction du service. */
     fun release() {
         mainHandler.removeCallbacks(pasteExpiryRunnable)
+        stopScreenshotWatch()
+        screenshotState.clear()
         reader.stop()
         state.clear()
         ClipboardEditBridge.onLastClipEdited = null
@@ -157,12 +195,14 @@ class ClipboardController(
         inputActive = true
         reader.start() // déjà démarré par [start] ; sans effet sauf si l'écoute avait été coupée
         readClipboard()
+        startScreenshotWatch()
     }
 
     /** Plus de champ actif : les copies continuent d'être enregistrées dans l'historique, mais plus de puce à rafraîchir. */
     fun stopListening() {
         inputActive = false
         mainHandler.removeCallbacks(pasteExpiryRunnable)
+        stopScreenshotWatch()
     }
 
     /** Le même bouton de la barre ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme. */
@@ -433,21 +473,122 @@ class ClipboardController(
         pasteAllowedInField && !host.isRecording() && !host.isCorrectionInProgress() &&
             !host.isEmojiPanelVisible() && !isPanelVisible
 
-    /** Met la puce de la barre d'accord avec l'état de la copie, et planifie son expiration (story 2.3). */
+    /**
+     * Met la puce de la barre d'accord avec l'état de la copie (ou de la capture d'écran, si elle est plus récente), et
+     * planifie son expiration (story 2.3).
+     */
     fun refreshPasteSuggestion() {
         if (!host.barReady()) return
-        val suggestion = if (pasteSuggestionAllowed()) state.suggestion() else null
-        if (suggestion != currentPasteSuggestion) {
-            currentPasteSuggestion = suggestion
-            if (suggestion == null) {
-                host.setPasteSuggestion(null, sensitive = false)
-            } else {
-                val preview = ClipboardPreview.forDisplay(suggestion.text, suggestion.sensitive)
-                host.setPasteSuggestion(preview, suggestion.sensitive)
+        val allowed = pasteSuggestionAllowed()
+        val text = if (allowed) state.suggestion() else null
+        val shot = if (allowed) screenshotCandidate() else null
+        val kind = PasteChipChoice.pick(
+            textCopiedAtMillis = if (text != null) state.suggestionCopiedAtMillis() else null,
+            screenshotTakenAtMillis = shot?.takenAtMillis,
+        )
+        val newText = if (kind == PasteChipChoice.Kind.TEXT) text else null
+        val newShot = if (kind == PasteChipChoice.Kind.SCREENSHOT) shot else null
+        if (newText != currentPasteSuggestion || newShot != currentScreenshotChip) {
+            currentPasteSuggestion = newText
+            currentScreenshotChip = newShot
+            when {
+                newText != null -> {
+                    val preview = ClipboardPreview.forDisplay(newText.text, newText.sensitive)
+                    host.setPasteSuggestion(preview, newText.sensitive)
+                }
+                newShot != null -> host.setPasteSuggestion(context.getString(R.string.clipboard_screenshot_chip), sensitive = false)
+                else -> host.setPasteSuggestion(null, sensitive = false)
             }
         }
         mainHandler.removeCallbacks(pasteExpiryRunnable)
-        state.expiresInMillis()?.let { mainHandler.postDelayed(pasteExpiryRunnable, it + PASTE_EXPIRY_MARGIN_MS) }
+        val delay = listOfNotNull(state.expiresInMillis(), screenshotState.expiresInMillis()).minOrNull()
+        delay?.let { mainHandler.postDelayed(pasteExpiryRunnable, it + PASTE_EXPIRY_MARGIN_MS) }
+    }
+
+    // ------------------------------------------------------------------
+    // Capture d'écran récente proposée au collage
+    // ------------------------------------------------------------------
+
+    /** Le réglage est activé et la permission d'images accordée (elle peut être retirée à tout moment dans les réglages Android). */
+    private fun screenshotsEnabled(): Boolean = keyboardPreferences.isScreenshotSuggestionEnabled && screenshotFinder.hasPermission()
+
+    /** La capture proposée si le champ accepte son type d'image ; null sinon (réglage coupé, aucune capture, champ texte seul). */
+    private fun screenshotCandidate(): ScreenshotSuggestionState.Shot? {
+        if (!screenshotsEnabled()) return null
+        val shot = screenshotState.suggestion() ?: return null
+        return shot.takeIf { ImageAcceptance.accepts(fieldImageMimeTypes, it.mimeType) }
+    }
+
+    /** Un champ est actif : cherche la capture récente et en surveille de nouvelles tant que le champ reste actif. */
+    private fun startScreenshotWatch() {
+        if (!screenshotsEnabled()) {
+            // Réglage coupé ou permission retirée : plus de capture proposée.
+            screenshotState.clear()
+            stopScreenshotWatch()
+            refreshPasteSuggestion()
+            return
+        }
+        if (!screenshotObserverRegistered) {
+            try {
+                context.contentResolver.registerContentObserver(ScreenshotFinder.observedUri, true, screenshotObserver)
+                screenshotObserverRegistered = true
+            } catch (e: RuntimeException) {
+                AppLog.w(TAG, "Surveillance des captures d'écran impossible", e)
+            }
+        }
+        refreshScreenshot()
+    }
+
+    private fun stopScreenshotWatch() {
+        mainHandler.removeCallbacks(screenshotRefreshRunnable)
+        screenshotJob?.cancel()
+        screenshotJob = null
+        if (screenshotObserverRegistered) {
+            context.contentResolver.unregisterContentObserver(screenshotObserver)
+            screenshotObserverRegistered = false
+        }
+    }
+
+    /** Cherche la capture la plus récente (hors du thread principal) puis met la puce à jour. */
+    private fun refreshScreenshot() {
+        if (!inputActive || !screenshotsEnabled()) return
+        val since = System.currentTimeMillis() - ScreenshotSuggestionState.EXPIRATION_MILLIS
+        screenshotJob?.cancel()
+        screenshotJob = scope.launch {
+            val found = withContext(Dispatchers.IO) { screenshotFinder.findLatest(since) }
+            screenshotState.onFound(found)
+            refreshPasteSuggestion()
+        }
+    }
+
+    /**
+     * Appui sur la puce « Capture d'écran » : copie la capture dans le cache de l'application, puis la confie au champ par
+     * `commitContent` (autorisation de lecture temporaire). Un refus du champ ou un échec de copie est expliqué par un message.
+     */
+    private fun pasteScreenshot(shot: ScreenshotSuggestionState.Shot) {
+        host.haptic()
+        host.clearHighlight()
+        screenshotPasteJob?.cancel()
+        screenshotPasteJob = scope.launch {
+            val uri = withContext(Dispatchers.IO) { screenshotFinder.copyForSharing(shot) }
+            val ic = host.inputConnection()
+            val info = host.editorInfo()
+            if (uri == null || ic == null || info == null) {
+                host.showMessage(context.getString(R.string.clipboard_screenshot_error))
+                return@launch
+            }
+            val content = InputContentInfoCompat(uri, ClipDescription(SCREENSHOT_LABEL, arrayOf(shot.mimeType)), null)
+            val accepted = InputConnectionCompat.commitContent(ic, info, content, InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION, null)
+            if (!accepted) {
+                host.showMessage(context.getString(R.string.clipboard_screenshot_refused))
+                return@launch
+            }
+            Analytics.track(context, AnalyticsEvents.CLIPBOARD_USED, "action" to "paste_screenshot")
+            screenshotState.onPasted()
+            host.collapseMenu()
+            host.resyncKeyboard()
+            refreshPasteSuggestion()
+        }
     }
 
     /**
@@ -455,8 +596,12 @@ class ClipboardController(
      * sélection), réinitialise l'autocorrection en attente et resynchronise la barre.
      */
     fun onPasteTapped() {
-        val suggestion = currentPasteSuggestion ?: return
         if (host.isRecording() || host.isCorrectionInProgress()) return
+        currentScreenshotChip?.let { shot ->
+            pasteScreenshot(shot)
+            return
+        }
+        val suggestion = currentPasteSuggestion ?: return
         val ic = host.inputConnection() ?: return
         host.haptic()
         host.clearHighlight()
@@ -475,5 +620,11 @@ class ClipboardController(
 
         /** Marge ajoutée au délai d'expiration de la puce, pour que l'horloge ait bien dépassé l'échéance. */
         private const val PASTE_EXPIRY_MARGIN_MS = 50L
+
+        /** Délai avant de chercher la capture après une notification du MediaStore (le fichier finit d'être écrit). */
+        private const val SCREENSHOT_REFRESH_DELAY_MS = 800L
+
+        /** Étiquette technique du contenu confié au champ (non affichée). */
+        private const val SCREENSHOT_LABEL = "Screenshot"
     }
 }

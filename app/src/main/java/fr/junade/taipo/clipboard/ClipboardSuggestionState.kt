@@ -102,6 +102,9 @@ class ClipboardSuggestionState(
         return Suggestion(current.shown, ClipboardItems.isSensitive(current.shown, current.sensitive))
     }
 
+    /** Moment de la copie proposée par la puce, ou null s'il n'y en a pas (sert à choisir entre le texte et une capture d'écran). */
+    fun suggestionCopiedAtMillis(): Long? = if (suggestion() == null) null else clip?.copiedAtMillis
+
     /** Durée avant l'expiration de la suggestion affichée, ou null s'il n'y en a pas (rien à planifier). */
     fun expiresInMillis(): Long? {
         val current = clip ?: return null

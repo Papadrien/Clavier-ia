@@ -174,6 +174,12 @@ class KeyboardView(context: Context) : View(context) {
      * glissement vers le haut, comme les accents). L'IME active ce comportement.
      */
     var isEnterLongPressEnabled = false
+        set(value) {
+            if (field == value) return
+            field = value
+            keyRenderer.showsGlobeOnEnter = value
+            invalidate()
+        }
     private var globeListener: Runnable? = null
 
     /** Appelé quand la touche globe de la bulle d'Entrée est relâchée (choix de la langue : voir TaipoIme). */

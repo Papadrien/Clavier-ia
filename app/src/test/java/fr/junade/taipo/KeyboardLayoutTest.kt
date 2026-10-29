@@ -536,4 +536,12 @@ class KeyboardLayoutTest {
         assertTrue(emoji.weight < space.weight)
         assertTrue(emoji.popup.isEmpty())
     }
+
+    @Test
+    fun `entree est une pilule plus large que haute sur les dispositions de lettres`() {
+        listOf(Keyboards.letters, Keyboards.lettersEn).forEach { layout ->
+            val enter = layout.rows.flatten().single { it.action == KeyAction.Enter }
+            assertTrue(enter.weight >= 2f, "Entrée trop étroite pour une pilule dans ${layout.id} : ${enter.weight}")
+        }
+    }
 }

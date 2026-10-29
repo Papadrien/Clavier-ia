@@ -26,3 +26,20 @@ Les intitulés exacts des formulaires peuvent avoir changé : à vérifier dans 
 
 ## Notifications : `POST_NOTIFICATIONS`
 - Usage : notification de progression du téléchargement (obligatoire pour un service au premier plan visible).
+
+## Photos : `READ_MEDIA_IMAGES` (captures d'écran récentes, réglage optionnel)
+- **Où** : `AndroidManifest.xml` (`READ_MEDIA_IMAGES`, et `READ_EXTERNAL_STORAGE` limité à Android 12 et moins) ; demandée depuis
+  Paramètres du clavier > Captures d'écran > « Proposer les captures d'écran récentes » (désactivé par défaut).
+- **Usage** : le Smart Clipboard propose de coller la dernière capture d'écran (moins de 10 minutes), dans les champs qui
+  acceptent les images. Le clavier interroge seulement le MediaStore (noms « Screenshot… » ou dossier « Screenshots ») ; l'image
+  n'est lue qu'au moment où l'utilisateur touche la suggestion, copiée dans le cache de l'application (supprimée au bout d'une
+  heure) et confiée au champ par `commitContent`. Rien n'est envoyé hors de l'appareil.
+- **RISQUE À VÉRIFIER AVANT LA RELEASE** : à ma connaissance, la politique Google Play « autorisations photos et vidéos »
+  réserve l'accès large aux images aux applications dont la fonction principale est la photo, et demande sinon le sélecteur
+  de photos. Un clavier peut être refusé ou devoir remplir le formulaire de déclaration avec une justification. Je n'ai pas pu
+  le confirmer : lire la politique à jour dans la Play Console. Repli possible sans permission : un bouton ouvrant le sélecteur
+  de photos du système.
+- **Sécurité des données** : toujours « aucune donnée collectée » (lecture locale), mais mettre à jour les textes de
+  confidentialité (déjà fait dans la section 5 du menu Confidentialité) et la fiche.
+- **Vidéo de démonstration** (si demandée) : activer le réglage, accepter la permission, prendre une capture, ouvrir un champ
+  d'une application qui accepte les images, toucher la puce « Capture d'écran ».

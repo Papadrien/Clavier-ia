@@ -3,6 +3,7 @@ package fr.junade.taipo
 import android.os.IBinder
 import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import fr.junade.taipo.ai.VoiceField
 import fr.junade.taipo.dictionary.NextLetterModel
@@ -51,6 +52,9 @@ internal interface ImeHostContext {
     val heightScale: Float
 
     fun inputConnection(): InputConnection?
+
+    /** Le champ de saisie courant (types d'images acceptés, collage d'une capture d'écran). */
+    fun editorInfo(): EditorInfo?
     fun isInputViewShown(): Boolean
     fun string(resId: Int): String
     fun hasSelection(): Boolean
@@ -176,6 +180,7 @@ internal class EmojiHost(private val ime: ImeHostContext) : EmojiController.Host
 internal class ClipboardHost(private val ime: ImeHostContext) : ClipboardController.Host {
     override fun showMessage(message: String) = ime.showMessage(message)
     override fun inputConnection() = ime.inputConnection()
+    override fun editorInfo() = ime.editorInfo()
     override fun haptic() = ime.haptic()
     override fun playKeySound(sound: KeySound) = ime.playKeySound(sound)
     override fun clearHighlight() = ime.clearHighlight()

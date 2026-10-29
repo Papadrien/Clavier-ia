@@ -3,6 +3,7 @@ package fr.junade.taipo
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
@@ -19,6 +20,7 @@ import android.widget.TextView
 import android.widget.Toast
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsPreferences
+import fr.junade.taipo.clipboard.ScreenshotFinder
 import fr.junade.taipo.dictionary.CorrectionHabitsProvider
 
 /**
@@ -34,6 +36,12 @@ class KeyboardSettingsActivity : Activity() {
 
     /** État des dictionnaires des langues utilisées (téléchargement automatique, Réessayer). */
     private lateinit var dictionaries: DictionaryStatusSection
+
+    /** Interrupteur « captures d'écran » : remis à faux si la permission d'images est refusée. */
+    private var screenshotSwitch: CompoundButton? = null
+
+    /** Vrai pendant que l'interrupteur est changé par le code (refus de la permission) : le changement n'est ni enregistré ni mesuré. */
+    private var settingScreenshotSwitch = false
 
     /** Lecteur d'aperçu du curseur de volume (préparé au premier toucher du curseur). */
     private val previewPlayer by lazy { KeySoundPlayer(applicationContext) }
@@ -94,6 +102,8 @@ class KeyboardSettingsActivity : Activity() {
             }
         }
 
+        setUpScreenshotSuggestions(preferences)
+
         val radioGroup = findViewById<RadioGroup>(R.id.radio_group_haptic)
         val radioIds = mapOf(
             HapticIntensity.OFF to R.id.radio_haptic_off,
@@ -148,13 +158,14 @@ class KeyboardSettingsActivity : Activity() {
                 Analytics.setting(this@KeyboardSettingsActivity, "habit_learning", checked)
             }
         }
+        // Groupe « Précision de frappe » : réglages en cours de validation, visibles uniquement en debug.
+        findViewById<View>(R.id.group_touch_precision).visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
         findViewById<CompoundButton>(R.id.switch_adaptive_touch).apply {
             isChecked = preferences.isAdaptiveTouchEnabled
             setOnCheckedChangeListener { _, checked -> preferences.isAdaptiveTouchEnabled = checked }
         }
         findViewById<CompoundButton>(R.id.switch_touch_zones_debug).apply {
-            // Calque des zones de frappe : réglage de debug, absent de la release.
-            visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
+            // Calque des zones de frappe (debug) : fait partie du groupe masqué en release.
             isChecked = preferences.showTouchZones
             setOnCheckedChangeListener { _, checked -> preferences.showTouchZones = checked }
         }
@@ -321,6 +332,39 @@ class KeyboardSettingsActivity : Activity() {
     }
 
     /**
+     * « Proposer les captures d'écran récentes » : l'activer demande la permission d'images (un clavier ne peut pas la demander
+     * lui-même). Le réglage n'est enregistré qu'une fois la permission accordée ; il reste coché seulement tant qu'elle l'est.
+     */
+    private fun setUpScreenshotSuggestions(preferences: KeyboardPreferences) {
+        val switch = findViewById<CompoundButton>(R.id.switch_screenshot_suggestions)
+        screenshotSwitch = switch
+        switch.isChecked = preferences.isScreenshotSuggestionEnabled && ScreenshotFinder.hasPermission(this)
+        switch.setOnCheckedChangeListener { _, checked ->
+            if (settingScreenshotSwitch) return@setOnCheckedChangeListener
+            if (checked && !ScreenshotFinder.hasPermission(this)) {
+                requestPermissions(arrayOf(ScreenshotFinder.permission), REQUEST_SCREENSHOT_PERMISSION)
+            } else {
+                preferences.isScreenshotSuggestionEnabled = checked
+                Analytics.setting(this, "screenshot_suggestions", checked)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode != REQUEST_SCREENSHOT_PERMISSION) return
+        val granted = grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
+        KeyboardPreferences(this).isScreenshotSuggestionEnabled = granted
+        Analytics.setting(this, "screenshot_suggestions", granted)
+        if (!granted) {
+            settingScreenshotSwitch = true
+            screenshotSwitch?.isChecked = false
+            settingScreenshotSwitch = false
+            Toast.makeText(this, R.string.keyboard_settings_screenshots_denied, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    /**
      * « Mesure d'usage anonyme » (Aptabase) : activée par défaut, désactivable ici. Désactivée, plus aucun événement n'est
      * créé (le SDK n'est plus appelé). Le passage à « activé » est le seul réglage de mesure qui est lui-même mesuré.
      */
@@ -350,5 +394,8 @@ class KeyboardSettingsActivity : Activity() {
     private companion object {
         /** Opacité de la case de la langue du clavier (cochée, non modifiable). */
         const val LOCKED_BOX_ALPHA = 0.5f
+
+        /** Code de la demande de permission d'images (captures d'écran). */
+        const val REQUEST_SCREENSHOT_PERMISSION = 4101
     }
 }

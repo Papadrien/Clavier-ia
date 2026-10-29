@@ -16,6 +16,7 @@ import android.view.inputmethod.InlineSuggestionsRequest
 import android.view.inputmethod.InlineSuggestionsResponse
 import android.view.inputmethod.InputMethodSubtype
 import androidx.annotation.RequiresApi
+import androidx.core.view.inputmethod.EditorInfoCompat
 import android.widget.Toast
 import fr.junade.taipo.ai.AiTranscriptionEngine
 import fr.junade.taipo.ai.CorrectionEngine
@@ -78,6 +79,7 @@ class TaipoIme : InputMethodService() {
         override val heightScale: Float get() = this@TaipoIme.keyboardHeight.scale
 
         override fun inputConnection(): InputConnection? = this@TaipoIme.currentInputConnection
+        override fun editorInfo(): EditorInfo? = this@TaipoIme.currentInputEditorInfo
         override fun isInputViewShown(): Boolean = this@TaipoIme.isInputViewShown
         override fun string(resId: Int): String = this@TaipoIme.getString(resId)
         override fun hasSelection(): Boolean = this@TaipoIme.hasSelection()
@@ -309,7 +311,8 @@ class TaipoIme : InputMethodService() {
 
     /**
      * Dernière autocorrection du dictionnaire, tant que rien d'autre n'a été fait depuis :
-     * une suppression immédiate la rétablit (mot tel que tapé), comme sur les claviers usuels.
+     * une suppression la rétablit (mot tel que tapé), comme sur les claviers usuels, mais seulement dans les
+     * [AUTOCORRECTION_UNDO_WINDOW_MS] qui suivent la correction et tant que le curseur est resté derrière elle.
      */
     private class AppliedAutocorrection(
         val original: String,
@@ -317,7 +320,13 @@ class TaipoIme : InputMethodService() {
         val boundary: String = "",
         // Texte avant le curseur au moment de la correction (pour les habitudes) ; vide si non renseigné.
         val textBefore: String = "",
-    )
+        // Instant de la correction (horloge monotone), pour borner le délai pendant lequel Supprimer l'annule.
+        val appliedAtMillis: Long = SystemClock.elapsedRealtime(),
+    ) {
+        /** Vrai si le délai d'annulation par Supprimer est dépassé. */
+        fun isUndoWindowExpired(): Boolean =
+            SystemClock.elapsedRealtime() - appliedAtMillis > AUTOCORRECTION_UNDO_WINDOW_MS
+    }
 
     private var pendingAutocorrection: AppliedAutocorrection? = null
 
@@ -408,6 +417,8 @@ class TaipoIme : InputMethodService() {
         suggestions.emailFieldAllowed = SuggestionPolicy.allowsEmailSuggestions(info?.inputType ?: 0) &&
             (info?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING == 0
         clipboard.pasteAllowedInField = SuggestionPolicy.allowsPasteSuggestion(info?.inputType ?: 0)
+        // Types d'images que le champ accepte (capture d'écran proposée au collage) : vide = le champ n'accepte que du texte.
+        clipboard.fieldImageMimeTypes = info?.let { EditorInfoCompat.getContentMimeTypes(it).toList() }.orEmpty()
         fieldType = FieldType.of(info?.inputType ?: 0)
         refreshNumberRow() // rangée de chiffres réservée aux champs mot de passe : dépend du type du champ qui vient de s'ouvrir
         // Adresse web (barre d'adresse et de recherche d'un navigateur) : mots proposés, mais rien n'est remplacé tout seul.
@@ -873,6 +884,7 @@ class TaipoIme : InputMethodService() {
     private fun undoLastPromptAutocorrection(): Boolean {
         val pending = pendingAutocorrection ?: return false
         pendingAutocorrection = null
+        if (pending.isUndoWindowExpired()) return false // trop tard : Supprimer efface un caractère comme d'habitude
         val expected = pending.corrected + pending.boundary
         if (!prompt.buffer.textBeforeCursor.endsWith(expected)) return false // le texte ou le curseur a changé entre-temps
         prompt.buffer.deleteBefore(expected.length)
@@ -1262,6 +1274,7 @@ class TaipoIme : InputMethodService() {
     private fun undoLastAutocorrection(): Boolean {
         val pending = pendingAutocorrection ?: return false
         pendingAutocorrection = null
+        if (pending.isUndoWindowExpired()) return false // trop tard : Supprimer efface un caractère comme d'habitude
         val ic = currentInputConnection ?: return false
         if (!ic.getSelectedText(0).isNullOrEmpty()) return false
         val expected = pending.corrected + pending.boundary
@@ -1388,5 +1401,8 @@ class TaipoIme : InputMethodService() {
 
         /** Longueur du texte retenu quand une autocorrection est annulée (voir [revertedAutocorrectionTail]). */
         private const val REVERTED_TAIL_LENGTH = 12
+
+        /** Délai après une autocorrection pendant lequel la touche Supprimer peut encore l'annuler. */
+        private const val AUTOCORRECTION_UNDO_WINDOW_MS = 5_000L
     }
 }

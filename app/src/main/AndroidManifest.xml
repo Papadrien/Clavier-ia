@@ -25,6 +25,15 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!--
+        Captures d'écran récentes proposées dans le Smart Clipboard (réglage optionnel, demandé depuis les paramètres du
+        clavier) : lecture des images, sur l'appareil seulement. Voir docs/play-console-declarations.md.
+    -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <!--
         Lot 3.4 (S2) : sauvegarde déclarée explicitement. Elle reste activée (réglages du clavier), mais tout ce
         qui est chiffré avec une clé Keystore, ainsi que les modèles IA, est exclu : voir res/xml/backup_rules.xml
         et data_extraction_rules.xml (testé par BackupRulesTest).
@@ -144,6 +153,17 @@
             android:name="androidx.work.impl.foreground.SystemForegroundService"
             android:foregroundServiceType="dataSync"
             tools:node="merge" />
+
+        <!-- Capture d'écran confiée au champ de saisie par commitContent : copie dans le cache, lecture temporaire accordée. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <service
             android:name=".TaipoIme"

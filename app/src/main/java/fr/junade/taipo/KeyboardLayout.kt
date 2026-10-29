@@ -204,14 +204,14 @@ object Keyboards {
      * Rangée du bas : le ! et le ? sont accessibles par appui long sur le point, ce qui agrandit
      * l'espace. Story 1.15 : le bouton emoji est à gauche de la barre espace et à droite de la
      * virgule, comme sur Gboard ; il prend 1 unité sur l'espace (4,8 → 3,8) pour que la rangée
-     * reste à 10 unités.
+     * reste à 10 unités. Entrée est une pilule (2,2 unités, 0,4 prise sur l'espace : 3,4).
      */
     private fun punctuationRowWith(popup: List<List<Char>>) = listOf(
         Key("comma", ",", KeyAction.TypeChar(','), secondary = true),
         Key("emoji", "☺", KeyAction.Emoji, secondary = true),
-        Key("space", "", KeyAction.Space, 3.8f),
+        Key("space", "", KeyAction.Space, 3.4f),
         Key("period", ".", KeyAction.TypeChar('.'), secondary = true, popup = popup),
-        Key("enter", "⏎", KeyAction.Enter, 1.8f),
+        Key("enter", "⏎", KeyAction.Enter, 2.2f),
     )
 
     private val punctuationRow = punctuationRowWith(periodPopup)

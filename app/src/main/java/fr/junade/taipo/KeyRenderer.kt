@@ -97,6 +97,7 @@ internal class KeyRenderer(private val context: Context) {
     var backspaceIconAngle = 0f
 
     // Lot 21 : un caractère à dessiner sans passer par String.
+    private val pillRect = RectF()
     private val charBuffer = CharArray(1)
     private var lastKeyTextSize = -1f
 
@@ -105,6 +106,10 @@ internal class KeyRenderer(private val context: Context) {
     private val backspaceIcon = loadKeyIcon(R.drawable.ic_key_backspace)
     private val enterIcon = loadKeyIcon(R.drawable.ic_key_enter)
     private val emojiIcon = loadKeyIcon(R.drawable.ic_key_emoji)
+    private val globeIcon = loadKeyIcon(R.drawable.ic_key_globe)
+
+    /** Clavier multilingue actif : la pilule Entrée affiche, à côté du symbole d'entrée, un petit globe (appui long = langue). */
+    var showsGlobeOnEnter = false
 
     // État de la vue pour le dessin en cours, fixé au début de chaque [draw] (aucune allocation).
     private var dims: DrawDimens = DrawDimens(context)
@@ -223,8 +228,8 @@ internal class KeyRenderer(private val context: Context) {
         val shownShadow = if (key == pressedKey) minOf(dims.keyShadowPressedHeight, restShadow) else restShadow
         keyRect.top += restShadow - shownShadow
         if (style == KeyStyle.ACCENT) {
-            // Lot 07 : Entrée est une touche ronde (la zone tactile reste le rectangle de la touche).
-            drawRoundKey(canvas, shownShadow, shadow, face)
+            // Entrée est une pilule : toute la largeur de la touche, extrémités en demi-cercles.
+            drawPillKey(canvas, shownShadow, shadow, face)
         } else {
             canvas.drawRoundRect(keyRect, radius, radius, shadow)
             keyRect.bottom -= shownShadow
@@ -247,7 +252,7 @@ internal class KeyRenderer(private val context: Context) {
 
             KeyAction.Emoji -> drawKeyIcon(canvas, emojiIcon)
 
-            KeyAction.Enter -> drawKeyIcon(canvas, enterIcon)
+            KeyAction.Enter -> drawEnterContent(canvas)
 
             KeyAction.Shift -> drawShiftIcon(canvas)
 
@@ -283,17 +288,45 @@ internal class KeyRenderer(private val context: Context) {
     }
 
     /**
-     * Touche ronde (Entrée) : cercle de la face, de diamètre la plus petite dimension de la face, centré dans la touche,
-     * sur un cercle d'ombre décalé vers le bas. Laisse [keyRect] réduit à la face, pour centrer le contenu.
+     * Touche pilule (Entrée) : face en capsule sur toute la largeur de la touche (rayon = la moitié de la hauteur de la
+     * face, ou de la largeur si la touche est plus haute que large), sur une capsule d'ombre décalée vers le bas. Laisse
+     * [keyRect] réduit à la face, pour centrer le contenu.
      */
-    private fun drawRoundKey(canvas: Canvas, shownShadow: Float, shadow: Paint, face: Paint) {
+    private fun drawPillKey(canvas: Canvas, shownShadow: Float, shadow: Paint, face: Paint) {
         val faceHeight = keyRect.height() - shownShadow
         val radius = minOf(keyRect.width(), faceHeight) / 2f
-        val cx = keyRect.centerX()
-        val faceCy = keyRect.top + faceHeight / 2f
-        canvas.drawCircle(cx, faceCy + shownShadow, radius, shadow)
-        canvas.drawCircle(cx, faceCy, radius, face)
+        pillRect.set(keyRect.left, keyRect.top, keyRect.right, keyRect.top + faceHeight)
+        pillRect.offset(0f, shownShadow)
+        canvas.drawRoundRect(pillRect, radius, radius, shadow)
+        pillRect.offset(0f, -shownShadow)
+        canvas.drawRoundRect(pillRect, radius, radius, face)
         keyRect.bottom -= shownShadow
+    }
+
+    /**
+     * Contenu de la pilule Entrée : le symbole d'entrée, seul et centré ; en mode multilingue, suivi d'un globe plus petit
+     * (GLOBE_SCALE), l'ensemble étant centré.
+     */
+    private fun drawEnterContent(canvas: Canvas) {
+        if (!showsGlobeOnEnter) {
+            drawKeyIcon(canvas, enterIcon)
+            return
+        }
+        val enterSize = minOf(dims.iconSize, keyRect.height() * KEY_ICON_MAX_RATIO)
+        val globeSize = enterSize * GLOBE_SCALE
+        val gap = enterSize * GLOBE_GAP_RATIO
+        val startX = keyRect.centerX() - (enterSize + gap + globeSize) / 2f
+        val cy = keyRect.centerY()
+        placeIcon(enterIcon, startX + enterSize / 2f, cy, enterSize / 2f)
+        enterIcon.draw(canvas)
+        placeIcon(globeIcon, startX + enterSize + gap + globeSize / 2f, cy, globeSize / 2f)
+        globeIcon.draw(canvas)
+    }
+
+    private fun placeIcon(icon: Drawable, cx: Float, cy: Float, half: Float) {
+        icon.setBounds(
+            (cx - half).roundToInt(), (cy - half).roundToInt(), (cx + half).roundToInt(), (cy + half).roundToInt(),
+        )
     }
 
     private fun loadKeyIcon(@DrawableRes id: Int): Drawable {
@@ -455,5 +488,9 @@ internal class KeyRenderer(private val context: Context) {
 
         /** Icônes des touches : jamais plus de cette part de la hauteur de la face (rangées basses en paysage). */
         const val KEY_ICON_MAX_RATIO = 0.62f
+
+        /** Pilule Entrée en mode multilingue : taille du globe par rapport au symbole d'entrée, et espace entre les deux. */
+        private const val GLOBE_SCALE = 0.7f
+        private const val GLOBE_GAP_RATIO = 0.3f
     }
 }
