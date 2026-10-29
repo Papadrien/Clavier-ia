@@ -25,11 +25,12 @@ class ScreenshotSuggestionTest {
 
     @Test
     fun `une capture recente est proposee puis expire apres 10 minutes`() {
-        state.onFound(shot())
-        assertEquals(shot(), state.suggestion())
+        val capture = shot()
+        state.onFound(capture)
+        assertEquals(capture, state.suggestion())
         assertEquals(ScreenshotSuggestionState.EXPIRATION_MILLIS, state.expiresInMillis())
         now += ScreenshotSuggestionState.EXPIRATION_MILLIS - 1
-        assertEquals(shot(), state.suggestion())
+        assertEquals(capture, state.suggestion())
         now += 1
         assertNull(state.suggestion())
         assertNull(state.expiresInMillis())
