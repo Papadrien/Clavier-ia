@@ -81,6 +81,14 @@ internal class KeyRenderer(private val context: Context) {
 
     private val keyRect = RectF()
 
+    // Animation « Élastique » du chiffre (glissement vers le bas sur une touche du haut) : voir DigitSwipeAnimation.
+    var digitSwipeAnimation: DigitSwipeAnimation? = null
+    private val digitPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = context.themeColor(R.color.taipo_purple_light)
+        textAlign = Paint.Align.CENTER
+        useTaipoFont(context)
+    }
+
     // Icône Maj dessinée au Canvas (flèche creuse, pleine ou verrouillée, animation « Bond ») : l'état vient de la vue.
     var shiftAnimation: ShiftAnimation? = null
     private val shiftPainter = ShiftIconPainter(context.themeColor(R.color.key_label))
@@ -175,7 +183,17 @@ internal class KeyRenderer(private val context: Context) {
         this.layout = layout
         this.isShifted = isShifted
         this.pressedKey = pressedKey
+        val swipe = digitSwipeAnimation?.takeIf { it.isAnimating(key) }
+        if (swipe == null) {
+            drawKey(canvas, key, left, top, keyWidth, rowHeight, inset)
+            return
+        }
+        // Touche étirée vers le bas sous le doigt : l'échelle se fait depuis le haut de la touche.
+        val p = swipe.letterProgress
+        canvas.save()
+        canvas.scale(DigitSwipePose.faceScaleX(p), DigitSwipePose.faceScaleY(p), left + keyWidth / 2f, top + inset)
         drawKey(canvas, key, left, top, keyWidth, rowHeight, inset)
+        canvas.restore()
     }
 
     private fun drawKey(canvas: Canvas, key: Key, left: Float, top: Float, keyWidth: Float, rowHeight: Float, inset: Float) {
@@ -244,6 +262,12 @@ internal class KeyRenderer(private val context: Context) {
      * tampon de caractère, sans créer de String.
      */
     private fun drawKeyLabel(canvas: Canvas, key: Key) {
+        digitSwipeAnimation?.let { swipe ->
+            if (swipe.isAnimating(key)) {
+                drawSwipingLabel(canvas, key, swipe)
+                return
+            }
+        }
         val upper = shiftedChar(key, layout, isShifted)
         val label = if (upper == NO_CHAR) displayLabel(key, layout, isShifted) else ""
         if (upper != NO_CHAR || label.isNotEmpty()) {
@@ -301,6 +325,73 @@ internal class KeyRenderer(private val context: Context) {
         val animation = shiftAnimation ?: return
         val size = minOf(dims.iconSize, keyRect.height() * KEY_ICON_MAX_RATIO)
         shiftPainter.draw(canvas, animation, keyRect.centerX(), keyRect.centerY(), size)
+    }
+
+    /**
+     * Libellé d'une touche du haut pendant l'animation « Élastique » : la lettre s'enfonce en rétrécissant, le chiffre éclot
+     * depuis l'indice jusqu'au centre, puis, au relâchement, sort par le haut de la touche (rogné sur la face) pendant que
+     * l'indice revient tout petit à sa place. Sans allocation.
+     */
+    private fun drawSwipingLabel(canvas: Canvas, key: Key, swipe: DigitSwipeAnimation) {
+        val digit = key.longPressChar ?: return
+        autoSizeTextPaint(key)
+        if (hintPaint.textSize != dims.hintTextSize) hintPaint.textSize = dims.hintTextSize
+        val height = keyRect.height()
+        val centerX = keyRect.centerX()
+        val centerY = keyRect.centerY()
+        val hintX = keyRect.right - dims.hintMarginEnd
+        val hintCenterY = keyRect.top + dims.hintMarginTop - hintPaint.ascent() + (hintPaint.ascent() + hintPaint.descent()) / 2f
+
+        // Lettre : descend, rétrécit, s'efface ; revient avec un petit rebond au relâchement.
+        val p = swipe.letterProgress
+        val letterAlpha = DigitSwipePose.letterAlpha(p)
+        if (letterAlpha > 0f) {
+            val upper = shiftedChar(key, layout, isShifted)
+            val baseAlpha = textPaint.alpha
+            val baseline = centerY - (textPaint.ascent() + textPaint.descent()) / 2f
+            val scale = DigitSwipePose.letterScale(p)
+            canvas.save()
+            canvas.translate(0f, p * height * DigitSwipePose.LETTER_SHIFT_RATIO)
+            canvas.scale(scale, scale, centerX, centerY)
+            textPaint.alpha = (baseAlpha * letterAlpha).toInt()
+            if (upper != NO_CHAR) {
+                drawChar(canvas, upper, centerX, baseline, textPaint)
+            } else {
+                canvas.drawText(displayLabel(key, layout, isShifted), centerX, baseline, textPaint)
+            }
+            textPaint.alpha = baseAlpha
+            canvas.restore()
+        }
+
+        // Chiffre : éclot de l'indice vers le centre, fait un « pop » à la validation, puis sort par le haut au relâchement.
+        val exit = swipe.digitExit
+        val digitAlpha = DigitSwipePose.digitAlpha(swipe.digitBloom, exit)
+        if (digitAlpha > 0f) {
+            val bloom = swipe.digitBloom.coerceIn(0f, DigitSwipePose.MAX_BLOOM)
+            digitPaint.textSize =
+                (dims.hintTextSize + (textPaint.textSize - dims.hintTextSize) * bloom) * (1f + DigitSwipePose.POP_SCALE * swipe.digitPop)
+            digitPaint.alpha = (255f * digitAlpha).toInt()
+            val x = hintX + (centerX - hintX) * bloom
+            val y = hintCenterY + (centerY - hintCenterY) * bloom - exit * height * DigitSwipePose.EXIT_RISE_RATIO
+            val clipped = exit > 0f
+            if (clipped) {
+                canvas.save()
+                canvas.clipRect(keyRect)
+            }
+            drawChar(canvas, digit, x, y - (digitPaint.ascent() + digitPaint.descent()) / 2f, digitPaint)
+            if (clipped) canvas.restore()
+        }
+
+        // Indice : disparaît quand le chiffre éclot ; revient tout petit une fois le chiffre sorti.
+        val hintScale = swipe.hintScale
+        if (hintScale > 0f) {
+            val baseAlpha = hintPaint.alpha
+            hintPaint.textSize = dims.hintTextSize * hintScale.coerceAtMost(DigitSwipePose.MAX_HINT_SCALE)
+            hintPaint.alpha = (baseAlpha * DigitSwipePose.hintAlpha(hintScale)).toInt()
+            drawChar(canvas, digit, hintX, hintCenterY - (hintPaint.ascent() + hintPaint.descent()) / 2f, hintPaint)
+            hintPaint.alpha = baseAlpha
+            hintPaint.textSize = dims.hintTextSize
+        }
     }
 
     /** Petit indice du chiffre accessible par appui long, en haut à droite de la touche. */

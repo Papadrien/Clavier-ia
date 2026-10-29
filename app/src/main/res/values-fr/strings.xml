@@ -101,6 +101,12 @@
     <string name="button_keyboard_settings">Paramètres du clavier</string>
     <string name="keyboard_settings_title">Paramètres du clavier</string>
     <string name="keyboard_settings_number_row">Rangée de chiffres</string>
+    <string name="keyboard_settings_number_row_passwords">Rangée de chiffres uniquement dans les champs mot de passe</string>
+    <string name="keyboard_settings_bottom_row_title">Touches de la rangée du bas</string>
+    <string name="keyboard_settings_show_emoji_key">Afficher la touche emoji</string>
+    <string name="keyboard_settings_show_comma_key">Afficher la touche virgule</string>
+    <string name="keyboard_settings_show_period_key">Afficher la touche point</string>
+    <string name="keyboard_settings_bottom_row_description">Une touche masquée cède sa largeur à la barre d\'espace. Sans la touche point, les symboles de son appui long ne sont plus accessibles. Dans les champs e-mail et adresse web, la touche « @ » ou « / » reste toujours affichée.</string>
     <string name="keyboard_settings_language_title">Langue du clavier</string>
     <string name="keyboard_settings_language_auto">Automatique (langue du téléphone)</string>
     <string name="keyboard_settings_multilingual_switch">Clavier multilingue</string>

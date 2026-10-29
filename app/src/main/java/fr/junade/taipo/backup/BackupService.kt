@@ -51,6 +51,10 @@ object BackupService {
                 .map { BackupPin(it.text, it.label, it.pinnedAtMillis) },
             keyboard = BackupKeyboardSettings(
                 numberRow = keyboard.isNumberRowEnabled,
+                numberRowPasswordOnly = keyboard.isNumberRowInPasswordFieldsOnly,
+                showEmojiKey = keyboard.isEmojiKeyShown,
+                showCommaKey = keyboard.isCommaKeyShown,
+                showPeriodKey = keyboard.isPeriodKeyShown,
                 hapticIntensity = keyboard.hapticIntensity.storageKey,
                 keyboardHeight = keyboard.keyboardHeight.storageKey,
                 recentEmojis = keyboard.recentEmojis,
@@ -109,6 +113,10 @@ object BackupService {
     private fun restoreKeyboard(context: Context, settings: BackupKeyboardSettings) {
         val keyboard = KeyboardPreferences(context)
         settings.numberRow?.let { keyboard.isNumberRowEnabled = it }
+        settings.numberRowPasswordOnly?.let { keyboard.isNumberRowInPasswordFieldsOnly = it }
+        settings.showEmojiKey?.let { keyboard.isEmojiKeyShown = it }
+        settings.showCommaKey?.let { keyboard.isCommaKeyShown = it }
+        settings.showPeriodKey?.let { keyboard.isPeriodKeyShown = it }
         settings.hapticIntensity?.let { key ->
             HapticIntensity.entries.firstOrNull { it.storageKey == key }?.let { keyboard.hapticIntensity = it }
         }

@@ -53,11 +53,44 @@ class KeyboardSettingsActivity : Activity() {
         findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
 
+        // « Uniquement dans les champs mot de passe » n'a plus d'objet quand la rangée est toujours affichée : l'option est grisée.
+        val passwordOnlySwitch = findViewById<CompoundButton>(R.id.switch_number_row_passwords).apply {
+            isChecked = preferences.isNumberRowInPasswordFieldsOnly
+            isEnabled = !preferences.isNumberRowEnabled
+            setOnCheckedChangeListener { _, checked ->
+                preferences.isNumberRowInPasswordFieldsOnly = checked
+                Analytics.setting(this@KeyboardSettingsActivity, "number_row_password_only", checked)
+            }
+        }
         findViewById<CompoundButton>(R.id.switch_number_row).apply {
             isChecked = preferences.isNumberRowEnabled
             setOnCheckedChangeListener { _, checked ->
                 preferences.isNumberRowEnabled = checked
+                passwordOnlySwitch.isEnabled = !checked
                 Analytics.setting(this@KeyboardSettingsActivity, "number_row", checked)
+            }
+        }
+
+        // Touches du bas : relues par le clavier à la prochaine ouverture d'un champ.
+        findViewById<CompoundButton>(R.id.switch_show_emoji_key).apply {
+            isChecked = preferences.isEmojiKeyShown
+            setOnCheckedChangeListener { _, checked ->
+                preferences.isEmojiKeyShown = checked
+                Analytics.setting(this@KeyboardSettingsActivity, "show_emoji_key", checked)
+            }
+        }
+        findViewById<CompoundButton>(R.id.switch_show_comma_key).apply {
+            isChecked = preferences.isCommaKeyShown
+            setOnCheckedChangeListener { _, checked ->
+                preferences.isCommaKeyShown = checked
+                Analytics.setting(this@KeyboardSettingsActivity, "show_comma_key", checked)
+            }
+        }
+        findViewById<CompoundButton>(R.id.switch_show_period_key).apply {
+            isChecked = preferences.isPeriodKeyShown
+            setOnCheckedChangeListener { _, checked ->
+                preferences.isPeriodKeyShown = checked
+                Analytics.setting(this@KeyboardSettingsActivity, "show_period_key", checked)
             }
         }
 

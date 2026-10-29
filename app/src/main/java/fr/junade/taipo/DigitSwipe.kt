@@ -15,4 +15,8 @@ internal object DigitSwipe {
 
     /** Vrai si le déplacement (dx, dy) depuis l'appui est assez long, vers le bas, et plus vertical qu'horizontal. */
     fun isTriggered(dx: Float, dy: Float, thresholdPx: Float): Boolean = dy >= thresholdPx && dy > abs(dx)
+
+    /** Avancement du geste, de 0 (pas engagé : vers le haut ou plus horizontal que vertical) à 1 (seuil franchi), pour l'animation. */
+    fun progress(dx: Float, dy: Float, thresholdPx: Float): Float =
+        if (thresholdPx > 0f && dy > abs(dx)) (dy / thresholdPx).coerceIn(0f, 1f) else 0f
 }

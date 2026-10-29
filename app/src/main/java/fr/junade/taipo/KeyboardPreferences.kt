@@ -24,6 +24,41 @@ class KeyboardPreferences(context: Context) {
         }
 
     /**
+     * Rangée de chiffres seulement dans les champs mot de passe (pour saisir un mot de passe avec ses chiffres sous la main, sans
+     * encombrer le clavier ailleurs). Sans effet quand [isNumberRowEnabled] est actif : la rangée est alors toujours affichée.
+     */
+    var isNumberRowInPasswordFieldsOnly: Boolean
+        get() = prefs.getBoolean(KEY_NUMBER_ROW_PASSWORD_ONLY, DEFAULT_NUMBER_ROW_PASSWORD_ONLY)
+        set(value) {
+            prefs.edit().putBoolean(KEY_NUMBER_ROW_PASSWORD_ONLY, value).apply()
+        }
+
+    /** Touche emoji dans la rangée du bas. Affichée par défaut ; masquée, la barre d'espace reprend sa largeur. */
+    var isEmojiKeyShown: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_EMOJI_KEY, DEFAULT_SHOW_BOTTOM_KEY)
+        set(value) {
+            prefs.edit().putBoolean(KEY_SHOW_EMOJI_KEY, value).apply()
+        }
+
+    /** Touche virgule dans la rangée du bas (la touche « @ » ou « / » des champs e-mail et URL reste toujours affichée). */
+    var isCommaKeyShown: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_COMMA_KEY, DEFAULT_SHOW_BOTTOM_KEY)
+        set(value) {
+            prefs.edit().putBoolean(KEY_SHOW_COMMA_KEY, value).apply()
+        }
+
+    /** Touche point dans la rangée du bas. Masquée, les symboles de son appui long ne sont plus accessibles depuis cette touche. */
+    var isPeriodKeyShown: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_PERIOD_KEY, DEFAULT_SHOW_BOTTOM_KEY)
+        set(value) {
+            prefs.edit().putBoolean(KEY_SHOW_PERIOD_KEY, value).apply()
+        }
+
+    /** Les trois réglages ci-dessus réunis, relus à chaque ouverture de champ. */
+    val bottomRowKeys: BottomRowKeys
+        get() = BottomRowKeys(emoji = isEmojiKeyShown, comma = isCommaKeyShown, period = isPeriodKeyShown)
+
+    /**
      * Vrai dès que l'utilisateur a saisi un chiffre par glissement vers le bas sur une touche du haut : le tip « Swipe vers le
      * bas » (affiché après un chiffre saisi par appui long) ne s'affiche plus.
      */
@@ -190,7 +225,13 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_SHOW_TOUCH_ZONES = "show_touch_zones"
         private const val KEY_NUMBER_ROW = "number_row_enabled"
         const val DEFAULT_NUMBER_ROW = false
+        private const val KEY_NUMBER_ROW_PASSWORD_ONLY = "number_row_password_only"
+        const val DEFAULT_NUMBER_ROW_PASSWORD_ONLY = false
         val DEFAULT_ADAPTIVE_TOUCH: Boolean = BuildConfig.DEBUG
+        private const val KEY_SHOW_EMOJI_KEY = "show_emoji_key"
+        private const val KEY_SHOW_COMMA_KEY = "show_comma_key"
+        private const val KEY_SHOW_PERIOD_KEY = "show_period_key"
+        const val DEFAULT_SHOW_BOTTOM_KEY = true
         private const val KEY_DIGIT_SWIPE_USED = "digit_swipe_used"
         private const val KEY_KEY_SOUND = "key_sound_enabled"
         const val DEFAULT_KEY_SOUND = true

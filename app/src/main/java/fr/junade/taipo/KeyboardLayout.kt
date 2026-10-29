@@ -412,13 +412,36 @@ object Keyboards {
         val language: KeyboardLanguage,
         val numberRow: Boolean,
         val fieldType: FieldType,
+        val bottomRowKeys: BottomRowKeys,
     )
 
-    /** Dispositions e-mail/URL, construites une fois (layoutOf est appelé à chaque frappe). */
+    /** Dispositions e-mail/URL et celles avec touches du bas masquées, construites une fois (layoutOf est appelé à chaque frappe). */
     private val fieldVariants = java.util.concurrent.ConcurrentHashMap<VariantKey, KeyboardLayout>()
 
     private fun KeyboardLayout.withCommaReplacedBy(replacement: Key) = copy(
         rows = rows.map { row -> row.map { key -> if (key.id == "comma") replacement else key } },
+    )
+
+    /**
+     * Retire de la rangée du bas les touches emoji, virgule et point désactivées dans les paramètres ; la barre d'espace
+     * reprend leur largeur (la rangée reste à 10 unités). La virgule remplacée par « @ » ou « / » dans les champs e-mail et
+     * URL n'est pas concernée : cette touche sert à saisir l'adresse, elle reste toujours affichée. Les touches « < » et
+     * « > » des symboles et les touches des pavés numériques ne sont pas non plus concernées.
+     */
+    private fun KeyboardLayout.withBottomRowKeys(keys: BottomRowKeys): KeyboardLayout = copy(
+        rows = rows.map { row ->
+            val hidden = row.filter { key ->
+                (key.id == "emoji" && !keys.emoji) || (key.id == "comma" && !keys.comma) || (key.id == "period" && !keys.period)
+            }
+            if (hidden.isEmpty() || row.none { it.action == KeyAction.Space }) {
+                row
+            } else {
+                val freedUnits = hidden.fold(0f) { acc, key -> acc + key.weight }
+                row.filterNot { it in hidden }.map { key ->
+                    if (key.action == KeyAction.Space) key.copy(weight = key.weight + freedUnits) else key
+                }
+            }
+        },
     )
 
     private fun baseLayoutOf(id: LayoutId, language: KeyboardLanguage, numberRow: Boolean): KeyboardLayout = when (id) {
@@ -437,12 +460,16 @@ object Keyboards {
      * Story 1.18 : selon [fieldType], un champ numérique ou téléphone affiche un pavé numérique
      * (quel que soit [id]) ; un champ e-mail ou URL remplace la virgule par « @ » ou « / », sur les
      * claviers de lettres et de symboles.
+     *
+     * [bottomRowKeys] : touches emoji, virgule et point à afficher dans la rangée du bas (paramètres du clavier) ;
+     * sans effet sur les pavés numériques.
      */
     fun layoutOf(
         id: LayoutId,
         language: KeyboardLanguage = KeyboardLanguage.FR,
         numberRow: Boolean = false,
         fieldType: FieldType = FieldType.TEXT,
+        bottomRowKeys: BottomRowKeys = BottomRowKeys.ALL,
     ): KeyboardLayout {
         val replacement = when (fieldType) {
             FieldType.NUMBER -> return numberPad
@@ -452,9 +479,10 @@ object Keyboards {
             FieldType.TEXT, FieldType.PASSWORD, FieldType.TERMINAL -> null
         }
         val base = baseLayoutOf(id, language, numberRow)
-        if (replacement == null) return base
-        return fieldVariants.getOrPut(VariantKey(base.id, language, numberRow, fieldType)) {
-            base.withCommaReplacedBy(replacement)
+        if (replacement == null && bottomRowKeys.isAll) return base
+        return fieldVariants.getOrPut(VariantKey(base.id, language, numberRow, fieldType, bottomRowKeys)) {
+            val withField = if (replacement == null) base else base.withCommaReplacedBy(replacement)
+            if (bottomRowKeys.isAll) withField else withField.withBottomRowKeys(bottomRowKeys)
         }
     }
 

@@ -17,6 +17,10 @@ class BackupCodecTest {
         ),
         keyboard = BackupKeyboardSettings(
             numberRow = true,
+            numberRowPasswordOnly = true,
+            showEmojiKey = false,
+            showCommaKey = true,
+            showPeriodKey = false,
             hapticIntensity = "light",
             keyboardHeight = "large",
             recentEmojis = listOf("😀", "👍"),

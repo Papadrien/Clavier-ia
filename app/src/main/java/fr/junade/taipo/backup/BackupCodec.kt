@@ -30,6 +30,10 @@ object BackupCodec {
     fun encode(data: BackupData): String {
         val keyboard = JSONObject().apply {
             data.keyboard.numberRow?.let { put("numberRow", it) }
+            data.keyboard.numberRowPasswordOnly?.let { put("numberRowPasswordOnly", it) }
+            data.keyboard.showEmojiKey?.let { put("showEmojiKey", it) }
+            data.keyboard.showCommaKey?.let { put("showCommaKey", it) }
+            data.keyboard.showPeriodKey?.let { put("showPeriodKey", it) }
             data.keyboard.hapticIntensity?.let { put("hapticIntensity", it) }
             data.keyboard.keyboardHeight?.let { put("keyboardHeight", it) }
             data.keyboard.recentEmojis?.let { put("recentEmojis", JSONArray(it)) }
@@ -80,6 +84,10 @@ object BackupCodec {
             pins = pins(root.optJSONArray("pinnedClips")),
             keyboard = BackupKeyboardSettings(
                 numberRow = keyboard.boolean("numberRow"),
+                numberRowPasswordOnly = keyboard.boolean("numberRowPasswordOnly"),
+                showEmojiKey = keyboard.boolean("showEmojiKey"),
+                showCommaKey = keyboard.boolean("showCommaKey"),
+                showPeriodKey = keyboard.boolean("showPeriodKey"),
                 hapticIntensity = keyboard.string("hapticIntensity"),
                 keyboardHeight = keyboard.string("keyboardHeight"),
                 recentEmojis = keyboard?.optJSONArray("recentEmojis")?.let(::strings),

@@ -55,7 +55,6 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     private val iconButtonWidth = dimen(R.dimen.taipo_bar_icon_button_width).toInt()
     private val minGap = dimen(R.dimen.taipo_bar_min_gap).toInt()
     private val fillGap = dimen(R.dimen.taipo_bar_gap).toInt()
-    private val paddingH = dimen(R.dimen.taipo_bar_padding_horizontal).toInt()
     private val paddingV = dimen(R.dimen.taipo_bar_padding_vertical).toInt()
     private val keyInset = dimen(R.dimen.taipo_key_inset).toInt()
 
@@ -158,7 +157,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             row.minGapPx = minGap
             row.fillGapPx = fillGap
             row.reservedEndPx = iconButtonWidth
-            row.setPadding(paddingH, paddingV, paddingH, paddingV)
+            row.setPadding(keyInset, paddingV, keyInset, paddingV)
         }
 
         // Rangée normale : Paramètres, Smart Clipboard, puce de collage, Annuler (puis Vocal, posé par-dessus).
@@ -242,7 +241,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             voiceButton,
             LayoutParams(iconButtonWidth, barHeight, Gravity.END or Gravity.TOP).apply {
                 topMargin = paddingV
-                marginEnd = paddingH
+                marginEnd = keyInset
             },
         )
 
@@ -311,13 +310,14 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     /**
      * Story 1.14 : en classe de largeur large (≥ 600 dp), les boutons restent alignés sur la zone centrée des touches (le
-     * fond de la barre garde toute la largeur). Vocal, toujours dernier, se cale sur le bord droit des touches (inset de touche).
+     * fond de la barre garde toute la largeur). Marges gauche et droite identiques : les boutons extrêmes (Paramètres / Robot et Vocal) se calent sur les bords des touches (inset de touche).
      */
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val available = MeasureSpec.getSize(widthMeasureSpec)
         val content = KeyboardWidth.forAvailableWidth(available.toFloat(), resources.displayMetrics.density)
-        val side = paddingH + content.leftPx.toInt()
-        val sideEnd = keyInset + content.leftPx.toInt()
+        // Même marge des deux côtés : le bord gauche (Paramètres / Robot) se cale sur les touches, comme Vocal à droite.
+        val side = keyInset + content.leftPx.toInt()
+        val sideEnd = side
         for (row in listOf(normalRow, typingRow)) {
             if (row.paddingLeft != side || row.paddingRight != sideEnd) row.setPadding(side, paddingV, sideEnd, paddingV)
         }

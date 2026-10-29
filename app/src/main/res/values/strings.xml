@@ -101,6 +101,12 @@
     <string name="button_keyboard_settings">Keyboard settings</string>
     <string name="keyboard_settings_title">Keyboard settings</string>
     <string name="keyboard_settings_number_row">Number row</string>
+    <string name="keyboard_settings_number_row_passwords">Number row in password fields only</string>
+    <string name="keyboard_settings_bottom_row_title">Bottom row keys</string>
+    <string name="keyboard_settings_show_emoji_key">Show the emoji key</string>
+    <string name="keyboard_settings_show_comma_key">Show the comma key</string>
+    <string name="keyboard_settings_show_period_key">Show the period key</string>
+    <string name="keyboard_settings_bottom_row_description">A hidden key gives its width to the space bar. Without the period key, its long-press symbols are no longer available. In email and web address fields, the \'@\' or \'/\' key always stays.</string>
     <string name="keyboard_settings_language_title">Keyboard language</string>
     <string name="keyboard_settings_language_auto">Automatic (phone language)</string>
     <string name="keyboard_settings_multilingual_switch">Multilingual keyboard</string>

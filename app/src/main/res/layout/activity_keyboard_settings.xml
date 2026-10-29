@@ -22,6 +22,48 @@
             android:layout_height="wrap_content"
             android:text="@string/keyboard_settings_number_row" />
 
+        <Switch
+            android:id="@+id/switch_number_row_passwords"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+            android:text="@string/keyboard_settings_number_row_passwords" />
+
+        <TextView
+            style="@style/TaipoText.Section"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/keyboard_settings_bottom_row_title"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+        <Switch
+            android:id="@+id/switch_show_emoji_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/keyboard_settings_show_emoji_key" />
+
+        <Switch
+            android:id="@+id/switch_show_comma_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+            android:text="@string/keyboard_settings_show_comma_key" />
+
+        <Switch
+            android:id="@+id/switch_show_period_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+            android:text="@string/keyboard_settings_show_period_key" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/keyboard_settings_bottom_row_description"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+
         <TextView
             style="@style/TaipoText.Section"
             android:layout_width="wrap_content"

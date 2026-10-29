@@ -214,6 +214,9 @@ class TaipoIme : InputMethodService() {
     // (onStartInputView) pour prendre en compte un changement fait dans les paramètres.
     private var numberRowEnabled = false
 
+    // Touches emoji, virgule et point de la rangée du bas : affichées ou masquées dans les paramètres, relues de la même façon.
+    private var bottomRowKeys = BottomRowKeys.ALL
+
     // Story 1.11 : niveau de retour haptique, relu de la même façon.
     private var hapticIntensity = HapticIntensity.DEFAULT
 
@@ -346,7 +349,7 @@ class TaipoIme : InputMethodService() {
         clipboard.start() // bases du presse-papiers + retour de l'écran de modification (story 2.6)
         suggestions.preloadDictionaries()
         preloadEmojiCatalog()
-        numberRowEnabled = keyboardPreferences.isNumberRowEnabled
+        refreshNumberRow()
         hapticIntensity = keyboardPreferences.hapticIntensity
         refreshKeySound()
         keyboardHeight = keyboardPreferences.keyboardHeight
@@ -385,7 +388,7 @@ class TaipoIme : InputMethodService() {
         // *changement* de subtype : on resynchronise ici explicitement au cas
         // où le subtype actif (choisi avant l'affichage du clavier, ou par
         // défaut au premier lancement) n'a jamais généré de callback.
-        numberRowEnabled = keyboardPreferences.isNumberRowEnabled
+        refreshNumberRow()
         hapticIntensity = keyboardPreferences.hapticIntensity
         refreshKeySound()
         keyboardHeight = keyboardPreferences.keyboardHeight
@@ -406,6 +409,7 @@ class TaipoIme : InputMethodService() {
             (info?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING == 0
         clipboard.pasteAllowedInField = SuggestionPolicy.allowsPasteSuggestion(info?.inputType ?: 0)
         fieldType = FieldType.of(info?.inputType ?: 0)
+        refreshNumberRow() // rangée de chiffres réservée aux champs mot de passe : dépend du type du champ qui vient de s'ouvrir
         // Adresse web (barre d'adresse et de recherche d'un navigateur) : mots proposés, mais rien n'est remplacé tout seul.
         suggestions.emojiAllowed = SuggestionPolicy.allowsEmojiSuggestions(info?.inputType ?: 0)
         suggestions.autocorrectsInField = autocorrectionAllowed()
@@ -1351,12 +1355,26 @@ class TaipoIme : InputMethodService() {
         }
     }
 
+    /**
+     * Rangée de chiffres affichée pour le champ courant : toujours, ou seulement dans un champ mot de passe (voir [NumberRowPolicy]).
+     * Relit aussi les touches du bas à afficher (emoji, virgule, point).
+     */
+    private fun refreshNumberRow() {
+        numberRowEnabled = NumberRowPolicy.shown(
+            always = keyboardPreferences.isNumberRowEnabled,
+            passwordFieldsOnly = keyboardPreferences.isNumberRowInPasswordFieldsOnly,
+            fieldType = fieldType,
+        )
+        bottomRowKeys = keyboardPreferences.bottomRowKeys
+    }
+
     private fun applyState() {
         // Hauteur constante : les pages de symboles (4 rangées) prennent la hauteur du clavier de lettres affiché,
         // qui compte une rangée de plus avec la rangée de chiffres. Évite de faire défiler l'application dessous.
         keyboardView.minRowCount =
-            Keyboards.layoutOf(LayoutId.LETTERS, controller.state.language, numberRowEnabled, fieldType).rows.size
-        keyboardView.layout = Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled, fieldType)
+            Keyboards.layoutOf(LayoutId.LETTERS, controller.state.language, numberRowEnabled, fieldType, bottomRowKeys).rows.size
+        keyboardView.layout =
+            Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled, fieldType, bottomRowKeys)
         keyboardView.isShifted = controller.state.isShifted
         keyboardView.isCapsLock = controller.state.isCapsLock
         keyboardView.isEnterLongPressEnabled = MultilingualChoice.isActive(keyboardPreferences.multilingualLanguages)

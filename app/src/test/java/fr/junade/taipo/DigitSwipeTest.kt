@@ -24,4 +24,17 @@ class DigitSwipeTest {
         assertFalse(DigitSwipe.isTriggered(dx = 0f, dy = -60f, thresholdPx = 40f))
         assertFalse(DigitSwipe.isTriggered(dx = 70f, dy = 50f, thresholdPx = 40f))
     }
+
+    @Test
+    fun `l avancement monte de zero a un puis reste plafonne`() {
+        assertEquals(0.5f, DigitSwipe.progress(dx = 0f, dy = 20f, thresholdPx = 40f))
+        assertEquals(1f, DigitSwipe.progress(dx = 0f, dy = 80f, thresholdPx = 40f))
+    }
+
+    @Test
+    fun `l avancement reste nul vers le haut, plus horizontal que vertical ou sans seuil`() {
+        assertEquals(0f, DigitSwipe.progress(dx = 0f, dy = -5f, thresholdPx = 40f))
+        assertEquals(0f, DigitSwipe.progress(dx = 70f, dy = 50f, thresholdPx = 40f))
+        assertEquals(0f, DigitSwipe.progress(dx = 0f, dy = 10f, thresholdPx = 0f))
+    }
 }

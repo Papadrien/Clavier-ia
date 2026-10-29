@@ -183,6 +183,7 @@ class KeyboardView(context: Context) : View(context) {
 
     private val longPressRunnable = Runnable {
         val key = pressedKey ?: return@Runnable
+        digitSwipeAnimation.cancel()
         val digit = key.longPressChar
         if (key.action is KeyAction.Enter) {
             // Bulle à une cellule (globe) : relâcher dessus change de langue, relâcher ailleurs ferme la bulle sans
@@ -316,9 +317,14 @@ class KeyboardView(context: Context) : View(context) {
         halfLengthPx = { resources.getDimension(R.dimen.taipo_space_bar_length) },
     )
 
+    // Animation « Élastique » du glissement vers le bas qui saisit le chiffre d'une touche du haut : la touche s'étire, la lettre
+    // s'enfonce, le chiffre éclot puis, au relâchement, sort par le haut de la touche et revient en petit (voir DigitSwipeAnimation).
+    private val digitSwipeAnimation = DigitSwipeAnimation(animationsEnabled = { ValueAnimator.areAnimatorsEnabled() })
+
     init {
         keyRenderer.shiftAnimation = shiftAnimation
         keyRenderer.spaceBarAnimation = spaceBarAnimation
+        keyRenderer.digitSwipeAnimation = digitSwipeAnimation
     }
 
     override fun onDetachedFromWindow() {
@@ -326,6 +332,7 @@ class KeyboardView(context: Context) : View(context) {
         backspaceAnimation.cancel()
         shiftAnimation.cancel()
         spaceBarAnimation.cancel()
+        digitSwipeAnimation.cancel()
         shiftSeeded = false
         keyRenderer.backspaceIconAngle = 0f
         repeatHandler.removeCallbacksAndMessages(null)
@@ -424,28 +431,46 @@ class KeyboardView(context: Context) : View(context) {
         if (backspaceAnimation.isRunning) backspaceAnimation.advance(now)
         if (shiftAnimation.isRunning) shiftAnimation.advance(now)
         if (spaceBarAnimation.isRunning) spaceBarAnimation.advance(now)
+        if (digitSwipeAnimation.isRunning) digitSwipeAnimation.advance(now)
         keyRenderer.backspaceIconAngle = backspaceAnimation.iconAngle
 
         val unit = content.widthPx / layout.referenceUnits
+        // La touche dont le chiffre s'anime s'étire vers le bas : elle est dessinée en dernier, par-dessus la rangée du dessous.
+        var swipingKey: Key? = null
+        var swipingLeft = 0f
+        var swipingTop = 0f
+        var swipingWidth = 0f
         layout.rows.forEachIndexed { rowIndex, row ->
             val top = rowIndex * rowHeight
             var left = content.leftPx + layout.rowStartUnits(row) * unit
 
             row.forEach { key ->
                 val keyWidth = unit * key.weight
-                keyRenderer.draw(
-                    canvas, key, left, top, keyWidth, rowHeight, inset,
-                    dims, layout, isShifted, pressedKey,
-                )
+                if (digitSwipeAnimation.isAnimating(key)) {
+                    swipingKey = key
+                    swipingLeft = left
+                    swipingTop = top
+                    swipingWidth = keyWidth
+                } else {
+                    keyRenderer.draw(
+                        canvas, key, left, top, keyWidth, rowHeight, inset,
+                        dims, layout, isShifted, pressedKey,
+                    )
+                }
                 left += keyWidth
             }
+        }
+        swipingKey?.let { key ->
+            keyRenderer.draw(canvas, key, swipingLeft, swipingTop, swipingWidth, rowHeight, inset, dims, layout, isShifted, pressedKey)
         }
 
         sparkPainter.draw(canvas, shiftAnimation.sparks)
         drawTouchZones(canvas)
         drawPopup(canvas)
         drawPreview(canvas)
-        if (backspaceAnimation.isRunning || shiftAnimation.isRunning || spaceBarAnimation.isRunning) postInvalidateOnAnimation()
+        if (backspaceAnimation.isRunning || shiftAnimation.isRunning || spaceBarAnimation.isRunning || digitSwipeAnimation.isRunning) {
+            postInvalidateOnAnimation()
+        }
     }
 
     // Multi-touch : en frappe rapide, le doigt suivant se pose avant que le précédent soit levé.
@@ -508,6 +533,8 @@ class KeyboardView(context: Context) : View(context) {
         backspaceSwipe.reset()
         deleteSwipeWords = 0
         pressedKey = keyAt(x, y)
+        digitSwipeAnimation.cancel()
+        pressedKey?.takeIf { it.longPressChar != null }?.let { digitSwipeAnimation.onPress(it) }
         keyPreview.key = pressedKey.takeIf { showsPreview(it) }
         if (pressedKey?.action is KeyAction.Space) spaceSwipe.onDown(x)
         if (pressedKey?.action is KeyAction.Backspace) {
@@ -550,15 +577,32 @@ class KeyboardView(context: Context) : View(context) {
                 return
             }
         }
+        trackDigitSwipe(x, y)
         if (commitDigitSwipe(x, y)) return
         val current = keyAt(x, y)
         if (current != pressedKey) {
             cancelKeyLongPress()
+            digitSwipeAnimation.cancel()
             pressedKey = current
             keyPreview.key = current.takeIf { showsPreview(it) }
             startRepeat(current)
             invalidate()
         }
+    }
+
+    /**
+     * Suit le glissement vers le bas d'une touche du haut pour l'animation « Élastique » du chiffre : la touche s'étire à mesure
+     * que le doigt approche du seuil. La bulle d'agrandissement de la lettre disparaît dès que le glissement s'engage.
+     */
+    private fun trackDigitSwipe(x: Float, y: Float) {
+        val key = pressedKey ?: return
+        if (!digitSwipeAnimation.isTracking(key)) return
+        val keyHeight = keyBounds(key)?.height() ?: return
+        val slop = ViewConfiguration.get(context).scaledTouchSlop.toFloat()
+        val progress = DigitSwipe.progress(x - downX, y - downY, DigitSwipe.threshold(keyHeight, slop))
+        digitSwipeAnimation.onDrag(progress)
+        if (progress > PREVIEW_HIDE_PROGRESS) keyPreview.key = null
+        invalidate()
     }
 
     /**
@@ -574,6 +618,7 @@ class KeyboardView(context: Context) : View(context) {
         cancelKeyLongPress()
         longPressCommitted = true
         keyPreview.key = null
+        digitSwipeAnimation.onCommit()
         keyListener?.onKey(Key("longpress_$digit", digit.toString(), KeyAction.TypeChar(digit)))
         digitHintListener?.onSwipeDigit()
         invalidate()
@@ -583,6 +628,7 @@ class KeyboardView(context: Context) : View(context) {
     /** Relâchement du doigt actif en (x, y) : saisit la touche, le symbole de la bulle, ou rien. */
     private fun releaseTouch(x: Float, y: Float) {
         spaceBarAnimation.onRelease()
+        digitSwipeAnimation.onRelease()
         stopRepeat()
         cancelKeyLongPress()
         keyPreview.key = null
@@ -672,6 +718,7 @@ class KeyboardView(context: Context) : View(context) {
         if (backspaceSwipe.isActive) deleteSwipeListener?.onDeleteSwipeCancel()
         backspaceAnimation.onSwipeCancel()
         spaceBarAnimation.onRelease()
+        digitSwipeAnimation.onRelease()
         deleteSwipeWords = 0
         stopRepeat()
         cancelKeyLongPress()
@@ -868,6 +915,9 @@ class KeyboardView(context: Context) : View(context) {
     private fun dp(value: Float): Float = value * resources.displayMetrics.density
 
     private companion object {
+        /** Avancement du glissement du chiffre à partir duquel la bulle d'agrandissement de la lettre est masquée. */
+        const val PREVIEW_HIDE_PROGRESS = 0.15f
+
         /** Lot 21 : « pas de caractère » (voir [KeyRenderer.shiftedChar]). */
         const val NO_CHAR = KeyRenderer.NO_CHAR
 
