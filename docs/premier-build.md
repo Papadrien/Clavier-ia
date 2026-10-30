@@ -387,3 +387,25 @@ comme dans le prompt (`applyDictionaryAutocorrection`, `applyPromptAutocorrectio
 Non compilé ni exécuté ici. Smoke test manuel : « a demain », « je vais a Paris », « quelque chose a manger »,
 « j'ai a faire », « il a manger », « il faut mangé », « à côté », « il a mangé » (inchangés), retour arrière après
 chaque correction, même chose dans le prompt.
+
+## Participe passé selon l'auxiliaire : autocorrection et bande de suggestions (29/10/2026)
+
+Analyse unique : `FrenchContextCorrector.participleFor(texte, frequencyOf)` renvoie un `ParticipleFix(form, automatic)` pour
+le dernier mot, d'après l'auxiliaire qui le précède (avoir : « j'ai », « il a », « nous avons »... ; être avec je/tu/il/on/elle).
+L'autocorrection (`fixParticiple`) et la bande de suggestions (`SuggestionController.refresh`) l'utilisent toutes deux.
+
+- **Autocorrection à l'espace** : « il a parle » -> « parlé », « elle est arrive » -> « arrivée », « j'ai observe » -> « observé ».
+  Après une forme de **avoir**, le rapport de fréquences exigé (forme en -é / forme en -e) passe de 1/11 à 1/50
+  (`AVOIR_SHARE_DIVISOR`) : un mot nu en -e juste après « j'ai » est presque toujours un participe. Noms de locutions exclus :
+  « j'ai envie / honte / hâte / peine / classe » (`NOUNS_AFTER_AVOIR`). Après **être**, le seuil reste 1/11 (« il est calme »).
+- **Bande de suggestions** : mot valide après un auxiliaire = le participe est au **centre**.
+  - Correction sûre (`automatic`) : [mot tapé, participe en gras, 1re complétion] (comme une faute du dictionnaire).
+  - Pas assez sûre (après être, forme en -é entre 1/11 et 1/30 de la forme en -e) : [complétion, participe en poids normal,
+    complétion], à toucher pour l'adopter. Après être sous 1/30 (« il est calme ») : rien. Après avoir : toujours proposé.
+  - Une faute du dictionnaire garde sa correction ; le participe n'est pas répété dans les complétions ; la casse du mot
+    tapé est reprise ; même comportement quand le curseur est posé sur un mot déjà écrit (`placementSlotsFor`).
+  - Dans un champ sans autocorrection, le centre s'affiche en poids normal (`plainIfNoAutocorrect`, existant).
+- **Non couvert** : sujets pluriels (« ils sont arrive » -> « arrivés »), accord avec un COD (« la pomme que j'ai mangé »),
+  noms sujets (« le chat a observe »).
+- Tests : `FrenchContextCorrectorTest` (règle avoir/être, `participleFor`), `DictionarySuggestionsTest` (emplacements).
+  366 tests du module core passent hors Gradle (doublure JUnit) ; non compilé sur Android (`SuggestionController`).

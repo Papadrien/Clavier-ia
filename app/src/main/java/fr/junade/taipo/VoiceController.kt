@@ -240,7 +240,7 @@ class VoiceController(
         voiceStartJob = scope.launch(start = CoroutineStart.UNDISPATCHED) {
             try {
                 voiceEngine.ensureLoaded()
-                val recorder = VoiceRecorder(voiceEngine, scope)
+                val recorder = VoiceRecorder(context, voiceEngine, scope)
                 recorder.onSilenceTimeout = {
                     // Appelé depuis le thread d'enregistrement (décision 6.3, mode appui
                     // bref uniquement) : on revient sur le thread principal pour arrêter proprement.

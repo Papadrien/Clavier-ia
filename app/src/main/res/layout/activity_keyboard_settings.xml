@@ -82,60 +82,24 @@
             style="@style/TaipoText.Section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_language_title"
+            android:text="@string/languages_title"
             android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
             android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
 
-        <!-- Liste déroulante (Automatique + une langue) remplie par KeyboardSettingsActivity. -->
-        <Spinner
-            android:id="@+id/spinner_language"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <Switch
-            android:id="@+id/switch_multilingual"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
-            android:text="@string/keyboard_settings_multilingual_switch" />
-
-        <!-- Une case par langue, remplie par KeyboardSettingsActivity ; visible seulement si le mode est activé. -->
+        <!-- Une ligne vers l'écran « Langues » (liste des langues, disposition et dictionnaire de chacune) ; résumé posé par KeyboardSettingsActivity. -->
         <LinearLayout
-            android:id="@+id/layout_multilingual_languages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone" />
+            android:background="@drawable/bg_settings_card"
+            android:clipToOutline="true">
 
-        <TextView
-            android:id="@+id/text_multilingual_min"
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_multilingual_min"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs"
-            android:visibility="gone" />
-
-        <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_multilingual_description"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
-
-        <TextView
-            style="@style/TaipoText.Section"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_dictionaries_title"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xxl" />
-
-        <!-- Une ligne par langue utilisée, remplie par DictionaryStatusSection. -->
-        <LinearLayout
-            android:id="@+id/layout_dictionaries"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            <include
+                android:id="@+id/button_languages"
+                layout="@layout/view_settings_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
         <TextView
             style="@style/TaipoText.Section"

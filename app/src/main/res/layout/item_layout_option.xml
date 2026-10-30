@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Une disposition au choix dans le détail d'une langue : bouton radio, nom, note et aperçu des touches.
+     Posée par LanguageDetailActivity (le fond de la ligne choisie et le bouton radio y sont réglés). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/taipo_settings_row_min_height"
+    android:paddingStart="@dimen/taipo_settings_card_padding"
+    android:paddingEnd="@dimen/taipo_settings_card_padding"
+    android:paddingTop="@dimen/taipo_settings_gap_md"
+    android:paddingBottom="@dimen/taipo_settings_gap_md"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/layout_option_radio"
+        android:layout_width="@dimen/taipo_icon_size"
+        android:layout_height="@dimen/taipo_icon_size"
+        android:src="@drawable/ic_radio_off"
+        android:importantForAccessibility="no" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/taipo_settings_gap_md"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/TaipoText.Lead"
+            android:id="@+id/layout_option_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:id="@+id/layout_option_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+    </LinearLayout>
+
+    <!-- Trois rangées de petits carrés, une par rangée de lettres (posées par le code). -->
+    <LinearLayout
+        android:id="@+id/layout_option_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/taipo_settings_gap_md"
+        android:orientation="vertical"
+        android:importantForAccessibility="no" />
+</LinearLayout>

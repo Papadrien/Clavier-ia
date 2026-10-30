@@ -21,8 +21,12 @@ package fr.junade.taipo.dictionary
  *   devient un infinitif (« il faut mangé » -> « il faut manger »).
  * - **accent oublié d'un participe** : après un auxiliaire, un mot en -e dont la forme en -é est un participe courant
  *   reçoit son accent (« il a parle » -> « il a parlé »). Le dictionnaire seul ne peut pas trancher : « parle » et
- *   « parlé » sont deux mots corrects. Les mots dont la forme en -é est très rare (« j'ai envie », « il est calme »)
- *   ne sont jamais touchés.
+ *   « parlé » sont deux mots corrects. Après une forme de avoir (« j'ai », « il a », « nous avons »), un mot nu en -e
+ *   ne peut quasiment être qu'un participe : le rapport de fréquences exigé est large ([AVOIR_SHARE_DIVISOR]), sauf pour
+ *   les noms des locutions (« j'ai envie », « j'ai hâte », voir [NOUNS_AFTER_AVOIR]). Après être, où l'adjectif est
+ *   fréquent (« il est calme »), le rapport reste strict ([ACCENTED_SHARE_DIVISOR]). La bande de suggestions
+ *   utilise la même analyse ([participleFor]) : quand la correction n'est pas assez sûre pour être appliquée seule,
+ *   le participe est tout de même proposé au centre de la bande.
  *
  * Non couvert : l'accord du participe (« elles sont parti »), les noms sujets (« le chat a manger » reste inchangé,
  * ce peut être « à » comme « a mangé »). Logique pure (sans Android), testée en JVM.
@@ -252,35 +256,9 @@ object FrenchContextCorrector {
         if (!token.isPlain || token.hasElision) return text
         val word = token.core
 
-        // Infinitif juste après un auxiliaire : « il a manger » -> « il a mangé ».
-        val participle = participleOf(word, frequencyOf)
-        if (participle != null) {
-            val gender = auxiliaryAgreement(tokens, last)
-            if (gender != null) {
-                val feminine = participle + "e"
-                val form = if (gender == FEMININE && frequencyOf(feminine) >= MIN_FREQUENCY) feminine else participle
-                return replaceToken(text, token, withOriginalCase(token.raw, form))
-            }
-        }
-
-        // Accent oublié d'un participe juste après un auxiliaire : « il a parle » -> « il a parlé ». Deux garde-fous :
-        // la forme en -é doit être un vrai mot (fréquence minimale) et ne pas être très rare face à la forme en -e
-        // (« envie », « calme », « compte » sont des noms ou des adjectifs, pas des participes sans accent).
-        if (word.length >= 4 && word.endsWith("e")) {
-            val accented = word.dropLast(1) + "é"
-            val accentedFrequency = frequencyOf(accented)
-            if (accentedFrequency >= MIN_FREQUENCY &&
-                accentedFrequency * ACCENTED_SHARE_DIVISOR >= frequencyOf(word) &&
-                accented !in NOUN_LIKE_PARTICIPLES
-            ) {
-                val gender = auxiliaryAgreement(tokens, last)
-                if (gender != null) {
-                    val feminine = accented + "e"
-                    val form = if (gender == FEMININE && frequencyOf(feminine) >= MIN_FREQUENCY) feminine else accented
-                    return replaceToken(text, token, withOriginalCase(token.raw, form))
-                }
-            }
-        }
+        // Infinitif ou accent oublié juste après un auxiliaire : « il a manger » -> « il a mangé », « il a parle » -> « il a parlé ».
+        val fix = participleAt(tokens, last, frequencyOf)
+        if (fix != null && fix.automatic) return replaceToken(text, token, withOriginalCase(token.raw, fix.form))
 
         // Participe en -é après un verbe qui appelle l'infinitif : « il faut mangé » -> « il faut manger ».
         if (word.endsWith("é") && word.length >= 4 && word !in NOUN_LIKE_PARTICIPLES && followsInfinitiveTrigger(tokens, last)) {
@@ -288,6 +266,51 @@ object FrenchContextCorrector {
             if (frequencyOf(infinitive) >= MIN_FREQUENCY) return replaceToken(text, token, withOriginalCase(token.raw, infinitive))
         }
         return text
+    }
+
+    /**
+     * Le participe passé que le dernier mot de [text] (le texte avant le curseur, sans espace finale) devrait être,
+     * d'après l'auxiliaire qui le précède, ou null : voir [ParticipleFix]. C'est l'analyse de l'autocorrection,
+     * exposée pour que la bande de suggestions montre la même chose (et propose le participe quand il n'est pas
+     * assez sûr pour être appliqué seul). La casse du mot tapé n'est pas reprise.
+     */
+    fun participleFor(text: String, frequencyOf: (String) -> Long): ParticipleFix? {
+        if (text.isEmpty() || text.last().isWhitespace()) return null
+        val tokens = tokenize(text)
+        if (tokens.isEmpty()) return null
+        return participleAt(tokens, tokens.lastIndex, frequencyOf)
+    }
+
+    private fun participleAt(tokens: List<Token>, index: Int, frequencyOf: (String) -> Long): ParticipleFix? {
+        val token = tokens[index]
+        if (!token.isPlain || token.hasElision) return null
+        val word = token.core
+        val auxiliary = auxiliaryAgreement(tokens, index) ?: return null
+
+        // Infinitif juste après un auxiliaire : « il a manger » -> « il a mangé ».
+        participleOf(word, frequencyOf)?.let { return ParticipleFix(agreed(it, auxiliary, frequencyOf), automatic = true) }
+
+        // Accent oublié : « il a parle » -> « il a parlé ». Garde-fous : la forme en -é doit être un vrai mot (fréquence
+        // minimale) et, pour être appliquée seule, ne pas être très rare face à la forme en -e (« calme », « comptes »
+        // sont des noms ou des adjectifs, pas des participes sans accent). Après avoir, le rapport exigé est bien plus
+        // large : un mot nu en -e juste après « j'ai » est presque toujours un participe.
+        if (word.length < 4 || !word.endsWith("e") || word in NOUNS_AFTER_AVOIR) return null
+        val accented = word.dropLast(1) + "é"
+        val accentedFrequency = frequencyOf(accented)
+        if (accentedFrequency < MIN_FREQUENCY) return null
+        val wordFrequency = frequencyOf(word)
+        val form = agreed(accented, auxiliary, frequencyOf)
+        val automatic = accented !in NOUN_LIKE_PARTICIPLES &&
+            accentedFrequency * (if (auxiliary.isAvoir) AVOIR_SHARE_DIVISOR else ACCENTED_SHARE_DIVISOR) >= wordFrequency
+        // Proposé sans être appliqué : après avoir toujours ; après être seulement si la forme en -é n'est pas négligeable.
+        val suggestible = automatic || auxiliary.isAvoir || accentedFrequency * SUGGESTED_SHARE_DIVISOR >= wordFrequency
+        return if (suggestible) ParticipleFix(form, automatic) else null
+    }
+
+    /** [participle] accordé : féminin (« arrivée ») après « elle est », si cette forme est un vrai mot. */
+    private fun agreed(participle: String, auxiliary: Auxiliary, frequencyOf: (String) -> Long): String {
+        val feminine = participle + "e"
+        return if (auxiliary.agreement == FEMININE && frequencyOf(feminine) >= MIN_FREQUENCY) feminine else participle
     }
 
     /**
@@ -307,9 +330,9 @@ object FrenchContextCorrector {
 
     /**
      * Le mot tokens[index] suit-il un auxiliaire (avec au plus deux adverbes entre les deux) ? Renvoie null sinon,
-     * MASCULINE ou FEMININE (sujet « elle » avec être) selon l'accord à donner au participe.
+     * sinon l'[Auxiliary] : son accord (MASCULINE, ou FEMININE pour le sujet « elle » avec être) et s'il s'agit du verbe avoir.
      */
-    private fun auxiliaryAgreement(tokens: List<Token>, index: Int): Int? {
+    private fun auxiliaryAgreement(tokens: List<Token>, index: Int): Auxiliary? {
         var k = index - 1
         var skipped = 0
         while (k >= 0 && skipped < 2 && tokens[k].isPlain && tokens[k].core in ADVERBS_BETWEEN) {
@@ -327,17 +350,19 @@ object FrenchContextCorrector {
                 // (« Paul a manger »), ou une élision (« l'a manger »).
                 val clear = auxiliary.hasElision ||
                     (before != null && ((isSubjectLike(before) && before.core != "y") || before.isCapitalized))
-                if (clear) MASCULINE else null
+                if (clear) Auxiliary(MASCULINE, isAvoir = true) else null
             }
-            head in AVOIR_FORMS -> MASCULINE
+            head in AVOIR_FORMS -> Auxiliary(MASCULINE, isAvoir = true)
             head in ETRE_FORMS && !auxiliary.hasElision && auxiliary.isPlain && before != null -> when (before.core) {
-                "je", "tu", "il", "on" -> MASCULINE
-                "elle" -> FEMININE
+                "je", "tu", "il", "on" -> Auxiliary(MASCULINE, isAvoir = false)
+                "elle" -> Auxiliary(FEMININE, isAvoir = false)
                 else -> null
             }
             else -> null
         }
     }
+
+    private class Auxiliary(val agreement: Int, val isAvoir: Boolean)
 
     /** Le mot tokens[index] suit-il un verbe ou une préposition qui appelle l'infinitif (au plus un adverbe entre) ? */
     private fun followsInfinitiveTrigger(tokens: List<Token>, index: Int): Boolean {
@@ -361,6 +386,18 @@ object FrenchContextCorrector {
      * forme en -e : « pensé » (24 %), « aimé » (11 %) oui ; « calmé » (2 %), « comptes » (4 %), « placé » (6,5 %) non.
      */
     private const val ACCENTED_SHARE_DIVISOR = 11L
+
+    /**
+     * Après une forme de avoir, le rapport exigé est de 1/50 : « regardé » (12 %), « resté » (8 %), « porté » ou
+     * « tombé » passent, alors que presque aucun nom en -e ne suit « j'ai » sans article (voir [NOUNS_AFTER_AVOIR]).
+     */
+    private const val AVOIR_SHARE_DIVISOR = 50L
+
+    /** Seuil (1/30) pour proposer, sans l'appliquer, le participe d'un mot en -e après être : « resté » (8 %) oui, « calmé » (2 %) non. */
+    private const val SUGGESTED_SHARE_DIVISOR = 30L
+
+    /** Noms en -e qui suivent « avoir » sans article (« j'ai envie », « j'ai hâte ») : jamais pris pour un participe sans accent. */
+    private val NOUNS_AFTER_AVOIR = setOf("envie", "honte", "hâte", "peine", "classe")
 
     private const val MASCULINE = 0
     private const val FEMININE = 1
@@ -513,3 +550,10 @@ object FrenchContextCorrector {
         "produire" to "produit", "traduire" to "traduit",
     )
 }
+
+/**
+ * Participe passé attendu à la place d'un mot, d'après l'auxiliaire qui le précède (voir
+ * [FrenchContextCorrector.participleFor]). [form] : le participe, accordé si besoin (« arrivée » après « elle est »),
+ * en minuscules. [automatic] : assez sûr pour remplacer le mot à l'espace ; sinon il est seulement proposé dans la bande.
+ */
+class ParticipleFix(val form: String, val automatic: Boolean)

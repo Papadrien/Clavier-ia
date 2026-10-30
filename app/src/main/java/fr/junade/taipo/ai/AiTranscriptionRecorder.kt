@@ -1,5 +1,6 @@
 package fr.junade.taipo.ai
 
+import android.content.Context
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
@@ -22,7 +23,9 @@ import kotlinx.coroutines.launch
  *
  * L'appelant vérifie la permission RECORD_AUDIO avant [start]. Toutes les méthodes se rappellent depuis le thread principal.
  */
-class AiTranscriptionRecorder(private val scope: CoroutineScope) {
+class AiTranscriptionRecorder(context: Context, private val scope: CoroutineScope) {
+
+    private val audioFocus = RecordingAudioFocus(context)
 
     private var record: AudioRecord? = null
     private var captureJob: Job? = null
@@ -56,14 +59,18 @@ class AiTranscriptionRecorder(private val scope: CoroutineScope) {
             audioRecord.release()
             throw MicUnavailableException("AudioRecord not initialized (state ${audioRecord.state})")
         }
+        // Met en pause la lecture audio des autres applications avant d'ouvrir le micro.
+        audioFocus.acquire()
         try {
             audioRecord.startRecording()
         } catch (e: IllegalStateException) {
             audioRecord.release()
+            audioFocus.release()
             throw MicUnavailableException("Microphone start refused", e)
         }
         if (audioRecord.recordingState != AudioRecord.RECORDSTATE_RECORDING) {
             audioRecord.release()
+            audioFocus.release()
             throw MicUnavailableException("The microphone did not switch to recording")
         }
         record = audioRecord
@@ -135,6 +142,7 @@ class AiTranscriptionRecorder(private val scope: CoroutineScope) {
             }
         }
         record = null
+        audioFocus.release()
     }
 
     companion object {

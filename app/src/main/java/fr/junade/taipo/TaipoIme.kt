@@ -477,7 +477,7 @@ class TaipoIme : InputMethodService() {
             this,
             AnalyticsEvents.KEYBOARD_LANGUAGE,
             "lang" to language.tag,
-            "layout" to AnalyticsEvents.layoutOf(language),
+            "layout" to keyboardPreferences.letterArrangementOf(language).tag,
             "auto" to (keyboardPreferences.keyboardLanguage == null),
         )
     }
@@ -1384,10 +1384,12 @@ class TaipoIme : InputMethodService() {
     private fun applyState() {
         // Hauteur constante : les pages de symboles (4 rangées) prennent la hauteur du clavier de lettres affiché,
         // qui compte une rangée de plus avec la rangée de chiffres. Évite de faire défiler l'application dessous.
+        // Disposition des lettres choisie pour la langue active (écran « Langues » des paramètres).
+        val arrangement = keyboardPreferences.letterArrangementOf(controller.state.language)
         keyboardView.minRowCount =
-            Keyboards.layoutOf(LayoutId.LETTERS, controller.state.language, numberRowEnabled, fieldType, bottomRowKeys).rows.size
+            Keyboards.layoutOf(LayoutId.LETTERS, controller.state.language, numberRowEnabled, fieldType, bottomRowKeys, arrangement).rows.size
         keyboardView.layout =
-            Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled, fieldType, bottomRowKeys)
+            Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled, fieldType, bottomRowKeys, arrangement)
         keyboardView.isShifted = controller.state.isShifted
         keyboardView.isCapsLock = controller.state.isCapsLock
         keyboardView.isEnterLongPressEnabled = MultilingualChoice.isActive(keyboardPreferences.multilingualLanguages)

@@ -367,11 +367,83 @@ object Keyboards {
         KeyboardLanguage.NL to qwertyBase(accentsNl),
     ).mapValues { (_, base) -> LetterSet(base, { it.withTopRowLongPressDigits() }, { it.withNumberRow() }) }
 
-    /** Disposition des lettres de [language], avec ou sans rangée de chiffres. */
-    fun lettersOf(language: KeyboardLanguage, numberRow: Boolean = false): KeyboardLayout = when (language) {
+    /** Disposition d'origine des lettres de [language] ([LetterArrangement.defaultFor]), avec ou sans rangée de chiffres. */
+    private fun defaultLettersOf(language: KeyboardLanguage, numberRow: Boolean): KeyboardLayout = when (language) {
         KeyboardLanguage.FR -> if (numberRow) lettersWithNumberRow else letters
         KeyboardLanguage.EN -> if (numberRow) lettersEnWithNumberRow else lettersEn
         else -> otherLetterSets.getValue(language).let { if (numberRow) it.numbered else it.plain }
+    }
+
+    /**
+     * Accents de l'appui long pour [language] sur la disposition [arrangement]. L'espagnol sans touche Ñ (hors
+     * [LetterArrangement.QWERTY_N]) saisit le « ñ » par un appui long sur le N.
+     */
+    private fun accentsOf(language: KeyboardLanguage, arrangement: LetterArrangement): Map<Char, String> = when (language) {
+        KeyboardLanguage.FR -> accentsFr
+        KeyboardLanguage.EN -> accentsEn
+        KeyboardLanguage.ES -> if (arrangement == LetterArrangement.QWERTY_N) accentsEs else accentsEs + ('n' to "ñ")
+        KeyboardLanguage.DE -> accentsDe
+        KeyboardLanguage.IT -> accentsIt
+        KeyboardLanguage.PT -> accentsPt
+        KeyboardLanguage.NL -> accentsNl
+    }
+
+    /**
+     * Lettres de [language] sur une disposition choisie dans les paramètres (autre que celle d'origine de la langue) :
+     * mêmes accents, mêmes largeurs de touches (10 unités par rangée ; la rangée à 9 touches est centrée). Le
+     * Colemak garde 10 touches en haut grâce à l'apostrophe, à la place du point-virgule.
+     */
+    private fun lettersBaseFor(language: KeyboardLanguage, arrangement: LetterArrangement): KeyboardLayout {
+        val accents = accentsOf(language, arrangement)
+        fun row(chars: String) = chars.map { letter(it, accents) }
+        val rows = when (arrangement) {
+            LetterArrangement.AZERTY -> listOf(
+                row("azertyuiop"),
+                row("qsdfghjklm"),
+                listOf(shiftKey(1.4f)) + row("wxcvbn") + listOf(apostrophe, backspace),
+            )
+            LetterArrangement.QWERTY -> listOf(
+                row("qwertyuiop"),
+                row("asdfghjkl"),
+                listOf(shiftKey()) + row("zxcvbnm") + listOf(backspaceQwerty),
+            )
+            LetterArrangement.QWERTZ -> listOf(
+                row("qwertzuiop"),
+                row("asdfghjkl"),
+                listOf(shiftKey()) + row("yxcvbnm") + listOf(backspaceQwerty),
+            )
+            LetterArrangement.QWERTY_N -> listOf(
+                row("qwertyuiop"),
+                row("asdfghjklñ"),
+                listOf(shiftKey()) + row("zxcvbnm") + listOf(backspaceQwerty),
+            )
+            LetterArrangement.COLEMAK -> listOf(
+                row("qwfpgjluy") + listOf(apostrophe),
+                row("arstdhneio"),
+                listOf(shiftKey()) + row("zxcvbkm") + listOf(backspaceQwerty),
+            )
+        }
+        val bottom = listOf(toggleLetters) + if (language == KeyboardLanguage.ES) punctuationRowEs else punctuationRow
+        return KeyboardLayout(id = LayoutId.LETTERS, rows = rows + listOf(bottom))
+    }
+
+    /** Dispositions choisies autres que celle d'origine, construites une fois par couple langue × disposition. */
+    private val customLetterSets = java.util.concurrent.ConcurrentHashMap<Pair<KeyboardLanguage, LetterArrangement>, LetterSet>()
+
+    /**
+     * Disposition des lettres de [language], avec ou sans rangée de chiffres, sur la disposition [arrangement] (celle
+     * d'origine de la langue par défaut : les dispositions d'origine ne sont pas reconstruites).
+     */
+    fun lettersOf(
+        language: KeyboardLanguage,
+        numberRow: Boolean = false,
+        arrangement: LetterArrangement = LetterArrangement.defaultFor(language),
+    ): KeyboardLayout {
+        if (arrangement == LetterArrangement.defaultFor(language)) return defaultLettersOf(language, numberRow)
+        val set = customLetterSets.getOrPut(language to arrangement) {
+            LetterSet(lettersBaseFor(language, arrangement), { it.withTopRowLongPressDigits() }, { it.withNumberRow() })
+        }
+        return if (numberRow) set.numbered else set.plain
     }
 
     private fun KeyboardLayout.withNumberRow() = copy(rows = listOf(numberRow) + rows)
@@ -413,6 +485,7 @@ object Keyboards {
         val numberRow: Boolean,
         val fieldType: FieldType,
         val bottomRowKeys: BottomRowKeys,
+        val arrangement: LetterArrangement,
     )
 
     /** Dispositions e-mail/URL et celles avec touches du bas masquées, construites une fois (layoutOf est appelé à chaque frappe). */
@@ -444,8 +517,13 @@ object Keyboards {
         },
     )
 
-    private fun baseLayoutOf(id: LayoutId, language: KeyboardLanguage, numberRow: Boolean): KeyboardLayout = when (id) {
-        LayoutId.LETTERS -> lettersOf(language, numberRow)
+    private fun baseLayoutOf(
+        id: LayoutId,
+        language: KeyboardLanguage,
+        numberRow: Boolean,
+        arrangement: LetterArrangement,
+    ): KeyboardLayout = when (id) {
+        LayoutId.LETTERS -> lettersOf(language, numberRow, arrangement)
         LayoutId.SYMBOLS, LayoutId.PAD -> symbols
         LayoutId.SYMBOLS_2 -> symbolsMore
     }
@@ -463,6 +541,9 @@ object Keyboards {
      *
      * [bottomRowKeys] : touches emoji, virgule et point à afficher dans la rangée du bas (paramètres du clavier) ;
      * sans effet sur les pavés numériques.
+     *
+     * [arrangement] : disposition des lettres choisie pour [language] (écran « Langues ») ; par défaut celle d'origine
+     * de la langue. Sans effet sur les pages de symboles et les pavés.
      */
     fun layoutOf(
         id: LayoutId,
@@ -470,6 +551,7 @@ object Keyboards {
         numberRow: Boolean = false,
         fieldType: FieldType = FieldType.TEXT,
         bottomRowKeys: BottomRowKeys = BottomRowKeys.ALL,
+        arrangement: LetterArrangement = LetterArrangement.defaultFor(language),
     ): KeyboardLayout {
         val replacement = when (fieldType) {
             FieldType.NUMBER -> return numberPad
@@ -478,9 +560,9 @@ object Keyboards {
             FieldType.URL -> urlSlashKey
             FieldType.TEXT, FieldType.PASSWORD, FieldType.TERMINAL -> null
         }
-        val base = baseLayoutOf(id, language, numberRow)
+        val base = baseLayoutOf(id, language, numberRow, arrangement)
         if (replacement == null && bottomRowKeys.isAll) return base
-        return fieldVariants.getOrPut(VariantKey(base.id, language, numberRow, fieldType, bottomRowKeys)) {
+        return fieldVariants.getOrPut(VariantKey(base.id, language, numberRow, fieldType, bottomRowKeys, arrangement)) {
             val withField = if (replacement == null) base else base.withCommaReplacedBy(replacement)
             if (bottomRowKeys.isAll) withField else withField.withBottomRowKeys(bottomRowKeys)
         }

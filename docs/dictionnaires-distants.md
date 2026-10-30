@@ -12,7 +12,7 @@ Stockage : `filesDir/dictionaries/` (même arborescence), exclu des sauvegardes.
 sont présents et non vides (rename atomique : un fichier n'apparaît qu'une fois complet).
 
 ## Quand le téléchargement démarre (`DictionaryDownloadScheduler.ensure`)
-- ouverture des paramètres du clavier, choix d'une langue (liste déroulante) ou d'une case multilingue ;
+- ouverture de l'écran « Langues » (paramètres du clavier), ajout d'une langue, ouverture du détail d'une langue ;
 - clavier : à l'ouverture d'un champ, si la langue active n'est pas installée (langue « Automatique » et mise à jour depuis une version qui
   embarquait les listes comprises) ; à l'arrivée des fichiers, la langue active se charge sans attendre (`SuggestionController`).
 - Après un échec, seul « Réessayer » relance (pas de requête à chaque champ).
@@ -22,8 +22,8 @@ Sans connexion : le travail WorkManager attend (« En attente de connexion… »
 `DictionaryDownloadWorker` réutilise `ModelFileFetcher` (HTTPS, `.tmp`, reprise `Range`, relances), **sans SHA-256** (les listes évoluent
 sur le serveur) : seul `DictionaryContentCheck` vérifie la forme (« mot fréquence ») avant installation. `DictionaryLoader` lit les fichiers ;
 une langue non installée n'est pas mise en cache (dictionnaire vide, autocorrection absente) et se charge dès qu'elle est installée.
-États : `DictionaryDownloadTracker` (Queued / Downloading % / Failed / Installed). Écran : section « Dictionnaires » de
-`KeyboardSettingsActivity` (`DictionaryStatusSection`).
+États : `DictionaryDownloadTracker` (Queued / Downloading % / Failed / Installed). Écran : carte « Dictionnaire » du détail d'une langue
+(`LanguageDetailActivity`, `DictionaryStatusSection`) ; pastille « À télécharger » sur la ligne de la langue (`LanguagesActivity`).
 
 ## Source des fichiers
 `dictionaries/` à la racine du projet (hors app) : ce qu'il faut envoyer sur R2 ; relu par `DictionaryAssetsIntegrityTest` et

@@ -57,7 +57,8 @@ mieux choisir entre plusieurs corrections possibles. L'étape « suggestions voc
    - **Paire acceptée** : la paire « tapé -> candidat » compte à partir de 2 acceptations
      (`CorrectionHabits.ACCEPTANCE_THRESHOLD`) ; plus elle est acceptée, plus elle pèse.
    - **Contexte** : combien de fois le candidat a suivi le mot qui précède, lu dans les bigrammes de `NextWordModel`
-     (accesseur `bigramCount`, rien n'est dupliqué). En début de phrase, le contexte est le début de phrase ; dans une
+     (accesseur `bigramCount`, rien n'est dupliqué), plus les triplets « deux mots → candidat » avec un poids de 4
+     (`NextWordModel.TRIGRAM_WEIGHT`, le même que pour prédire le mot suivant ; voir « Tournures habituelles » plus bas). En début de phrase, le contexte est le début de phrase ; dans une
      fenêtre de texte coupée au début, le premier mot (peut-être incomplet) ne compte pas ; un nombre juste avant coupe
      le contexte (même règle que l'apprentissage du mot suivant, `HabitContext.previousWordOf`).
    - **Usage** : combien de fois le candidat a été tapé et validé.
@@ -78,6 +79,46 @@ mieux choisir entre plusieurs corrections possibles. L'étape « suggestions voc
      un second test vérifie sur des habitudes tirées au hasard que le candidat retenu est toujours à la même distance.
    - **Débogage** : en build debug, logcat (filtre `SuggestionController`) compte les fois où le départage a changé la
      correction par rapport à ce que le moteur aurait donné sans habitudes (un nombre, jamais de texte).
+
+## Tournures habituelles (trigrammes)
+
+Le clavier retient les tournures de phrases de l'utilisateur et s'en sert pour corriger et proposer plus juste.
+
+- **Enregistrement** : rien de nouveau n'est stocké. `NextWordModel` retient déjà, à chaque mot terminé, les paires
+  « mot → mot suivant » et les triplets « deux mots → mot suivant » (`trigrams`), dans `next_word_model.enc` (chiffré,
+  hors sauvegarde), avec les mêmes interdictions que le reste (champ sensible, navigation privée, option « Apprendre de
+  mes habitudes » désactivée). Jamais de texte : seulement des comptes de mots. Ce qui change, c'est leur **usage**.
+  Accesseurs en lecture seule : `trigramCount`, `trigramFollowers` ; `NextWordModel.contextOf` donne les deux mots de
+  contexte avec la règle d'apprentissage.
+- **Départage** : le contexte d'un candidat (`HabitContext.score`) vaut maintenant paire + 4 x triplet. Il ne joue que
+  parmi des candidats à distance d'édition égale, comme avant ; sans triplet appris, le résultat est celui d'avant.
+- **Corriger un mot valide** (`PhraseHabits`, `HabitContext.phraseCorrectionFor`, `Dictionary.habitPhraseCorrectionFor`) :
+  quand le mot terminé n'a reçu aucune autre correction, il est remplacé par le mot que les habitudes mettent clairement
+  à cet endroit. Il faut, tous ensemble :
+  - deux mots de contexte sûrs (pas de début de phrase seul, de texte coupé ni de nombre juste avant) ;
+  - le contexte vu au moins 4 fois (`MIN_CANDIDATE_COUNT`) et un mot qui en fait au moins 80 % (`MIN_SHARE_PERCENT`) ;
+  - le mot tapé en fait au plus 10 % (`MAX_TYPED_SHARE_PERCENT`) : s'il l'écrit déjà là, on ne le touche pas ;
+  - le mot habituel est à **une seule** faute du mot tapé (lettre changée, ajoutée, retirée, ou deux lettres inversées) ;
+  - le mot habituel est connu (dictionnaire ou mot personnel) ; le mot tapé a au moins 3 lettres (`MIN_WORD_LENGTH`), n'est
+    ni un acronyme, ni un mot avec chiffre, ni un mot personnel ;
+  - la correction n'a jamais été annulée (`REFUSAL_UNDOS = 1` : une seule annulation suffit, contre 2 pour les autres
+    corrections, car corriger un mot valide est plus risqué qu'une faute).
+  - Exemple : après « je mange », l'utilisateur a écrit « des » 5 fois ; il tape « les » : « les » devient « des ».
+- **Ordre** : après la correction du dictionnaire et les règles de contexte français (« a » / « à »...). Si l'une d'elles a
+  changé quelque chose, la tournure habituelle ne s'applique pas. Le refus de la phase 3 (2 annulations) reste vérifié sur
+  le mot réellement changé.
+- **Bande de suggestions** : comme pour une faute, la tournure habituelle s'affiche en gras au milieu (mot tapé à gauche
+  pour pouvoir la refuser) pendant la frappe (`suggestionSlotsFor`, `suggestionsFor`), pour que le gras soit ce qui sera
+  appliqué. Pas quand le curseur est posé sur un mot déjà écrit (`placementSlotsFor` inchangé).
+- **Non couvert** : mots de 1 à 2 lettres (« a » / « à », « ou » / « où » gardent leurs règles) ; mot habituel à deux fautes
+  ou plus du mot tapé ; les triplets ne sont pas par langue (le mot habituel doit être dans le dictionnaire de la langue du
+  clavier, ce qui limite l'effet) ; les entrées vues une fois sont élaguées quand le modèle dépasse 40 000 entrées.
+- **Risque connu** : une tournure vue au moins 4 fois n'est pas une règle. Une phrase volontairement différente (« je mange
+  les pommes » alors qu'il écrit toujours « des ») est corrigée une première fois ; l'annuler suffit à ne plus la reproposer.
+  Seuils à ajuster à l'usage.
+- **Tests** : `PhraseHabitsTest` (règle, contexte, bande, annulation, mot personnel, poids des triplets). À essayer sur
+  appareil : écrire 5 fois une tournure (« je mange des pommes »), puis taper « je mange les » + espace : « les » doit
+  devenir « des » ; annuler : il ne revient plus.
 
 ## Adresses e-mail
 

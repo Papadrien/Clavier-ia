@@ -182,7 +182,40 @@ class FrenchContextCorrectorTest {
         // Forme en -é trop rare face à la forme en -e, ou pas assez fréquente pour être un vrai mot.
         assertNull(correctAccent("j'ai envie"))
         assertNull(correctAccent("il est calme"))
-        assertNull(correctAccent("il a reste"))
+        assertNull(correctAccent("j'ai honte"))
+        assertNull(correctAccent("j'ai hâte"))
+        assertNull(correctAccent("j'ai peine"))
+    }
+
+    @Test
+    fun `apres avoir le rapport de frequences exige est plus large qu apres etre`() {
+        // « resté » ne fait que 8 % de « reste » : trop peu pour « il est reste », assez après avoir (jamais « il a reste » nu).
+        assertEquals("il a resté", correctAccent("il a reste"))
+        assertEquals("j'ai resté", correctAccent("j'ai reste"))
+        assertNull(correctAccent("il est reste"))
+    }
+
+    @Test
+    fun `participe proposé sans etre applique quand il est trop rare`() {
+        val fix = FrenchContextCorrector.participleFor("il est reste") { accentFrequencies[it] ?: 0L }
+        assertEquals("resté", fix?.form)
+        assertEquals(false, fix?.automatic)
+        // Forme en -é négligeable (2 %) : rien n'est proposé après être, pas même en suggestion.
+        assertNull(FrenchContextCorrector.participleFor("il est calme") { accentFrequencies[it] ?: 0L })
+    }
+
+    @Test
+    fun `participleFor est celui de l autocorrection`() {
+        val frequencyOf: (String) -> Long = { accentFrequencies[it] ?: 0L }
+        val fix = FrenchContextCorrector.participleFor("j'ai observe", frequencyOf)
+        assertNull(fix) // « observé » absent de cette liste
+        val parle = FrenchContextCorrector.participleFor("il a parle", frequencyOf)
+        assertEquals("parlé", parle?.form)
+        assertEquals(true, parle?.automatic)
+        assertEquals("arrivée", FrenchContextCorrector.participleFor("elle est arrive", frequencyOf)?.form)
+        assertNull(FrenchContextCorrector.participleFor("il parle", frequencyOf))
+        assertNull(FrenchContextCorrector.participleFor("il a parle ", frequencyOf))
+        assertNull(FrenchContextCorrector.participleFor("", frequencyOf))
     }
 
     @Test

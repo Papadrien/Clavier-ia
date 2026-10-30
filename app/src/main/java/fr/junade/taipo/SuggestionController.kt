@@ -191,8 +191,9 @@ class SuggestionController(
     private fun habitContextFor(textBeforeCursor: String): HabitContext? {
         if (!habitsAllowed) return null
         val before = textBeforeCursor.dropLast(WordText.trailingWord(textBeforeCursor).length)
-        val previous = HabitContext.previousWordOf(before, truncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND)
-        return HabitContext(correctionHabits.habits, host.language(), nextWords.model, previous)
+        // Un ou deux mots de contexte : les paires et les triplets (tournures habituelles) du modèle du mot suivant.
+        val context = HabitContext.contextOf(before, truncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND)
+        return HabitContext(correctionHabits.habits, host.language(), nextWords.model, context?.first, context?.second)
     }
 
     /** L'utilisateur vient d'annuler une autocorrection. */
@@ -369,19 +370,25 @@ class SuggestionController(
             }
             val personalWords = host.personalWords()
             val habits = habitContextFor(textBeforeCursor) // lu ici (thread principal), consulté pendant le calcul
+            // Texte avant le curseur jusqu'au mot entier (partie après le curseur comprise), pour lire l'auxiliaire qui le précède.
+            val textUpToWord = textBeforeCursor.dropLast(WordText.trailingWord(textBeforeCursor).length) + typed
+            val french = language == KeyboardLanguage.FR
             currentWordSuggestions = emptyList() // un appui sur un mot périmé est ignoré
             publishEmoji(emoji)
             suggestionJob = scope.launch(Dispatchers.Default) {
                 val words = traced(Sections.SUGGESTIONS) {
+                    // Participe passé attendu d'après l'auxiliaire (« il a observe » -> « observé »), même analyse que l'autocorrection.
+                    val participle = if (french) FrenchContextCorrector.participleFor(textUpToWord, dictionary::frequencyOf) else null
                     if (placement) {
                         dictionary.placementSlotsFor(
                             typed,
                             personalWords,
                             previousForm = correctionHistory.originalOf(typed),
                             habits = habits,
+                            participle = participle,
                         )
                     } else {
-                        dictionary.suggestionSlotsFor(typed, personalWords = personalWords, habits = habits)
+                        dictionary.suggestionSlotsFor(typed, personalWords = personalWords, habits = habits, participle = participle)
                     }
                 }
                 withContext(Dispatchers.Main) {
@@ -615,8 +622,9 @@ class SuggestionController(
         // Une adresse e-mail en cours de frappe n'est jamais corrigée (« gmal », « com »...) : l'utilisateur la tape telle quelle.
         val token = EmailText.trailingToken(textBeforeCursor, truncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND)
         if (token != null && token.indexOf('@') > 0) return null
+        val habits = habitContextFor(textBeforeCursor)
         // Phase 3 : une correction annulée deux fois n'est plus appliquée (le mot reste tel que tapé).
-        val dictionaryFix = dictionaryCorrectionFor(word, habitContextFor(textBeforeCursor))?.takeUnless { refusedByUser(word, it) }
+        val dictionaryFix = dictionaryCorrectionFor(word, habits)?.takeUnless { refusedByUser(word, it) }
         var result = if (dictionaryFix != null) textBeforeCursor.dropLast(word.length) + dictionaryFix else textBeforeCursor
         if (host.language() == KeyboardLanguage.FR) {
             val dictionary = DictionaryLoader.peek(KeyboardLanguage.FR)
@@ -630,6 +638,11 @@ class SuggestionController(
                 if (contextual != null) result = contextual
             }
         }
+        // Tournure habituelle : rien d'autre n'a été corrigé, mais ce mot (même valide) n'est pas ce que les habitudes de
+        // l'utilisateur mettent là, et il est à une faute de celui qu'elles mettent (voir PhraseHabits).
+        if (result == textBeforeCursor) {
+            habitPhraseFor(word, habits)?.let { result = textBeforeCursor.dropLast(word.length) + it }
+        }
         if (result == textBeforeCursor) return null
         var common = 0
         val limit = minOf(result.length, textBeforeCursor.length)
@@ -642,6 +655,16 @@ class SuggestionController(
             return null
         }
         return edit
+    }
+
+    /**
+     * Tournure habituelle à mettre à la place de [word] (même valide), ou null : voir `PhraseHabits`. Comme pour la
+     * correction du dictionnaire, jamais d'attente du chargement et jamais sans habitudes ([habits] null : option
+     * désactivée ou champ où l'apprentissage est interdit).
+     */
+    private fun habitPhraseFor(word: String, habits: HabitContext?): String? {
+        val dictionary = DictionaryLoader.peek(host.language()) ?: return null
+        return dictionary.habitPhraseCorrectionFor(word, host.personalWords(), habits)?.takeIf { it != word }
     }
 
     /**

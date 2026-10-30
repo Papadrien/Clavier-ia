@@ -31,7 +31,7 @@
     <string name="system_prompt_generation_title">Prompt mode (chat)</string>
     <string name="system_prompt_generation_description">Instruction sent to the model for prompt mode conversations: length and format of replies.</string>
     <string name="system_prompt_transcription_title">AI transcription</string>
-    <string name="system_prompt_transcription_description">Instruction sent to the model to transcribe and then clean up a recording: removing filler words, light rephrasing, tone preserved.</string>
+    <string name="system_prompt_transcription_description">Instruction sent to the model to turn a recording into a well-written message: it understands the meaning, rephrases when needed and uses a list when it fits.</string>
     <string name="system_prompt_save">Save this prompt</string>
     <string name="system_prompt_show_default">Show the default prompt</string>
     <string name="system_prompt_reset">Reset to default prompt</string>
@@ -111,10 +111,6 @@
     <string name="keyboard_settings_screenshots_description">In Smart Clipboard, offers to paste your latest screenshot (taken less than 10 minutes ago) in apps that accept images. The keyboard only checks that a screenshot exists: the image itself is read on your device when you tap the suggestion, and is never sent anywhere. Requires access to your photos.</string>
     <string name="keyboard_settings_screenshots_denied">Access to photos was denied. Allow it in the Android settings to use this option.</string>
     <string name="keyboard_settings_language_title">Keyboard language</string>
-    <string name="keyboard_settings_language_auto">Automatic (phone language)</string>
-    <string name="keyboard_settings_multilingual_switch">Multilingual keyboard</string>
-    <string name="keyboard_settings_multilingual_min">Select at least two languages to turn on language switching.</string>
-    <string name="keyboard_settings_multilingual_description">Type in several languages without opening the settings. Choose your languages, then long-press the Enter key on the keyboard and slide up to the globe to switch language.</string>
     <string name="keyboard_settings_haptic_title">Haptic feedback</string>
     <string name="keyboard_settings_haptic_off">Off</string>
     <string name="keyboard_settings_haptic_light">Light</string>
@@ -450,7 +446,7 @@
     <string name="privacy_section_2_title">2. Internet connections</string>
     <string name="privacy_section_2_body">Taipo connects to the Internet to download AI model files, at your request: from a Junadé server for the Gemma 3 models and the voice input models, and from Hugging Face for the Gemma 4 models. It also downloads, from the same Junadé server, the dictionary of each keyboard language you use (a few MB, automatically as soon as a language is selected). These servers receive the usual technical information of a connection (IP address, requested file), never your text or your recordings. Unless you turn it off in the keyboard settings, Taipo also sends anonymous usage analytics to Aptabase, a European service (see section 3). From time to time, Taipo may also offer to let you leave a review: this window is displayed by Google Play, which receives your rating and comment; Taipo does not receive them.</string>
     <string name="privacy_section_3_title">3. No personal data collection</string>
-    <string name="privacy_section_3_body">Taipo has no account and no ads. It measures its usage anonymously with Aptabase: events such as “an AI correction succeeded”, “a model was downloaded” or “a setting changed”, along with the app version, the Android version, the device model and its language. Never your text, what you copy or dictate, or any identifier of the device or the person, and nothing from password fields. As with any Internet connection, Aptabase\'s servers technically receive the IP address of the request; Taipo itself never sees it or stores it (see Aptabase\'s privacy policy for how it is handled). You can turn it off at any time in Keyboard settings > Usage data. Taipo itself collects no personal data about you.</string>
+    <string name="privacy_section_3_body">Taipo has no account and no ads. It measures its usage anonymously with Aptabase: events such as “an AI correction succeeded”, “a model was downloaded” or “a setting changed”, along with the app version, the Android version, the device model and its language, plus two coarse ranges: how long the app has been installed and on how many days it was used (for example “8 to 30 days”), never exact values. Never your text, what you copy or dictate, or any identifier of the device or the person, and nothing from password fields. As with any Internet connection, Aptabase\'s servers technically receive the IP address of the request; Taipo itself never sees it or stores it (see Aptabase\'s privacy policy for how it is handled). You can turn it off at any time in Keyboard settings > Usage data. Taipo itself collects no personal data about you.</string>
     <string name="privacy_section_4_title">4. Password fields</string>
     <string name="privacy_section_4_body">In a password or secret code field, AI actions (Correct, Generate, Voice, AI transcription) and the Smart Clipboard are disabled: the field\'s content is not read and the microphone is not opened.</string>
     <string name="privacy_section_5_title">5. What is stored on the device</string>
@@ -548,7 +544,6 @@
     <string name="voice_file_error_not_provided">%1$s file missing for the voice model. Download the voice model from the “Voice model” screen.</string>
     <string name="voice_file_error_cannot_open">Couldn\'t open the %1$s file (permission lost? select it again).</string>
     <string name="voice_file_error_cannot_finalize">Couldn\'t finalize the copy of the %1$s file.</string>
-    <string name="keyboard_settings_dictionaries_title">Dictionaries</string>
     <string name="dictionary_status_downloading">Downloading… %1$d %%</string>
     <string name="dictionary_status_queued">Waiting for a connection…</string>
     <string name="dictionary_status_installed">Installed</string>
@@ -566,4 +561,20 @@
     <string name="keyboard_settings_touch_switch">Adaptive key areas</string>
     <string name="keyboard_settings_touch_description">The touch area of the letters most likely to come next grows a little, so a slightly off-center tap still lands on the right key. The keys keep their look and size. Computed on this device from the word you are typing; nothing is stored or sent. Not used in password, email or web address fields.</string>
     <string name="keyboard_settings_touch_zones_debug">Show key areas (debug)</string>
+
+    <!-- Écran « Langues » (piste C) : liste des langues, détail d'une langue (disposition, dictionnaire, retrait). -->
+    <string name="languages_title">Languages</string>
+    <string name="languages_section_keyboard">Keyboard languages</string>
+    <string name="languages_summary_device">%1$s · device language</string>
+    <string name="languages_add">Add a language</string>
+    <string name="languages_explanation">By default, the keyboard uses the device language. As soon as several languages are added, it becomes multilingual: long-press Enter, then slide up to the globe, to switch from one to the other.</string>
+    <string name="language_detail_layout_title">Layout</string>
+    <string name="language_detail_dictionary_title">Dictionary</string>
+    <string name="language_detail_remove">Remove this language</string>
+    <string name="language_detail_footer">The layout chosen here applies when %1$s is the active language. The Remove button only appears while another language remains.</string>
+    <string name="language_layout_note_azerty">France, Belgium</string>
+    <string name="language_layout_note_qwerty">International</string>
+    <string name="language_layout_note_qwertz">Germany, Switzerland, Austria</string>
+    <string name="language_layout_note_qwerty_n">Usual for Spanish</string>
+    <string name="language_layout_note_colemak">Ergonomic</string>
 </resources>

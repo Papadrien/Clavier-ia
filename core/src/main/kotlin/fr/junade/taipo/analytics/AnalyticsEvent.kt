@@ -76,6 +76,14 @@ class AnalyticsProps private constructor(val values: Map<String, Any>) {
         return out
     }
 
+    /** Nouvelles propriétés ajoutées à celles-ci, passées par le même filtre que les autres. */
+    fun plus(vararg extra: Pair<String, Any?>): AnalyticsProps {
+        val all = ArrayList<Pair<String, Any?>>(values.size + extra.size)
+        for ((key, value) in values) all.add(key to value)
+        all.addAll(extra)
+        return of(*all.toTypedArray())
+    }
+
     companion object {
         /** Longueur maximale d'un mot-clé : trop court pour contenir une phrase. */
         const val MAX_KEYWORD_LENGTH = 24

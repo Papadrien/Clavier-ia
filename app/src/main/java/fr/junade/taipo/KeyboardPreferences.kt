@@ -190,6 +190,30 @@ class KeyboardPreferences(context: Context) {
         }
 
     /**
+     * Réglage des langues vu comme une seule liste (écran « Langues ») : langue choisie, langues cochées et mode multilingue,
+     * lus et écrits ensemble pour rester cohérents (voir [LanguageList]).
+     */
+    var languageSetup: LanguageSetup
+        get() = LanguageSetup(keyboardLanguage, multilingualSelection, isMultilingualEnabled)
+        set(value) {
+            keyboardLanguage = value.chosen
+            multilingualSelection = value.selection
+            isMultilingualEnabled = value.multilingualEnabled
+        }
+
+    /** Disposition des lettres choisie pour [language] ; sans choix, celle d'origine de la langue ([LetterArrangement.defaultFor]). */
+    fun letterArrangementOf(language: KeyboardLanguage): LetterArrangement =
+        LetterArrangement.fromTag(prefs.getString(KEY_ARRANGEMENT_PREFIX + language.tag, null)) ?: LetterArrangement.defaultFor(language)
+
+    /** Enregistre la disposition de [language] ; la disposition d'origine efface le choix. Relue à l'ouverture du prochain champ. */
+    fun setLetterArrangement(language: KeyboardLanguage, arrangement: LetterArrangement) {
+        prefs.edit().apply {
+            if (arrangement == LetterArrangement.defaultFor(language)) remove(KEY_ARRANGEMENT_PREFIX + language.tag)
+            else putString(KEY_ARRANGEMENT_PREFIX + language.tag, arrangement.tag)
+        }.apply()
+    }
+
+    /**
      * Emojis récemment utilisés (story 1.15), du plus récent au plus ancien. Stockés localement,
      * comme les autres réglages : juste la liste des derniers emojis choisis, rien n'est analysé.
      */
@@ -259,6 +283,7 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_MULTILINGUAL = "multilingual_enabled"
         private const val KEY_MULTILINGUAL_LANGUAGES = "multilingual_languages"
         private const val KEY_MULTILINGUAL_ACTIVE = "multilingual_active_language"
+        private const val KEY_ARRANGEMENT_PREFIX = "letter_arrangement_"
         private const val KEY_RECENT_EMOJIS = "recent_emojis"
         private const val KEY_HABIT_LEARNING = "habit_learning_enabled"
         const val DEFAULT_HABIT_LEARNING = true

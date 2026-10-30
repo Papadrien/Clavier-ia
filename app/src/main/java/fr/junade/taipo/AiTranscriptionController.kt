@@ -65,7 +65,7 @@ class AiTranscriptionController(
         fun playSound(sound: KeySound)
     }
 
-    private val recorder = AiTranscriptionRecorder(scope)
+    private val recorder = AiTranscriptionRecorder(context, scope)
     private var job: Job? = null
     private var state = AiTranscriptionBarState.IDLE
 

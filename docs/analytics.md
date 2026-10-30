@@ -11,7 +11,8 @@ déclaré dans `settings.gradle.kts` et limité à son groupe). Le SDK est initi
 - **Aucun texte** : une propriété ne peut être qu'un nombre, un booléen ou un mot-clé court (`[a-z0-9_.-]`, 24 caractères au
   plus). `AnalyticsProps.of` écarte le reste (phrase, mot saisi, nom de fichier, majuscules, espaces) : même une erreur de
   code ne peut pas faire partir un texte.
-- **Aucun identifiant** d'appareil ou de personne. La session Aptabase (gérée par le SDK) est anonyme et renouvelée après 1 h sans
+- **Aucun identifiant** d'appareil ou de personne (les tranches `install_age` et `active_days` ci-dessous sont communes à tous les
+  utilisateurs de même profil). La session Aptabase (gérée par le SDK) est anonyme et renouvelée après 1 h sans
   événement.
 - **Champs de mot de passe** : `Analytics.sensitiveFieldActive` (tenu par `TaipoIme`) coupe tout événement tant qu'un champ
   sensible est affiché.
@@ -21,6 +22,20 @@ déclaré dans `settings.gradle.kts` et limité à son groupe). Le SDK est initi
   (mots-clés) et les `Long` en `Int`.
 - **Debug** : `Analytics.initialize` passe le mode explicitement (`TrackingMode.asDebug` si `BuildConfig.DEBUG`, sinon `asRelease`) :
   les builds debug vont au tableau de bord de test d'Aptabase, séparé de la production.
+
+Propriétés de profil ajoutées par `Analytics.send` à **chaque** événement (tranches, jamais de valeur exacte ; logique dans
+`UsageBuckets`, `:core`) :
+
+| Propriété | Tranches | Source |
+|---|---|---|
+| `install_age` | `0_1d`, `2_7d`, `8_30d`, `gt_30d` | `PackageInfo.firstInstallTime` (conservée par Android lors des mises à jour) |
+| `active_days` | `1d`, `2_3d`, `4_7d`, `8_30d`, `gt_30d` | nombre de jours (UTC) où au moins un événement a été envoyé |
+
+Elles servent à estimer la rétention **sans identifiant** : Aptabase n'a pas d'utilisateur persistant, donc on filtre les
+événements par profil (ex. `ai_action` avec `install_age = 8_30d` et `active_days = 4_7d`) au lieu de suivre une personne.
+Le compteur de jours (`active_days` et `last_active_day` dans `AnalyticsPreferences`) reste sur l'appareil, suit la
+sauvegarde Android comme `first_open_handled`, et n'avance pas quand la mesure est désactivée. Elles passent par le même filtre
+(`AnalyticsProps.plus`) et comptent dans `MAX_PROPS` : le plus gros événement (`ai_action`, 4 propriétés) en a 6 au total, sous la limite de 8.
 
 Propriétés système envoyées avec chaque événement (par le SDK) : version et build de l'app, version d'Android, langue et **modèle
 de l'appareil** (la doc du SDK le cite ; l'ancien client maison ne l'envoyait pas).
@@ -37,8 +52,8 @@ de l'appareil** (la doc du SDK le cite ; l'ancien client maison ne l'envoyait pa
 | `autocorrect_undone` | aucune | `TaipoIme` (champ et prompt) |
 | `clipboard_used` | `action` (`paste`, `pin`) | `ClipboardController` |
 | `undo_used` | aucune | `UndoController` |
-| `keyboard_language` | `lang`, `layout` (`azerty`, `qwerty`, `qwertz`), `auto` | `TaipoIme.startInputView`, une fois par changement de langue |
-| `setting_changed` | `key`, `value` (`true` / `false` ou mot-clé) | `KeyboardSettingsActivity` |
+| `keyboard_language` | `lang`, `layout` (disposition choisie pour la langue : `azerty`, `qwerty`, `qwertz`, `qwerty_n`, `colemak`), `auto` | `TaipoIme.startInputView`, une fois par changement de langue |
+| `setting_changed` | `key`, `value` (`true` / `false` ou mot-clé) | `KeyboardSettingsActivity`, `LanguagesActivity` (`language_added`), `LanguageDetailActivity` (`language_removed`, `letter_arrangement` = `<langue>_<disposition>`) |
 | `first_open` | aucune | `MainActivity.onCreate` via `Analytics.firstOpen`, une fois par installation |
 
 Tranches de durée : `ai_action` `lt_1s`, `1_3s`, `3_10s`, `10_30s`, `gt_30s` ; `voice_input` `lt_5s`, `5_15s`, `15_60s`, `gt_60s`.
@@ -63,6 +78,12 @@ installations ouvertes (filtrer par période, version de l'app, langue ou pays d
 - **Tester** : désinstaller puis réinstaller (les dates d'installation et de mise à jour doivent être égales) ; « Effacer les
   données » ou une mise à jour par-dessus ne rejoue pas l'événement, car l'application est alors vue comme mise à jour.
 
+## Lire la rétention dans Aptabase
+
+Filtrer ou grouper par `install_age` et `active_days`. Exemple : parmi les événements `install_age = gt_30d`, la part de
+`active_days = gt_30d` indique les utilisateurs fidèles. Ce sont des **proportions d'événements**, pas d'utilisateurs :
+un utilisateur très actif pèse plus qu'un utilisateur occasionnel.
+
 ## Pas encore là
 
 - `premium_paywall_shown` / `premium_purchased` : à ajouter avec l'achat intégré.
@@ -77,6 +98,9 @@ installations ouvertes (filtrer par période, version de l'app, langue ou pays d
 - Politique de confidentialité du site (page de Taipo) : même texte que les sections 2 et 3 de l'écran Confidentialité.
 
 ## À vérifier sur appareil (rien n'a été compilé ni exécuté)
+
+7. (tranches) Ouvrir un événement dans le tableau de bord debug : `install_age` et `active_days` présents. Sur une installation neuve : `0_1d` et `1d`.
+   Mesure désactivée puis réactivée : le compteur n'a pas avancé pendant la pause.
 
 0. Au premier build : la résolution de `com.github.aptabase:aptabase-kotlin:0.1.0` sur JitPack, et les imports `com.aptabase.*`
    (`Aptabase`, `InitOptions`, `TrackingMode`) dans `Analytics.kt`, écrits sans avoir pu lire le code du SDK. Le comportement hors ligne

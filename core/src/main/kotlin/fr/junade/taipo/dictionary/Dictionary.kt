@@ -238,6 +238,25 @@ class Dictionary private constructor(
     }
 
     /**
+     * Tournure habituelle à mettre à la place de [word], même s'il est valide (voir [PhraseHabits]) : à appeler quand
+     * [correctionFor] n'a rien changé. Null sans habitudes, si [word] est un mot personnel (choix volontaire) ou si les
+     * habitudes ne disent pas clairement autre chose. Le mot habituel doit être connu (liste ou mot personnel). La casse
+     * du mot tapé est reprise.
+     */
+    fun habitPhraseCorrectionFor(
+        word: String,
+        personalWords: Collection<String> = emptyList(),
+        habits: HabitContext? = null,
+    ): String? {
+        if (habits == null || habits.isInert() || word.length < PhraseHabits.MIN_WORD_LENGTH) return null
+        if (personalWords.any { it.equals(word, ignoreCase = true) }) return null
+        val known = { candidate: String -> candidate in frequencies || personalWords.any { it.equals(candidate, ignoreCase = true) } }
+        val candidate = habits.phraseCorrectionFor(word, known) ?: return null
+        val stored = personalWords.firstOrNull { it.equals(candidate, ignoreCase = true) }
+        return stored ?: applyOriginalCasing(word, candidate)
+    }
+
+    /**
      * Forme d'un prénom ou nom propre connu : « adrien » -> « Adrien », « adrein » -> « Adrien » (faute corrigée puis
      * mise en majuscule), « eric » -> « Éric ». Null si le mot n'est pas un nom connu ou s'il est déjà bien écrit.
      * Un mot du dictionnaire personnel garde toujours la forme choisie par l'utilisateur, et un mot tapé avec une
@@ -418,7 +437,8 @@ class Dictionary private constructor(
         typed: String,
         personalWords: Collection<String> = emptyList(),
         habits: HabitContext? = null,
-    ): List<WordSuggestion?> = suggestions.suggestionSlotsFor(typed, personalWords, habits)
+        participle: ParticipleFix? = null,
+    ): List<WordSuggestion?> = suggestions.suggestionSlotsFor(typed, personalWords, habits, participle)
 
     /** Emplacements quand le curseur est posé sur un mot déjà écrit ([typed]) ; voir [DictionarySuggestions]. */
     fun placementSlotsFor(
@@ -426,7 +446,8 @@ class Dictionary private constructor(
         personalWords: Collection<String> = emptyList(),
         previousForm: String? = null,
         habits: HabitContext? = null,
-    ): List<WordSuggestion?> = suggestions.placementSlotsFor(typed, personalWords, previousForm, habits)
+        participle: ParticipleFix? = null,
+    ): List<WordSuggestion?> = suggestions.placementSlotsFor(typed, personalWords, previousForm, habits, participle)
 
     /** Au plus [limit] alternatives pour le mot entier [typed] ; voir [DictionarySuggestions]. */
     fun alternativesFor(

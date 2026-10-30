@@ -31,7 +31,7 @@
     <string name="system_prompt_generation_title">Mode prompt (chat)</string>
     <string name="system_prompt_generation_description">Consigne envoyée au modèle pour les conversations du mode prompt : longueur et format des réponses.</string>
     <string name="system_prompt_transcription_title">Transcription IA</string>
-    <string name="system_prompt_transcription_description">Consigne envoyée au modèle pour transcrire puis nettoyer un enregistrement : suppression des hésitations, reformulation légère, ton conservé.</string>
+    <string name="system_prompt_transcription_description">Consigne envoyée au modèle pour transformer un enregistrement en message bien rédigé : il en comprend le sens, reformule si besoin et utilise une liste quand elle convient.</string>
     <string name="system_prompt_save">Enregistrer ce prompt</string>
     <string name="system_prompt_show_default">Afficher le prompt par défaut</string>
     <string name="system_prompt_reset">Réinitialiser au prompt par défaut</string>
@@ -111,10 +111,6 @@
     <string name="keyboard_settings_screenshots_description">Dans le Smart Clipboard, propose de coller votre dernière capture d\'écran (prise il y a moins de 10 minutes) dans les applications qui acceptent les images. Le clavier vérifie seulement qu\'une capture existe : l\'image elle-même est lue sur votre appareil quand vous touchez la suggestion, et n\'est jamais envoyée. Demande l\'accès à vos photos.</string>
     <string name="keyboard_settings_screenshots_denied">L\'accès aux photos a été refusé. Autorisez-le dans les réglages Android pour utiliser cette option.</string>
     <string name="keyboard_settings_language_title">Langue du clavier</string>
-    <string name="keyboard_settings_language_auto">Automatique (langue du téléphone)</string>
-    <string name="keyboard_settings_multilingual_switch">Clavier multilingue</string>
-    <string name="keyboard_settings_multilingual_min">Sélectionnez au moins deux langues pour activer le changement de langue.</string>
-    <string name="keyboard_settings_multilingual_description">Écrivez en plusieurs langues sans ouvrir les paramètres. Choisissez vos langues, puis faites un appui long sur la touche Entrée du clavier et glissez vers le haut jusqu\'au globe pour changer de langue.</string>
     <string name="keyboard_settings_haptic_title">Retour haptique</string>
     <string name="keyboard_settings_haptic_off">Désactivé</string>
     <string name="keyboard_settings_haptic_light">Léger</string>
@@ -459,7 +455,7 @@
     <string name="privacy_section_2_title">2. Connexions Internet</string>
     <string name="privacy_section_2_body">Taipo se connecte à Internet pour télécharger les fichiers des modèles IA, à votre demande : depuis un serveur de Junadé pour les modèles Gemma 3 et les modèles de saisie vocale, et depuis Hugging Face pour les modèles Gemma 4. Il télécharge aussi, depuis ce même serveur de Junadé, le dictionnaire de chaque langue du clavier que vous utilisez (quelques Mo, automatiquement dès qu\'une langue est choisie). Ces serveurs reçoivent les informations techniques habituelles d\'une connexion (adresse IP, fichier demandé), jamais votre texte ni vos enregistrements. Taipo envoie aussi, sauf si vous le désactivez dans les paramètres du clavier, une mesure d\'usage anonyme à Aptabase, un service européen (voir la section 3). De temps en temps, Taipo peut aussi vous proposer de laisser un avis : cette fenêtre est affichée par Google Play, qui reçoit votre note et votre commentaire ; Taipo ne les reçoit pas.</string>
     <string name="privacy_section_3_title">3. Aucune collecte de données personnelles</string>
-    <string name="privacy_section_3_body">Taipo n\'a pas de compte et pas de publicité. Il mesure son usage de façon anonyme avec Aptabase : des événements comme « une correction IA a réussi », « un modèle a été téléchargé » ou « un réglage a changé », avec la version de l\'application, la version d\'Android, le modèle de l\'appareil et sa langue. Jamais votre texte, ce que vous copiez ou dictez, ni un identifiant de l\'appareil ou de la personne, et rien depuis les champs de mot de passe. Vous pouvez la désactiver à tout moment dans Paramètres du clavier > Données d\'utilisation. Comme pour toute connexion Internet, les serveurs d\'Aptabase reçoivent techniquement l\'adresse IP de la requête ; Taipo ne la voit ni ne la conserve jamais (voir la politique de confidentialité d\'Aptabase pour son traitement). Taipo lui-même ne collecte aucune donnée personnelle vous concernant.</string>
+    <string name="privacy_section_3_body">Taipo n\'a pas de compte et pas de publicité. Il mesure son usage de façon anonyme avec Aptabase : des événements comme « une correction IA a réussi », « un modèle a été téléchargé » ou « un réglage a changé », avec la version de l\'application, la version d\'Android, le modèle de l\'appareil et sa langue, plus deux tranches approximatives : depuis combien de temps l\'application est installée et sur combien de jours elle a été utilisée (par exemple « 8 à 30 jours »), jamais des valeurs exactes. Jamais votre texte, ce que vous copiez ou dictez, ni un identifiant de l\'appareil ou de la personne, et rien depuis les champs de mot de passe. Vous pouvez la désactiver à tout moment dans Paramètres du clavier > Données d\'utilisation. Comme pour toute connexion Internet, les serveurs d\'Aptabase reçoivent techniquement l\'adresse IP de la requête ; Taipo ne la voit ni ne la conserve jamais (voir la politique de confidentialité d\'Aptabase pour son traitement). Taipo lui-même ne collecte aucune donnée personnelle vous concernant.</string>
     <string name="privacy_section_4_title">4. Champs de mot de passe</string>
     <string name="privacy_section_4_body">Dans un champ de mot de passe ou de code secret, les actions IA (Corriger, Générer, Vocal, Transcription IA) et le Smart Clipboard sont désactivés : le contenu du champ n\'est pas lu et le micro n\'est pas ouvert.</string>
     <string name="privacy_section_5_title">5. Ce qui est conservé sur l\'appareil</string>
@@ -563,7 +559,6 @@
     <string name="voice_file_error_not_provided">Fichier %1$s manquant pour le modèle vocal. Téléchargez le modèle vocal dans l\'écran « Modèle vocal ».</string>
     <string name="voice_file_error_cannot_open">Impossible d\'ouvrir le fichier %1$s (permission perdue ? à re-sélectionner).</string>
     <string name="voice_file_error_cannot_finalize">Impossible de finaliser la copie du fichier %1$s.</string>
-    <string name="keyboard_settings_dictionaries_title">Dictionnaires</string>
     <string name="dictionary_status_downloading">Téléchargement… %1$d %%</string>
     <string name="dictionary_status_queued">En attente de connexion…</string>
     <string name="dictionary_status_installed">Installé</string>
@@ -581,4 +576,20 @@
     <string name="keyboard_settings_touch_switch">Zones de frappe adaptatives</string>
     <string name="keyboard_settings_touch_description">La zone de toucher des lettres les plus probables d\'après le mot en cours grandit un peu : un appui légèrement décentré tombe quand même sur la bonne touche. Les touches gardent leur aspect et leur taille. Calculé sur l\'appareil à partir du mot que vous tapez, rien n\'est conservé ni envoyé. Inactif dans les champs de mot de passe, d\'adresse e-mail et d\'adresse web.</string>
     <string name="keyboard_settings_touch_zones_debug">Afficher les zones de frappe (debug)</string>
+
+    <!-- Écran « Langues » (piste C) : liste des langues, détail d'une langue (disposition, dictionnaire, retrait). -->
+    <string name="languages_title">Langues</string>
+    <string name="languages_section_keyboard">Langues du clavier</string>
+    <string name="languages_summary_device">%1$s · langue de l\'appareil</string>
+    <string name="languages_add">Ajouter une langue</string>
+    <string name="languages_explanation">Par défaut, le clavier utilise la langue de l\'appareil. Dès que plusieurs langues sont ajoutées, il devient multilingue : faites un appui long sur Entrée, puis glissez vers le haut jusqu\'au globe, pour passer de l\'une à l\'autre.</string>
+    <string name="language_detail_layout_title">Disposition</string>
+    <string name="language_detail_dictionary_title">Dictionnaire</string>
+    <string name="language_detail_remove">Retirer cette langue</string>
+    <string name="language_detail_footer">La disposition choisie ici s\'applique quand %1$s est la langue active. Le bouton Retirer n\'apparaît que s\'il reste une autre langue.</string>
+    <string name="language_layout_note_azerty">France, Belgique</string>
+    <string name="language_layout_note_qwerty">International</string>
+    <string name="language_layout_note_qwertz">Allemagne, Suisse, Autriche</string>
+    <string name="language_layout_note_qwerty_n">Habituelle en espagnol</string>
+    <string name="language_layout_note_colemak">Ergonomique</string>
 </resources>

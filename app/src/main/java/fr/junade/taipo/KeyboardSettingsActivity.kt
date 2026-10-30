@@ -3,19 +3,15 @@ package fr.junade.taipo
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.CheckBox
 import android.widget.CompoundButton
-import android.widget.LinearLayout
 import android.widget.RadioGroup
 import android.widget.SeekBar
-import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import fr.junade.taipo.analytics.Analytics
@@ -27,15 +23,9 @@ import fr.junade.taipo.dictionary.CorrectionHabitsProvider
  * Écran « Paramètres du clavier ». Contient l'activation de la rangée de
  * chiffres (story 1.5) et le niveau de retour haptique (story 1.11) et la
  * hauteur du clavier (story 1.12), ainsi que l'option « Apprendre de mes habitudes » et l'effacement des
- * habitudes de correction.
+ * habitudes de correction. Les langues (liste, disposition, dictionnaire) ont leur propre écran : [LanguagesActivity].
  */
 class KeyboardSettingsActivity : Activity() {
-
-    /** Rappelé quand la langue du clavier change, pour que les cases du mode multilingue suivent. */
-    private var onKeyboardLanguageChanged: (() -> Unit)? = null
-
-    /** État des dictionnaires des langues utilisées (téléchargement automatique, Réessayer). */
-    private lateinit var dictionaries: DictionaryStatusSection
 
     /** Interrupteur « captures d'écran » : remis à faux si la permission d'images est refusée. */
     private var screenshotSwitch: CompoundButton? = null
@@ -55,9 +45,7 @@ class KeyboardSettingsActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_keyboard_settings)
         val preferences = KeyboardPreferences(this)
-        dictionaries = DictionaryStatusSection(this, findViewById(R.id.layout_dictionaries), preferences)
-        setUpLanguageChoice(preferences)
-        setUpMultilingual(preferences)
+        setUpLanguagesRow()
         findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
 
@@ -175,12 +163,7 @@ class KeyboardSettingsActivity : Activity() {
 
     override fun onStart() {
         super.onStart()
-        dictionaries.start()
-    }
-
-    override fun onStop() {
-        dictionaries.stop()
-        super.onStop()
+        showLanguagesSummary() // l'écran « Langues » a pu changer la liste
     }
 
     override fun onDestroy() {
@@ -245,90 +228,20 @@ class KeyboardSettingsActivity : Activity() {
         })
     }
 
-    /**
-     * Langue du clavier : liste déroulante « Automatique » puis une entrée par langue gérée ([KeyboardLanguage.entries],
-     * nom dans la langue elle-même). La liste suit l'énumération : une langue ajoutée au code apparaît ici sans autre
-     * modification.
-     */
-    private fun setUpLanguageChoice(preferences: KeyboardPreferences) {
-        val spinner = findViewById<Spinner>(R.id.spinner_language)
-        val choices: List<Pair<KeyboardLanguage?, String>> =
-            listOf<Pair<KeyboardLanguage?, String>>(null to getString(R.string.keyboard_settings_language_auto)) +
-                KeyboardLanguage.entries.map { it to it.displayName }
-        spinner.adapter = ArrayAdapter(this, R.layout.spinner_item, choices.map { it.second })
-            .also { it.setDropDownViewResource(R.layout.spinner_dropdown_item) }
-        spinner.setSelection(choices.indexOfFirst { it.first == preferences.keyboardLanguage }.coerceAtLeast(0))
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selected = choices[position].first
-                // Android notifie aussi la sélection initiale : on n'écrit que s'il y a un vrai changement.
-                if (selected != preferences.keyboardLanguage) {
-                    preferences.keyboardLanguage = selected
-                    Analytics.setting(this@KeyboardSettingsActivity, "language", selected?.tag ?: "auto")
-                }
-                onKeyboardLanguageChanged?.invoke()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+    /** Ligne « Langues » : ouvre l'écran des langues (liste, disposition et dictionnaire de chacune). */
+    private fun setUpLanguagesRow() {
+        findViewById<View>(R.id.button_languages).apply {
+            findViewById<TextView>(R.id.row_title).setText(R.string.languages_title)
+            setOnClickListener { startActivity(Intent(this@KeyboardSettingsActivity, LanguagesActivity::class.java)) }
         }
+        showLanguagesSummary()
     }
 
-    /** Langue effectivement utilisée par le clavier d'après la liste déroulante (« Automatique » = langue du système). */
-    private fun baseKeyboardLanguage(preferences: KeyboardPreferences): KeyboardLanguage =
-        KeyboardLanguageChoice.resolve(
-            preferences.keyboardLanguage,
-            resources.configuration.locales.let { list -> (0 until list.size()).map { list.get(it).toLanguageTag() } },
-        )
-
-    /**
-     * Clavier multilingue : interrupteur + une case par langue gérée. Activé, l'appui long sur Entrée passe d'une langue
-     * cochée à la suivante (au moins deux). La langue choisie plus haut dans « Langue du clavier » est toujours cochée
-     * et grisée (non décochable) : elle fait partie du mode et suit la liste déroulante.
-     */
-    private fun setUpMultilingual(preferences: KeyboardPreferences) {
-        val switch = findViewById<CompoundButton>(R.id.switch_multilingual)
-        val container = findViewById<LinearLayout>(R.id.layout_multilingual_languages)
-        val minHint = findViewById<View>(R.id.text_multilingual_min)
-        val selected = preferences.multilingualSelection.toMutableSet()
-        val boxes = KeyboardLanguage.entries.map { language ->
-            CheckBox(this).apply {
-                text = language.displayName
-                isChecked = language in selected
-            }.also { container.addView(it) }
-        }
-
-        fun refresh() {
-            val on = switch.isChecked
-            container.visibility = if (on) View.VISIBLE else View.GONE
-            if (on) {
-                // Langue du clavier : cochée (ce qui met aussi à jour la sélection enregistrée) puis grisée.
-                val base = baseKeyboardLanguage(preferences)
-                boxes.forEachIndexed { index, box ->
-                    val locked = KeyboardLanguage.entries[index] == base
-                    if (locked && !box.isChecked) box.isChecked = true
-                    box.isEnabled = !locked
-                    box.alpha = if (locked) LOCKED_BOX_ALPHA else 1f
-                }
-            }
-            minHint.visibility = if (on && !MultilingualChoice.isActive(selected.toList())) View.VISIBLE else View.GONE
-            // Langues utilisées modifiées : le dictionnaire des nouvelles langues se télécharge tout de suite.
-            dictionaries.refresh()
-        }
-        boxes.forEachIndexed { index, box ->
-            val language = KeyboardLanguage.entries[index]
-            box.setOnCheckedChangeListener { _, checked ->
-                if (checked) selected.add(language) else selected.remove(language)
-                preferences.multilingualSelection = selected.toList()
-                refresh()
-            }
-        }
-        switch.isChecked = preferences.isMultilingualEnabled
-        switch.setOnCheckedChangeListener { _, checked ->
-            preferences.isMultilingualEnabled = checked
-            refresh()
-        }
-        onKeyboardLanguageChanged = ::refresh
-        refresh()
+    /** Sous-titre de la ligne « Langues » : les langues utilisées (ex. « Français, English »), relu à chaque retour sur l'écran. */
+    private fun showLanguagesSummary() {
+        val languages = KeyboardPreferences(this).languageSetup.inUse(automaticKeyboardLanguage())
+        findViewById<View>(R.id.button_languages).findViewById<TextView>(R.id.row_subtitle).text =
+            languages.joinToString(", ") { it.displayName }
     }
 
     /**
@@ -392,9 +305,6 @@ class KeyboardSettingsActivity : Activity() {
     }
 
     private companion object {
-        /** Opacité de la case de la langue du clavier (cochée, non modifiable). */
-        const val LOCKED_BOX_ALPHA = 0.5f
-
         /** Code de la demande de permission d'images (captures d'écran). */
         const val REQUEST_SCREENSHOT_PERMISSION = 4101
     }

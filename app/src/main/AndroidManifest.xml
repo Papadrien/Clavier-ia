@@ -70,6 +70,16 @@
             android:exported="false" />
 
         <activity
+            android:name=".LanguagesActivity"
+            android:label="@string/languages_title"
+            android:exported="false" />
+
+        <activity
+            android:name=".LanguageDetailActivity"
+            android:label="@string/languages_title"
+            android:exported="false" />
+
+        <activity
             android:name=".ModelDownloadActivity"
             android:label="@string/model_download_title"
             android:exported="false" />

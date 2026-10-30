@@ -29,8 +29,10 @@ internal class DictionarySuggestions(private val d: Dictionary) {
         habits: HabitContext? = null,
     ): List<String> {
         if (limit <= 0 || !isSuggestible(typed)) return emptyList()
+        // Tournure habituelle : à défaut de faute, un mot valide que les habitudes remplacent clairement (voir PhraseHabits).
         val correction = d.correctionFor(typed, personalWords = personalWords, habits = habits)
-        return (listOfNotNull(correction) + completionsFor(typed, limit, personalWords, correction)).take(limit)
+            ?: d.habitPhraseCorrectionFor(typed, personalWords, habits)
+        return (listOfNotNull(correction) + completionsFor(typed, limit, personalWords, listOfNotNull(correction))).take(limit)
     }
 
     /**
@@ -42,16 +44,25 @@ internal class DictionarySuggestions(private val d: Dictionary) {
      *   [mot tapé, correction, 1re complétion], la correction au centre (gras, elle va remplacer le
      *   mot tapé) et le mot tapé à gauche pour pouvoir la refuser.
      * - Sinon : les complétions, de gauche à droite, en simples suggestions (poids normal).
+     *
+     * [participle] : participe passé attendu à la place du mot tapé d'après l'auxiliaire qui le précède (voir
+     * [FrenchContextCorrector.participleFor]) ; il n'est pris en compte que si le mot tapé n'est pas une faute.
+     * Voir [participleSlots].
      */
     fun suggestionSlotsFor(
         typed: String,
         personalWords: Collection<String> = emptyList(),
         habits: HabitContext? = null,
+        participle: ParticipleFix? = null,
     ): List<WordSuggestion?> {
         val empty = List<WordSuggestion?>(Dictionary.SUGGESTION_LIMIT) { null }
         if (!isSuggestible(typed)) return empty
+        // Même règle que l'autocorrection : la tournure habituelle affichée en gras est celle qui sera appliquée.
         val correction = d.correctionFor(typed, personalWords = personalWords, habits = habits)
-        val completions = completionsFor(typed, Dictionary.SUGGESTION_LIMIT, personalWords, correction)
+            ?: d.habitPhraseCorrectionFor(typed, personalWords, habits)
+        // Mot valide qui suit un auxiliaire (« il a observe ») : le participe est proposé au centre.
+        if (correction == null && participle != null) return participleSlots(typed, participle, personalWords)
+        val completions = completionsFor(typed, Dictionary.SUGGESTION_LIMIT, personalWords, listOfNotNull(correction))
         fun completion(index: Int) = completions.getOrNull(index)?.let { WordSuggestion(it, WordSuggestion.Kind.COMPLETION) }
         if (correction != null) {
             return listOf(
@@ -78,6 +89,7 @@ internal class DictionarySuggestions(private val d: Dictionary) {
         personalWords: Collection<String> = emptyList(),
         previousForm: String? = null,
         habits: HabitContext? = null,
+        participle: ParticipleFix? = null,
     ): List<WordSuggestion?> {
         val empty = List<WordSuggestion?>(Dictionary.SUGGESTION_LIMIT) { null }
         if (!isSuggestible(typed)) return empty
@@ -85,6 +97,8 @@ internal class DictionarySuggestions(private val d: Dictionary) {
         val exclude = HashSet<String>()
         exclude += typed.lowercase()
         correction?.let { exclude += it.lowercase() }
+        val participleForm = participle?.takeIf { correction == null }
+        participleForm?.let { exclude += participleKeys(it) }
         val original = previousForm?.takeIf { correction == null && it.isNotEmpty() && it.lowercase() != typed.lowercase() }
         original?.let { exclude += it.lowercase() }
         val alternatives = alternativesFor(typed, Dictionary.SUGGESTION_LIMIT, personalWords, exclude)
@@ -95,9 +109,58 @@ internal class DictionarySuggestions(private val d: Dictionary) {
                 WordSuggestion(correction, WordSuggestion.Kind.AUTOCORRECTION),
                 alternative(0),
             )
+            // Mot déjà écrit après un auxiliaire (« il a observe ») : le participe au centre, comme à la frappe.
+            participleForm != null -> {
+                val form = WordForms.applyOriginalCasing(typed, participleForm.form)
+                if (participleForm.automatic) {
+                    listOf(
+                        WordSuggestion(typed, WordSuggestion.Kind.TYPED),
+                        WordSuggestion(form, WordSuggestion.Kind.AUTOCORRECTION),
+                        alternative(0),
+                    )
+                } else {
+                    listOf(alternative(0), WordSuggestion(form, WordSuggestion.Kind.COMPLETION), alternative(1))
+                }
+            }
             original != null -> listOf(WordSuggestion(original, WordSuggestion.Kind.TYPED), alternative(0), alternative(1))
             else -> List(Dictionary.SUGGESTION_LIMIT) { alternative(it) }
         }
+    }
+
+    /**
+     * Emplacements d'un mot tapé qui est valide mais que l'auxiliaire qui le précède fait attendre au participe passé
+     * (« il a observe » -> « observé ») :
+     *
+     * - [ParticipleFix.automatic] (l'autocorrection l'appliquera à l'espace) : [mot tapé, participe, 1re complétion],
+     *   le participe au centre et en gras, le mot tapé à gauche pour le refuser, comme pour une faute du dictionnaire ;
+     * - sinon (pas assez sûr pour être appliqué seul) : [1re complétion, participe, 2e complétion], le participe au
+     *   centre en simple suggestion (poids normal), à toucher pour l'adopter.
+     *
+     * Le participe (et sa forme masculine, s'il est accordé) n'est pas répété dans les complétions.
+     */
+    private fun participleSlots(
+        typed: String,
+        participle: ParticipleFix,
+        personalWords: Collection<String>,
+    ): List<WordSuggestion?> {
+        val form = WordForms.applyOriginalCasing(typed, participle.form)
+        val completions = completionsFor(typed, Dictionary.SUGGESTION_LIMIT, personalWords, participleKeys(participle).toList())
+        fun completion(index: Int) = completions.getOrNull(index)?.let { WordSuggestion(it, WordSuggestion.Kind.COMPLETION) }
+        return if (participle.automatic) {
+            listOf(
+                WordSuggestion(typed, WordSuggestion.Kind.TYPED),
+                WordSuggestion(form, WordSuggestion.Kind.AUTOCORRECTION),
+                completion(0),
+            )
+        } else {
+            listOf(completion(0), WordSuggestion(form, WordSuggestion.Kind.COMPLETION), completion(1))
+        }
+    }
+
+    /** Clés minuscules à ne pas reproposer à côté du participe : lui-même et, s'il est accordé (« arrivée »), sa forme masculine. */
+    private fun participleKeys(participle: ParticipleFix): Set<String> {
+        val key = participle.form.lowercase()
+        return setOf(key, key.removeSuffix("e"))
     }
 
     /**
@@ -176,20 +239,20 @@ internal class DictionarySuggestions(private val d: Dictionary) {
 
     /**
      * Au plus [limit] complétions de [typed] : mots personnels d'abord, puis mots du dictionnaire.
-     * Ni le mot tapé ni [exclude] (la correction, déjà proposée à part) n'y figurent.
+     * Ni le mot tapé ni [exclude] (la correction ou le participe, déjà proposés à part) n'y figurent.
      */
     private fun completionsFor(
         typed: String,
         limit: Int,
         personalWords: Collection<String>,
-        exclude: String?,
+        exclude: Collection<String>,
     ): List<String> {
         val lower = typed.lowercase()
         val result = ArrayList<String>(limit)
         // Clés minuscules déjà proposées (« Chat » et « chat » ne comptent qu'une fois).
         val seen = HashSet<String>()
         seen += lower
-        exclude?.let { seen += it.lowercase() }
+        for (word in exclude) seen += word.lowercase()
 
         fun offer(display: String, key: String) {
             if (result.size < limit && seen.add(key)) result += display

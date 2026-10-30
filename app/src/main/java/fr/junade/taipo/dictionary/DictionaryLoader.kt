@@ -2,6 +2,7 @@ package fr.junade.taipo.dictionary
 
 import android.content.Context
 import fr.junade.taipo.AppLog
+import fr.junade.taipo.KeyboardPreferences
 import fr.junade.taipo.Sections
 import fr.junade.taipo.traced
 import fr.junade.taipo.KeyboardLanguage
@@ -62,6 +63,14 @@ object DictionaryLoader {
     /** Dictionnaire déjà chargé pour [language], ou null. Ne bloque jamais et ne charge rien. */
     fun peek(language: KeyboardLanguage): Dictionary? = cache[language]
 
+    /**
+     * Oublie le dictionnaire chargé de [language] : il est relu au prochain préchargement (ouverture d'un champ). Appelé
+     * quand la disposition de la langue change dans les paramètres, car la proximité des touches en dépend.
+     */
+    fun evict(language: KeyboardLanguage) {
+        cache.remove(language)
+    }
+
     /** Charge (si besoin) et renvoie le dictionnaire : bloquant, à appeler hors du thread principal. */
     fun forLanguage(context: Context, language: KeyboardLanguage): Dictionary {
         cache[language]?.let { return it }
@@ -69,7 +78,7 @@ object DictionaryLoader {
             cache[language]?.let { return it }
             // Fichiers pas (encore) téléchargés : on tape sans autocorrection ni suggestions (dictionnaire vide), sans le
             // mettre en cache.
-            if (!DictionaryFiles.isInstalled(context.filesDir, language)) return emptyDictionary(language)
+            if (!DictionaryFiles.isInstalled(context.filesDir, language)) return emptyDictionary(context, language)
             val dictionary = traced(Sections.DICTIONARY_LOAD) { loadWithBackup(context, language) }
             cache[language] = dictionary
             return dictionary
@@ -84,10 +93,14 @@ object DictionaryLoader {
     private fun backupSourceFor(context: Context, language: KeyboardLanguage): Source =
         Source(DictionaryFiles.localFile(context.filesDir, language, DictionaryFile.BACKUP))
 
-    private fun emptyDictionary(language: KeyboardLanguage): Dictionary {
+    private fun emptyDictionary(context: Context, language: KeyboardLanguage): Dictionary {
         AppLog.w(TAG, "dictionnaire $language pas encore téléchargé : saisie sans autocorrection ni suggestions")
-        return Dictionary.withFrequencies(emptyMap(), inflectionsFor(language), 0L, KeyProximityFactory.forLanguage(language))
+        return Dictionary.withFrequencies(emptyMap(), inflectionsFor(language), 0L, proximityOf(context, language))
     }
+
+    /** Proximité des touches de la disposition choisie pour [language] dans les paramètres. */
+    private fun proximityOf(context: Context, language: KeyboardLanguage): KeyProximity =
+        KeyProximityFactory.forLanguage(language, KeyboardPreferences(context).letterArrangementOf(language))
 
     /** Charge la liste principale ; si elle échoue (mémoire, lecture) et qu'une liste de secours existe, charge celle-ci. */
     private fun loadWithBackup(context: Context, language: KeyboardLanguage): Dictionary {
@@ -110,7 +123,7 @@ object DictionaryLoader {
             inflectionsFor(language),
             source.candidateMinFrequency,
             // Proximité des touches de la disposition de la langue : départage les corrections à distance égale.
-            KeyProximityFactory.forLanguage(language),
+            proximityOf(context, language),
             // Prénoms courants avec leur majuscule (les listes de fréquence sont toutes en minuscules).
             properNames = readNames(context, language),
         )

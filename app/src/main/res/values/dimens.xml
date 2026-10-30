@@ -256,6 +256,10 @@
     <dimen name="taipo_input_text_size">16sp</dimen>
     <!-- Ligne de commutateur ou de bouton radio : hauteur minimale de la zone tactile (lot 18, auparavant 48dp dans chaque ligne). -->
     <dimen name="taipo_settings_row_min_height">48dp</dimen>
+
+    <!-- Aperçu d'une disposition (détail d'une langue) : un carré par touche, écart entre les carrés. -->
+    <dimen name="taipo_layout_preview_key">8dp</dimen>
+    <dimen name="taipo_layout_preview_gap">2dp</dimen>
     <!-- Commutateur : piste, pastille (la zone tactile reste celle de la ligne, 48dp au minimum) et écart au bord. -->
     <dimen name="taipo_switch_track_width">52dp</dimen>
     <dimen name="taipo_switch_track_height">26dp</dimen>

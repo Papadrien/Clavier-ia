@@ -1,5 +1,6 @@
 package fr.junade.taipo.ai
 
+import android.content.Context
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
@@ -47,7 +48,9 @@ class MicUnavailableException(message: String, cause: Throwable? = null) : Illeg
  * s'ouvre pas (sans rien laisser d'alloué) ; en cours d'écoute, une lecture en erreur ou une file de
  * décodage saturée arrêtent la capture proprement et sont signalées par [onCaptureError].
  */
-class VoiceRecorder(private val engine: VoiceEngine, private val scope: CoroutineScope) {
+class VoiceRecorder(context: Context, private val engine: VoiceEngine, private val scope: CoroutineScope) {
+
+    private val audioFocus = RecordingAudioFocus(context)
 
     private var audioRecord: AudioRecord? = null
     private var captureJob: Job? = null
@@ -108,6 +111,8 @@ class VoiceRecorder(private val engine: VoiceEngine, private val scope: Coroutin
             throw MicUnavailableException("AudioRecord not initialized (state ${record.state})")
         }
         val voiceStream = engine.createStream()
+        // Met en pause la lecture audio des autres applications avant d'ouvrir le micro.
+        audioFocus.acquire()
         try {
             record.startRecording()
         } catch (e: IllegalStateException) {
@@ -214,6 +219,7 @@ class VoiceRecorder(private val engine: VoiceEngine, private val scope: Coroutin
             }
         }
         audioRecord = null
+        audioFocus.release()
 
         val finalStream = stream
         stream = null
@@ -228,6 +234,7 @@ class VoiceRecorder(private val engine: VoiceEngine, private val scope: Coroutin
 
     /** Libère ce que [start] avait déjà alloué quand le micro refuse de démarrer. */
     private fun abortStart(record: AudioRecord, voiceStream: OnlineStream) {
+        audioFocus.release()
         record.release()
         voiceStream.release()
     }
