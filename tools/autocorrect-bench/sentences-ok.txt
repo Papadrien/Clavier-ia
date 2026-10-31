@@ -1,0 +1,138 @@
+# Phrases françaises JUSTES : l'autocorrection ne doit en changer aucune (mesure des fausses corrections).
+# Une phrase par ligne, apostrophes droites. Lignes commençant par # ignorées.
+Il a mangé une pomme.
+Je vais à Paris demain.
+Où est-ce que tu habites ?
+La ville où j'habite est petite.
+Elle est là depuis hier.
+Tu veux du thé ou du café ?
+Ils ont fini leur travail.
+On a ri toute la soirée.
+Son frère et sa sœur sont arrivés.
+Ces enfants ont perdu leurs clés.
+Il peut venir si on le lui demande.
+Il y a peu de monde ici.
+Ça va très bien, merci.
+Il faut manger avant de partir.
+Elle a envie de dormir.
+J'ai hâte de te revoir.
+Nous avons parlé pendant des heures.
+Peut-être qu'il viendra demain.
+Est-ce que tu viens ?
+Va-t-il pleuvoir ce soir ?
+Qu'est-ce que tu fais ?
+Je n'ai pas compris ce qu'il voulait.
+Lorsqu'un enfant pleure, il faut le consoler.
+Quelqu'un a laissé la porte ouverte.
+Aujourd'hui, il fait beau.
+Ne t'inquiète pas, tout va bien.
+J'étais à la maison quand il a appelé.
+Le cœur de la ville est magnifique.
+Elle a écrit une lettre à sa mère.
+Il a un chien et un chat.
+Elle a peur du noir.
+Nous sommes arrivés à la gare à midi.
+Je pense à toi tous les jours.
+C'est facile à faire quand on sait comment.
+Il y a du travail à faire demain.
+Il habite à côté de chez moi.
+À demain, et bonne soirée.
+Le jour où il est parti, il pleuvait.
+Je ne sais pas où il habite.
+D'où viens-tu ?
+Reste là, je reviens tout de suite.
+Il n'est pas là aujourd'hui.
+Passe par là, c'est plus court.
+Ils se sont vus hier soir.
+Elle se demande pourquoi il est parti.
+Ce livre est très intéressant.
+Il s'est trompé de chemin.
+Elle s'est levée tôt ce matin.
+Les enfants ont joué dehors toute la journée.
+Elles ont faim après la promenade.
+Quand on a fini, on part.
+Ils sont partis hier matin.
+Les clés sont sur la table.
+Il a perdu son portable dans le train.
+Ses amis sont arrivés en retard.
+C'est un bon film, je te le conseille.
+Il a dit qu'on viendrait demain.
+Ils ont vendu leurs maisons.
+Leur maison est très grande.
+Elle aime sa voiture.
+Il est grand et fort.
+Elle et lui sont partis ensemble.
+Marie et Paul sont amis depuis longtemps.
+Ce livre est intéressant.
+Un peu de patience, s'il te plaît.
+J'écoute la radio le matin.
+Je suis très content de te voir.
+Elle a un gros problème avec son ordinateur.
+La réunion commence à midi.
+Les élèves sont en classe.
+Il a réussi son examen.
+Merci beaucoup pour tout.
+Je vous écris pour confirmer notre rendez-vous.
+Donne-moi un instant, je regarde.
+Dis-moi la vérité.
+Dit-il en souriant.
+Une œuvre magnifique.
+Des œufs frais pour le petit déjeuner.
+Je mange un bœuf bourguignon ce soir.
+Il fait beau et chaud aujourd'hui.
+Nous avons décidé de partir tôt.
+Elle a parlé pendant une heure.
+Il est arrivé hier soir.
+Tu as oublié ton sac sur le banc.
+Je vais manger maintenant.
+Ils ont donné leur avis sur le projet.
+Pour parler avec lui, il faut attendre.
+Il a observé la scène sans rien dire.
+Je suis allé chez le médecin ce matin.
+On se retrouve devant le cinéma à huit heures.
+Elle travaille dans une grande entreprise.
+Mon père est parti en voyage la semaine dernière.
+Il ne faut pas oublier de fermer la porte.
+Nous avons dîné au restaurant hier soir.
+Je voudrais un café, s'il vous plaît.
+Il a plu toute la nuit.
+Tu peux m'appeler quand tu veux.
+Il y a beaucoup de choses à voir dans cette ville.
+Je suis en train de lire un roman.
+Elle est très fatiguée après le travail.
+Les gens sont gentils dans ce quartier.
+Je ne suis pas sûr de comprendre.
+Demain, je vais chez ma grand-mère.
+Le train part à neuf heures trente.
+Il a acheté du pain et du fromage.
+J'aimerais bien partir en vacances.
+Nous allons au marché samedi matin.
+Mon téléphone ne marche plus depuis hier.
+Je n'ai pas encore reçu ton message.
+Est-ce qu'elle a trouvé ses lunettes ?
+Cette semaine, on a beaucoup travaillé.
+Tu as raison, c'est une bonne idée.
+Je te rappelle dans une heure.
+Il fait froid ce matin, mets ton manteau.
+Elle a choisi la robe bleue.
+Qui veut encore du gâteau ?
+Il n'y a plus de lait dans le frigo.
+C'est ce que je veux.
+Il est ce qu'il est.
+Il peut être fatigué ce soir.
+Je lui ai dit il y a longtemps.
+Fais le ménage avant de partir.
+Elle passe lui dire bonjour.
+Il me dit toi aussi tu viens.
+Écoute, moi je pense que c'est trop cher.
+Voilà ce qui est ce qu'on attendait.
+Tu as vu ce que j'ai fait ?
+Dites nous la vérité.
+Le chat a mangé la souris.
+La poésie et la moelle des os.
+Un coefficient de sécurité élevé.
+Le poète lit un poème.
+Ils coexistent depuis longtemps.
+Le phénix renaît de ses cendres.
+Elle aime la glace au chocolat.
+Le dernier mot de la phrase.

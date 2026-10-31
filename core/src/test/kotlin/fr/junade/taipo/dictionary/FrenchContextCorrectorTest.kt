@@ -275,8 +275,9 @@ class FrenchContextCorrectorTest {
     }
 
     @Test
-    fun `vis a vis devient vis a accent grave vis`() {
-        assertEquals("vis à vis", correct("vis a vis"))
+    fun `vis a vis devient vis-a-vis avec ses accent et traits d'union`() {
+        // a / à met l'accent, puis FrenchHyphenation ajoute les traits d'union (phase 1 de la refonte).
+        assertEquals("vis-à-vis", correct("vis a vis"))
     }
 
     @Test

@@ -1,0 +1,130 @@
+# categorie<TAB>texte tapé<TAB>texte attendu après autocorrection (mot par mot, comme au clavier)
+# Les cas qui échouent aujourd'hui sont les CIBLES de la refonte ; ils sont listés dans baseline.txt.
+a-à	Il va a la plage.	Il va à la plage.
+a-à	Je pense a toi.	Je pense à toi.
+a-à	J'ai réussi a finir ce travail.	J'ai réussi à finir ce travail.
+a-à	Nous sommes a la maison.	Nous sommes à la maison.
+a-à	A demain et bonne soirée.	À demain et bonne soirée.
+a-à	Il a mangé a midi.	Il a mangé à midi.
+a-à	C'est facile a faire.	C'est facile à faire.
+a-à	J'ai quelque chose a te dire.	J'ai quelque chose à te dire.
+a-à	Je t'attends a la gare.	Je t'attends à la gare.
+a-à	Il habite a côté de chez moi.	Il habite à côté de chez moi.
+a-à	Il y a du travail a faire.	Il y a du travail à faire.
+a-à	Jusqu'a demain.	Jusqu'à demain.
+a-à	A cause de la pluie, on reste.	À cause de la pluie, on reste.
+a-à	Il l'a dit a son frère.	Il l'a dit à son frère.
+ou-où	La ville ou j'habite est calme.	La ville où j'habite est calme.
+ou-où	Le jour ou il est parti, il pleuvait.	Le jour où il est parti, il pleuvait.
+ou-où	Ou est-il passé ?	Où est-il passé ?
+ou-où	Ou vas-tu ce soir ?	Où vas-tu ce soir ?
+ou-où	Je ne sais pas ou il habite.	Je ne sais pas où il habite.
+ou-où	D'ou viens-tu ?	D'où viens-tu ?
+ou-où	Un dépôt ou seul moi j'ai accès.	Un dépôt où seul moi j'ai accès.
+la-là	Il est la depuis midi.	Il est là depuis midi.
+la-là	Je suis la pour toi.	Je suis là pour toi.
+la-là	Reste la, je reviens.	Reste là, je reviens.
+la-là	Il n'est pas la aujourd'hui.	Il n'est pas là aujourd'hui.
+la-là	Passe par la.	Passe par là.
+participe	Il a manger tout le gâteau.	Il a mangé tout le gâteau.
+participe	Il faut mangé avant de partir.	Il faut manger avant de partir.
+participe	Elle a parle hier.	Elle a parlé hier.
+participe	J'ai fini de travaillé.	J'ai fini de travailler.
+participe	Il est arrive hier.	Il est arrivé hier.
+participe	Tu as oublie ton sac.	Tu as oublié ton sac.
+participe	Je vais mangé maintenant.	Je vais manger maintenant.
+participe	Ils ont donne leur avis.	Ils ont donné leur avis.
+participe	Pour parlé avec lui, il faut attendre.	Pour parler avec lui, il faut attendre.
+participe	Il a observe la scène.	Il a observé la scène.
+ce-se	Il ce lève tôt.	Il se lève tôt.
+ce-se	Ils ce sont vus hier.	Ils se sont vus hier.
+ce-se	Elle ce demande pourquoi.	Elle se demande pourquoi.
+ce-se	Se livre est intéressant.	Ce livre est intéressant.
+on-ont	Ils on fini leur travail.	Ils ont fini leur travail.
+on-ont	Elles on faim.	Elles ont faim.
+on-ont	Les enfants on joué dehors.	Les enfants ont joué dehors.
+on-ont	Ont y va demain.	On y va demain.
+son-sont	Ils son partis hier.	Ils sont partis hier.
+son-sont	Elles son contentes.	Elles sont contentes.
+son-sont	Il a perdu sont portable.	Il a perdu son portable.
+son-sont	Sont frère est grand.	Son frère est grand.
+c'est-s'est	Cest un bon film.	C'est un bon film.
+c'est-s'est	Il c'est lavé les mains.	Il s'est lavé les mains.
+c'est-s'est	Elle c'est trompée.	Elle s'est trompée.
+c'est-s'est	Ces un bon ami.	C'est un bon ami.
+leur-leurs	Ils ont perdu leur clés.	Ils ont perdu leurs clés.
+leur-leurs	Je leurs ai parlé hier.	Je leur ai parlé hier.
+leur-leurs	Ils ont vendu leur maisons.	Ils ont vendu leurs maisons.
+ça-sa	Sa va bien merci.	Ça va bien merci.
+ça-sa	Ca marche très bien.	Ça marche très bien.
+ça-sa	Ça mère est gentille.	Sa mère est gentille.
+et-est	Il et parti hier.	Il est parti hier.
+et-est	Il fait beau est chaud.	Il fait beau et chaud.
+et-est	Ce livre et intéressant.	Ce livre est intéressant.
+et-est	Marie est Paul sont amis.	Marie et Paul sont amis.
+peu-peut	Il peu venir demain.	Il peut venir demain.
+peu-peut	Il y a peut de monde.	Il y a peu de monde.
+peu-peut	Il mange très peut.	Il mange très peu.
+peu-peut	On peu y aller.	On peut y aller.
+accents	J'ecoute la radio.	J'écoute la radio.
+accents	Jetais fatigué hier.	J'étais fatigué hier.
+accents	Tinquiete pas.	T'inquiète pas.
+accents	Lorsquun enfant pleure, on le console.	Lorsqu'un enfant pleure, on le console.
+accents	Je suis tres content.	Je suis très content.
+accents	Il fait beau aujourdhui.	Il fait beau aujourd'hui.
+accents	Cest vrai.	C'est vrai.
+accents	Jai faim.	J'ai faim.
+accents	Il est deja parti.	Il est déjà parti.
+accents	Apres le repas, on sort.	Après le repas, on sort.
+accents	Il eet parti.	Il est parti.
+accents	Elle a un gros probleme.	Elle a un gros problème.
+accents	La reunion commence a midi.	La réunion commence à midi.
+accents	Les eleves sont en classe.	Les élèves sont en classe.
+accents	Il a reussi son examen.	Il a réussi son examen.
+ligatures	Mon coeur bat vite.	Mon cœur bat vite.
+ligatures	Une oeuvre magnifique.	Une œuvre magnifique.
+ligatures	Des oeufs frais.	Des œufs frais.
+ligatures	Ma soeur arrive.	Ma sœur arrive.
+ligatures	Un boeuf bourguignon.	Un bœuf bourguignon.
+trait-union	Peutêtre qu'il viendra.	Peut-être qu'il viendra.
+trait-union	Est ce que tu viens ?	Est-ce que tu viens ?
+trait-union	Va t il pleuvoir ?	Va-t-il pleuvoir ?
+trait-union	Dis moi la vérité.	Dis-moi la vérité.
+noms	adrien est venu hier.	Adrien est venu hier.
+noms	Eric arrive demain.	Eric arrive demain.
+fautes-frappe	Je vais mangr maintenant.	Je vais manger maintenant.
+fautes-frappe	Il fait tres froid dehors.	Il fait très froid dehors.
+fautes-frappe	Bonjor tout le monde.	Bonjour tout le monde.
+fautes-frappe	Merci baucoup pour ton aide.	Merci beaucoup pour ton aide.
+fautes-frappe	Je suis fatigue ce soir.	Je suis fatigué ce soir.
+fautes-frappe	Nosu partons demain.	Nous partons demain.
+fautes-frappe	Il a ouvret la porte.	Il a ouvert la porte.
+fautes-frappe	Je pese que tu as raison.	Je pense que tu as raison.
+trait-union	Aime t elle son travail ?	Aime-t-elle son travail ?
+trait-union	Y a t il du pain ?	Y a-t-il du pain ?
+trait-union	Mange t il bien ?	Mange-t-il bien ?
+trait-union	Va t on partir demain ?	Va-t-on partir demain ?
+trait-union	Donne moi ça.	Donne-moi ça.
+trait-union	Dépêche toi, on part.	Dépêche-toi, on part.
+trait-union	Rends lui visite demain.	Rends-lui visite demain.
+trait-union	Rendez vous demain à midi.	Rendez-vous demain à midi.
+trait-union	Qu'est ce que tu fais ?	Qu'est-ce que tu fais ?
+trait-union	N'est ce pas ?	N'est-ce pas ?
+trait-union	Où est ce que tu vas ?	Où est-ce que tu vas ?
+trait-union	Aujourd hui il pleut.	Aujourd'hui il pleut.
+trait-union	Mon grand père arrive.	Mon grand-père arrive.
+trait-union	Il est la bas.	Il est là-bas.
+trait-union	Le rapport ci dessous.	Le rapport ci-dessous.
+trait-union	C'est a dire que oui.	C'est-à-dire que oui.
+trait-union	Quelques uns sont partis.	Quelques-uns sont partis.
+trait-union	Au dessus de la table.	Au-dessus de la table.
+trait-union	Après demain je pars.	Après-demain je pars.
+trait-union	Ce week end je travaille.	Ce week-end je travaille.
+trait-union	Celui ci est meilleur.	Celui-ci est meilleur.
+trait-union	Il habite au sous sol.	Il habite au sous-sol.
+ligatures	Elle a le coeur lourd.	Elle a le cœur lourd.
+ligatures	Oeuvre d'art.	Œuvre d'art.
+ligatures	Mes voeux de bonheur.	Mes vœux de bonheur.
+ligatures	Un noeud dans la corde.	Un nœud dans la corde.
+ligatures	Elle a mal à l'oeil.	Elle a mal à l'œil.
+ligatures	Une manoeuvre difficile.	Une manœuvre difficile.

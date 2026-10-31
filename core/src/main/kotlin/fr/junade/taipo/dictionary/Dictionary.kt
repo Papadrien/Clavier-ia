@@ -131,6 +131,11 @@ class Dictionary private constructor(
         }
     }
 
+    // Écriture sans ligature -> écriture avec ligature (« coeur » -> « cœur », « oeuvre » -> « œuvre ») : voir
+    // [FrenchCanonicalizer.ligatureRestorations]. Vide pour les langues sans « œ » dans leur liste.
+    private val ligatureForms: Map<String, String> =
+        FrenchCanonicalizer.ligatureRestorations(candidateWords, candidateFrequencies) { frequencies[it] ?: 0L }
+
     // Fréquence attribuée aux mots personnels : strictement supérieure à toutes celles du dictionnaire
     // (l'utilisateur les a ajoutés volontairement, ils priment sur un mot du dictionnaire à distance égale).
     internal val personalFrequency: Long = (candidateFrequencies.maxOrNull() ?: 0L) + 1L
@@ -293,6 +298,8 @@ class Dictionary private constructor(
         if (isPersonalWithApostrophe(lower, personal)) return null
 
         if (lower in frequencies) {
+            // « coeur » -> « cœur » : la liste contient les deux écritures, seule celle avec la ligature est juste.
+            ligatureForms[lower]?.let { return applyOriginalCasing(word, it) }
             // Mot présent dans les listes : corrigé seulement si c'est une faute du corpus dont la
             // version accentuée domine nettement (« ca » -> « ça »).
             dominatedByAccented[lower]?.let { return applyOriginalCasing(word, it) }
@@ -321,7 +328,7 @@ class Dictionary private constructor(
         contractionsFolded[lower]?.let { return applyOriginalCasing(word, it) }
 
         // Accent oublié : la forme accentuée (éventuellement fléchie) est la correction évidente.
-        accentRestoration(lower)?.let { return applyOriginalCasing(word, it.word) }
+        accentRestoration(lower)?.let { return applyOriginalCasing(word, ligatureForms[it.word] ?: it.word) }
 
         // Apostrophe d'élision oubliée devant un mot connu (« tinquiete » -> « t'inquiète », « lorsquun » ->
         // « lorsqu'un »), avant la recherche par distance d'édition qui, sinon, retirerait la lettre élidée.
@@ -331,11 +338,7 @@ class Dictionary private constructor(
 
         var best: String? = null
         var bestDistance = allowedDistance + 1
-        var bestFrequency = -1L
-        var bestIsSwap = false
-        var bestIsPersonal = false
-        var bestHabit = HabitScore.NONE
-        var bestCost = Int.MAX_VALUE
+        var bestScore = Double.NEGATIVE_INFINITY
         var ambiguous = false
         // Rien d'appris : aucun départage possible, on ne calcule rien (résultat identique à l'absence d'habitudes).
         val activeHabits = habits?.takeUnless { it.isInert() }
@@ -353,41 +356,17 @@ class Dictionary private constructor(
             val habit = if (activeHabits != null && distance <= bestDistance) activeHabits.score(lower, candidate) else HabitScore.NONE
             // Coût pondéré par la proximité des touches (0 si elle est désactivée : sans effet).
             val cost = proximity.editCost(lower, candidate)
-            // À distance égale : mot personnel (ajouté volontairement) > habitudes (paire acceptée > contexte >
-            // usage) > faute plausible au clavier (touche voisine, lettre effleurée, inversion : coût pondéré le
-            // plus bas) > inversion de deux lettres > fréquence. Sans la première règle, « nae » donnait « ane »
-            // (inversion) et non « naé ».
-            val better = distance < bestDistance || (
-                distance == bestDistance && (
-                    (isPersonal && !bestIsPersonal) || (
-                        isPersonal == bestIsPersonal && (
-                            habit > bestHabit || (
-                                habit == bestHabit && (
-                                    cost < bestCost || (
-                                        cost == bestCost && (
-                                            (isSwap && !bestIsSwap) || (isSwap == bestIsSwap && frequency > bestFrequency)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
+            // À distance égale, le meilleur score gagne (voir [CandidateScore] : mot personnel, habitudes, plausibilité de la
+            // faute au clavier, inversion, fréquence). Deux scores identiques = ambiguïté, on ne corrige pas.
+            val score = CandidateScore.of(frequency, cost, isSwap, isPersonal, habit)
             when {
-                better -> {
+                distance < bestDistance || (distance == bestDistance && score > bestScore) -> {
                     bestDistance = distance
-                    bestFrequency = frequency
-                    bestIsSwap = isSwap
-                    bestIsPersonal = isPersonal
-                    bestHabit = habit
-                    bestCost = cost
+                    bestScore = score
                     best = candidate
                     ambiguous = false
                 }
-                distance == bestDistance && isPersonal == bestIsPersonal && habit == bestHabit && isSwap == bestIsSwap &&
-                    cost == bestCost && frequency == bestFrequency && candidate != best ->
-                    ambiguous = true
+                distance == bestDistance && score == bestScore && candidate != best -> ambiguous = true
             }
         }
 
@@ -531,7 +510,9 @@ class Dictionary private constructor(
         }
         if (isInflectedForm(rest)) return rest
         val restored = accentRestoration(rest)?.word ?: return null
-        return if (frequencies.getValue(restored) >= ELIDED_WORD_MIN_FREQUENCY) restored else null
+        // Une forme fléchie rétablie (« olés » pour « olé ») n'a pas de fréquence propre : trop incertaine pour une élision
+        // (getValue la faisait planter : trouvé par le banc d'autocorrection, phase 0).
+        return if ((frequencies[restored] ?: 0L) >= ELIDED_WORD_MIN_FREQUENCY) restored else null
     }
 
     /**

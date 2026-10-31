@@ -1,0 +1,91 @@
+# Référence du banc d'autocorrection (docs/autocorrection-bench.md). Générée par `main --write-baseline`.
+# À régénérer volontairement quand une phase de la refonte change le comportement, jamais pour masquer une régression.
+[metrics]
+typos.courants.voisine.ok=87.3
+typos.courants.oubli.ok=78.5
+typos.courants.doublon.ok=89.5
+typos.courants.inversion.ok=94.0
+typos.courants.ajout.ok=95.6
+typos.courants.accent.ok=96.8
+typos.courants.apostrophe.ok=100.0
+typos.courants.ok=91.67
+typos.courants.missed=3.54
+typos.courants.wrong=4.79
+typos.courants.surMotValide=68.31
+typos.varies.voisine.ok=90.3
+typos.varies.oubli.ok=76.9
+typos.varies.doublon.ok=92.2
+typos.varies.inversion.ok=97.6
+typos.varies.ajout.ok=94.8
+typos.varies.accent.ok=95.7
+typos.varies.apostrophe.ok=100.0
+typos.varies.ok=92.5
+typos.varies.missed=1.47
+typos.varies.wrong=6.03
+typos.varies.surMotValide=19.6
+valides.courants.faux=0.0
+valides.courants.restaure=0.56
+valides.varies.faux=0.02
+valides.varies.restaure=1.52
+phrases.justes.changees=0.0
+contexte.a-à.ok=57.14
+contexte.ou-où.ok=71.43
+contexte.la-là.ok=40.0
+contexte.participe.ok=90.0
+contexte.ce-se.ok=0.0
+contexte.on-ont.ok=0.0
+contexte.son-sont.ok=0.0
+contexte.c'est-s'est.ok=25.0
+contexte.leur-leurs.ok=0.0
+contexte.ça-sa.ok=33.33
+contexte.et-est.ok=0.0
+contexte.peu-peut.ok=0.0
+contexte.accents.ok=100.0
+contexte.ligatures.ok=100.0
+contexte.trait-union.ok=100.0
+contexte.noms.ok=100.0
+contexte.fautes-frappe.ok=87.5
+contexte.total.ok=67.97
+[failing-cases]
+a-à	Il a mangé a midi.
+a-à	C'est facile a faire.
+a-à	J'ai quelque chose a te dire.
+a-à	Je t'attends a la gare.
+a-à	Il y a du travail a faire.
+a-à	Il l'a dit a son frère.
+ou-où	D'ou viens-tu ?
+ou-où	Un dépôt ou seul moi j'ai accès.
+la-là	Reste la, je reviens.
+la-là	Il n'est pas la aujourd'hui.
+la-là	Passe par la.
+participe	J'ai fini de travaillé.
+ce-se	Il ce lève tôt.
+ce-se	Ils ce sont vus hier.
+ce-se	Elle ce demande pourquoi.
+ce-se	Se livre est intéressant.
+on-ont	Ils on fini leur travail.
+on-ont	Elles on faim.
+on-ont	Les enfants on joué dehors.
+on-ont	Ont y va demain.
+son-sont	Ils son partis hier.
+son-sont	Elles son contentes.
+son-sont	Il a perdu sont portable.
+son-sont	Sont frère est grand.
+c'est-s'est	Il c'est lavé les mains.
+c'est-s'est	Elle c'est trompée.
+c'est-s'est	Ces un bon ami.
+leur-leurs	Ils ont perdu leur clés.
+leur-leurs	Je leurs ai parlé hier.
+leur-leurs	Ils ont vendu leur maisons.
+ça-sa	Sa va bien merci.
+ça-sa	Ça mère est gentille.
+et-est	Il et parti hier.
+et-est	Il fait beau est chaud.
+et-est	Ce livre et intéressant.
+et-est	Marie est Paul sont amis.
+peu-peut	Il peu venir demain.
+peu-peut	Il y a peut de monde.
+peu-peut	Il mange très peut.
+peu-peut	On peu y aller.
+fautes-frappe	Je pese que tu as raison.
+[changed-sentences]

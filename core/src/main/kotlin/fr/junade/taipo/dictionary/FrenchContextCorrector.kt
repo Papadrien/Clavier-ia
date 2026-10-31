@@ -28,6 +28,8 @@ package fr.junade.taipo.dictionary
  *   utilise la même analyse ([participleFor]) : quand la correction n'est pas assez sûre pour être appliquée seule,
  *   le participe est tout de même proposé au centre de la bande.
  *
+ * - **traits d'union** : « est ce que », « va t il », « dis moi », « au dessus »... (voir [FrenchHyphenation]).
+ *
  * Non couvert : l'accord du participe (« elles sont parti »), les noms sujets (« le chat a manger » reste inchangé,
  * ce peut être « à » comme « a mangé »). Logique pure (sans Android), testée en JVM.
  */
@@ -55,6 +57,8 @@ object FrenchContextCorrector {
         current = fixAccentOnA(current, textMayBeTruncated, allowRetro, frequencyOf)
         current = fixAccentOnOuAndLa(current, textMayBeTruncated, allowRetro)
         current = fixParticiple(current, frequencyOf)
+        // Traits d'union oubliés (« est ce que », « dis moi », « rendez vous ») : en dernier, après les accents de a / à.
+        current = FrenchHyphenation.fix(current, textMayBeTruncated) ?: current
         return if (current == text) null else current
     }
 
