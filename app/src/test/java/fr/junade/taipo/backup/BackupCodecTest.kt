@@ -25,6 +25,7 @@ class BackupCodecTest {
             keyboardHeight = "large",
             recentEmojis = listOf("😀", "👍"),
             habitLearning = false,
+            themeChoice = "dynamic",
         ),
         ai = BackupAiSettings(
             activeModelId = "equilibre",
@@ -49,6 +50,7 @@ class BackupCodecTest {
         assertEquals(listOf("a"), partial.dictionary)
         assertNull(partial.keyboard.numberRow)
         assertNull(partial.keyboard.recentEmojis)
+        assertNull(partial.keyboard.themeChoice)
         assertNull(partial.ai.activeModelId)
         assertEquals(emptyMap<String, String>(), partial.ai.prompts)
     }

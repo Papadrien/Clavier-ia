@@ -44,7 +44,7 @@ class MainActivity : Activity() {
         value.float
     }
 
-    // Thème de la V1 : toujours sombre (voir KeyboardTheme).
+    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }
@@ -72,6 +72,7 @@ class MainActivity : Activity() {
             getSystemService(InputMethodManager::class.java)?.showInputMethodPicker()
         }
         bindRow(R.id.button_keyboard_settings, R.string.button_keyboard_settings, R.string.home_row_keyboard_settings_subtitle, KeyboardSettingsActivity::class.java)
+        bindRow(R.id.button_theme, R.string.button_theme, R.string.home_row_theme_subtitle, ThemeActivity::class.java)
         bindRow(R.id.button_personal_dictionary, R.string.button_personal_dictionary, R.string.home_row_personal_dictionary_subtitle, PersonalDictionaryActivity::class.java)
         bindRow(R.id.button_model_download, R.string.button_model_download, R.string.home_row_model_download_subtitle, ModelDownloadActivity::class.java)
         bindRow(R.id.button_model_settings, R.string.button_model_settings, R.string.home_row_model_settings_subtitle, ModelSettingsActivity::class.java)
@@ -108,11 +109,19 @@ class MainActivity : Activity() {
         super.onResume()
         renderOnboarding(readOnboardingState())
         renderModelStatuses()
+        renderThemeRow()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) renderOnboarding(readOnboardingState())
+    }
+
+    /** Lot T5 : sous-titre de la ligne « Thème » = thème choisi, relu au retour de la page (le choix s'y fait). */
+    private fun renderThemeRow() {
+        val choice = KeyboardPreferences(this).themeChoice
+        findViewById<View>(R.id.button_theme).findViewById<TextView>(R.id.row_subtitle).text =
+            getString(R.string.home_row_theme_subtitle, getString(choice.labelRes()))
     }
 
     /**

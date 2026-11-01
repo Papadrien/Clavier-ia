@@ -563,6 +563,17 @@
     <string name="keyboard_settings_touch_zones_debug">Show key areas (debug)</string>
 
     <!-- Écran « Langues » (piste C) : liste des langues, détail d'une langue (disposition, dictionnaire, retrait). -->
+    <!-- Page « Thème » (lot T5) -->
+    <string name="theme_title">Theme</string>
+    <string name="theme_section_keyboard">Keyboard</string>
+    <string name="theme_choice_system">System</string>
+    <string name="theme_choice_light">Light</string>
+    <string name="theme_choice_dark">Dark</string>
+    <string name="theme_choice_system_description">System, automatic</string>
+    <string name="theme_choice_dynamic">Dynamic color</string>
+    <string name="theme_explanation">The theme applies to the keyboard only. System follows the light or dark mode of your device and changes with it. Dynamic color (Android 12 and later) takes the colors of your wallpaper. The app screens always stay dark.</string>
+    <string name="home_row_theme_subtitle">Keyboard colors: %1$s</string>
+    <string name="button_theme">Theme</string>
     <string name="languages_title">Languages</string>
     <string name="languages_section_keyboard">Keyboard languages</string>
     <string name="languages_summary_device">%1$s · device language</string>

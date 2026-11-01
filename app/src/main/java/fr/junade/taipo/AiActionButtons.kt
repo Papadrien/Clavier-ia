@@ -19,7 +19,7 @@ internal class AiActionButtons(context: Context, style: BarStyle) {
     /** Trois barres : onde au repos et à l'écoute, lignes pendant le traitement. */
     val transcriptionIcon = WaveIconDrawable(
         context.dimen(R.dimen.taipo_icon_size).toInt(),
-        context.getColor(R.color.taipo_purple_light),
+        context.themeColor(R.color.taipo_purple_light),
     )
 
     val views: List<LabeledIconButton> get() = listOf(generateButton, correctButton, transcriptionButton)

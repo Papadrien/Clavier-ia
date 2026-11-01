@@ -4,6 +4,7 @@ import android.content.Context
 import fr.junade.taipo.HapticIntensity
 import fr.junade.taipo.KeyboardHeight
 import fr.junade.taipo.KeyboardPreferences
+import fr.junade.taipo.ThemeChoice
 import fr.junade.taipo.ai.CorrectionPromptPreferences
 import fr.junade.taipo.ai.GenerationPromptPreferences
 import fr.junade.taipo.ai.SystemPromptPreferences
@@ -59,6 +60,7 @@ object BackupService {
                 keyboardHeight = keyboard.keyboardHeight.storageKey,
                 recentEmojis = keyboard.recentEmojis,
                 habitLearning = keyboard.isHabitLearningEnabled,
+                themeChoice = keyboard.themeChoice.storageKey,
             ),
             ai = BackupAiSettings(
                 activeModelId = ModelPreferences(appContext).activeModel()?.id,
@@ -125,6 +127,10 @@ object BackupService {
         }
         settings.recentEmojis?.let { keyboard.recentEmojis = it.take(RecentEmojis.MAX_SIZE) }
         settings.habitLearning?.let { keyboard.isHabitLearningEnabled = it }
+        settings.themeChoice?.let { key ->
+            // Écrire le réglage met aussi à jour KeyboardTheme.choice. « dynamic » sur un appareil d'avant Android 12 se comporte comme « system ».
+            ThemeChoice.entries.firstOrNull { it.storageKey == key }?.let { keyboard.themeChoice = it }
+        }
     }
 
     /**

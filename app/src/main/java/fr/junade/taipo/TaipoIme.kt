@@ -349,6 +349,7 @@ class TaipoIme : InputMethodService() {
 
     override fun onCreate() {
         super.onCreate()
+        KeyboardTheme.updateSystemConfiguration(resources.configuration)
         // Story 1.4 : l'ouverture de la base chiffrée du dictionnaire
         // personnel est asynchrone ; on la déclenche dès la création du
         // service pour qu'elle soit prête avant la première frappe.
@@ -381,10 +382,27 @@ class TaipoIme : InputMethodService() {
      */
     override fun onEvaluateFullscreenMode(): Boolean = false
 
-    override fun onCreateInputView(): View = viewComposer.compose()
+    /** Thème avec lequel les vues du clavier ont été créées pour la dernière fois (voir [recomposeIfThemeChanged]). */
+    private var composedThemeLook: KeyboardTheme.Look? = null
+
+    override fun onCreateInputView(): View {
+        composedThemeLook = KeyboardTheme.look
+        return viewComposer.compose()
+    }
+
+    /**
+     * Les vues lisent leurs couleurs à leur création : si le thème a changé depuis (réglage modifié pendant que le clavier était
+     * masqué), on les recrée comme à une rotation. Sans changement, rien n'est refait.
+     */
+    private fun recomposeIfThemeChanged() {
+        if (!viewComposer.isComposed || composedThemeLook == KeyboardTheme.look) return
+        messagePopup.dismiss()
+        setInputView(onCreateInputView())
+    }
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
+        recomposeIfThemeChanged()
         // Lot 3.6 : section de trace pour mesurer l'ouverture du clavier (le `return` reste local à la fonction).
         // Même champ relancé par l'application (restarting) : l'annulation reste possible, le texte est retrouvé par son contenu.
         if (!restarting) undoController.clear(notify = false)
@@ -546,6 +564,8 @@ class TaipoIme : InputMethodService() {
     }
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        // Avant super : Android y recrée la vue du clavier, qui doit déjà connaître le thème de l'appareil (clair ou sombre).
+        KeyboardTheme.updateSystemConfiguration(newConfig)
         super.onConfigurationChanged(newConfig)
         // Le panneau emoji est calé sur les dimensions du clavier : on revient aux touches après
         // une rotation ou un changement de taille de fenêtre, plutôt que d'afficher un panneau mal ajusté.

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- CHARTE TAIPO (refonte graphique, lot 01).
-     Une seule charte, sombre : values/colors.xml et values-night/colors.xml sont strictement identiques. Le thème clair est prévu pour la V2 (voir KeyboardTheme).
-     Ne modifier une valeur que dans la section « Charte » ; la section « Rôles » ne fait que nommer l'usage. -->
+<!-- CHARTE TAIPO, palette SOMBRE (refonte graphique, lot 01 ; thèmes du clavier, lot T1-T3).
+     Deux palettes de mêmes noms : values-night/colors.xml (sombre, ce fichier) et values/colors.xml (claire).
+     Les écrans de l'application sont toujours sombres (KeyboardTheme.wrap force le mode nuit) ; le clavier choisit sa palette
+     selon le thème (ThemeChoice, KeyboardTheme.mode). Ne modifier une valeur que dans la section « Charte » ; la section « Rôles »
+     ne fait que nommer l'usage. Garde-fous : AccessibilityContrastTest (contrastes des deux palettes), RefonteResourcesRegressionTest (mêmes noms). -->
 <resources>
 
     <!-- ===== Charte (valeurs de la plaquette) ===== -->
@@ -24,8 +26,17 @@
     <!-- ===== Rôles (noms utilisés par le code, inchangés) ===== -->
     <color name="accent">@color/taipo_purple</color>
     <color name="text_primary">@color/taipo_text</color>
-    <!-- Fond de l'icône du lanceur (lot 18) : le vert foncé #0A140A de l'ancienne direction artistique est remplacé par le fond Taipo. -->
-    <color name="ic_launcher_background">@color/taipo_background</color>
+    <!-- Fond de l'icône du lanceur (lot 18) : le fond sombre Taipo, fixe (le lanceur le résout hors du thème du clavier). -->
+    <color name="ic_launcher_background">#0E0E0E</color>
+    <!-- Fond du splashscreen : résolu par le système (pas par le thème du clavier), donc fixe, identique dans les deux palettes. -->
+    <color name="splash_background">#0E0E0E</color>
+    <!-- Texte et icônes posés sur un fond violet (touche Entrée, bouton envoyer, étiquette d'épingle…) : blanc dans les deux
+         palettes, puisque le violet ne change pas. À ne pas confondre avec text_primary, qui devient sombre en thème clair. -->
+    <color name="text_on_accent">#FFFFFF</color>
+    <!-- Accent dessiné SUR une touche ou un bouton gris (chiffres d'appui long, trait étiré de la barre d'espace, étincelles) :
+         violet clair (lisible sur les touches sombres).
+         Même nom dans les deux palettes ; ne pas confondre avec taipo_purple_light, fixe, qui est illisible sur du clair. -->
+    <color name="accent_on_key">@color/taipo_purple_light</color>
 
     <!-- Clavier (KeyboardView). key_pressed : face d'une touche à bascule active (Maj, symboles) ; l'état pressé,
          lui, n'a pas de couleur propre (la touche s'enfonce, lot 05). -->

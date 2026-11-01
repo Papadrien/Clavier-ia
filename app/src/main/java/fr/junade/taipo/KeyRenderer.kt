@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import kotlin.math.abs
@@ -67,7 +68,7 @@ internal class KeyRenderer(private val context: Context) {
     var spaceBarAnimation: SpaceBarAnimation? = null
     private val spaceBarBlobPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val spaceBarBlobPath = Path()
-    private val spaceBarTint = context.themeColor(R.color.taipo_purple_light)
+    private val spaceBarTint = context.themeColor(R.color.accent_on_key) // lot T6 : violet clair en sombre, violet plein en clair
 
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = context.themeColor(R.color.text_primary)
@@ -86,7 +87,7 @@ internal class KeyRenderer(private val context: Context) {
     // Animation « Élastique » du chiffre (glissement vers le bas sur une touche du haut) : voir DigitSwipeAnimation.
     var digitSwipeAnimation: DigitSwipeAnimation? = null
     private val digitPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = context.themeColor(R.color.taipo_purple_light)
+        color = context.themeColor(R.color.accent_on_key) // lot T6
         textAlign = Paint.Align.CENTER
         useTaipoFont(context)
     }
@@ -106,9 +107,11 @@ internal class KeyRenderer(private val context: Context) {
     // Icônes des touches (lot 09) : VectorDrawable de la charte, teintés une fois, redimensionnés au dessin (aucune
     // allocation dans onDraw). Remplacent les glyphes de police (Maj, Effacer) et les tracés Canvas (Entrée, Emoji).
     private val backspaceIcon = loadKeyIcon(R.drawable.ic_key_backspace)
-    private val enterIcon = loadKeyIcon(R.drawable.ic_key_enter)
+    // Lot T6 : Entrée est violette dans les deux thèmes, son icône est donc blanche (text_on_accent), pas la couleur des libellés.
+    private val enterIcon = loadKeyIcon(R.drawable.ic_key_enter, R.color.text_on_accent)
     private val emojiIcon = loadKeyIcon(R.drawable.ic_key_emoji)
-    private val globeIcon = loadKeyIcon(R.drawable.ic_key_globe).apply { setTint(context.themeColor(R.color.key_hint)) }
+    // Petit globe en exposant sur la pilule Entrée violette : blanc, légèrement atténué comme l'indice des chiffres (lot T6).
+    private val globeIcon = loadKeyIcon(R.drawable.ic_key_globe, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
 
     /** Clavier multilingue actif : la pilule Entrée affiche un petit globe en exposant (appui long = langue). */
     var showsGlobeOnEnter = false
@@ -331,9 +334,9 @@ internal class KeyRenderer(private val context: Context) {
         )
     }
 
-    private fun loadKeyIcon(@DrawableRes id: Int): Drawable {
+    private fun loadKeyIcon(@DrawableRes id: Int, @ColorRes tint: Int = R.color.key_label): Drawable {
         val icon = checkNotNull(ContextCompat.getDrawable(context, id)) { "Icône de touche introuvable" }
-        return icon.mutate().apply { setTint(context.themeColor(R.color.key_label)) }
+        return icon.mutate().apply { setTint(context.themeColor(tint)) }
     }
 
     /** Lot 09 : icône centrée sur la face de la touche, à [R.dimen.taipo_icon_size] (réduite sur les touches basses). */
@@ -494,5 +497,8 @@ internal class KeyRenderer(private val context: Context) {
         /** Pilule Entrée en mode multilingue : taille du globe par rapport à la taille de l'indice des chiffres, et marge au bord courbe. */
         private const val GLOBE_HINT_SCALE = 1.3f
         private const val GLOBE_EDGE_RATIO = 0.88f
+
+        /** Opacité (sur 255) du petit globe blanc de la pilule Entrée : l'indice des chiffres est à 70 % dans la charte. */
+        private const val GLOBE_ALPHA = 179
     }
 }

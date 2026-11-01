@@ -13,6 +13,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
+import fr.junade.taipo.FaceContent
 import fr.junade.taipo.KeyboardWidth
 import fr.junade.taipo.PillKeyDrawable
 import fr.junade.taipo.R
@@ -200,7 +201,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         if (label != null) {
             val pill = TextView(context)
             pill.text = label
-            pill.setTextColor(context.themeColor(R.color.text_primary))
+            pill.setTextColor(context.themeColor(FaceContent.colorOn(R.color.clip_pin_badge))) // lot T6 : blanc sur la pastille violette
             pill.setTextSizeRes(R.dimen.taipo_clip_label_text_size)
             pill.useTaipoFont(TaipoType.Weight.BOLD)
             pill.maxLines = 1
@@ -406,6 +407,7 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
     private fun stylePrimaryEntry(entry: TextView) {
         val shadow = dimen(R.dimen.taipo_key_shadow_height)
         entry.gravity = Gravity.CENTER
+        entry.setTextColor(context.themeColor(FaceContent.colorOn(R.color.clip_action_primary))) // lot T6 : blanc sur le violet
         entry.setPadding(0, 0, 0, shadow.toInt())
         entry.background = PillKeyDrawable(
             faceColor = context.themeColor(R.color.clip_action_primary),

@@ -299,7 +299,7 @@ class KeyboardView(context: Context) : View(context) {
     )
     private val sparkPainter = SparkPainter(
         intArrayOf(
-            context.themeColor(R.color.taipo_purple_light),
+            context.themeColor(R.color.accent_on_key), // lot T6 : violet clair en sombre, violet plein en clair
             context.themeColor(R.color.taipo_purple),
             context.themeColor(R.color.key_label),
         ),

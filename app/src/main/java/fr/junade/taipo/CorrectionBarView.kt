@@ -538,6 +538,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         if (robotActive != menuOpen) {
             robotActive = menuOpen
             robotButton.background = robotBackgrounds.get(menuOpen)
+            robotButton.imageTintList = style.contentTint(if (menuOpen) R.color.accent else R.color.surface_button)
             robotIcon?.setActive(menuOpen, animate = isLaidOut)
         }
         normalButtons.setClipboardActive(zoneState.clipboardPanelOpen, animate = isLaidOut)
@@ -688,6 +689,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         val appearance = BarVisibility.voiceAppearance(voiceState, aiTranscriptionState)
         voiceButton.contentDescription = context.getString(appearance.label)
         voiceButton.background = voiceBackgrounds.getOrPut(appearance.background) { style.roundBackground(appearance.background) }
+        voiceButton.imageTintList = style.contentTint(appearance.background) // lot T6 : blanc sur le rouge ou le violet
         voiceButton.alpha = appearance.alpha
         micIcon.setMode(MicIconMode.of(voiceState), animate = isLaidOut)
         applyAiTranscriptionAppearance() // Transcription IA est grisée pendant une saisie vocale

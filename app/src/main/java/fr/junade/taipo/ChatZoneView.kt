@@ -232,7 +232,8 @@ class ChatZoneView(context: Context) : ScrollView(context) {
     private fun addBubble(text: String, fromUser: Boolean, placeholder: Boolean = false): TextView {
         val bubble = TextView(context).apply {
             this.text = text
-            setTextColor(context.themeColor(if (placeholder) PLACEHOLDER_TEXT_COLOR else TEXT_COLOR))
+            // Lot T6 : le texte de la bulle de l'utilisateur (fond violet) est blanc dans les deux thèmes.
+            setTextColor(context.themeColor(if (placeholder) PLACEHOLDER_TEXT_COLOR else FaceContent.colorOn(if (fromUser) USER_COLOR else MODEL_COLOR)))
             setTextSizeRes(R.dimen.taipo_chat_bubble_text_size)
             useTaipoFont()
             setPadding(

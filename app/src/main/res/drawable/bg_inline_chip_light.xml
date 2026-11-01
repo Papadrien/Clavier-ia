@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Fond des suggestions d'auto-remplissage en thème clair (voir bg_inline_chip_dark). -->
+<!--
+    Fond des suggestions d'auto-remplissage (Bitwarden…) en thème clair : pastille de la couleur des boutons secondaires de la palette
+    claire (taipo_key_secondary, #CDCDD3), comme bg_inline_chip_dark pour la palette sombre. Dessin lu par le service d'auto-remplissage,
+    hors de la configuration du clavier : la couleur est donc écrite en dur ici ; AccessibilityContrastTest garde les deux
+    palettes et ces deux dessins d'accord.
+-->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="#E6E6E6" />
+    <solid android:color="#CDCDD3" />
     <corners android:radius="16dp" />
 </shape>

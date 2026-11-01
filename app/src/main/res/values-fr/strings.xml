@@ -578,6 +578,17 @@
     <string name="keyboard_settings_touch_zones_debug">Afficher les zones de frappe (debug)</string>
 
     <!-- Écran « Langues » (piste C) : liste des langues, détail d'une langue (disposition, dictionnaire, retrait). -->
+    <!-- Page « Thème » (lot T5) -->
+    <string name="theme_title">Thème</string>
+    <string name="theme_section_keyboard">Clavier</string>
+    <string name="theme_choice_system">Système</string>
+    <string name="theme_choice_light">Clair</string>
+    <string name="theme_choice_dark">Sombre</string>
+    <string name="theme_choice_system_description">Système, automatique</string>
+    <string name="theme_choice_dynamic">Couleur dynamique</string>
+    <string name="theme_explanation">Le thème ne concerne que le clavier. « Système » suit le mode clair ou sombre de votre appareil et change avec lui. « Couleur dynamique » (Android 12 et plus) reprend les couleurs de votre fond d\'écran. Les écrans de l\'application restent toujours sombres.</string>
+    <string name="home_row_theme_subtitle">Couleurs du clavier : %1$s</string>
+    <string name="button_theme">Thème</string>
     <string name="languages_title">Langues</string>
     <string name="languages_section_keyboard">Langues du clavier</string>
     <string name="languages_summary_device">%1$s · langue de l\'appareil</string>

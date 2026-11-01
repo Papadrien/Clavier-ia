@@ -30,7 +30,7 @@ class LanguagesActivity : Activity() {
     /** État d'un téléchargement de dictionnaire modifié : la pastille « À télécharger » des lignes suit. */
     private val downloadListener = DictionaryDownloadTracker.Listener { _, _ -> runOnUiThread { render() } }
 
-    // Thème de la V1 : toujours sombre (voir KeyboardTheme).
+    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }

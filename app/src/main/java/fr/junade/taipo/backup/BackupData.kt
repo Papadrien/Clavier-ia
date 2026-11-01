@@ -28,6 +28,8 @@ data class BackupKeyboardSettings(
     val keyboardHeight: String? = null,
     val recentEmojis: List<String>? = null,
     val habitLearning: Boolean? = null,
+    /** Thème du clavier : clé de stockage de [fr.junade.taipo.ThemeChoice] (`system`, `light`, `dark`, `dynamic`). */
+    val themeChoice: String? = null,
 )
 
 /**

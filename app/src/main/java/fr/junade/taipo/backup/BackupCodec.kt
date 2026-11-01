@@ -38,6 +38,7 @@ object BackupCodec {
             data.keyboard.keyboardHeight?.let { put("keyboardHeight", it) }
             data.keyboard.recentEmojis?.let { put("recentEmojis", JSONArray(it)) }
             data.keyboard.habitLearning?.let { put("habitLearning", it) }
+            data.keyboard.themeChoice?.let { put("themeChoice", it) }
         }
         val ai = JSONObject().apply {
             data.ai.activeModelId?.let { put("activeModel", it) }
@@ -92,6 +93,7 @@ object BackupCodec {
                 keyboardHeight = keyboard.string("keyboardHeight"),
                 recentEmojis = keyboard?.optJSONArray("recentEmojis")?.let(::strings),
                 habitLearning = keyboard.boolean("habitLearning"),
+                themeChoice = keyboard.string("themeChoice"),
             ),
             ai = BackupAiSettings(
                 activeModelId = ai.string("activeModel"),

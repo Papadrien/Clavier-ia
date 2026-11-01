@@ -211,6 +211,19 @@
             android:layout_marginStart="@dimen/taipo_settings_card_padding"
             android:background="@color/settings_divider" />
 
+        <!-- Page « Thème » (lot T5) : le sous-titre montre le thème choisi (MainActivity.renderThemeRow). -->
+        <include
+            android:id="@+id/button_theme"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
         <include
             android:id="@+id/button_personal_dictionary"
             layout="@layout/view_settings_row"

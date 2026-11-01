@@ -79,3 +79,8 @@ Non traitée : l'IME n'est pas une cible de focus clavier. Les écrans de régla
 TalkBack : explorer le clavier (lettres, symboles, Maj, point + actions), saisir une lettre au double appui, ouvrir le panneau
 emoji et en choisir un, dicter par le bouton Vocal, coller depuis le presse-papiers. Police à 130 % et 200 % : barre du haut,
 suggestions, panneau emoji. Zones tactiles : viser le bord haut / bas des boutons de la barre.
+
+## Thèmes du clavier (01/11/2026)
+
+La palette claire (`values/colors.xml`) et la palette sombre (`values-night/colors.xml`) passent les mêmes vérifications de contraste
+(`AccessibilityContrastTest`). Le texte sur fond violet utilise `text_on_accent`. Détails : `docs/theme-clavier.md`.

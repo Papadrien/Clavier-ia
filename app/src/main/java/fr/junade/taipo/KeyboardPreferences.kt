@@ -86,6 +86,17 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putString(KEY_HAPTIC_INTENSITY, value.storageKey).apply()
         }
 
+    /**
+     * Thème du clavier (clair, sombre, automatique). Système, automatique par défaut (voir [ThemeChoice.DEFAULT]). Écrire le
+     * réglage met aussi à jour [KeyboardTheme.choice], lu par toutes les vues du clavier.
+     */
+    var themeChoice: ThemeChoice
+        get() = ThemeChoice.fromStorageKey(prefs.getString(KEY_THEME_CHOICE, null))
+        set(value) {
+            prefs.edit().putString(KEY_THEME_CHOICE, value.storageKey).apply()
+            KeyboardTheme.choice = value
+        }
+
     /** Son du clavier (tic doux à chaque frappe, plus aigu pour la barre d'espace). Activé par défaut. */
     var isKeySoundEnabled: Boolean
         get() = prefs.getBoolean(KEY_KEY_SOUND, DEFAULT_KEY_SOUND)
@@ -256,6 +267,7 @@ class KeyboardPreferences(context: Context) {
 
     companion object {
         private const val PREFS_NAME = "keyboard_prefs"
+        private const val KEY_THEME_CHOICE = "theme_choice"
         private const val KEY_ADAPTIVE_TOUCH = "adaptive_touch_enabled"
         private const val KEY_SHOW_TOUCH_ZONES = "show_touch_zones"
         private const val KEY_NUMBER_ROW = "number_row_enabled"

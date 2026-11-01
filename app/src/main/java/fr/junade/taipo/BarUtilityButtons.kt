@@ -13,7 +13,7 @@ import android.widget.TextView
  * et Annuler. Une vue ne peut avoir qu'un parent : la barre en crée deux jeux (un par rangée) et applique chaque état aux
  * deux. Les icônes animées et les fonds de bascule sont propres à chaque jeu (un Drawable n'appartient qu'à une seule vue).
  */
-internal class UtilityButtons(private val context: Context, style: BarStyle) {
+internal class UtilityButtons(private val context: Context, private val style: BarStyle) {
 
     val settingsButton = ImageButton(context)
     val clipboardButton = ImageButton(context)
@@ -92,6 +92,7 @@ internal class UtilityButtons(private val context: Context, style: BarStyle) {
         if (clipboardActive == active) return
         clipboardActive = active
         clipboardButton.background = clipboardBackgrounds.get(active)
+        clipboardButton.imageTintList = style.contentTint(if (active) R.color.accent else R.color.surface_button)
         clipboardIcon.setActive(active, animate = animate)
     }
 

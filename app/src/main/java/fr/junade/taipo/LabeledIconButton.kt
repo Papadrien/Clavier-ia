@@ -53,6 +53,7 @@ internal class LabeledIconButton(context: Context, private val style: BarStyle) 
             if (field == value) return
             field = value
             applyBackground()
+            applyContentColor()
         }
 
     /** Vrai : pilule icône + texte ; faux : bouton rond à icône seule. */
@@ -75,6 +76,13 @@ internal class LabeledIconButton(context: Context, private val style: BarStyle) 
         } else {
             setPadding(0, 0, 0, shadowHeight)
         }
+    }
+
+    /** Lot T6 : icône et texte blancs sur une face violette ou rouge, couleur du texte du thème sur une face grise. */
+    private fun applyContentColor() {
+        imageTintList = style.contentTint(face)
+        textPaint.color = context.themeColor(FaceContent.colorOn(face))
+        invalidate()
     }
 
     private fun applyBackground() {

@@ -49,10 +49,11 @@ une implémentation propre a été préférée.
 
 ## Thème
 
-**V1 : le thème est toujours sombre**, quel que soit le thème du système (décision du 04/10/2026). Un thème clair
-existe déjà sous forme d'ébauche, mais il n'est pas proposé : il est prévu pour la V2. La palette sombre est dans
-`app/src/main/res/values-night/colors.xml` (seule utilisée), la claire dans `values/colors.xml`. Le choix est centralisé
-dans `KeyboardTheme.mode` : passer à la V2 (suivre le système ou un réglage) ne touchera pas aux vues.
+Le thème du clavier se règle dans l'accueil > « Thème » : **Système** (automatique), **Clair** ou **Sombre**, avec un aperçu
+de chaque palette (`ThemeActivity`). Les écrans de l'application restent toujours sombres. La palette sombre est dans
+`app/src/main/res/values-night/colors.xml`, la claire dans `values/colors.xml` ; `KeyboardTheme.mode` donne la palette
+effective. Le thème par défaut reste **sombre** tant que le passage en clair du clavier n'est pas terminé (lot T6). Plan,
+état des lots et points à vérifier : `docs/theme-clavier.md`.
 
 ## Construction
 

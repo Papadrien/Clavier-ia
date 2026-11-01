@@ -35,7 +35,7 @@ class MessagePopup(private val context: Context, private val host: Host) {
             return
         }
         dismiss()
-        val created = AlertDialog.Builder(ContextThemeWrapper(context, R.style.MessageDialogTheme))
+        val created = AlertDialog.Builder(ContextThemeWrapper(KeyboardTheme.themed(context), R.style.MessageDialogTheme))
             .setMessage(message)
             .setPositiveButton(R.string.message_dialog_ok, null)
             .create()
@@ -68,7 +68,7 @@ class MessagePopup(private val context: Context, private val host: Host) {
             return
         }
         dismiss()
-        val created = AlertDialog.Builder(ContextThemeWrapper(context, R.style.MessageDialogTheme))
+        val created = AlertDialog.Builder(ContextThemeWrapper(KeyboardTheme.themed(context), R.style.MessageDialogTheme))
             .setTitle(title)
             .setSingleChoiceItems(items, checked) { picker, which ->
                 picker.dismiss()

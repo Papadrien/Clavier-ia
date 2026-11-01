@@ -23,6 +23,12 @@ internal class KeyPopup(private val view: View) {
         textAlign = Paint.Align.CENTER
         useTaipoFont(view.context, TaipoType.Weight.BOLD)
     }
+    // Lot T6 : le symbole de la cellule sélectionnée (fond violet) est blanc dans les deux thèmes.
+    private val popupSelectedTextPaint = Paint(popupTextPaint).apply {
+        color = view.context.themeColor(FaceContent.colorOn(R.color.key_popup_selection))
+    }
+    private val globeColor = view.context.themeColor(R.color.text_primary)
+    private var globeOnSelection = false
     private val popupRect = RectF()
     private val charBuffer = CharArray(1)
 
@@ -212,19 +218,28 @@ internal class KeyPopup(private val view: View) {
         if (alpha < 255) canvas.saveLayerAlpha(popupRect, alpha)
         canvas.drawRoundRect(popupRect, cornerRadius, cornerRadius, popupPaint)
 
-        if (popupTextPaint.textSize != textSize) popupTextPaint.textSize = textSize
+        if (popupTextPaint.textSize != textSize) {
+            popupTextPaint.textSize = textSize
+            popupSelectedTextPaint.textSize = textSize
+        }
         val baselineOffset = -(popupTextPaint.ascent() + popupTextPaint.descent()) / 2f
 
         popupGrid.forEachIndexed { rowIndex, row ->
             row.forEachIndexed { colIndex, symbol ->
                 val cx = popupRect.left + popupPadding + (colIndex + 0.5f) * popupCellWidth
                 val cy = popupRect.top + popupPaddingV + (rowIndex + 0.5f) * popupCellHeight
-                if (rowIndex == popupSelectedRow && colIndex == popupSelectedCol) {
+                val selected = rowIndex == popupSelectedRow && colIndex == popupSelectedCol
+                if (selected) {
                     val selectionRadius = minOf(popupCellWidth, popupCellHeight) / 2f - selectionInset
                     canvas.drawCircle(cx, cy, selectionRadius, popupSelectionPaint)
                 }
                 if (symbol == GLOBE_SYMBOL) {
                     val half = minOf(iconSize, popupCellHeight * iconMaxRatio) / 2f
+                    if (globeOnSelection != selected) {
+                        // Lot T6 : le globe posé sur la cellule violette est blanc ; la teinte ne change qu'avec la sélection.
+                        globeOnSelection = selected
+                        globeIcon.setTint(if (selected) popupSelectedTextPaint.color else globeColor)
+                    }
                     globeIcon.setBounds(
                         (cx - half).roundToInt(), (cy - half).roundToInt(), (cx + half).roundToInt(), (cy + half).roundToInt(),
                     )
@@ -233,7 +248,7 @@ internal class KeyPopup(private val view: View) {
                 }
                 val shown = if (shifted && symbol.isLetter()) symbol.uppercaseChar() else symbol
                 charBuffer[0] = shown
-                canvas.drawText(charBuffer, 0, 1, cx, cy + baselineOffset, popupTextPaint)
+                canvas.drawText(charBuffer, 0, 1, cx, cy + baselineOffset, if (selected) popupSelectedTextPaint else popupTextPaint)
             }
         }
         if (alpha < 255) canvas.restore()

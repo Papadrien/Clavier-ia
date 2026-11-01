@@ -32,7 +32,7 @@ import kotlinx.coroutines.withContext
  */
 class BackupActivity : ComponentActivity() {
 
-    // Thème de la V1 : toujours sombre (voir KeyboardTheme).
+    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }

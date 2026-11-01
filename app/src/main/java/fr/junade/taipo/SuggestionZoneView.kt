@@ -10,6 +10,7 @@ import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import fr.junade.taipo.dictionary.WordSuggestion
 
 /**
@@ -48,7 +49,8 @@ internal class SuggestionZoneView(context: Context) : FrameLayout(context) {
         tipView.visibility = View.GONE
         val iconSize = dimen(R.dimen.taipo_icon_size).toInt()
         val tipIcon = ImageView(context).apply {
-            setImageResource(R.drawable.ic_tip_bulb)
+            // Icône non teintée, avec ses couleurs de ressource : chargée avec le contexte du thème du clavier.
+            setImageDrawable(ContextCompat.getDrawable(KeyboardTheme.themed(context), R.drawable.ic_tip_bulb))
             importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
         }
         val tipText = TextView(context).apply {

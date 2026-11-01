@@ -257,6 +257,15 @@
     <!-- Ligne de commutateur ou de bouton radio : hauteur minimale de la zone tactile (lot 18, auparavant 48dp dans chaque ligne). -->
     <dimen name="taipo_settings_row_min_height">48dp</dimen>
 
+    <!-- Page « Thème » (lot T5) : hauteur de l'aperçu d'une carte, taille et marge de la coche de sélection, contour d'une carte
+         au repos et choisie. -->
+    <dimen name="taipo_theme_preview_height">132dp</dimen>
+    <dimen name="taipo_theme_check_size">24dp</dimen>
+    <dimen name="taipo_theme_check_icon_size">16dp</dimen>
+    <dimen name="taipo_theme_check_margin">6dp</dimen>
+    <dimen name="taipo_theme_card_stroke">1dp</dimen>
+    <dimen name="taipo_theme_card_stroke_selected">2dp</dimen>
+
     <!-- Aperçu d'une disposition (détail d'une langue) : un carré par touche, écart entre les carrés. -->
     <dimen name="taipo_layout_preview_key">8dp</dimen>
     <dimen name="taipo_layout_preview_gap">2dp</dimen>
