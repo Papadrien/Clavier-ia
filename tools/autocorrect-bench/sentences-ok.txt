@@ -136,3 +136,74 @@ Ils coexistent depuis longtemps.
 Le phénix renaît de ses cendres.
 Elle aime la glace au chocolat.
 Le dernier mot de la phrase.
+# Phase 4 : phrases justes qui contiennent un homophone (ne jamais toucher)
+Ils ont perdu leurs clés.
+Je leur dis la vérité.
+Je ne leur dis rien.
+Il leur donne des conseils.
+Elle leur raconte des histoires.
+On leur prépare des surprises.
+Pour leur bien, on part.
+Ils ont vendu leur maison.
+Ils ont pris leur temps.
+Ils aiment leurs enfants.
+Nous leur offrons des fleurs.
+Il faut leur donner du temps.
+Dans leur voiture, il y avait trois sacs.
+Ceux qui leur ressemblent sont là.
+Les gens qui leur parlent sourient.
+On a dit que leur travail est bon.
+Quand il se lève, il se lave.
+Il ne se souvient de rien.
+Ils se sont vus hier.
+Elle se demande pourquoi.
+On se voit demain.
+Je me demande ce que tu fais.
+Ce soir, on sort.
+Il ce soir-là, rien.
+Il faut se laver les mains.
+Pour se rendre à Paris, il prend le train.
+Il a décidé de se reposer.
+Il a peur de se tromper.
+Elles ont faim.
+Les enfants ont joué dehors.
+On y va demain.
+On a mangé tôt.
+Alors on y va, on a le temps.
+Nous on a décidé de rester.
+Vous on vous attend.
+Chez nous on mange tard.
+Dans les rues on voit des gens.
+Tous les jours on lit un peu.
+Les amis qui ont fait le voyage sont rentrés.
+Ils sont partis hier.
+Elles sont contentes.
+Ses parents sont gentils.
+Ce sont père et fils.
+Les enfants sont à l'école.
+Il a perdu son portable.
+Son frère est grand.
+Ils sont amis depuis longtemps.
+Ceux qui sont là partent.
+Marie et Paul sont père et mère de trois enfants.
+Ses frères sont venus.
+C'est un bon film.
+Ces gens sont gentils.
+Ces livres sont lourds.
+Ces mots sont très beaux.
+Ces très beaux jours sont finis.
+Ces pas résonnent dans la nuit.
+Ces plus beaux jours sont passés.
+Il s'est lavé les mains.
+Elle s'est trompée.
+Ils se sont lavés.
+Ça va bien merci.
+Sa mère est gentille.
+Sa voiture est neuve.
+Sa marche est lente.
+Il a pris sa place.
+Elle a perdu sa maison.
+Il est parti hier.
+Il est très fatigué et il dort.
+Il est grand et beau.
+Le grand et beau château est vieux.

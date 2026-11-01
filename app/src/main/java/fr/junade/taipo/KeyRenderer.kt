@@ -8,7 +8,9 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import kotlin.math.abs
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 /**
  * Lot 21 : dimensions de la charte lues **une fois** (construction, changement de configuration ou de taille), puis
@@ -106,9 +108,9 @@ internal class KeyRenderer(private val context: Context) {
     private val backspaceIcon = loadKeyIcon(R.drawable.ic_key_backspace)
     private val enterIcon = loadKeyIcon(R.drawable.ic_key_enter)
     private val emojiIcon = loadKeyIcon(R.drawable.ic_key_emoji)
-    private val globeIcon = loadKeyIcon(R.drawable.ic_key_globe)
+    private val globeIcon = loadKeyIcon(R.drawable.ic_key_globe).apply { setTint(context.themeColor(R.color.key_hint)) }
 
-    /** Clavier multilingue actif : la pilule Entrée affiche, à côté du symbole d'entrée, un petit globe (appui long = langue). */
+    /** Clavier multilingue actif : la pilule Entrée affiche un petit globe en exposant (appui long = langue). */
     var showsGlobeOnEnter = false
 
     // État de la vue pour le dessin en cours, fixé au début de chaque [draw] (aucune allocation).
@@ -304,22 +306,22 @@ internal class KeyRenderer(private val context: Context) {
     }
 
     /**
-     * Contenu de la pilule Entrée : le symbole d'entrée, seul et centré ; en mode multilingue, suivi d'un globe plus petit
-     * (GLOBE_SCALE), l'ensemble étant centré.
+     * Contenu de la pilule Entrée : le symbole d'entrée, centré ; en mode multilingue, un petit globe en exposant, en haut
+     * à droite comme l'indice des chiffres, replié vers l'intérieur pour rester dans la courbe de la pilule.
      */
     private fun drawEnterContent(canvas: Canvas) {
-        if (!showsGlobeOnEnter) {
-            drawKeyIcon(canvas, enterIcon)
-            return
-        }
-        val enterSize = minOf(dims.iconSize, keyRect.height() * KEY_ICON_MAX_RATIO)
-        val globeSize = enterSize * GLOBE_SCALE
-        val gap = enterSize * GLOBE_GAP_RATIO
-        val startX = keyRect.centerX() - (enterSize + gap + globeSize) / 2f
-        val cy = keyRect.centerY()
-        placeIcon(enterIcon, startX + enterSize / 2f, cy, enterSize / 2f)
-        enterIcon.draw(canvas)
-        placeIcon(globeIcon, startX + enterSize + gap + globeSize / 2f, cy, globeSize / 2f)
+        drawKeyIcon(canvas, enterIcon)
+        if (!showsGlobeOnEnter) return
+        val size = dims.hintTextSize * GLOBE_HINT_SCALE
+        val half = size / 2f
+        val radius = minOf(keyRect.width(), keyRect.height()) / 2f
+        val cy = keyRect.top + dims.hintMarginTop + half
+        // Coin haut-droit de l'icône (cx + half, cy - half) à l'intérieur du cercle de l'extrémité droite de la pilule.
+        val reach = radius * GLOBE_EDGE_RATIO
+        val dy = (cy - half) - (keyRect.top + radius)
+        val dx = if (reach > abs(dy)) sqrt(reach * reach - dy * dy) else 0f
+        val cx = keyRect.right - radius + dx - half
+        placeIcon(globeIcon, cx, cy, half)
         globeIcon.draw(canvas)
     }
 
@@ -489,8 +491,8 @@ internal class KeyRenderer(private val context: Context) {
         /** Icônes des touches : jamais plus de cette part de la hauteur de la face (rangées basses en paysage). */
         const val KEY_ICON_MAX_RATIO = 0.62f
 
-        /** Pilule Entrée en mode multilingue : taille du globe par rapport au symbole d'entrée, et espace entre les deux. */
-        private const val GLOBE_SCALE = 0.7f
-        private const val GLOBE_GAP_RATIO = 0.3f
+        /** Pilule Entrée en mode multilingue : taille du globe par rapport à la taille de l'indice des chiffres, et marge au bord courbe. */
+        private const val GLOBE_HINT_SCALE = 1.3f
+        private const val GLOBE_EDGE_RATIO = 0.88f
     }
 }

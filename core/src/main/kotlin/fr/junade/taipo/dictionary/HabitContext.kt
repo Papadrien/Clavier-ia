@@ -66,6 +66,22 @@ class HabitContext(
         return NextWordModel.TRIGRAM_WEIGHT * model.trigramCount(before, previousWord ?: return 0, lowerCandidate)
     }
 
+    /** Vrai si l'utilisateur a annulé au moins [CorrectionHabits.REFUSAL_THRESHOLD] fois la correction [typed] -> [corrected] : elle n'est plus appliquée. */
+    fun isRefused(typed: String, corrected: String): Boolean = habits.isRefused(language, typed, corrected)
+
+    /**
+     * Départage pour une correction de contexte (phase 5), qui n'a qu'un candidat : vrai si les habitudes disent que
+     * [typed] est ce que l'utilisateur écrit à cet endroit, et non [corrected]. Il faut une preuve de **contexte** : [typed]
+     * a suivi le mot qui précède au moins [CONTEXT_EVIDENCE] fois (paires et triplets) et plus souvent que [corrected], qui
+     * n'est pas une paire acceptée. L'usage seul ne compte pas (« on » est plus tapé que « ont » partout : cela ne prouve rien).
+     */
+    fun keepsTyped(typed: String, corrected: String): Boolean {
+        if (previousWord == null || nextWords == null) return false
+        val kept = score(typed, typed)
+        val changed = score(typed, corrected)
+        return changed.accepted == 0 && kept.context >= CONTEXT_EVIDENCE && kept.context > changed.context
+    }
+
     /**
      * Tournure habituelle à mettre à la place de [typed] (même valide), ou null : voir [PhraseHabits]. Demande deux mots
      * de contexte sûrs (pas de début de phrase seul, pas de texte coupé, pas de nombre) et ne reprend pas une correction
@@ -82,6 +98,9 @@ class HabitContext(
     }
 
     companion object {
+        /** Fois minimales où un mot a suivi le mot qui précède pour que les habitudes retiennent un mot que le contexte voudrait changer. */
+        const val CONTEXT_EVIDENCE = 2
+
         /**
          * Les deux éléments qui précèdent ce qui suit [textBeforeWord] (même règle que [previousWordOf] et que
          * l'apprentissage des triplets) : (mot ou début de phrase juste avant, élément encore avant ou null). Null s'il

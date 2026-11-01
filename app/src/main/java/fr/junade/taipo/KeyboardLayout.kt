@@ -486,6 +486,7 @@ object Keyboards {
         val fieldType: FieldType,
         val bottomRowKeys: BottomRowKeys,
         val arrangement: LetterArrangement,
+        val compactEnter: Boolean,
     )
 
     /** Dispositions e-mail/URL et celles avec touches du bas masquées, construites une fois (layoutOf est appelé à chaque frappe). */
@@ -516,6 +517,29 @@ object Keyboards {
             }
         },
     )
+
+    /**
+     * Clavier multilingue : le globe passe en exposant sur Entrée, qui n'a plus besoin de place à côté de son symbole.
+     * La pilule perd [ENTER_COMPACT_UNITS] unités, reprises par la barre d'espace (la rangée reste à 10 unités ; le point
+     * et les touches à sa gauche gardent leur largeur, le point est donc décalé vers la droite).
+     */
+    private fun KeyboardLayout.withCompactEnter(): KeyboardLayout = copy(
+        rows = rows.map { row ->
+            if (row.none { it.action == KeyAction.Space } || row.none { it.action == KeyAction.Enter }) {
+                row
+            } else {
+                row.map { key ->
+                    when (key.action) {
+                        KeyAction.Enter -> key.copy(weight = key.weight - ENTER_COMPACT_UNITS)
+                        KeyAction.Space -> key.copy(weight = key.weight + ENTER_COMPACT_UNITS)
+                        else -> key
+                    }
+                }
+            }
+        },
+    )
+
+    private const val ENTER_COMPACT_UNITS = 0.5f
 
     private fun baseLayoutOf(
         id: LayoutId,
@@ -552,6 +576,7 @@ object Keyboards {
         fieldType: FieldType = FieldType.TEXT,
         bottomRowKeys: BottomRowKeys = BottomRowKeys.ALL,
         arrangement: LetterArrangement = LetterArrangement.defaultFor(language),
+        compactEnter: Boolean = false,
     ): KeyboardLayout {
         val replacement = when (fieldType) {
             FieldType.NUMBER -> return numberPad
@@ -561,10 +586,11 @@ object Keyboards {
             FieldType.TEXT, FieldType.PASSWORD, FieldType.TERMINAL -> null
         }
         val base = baseLayoutOf(id, language, numberRow, arrangement)
-        if (replacement == null && bottomRowKeys.isAll) return base
-        return fieldVariants.getOrPut(VariantKey(base.id, language, numberRow, fieldType, bottomRowKeys, arrangement)) {
+        if (replacement == null && bottomRowKeys.isAll && !compactEnter) return base
+        return fieldVariants.getOrPut(VariantKey(base.id, language, numberRow, fieldType, bottomRowKeys, arrangement, compactEnter)) {
             val withField = if (replacement == null) base else base.withCommaReplacedBy(replacement)
-            if (bottomRowKeys.isAll) withField else withField.withBottomRowKeys(bottomRowKeys)
+            val withKeys = if (bottomRowKeys.isAll) withField else withField.withBottomRowKeys(bottomRowKeys)
+            if (compactEnter) withKeys.withCompactEnter() else withKeys
         }
     }
 

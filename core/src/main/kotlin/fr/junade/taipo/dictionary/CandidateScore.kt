@@ -22,7 +22,8 @@ package fr.junade.taipo.dictionary
  * correction de plus. Avec les touches du clavier, la plupart des cas sont déjà tranchés par le coût de saisie (une
  * inversion coûte 2, une lettre en trop 4 : « teh » reste « the » même devant « te »).
  *
- * Deux scores identiques (tous les termes égaux) signalent une ambiguïté : `Dictionary` ne corrige alors pas.
+ * Deux scores identiques (tous les termes égaux) signalent une ambiguïté : `Dictionary` ne corrige alors pas. Plus
+ * généralement, l'écart entre le meilleur score et le suivant est la marge de confiance (phase 3, voir [CorrectionConfidence]).
  * Logique pure, testée en JVM par `CandidateScoreTest`.
  */
 internal object CandidateScore {

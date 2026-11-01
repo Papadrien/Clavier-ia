@@ -510,6 +510,16 @@ class KeyboardLayoutTest {
     }
 
     @Test
+    fun `en multilingue Entree perd une demi unite reprise par la barre espace`() {
+        val normal = Keyboards.layoutOf(LayoutId.LETTERS).rows.last()
+        val compact = Keyboards.layoutOf(LayoutId.LETTERS, compactEnter = true).rows.last()
+        assertEquals(normal.first { it.id == "enter" }.weight - 0.5f, compact.first { it.id == "enter" }.weight, 0.001f)
+        assertEquals(normal.first { it.id == "space" }.weight + 0.5f, compact.first { it.id == "space" }.weight, 0.001f)
+        assertEquals(10f, compact.sumOf { it.weight.toDouble() }.toFloat(), 0.001f)
+        assertEquals(normal.first { it.id == "period" }.weight, compact.first { it.id == "period" }.weight, 0.001f)
+    }
+
+    @Test
     fun `sur la page 1 des symboles l emoji est entre inferieur et superieur et la barre espace`() {
         val row = Keyboards.symbols.rows.last()
         assertEquals(listOf("toggle", "less", "emoji", "space", "greater", "enter"), row.map { it.id })

@@ -22,6 +22,7 @@ class Dictionary private constructor(
     internal val proximity: KeyProximity = KeyProximity.NONE,
     private val letterPrefilter: Boolean = true,
     properNames: Collection<String> = emptyList(),
+    internal val confidence: CorrectionConfidence = CorrectionConfidence.NONE,
 ) {
 
     // Prénoms et noms propres courants (forme avec majuscule, « Adrien », « Éric ») : les listes de fréquence sont
@@ -231,15 +232,28 @@ class Dictionary private constructor(
      * - le mot est entièrement en majuscules (probablement un acronyme) ;
      * - aucun candidat n'est assez proche, ou plusieurs candidats sont à égalité de
      *   distance ET de fréquence (ambiguïté : mieux vaut ne rien changer qu'un mauvais choix).
+     *
+     * [trace] (phase 6) : si fourni, reçoit le chemin pris et la marge de la décision (voir [DecisionTrace]). Il ne change
+     * jamais le résultat.
      */
     fun correctionFor(
         word: String,
         maxDistance: Int = 2,
         personalWords: Collection<String> = emptyList(),
         habits: HabitContext? = null,
+        trace: DecisionTrace? = null,
     ): String? {
-        val correction = correctionWithoutNames(word, maxDistance, personalWords, habits)
-        return properNameForm(word, correction, personalWords) ?: correction
+        val correction = correctionWithoutNames(word, maxDistance, personalWords, habits, trace)
+        val result = properNameForm(word, correction, personalWords) ?: correction
+        // Phase 5 : une correction annulée deux fois (voir [HabitContext.isRefused]) n'est plus proposée nulle part, ni à
+        // l'espace ni dans la bande : celle-ci montre toujours ce que l'autocorrection applique.
+        val refused = result != null && habits != null && habits.isRefused(word, result)
+        // Phase 6 : [trace] (null hors debug) retient seulement le chemin pris et le refus, jamais le texte.
+        if (trace != null) {
+            if (refused) trace.refusedByHabits = true
+            if (result != null && trace.path == DecisionTrace.Path.NONE) trace.path = DecisionTrace.Path.DIRECT
+        }
+        return if (refused) null else result
     }
 
     /**
@@ -283,6 +297,7 @@ class Dictionary private constructor(
         maxDistance: Int,
         personalWords: Collection<String>,
         habits: HabitContext?,
+        trace: DecisionTrace?,
     ): String? {
         if (word.length < MIN_WORD_LENGTH_FOR_CORRECTION) return null
         if (word.any { it.isDigit() }) return digitSlipCorrection(word)
@@ -335,13 +350,45 @@ class Dictionary private constructor(
         elisionRestoration(lower)?.let { return applyOriginalCasing(word, it) }
 
         val allowedDistance = minOf(maxDistance, maxDistanceForLength(lower.length))
-
-        var best: String? = null
-        var bestDistance = allowedDistance + 1
-        var bestScore = Double.NEGATIVE_INFINITY
-        var ambiguous = false
         // Rien d'appris : aucun départage possible, on ne calcule rien (résultat identique à l'absence d'habitudes).
         val activeHabits = habits?.takeUnless { it.isInert() }
+
+        var contest = searchCandidates(lower, allowedDistance, personal, activeHabits)
+        // Mot long sans aucun candidat à distance 2 ou moins : trois erreurs d'édition sont tentées (phase 3), sous réserve
+        // d'une marge forte (voir [CorrectionConfidence]). Pas si l'appelant a volontairement limité la distance.
+        if (contest.best == null && maxDistance >= 2 && confidence.allowsThreeEditsFor(lower.length)) {
+            trace?.threeEditsSearched = true
+            contest = searchCandidates(lower, confidence.longWordDistance, personal, activeHabits)
+        }
+
+        // Décision de déclenchement (phase 3) : le meilleur candidat ne s'applique que si sa marge sur le suivant atteint
+        // le seuil de son type de faute. Une égalité stricte (marge nulle) ne corrige jamais.
+        val correction = contest.best ?: return null
+        val kind = confidence.kindOf(lower, correction, contest.bestDistance, contest.bestIsSwap, contest.bestCost)
+        val margin = contest.margin()
+        val accepted = confidence.accepts(kind, margin, contest.bestCost)
+        if (trace != null) {
+            trace.path = DecisionTrace.Path.SEARCH
+            trace.kind = kind
+            trace.margin = margin
+            trace.accepted = accepted
+        }
+        if (!accepted) return null
+        val stored = personal[correction]
+        return if (stored != null && stored != stored.lowercase()) stored else applyOriginalCasing(word, correction)
+    }
+
+    /**
+     * Cherche dans les listes, les mots personnels et les prénoms les candidats à au plus [allowedDistance] erreurs
+     * d'édition de [lower] et les range dans un [CandidateContest] (le meilleur, le suivant, la marge). Ne décide rien.
+     */
+    private fun searchCandidates(
+        lower: String,
+        allowedDistance: Int,
+        personal: Map<String, String>,
+        activeHabits: HabitContext?,
+    ): CandidateContest {
+        val contest = CandidateContest()
 
         fun consider(candidate: String, frequency: Long, isPersonal: Boolean = false) {
             // Distance bornée : renvoie allowedDistance + 1 dès que le candidat est trop loin (même
@@ -353,21 +400,12 @@ class Dictionary private constructor(
             if (candidate in dominatedByAccented) return
             val isSwap = distance == 1 && isAdjacentSwap(lower, candidate)
             // Habitudes : seulement pour un candidat qui peut encore passer devant ou à égalité (plus loin, il est battu).
-            val habit = if (activeHabits != null && distance <= bestDistance) activeHabits.score(lower, candidate) else HabitScore.NONE
+            val habit = if (activeHabits != null && distance <= contest.bestDistance) activeHabits.score(lower, candidate) else HabitScore.NONE
             // Coût pondéré par la proximité des touches (0 si elle est désactivée : sans effet).
             val cost = proximity.editCost(lower, candidate)
             // À distance égale, le meilleur score gagne (voir [CandidateScore] : mot personnel, habitudes, plausibilité de la
-            // faute au clavier, inversion, fréquence). Deux scores identiques = ambiguïté, on ne corrige pas.
-            val score = CandidateScore.of(frequency, cost, isSwap, isPersonal, habit)
-            when {
-                distance < bestDistance || (distance == bestDistance && score > bestScore) -> {
-                    bestDistance = distance
-                    bestScore = score
-                    best = candidate
-                    ambiguous = false
-                }
-                distance == bestDistance && score == bestScore && candidate != best -> ambiguous = true
-            }
+            // faute au clavier, inversion, fréquence). L'écart avec le suivant est la marge de confiance.
+            contest.offer(candidate, distance, CandidateScore.of(frequency, cost, isSwap, isPersonal, habit), cost, isSwap)
         }
 
         val minLength = maxOf(0, lower.length - allowedDistance)
@@ -393,11 +431,7 @@ class Dictionary private constructor(
         for (candidate in personal.keys) if (candidate !in frequencies) consider(candidate, personalFrequency, isPersonal = true)
         // Prénoms courants : proposés en correction même s'ils sont absents des listes ou trop rares pour y être candidats.
         for (name in exactNames.keys) if ((frequencies[name] ?: 0L) < nameFrequency) consider(name, nameFrequency)
-
-        val correction = best ?: return null
-        if (bestDistance > allowedDistance || ambiguous) return null
-        val stored = personal[correction]
-        return if (stored != null && stored != stored.lowercase()) stored else applyOriginalCasing(word, correction)
+        return contest
     }
 
     // Suggestions de la bande : voir DictionarySuggestions (audit 2.1, étape 10). Sans état : une instance paresseuse suffit.
@@ -494,9 +528,12 @@ class Dictionary private constructor(
         for (prefix in ELISION_PREFIXES) {
             if (!lower.startsWith(prefix) || lower.length == prefix.length) continue
             val rest = lower.substring(prefix.length)
-            if (rest.length < (if (prefix.length == 1) 3 else 2) || !canFollowElision(rest)) continue
+            val minRest = if (prefix.length == 1) confidence.singleLetterElisionMinRest else 2
+            if (rest.length < minRest || !canFollowElision(rest)) continue
             val word = elidedWord(rest) ?: continue
             if (!canFollowElision(word)) continue
+            // « c' » ne s'élide que devant « ce » ou « ça » : « c'est », « c'était », « c'en » (« cait » n'est pas « c'ait »).
+            if (confidence.cElisionOnlyBeforeE && prefix == "c" && word.first() !in "eéèêë") continue
             return "$prefix'$word"
         }
         return null
@@ -741,6 +778,8 @@ class Dictionary private constructor(
          * [letterPrefilter] : pré-filtre par les lettres de la recherche par distance d'édition (résultat identique,
          * beaucoup plus rapide) ; désactivable uniquement pour mesurer ou comparer.
          * [properNames] : prénoms et noms propres courants avec leur majuscule (voir [properNameForm]).
+         * [confidence] : décision de déclenchement (phase 3, voir [CorrectionConfidence]) ; par défaut, le comportement
+         * d'avant la phase 3 (seule une égalité stricte bloque la correction).
          */
         fun withFrequencies(
             entries: Map<String, Long>,
@@ -749,17 +788,18 @@ class Dictionary private constructor(
             proximity: KeyProximity = KeyProximity.NONE,
             letterPrefilter: Boolean = true,
             properNames: Collection<String> = emptyList(),
+            confidence: CorrectionConfidence = CorrectionConfidence.NONE,
         ): Dictionary {
             // Liste déjà en minuscules (cas des listes de l'application) : pas de copie, ce qui évite de
             // doubler la mémoire avec une liste complète de plusieurs centaines de milliers de mots.
-            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames)
+            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence)
             val merged = HashMap<String, Long>(entries.size)
             entries.forEach { (word, count) ->
                 val key = word.lowercase()
                 val previous = merged[key]
                 if (previous == null || count > previous) merged[key] = count
             }
-            return Dictionary(merged, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames)
+            return Dictionary(merged, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence)
         }
 
         // Relais vers EditDistance et WordForms (audit 2.1, étape 6) : l'API de Dictionary reste celle d'avant.

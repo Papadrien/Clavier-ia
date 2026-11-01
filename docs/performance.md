@@ -104,3 +104,10 @@ Mêmes conditions avant / après (batterie, température, autres applis), releas
 - [ ] Lot 21 : `./gradlew assembleDebug testDebugUnitTest ktlintCheck detekt` (fichiers touchés : `KeyboardView`, `BarStyle`,
       `CorrectionBarView`, `SuggestionZoneView`, `RecentEmojiBarView`, `TaipoDimens`, `EmojiCatalog`, `TaipoIme`, `Tracing`,
       `KeyboardBenchmark`, `Targets`) puis les mesures ci-dessus.
+
+## Autocorrection : latence du moteur (phase 6, 01/11/2026)
+
+`AutocorrectionLatencyTest` (`androidTest`) chronomètre `Autocorrection.correctedText` sur le vrai dictionnaire français, sur
+l'appareil, avec quatre corpus fixes ; en build debug, `SuggestionController` écrit aussi un histogramme de latence dans logcat
+(filtre `SuggestionController`). Mode d'emploi, lecture des chiffres et tableau à remplir : `docs/autocorrection-bench.md`,
+« Phase 6 ». **Non compilé ni exécuté** depuis l'environnement de développement : aucune mesure n'a encore été prise.

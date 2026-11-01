@@ -1,5 +1,6 @@
 package fr.junade.taipo.bench
 
+import fr.junade.taipo.dictionary.CorrectionConfidence
 import fr.junade.taipo.dictionary.Dictionary
 import fr.junade.taipo.dictionary.FrenchContextCorrector
 import fr.junade.taipo.dictionary.InflectionRules
@@ -86,13 +87,18 @@ object AutocorrectBench {
         error("Racine du projet introuvable depuis $start (dictionaries/fr.txt et tools/autocorrect-bench attendus)")
     }
 
-    fun loadDictionary(root: File): Dictionary {
+    fun loadDictionary(root: File, without: Set<String> = emptySet()): Dictionary {
         val frequencies = File(root, "dictionaries/fr.txt").bufferedReader(Charsets.UTF_8).useLines { lines ->
             Dictionary.parseFrequencyLines(lines, MIN_FREQUENCY)
         }
         val names = File(root, "dictionaries/names/fr.txt").takeIf { it.isFile }?.readLines(Charsets.UTF_8)
             ?.map { it.trim() }?.filter { it.isNotEmpty() && !it.startsWith("#") }.orEmpty()
-        return Dictionary.withFrequencies(frequencies, InflectionRules.FRENCH, CANDIDATE_MIN_FREQUENCY, AZERTY, properNames = names)
+        // [without] : mots retirés des listes (mesure des mots justes inconnus du dictionnaire, voir [unknownWordMeasures]).
+        val entries = if (without.isEmpty()) frequencies else frequencies.filterKeys { it !in without }
+        return Dictionary.withFrequencies(
+            entries, InflectionRules.FRENCH, CANDIDATE_MIN_FREQUENCY, AZERTY, properNames = names,
+            confidence = CorrectionConfidence.STANDARD, // la même décision que le français de l'application (DictionaryLoader)
+        )
     }
 
     fun run(root: File): Report {
@@ -108,6 +114,8 @@ object AutocorrectBench {
 
         typoMeasures(dictionary, frequencies, metrics, details, timings)
         validWordMeasures(dictionary, frequencies, metrics, details)
+        longWordMeasures(dictionary, frequencies, metrics, details)
+        unknownWordMeasures(root, frequencies, metrics, details)
         val changedSentences = sentenceMeasures(root, dictionary, metrics)
         val failingCases = contextMeasures(root, dictionary, metrics, details)
 
@@ -272,6 +280,109 @@ object AutocorrectBench {
             metrics["valides.$setName.restaure"] = percent(restored, VALID_SAMPLES)
             details += "Mots justes remplacés par un autre mot ($setName), exemples :"
             offenders.forEach { (word, result) -> details += "  $word -> $result" }
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Mots longs à plusieurs erreurs (phase 3 : distance 3 des mots longs)
+    // ------------------------------------------------------------------
+
+    private const val LONG_SAMPLES = 300
+    private const val LONG_MIN_LENGTH = 8
+    private const val ALPHABET = "abcdefghijklmnopqrstuvwxyz"
+
+    /**
+     * Mots d'au moins [LONG_MIN_LENGTH] lettres abîmés par 2 ou 3 erreurs aléatoires (touche voisine, lettre oubliée,
+     * ajoutée, doublée ou quelconque), à la distance d'édition exacte voulue. Mesurés à part de `typos.*` : ces mesures ne
+     * changent pas les totaux de référence. `ok` = le mot d'origine est rétabli, `wrong` = un autre mot le remplace.
+     */
+    private fun longWordMeasures(
+        dictionary: Dictionary,
+        frequencies: Map<String, Long>,
+        metrics: LinkedHashMap<String, Double>,
+        details: MutableList<String>,
+    ) {
+        val pool = frequencies.keys.filter { w -> w.length >= LONG_MIN_LENGTH && w.all { it.isLetter() } }.sorted()
+        for (weighted in listOf(true, false)) {
+            val setName = if (weighted) "courants" else "varies"
+            val random = Random(SEED + if (weighted) 21 else 22)
+            val sampler = Sampler(pool, frequencies, weighted, random)
+            for ((edits, label) in listOf(2 to "deux", 3 to "trois")) {
+                var ok = 0
+                var wrong = 0
+                var total = 0
+                var attempts = 0
+                val examples = ArrayList<String>()
+                while (total < LONG_SAMPLES && attempts++ < LONG_SAMPLES * 50) {
+                    val word = sampler.next()
+                    var typo = word
+                    repeat(edits) { typo = randomEdit(typo, random) }
+                    if (typo == word || dictionary.contains(typo) || Dictionary.damerauLevenshtein(typo, word) != edits) continue
+                    total++
+                    val result = dictionary.correctionFor(typo)
+                    when {
+                        result == word -> ok++
+                        result == null || result == typo -> {}
+                        else -> {
+                            wrong++
+                            if (examples.size < 10) examples += "  [$setName/$label] $typo -> $result (attendu $word)"
+                        }
+                    }
+                }
+                metrics["longues.$setName.$label.ok"] = percent(ok, total)
+                metrics["longues.$setName.$label.wrong"] = percent(wrong, total)
+                details += "Mots longs à $edits erreurs ($setName), mauvaises corrections :"
+                details += examples
+            }
+        }
+    }
+
+    private fun randomEdit(word: String, random: Random): String {
+        val i = 1 + random.nextInt(word.length - 2)
+        return when (random.nextInt(5)) {
+            0 -> {
+                val options = AZERTY.neighborsOf(word[i]).filter { it.isLetter() }.sorted()
+                if (options.isEmpty()) word else word.substring(0, i) + options[random.nextInt(options.size)] + word.substring(i + 1)
+            }
+            1 -> word.removeRange(i, i + 1)
+            2 -> word.substring(0, i) + ALPHABET[random.nextInt(ALPHABET.length)] + word.substring(i)
+            3 -> word.substring(0, i) + word[i] + word.substring(i)
+            else -> word.substring(0, i) + ALPHABET[random.nextInt(ALPHABET.length)] + word.substring(i + 1)
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Mots justes inconnus du dictionnaire
+    // ------------------------------------------------------------------
+
+    private const val UNKNOWN_SAMPLES = 300
+
+    /**
+     * Prénoms, mots d'argot ou termes techniques : des mots justes que le dictionnaire ne connaît pas et que le moteur ne
+     * doit pas remplacer par un autre mot. On les imite en retirant des mots courants des listes puis en les tapant :
+     * c'est une borne haute pessimiste (un mot courant retiré laisse des voisins proches, ce qui n'est pas le cas d'un
+     * vrai nom propre), à suivre en valeur relative d'une phase à l'autre. `faux` = le mot est remplacé par un autre.
+     */
+    private fun unknownWordMeasures(
+        root: File,
+        frequencies: Map<String, Long>,
+        metrics: LinkedHashMap<String, Double>,
+        details: MutableList<String>,
+    ) {
+        val pool = frequencies.keys.filter { w -> w.length >= 5 && w.all { it.isLetter() } }.sorted()
+        val samples = LinkedHashMap<Boolean, List<String>>()
+        for (weighted in listOf(true, false)) {
+            val random = Random(SEED + if (weighted) 31 else 32)
+            val sampler = Sampler(pool, frequencies, weighted, random)
+            samples[weighted] = List(UNKNOWN_SAMPLES) { sampler.next() }
+        }
+        val dictionary = loadDictionary(root, without = samples.values.flatten().toSet())
+        for ((weighted, words) in samples) {
+            val setName = if (weighted) "courants" else "varies"
+            val replaced = words.mapNotNull { word -> dictionary.correctionFor(word)?.takeIf { it != word }?.let { word to it } }
+            metrics["inconnus.$setName.faux"] = percent(replaced.size, words.size)
+            details += "Mots justes retirés du dictionnaire puis remplacés ($setName), exemples :"
+            replaced.take(10).forEach { (word, result) -> details += "  $word -> $result" }
         }
     }
 

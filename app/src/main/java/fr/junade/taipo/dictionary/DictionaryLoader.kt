@@ -126,7 +126,15 @@ object DictionaryLoader {
             proximityOf(context, language),
             // Prénoms courants avec leur majuscule (les listes de fréquence sont toutes en minuscules).
             properNames = readNames(context, language),
+            confidence = confidenceOf(language),
         )
+
+    /**
+     * Décision de déclenchement de l'autocorrection (phase 3) : calibrée sur le français seulement (docs/autocorrection-bench.md),
+     * les autres langues gardent le comportement d'avant tant qu'elles n'ont pas leur propre banc.
+     */
+    private fun confidenceOf(language: KeyboardLanguage): CorrectionConfidence =
+        if (language == KeyboardLanguage.FR) CorrectionConfidence.STANDARD else CorrectionConfidence.NONE
 
     /** Prénoms de [language] : `names/<code>.txt`, un par ligne, « # » = commentaire. Absent : aucun nom. */
     private fun readNames(context: Context, language: KeyboardLanguage): List<String> {

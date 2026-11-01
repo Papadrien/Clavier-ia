@@ -621,6 +621,12 @@ class TaipoIme : InputMethodService() {
         // Dictée en cours : un toucher sur un mot du champ (à corriger) ou l'écho de nos insertions.
         if (isRecording) voice.onCursorMoved(oldSelEnd, newSelStart, newSelEnd, suggestions.typedRecently())
         correction.onSelectionUpdated(newSelStart, newSelEnd)
+        // Collage par le bouton « Coller » du champ (hors du clavier) : la puce de collage ne doit plus être proposée.
+        if (viewComposer.isComposed && !isRecording && !correctionInProgress && !prompt.active &&
+            !suggestions.typedRecently() && !correction.isSelfEditEcho()
+        ) {
+            clipboard.onExternalSelectionChange(oldSelStart, oldSelEnd, newSelStart, newSelEnd)
+        }
         if (!correctionInProgress && viewComposer.isComposed) {
             updateCorrectionBarVisibility()
         }
@@ -1386,13 +1392,15 @@ class TaipoIme : InputMethodService() {
         // qui compte une rangée de plus avec la rangée de chiffres. Évite de faire défiler l'application dessous.
         // Disposition des lettres choisie pour la langue active (écran « Langues » des paramètres).
         val arrangement = keyboardPreferences.letterArrangementOf(controller.state.language)
+        // Multilingue : le globe est en exposant sur Entrée, qui se rétrécit au profit de l'espace.
+        val compactEnter = MultilingualChoice.isActive(keyboardPreferences.multilingualLanguages)
         keyboardView.minRowCount =
-            Keyboards.layoutOf(LayoutId.LETTERS, controller.state.language, numberRowEnabled, fieldType, bottomRowKeys, arrangement).rows.size
+            Keyboards.layoutOf(LayoutId.LETTERS, controller.state.language, numberRowEnabled, fieldType, bottomRowKeys, arrangement, compactEnter).rows.size
         keyboardView.layout =
-            Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled, fieldType, bottomRowKeys, arrangement)
+            Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled, fieldType, bottomRowKeys, arrangement, compactEnter)
         keyboardView.isShifted = controller.state.isShifted
         keyboardView.isCapsLock = controller.state.isCapsLock
-        keyboardView.isEnterLongPressEnabled = MultilingualChoice.isActive(keyboardPreferences.multilingualLanguages)
+        keyboardView.isEnterLongPressEnabled = compactEnter
     }
 
     companion object {

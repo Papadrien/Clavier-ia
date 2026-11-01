@@ -28,6 +28,8 @@ package fr.junade.taipo.dictionary
  *   utilise la même analyse ([participleFor]) : quand la correction n'est pas assez sûre pour être appliquée seule,
  *   le participe est tout de même proposé au centre de la bande.
  *
+ * - **homophones** : ce / se, on / ont, son / sont, ces / c'est / s'est, leur / leurs, ça / sa, et / est, peu / peut, plus quelques
+ *   cas de a / à et de la / là que les règles ci-dessus manquaient (voir [FrenchConfusions], une table de règles testée).
  * - **traits d'union** : « est ce que », « va t il », « dis moi », « au dessus »... (voir [FrenchHyphenation]).
  *
  * Non couvert : l'accord du participe (« elles sont parti »), les noms sujets (« le chat a manger » reste inchangé,
@@ -56,6 +58,8 @@ object FrenchContextCorrector {
         var current = text
         current = fixAccentOnA(current, textMayBeTruncated, allowRetro, frequencyOf)
         current = fixAccentOnOuAndLa(current, textMayBeTruncated, allowRetro)
+        // Homophones (ce / se, on / ont, son / sont, leur / leurs, ça / sa, et / est, peu / peut...) : table déclarative.
+        current = FrenchConfusions.fix(current, textMayBeTruncated, allowRetro, frequencyOf)
         current = fixParticiple(current, frequencyOf)
         // Traits d'union oubliés (« est ce que », « dis moi », « rendez vous ») : en dernier, après les accents de a / à.
         current = FrenchHyphenation.fix(current, textMayBeTruncated) ?: current
@@ -426,6 +430,9 @@ object FrenchContextCorrector {
         "tiens", "tient", "tenons", "tenez", "tiennent", "tenir", "tenu",
         "apprends", "apprend", "apprenons", "apprenez", "apprennent", "apprendre", "appris",
         "sert", "servent", "servir", "servi",
+        "attends", "attend", "attendons", "attendez", "attendent", "attendre",
+        "rentre", "rentres", "rentrons", "rentrez", "rentrent", "rentrer",
+        "joue", "joues", "jouons", "jouez", "jouent", "jouer",
     )
 
     /**

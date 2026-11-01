@@ -45,8 +45,10 @@ internal class DictionarySuggestions(private val d: Dictionary) {
      *   mot tapé) et le mot tapé à gauche pour pouvoir la refuser.
      * - Sinon : les complétions, de gauche à droite, en simples suggestions (poids normal).
      *
-     * [participle] : participe passé attendu à la place du mot tapé d'après l'auxiliaire qui le précède (voir
-     * [FrenchContextCorrector.participleFor]) ; il n'est pris en compte que si le mot tapé n'est pas une faute.
+     * [participle] : correction de contexte du mot tapé (homophone, a / à, participe passé attendu d'après l'auxiliaire :
+     * voir [ContextualCorrection.lastWordFix]), appliquée à l'espace si [ParticipleFix.automatic], sinon seulement proposée ;
+     * elle n'est prise en compte que si le mot tapé n'est pas une faute du dictionnaire. Les corrections refusées deux
+     * fois n'y sont plus (comme dans l'autocorrection).
      * Voir [participleSlots].
      */
     fun suggestionSlotsFor(
