@@ -79,7 +79,20 @@ class HabitContext(
         if (previousWord == null || nextWords == null) return false
         val kept = score(typed, typed)
         val changed = score(typed, corrected)
-        return changed.accepted == 0 && kept.context >= CONTEXT_EVIDENCE && kept.context > changed.context
+        return changed.accepted == 0 && contextOccurrences(typed) >= CONTEXT_EVIDENCE && kept.context > changed.context
+    }
+
+    /**
+     * Combien de fois [word] a suivi le mot qui précède, en **occurrences** : un même passage apprend une paire et un triplet,
+     * qui ne doivent pas compter pour deux (et le triplet, pondéré dans [score], pour cinq). On retient donc le plus grand des deux.
+     */
+    private fun contextOccurrences(word: String): Int {
+        val previous = previousWord ?: return 0
+        val model = nextWords ?: return 0
+        val lower = word.lowercase(Locale.ROOT)
+        val bigrams = model.bigramCount(previous, lower)
+        val trigrams = beforePreviousWord?.let { model.trigramCount(it, previous, lower) } ?: 0
+        return maxOf(bigrams, trigrams)
     }
 
     /**

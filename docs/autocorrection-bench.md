@@ -338,3 +338,15 @@ pour cette raison. La section de trace de la recherche à trois erreurs n'a pas 
 4. taper un moment dans une appli en build debug et lire les compteurs ; l'annulation d'une correction doit faire monter `annulees`.
    Les compteurs d'avant la phase 6 (habitudes) restent ceux de `docs/habitudes-correction.md`.
 5. la référence du banc reste à régénérer pour les phases 3 à 5 (voir plus haut) : la phase 6 n'y touche pas.
+
+### Référence régénérée (01/11/2026, phases 3 à 5)
+
+Le banc a été lancé pour la première fois depuis les phases 3 à 5 et `AutocorrectBaselineTest` échouait comme prévu. Différences
+relues avant d'enregistrer : fautes courantes bien corrigées 91,67 -> 91,6 %, non corrigées 3,54 -> 4,49 %, mal corrigées
+4,79 -> 3,91 % ; fautes variées 92,5 -> 92,1 % (oubli 76,9 -> 75,6 %), mal corrigées 6,03 -> 5,4 % ; mots justes changés et phrases
+justes changées : 0 ; contexte 67,97 -> 96,48 % ; mesures `longues.*` et `inconnus.*` ajoutées. Les baisses sont celles de la phase 3
+(plus de prudence) ; la référence est enregistrée avec `--write-baseline`.
+
+Même passage : `HabitContext.keepsTyped` comptait une paire et un triplet appris d'un seul passage pour 5 occurrences (le triplet est
+pondéré par 4) et refusait la correction dès la première fois ; la preuve de contexte compte maintenant des occurrences (le plus
+grand de la paire et du triplet), comme l'annonce « une seule fois ne prouve rien ».
