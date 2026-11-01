@@ -130,7 +130,7 @@
     <dimen name="taipo_chat_action_text_size">13sp</dimen>
     <!-- Hauteur de la FACE du bouton. Lot 20 : la vue fait 48 dp (face + taipo_touch_slop de chaque côté, fond inséré), le rendu ne change pas. -->
     <dimen name="taipo_chat_action_min_height">36dp</dimen>
-    <dimen name="taipo_chat_action_padding_horizontal">14dp</dimen>
+    <dimen name="taipo_chat_action_padding_horizontal">20dp</dimen>
     <dimen name="taipo_chat_action_padding_vertical">6dp</dimen>
     <dimen name="taipo_chat_action_margin_top">4dp</dimen>
 
