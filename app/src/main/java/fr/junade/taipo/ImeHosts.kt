@@ -303,6 +303,7 @@ internal class CorrectionHost(private val ime: ImeHostContext) : CorrectionAiCon
     override fun syncAutoCapitalization() = ime.syncAutoCapitalization()
     override fun clearPendingAutocorrection() = ime.clearPendingAutocorrection()
     override fun recordUndo(undo: UndoHistory.Undo) = ime.recordUndoAction(undo)
+    override fun playAiButtonSound() = ime.playAiButtonSound()
     override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
 }
 

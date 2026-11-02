@@ -674,12 +674,6 @@ class TaipoIme : InputMethodService() {
         // Dictée en cours : un toucher sur un mot du champ (à corriger) ou l'écho de nos insertions.
         if (isRecording) voice.onCursorMoved(oldSelEnd, newSelStart, newSelEnd, suggestions.typedRecently())
         correction.onSelectionUpdated(newSelStart, newSelEnd)
-        // Collage par le bouton « Coller » du champ (hors du clavier) : la puce de collage ne doit plus être proposée.
-        if (viewComposer.isComposed && !isRecording && !correctionInProgress && !prompt.active &&
-            !suggestions.typedRecently() && !correction.isSelfEditEcho()
-        ) {
-            clipboard.onExternalSelectionChange(oldSelStart, oldSelEnd, newSelStart, newSelEnd)
-        }
         if (!correctionInProgress && viewComposer.isComposed) {
             updateCorrectionBarVisibility()
         }

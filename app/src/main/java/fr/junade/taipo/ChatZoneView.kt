@@ -291,6 +291,10 @@ class ChatZoneView(context: Context) : ScrollView(context) {
                 dimen(R.dimen.taipo_chat_action_padding_vertical).toInt() + dimen(R.dimen.taipo_key_shadow_height).toInt() + touchInset,
             )
             background = InsetDrawable(style.pillBackground(BUTTON_COLOR), 0, touchInset, 0, touchInset)
+            // Poser le fond réécrit le padding de la vue (celui de l'InsetDrawable : 0 sur les côtés) : sans cette ligne, le texte
+            // colle au bord de la pastille. On remet la marge horizontale ; le haut et le bas restent ceux du fond.
+            val horizontalPadding = dimen(R.dimen.taipo_chat_action_padding_horizontal).toInt()
+            setPadding(horizontalPadding, paddingTop, horizontalPadding, paddingBottom)
             visibility = if (visible) View.VISIBLE else View.GONE
             setOnClickListener { listener()?.invoke(index) }
             announceAsButton()

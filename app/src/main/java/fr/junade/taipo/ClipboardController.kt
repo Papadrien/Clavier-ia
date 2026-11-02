@@ -523,6 +523,7 @@ class ClipboardController(
     private fun startScreenshotWatch() {
         if (!screenshotsEnabled()) {
             // Réglage coupé ou permission retirée : plus de capture proposée.
+            AppLog.d(TAG, "capture: inactive reglage=${keyboardPreferences.isScreenshotSuggestionEnabled} permission=${screenshotFinder.hasPermission()}")
             screenshotState.clear()
             stopScreenshotWatch()
             refreshPasteSuggestion()
@@ -557,6 +558,12 @@ class ClipboardController(
         screenshotJob = scope.launch {
             val found = withContext(Dispatchers.IO) { screenshotFinder.findLatest(since) }
             screenshotState.onFound(found)
+            // Diagnostic (debug seulement) : pourquoi la puce « Capture d'écran » est ou n'est pas proposée. Aucun contenu journalisé.
+            AppLog.d(
+                TAG,
+                "capture: trouvee=${found != null} mime=${found?.mimeType} proposee=${screenshotState.suggestion() != null} " +
+                    "typesChamp=$fieldImageMimeTypes accepteParChamp=${found?.let { ImageAcceptance.accepts(fieldImageMimeTypes, it.mimeType) }}",
+            )
             refreshPasteSuggestion()
         }
     }
@@ -617,30 +624,8 @@ class ClipboardController(
         host.resyncKeyboard()
     }
 
-    /**
-     * Collage fait hors du clavier (bouton « Coller » du menu d'appui long du champ, raccourci de l'application) : le champ
-     * ne nous prévient pas, on le reconnaît à la mise à jour de sélection. Le curseur s'est replié juste après un texte
-     * égal à la copie proposée, sans frappe ni modification du clavier lui-même (l'appelant l'a déjà écarté) : la copie
-     * est considérée comme collée et la puce disparaît.
-     */
-    fun onExternalSelectionChange(oldSelStart: Int, oldSelEnd: Int, newSelStart: Int, newSelEnd: Int) {
-        if (newSelStart != newSelEnd) return
-        val suggestion = currentPasteSuggestion ?: return
-        if (currentScreenshotChip != null) return
-        val length = suggestion.text.length
-        if (length == 0 || length > EXTERNAL_PASTE_MAX_CHARS) return
-        if (newSelStart - minOf(oldSelStart, oldSelEnd) != length) return
-        val before = host.inputConnection()?.getTextBeforeCursor(length, 0)?.toString() ?: return
-        if (before != suggestion.text) return
-        state.onPasted()
-        refreshPasteSuggestion()
-    }
-
     private companion object {
         private const val TAG = "ClipboardController"
-
-        /** Au-delà, un collage hors du clavier n'est pas reconnu (on évite de relire un très gros texte du champ). */
-        private const val EXTERNAL_PASTE_MAX_CHARS = 20_000
 
         /** Marge ajoutée au délai d'expiration de la puce, pour que l'horloge ait bien dépassé l'échéance. */
         private const val PASTE_EXPIRY_MARGIN_MS = 50L

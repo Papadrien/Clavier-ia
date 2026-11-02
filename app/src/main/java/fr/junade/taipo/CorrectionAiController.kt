@@ -50,6 +50,9 @@ class CorrectionAiController(
         /** Retour haptique d'une action IA (premier appui). */
         fun hapticAi(cue: AiHapticCue)
 
+        /** Son du bouton IA (réglage « Sons de la barre ») : joué au lancement par la barre, et à la fin de la correction. */
+        fun playAiButtonSound()
+
         fun inputConnection(): InputConnection?
 
         /** Une génération (mode prompt) est en cours : le moteur est pris, la correction est refusée. */
@@ -363,6 +366,7 @@ class CorrectionAiController(
             try {
                 work()
                 host.hapticAi(AiHapticCue.PROCESSING_DONE) // fin du traitement, comme la transcription IA (pas si annulée ou en échec)
+                host.playAiButtonSound() // même son qu'au lancement
                 Analytics.aiAction(context, AnalyticsEvents.AiType.CORRECT, modelId, startedAt)
             } catch (e: CorrectionCancelledException) {
                 AppLog.i(TAG, "correction annulée par l'utilisateur")
