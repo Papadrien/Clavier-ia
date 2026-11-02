@@ -154,6 +154,28 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putString(KEY_KEYBOARD_HEIGHT, value.storageKey).apply()
         }
 
+    /** Mode une main (touches serrées à gauche ou à droite). Désactivé par défaut. Relu à chaque ouverture de champ. */
+    var oneHandedMode: OneHandedMode
+        get() = OneHandedMode.fromStorageKey(prefs.getString(KEY_ONE_HANDED_MODE, null))
+        set(value) {
+            prefs.edit().apply {
+                putString(KEY_ONE_HANDED_MODE, value.storageKey)
+                // Le dernier côté choisi est retenu même après avoir quitté le mode (voir [lastOneHandedSide]).
+                if (value.isActive) putString(KEY_ONE_HANDED_SIDE, value.storageKey)
+            }.apply()
+        }
+
+    /** Dernier côté choisi du mode une main ([OneHandedMode.LEFT] ou [OneHandedMode.RIGHT]) : celui qu'on retrouve en réactivant le mode. Droite par défaut. */
+    val lastOneHandedSide: OneHandedMode
+        get() = OneHandedMode.fromStorageKey(prefs.getString(KEY_ONE_HANDED_SIDE, null)).takeIf { it.isActive } ?: OneHandedMode.RIGHT
+
+    /** Largeur de la zone des touches en mode une main, en % de la largeur normale ([OneHandedWidth]). 80 % par défaut. */
+    var oneHandedWidthPercent: Int
+        get() = OneHandedWidth.clamp(prefs.getInt(KEY_ONE_HANDED_WIDTH, OneHandedWidth.DEFAULT_PERCENT))
+        set(value) {
+            prefs.edit().putInt(KEY_ONE_HANDED_WIDTH, OneHandedWidth.clamp(value)).apply()
+        }
+
     /** Marge sous les touches en portrait, en dp ([KeyboardBottomMargin]). 60 dp par défaut. Relue à chaque ouverture de champ. */
     var bottomMarginDp: Int
         get() = KeyboardBottomMargin.clamp(prefs.getInt(KEY_BOTTOM_MARGIN, KeyboardBottomMargin.DEFAULT_DP))
@@ -291,6 +313,9 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_HAPTIC_INTENSITY = "haptic_intensity"
         private const val KEY_KEYBOARD_HEIGHT = "keyboard_height"
         private const val KEY_BOTTOM_MARGIN = "bottom_margin_dp"
+        private const val KEY_ONE_HANDED_MODE = "one_handed_mode"
+        private const val KEY_ONE_HANDED_SIDE = "one_handed_side"
+        private const val KEY_ONE_HANDED_WIDTH = "one_handed_width_percent"
         private const val KEY_LANGUAGE = "keyboard_language"
         private const val KEY_MULTILINGUAL = "multilingual_enabled"
         private const val KEY_MULTILINGUAL_LANGUAGES = "multilingual_languages"

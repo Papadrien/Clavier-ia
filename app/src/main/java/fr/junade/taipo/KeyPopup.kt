@@ -29,6 +29,7 @@ internal class KeyPopup(private val view: View) {
     }
     private val globeColor = view.context.themeColor(R.color.text_primary)
     private var globeOnSelection = false
+    private var oneHandedOnSelection = false
     private val popupRect = RectF()
     private val charBuffer = CharArray(1)
 
@@ -36,7 +37,7 @@ internal class KeyPopup(private val view: View) {
     var key: Key? = null
         private set
 
-    // Grille de la bulle ouverte : Key.popup, ou ENTER_GRID pour la touche Entrée (qui n'a pas de symboles propres).
+    // Grille de la bulle ouverte : Key.popup, ou EnterBubbleGrid pour la touche Entrée (qui n'a pas de symboles propres).
     private var popupGrid: List<List<Char>> = emptyList()
     private var popupSelectedRow = -1
     private var popupSelectedCol = -1
@@ -209,6 +210,7 @@ internal class KeyPopup(private val view: View) {
         iconMaxRatio: Float,
         shifted: Boolean,
         globeIcon: Drawable,
+        oneHandedIcon: Drawable,
     ) {
         if (key == null) return
         val openScale = advanceOpening()
@@ -233,17 +235,20 @@ internal class KeyPopup(private val view: View) {
                     val selectionRadius = minOf(popupCellWidth, popupCellHeight) / 2f - selectionInset
                     canvas.drawCircle(cx, cy, selectionRadius, popupSelectionPaint)
                 }
-                if (symbol == GLOBE_SYMBOL) {
+                if (symbol == GLOBE_SYMBOL || symbol == ONE_HANDED_SYMBOL) {
+                    val isGlobe = symbol == GLOBE_SYMBOL
+                    val icon = if (isGlobe) globeIcon else oneHandedIcon
                     val half = minOf(iconSize, popupCellHeight * iconMaxRatio) / 2f
-                    if (globeOnSelection != selected) {
-                        // Lot T6 : le globe posé sur la cellule violette est blanc ; la teinte ne change qu'avec la sélection.
-                        globeOnSelection = selected
-                        globeIcon.setTint(if (selected) popupSelectedTextPaint.color else globeColor)
+                    val tintedOnSelection = if (isGlobe) globeOnSelection else oneHandedOnSelection
+                    if (tintedOnSelection != selected) {
+                        // Lot T6 : l'icône posée sur la cellule violette est blanche ; la teinte ne change qu'avec la sélection.
+                        if (isGlobe) globeOnSelection = selected else oneHandedOnSelection = selected
+                        icon.setTint(if (selected) popupSelectedTextPaint.color else globeColor)
                     }
-                    globeIcon.setBounds(
+                    icon.setBounds(
                         (cx - half).roundToInt(), (cy - half).roundToInt(), (cx + half).roundToInt(), (cy + half).roundToInt(),
                     )
-                    globeIcon.draw(canvas)
+                    icon.draw(canvas)
                     return@forEachIndexed
                 }
                 val shown = if (shifted && symbol.isLetter()) symbol.uppercaseChar() else symbol
@@ -271,13 +276,13 @@ internal class KeyPopup(private val view: View) {
 
     companion object {
         /** Caractère fictif (zone d'usage privé) qui représente la touche globe dans la bulle d'Entrée ; jamais saisi. */
-        const val GLOBE_SYMBOL = '\uE000'
+        const val GLOBE_SYMBOL = EnterBubbleGrid.GLOBE
+
+        /** Caractère fictif qui représente la touche mode une main dans la bulle d'Entrée ; jamais saisi. */
+        const val ONE_HANDED_SYMBOL = EnterBubbleGrid.ONE_HANDED
 
         private const val NANOS_PER_SECOND = 1_000_000_000f
         private const val FIRST_FRAME_S = 1f / 60f
         private const val MAX_FRAME_S = 0.05f
-
-        /** Grille de la bulle d'Entrée : une seule cellule, le globe. */
-        val ENTER_GRID: List<List<Char>> = listOf(listOf(GLOBE_SYMBOL))
     }
 }

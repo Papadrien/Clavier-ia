@@ -123,6 +123,7 @@ class KeyboardSettingsActivity : Activity() {
         }
         setUpSoundVolume(preferences)
         setUpBottomMargin(preferences)
+        setUpOneHanded(preferences)
 
         val heightGroup = findViewById<RadioGroup>(R.id.radio_group_height)
         val heightIds = mapOf(
@@ -224,6 +225,45 @@ class KeyboardSettingsActivity : Activity() {
 
             override fun onStopTrackingTouch(bar: SeekBar) {
                 Analytics.setting(this@KeyboardSettingsActivity, "bottom_margin", bar.progress)
+            }
+        })
+    }
+
+    /** Mode une main : côté (désactivé, gauche, droite) et largeur de la zone des touches, relus à la prochaine ouverture d'un champ. */
+    private fun setUpOneHanded(preferences: KeyboardPreferences) {
+        val group = findViewById<RadioGroup>(R.id.radio_group_one_handed)
+        val ids = mapOf(
+            OneHandedMode.OFF to R.id.radio_one_handed_off,
+            OneHandedMode.LEFT to R.id.radio_one_handed_left,
+            OneHandedMode.RIGHT to R.id.radio_one_handed_right,
+        )
+        group.check(ids.getValue(preferences.oneHandedMode))
+        group.setOnCheckedChangeListener { _, checkedId ->
+            val selected = ids.entries.firstOrNull { it.value == checkedId }?.key ?: return@setOnCheckedChangeListener
+            preferences.oneHandedMode = selected
+            Analytics.setting(this, "one_handed_mode", selected.storageKey)
+        }
+
+        val seekBar = findViewById<SeekBar>(R.id.seek_one_handed_width)
+        val label = findViewById<TextView>(R.id.text_one_handed_width)
+        fun showValue(percent: Int) {
+            label.text = getString(R.string.keyboard_settings_one_handed_width_value, percent)
+            seekBar.contentDescription = label.text
+        }
+        seekBar.max = OneHandedWidth.MAX_PERCENT - OneHandedWidth.MIN_PERCENT
+        seekBar.progress = preferences.oneHandedWidthPercent - OneHandedWidth.MIN_PERCENT
+        showValue(preferences.oneHandedWidthPercent)
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(bar: SeekBar, progress: Int, fromUser: Boolean) {
+                val percent = progress + OneHandedWidth.MIN_PERCENT
+                showValue(percent)
+                if (fromUser) preferences.oneHandedWidthPercent = percent
+            }
+
+            override fun onStartTrackingTouch(bar: SeekBar) = Unit
+
+            override fun onStopTrackingTouch(bar: SeekBar) {
+                Analytics.setting(this@KeyboardSettingsActivity, "one_handed_width", bar.progress + OneHandedWidth.MIN_PERCENT)
             }
         })
     }

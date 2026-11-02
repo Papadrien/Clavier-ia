@@ -46,5 +46,25 @@ data class KeyboardWidth(val leftPx: Float, val widthPx: Float) {
                 }
             }
         }
+
+        /**
+         * Zone des touches avec le mode une main. [OneHandedMode.OFF] : identique à l'appel sans mode. Sinon la largeur
+         * normale (celle de [forAvailableWidth], donc déjà plafonnée en classe large, y compris en paysage) est réduite
+         * à [widthPercent] % (bornée par [OneHandedWidth]) et la zone est collée au bord gauche ou droit de la vue,
+         * pas centrée : le but est de rapprocher les touches du pouce. Les touches gardent leur hauteur.
+         */
+        fun forAvailableWidth(
+            availableWidthPx: Float,
+            density: Float,
+            oneHanded: OneHandedMode,
+            widthPercent: Int = OneHandedWidth.DEFAULT_PERCENT,
+        ): KeyboardWidth {
+            val base = forAvailableWidth(availableWidthPx, density)
+            if (!oneHanded.isActive || base.widthPx <= 0f) return base
+            val available = availableWidthPx.coerceAtLeast(0f)
+            val width = base.widthPx * OneHandedWidth.clamp(widthPercent) / 100f
+            val left = if (oneHanded == OneHandedMode.LEFT) 0f else available - width
+            return KeyboardWidth(left, width)
+        }
     }
 }

@@ -37,6 +37,12 @@ class ImeViewComposer(
         /** Touche globe de la bulle d'Entrée (clavier multilingue) relâchée : changement de langue. */
         fun onGlobeSelected()
 
+        /** Touche mode une main de la bulle d'Entrée relâchée : active ou quitte le mode une main. */
+        fun onOneHandedToggled()
+
+        /** Bouton « changer de côté » de la zone libre relâché : le mode une main passe à l'autre bord. */
+        fun onOneHandedSideSwitched()
+
         /** Chiffre d'une touche du haut saisi par appui long : le tip « Swipe vers le bas » peut s'afficher. */
         fun onDigitLongPressed()
 
@@ -110,6 +116,10 @@ class ImeViewComposer(
     lateinit var keyboardView: KeyboardView
         private set
 
+    /** Pile clavier + panneaux (emoji, Smart Clipboard) : les panneaux y suivent la largeur du mode une main. */
+    lateinit var keyboardStack: KeyboardStackLayout
+        private set
+
     lateinit var correctionBar: CorrectionBarView
         private set
 
@@ -139,6 +149,8 @@ class ImeViewComposer(
         keyboardView.setOnKeyListener { key -> host.onKey(key) }
         keyboardView.setOnCursorMoveListener { steps -> host.onCursorMoved(steps) }
         keyboardView.setOnGlobeSelectedListener { host.onGlobeSelected() }
+        keyboardView.setOnOneHandedToggleListener { host.onOneHandedToggled() }
+        keyboardView.setOnOneHandedSwitchSideListener { host.onOneHandedSideSwitched() }
         keyboardView.setOnDigitHintListener(object : KeyboardView.OnDigitHintListener {
             override fun onLongPressDigit() = host.onDigitLongPressed()
             override fun onSwipeDigit() = host.onDigitSwiped()
@@ -279,6 +291,7 @@ class ImeViewComposer(
             // basculant, même si le contenu d'un panneau est plus haut (rotation et réglage compris).
             addView(
                 KeyboardStackLayout(context).apply {
+                    keyboardStack = this
                     clipChildren = false
                     addView(
                         keyboardView,

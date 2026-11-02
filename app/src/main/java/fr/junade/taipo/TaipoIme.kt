@@ -138,6 +138,8 @@ class TaipoIme : InputMethodService() {
         override fun onKeyPressed(key: Key) = this@TaipoIme.onKeyPressed(key)
         override fun onCursorMoved(steps: Int) = this@TaipoIme.onCursorMoved(steps)
         override fun onGlobeSelected() = this@TaipoIme.onGlobeSelected()
+        override fun onOneHandedToggled() = this@TaipoIme.onOneHandedToggled()
+        override fun onOneHandedSideSwitched() = this@TaipoIme.onOneHandedSideSwitched()
         override fun openAppHome() = this@TaipoIme.openAppHome()
     }
 
@@ -421,6 +423,7 @@ class TaipoIme : InputMethodService() {
         keyboardHeight = keyboardPreferences.keyboardHeight
         keyboardView.heightScale = keyboardHeight.scale
         keyboardView.bottomMarginDp = keyboardPreferences.bottomMarginDp
+        applyOneHanded()
         keyboardView.showTouchZones = keyboardPreferences.showTouchZones
         emojiController.hidePanel(resync = false)
         clipboard.hidePanel(resync = false)
@@ -520,6 +523,36 @@ class TaipoIme : InputMethodService() {
             keyboardPreferences.multilingualLanguages,
             keyboardPreferences.activeMultilingualLanguage,
         )
+
+    /** Mode une main : la zone des touches et celle des panneaux suivent le réglage ; la barre du haut garde toute la largeur. */
+    private fun applyOneHanded() {
+        val mode = keyboardPreferences.oneHandedMode
+        val percent = keyboardPreferences.oneHandedWidthPercent
+        keyboardView.oneHandedWidthPercent = percent
+        keyboardView.oneHandedMode = mode
+        viewComposer.keyboardStack.oneHandedWidthPercent = percent
+        viewComposer.keyboardStack.oneHandedMode = mode
+    }
+
+    /** Touche mode une main de la bulle d'appui long sur Entrée : quitte le mode s'il est actif, sinon l'active du dernier côté choisi. */
+    private fun onOneHandedToggled() {
+        keyboardPreferences.oneHandedMode =
+            if (keyboardPreferences.oneHandedMode.isActive) OneHandedMode.OFF else keyboardPreferences.lastOneHandedSide
+        hapticFeedback.perform(hapticIntensity)
+        applyOneHanded()
+    }
+
+    /** Bouton « changer de côté » de la zone libre : le mode une main passe de l'autre côté (sans effet s'il n'est pas actif). */
+    private fun onOneHandedSideSwitched() {
+        val other = when (keyboardPreferences.oneHandedMode) {
+            OneHandedMode.LEFT -> OneHandedMode.RIGHT
+            OneHandedMode.RIGHT -> OneHandedMode.LEFT
+            OneHandedMode.OFF -> return
+        }
+        keyboardPreferences.oneHandedMode = other
+        hapticFeedback.perform(hapticIntensity)
+        applyOneHanded()
+    }
 
     /**
      * Clavier multilingue : touche globe de la bulle d'appui long sur Entrée. Deux langues cochées : on passe
@@ -1420,7 +1453,7 @@ class TaipoIme : InputMethodService() {
             Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled, fieldType, bottomRowKeys, arrangement, compactEnter)
         keyboardView.isShifted = controller.state.isShifted
         keyboardView.isCapsLock = controller.state.isCapsLock
-        keyboardView.isEnterLongPressEnabled = compactEnter
+        keyboardView.showsGlobeOnEnter = compactEnter
     }
 
     companion object {

@@ -97,6 +97,37 @@ class KeyboardView(context: Context) : View(context) {
             invalidate()
         }
 
+    /**
+     * Mode une main : zone des touches serrée contre un bord (voir [KeyboardWidth]). Les panneaux (emoji, Smart Clipboard)
+     * suivent cette zone via [KeyboardStackLayout] ; la barre du haut garde toute la largeur. La zone libre est inerte, sauf
+     * ses deux boutons (changer de côté, quitter le mode : voir [OneHandedControls]).
+     */
+    var oneHandedMode: OneHandedMode = OneHandedMode.DEFAULT
+        set(value) {
+            if (field == value) return
+            field = value
+            onKeyZoneChanged()
+        }
+
+    /** Largeur de la zone des touches en mode une main, en % de la largeur normale ([OneHandedWidth]). */
+    var oneHandedWidthPercent: Int = OneHandedWidth.DEFAULT_PERCENT
+        set(value) {
+            val clamped = OneHandedWidth.clamp(value)
+            if (field == clamped) return
+            field = clamped
+            onKeyZoneChanged()
+        }
+
+    /** La zone des touches a changé : géométrie recalculée, bulle ouverte fermée (elle serait mal placée). */
+    private fun onKeyZoneChanged() {
+        contentCache = null
+        slotCache = null
+        keyPreview.key = null
+        dismissPopup()
+        accessibility.invalidateRoot()
+        invalidate()
+    }
+
     // Story 1.13 : orientation courante, qui détermine les dimensions verticales (KeyboardMetrics).
     private var isLandscape: Boolean =
         context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -149,6 +180,20 @@ class KeyboardView(context: Context) : View(context) {
     private val globeIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_key_globe)) { "Icône globe introuvable" }
         .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
 
+    // Icône du mode une main (bulle d'Entrée), teintée comme celle du globe.
+    private val oneHandedIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_key_one_hand)) { "Icône mode une main introuvable" }
+        .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
+
+    // Mode une main : boutons de la zone libre (changer de côté, quitter le mode), voir OneHandedControls.
+    private val oneHandedSwitchIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_one_hand_switch)) { "Icône changement de côté introuvable" }
+        .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
+    private val oneHandedExitIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_one_hand_exit)) { "Icône sortie du mode une main introuvable" }
+        .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
+    private val controlFacePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_functional) }
+    private val controlShadowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_functional_shadow) }
+    private val controlPressedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_pressed) }
+    private var pressedControl: OneHandedControls.Button? = null
+
     // Appui long : bulle de symboles (grille) affichée au-dessus de la touche : voir KeyPopup (audit 2.1).
     private val keyPopup = KeyPopup(this)
 
@@ -170,10 +215,10 @@ class KeyboardView(context: Context) : View(context) {
     private fun showsPreview(key: Key?): Boolean = key?.action is KeyAction.TypeChar
 
     /**
-     * Clavier multilingue : l'appui long sur Entrée ouvre une bulle contenant la touche globe (sélection par
-     * glissement vers le haut, comme les accents). L'IME active ce comportement.
+     * L'appui long sur Entrée ouvre toujours une bulle (sélection par glissement vers le haut, comme les accents) avec la
+     * touche du mode une main. Clavier multilingue (activé par l'IME) : le globe s'y ajoute et passe aussi en exposant sur Entrée.
      */
-    var isEnterLongPressEnabled = false
+    var showsGlobeOnEnter = false
         set(value) {
             if (field == value) return
             field = value
@@ -181,6 +226,18 @@ class KeyboardView(context: Context) : View(context) {
             invalidate()
         }
     private var globeListener: Runnable? = null
+    private var oneHandedToggleListener: Runnable? = null
+    private var oneHandedSwitchSideListener: Runnable? = null
+
+    /** Appelé quand le bouton « changer de côté » de la zone libre est relâché (mode une main actif : voir TaipoIme). */
+    fun setOnOneHandedSwitchSideListener(listener: Runnable) {
+        oneHandedSwitchSideListener = listener
+    }
+
+    /** Appelé quand la touche mode une main de la bulle d'Entrée est relâchée (active ou quitte le mode : voir TaipoIme). */
+    fun setOnOneHandedToggleListener(listener: Runnable) {
+        oneHandedToggleListener = listener
+    }
 
     /** Appelé quand la touche globe de la bulle d'Entrée est relâchée (choix de la langue : voir TaipoIme). */
     fun setOnGlobeSelectedListener(listener: Runnable) {
@@ -192,9 +249,9 @@ class KeyboardView(context: Context) : View(context) {
         digitSwipeAnimation.cancel()
         val digit = key.longPressChar
         if (key.action is KeyAction.Enter) {
-            // Bulle à une cellule (globe) : relâcher dessus change de langue, relâcher ailleurs ferme la bulle sans
-            // envoyer de retour à la ligne (le relâchement avec bulle ouverte ne saisit jamais la touche d'origine).
-            showPopup(key, KeyPopup.ENTER_GRID)
+            // Bulle du globe (multilingue) et du mode une main : relâcher sur une cellule l'active, relâcher ailleurs ferme la
+            // bulle sans envoyer de retour à la ligne (le relâchement avec bulle ouverte ne saisit jamais la touche d'origine).
+            showPopup(key, EnterBubbleGrid.grid(multilingual = showsGlobeOnEnter))
         } else if (key.popup.isNotEmpty()) {
             // Story 1.8 : bulle d'accents / symboles, sélection par glissement du doigt.
             showPopup(key)
@@ -471,6 +528,7 @@ class KeyboardView(context: Context) : View(context) {
         }
 
         sparkPainter.draw(canvas, shiftAnimation.sparks)
+        drawOneHandedControls(canvas)
         drawTouchZones(canvas)
         drawPopup(canvas)
         drawPreview(canvas)
@@ -532,6 +590,7 @@ class KeyboardView(context: Context) : View(context) {
 
     private fun pressStart(x: Float, y: Float) {
         longPressCommitted = false
+        pressedControl = controlAt(x, y)
         downX = x
         downY = y
         pressZones = zones
@@ -633,6 +692,15 @@ class KeyboardView(context: Context) : View(context) {
 
     /** Relâchement du doigt actif en (x, y) : saisit la touche, le symbole de la bulle, ou rien. */
     private fun releaseTouch(x: Float, y: Float) {
+        pressedControl?.let { button ->
+            // Bouton de la zone libre : validé seulement si le doigt est relâché encore dessus.
+            pressedControl = null
+            if (controlAt(x, y) == button) {
+                if (button == OneHandedControls.Button.SWITCH_SIDE) oneHandedSwitchSideListener?.run() else oneHandedToggleListener?.run()
+            }
+            invalidate()
+            return
+        }
         spaceBarAnimation.onRelease()
         digitSwipeAnimation.onRelease()
         stopRepeat()
@@ -647,6 +715,8 @@ class KeyboardView(context: Context) : View(context) {
             pressedKey = null
             if (symbol == KeyPopup.GLOBE_SYMBOL) {
                 globeListener?.run()
+            } else if (symbol == KeyPopup.ONE_HANDED_SYMBOL) {
+                oneHandedToggleListener?.run()
             } else if (symbol != null) {
                 keyListener?.onKey(Key("popup_$symbol", symbol.toString(), KeyAction.TypeChar(symbol)))
                 // Le chiffre de la touche du haut a été choisi dans la bulle : l'IME peut suggérer le glissement vers le bas.
@@ -721,6 +791,7 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     private fun cancelTouch() {
+        pressedControl = null
         if (backspaceSwipe.isActive) deleteSwipeListener?.onDeleteSwipeCancel()
         backspaceAnimation.onSwipeCancel()
         spaceBarAnimation.onRelease()
@@ -749,7 +820,7 @@ class KeyboardView(context: Context) : View(context) {
     private fun longPressDelayMs(): Long =
         (ViewConfiguration.getLongPressTimeout() * LONG_PRESS_DELAY_RATIO).toLong()
 
-    private fun isEnterLongPress(key: Key): Boolean = isEnterLongPressEnabled && key.action is KeyAction.Enter
+    private fun isEnterLongPress(key: Key): Boolean = key.action is KeyAction.Enter
 
     private fun cancelKeyLongPress() {
         repeatHandler.removeCallbacks(longPressRunnable)
@@ -768,6 +839,39 @@ class KeyboardView(context: Context) : View(context) {
             style = Paint.Style.STROKE
             strokeWidth = dp(TOUCH_ZONE_STROKE_DP)
             color = TOUCH_ZONE_COLOR
+        }
+    }
+
+    /** Mode une main : disposition des boutons dans la zone libre, ou null (mode inactif, zone trop étroite ou trop basse). */
+    private fun oneHandedControlsLayout(): OneHandedControls.Layout? {
+        if (!oneHandedMode.isActive) return null
+        val content = keyboardWidth()
+        val freeLeft = if (oneHandedMode == OneHandedMode.LEFT) content.rightPx else 0f
+        val freeRight = if (oneHandedMode == OneHandedMode.LEFT) width.toFloat() else content.leftPx
+        return OneHandedControls.layout(
+            freeLeft, freeRight, usableHeightPx(),
+            maxRadius = dp(CONTROL_MAX_RADIUS_DP), margin = dp(CONTROL_MARGIN_DP), minRadius = dp(CONTROL_MIN_RADIUS_DP),
+        )
+    }
+
+    private fun controlAt(x: Float, y: Float): OneHandedControls.Button? =
+        oneHandedControlsLayout()?.let { OneHandedControls.hit(it, x, y) }
+
+    /** Mode une main : deux pastilles rondes (face + ombre, comme les touches) dans la zone libre. */
+    private fun drawOneHandedControls(canvas: Canvas) {
+        val layout = oneHandedControlsLayout() ?: return
+        val shadow = resources.getDimension(R.dimen.taipo_key_shadow_height)
+        OneHandedControls.Button.entries.forEach { button ->
+            val pressed = pressedControl == button
+            val faceY = layout.centerY(button) + if (pressed) shadow else 0f
+            canvas.drawCircle(layout.cx, layout.centerY(button) + shadow, layout.radius, controlShadowPaint)
+            canvas.drawCircle(layout.cx, faceY, layout.radius, if (pressed) controlPressedPaint else controlFacePaint)
+            val icon = if (button == OneHandedControls.Button.SWITCH_SIDE) oneHandedSwitchIcon else oneHandedExitIcon
+            val half = minOf(dims.iconSize, layout.radius * CONTROL_ICON_RATIO) / 2f
+            icon.setBounds(
+                (layout.cx - half).roundToInt(), (faceY - half).roundToInt(), (layout.cx + half).roundToInt(), (faceY + half).roundToInt(),
+            )
+            icon.draw(canvas)
         }
     }
 
@@ -826,6 +930,7 @@ class KeyboardView(context: Context) : View(context) {
         iconMaxRatio = KeyRenderer.KEY_ICON_MAX_RATIO,
         shifted = isShifted,
         globeIcon = globeIcon,
+        oneHandedIcon = oneHandedIcon,
     )
 
     /** Story 1.10 : bulle d'agrandissement affichée au-dessus de la touche de caractère pressée. */
@@ -858,8 +963,8 @@ class KeyboardView(context: Context) : View(context) {
         val rowIndex = (y / rowHeight).toInt().coerceIn(0, rows.lastIndex)
         val row = rows[rowIndex]
         val content = keyboardWidth()
-        // Story 1.14 : en classe large, les marges de part et d'autre de la zone des touches sont inertes.
-        if (content.leftPx > 0f && (x < content.leftPx || x >= content.rightPx)) return null
+        // Story 1.14 : en classe large (et en mode une main), les marges de part et d'autre de la zone des touches sont inertes.
+        if ((content.leftPx > 0f || content.rightPx < width.toFloat()) && (x < content.leftPx || x >= content.rightPx)) return null
         // Rangée plus courte que la référence (centrée) : un appui dans la marge revient à la touche la plus proche.
         val unit = content.widthPx / layout.referenceUnits
         val rowStart = content.leftPx + layout.rowStartUnits(row) * unit
@@ -913,14 +1018,21 @@ class KeyboardView(context: Context) : View(context) {
         dp(if (isLandscape) metrics().bottomMarginDp else bottomMarginDp.toFloat())
     private fun usableHeightPx(): Float = (height - bottomMarginPx()).coerceAtLeast(0f)
 
-    /** Story 1.14 : zone horizontale des touches (plein écran en Compact, plafonnée et centrée en large). */
+    /** Story 1.14 : zone horizontale des touches (plein écran en Compact, plafonnée et centrée en large, serrée contre un bord en mode une main). */
     private fun keyboardWidth(): KeyboardWidth =
-        contentCache ?: KeyboardWidth.forAvailableWidth(width.toFloat(), resources.displayMetrics.density)
-            .also { contentCache = it }
+        contentCache ?: KeyboardWidth.forAvailableWidth(
+            width.toFloat(), resources.displayMetrics.density, oneHandedMode, oneHandedWidthPercent,
+        ).also { contentCache = it }
 
     private fun dp(value: Float): Float = value * resources.displayMetrics.density
 
     private companion object {
+        /** Mode une main : rayon maximal, marge et rayon minimal des boutons de la zone libre, et part du diamètre prise par l'icône. */
+        const val CONTROL_MAX_RADIUS_DP = 22f
+        const val CONTROL_MARGIN_DP = 6f
+        const val CONTROL_MIN_RADIUS_DP = 12f
+        const val CONTROL_ICON_RATIO = 1.2f
+
         /** Avancement du glissement du chiffre à partir duquel la bulle d'agrandissement de la lettre est masquée. */
         const val PREVIEW_HIDE_PROGRESS = 0.15f
 

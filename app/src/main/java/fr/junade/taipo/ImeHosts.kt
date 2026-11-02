@@ -109,6 +109,8 @@ internal interface ImeHostContext {
     fun onKeyPressed(key: Key)
     fun onCursorMoved(steps: Int)
     fun onGlobeSelected()
+    fun onOneHandedToggled()
+    fun onOneHandedSideSwitched()
     fun openAppHome()
 
     // Déduits des membres ci-dessus
@@ -406,6 +408,8 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
     override fun onKey(key: Key) = ime.onKeyPressed(key)
     override fun onCursorMoved(steps: Int) = ime.onCursorMoved(steps)
     override fun onGlobeSelected() = ime.onGlobeSelected()
+    override fun onOneHandedToggled() = ime.onOneHandedToggled()
+    override fun onOneHandedSideSwitched() = ime.onOneHandedSideSwitched()
     override fun onDigitLongPressed() {
         // Le tip remplace les suggestions de la barre du haut : pas dans le mode chat, et plus une fois le glissement adopté.
         if (ime.prompt.active || ime.keyboardPreferences.hasUsedDigitSwipe) return
