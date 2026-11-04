@@ -56,13 +56,13 @@ object DictionaryFiles {
 
     /**
      * Taille indicative (octets), pour la progression globale seulement : jamais utilisée pour valider un fichier.
-     * Relevée sur les fichiers du 16/10/2026.
+     * Relevée sur les fichiers du 16/10/2026 (fr : 04/11/2026, après enrichissement).
      */
     fun approxBytes(language: KeyboardLanguage, file: DictionaryFile): Long = when (file) {
         DictionaryFile.NAMES -> 1_200L
         DictionaryFile.BACKUP -> 650_000L
         DictionaryFile.FULL -> when (language) {
-            KeyboardLanguage.FR -> 9_070_000L
+            KeyboardLanguage.FR -> 9_155_000L
             KeyboardLanguage.EN -> 3_900_000L
             KeyboardLanguage.ES -> 4_110_000L
             KeyboardLanguage.DE -> 3_240_000L

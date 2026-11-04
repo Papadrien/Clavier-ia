@@ -109,3 +109,17 @@ une majuscule garde sa graphie (« Eric » reste « Eric »). Les prénoms rares
 Règle de la liste : jamais un prénom qui est aussi un mot courant de la langue (fr : pierre, jean, rose, claire, marine, jade,
 noël, clément ; en : will, mark, bill, rose, grace, hope, april, may, june, jack ; es : alba, pilar, ángel, tomás ; it : rosa,
 aurora ; nl : roos, wil, iris...), sinon un mot ordinaire serait mis en majuscule à tort.
+
+== fr.txt : enrichissement du 04/11/2026 (tools/enrich_fr_dictionary.py) ==
+Liste de départ : fr.txt du 10/10/2026 (729 092 lignes). Résultat : 735 098 lignes, 9 155 137 octets.
+Sources de référence consultées pour valider des mots : listes de mots de Gboard et de SwiftKey pour le français (extraites
+par l'auteur). Elles ne servent qu'à décider si un mot existe ; les fréquences ne viennent pas d'elles.
+ - 6 006 mots ajoutés et 8 293 mots de fr.txt vus moins de 5 fois (ignorés au chargement) relevés à 20 (une seule liste) ou 60
+   (les deux listes, ou les 20 000 mots principaux de SwiftKey). Toujours < 100 : valides, jamais proposés en correction.
+ - Non ajoutés : noms propres et sigles (26 799), élisions dont le mot collé est connu (le clavier les traite), pluriels s/x/aux
+   déjà reconnus, mots dont la forme accentuée entre en collision avec un mot chargé (653), fautes de frappe plausibles selon la
+   règle de PruneDictionaryTypos (353).
+ - 1 196 mots de fréquence >= 100 absents des deux listes et anglais (ou débris) passent à 99 : toujours valides, plus proposés.
+   Aucun mot n'est supprimé. Détail : docs/dictionnaire-fr-2026-11-04/.
+Mesures : mots chargés (>= 5) 237 405 -> 251 704 ; candidats (>= 100) 49 941 -> 48 745 ; couverture des mots de référence en
+minuscules 83,3 % -> 98,9 %. Banc d'autocorrection (tools/autocorrect-bench) non exécuté.

@@ -1,6 +1,6 @@
 # Taipo
 
-Clavier Android nati(`fr.junade.taipo`, Kotlin, `InputMethodService` + vues dessinées à la main, AZERTY / QWERTY) avec
+Clavier Android natif (`fr.junade.taipo`, Kotlin, `InputMethodService` + vues dessinées à la main, AZERTY / QWERTY) avec
 des actions d'**IA entièrement locale** : correction du texte, génération par prompt et saisie vocale, sans aucune
 donnée envoyée. Les modèles tournent sur l'appareil. La permission `INTERNET` ne sert qu'au **téléchargement du fichier
 d'un modèle** (écran « Modèle IA », voir `docs/telechargement-modeles.md`) : le clavier lui-même n'émet aucune requête. Ce document décrit ce qui
