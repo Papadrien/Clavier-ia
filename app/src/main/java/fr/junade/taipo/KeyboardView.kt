@@ -105,8 +105,11 @@ class KeyboardView(context: Context) : View(context) {
     var oneHandedMode: OneHandedMode = OneHandedMode.DEFAULT
         set(value) {
             if (field == value) return
+            val previous = field
             field = value
+            if (value.isActive) controlsMode = value
             onKeyZoneChanged()
+            moveOneHanded(previous)
         }
 
     /** Largeur de la zone des touches en mode une main, en % de la largeur normale ([OneHandedWidth]). */
@@ -115,8 +118,33 @@ class KeyboardView(context: Context) : View(context) {
             val clamped = OneHandedWidth.clamp(value)
             if (field == clamped) return
             field = clamped
+            oneHandedTransition.stop()
             onKeyZoneChanged()
         }
+
+    /**
+     * Mode une main : la zone des touches et les boutons ronds passent d'un état à l'autre en ressort (voir [OneHandedTransition]).
+     * Pas d'animation si les animations sont coupées dans les réglages système, ni si la vue n'est pas affichée : changement direct.
+     */
+    private fun moveOneHanded(previous: OneHandedMode) {
+        if (width <= 0 || !isShown || !ValueAnimator.areAnimatorsEnabled()) {
+            oneHandedTransition.stop()
+            return
+        }
+        val density = resources.displayMetrics.density
+        val available = width.toFloat()
+        val from = KeyboardWidth.forAvailableWidth(available, density, previous, oneHandedWidthPercent)
+        val to = KeyboardWidth.forAvailableWidth(available, density, oneHandedMode, oneHandedWidthPercent)
+        oneHandedTransition.moveTo(previous, oneHandedMode, from, to, controlsCenterX(previous, from), controlsCenterX(oneHandedMode, to))
+        invalidate()
+    }
+
+    /** Centre horizontal des boutons ronds dans la zone libre d'un mode actif ([zone] : zone des touches de ce mode). */
+    private fun controlsCenterX(mode: OneHandedMode, zone: KeyboardWidth): Float = when (mode) {
+        OneHandedMode.LEFT -> (zone.rightPx + width) / 2f
+        OneHandedMode.RIGHT -> zone.leftPx / 2f
+        OneHandedMode.OFF -> 0f
+    }
 
     /** La zone des touches a changé : géométrie recalculée, bulle ouverte fermée (elle serait mal placée). */
     private fun onKeyZoneChanged() {
@@ -176,8 +204,8 @@ class KeyboardView(context: Context) : View(context) {
     // Lot 21 : tampon réutilisé (aucun RectF créé par frame) : l'emprise d'une touche pour les bulles.
     private val boundsScratch = RectF()
 
-    // Icône du globe (bulle d'Entrée) : les autres icônes de touche sont chargées par KeyRenderer.
-    private val globeIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_key_globe)) { "Icône globe introuvable" }
+    // Icône « ... » (bulle d'Entrée, changement de langue) : les autres icônes de touche sont chargées par KeyRenderer.
+    private val globeIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_key_ellipsis)) { "Icône points de suspension introuvable" }
         .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
 
     // Icône du mode une main (bulle d'Entrée), teintée comme celle du globe.
@@ -192,7 +220,18 @@ class KeyboardView(context: Context) : View(context) {
     private val controlFacePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_functional) }
     private val controlShadowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_functional_shadow) }
     private val controlPressedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_pressed) }
+    // Animation du mode une main (zone des touches, boutons ronds) ; controlsMode : dernier côté actif, pour dessiner les boutons qui rétrécissent à la sortie.
+    private val oneHandedTransition = OneHandedTransition()
+    private var controlsMode: OneHandedMode = OneHandedMode.RIGHT
     private var pressedControl: OneHandedControls.Button? = null
+        set(value) {
+            if (field == value) return
+            val animate = ValueAnimator.areAnimatorsEnabled()
+            field?.let { oneHandedTransition.setPressed(it, false, animate) }
+            value?.let { oneHandedTransition.setPressed(it, true, animate) }
+            field = value
+            invalidate()
+        }
 
     // Appui long : bulle de symboles (grille) affichée au-dessus de la touche : voir KeyPopup (audit 2.1).
     private val keyPopup = KeyPopup(this)
@@ -396,6 +435,7 @@ class KeyboardView(context: Context) : View(context) {
         shiftAnimation.cancel()
         spaceBarAnimation.cancel()
         digitSwipeAnimation.cancel()
+        oneHandedTransition.stop()
         shiftSeeded = false
         keyRenderer.backspaceIconAngle = 0f
         repeatHandler.removeCallbacksAndMessages(null)
@@ -419,6 +459,7 @@ class KeyboardView(context: Context) : View(context) {
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        oneHandedTransition.stop()
         slotCache = null
         refreshDimens() // lot 21 : dépliage d'un pliable, multi-fenêtre : les dimensions et la zone des touches sont relues
         // Story 1.14 : largeur modifiée (dépliage d'un pliable, multi-fenêtre) ; une bulle ouverte
@@ -484,6 +525,11 @@ class KeyboardView(context: Context) : View(context) {
     override fun onDraw(canvas: Canvas) {
         // Pas de fond propre : le clavier est transparent et laisse voir le fond commun posé sur la
         // racine de l'IME (KeyboardBackgroundDrawable), partagé avec la barre du haut.
+        // Mode une main : le ressort avance avant que la zone des touches soit lue ; les zones de toucher mises en cache suivent.
+        if (oneHandedTransition.isRunning) {
+            oneHandedTransition.advance(System.nanoTime())
+            slotCache = null
+        }
         val inset = dims.keyInset
         val usableHeight = usableHeightPx()
         val rowHeight = usableHeight / layout.rows.size.toFloat()
@@ -532,7 +578,9 @@ class KeyboardView(context: Context) : View(context) {
         drawTouchZones(canvas)
         drawPopup(canvas)
         drawPreview(canvas)
-        if (backspaceAnimation.isRunning || shiftAnimation.isRunning || spaceBarAnimation.isRunning || digitSwipeAnimation.isRunning) {
+        if (backspaceAnimation.isRunning || shiftAnimation.isRunning || spaceBarAnimation.isRunning || digitSwipeAnimation.isRunning ||
+            oneHandedTransition.isRunning
+        ) {
             postInvalidateOnAnimation()
         }
     }
@@ -842,36 +890,59 @@ class KeyboardView(context: Context) : View(context) {
         }
     }
 
-    /** Mode une main : disposition des boutons dans la zone libre, ou null (mode inactif, zone trop étroite ou trop basse). */
+    /**
+     * Mode une main : disposition des boutons dans la zone libre du mode actif (ou du dernier côté actif pendant que les boutons
+     * rétrécissent à la sortie), ou null (boutons absents, zone trop étroite ou trop basse). Taille et hauteur sont celles de la zone
+     * finale ; seul le centre horizontal est animé (voir [controlsCenter]).
+     */
     private fun oneHandedControlsLayout(): OneHandedControls.Layout? {
-        if (!oneHandedMode.isActive) return null
-        val content = keyboardWidth()
-        val freeLeft = if (oneHandedMode == OneHandedMode.LEFT) content.rightPx else 0f
-        val freeRight = if (oneHandedMode == OneHandedMode.LEFT) width.toFloat() else content.leftPx
+        val mode = if (oneHandedMode.isActive) oneHandedMode else controlsMode
+        if (!oneHandedMode.isActive && oneHandedTransition.controlsAppear <= CONTROL_HIDDEN_BELOW) return null
+        val zone = KeyboardWidth.forAvailableWidth(width.toFloat(), resources.displayMetrics.density, mode, oneHandedWidthPercent)
+        val freeLeft = if (mode == OneHandedMode.LEFT) zone.rightPx else 0f
+        val freeRight = if (mode == OneHandedMode.LEFT) width.toFloat() else zone.leftPx
         return OneHandedControls.layout(
             freeLeft, freeRight, usableHeightPx(),
             maxRadius = dp(CONTROL_MAX_RADIUS_DP), margin = dp(CONTROL_MARGIN_DP), minRadius = dp(CONTROL_MIN_RADIUS_DP),
         )
     }
 
-    private fun controlAt(x: Float, y: Float): OneHandedControls.Button? =
-        oneHandedControlsLayout()?.let { OneHandedControls.hit(it, x, y) }
+    /** Centre horizontal des boutons ronds : celui du ressort pendant un mouvement, sinon celui de la zone libre. */
+    private fun controlsCenter(layout: OneHandedControls.Layout): Float =
+        if (oneHandedTransition.isMoving) oneHandedTransition.controlsCx else layout.cx
 
-    /** Mode une main : deux pastilles rondes (face + ombre, comme les touches) dans la zone libre. */
+    private fun controlAt(x: Float, y: Float): OneHandedControls.Button? {
+        if (!oneHandedMode.isActive) return null
+        if (oneHandedTransition.isMoving && oneHandedTransition.controlsAppear < CONTROL_TOUCHABLE_FROM) return null
+        val layout = oneHandedControlsLayout() ?: return null
+        return OneHandedControls.hit(layout.copy(cx = controlsCenter(layout)), x, y)
+    }
+
+    /** Mode une main : deux pastilles rondes (face + ombre, comme les touches) dans la zone libre, en ressort (apparition, déplacement, appui). */
     private fun drawOneHandedControls(canvas: Canvas) {
         val layout = oneHandedControlsLayout() ?: return
+        val moving = oneHandedTransition.isMoving
+        val appear = if (moving) oneHandedTransition.controlsAppear else 1f
+        // La flèche de changement de côté pointe vers la zone libre : à droite en mode gauche, retournée en mode droit.
+        val flipX = if (moving) oneHandedTransition.flipX else if (oneHandedMode == OneHandedMode.LEFT) 1f else -1f
+        val cx = controlsCenter(layout)
         val shadow = resources.getDimension(R.dimen.taipo_key_shadow_height)
         OneHandedControls.Button.entries.forEach { button ->
+            val scale = appear * oneHandedTransition.pressScale(button)
+            if (scale <= CONTROL_HIDDEN_BELOW) return@forEach
             val pressed = pressedControl == button
-            val faceY = layout.centerY(button) + if (pressed) shadow else 0f
-            canvas.drawCircle(layout.cx, layout.centerY(button) + shadow, layout.radius, controlShadowPaint)
-            canvas.drawCircle(layout.cx, faceY, layout.radius, if (pressed) controlPressedPaint else controlFacePaint)
+            val centerY = layout.centerY(button)
+            val faceY = centerY + if (pressed) shadow else 0f
+            val saved = canvas.save()
+            canvas.scale(scale, scale, cx, centerY)
+            canvas.drawCircle(cx, centerY + shadow, layout.radius, controlShadowPaint)
+            canvas.drawCircle(cx, faceY, layout.radius, if (pressed) controlPressedPaint else controlFacePaint)
             val icon = if (button == OneHandedControls.Button.SWITCH_SIDE) oneHandedSwitchIcon else oneHandedExitIcon
             val half = minOf(dims.iconSize, layout.radius * CONTROL_ICON_RATIO) / 2f
-            icon.setBounds(
-                (layout.cx - half).roundToInt(), (faceY - half).roundToInt(), (layout.cx + half).roundToInt(), (faceY + half).roundToInt(),
-            )
+            icon.setBounds((cx - half).roundToInt(), (faceY - half).roundToInt(), (cx + half).roundToInt(), (faceY + half).roundToInt())
+            if (button == OneHandedControls.Button.SWITCH_SIDE) canvas.scale(flipX, 1f, cx, faceY)
             icon.draw(canvas)
+            canvas.restoreToCount(saved)
         }
     }
 
@@ -1020,9 +1091,13 @@ class KeyboardView(context: Context) : View(context) {
 
     /** Story 1.14 : zone horizontale des touches (plein écran en Compact, plafonnée et centrée en large, serrée contre un bord en mode une main). */
     private fun keyboardWidth(): KeyboardWidth =
-        contentCache ?: KeyboardWidth.forAvailableWidth(
-            width.toFloat(), resources.displayMetrics.density, oneHandedMode, oneHandedWidthPercent,
-        ).also { contentCache = it }
+        if (oneHandedTransition.isMoving) {
+            oneHandedTransition.zone // mode une main en cours de ressort : la zone bouge à chaque image, rien n'est mis en cache
+        } else {
+            contentCache ?: KeyboardWidth.forAvailableWidth(
+                width.toFloat(), resources.displayMetrics.density, oneHandedMode, oneHandedWidthPercent,
+            ).also { contentCache = it }
+        }
 
     private fun dp(value: Float): Float = value * resources.displayMetrics.density
 
@@ -1032,6 +1107,10 @@ class KeyboardView(context: Context) : View(context) {
         const val CONTROL_MARGIN_DP = 6f
         const val CONTROL_MIN_RADIUS_DP = 12f
         const val CONTROL_ICON_RATIO = 1.2f
+
+        /** Sous cette échelle un bouton rond n'est ni dessiné ni touchable (il est encore en train d'apparaître ou de disparaître). */
+        const val CONTROL_HIDDEN_BELOW = 0.01f
+        const val CONTROL_TOUCHABLE_FROM = 0.5f
 
         /** Avancement du glissement du chiffre à partir duquel la bulle d'agrandissement de la lettre est masquée. */
         const val PREVIEW_HIDE_PROGRESS = 0.15f

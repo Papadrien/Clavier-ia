@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Mode une main : quitter le mode, clavier pleine largeur (flèches vers l'extérieur), au trait de 2 sur une grille de 24. -->
+<!-- Mode une main : quitter le mode, clavier pleine largeur (quatre coins de plein écran), au trait de 2 sur une grille de 24. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="@dimen/taipo_icon_size"
     android:height="@dimen/taipo_icon_size"
     android:viewportWidth="24"
     android:viewportHeight="24">
     <path
-        android:pathData="M15,4 L20,4 L20,9 M20,4 L14,10 M9,20 L4,20 L4,15 M4,20 L10,14"
+        android:pathData="M4,9 L4,4 L9,4 M15,4 L20,4 L20,9 M20,15 L20,20 L15,20 M9,20 L4,20 L4,15"
         android:strokeColor="@color/taipo_text"
         android:strokeWidth="2"
         android:strokeLineCap="round"

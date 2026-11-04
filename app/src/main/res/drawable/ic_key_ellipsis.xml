@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Touche de changement de langue (clavier multilingue) : trois points de suspension sur une grille de 24, comme les autres icônes Taipo. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/taipo_icon_size"
+    android:height="@dimen/taipo_icon_size"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M4,12 a2.2,2.2 0 1 0 4.4,0 a2.2,2.2 0 1 0 -4.4,0 Z"
+        android:fillColor="@color/taipo_text" />
+    <path
+        android:pathData="M9.8,12 a2.2,2.2 0 1 0 4.4,0 a2.2,2.2 0 1 0 -4.4,0 Z"
+        android:fillColor="@color/taipo_text" />
+    <path
+        android:pathData="M15.6,12 a2.2,2.2 0 1 0 4.4,0 a2.2,2.2 0 1 0 -4.4,0 Z"
+        android:fillColor="@color/taipo_text" />
+</vector>

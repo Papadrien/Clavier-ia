@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Mode une main : changer de côté (double flèche horizontale), au trait de 2 sur une grille de 24, comme les autres icônes Taipo. -->
+<!-- Mode une main : changer de côté (flèche vers la droite ; KeyboardView la retourne quand la zone libre est à gauche), au trait de 2 sur une grille de 24, comme les autres icônes Taipo. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="@dimen/taipo_icon_size"
     android:height="@dimen/taipo_icon_size"
     android:viewportWidth="24"
     android:viewportHeight="24">
     <path
-        android:pathData="M4,12 L20,12 M8,8 L4,12 L8,16 M16,8 L20,12 L16,16"
+        android:pathData="M4,12 L20,12 M14,6 L20,12 L14,18"
         android:strokeColor="@color/taipo_text"
         android:strokeWidth="2"
         android:strokeLineCap="round"
