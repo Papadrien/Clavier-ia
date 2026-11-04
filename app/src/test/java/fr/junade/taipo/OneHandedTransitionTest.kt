@@ -52,7 +52,9 @@ class OneHandedTransitionTest {
         val t = OneHandedTransition()
         t.moveTo(OneHandedMode.OFF, OneHandedMode.LEFT, off, leftZone, 0f, 900f)
         run(t, 0.5f)
-        assertFalse(t.isMoving)
+        // Les boutons, qui apparaissent après un délai, peuvent encore bouger : on ne regarde que la zone des touches (à 2 px près).
+        assertEquals(800f, t.zone.widthPx, 2f)
+        assertEquals(0f, t.zone.leftPx, 2f)
     }
 
     @Test
