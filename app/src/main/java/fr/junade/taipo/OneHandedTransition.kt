@@ -7,7 +7,7 @@ import kotlin.math.ceil
  * Ressort amorti à raideur et amortissement réglables (le [SpringValue] partagé a des constantes fixes). [retarget] fixe une nouvelle cible,
  * éventuellement après un délai ; la valeur garde sa vitesse, donc un changement de cible en plein mouvement ne fait pas de saut.
  */
-internal class TunedSpring(
+internal class OneHandedSpringValue(
     private var stiffness: Float,
     private var damping: Float,
     value: Float = 0f,
@@ -99,13 +99,13 @@ internal object OneHandedSpring {
  */
 internal class OneHandedTransition {
 
-    private val left = TunedSpring(OneHandedSpring.ZONE_STIFFNESS, OneHandedSpring.ZONE_DAMPING, 0f, 2f, 40f)
-    private val width = TunedSpring(OneHandedSpring.ZONE_STIFFNESS, OneHandedSpring.ZONE_DAMPING, 0f, 2f, 40f)
-    private val controlsX = TunedSpring(OneHandedSpring.ZONE_STIFFNESS, OneHandedSpring.ZONE_DAMPING, 0f, 2f, 40f)
-    private val controlsScale = TunedSpring(OneHandedSpring.APPEAR_STIFFNESS, OneHandedSpring.APPEAR_DAMPING)
-    private val flip = TunedSpring(OneHandedSpring.FLIP_STIFFNESS, OneHandedSpring.FLIP_DAMPING, 1f)
+    private val left = OneHandedSpringValue(OneHandedSpring.ZONE_STIFFNESS, OneHandedSpring.ZONE_DAMPING, 0f, 2f, 40f)
+    private val width = OneHandedSpringValue(OneHandedSpring.ZONE_STIFFNESS, OneHandedSpring.ZONE_DAMPING, 0f, 2f, 40f)
+    private val controlsX = OneHandedSpringValue(OneHandedSpring.ZONE_STIFFNESS, OneHandedSpring.ZONE_DAMPING, 0f, 2f, 40f)
+    private val controlsScale = OneHandedSpringValue(OneHandedSpring.APPEAR_STIFFNESS, OneHandedSpring.APPEAR_DAMPING)
+    private val flip = OneHandedSpringValue(OneHandedSpring.FLIP_STIFFNESS, OneHandedSpring.FLIP_DAMPING, 1f)
     private val press = Array(OneHandedControls.Button.entries.size) {
-        TunedSpring(OneHandedSpring.PRESS_UP_STIFFNESS, OneHandedSpring.PRESS_UP_DAMPING, 1f)
+        OneHandedSpringValue(OneHandedSpring.PRESS_UP_STIFFNESS, OneHandedSpring.PRESS_UP_DAMPING, 1f)
     }
     private val moving = listOf(left, width, controlsX, controlsScale, flip)
     private val all = moving + press
