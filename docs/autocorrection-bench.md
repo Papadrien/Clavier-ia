@@ -577,3 +577,8 @@ Fichiers : `WordSuggestion.Kind.COMPOUND`, `WordText.wordBeforeSingleSpace`, `Su
 - **Non essayé** : ni compilé ni lancé sur un téléphone (pas de Kotlin ni Android ici). À vérifier à la main : taper « Haus tür », voir « Haustür » à droite, le toucher, puis Supprimer
   pour revenir à « Haus tür » ; même chose dans le prompt.
 
+
+**Banc allemand et majuscule des noms (07/11/2026)** : avec la liste de noms étendue, « haus » est corrigé en « Haus » (voulu). Le banc comptait cela comme une mauvaise correction
+(`typos.*.wrong` et `longues.*.wrong` en hausse, `.ok` en baisse). `AutocorrectBench.sameWord` accepte désormais, en allemand seulement, un résultat qui ne diffère du mot attendu que par
+la casse. Le code du moteur n'a pas changé. Le français est inchangé : son écart avec la référence est celui décrit plus haut (enrichissement de `fr.txt` du 04/11/2026), à relire
+puis à régénérer avec `--write-baseline`.

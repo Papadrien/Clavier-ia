@@ -191,6 +191,13 @@ object AutocorrectBench {
         error("Racine du projet introuvable depuis $start (dictionaries/fr.txt et tools/autocorrect-bench attendus)")
     }
 
+    /**
+     * Le mot attendu est retrouvé. En allemand, la majuscule d'un nom (« haus » -> « Haus ») est voulue, pas une erreur :
+     * la liste de noms la pose, et les listes de fréquences sont en minuscules.
+     */
+    private fun sameWord(result: String?, word: String): Boolean =
+        result != null && (result == word || (profile.language == KeyboardLanguage.DE && result.lowercase() == word))
+
     fun loadDictionary(root: File, without: Set<String> = emptySet()): Dictionary {
         val frequencies = File(root, "dictionaries/${profile.code}.txt").bufferedReader(Charsets.UTF_8).useLines { lines ->
             Dictionary.parseFrequencyLines(lines, MIN_FREQUENCY)
@@ -294,7 +301,7 @@ object AutocorrectBench {
                     val result = dictionary.correctionFor(typo)
                     timings += (System.nanoTime() - t0) / 1_000
                     when {
-                        result == word -> { ok++; kindOk++ }
+                        sameWord(result, word) -> { ok++; kindOk++ }
                         result == null || result == typo -> missed++
                         else -> {
                             wrong++
@@ -445,7 +452,7 @@ object AutocorrectBench {
                     total++
                     val result = dictionary.correctionFor(typo)
                     when {
-                        result == word -> ok++
+                        sameWord(result, word) -> ok++
                         result == null || result == typo -> {}
                         else -> {
                             wrong++
