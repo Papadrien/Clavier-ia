@@ -80,7 +80,7 @@ class DictionaryAccentsTest {
     @Test
     fun `les regles anglaises reconnaissent pluriels et conjugaisons regulieres`() {
         val en = Dictionary.withFrequencies(
-            mapOf("like" to 10L, "city" to 10L, "walk" to 10L),
+            mapOf("like" to 1_000L, "city" to 1_000L, "walk" to 1_000L), // >= minBaseFrequency de ENGLISH
             InflectionRules.ENGLISH,
         )
         assertNull(en.correctionFor("liked"))
