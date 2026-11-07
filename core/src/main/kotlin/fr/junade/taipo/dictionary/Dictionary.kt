@@ -280,7 +280,14 @@ class Dictionary private constructor(
         previousWord: String? = null,
     ): String? {
         val correction = correctionWithoutNames(word, maxDistance, personalWords, habits, trace, previousWord)
-        val result = properNameForm(word, correction, personalWords) ?: correction
+        var result = properNameForm(word, correction, personalWords) ?: correction
+        // Point 4 : « … avec Kubernets » : un mot inconnu à majuscule juste après un autre mot est sans doute un nom propre ; il n'est
+        // remplacé que par un nom connu (« Adrein » -> « Adrien »), jamais par un mot courant.
+        if (result != null && confidence.protectsMidSentenceCapitals && previousWord != null && isCapitalized(word) &&
+            word.lowercase() !in frequencies && result.lowercase() !in exactNames
+        ) {
+            result = null
+        }
         // Phase 5 : une correction annulée deux fois (voir [HabitContext.isRefused]) n'est plus proposée nulle part, ni à
         // l'espace ni dans la bande : celle-ci montre toujours ce que l'autocorrection applique.
         val refused = result != null && habits != null && habits.isRefused(word, result)
@@ -351,6 +358,8 @@ class Dictionary private constructor(
         val personal = HashMap<String, String>(personalWords.size)
         personalWords.forEach { personal[it.lowercase()] = it }
         if (lower in personal) return null
+        // Point 4 : un mot inconnu que l'utilisateur a déjà gardé deux fois est un mot à lui (nom, argot, sigle) : plus de correction.
+        if (habits != null && lower !in frequencies && habits.isLearnedWord(lower)) return null
         // « l'Taipo », « d'Adrien », « Taipo's » : le clavier voit un seul mot avec apostrophe.
         if (isPersonalWithApostrophe(lower, personal)) return null
 
@@ -416,6 +425,9 @@ class Dictionary private constructor(
         // Décision de déclenchement (phase 3) : le meilleur candidat ne s'applique que si sa marge sur le suivant atteint
         // le seuil de son type de faute. Une égalité stricte (marge nulle) ne corrige jamais.
         val correction = contest.best ?: return null
+        // Point 4 : un mot court à deux erreurs de tout mot connu est souvent un mot juste inconnu (nom, argot) ; on ne le remplace
+        // que si le mot précédent soutient la correction.
+        if (contest.bestDistance == 2 && lower.length < confidence.twoEditsMinLengthWithoutContext && !contextSupports(previousWord, correction)) return null
         val kind = confidence.kindOf(lower, correction, contest.bestDistance, contest.bestIsSwap, contest.bestCost)
         val margin = contest.margin()
         val accepted = confidence.accepts(kind, margin, contest.bestCost)
@@ -429,6 +441,14 @@ class Dictionary private constructor(
         val stored = personal[correction]
         return if (stored != null && stored != stored.lowercase()) stored else applyOriginalCasing(word, correction)
     }
+
+    /** Majuscule initiale suivie d'au moins une minuscule (« Paris », pas « PARIS » ni « paris »). */
+    private fun isCapitalized(word: String): Boolean =
+        word.length > 1 && word[0].isUpperCase() && word.drop(1).any { it.isLowerCase() }
+
+    /** Vrai si le modèle de bigrammes attend [candidate] après [previousWord] plus que sans contexte (point 4). */
+    private fun contextSupports(previousWord: String?, candidate: String): Boolean =
+        previousWord != null && confidence.contextWeight > 0.0 && ngrams.contextCount(previousWord) > 0 && ngrams.bonus(previousWord, candidate) > 0.0
 
     /** Vrai si, après [previousWord], le modèle de bigrammes attend nettement plus [typed] que [replacement] (point 1). */
     private fun contextPrefers(previousWord: String?, typed: String, replacement: String): Boolean {
@@ -447,7 +467,9 @@ class Dictionary private constructor(
         activeHabits: HabitContext?,
         previousWord: String? = null,
     ): CandidateContest {
-        val contest = CandidateContest()
+        // Sans géométrie de clavier, le coût de saisie vaut 0 : une erreur y compte alors comme une erreur quelconque (COST x 4).
+        val penalty = confidence.distancePenalty?.let { if (proximity === KeyProximity.NONE) it + NO_PROXIMITY_EDIT_PENALTY else it }
+        val contest = CandidateContest(penalty)
         // Point 1 (bigrammes) : le mot précédent départage les candidats, s'il est connu du modèle et que la langue lui donne un poids.
         val context = previousWord?.takeIf { confidence.contextWeight > 0.0 && ngrams.contextCount(it) > 0 }
 
@@ -888,6 +910,9 @@ class Dictionary private constructor(
 
         /** Story 1.17 : nombre d'emplacements de mots de la bande de suggestions. */
         const val SUGGESTION_LIMIT = 3
+
+        /** Pénalité d'une erreur d'édition dans le score unique quand la proximité des touches est inconnue (voir [searchCandidates]). */
+        private const val NO_PROXIMITY_EDIT_PENALTY = 40.0
 
         /** Une contraction écrite sans apostrophe est corrigée si la contraction est au moins 100 fois plus fréquente. */
         private const val CONTRACTION_DOMINANCE = 100L

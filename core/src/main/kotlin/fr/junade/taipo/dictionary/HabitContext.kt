@@ -47,6 +47,12 @@ class HabitContext(
     /** Vrai si rien n'a été appris : [score] vaudrait [HabitScore.NONE] pour tout candidat (évite de le calculer). */
     fun isInert(): Boolean = habits.isEmpty() && (nextWords == null || nextWords.isEmpty())
 
+    /**
+     * Point 4 de docs/autocorrection-roadmap.md : vrai si l'utilisateur a déjà gardé [word] au moins [LEARNED_WORD_USAGE] fois (tapé
+     * et validé sans correction, ou correction annulée) : c'est un mot à lui (nom, argot, sigle), il n'est plus corrigé.
+     */
+    fun isLearnedWord(word: String): Boolean = habits.usageCount(language, word) >= LEARNED_WORD_USAGE
+
     /** Score du candidat [candidate] pour le mot tapé [typed] (casse sans effet). */
     fun score(typed: String, candidate: String): HabitScore {
         val acceptedCount = habits.acceptedCount(language, typed, candidate)
@@ -111,6 +117,9 @@ class HabitContext(
     }
 
     companion object {
+        /** Un mot inconnu gardé deux fois est appris : une seule fois peut être un accident. */
+        const val LEARNED_WORD_USAGE = 2
+
         /** Fois minimales où un mot a suivi le mot qui précède pour que les habitudes retiennent un mot que le contexte voudrait changer. */
         const val CONTEXT_EVIDENCE = 2
 

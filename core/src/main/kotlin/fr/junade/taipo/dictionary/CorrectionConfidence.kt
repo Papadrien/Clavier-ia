@@ -70,6 +70,21 @@ class CorrectionConfidence(
      * contexte est ignoré (langues sans bigrammes ou non calibrées). 1 : une unité de bonus vaut une unité de ln(fréquence).
      */
     val contextWeight: Double = 0.0,
+    /**
+     * Point 2 de docs/autocorrection-roadmap.md : pénalité d'une erreur d'édition dans le score unique ([CandidateContest]). Null : la
+     * distance d'édition prime sur tout le reste (comportement historique).
+     */
+    val distancePenalty: Double? = null,
+    /**
+     * Point 4 de docs/autocorrection-roadmap.md : un mot tapé plus court que cette longueur n'est corrigé à deux erreurs que si le mot
+     * précédent soutient la correction ([NgramModel.bonus] positif). 0 : jamais exigé.
+     */
+    val twoEditsMinLengthWithoutContext: Int = 0,
+    /**
+     * Point 4 : un mot inconnu à majuscule qui suit directement un autre mot (pas en début de phrase) n'est remplacé que par un nom
+     * propre connu. Faux en allemand, où tous les noms prennent une majuscule.
+     */
+    val protectsMidSentenceCapitals: Boolean = false,
 ) {
 
     /** Distance d'édition de la recherche à mots longs. */
@@ -131,6 +146,11 @@ class CorrectionConfidence(
             cElisionOnlyBeforeE = true,
             // Point 1 (bigrammes) : réglé sur le banc des phrases mises de côté (0,5 / 1 / 1,5 / 2 : 1 est le meilleur compromis).
             contextWeight = 1.0,
+            // Point 2 : un seul score (0 : le coût de saisie, déjà 20 à 40 par erreur, suffit à pénaliser la distance ; banc 0 / 10 / 20 / 30).
+            distancePenalty = 0.0,
+            // Point 4 : banc 0 / 6 / 8 ; 6 retire des fausses corrections sans perdre de bonne correction (8 coûte 7 points aux mots longs).
+            twoEditsMinLengthWithoutContext = 6,
+            protectsMidSentenceCapitals = true,
         )
 
         /**
@@ -153,6 +173,11 @@ class CorrectionConfidence(
             cElisionOnlyBeforeE = true,
             restoresElisions = false,
             contextWeight = 1.0,
+            // Point 2 : un seul score (0 : le coût de saisie, déjà 20 à 40 par erreur, suffit à pénaliser la distance ; banc 0 / 10 / 20 / 30).
+            distancePenalty = 0.0,
+            // Point 4 : banc 0 / 6 / 8 ; 6 retire des fausses corrections sans perdre de bonne correction (8 coûte 7 points aux mots longs).
+            twoEditsMinLengthWithoutContext = 6,
+            protectsMidSentenceCapitals = true,
         )
 
         /**

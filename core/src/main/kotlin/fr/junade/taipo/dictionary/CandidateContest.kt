@@ -6,7 +6,14 @@ package fr.junade.taipo.dictionary
  * marge entre les deux. Remplace l'ancien drapeau « ambigu », qui ne voyait que l'égalité stricte.
  * Logique pure, testée en JVM par `CandidateContestTest`.
  */
-internal class CandidateContest {
+internal class CandidateContest(
+    /**
+     * Point 2 de docs/autocorrection-roadmap.md : null = la distance d'édition prime (ordre historique) ; sinon, un seul score
+     * départage tous les candidats, `score - distancePenalty x distance`, et une faute à deux touches voisines peut battre une faute
+     * à une touche éloignée si le mot est bien plus probable. La marge est alors l'écart entre ces scores, quelle que soit la distance.
+     */
+    private val distancePenalty: Double? = null,
+) {
 
     var best: String? = null
         private set
@@ -52,10 +59,17 @@ internal class CandidateContest {
      */
     fun margin(): Double = when {
         best == null -> 0.0
-        second == null || secondDistance > bestDistance -> Double.POSITIVE_INFINITY
+        second == null -> Double.POSITIVE_INFINITY
+        distancePenalty != null -> adjusted(bestScore, bestDistance) - adjusted(secondScore, secondDistance)
+        secondDistance > bestDistance -> Double.POSITIVE_INFINITY
         else -> bestScore - secondScore
     }
 
-    private fun beats(distance: Int, score: Double, otherDistance: Int, otherScore: Double): Boolean =
-        distance < otherDistance || (distance == otherDistance && score > otherScore)
+    private fun adjusted(score: Double, distance: Int): Double = score - (distancePenalty ?: 0.0) * distance
+
+    private fun beats(distance: Int, score: Double, otherDistance: Int, otherScore: Double): Boolean = when {
+        otherDistance == Int.MAX_VALUE -> true
+        distancePenalty != null -> adjusted(score, distance) > adjusted(otherScore, otherDistance)
+        else -> distance < otherDistance || (distance == otherDistance && score > otherScore)
+    }
 }

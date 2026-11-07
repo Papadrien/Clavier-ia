@@ -85,4 +85,20 @@ class CandidateContestTest {
         assertEquals("adrien", contest.best)
         assertEquals(Double.POSITIVE_INFINITY, contest.margin())
     }
+
+    @Test
+    fun `avec un score unique un candidat plus loin mais bien meilleur l'emporte et compte dans la marge`() {
+        val unified = CandidateContest(distancePenalty = 0.0)
+        unified.offer("proche", 1, 10.0, 4, false)
+        unified.offer("loin", 2, 15.0, 4, false)
+        assertEquals("loin", unified.best)
+        assertEquals(5.0, unified.margin(), 1e-9)
+
+        // Ordre historique : la distance prime, le rival plus loin ne compte pas.
+        val historic = CandidateContest()
+        historic.offer("proche", 1, 10.0, 4, false)
+        historic.offer("loin", 2, 15.0, 4, false)
+        assertEquals("proche", historic.best)
+        assertEquals(Double.POSITIVE_INFINITY, historic.margin())
+    }
 }
