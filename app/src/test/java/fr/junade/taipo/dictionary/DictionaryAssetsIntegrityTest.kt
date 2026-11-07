@@ -73,9 +73,9 @@ class DictionaryAssetsIntegrityTest {
     }
 
     @ParameterizedTest(name = "{0} : liste complète")
-    @CsvSource(delimiter = '|', value = ["fr|700000", "en|120000", "es|300000", "de|100000", "it|220000", "pt|220000", "nl|220000"])
+    @CsvSource(delimiter = '|', value = ["fr|700000", "en|120000", "es|140000", "de|100000", "it|220000", "pt|220000", "nl|220000"])
     fun `la liste complete est bien la liste complete`(language: String, minimumWords: Int) {
-        // Constaté : fr 735 098 mots, en 133 339 (élaguée le 05/11/2026), es 335 938, de 117 170 (nettoyée le 06/11/2026), it 236 944, pt 238 172, nl 245 627.
+        // Constaté : fr 735 098 mots, en 133 339 (élaguée le 05/11/2026), es 147 805 (nettoyée le 05/11/2026), de 117 170 (nettoyée le 06/11/2026), it 236 944, pt 238 172, nl 245 627.
         val full = strictEntries(language).size
         assertTrue(full >= minimumWords, "$language.txt : $full mots seulement (plancher : $minimumWords)")
     }
