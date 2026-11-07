@@ -41,7 +41,7 @@ class ContextualCorrectionTest {
     @Test
     fun `sans habitudes la correction de contexte est appliquee`() {
         assertEquals("Ils ont", apply("Ils on"))
-        assertEquals("Ils ont", ContextualCorrection.apply("Ils on", false, true, ::frequencyOf) { null })
+        assertEquals("Ils ont", ContextualCorrection.apply("Ils on", false, true, ::frequencyOf, habitsFor = { null }))
     }
 
     @Test

@@ -73,7 +73,7 @@ class AutocorrectionCoherenceTest {
                     contextual = true,
                     habitsFor = { null },
                 )
-                val fix = ContextualCorrection.lastWordFix(text, false, dictionary::frequencyOf) { null }
+                val fix = ContextualCorrection.lastWordFix(text, false, dictionary::frequencyOf, habitsFor = { null })
                 val slots = dictionary.suggestionSlotsFor(typed, emptyList(), null, fix)
                 val bold = slots.firstOrNull { it?.kind == WordSuggestion.Kind.AUTOCORRECTION }?.text
                 val appliedToLastWord = corrected != text && text.dropLast(typed.length) == corrected.dropLast(lastWord(corrected).length)
