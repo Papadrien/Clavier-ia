@@ -1,29 +1,29 @@
 # Référence du banc d'autocorrection (docs/autocorrection-bench.md). Générée par `main --write-baseline`.
 # À régénérer volontairement quand une phase de la refonte change le comportement, jamais pour masquer une régression.
 [metrics]
-typos.courants.voisine.ok=93.7
-typos.courants.oubli.ok=80.9
+typos.courants.voisine.ok=94.5
+typos.courants.oubli.ok=81.5
 typos.courants.doublon.ok=97.9
-typos.courants.inversion.ok=99.2
-typos.courants.ajout.ok=97.8
+typos.courants.inversion.ok=99.6
+typos.courants.ajout.ok=97.9
 typos.courants.accent.ok=100.0
 typos.courants.ss-pour-eszett.ok=99.9
 typos.courants.ae-oe-ue.ok=99.5
-typos.courants.ok=96.11
+typos.courants.ok=96.35
 typos.courants.missed=0.01
-typos.courants.wrong=3.88
+typos.courants.wrong=3.64
 typos.courants.surMotValide=31.9
 typos.varies.voisine.ok=93.8
 typos.varies.oubli.ok=82.1
 typos.varies.doublon.ok=98.5
-typos.varies.inversion.ok=99.0
+typos.varies.inversion.ok=99.1
 typos.varies.ajout.ok=98.3
 typos.varies.accent.ok=99.7
 typos.varies.ss-pour-eszett.ok=99.2
 typos.varies.ae-oe-ue.ok=99.5
-typos.varies.ok=96.26
+typos.varies.ok=96.28
 typos.varies.missed=0.0
-typos.varies.wrong=3.74
+typos.varies.wrong=3.73
 typos.varies.surMotValide=4.28
 valides.courants.faux=0.0
 valides.courants.restaure=7.94
@@ -53,8 +53,8 @@ contexte.wurde-würde.ok=66.67
 contexte.das-dass.ok=100.0
 contexte.mal-Mal.ok=100.0
 contexte.tageszeit.ok=100.0
-contexte.tippfehler.ok=86.67
-contexte.total.ok=90.6
+contexte.tippfehler.ok=93.33
+contexte.total.ok=91.45
 [failing-cases]
 umlaut	Ich mochte ein Glas Wasser.
 eszett	Er ist grosser als ich.
@@ -65,6 +65,5 @@ wir-wie	Heute essen wie zu Hause.
 wir-wie	Wie können morgen kommen.
 wurde-würde	Ich wurde das nie tun.
 wurde-würde	Sie wurden gern früher gehen.
-tippfehler	Das ist sher gut.
 tippfehler	Ich möchte einen Kaffe.
 [changed-sentences]

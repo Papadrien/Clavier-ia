@@ -100,6 +100,12 @@ class CorrectionConfidence(
         val NONE = CorrectionConfidence(emptyMap())
 
         /**
+         * Allemand : les seuils de [NONE] (pas encore calibrés), sans élision. L'allemand n'élide pas : « danne » ne devient pas
+         * « d'anne », « sins » pas « s'ins » (banc `--lang=de`, 07/11/2026).
+         */
+        val GERMAN = CorrectionConfidence(emptyMap(), restoresElisions = false)
+
+        /**
          * Seuils du français, calibrés sur le banc (docs/autocorrection-bench.md, phase 3). Ils sont volontairement bas :
          * ils ne retirent que les quasi-égalités, où le choix est un pile ou face. Les relever corrige moins et se trompe
          * moins ; chaque point se mesure avec le banc avant d'être changé.

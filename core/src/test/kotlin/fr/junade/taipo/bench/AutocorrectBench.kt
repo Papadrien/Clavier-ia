@@ -142,7 +142,7 @@ object AutocorrectBench {
      * (les largeurs exactes de `KeyboardLayout` ne sont pas dans le module `core`).
      */
     val GERMAN = Profile(
-        KeyboardLanguage.DE, QWERTZ, InflectionRules.GERMAN, 41L, CorrectionConfidence.NONE,
+        KeyboardLanguage.DE, QWERTZ, InflectionRules.GERMAN, 41L, CorrectionConfidence.GERMAN,
         { text, f -> ContextualCorrection.correctWithoutHabits(KeyboardLanguage.DE, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f) },
         "tools/autocorrect-bench/de/sentences-ok.txt", "tools/autocorrect-bench/de/context-cases.tsv", "tools/autocorrect-bench/de/baseline.txt",
         AccentPolicy.GERMAN,

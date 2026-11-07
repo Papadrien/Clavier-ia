@@ -153,6 +153,7 @@ object DictionaryLoader {
         KeyboardLanguage.FR -> CorrectionConfidence.STANDARD
         KeyboardLanguage.EN -> CorrectionConfidence.ENGLISH
         KeyboardLanguage.ES -> CorrectionConfidence.SPANISH
+        KeyboardLanguage.DE -> CorrectionConfidence.GERMAN
         else -> CorrectionConfidence.NONE
     }
 

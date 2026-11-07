@@ -594,3 +594,8 @@ puis à régénérer avec `--write-baseline`.
 - Les deux références sont régénérées avec `--write-baseline`. L'allemande datait d'avant les phases 4 et 5 (`contexte.total.ok` 56,41 -> 90,6) ;
   la française prend en compte l'enrichissement de `fr.txt` du 04/11/2026 (voir plus haut).
 - À noter : `valides.*.restaure` (non contrôlé) passe de 0,16 à 7,94 en allemand. C'est la majuscule des noms (« haus » -> « Haus ») sur les mots justes.
+
+**Allemand sans élision (07/11/2026)** : l'allemand utilisait `CorrectionConfidence.NONE`, qui garde la restauration d'élision du français
+(« danne » -> « d'anne », « sins » -> « s'ins », « leiner » -> « l'einer »). Nouveau profil `CorrectionConfidence.GERMAN` = `NONE` sans élision,
+utilisé par `DictionaryLoader` et le banc. Banc : `typos.courants.wrong` 3,88 -> 3,64, `contexte.tippfehler.ok` 86,67 -> 93,33, aucune mesure en baisse ;
+référence `de/baseline.txt` régénérée. L'italien garde ses élisions ; le portugais et le néerlandais restent sur `NONE` (non mesurés).
