@@ -28,6 +28,15 @@ class AutocorrectBaselineTest {
     @Test
     fun `l'autocorrection allemande ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.GERMAN)
 
+    @Test
+    fun `l'autocorrection italienne ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.ITALIAN)
+
+    @Test
+    fun `l'autocorrection portugaise ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.PORTUGUESE)
+
+    @Test
+    fun `l'autocorrection neerlandaise ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.DUTCH)
+
     private fun checkNoRegression(profile: AutocorrectBench.Profile) {
         assumeTrue(root != null, "racine du projet introuvable")
         val baseline = AutocorrectBench.readBaseline(root!!, profile)

@@ -593,6 +593,7 @@ zin 37661
 straks 37601
 vent 37493
 zus 37423
+zo'n 37401
 haat 37392
 vandaan 37082
 miss 36969
@@ -1397,6 +1398,7 @@ dna 12521
 hoelang 12478
 eenmaal 12477
 simpel 12470
+m'n 12467
 zocht 12466
 blauwe 12465
 stukje 12436
@@ -1601,6 +1603,7 @@ yeah 10679
 momentje 10670
 medische 10658
 sexy 10644
+z'n 10643
 burgemeester 10640
 lee 10638
 officier 10624
@@ -7812,7 +7815,6 @@ geheugenverlies 1423
 konijnen 1423
 liften 1423
 misdrijven 1423
-patient 1423
 schrijvers 1423
 schuldige 1423
 verwerkt 1423
@@ -11781,7 +11783,6 @@ ingericht 789
 inschenken 789
 omarmen 789
 ondankbaar 789
-patienten 789
 primaire 789
 smeekt 789
 tardis 789
@@ -11979,7 +11980,6 @@ ulds 773
 volume 773
 wippen 773
 disney 772
-geinteresseerd 772
 moskee 772
 ontnemen 772
 spider 772
@@ -14420,7 +14420,6 @@ ongekende 586
 regelrecht 586
 ade 585
 armand 585
-cafe 585
 con 585
 diesel 585
 essay 585
@@ -15911,7 +15910,6 @@ colombiaanse 504
 doorverbinden 504
 dwaasheid 504
 gandhi 504
-israel 504
 keerden 504
 killian 504
 lesbienne 504
@@ -20830,7 +20828,6 @@ fragment 331
 geheid 331
 gigolo 331
 guerrilla 331
-ideeen 331
 inleiding 331
 katz 331
 kuur 331
@@ -23074,7 +23071,6 @@ naïeve 283
 neanderthaler 283
 nevins 283
 nie 283
-officiele 283
 overblijfsel 283
 pinot 283
 prutser 283
@@ -24203,7 +24199,6 @@ gifford 262
 gril 262
 guillermo 262
 heathrow 262
-italie 262
 knabbelen 262
 lasso 262
 lucratief 262
@@ -25388,7 +25383,6 @@ duwden 242
 edelmoedig 242
 eerstgeborene 242
 exit 242
-financiele 242
 formaldehyde 242
 geknuffeld 242
 geërgerd 242
@@ -25943,7 +25937,6 @@ subaru 234
 sung 234
 thethom 234
 tricky 234
-tweeen 234
 uitgeprobeerd 234
 universeel 234
 vickers 234
@@ -32155,7 +32148,6 @@ strookt 165
 temujin 165
 ti 165
 tone 165
-uberhaupt 165
 vanity 165
 verdom 165
 vervain 165
@@ -34231,7 +34223,6 @@ allianties 147
 analfabeet 147
 ansel 147
 arenden 147
-australie 147
 authenticiteit 147
 baltische 147
 barbeque 147
@@ -36222,7 +36213,6 @@ frauduleuze 134
 gamer 134
 geheimhoudingsplicht 134
 haggis 134
-hawai 134
 hawes 134
 hennessey 134
 hort 134
@@ -44910,7 +44900,6 @@ decibel 92
 deelneemster 92
 delorean 92
 diagnostiek 92
-discussieren 92
 docente 92
 doordrong 92
 drankgebruik 92
@@ -45806,7 +45795,6 @@ aflever 89
 aftroggelen 89
 ambachtelijke 89
 assisteerde 89
-azie 89
 badgast 89
 bahia 89
 bakers 89
@@ -48868,7 +48856,6 @@ paradigma 80
 payn 80
 pfc 80
 pinkje 80
-poezie 80
 pontus 80
 presidents 80
 projectje 80
@@ -54709,7 +54696,6 @@ veerdienst 66
 veertigduizend 66
 veiligheidsbril 66
 veiligheidstroepen 66
-venetie 66
 verdaan 66
 verkondigd 66
 verkwanselen 66
@@ -59527,7 +59513,6 @@ behan 56
 behoedde 56
 bekampen 56
 bekostigd 56
-belgie 56
 belikov 56
 belters 56
 bemiddelde 56
@@ -62083,7 +62068,6 @@ bo-bo 52
 bolide 52
 bracknell 52
 brandwonde 52
-brazilie 52
 brecht 52
 brigadoon 52
 broadchurch 52
@@ -69769,7 +69753,6 @@ varus 43
 vasculair 43
 vastgehad 43
 veevoer 43
-vegetarier 43
 venom 43
 verantwoordt 43
 verblijdt 43
@@ -70523,7 +70506,6 @@ revolverman 42
 rigide 42
 rijkeluiskinderen 42
 riq 42
-roemenie 42
 roepie 42
 roget 42
 romantiseren 42
@@ -86508,7 +86490,6 @@ observator 29
 oceaanstromingen 29
 oculair 29
 odone 29
-oekraine 29
 oher 29
 oishi 29
 oki-doki 29
@@ -90397,7 +90378,6 @@ sissie 27
 sixsmith 27
 sjoemelde 27
 skales 27
-skien 27
 skimaskers 27
 skinwalkers 27
 slaapfeest 27
@@ -134352,7 +134332,6 @@ gromyko 13
 grondboor 13
 grondstation 13
 grooste 13
-groot-brittannie 13
 grootgrondbezitters 13
 groothandelsprijs 13
 grootindustrieel 13
@@ -245625,3 +245604,27 @@ zúllen 5
 öster 5
 über-life 5
 über-telefoon 5
+australie 1
+azie 1
+belgie 1
+brazilie 1
+cafe 1
+discussieren 1
+financiele 1
+geinteresseerd 1
+groot-brittannie 1
+hawai 1
+ideeen 1
+israel 1
+italie 1
+oekraine 1
+officiele 1
+patient 1
+patienten 1
+poezie 1
+roemenie 1
+skien 1
+tweeen 1
+uberhaupt 1
+vegetarier 1
+venetie 1

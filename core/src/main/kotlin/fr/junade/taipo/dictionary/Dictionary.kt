@@ -596,8 +596,10 @@ class Dictionary private constructor(
         personalWords: Collection<String>,
     ): ApostropheResult? {
         val apostrophe = lower.indexOf('\'')
-        // Possessif d'un pluriel (« teachers' », « days' ») : le mot est juste si le pluriel l'est (banc des phrases, 07/11/2026).
-        if (apostrophe == lower.length - 1 && apostrophe > 1 && lower[apostrophe - 1] == 's') {
+        // Apostrophe initiale (néerlandais « 's avonds », « 't », anglais « 'em ») : forme voulue, jamais corrigée.
+        if (apostrophe == 0) return ApostropheResult(null)
+        // Apostrophe finale après un mot connu : possessif d'un pluriel (« teachers' », « days' ») ou élision finale italienne (« po' »).
+        if (apostrophe == lower.length - 1 && apostrophe > 1) {
             val head = lower.substring(0, apostrophe)
             if (head in frequencies || isInflectedForm(head)) return ApostropheResult(null)
         }

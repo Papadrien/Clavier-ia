@@ -1,0 +1,72 @@
+# Frasi italiane corrette: l'autocorrezione non deve cambiarne nessuna (misura le false correzioni).
+# Una frase per riga. Le righe che iniziano con # sono ignorate.
+Ciao, come stai?
+Lui e lei sono andati al mare.
+Io e te dobbiamo parlare.
+Non è vero.
+È stato bello rivederti.
+C'è un problema con la macchina.
+Ce l'ho fatta, finalmente!
+Ce ne sono tanti in giro.
+Ho fame e ho sonno.
+Hai visto il mio telefono?
+Ha detto che arriva domani.
+Hanno comprato una casa nuova.
+Vado a casa dopo il lavoro.
+Andiamo a mangiare una pizza.
+O vieni con noi o resti qui.
+Vuoi il tè o il caffè?
+Mi dà fastidio quando parli così.
+Vengo da Roma, e tu?
+Sì, grazie mille.
+Se vuoi, possiamo uscire stasera.
+Si dice che pioverà domani.
+Né io né lui lo sapevamo.
+Ne ho parlato con mia madre.
+Aspetta un po', arrivo subito.
+Perché non mi hai chiamato?
+Qual è il tuo nome?
+Dov'è la stazione?
+Com'è andata la giornata?
+Quell'uomo è mio zio.
+L'ho visto ieri sera.
+Dell'acqua, per favore.
+All'inizio non capivo niente.
+Un'altra volta, forse.
+La città è molto bella di notte.
+Più tardi ti scrivo.
+Così non va bene.
+Però hai ragione tu.
+Lunedì ho un esame importante.
+Mi piace molto questo libro.
+Che cosa fai questo fine settimana?
+Chi ha mangiato la torta?
+Quando arrivi, chiamami.
+Dove sei andato in vacanza?
+Ci vediamo alle otto davanti al cinema.
+Grazie per l'aiuto.
+Non ho capito la domanda.
+Devo andare in farmacia.
+Abbiamo tempo per un caffè?
+Mia sorella lavora in banca.
+Il treno è in ritardo di dieci minuti.
+Fa freddo oggi.
+Ti voglio bene.
+Buona notte e sogni d'oro.
+Mi puoi aiutare con i compiti?
+Ho lasciato le chiavi in macchina.
+È meglio partire presto.
+Sono stanco morto.
+Lo so, ma non posso farci niente.
+Ci sono molte persone in piazza.
+Gli ho detto di venire.
+Le ho regalato dei fiori.
+Il gatto dorme sul divano.
+Hai già mangiato?
+Anche io voglio venire.
+Questa è la mia amica Giulia.
+Parliamo domani con calma.
+Che bello vederti!
+Va bene, a dopo.
+Non c'è niente da fare.
+È possibile prenotare un tavolo?

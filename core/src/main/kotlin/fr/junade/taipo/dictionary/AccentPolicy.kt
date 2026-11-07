@@ -75,6 +75,41 @@ class AccentPolicy(
             nounsKeepValidWords = true,
         )
 
+        /**
+         * Italien : l'accent n'est écrit que sur la dernière syllabe (« perché », « città », « più ») ; la forme sans accent est presque toujours
+         * une faute, sauf les mots courts dont les deux formes sont justes (e / è, da / dà, si / sì, la / là, li / lì, ne / né, se / sé, te / tè,
+         * di / dì) et papa / papà, meta / metà. Seuil de 10, comme l'espagnol.
+         */
+        val ITALIAN = AccentPolicy(
+            softDominance = 10L,
+            strictDominance = 10L,
+            keptPlain = setOf("e", "da", "si", "la", "li", "ne", "se", "te", "di", "papa", "meta"),
+            strictPair = { _, _ -> true },
+        )
+
+        /**
+         * Portugais : comme l'espagnol, l'accent distingue souvent deux mots justes (esta / está, e / é, a / à, nos / nós, pais / país, pode /
+         * pôde, para / pára, tem / têm, sabia / sábia, publico / público). Seuil de 10, et ces formes sans accent gardées telles quelles : le
+         * contexte (PortugueseConfusions) tranche les cas sûrs.
+         */
+        val PORTUGUESE = AccentPolicy(
+            softDominance = 10L,
+            strictDominance = 10L,
+            keptPlain = setOf(
+                "esta", "estas", "e", "a", "nos", "vos", "por", "pode", "para", "pais", "tem", "vem", "sabia", "secretaria", "publico",
+                "pratica", "critica", "da", "de", "mas", "pelo", "porque", "que", "avo",
+            ),
+            strictPair = { _, _ -> true },
+        )
+
+        /** Néerlandais : peu d'accents (één / een, vóór / voor, café) ; la forme sans accent est le plus souvent juste : seuil de 10. */
+        val DUTCH = AccentPolicy(
+            softDominance = 10L,
+            strictDominance = 10L,
+            keptPlain = setOf("een", "voor", "dat", "die", "is"),
+            strictPair = { _, _ -> true },
+        )
+
         /** Espagnol : un seul seuil de 10, et les mots justes dont l'accent change le sens à plus de 10 contre 1. */
         val SPANISH = AccentPolicy(
             softDominance = 10L,

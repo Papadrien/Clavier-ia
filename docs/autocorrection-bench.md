@@ -603,3 +603,6 @@ référence `de/baseline.txt` régénérée. L'italien garde ses élisions ; le 
 **Feuille de route fr/en (07/11/2026)** : bigrammes livrés, score unique, protection des mots inconnus et complétion tolérante aux
 fautes, avec un banc sur phrases réelles (`heldout.*`, `completion.*`). Détail, mesures et suites dans `docs/autocorrection-roadmap.md`.
 Le banc lit `dictionaries/bigrams/<code>.txt` s'il existe ; les références fr et en sont régénérées.
+
+**Italien, portugais, néerlandais (07/11/2026)** : profils `--lang=it`, `--lang=pt`, `--lang=nl` (et `-legacy` pour l'état d'avant), jeux
+`tools/autocorrect-bench/{it,pt,nl}/` (phrases justes, cas de contexte, références). Détail dans `docs/autocorrection-roadmap.md`.

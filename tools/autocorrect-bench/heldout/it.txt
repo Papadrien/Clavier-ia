@@ -1,0 +1,2001 @@
+# Phrases Tatoeba (CC BY 2.0 FR) jamais comptées dans dictionaries/bigrams/it.txt : voir tools/build_ngrams.py.
+Mettere in forma dopo il lavaggio.
+Vi devo confessare che russo.
+Ho cominciato a studiare cinese la settimana scorsa.
+Questo film mi è piaciuto.
+Ogni attività che volete compiere prenderà più tempo di quanto ne avete a disposizione.
+Non sanno nemmeno il perché.
+Mangeremo molto stasera e quindi spero che tu non sia a dieta.
+Quanto è distante da qui?
+È possibile restare un altro po'?
+Fai amicizia con questi ragazzi?
+La stazione si trova nel mezzo della città.
+Gli promisi di tenerlo segreto.
+Portò il suo bagaglio sul treno.
+Per favore, dimmi cosa dovrei fare in questa situazione.
+Ho bisogno del tuo aiuto.
+Mi dispiace averti fatto attendere a lungo.
+Sa parlare bene lo spagnolo.
+Sembra la moglie di un contadino.
+È il miglior lavoro del mondo!
+Pesa di più il piombo o l'oro?
+Il Canada è più grande del Giappone.
+Imparare una lingua straniera è difficile.
+Non conosce nulla di politica.
+Oggi è il compleanno di mia sorella.
+Il nostro giardino era pieno di erbacce.
+Fatemi vedere la vostra foto.
+Sono di Tokyo, in Giappone.
+Il francese è la sua lingua madre.
+Mi presti la tua radio?
+La sua famiglia sta molto bene.
+Non ha nessuno con cui parlare.
+Bob è diventato un ingegnere.
+Accetta le cose per come sono.
+Andò a letto dopo aver finito.
+Non ci piace la pioggia.
+Mia madre segue una dieta.
+I miei genitori vivono a Kyoto.
+La sua opinione non conta.
+Ha più o meno la mia età.
+Non possiamo restare in silenzio vedendo la gente morire di fame.
+Ci sono molte antiche città in Italia. Roma e Venezia, per esempio.
+Quando il ghiaccio si scioglie, diventa acqua.
+Non mi interessa quello che dice la gente.
+Il baseball è uno sport interessante.
+Yumi ha molti soldi ora.
+Ho troppe cose per la testa in questi giorni.
+Non ha le capacità per fare il presidente.
+Quella è la montagna più alta del mondo.
+È un membro del club di tennis della nostra scuola.
+Mio padre è un professore di inglese.
+A volte cucino per cena.
+Per favore, me lo indichi sulla mappa.
+Kate è stata obbligata a leggere il libro.
+Sei già stato a Parigi?
+Sono sorpreso dal tuo comportamento.
+Scrivete il vostro nome in maiuscolo.
+Uno studente passa molto del suo tempo a studiare.
+Mio padre è preoccupato per la mia salute.
+Mi diede un bacio sulla guancia e poi se ne andò.
+A volte vado, a volte no.
+Qualunque cosa succeda, non cambiare opinione.
+C'è un gatto in cucina.
+A chi appartiene questa villa?
+La stazione è qui vicino.
+Il tuo portamonete è simile al mio.
+Ha ammirato la mia nuova macchina.
+Mi piacerebbe andare alle Hawaii.
+John vive a New York.
+Siamo andati al parco per giocare.
+Chi è il tuo insegnante inglese?
+Qualche volta sento mio padre che canta in bagno.
+Lui è più giovane di me di tre anni.
+Che ti piaccia o meno, non cambierò idea.
+Leggete tutti insieme dopo di me.
+I batteri sono invisibili a occhio nudo.
+Cosa preferisci, il riso o il pane?
+La squadra tedesca ha perso e ora io sono triste.
+FMI significa "Fondo Monetario Internazionale".
+I ragni tessono delle tele.
+Kate ha fatto una crostata di mele.
+Secondo me lui ha ragione.
+La torre Eiffel è nella stessa città del Louvre.
+Ho apprezzato il tuo aiuto.
+Cookie è il più bello di tutti i cani.
+Una soluzione l'ho trovata, ma l'ho trovata talmente in fretta che non può essere giusta.
+Chi è l'uomo con cui parlavi?
+Il gelato alla stracciatella è solo gelato alla panna con dei pezzetti di cioccolato.
+Io non l'ho visto più da allora.
+Scusami, ero a cena e non ho visto il messaggio.
+Non mi disturbate quando sto studiando.
+Per favore, accendi la radio.
+Le statistiche dicono che ci sono sempre più persone che vanno in vacanza durante l'inverno.
+Alain è il protagonista umano del romanzo.
+Non sei simpatico quanto me quando fai queste osservazioni.
+Parliamo seriamente del tuo futuro.
+Andiamo a scuola perché vogliamo imparare.
+I prigionieri evasi sono ancora in fuga.
+Subito dopo aver visto ciò, si alzò in piedi.
+Il tetto della casa è lasciato sotto la pioggia.
+La tua bicicletta è migliore della mia.
+Mi piacciono molto le corone tedesche.
+Alcune specie di uccelli non possono volare.
+Mi direte come sillabare la parola?
+Ti dispiace se ti accompagno?
+Voglio un po' di soldi.
+Sei andata direttamente a casa dopo la scuola ieri?
+Dicci la storia dall'inizio alla fine.
+Se corri veloce puoi riuscire a prendere il treno.
+In una parola, quello di cui avete bisogno è pazienza.
+Egli mi ha insultato senza motivo.
+Dubito che la sua storia sia vera.
+Sono arrivati a Osaka all'inizio di maggio.
+Non sapeva cosa fare dopo.
+Lascia che ti aiuti a mettere la giacca.
+Studio il cinese da due anni.
+Ha espresso le sue emozioni per la natura in una poesia.
+È possibile che tu vinca il concorso.
+Non sapendo cosa dire è rimasta in silenzio.
+Su ambedue i lati della strada l'esercito si muoveva silenzioso.
+Sono alto come mio padre.
+La prima edizione è stata pubblicata dieci anni fa.
+Mettila dove i bambini non possono raggiungerla.
+Sono arrivato a scuola in orario.
+Quella macchina è ancora utilizzabile?
+Tutto quello che deve fare è firmare questo foglio.
+Molti bambini non sentono molto bene la differenza.
+Ognuno ha quello che si merita.
+Siamo andati al parco a fare foto.
+Ha messo in ordine la sua stanza prima che i suoi ospiti arrivassero.
+Non avevano molto cibo da mangiare.
+La sorella di George mi ha fatto dei sandwich.
+Il suo fallimento è dovuto alla sua ignoranza.
+Non devi mangiare nulla per alcuni giorni.
+Si è bruciato la mano sulla pentola calda.
+Questi uomini sono abituati al duro lavoro.
+Il cavallo, il leone, il cane e la pecora sono animali.
+Porto la sua valigia in camera sua, signore.
+In agosto vado in Giappone con la mia ragazza.
+Mi dispiace di aver sprecato i soldi.
+I bambini entrarono nella stanza correndo.
+Ha messo giù il telefono.
+Vorrei avere della cioccolata calda.
+Almeno il 49 % degli studenti vanno all'università.
+La sua malattia potrebbe essere un cancro.
+Se ricordo bene sono cugini.
+Lei non crede in Dio.
+Gli piace non solo il baseball ma anche il calcio.
+Mentre stavo aspettando l'autobus ho visto un incidente.
+"Pensi che lei verrà?" - "Spero di no."
+Se fossi stato libero, avrei potuto aiutarvi.
+Sai l'orario di arrivo del suo aereo?
+Continui a fare gli stessi errori nel corso del tempo.
+Posso vedere il tuo passaporto?
+Devi solo studiare duramente e supererai il test.
+Ho sentito che si è sposata e ha due bambini.
+Alle undici va bene per me.
+Promette di non bere più.
+La tempesta di neve continuava.
+Non avrei dovuto dirti nulla.
+Chi indossa i pantaloni nella tua famiglia?
+E Dio disse: Che luce sia. E luce fu.
+Non pensi che abbia molti difetti?
+Lui era un musicista povero.
+Sapevo di essermi rotto il polso nel momento in cui sono caduto.
+Lui ha molti libri di storia.
+Egli ha promesso di essere qui alle sei.
+Non sono riuscito a fargli riconoscere il suo errore.
+Un elefante ha un naso lungo.
+Non riesco a ricordare il suo nome.
+In una democrazia è importante che il giornalismo sia indipendente.
+A Bill e John piace ritrovarsi una volta al mese per parlare.
+Tua madre è a casa?
+Molti baciano la mano che vorrebbero tagliare.
+In una democrazia è importante che la stampa sia indipendente.
+Lo abbiamo visto attraversare la strada.
+Lui mi ama. Ma io non amo lui.
+Volevo solo controllare la mia posta elettronica.
+Non voglio essere coinvolto in quel genere di cose.
+Non dimenticherò mai la vostra gentilezza fin quando vivrò.
+Il mondo è un grande ballo in cui tutti indossano una maschera.
+"Come pronunciate il simbolo @ in questa lingua?" "Chiocciola."
+L'uomo è l'unico animale che riesce a ridere.
+Lei è venuta qui appena l'ha sentito.
+Lei gli ha tirato un ceffone in pieno viso.
+Ha detto di volere del denaro.
+Sembra che lei stia mantenendo quel segreto.
+Sono belli questi fiori, vero?
+Lei prese parte attiva nel movimento per la liberazione della donna.
+Mi ha chiamato molte volte.
+Dormirete nella stanza degli ospiti?
+La coppia sta camminando mano nella mano.
+La fermata dell'autobus è vicina.
+Le sue idee sono troppo estreme per me.
+Le persone che stanno in prigione sono chiamate prigionieri.
+Non riesco a dirvi quanto mi dispiace.
+Se gli uomini sono dei lupi allora le donne sono dei diavoli.
+Intendi dire che non sa leggere o scrivere?
+Mangi carne o sei vegetariano?
+Gli italiani fanno un grande pasto due volte al giorno.
+La catena himalayana è più alta delle Alpi.
+Perché sposeresti una donna se ti piacciono gli uomini?
+Ha già visitato una prigione italiana o straniera all'interno?
+Nulla è impossibile per chi non lo deve fare.
+Ho un dolore nel petto.
+La polizia non dovrebbe prendere tangenti.
+Ho l'abitudine di cucinare da solo.
+Sto per leggere il libro.
+Il leone è più forte del lupo.
+Troverà il negozio tra una banca e una scuola.
+Yukio Mishima si suicidò nel 1970.
+Non sono la tua bambola.
+George è alto quanto suo padre.
+Qualcuno ha rotto il parabrezza della mia automobile nuova.
+Il mestiere di controllore aereo è un mestiere che procura enormemente dello stress.
+Non leggo mai dei libri erotici.
+Quella è una penna rossa?
+Questo non finirà bene, me lo sento!
+Sono stanco delle tue infinite lamentele.
+Questa macchina da scrivere è stata usata molto.
+Il loro nazionalismo fu una delle cause della guerra.
+Quello che conta non è cosa fai, ma come lo fai.
+Lui non dipinge le pareti, ma le ricopre con la carta da parati.
+Come avete saputo che è sposato?
+"Apri la bocca", disse il dentista.
+Mi sono bruciato la punta del dito.
+Un fiume è un flusso d'acqua.
+Dimmi come giocare al gioco.
+Non ti ho nascosto il mio nome.
+In ogni caso, non la amo.
+Il progetto sta prendendo forma.
+Mi fa andare con lei in aereo a Shanghai.
+Ieri sono andato al parco.
+Cerchiamo una soluzione che sia accettabile a tutti.
+Le minigonne sono tornate di moda.
+Amo la geografia e la storia.
+Ha bagnato il suo asciugamano con dell'acqua.
+È breve la via o lunga?
+Mi piace molto la cucina francese.
+Lei ha rifiutato la mia richiesta.
+Il vomito aveva un aspetto scuro?
+Ho fatto colazione in pigiama.
+Ho guardato la televisione invece di studiare.
+Potete darmi un po' di soldi?
+Cosa vorresti fare mentre sei qui?
+Butta questo mucchio di vecchi giornali.
+Siamo qui da pochi minuti.
+L'ho informato del suo arrivo.
+Lui ha il doppio dei miei anni.
+Questo libro risveglierà la vostra immaginazione.
+Dove il diavolo non arriva, spinge avanti una donna.
+Non mi piace fare errori.
+Lui lava la macchina ogni settimana.
+Si sostituiscono i suoni con atri suoni più frequenti.
+Una parola può avere più marche alla volta.
+Disse che oggi non sarei neanche dovuto venire.
+Mi ha trovato un taxi.
+Questo cane è il vostro.
+Sono passati due mesi dal mio arrivo a Tokyo.
+Questa ragazza è ignorante come un asino.
+Mi accorsi che, dormendo, ero andato oltre la mia fermata.
+Molte persone furono uccise durante la guerra.
+Sono troppo vecchia per questo mondo.
+Gli ho dato un avvertimento, al quale non ha prestato attenzione.
+La persona danese prova a parlare in italiano all'inizio della conversazione.
+Questo giornale è un quotidiano.
+Io e mio fratello condividevamo la camera.
+Il tempo passa troppo veloce.
+Di solito lo chiamiamo Toshi.
+Quando arrivò la primavera, la neve si sciolse.
+Avete posto per una tenda?
+I cani respirano approssimativamente 30 volte al minuto.
+Non riusciva più a reggere il dolore.
+Tenete a mente queste regole.
+Siete pregati di astenervi dal fumare fino allo spegnimento del segnale.
+Lei comprò un paio di stivali.
+Le balene si nutrono di plancton e piccoli pesci.
+Quel poema mescola la prosa con la poesia.
+Si è sposata l'anno scorso.
+Siate uomini, non pecore matte!
+Il signor Oh è venuto in Giappone per studiare il giapponese.
+Il cane era intento a sotterrare il suo osso nel giardino.
+È un regalo per te.
+Questo dizionario è superiore a quello.
+Ho una brutta situazione a riguardo.
+Ha più vite di un gatto.
+Ho ordinato un libro a Londra.
+Non devi lavorare così duramente.
+Se fossi in te la ignorerei.
+Ci è andato di persona.
+Ken baciò la fidanzata di Tom.
+George è il ragazzo più diligente nella nostra classe.
+Chi è il tuo DJ preferito?
+Noi siamo il gruppo di spalla.
+Bisogna proteggere la propria famiglia.
+Non solo ho mangiato del pilaf, ma ho anche mangiato dei kebab.
+Che bel fiore è questo!
+Datemi una copia di questo libro.
+Giungeremo alla città prima di notte.
+Sei entrato nella mia camera.
+Non ho mai visto una balena tanto grande.
+Alla prossima stazione deve scendere.
+Vuoi dire che l'hai incontrata!?
+Ha attaccato una etichetta alla borsa.
+Non c'è nessun motivo di aver paura in anticipo.
+Questo verbo è in qualche modo simile a "bere".
+L'orologio che si è rotto dev'essere riparato immediatamente.
+Quel che non si fa, non si sa.
+Quando le gazzelle tremano la palude ascolta in silenzio.
+Gli dissi di mandarmi un altro biglietto.
+Devi solo stare là senza fare nulla.
+Le nuvole stanno diventando più scure.
+Sono stato obbligato a lasciare la scuola.
+Era in anticipo sui propri tempi.
+È stata una grande vittoria per Jackson.
+Lei dev'essere arrabbiata con me.
+Sono andato in banca per prendere del denaro.
+L'aereo decollò esattamente alle nove.
+Sogno di andare ad abitare in Lituania.
+Una volta partito non lo potrai più recuperare.
+Saremo in tempo per l'inizio della festa?
+È un uomo che farà ciò che vuole.
+Mi presterete il vostro dizionario?
+Era una grande autorità in astronomia, ovvero la scienza dei corpi celesti.
+In questa città esiste solo una cartoleria.
+La prossima volta lo farò da solo.
+Qual è il tuo nome?
+Un francese, per esempio, potrebbe trovare difficile ridere per una barzelletta russa.
+Non posso più tollerare la sua brutalità.
+Betty sta annaffiando i fiori.
+Comprò un libro al negozio.
+Tutto ciò che può fare è aspettare.
+Ci sono degli orsi qua attorno?
+Sei prigioniero delle tue abitudini?
+Pensi che sia importante mangiare con la tua famiglia?
+Mi dica una storia vera.
+Farò del mio meglio al test.
+Il ragazzo tirò una pietra alla rana.
+A che ora sarà qui?
+Questi bambini sono trascurati dai propri genitori.
+Ogni essere umano è un individuo.
+Questa è un'eccezione alla regola.
+Capirsi è l'unico modo per amarsi.
+Zero viene prima di uno.
+Sei pronto a sentire la cattiva notizia?
+La sua stupidità era inevitabile.
+Ho passato le vacanze a Hakone.
+Il poliziotto ha arrestato il ladro.
+Il nostro hotel è a bordo mare.
+Per favore chiedigli di chiamarmi.
+Chi non ama un ribelle?
+Quella gallina ultimamente non ha affatto deposto uova.
+Si è rotta una gamba del tavolino.
+Ci piacerebbe distribuire questo prodotto in Giappone.
+Ha lavorato duro per mantenere una famiglia numerosa.
+Questo è il mio indirizzo di posta elettronica.
+Mi sono svegliato alle cinque questa mattina.
+Vi invito ad accompagnarmi in questa incredibile esplorazione.
+C'erano tuoni e fulmini la notte scorsa.
+Nei rapporti in America, la guerrilla di resistenza dei militari iracheni è chiamata terrorismo.
+Mia madre è stata in ospedale durante l'estate.
+Che facciamo se mamma non ci da i soldi?
+Ha vinto il terzo premio.
+Ann ama molto la musica.
+Ha la brutta reputazione di essere disonesto.
+Non interrompere mentre gli altri stanno parlando.
+Il Buddismo ha i suoi inizi in India.
+L'inverno scorso sono andato a sciare in Canada.
+Mio fratello è un ragazzo molto lamentoso.
+Bisogna arrivare ad un abbassamento globale dei prezzi.
+Mi è stato comandato di fare così.
+La magistratura è contro di me!
+Mi si è rotto il fanalino della bici.
+Il solo pensiero di perderla mi fece rabbrividire.
+Questo è un gas volatile.
+Cosa faresti al mio posto?
+Lui è entrato nella stanza.
+Voglio partecipare al prossimo triathlon.
+Bisogna sempre pentirsi dei propri errori.
+Posso sentire questa pralina di cioccolato?
+Vai in camporella con la tua fidanzata?
+Il cancelliere tedesco diede le dimissioni.
+Questo è un locale molto caratteristico.
+Guarda il libro che ha posato sulla scrivania.
+Riuscì ad arrivare lì in tempo.
+Cerco di risparmiare il 10% del mio stipendio ogni mese.
+Che bella quiete che c'è oggi.
+Lui non è colpevole di omicidio.
+Non ho i mezzi per comprare una macchina fotografica a più di 300 dollari.
+Visitò la costa del Sudamerica nel 1499.
+Il tuo nuovo vestito ti sta molto bene.
+Lui è il capitano della squadra.
+Questo vino sa di tappo!
+Per piacere, traducete questo testo giapponese in francese.
+Quanto è lontana da qui?
+Vorrei essere giovane come te.
+Chiedi a Trang se esce questa sera.
+Quella è la casa in cui vivevano.
+Sono passata a Google Chrome e ha funzionato.
+L'uomo mi ha accusato di essere irresponsabile.
+La perdita di mia figlia mi ha tolto la voglia di vivere.
+Ha fatto una doccia prima di colazione.
+Gira voce che il primo ministro sia gravemente ammalato.
+Quale metodo hai utilizzato per smettere di fumare?
+Non sono bravo in matematica.
+Il nostro mondo è solo una piccola parte dell'universo.
+All'inizio sarà difficile, ma tutto all'inizio è difficile.
+Sui gusti non si discute.
+Il dottore ha bendato le mie ferite.
+È piuttosto scarso a tennis.
+Linda tirò fuori la lingua.
+Nessuno ha abbastanza tempo per fare tutto.
+Dovremmo ignorare questi dati. Non sono per niente accurati.
+Promettimi che farai il bravo.
+A quale età si può guidare una macchina in Francia?
+Il mio comportamento era molto bizzarro.
+Anche lei ama i libri.
+Lei deve mettere il becco in tutto!
+È andata al parco con lui.
+Questo pesce non è commestibile.
+Abbiamo cinque lezioni di inglese alla settimana.
+Questo è perché si è arrabbiato con te.
+Nessuno voleva giocare con Tango, tranne il ragazzino.
+Fate attenzione a quello che stai facendo!
+Quanti ragazzi ci sono nella sua classe?
+Che cosa gli ha risposto?
+Ti ha dato il suo numero di telefono?
+Te l'ho presentata ieri sera.
+Chi è il tuo cantante preferito?
+Mi darete qualcosa da bere?
+Sapresti tradurre questa frase in inglese?
+Ha avuto questa casa per cinque millioni.
+Uno di loro è stato bocciato.
+Mi dica esattamente dove abita.
+I funghi con panna sono il mio piatto preferito.
+Non parli con la bocca piena!
+Voglio che se ne vada.
+Il regolamento prevede che ci siano due sorveglianti.
+È necessario avere un equipaggiamento completo.
+Pensate sempre che sia inutile intervenire?
+È stato un brutto concerto.
+Disegnai un cerchio con dei compassi.
+La conseguenza di una traduzione sbagliata a volte può essere catastrofica.
+Le stelle sono gigantesche palle di plasma.
+Per quanto mi riguarda, la rappresentazione era abbastanza interessante.
+Rimasero tranquilli davanti al disastro.
+La bomba atomica ha completamente distrutto la città di Hiroshima.
+Casa mia è casa tua.
+Lei ha strappato a pezzi la lettera.
+Ti amo proprio come sei.
+Mi avete preso per un eroe.
+Ha detto che ballerebbe con me se le portassi delle rose rosse.
+Tom vive a Boston da quando è nato.
+Philip e Tom sono imparentati.
+Tom non aveva appetito per via della malattia.
+Avresti dovuto essere più prudente.
+Tom ha un appuntamento alle 2:30.
+Tom non sa parlare francese e neanche spagnolo.
+Tom sta imparando il francese.
+Tom sa parlare francese meglio di me.
+Tom parla solo un po' di francese.
+Qualunque cosa tu faccia, c'è bisogno di soldi.
+Cercammo i due ragazzi ovunque, ma nessuno dei due fu ritrovato.
+Lei non aveva nient'altro da bere.
+Lo considero come uno dei miei buoni amici.
+Lo ha aiutato a superare la sua tristezza.
+L'ordine è di per sé qualcosa di divino.
+Come aumenta il sapere, così aumenta il dolore.
+La medicina ha un gusto amaro.
+Penso sia colpa delle nuove liste di Facebook.
+Ho deciso di comprare una macchina.
+Tom è tornato da Boston.
+Ci vogliono circa 15 minuti per arrivare al mio ufficio.
+Lo scopo di questo gioco è di fare esplodere tutte le bombe sullo schermo.
+Ci sono molti pesci in quel lago.
+Tom non vive propriamente entro i confini del municipio di Boston.
+Come sei entrato nella mia camera?
+Mi manca così tanto Parigi.
+Lui dovrebbe arrivare da te in un'ora.
+La sorella di Tom, Mary, ora è a Boston.
+Tom sa che Mary è andata a Boston.
+Il nostro appartamento ha cinque stanze.
+Come posso farla cambiare opinione?
+Il treno ha lasciato la stazione in orario.
+Ha una villa in riva al mare.
+Penso che ce l'abbia ancora nella macchina fotografica.
+Sembra che Tom si diverta davvero a stare a Boston.
+Se verrà, salutalo da parte mia.
+La mia schiena si è rattrappita!
+Puoi partecipare alla riunione indipendentemente dalla tua età.
+Ci sono sette di noi.
+Ci vuole proprio una bella forza a non capirlo!
+Capisce quel che le dico?
+È stato investito e ammazzato.
+Non importa come morire, ma come vivere.
+Tom pensa che Mary dovrebbe scusarsi con John.
+La sua verità è in cammino.
+Tom non diede a Mary la colpa per aver colpito John.
+Sono entrata nella sua stanza.
+Tom è venuto a Boston subito dopo aver preso il diploma di scuola superiore.
+Lui aveva paura del buio.
+Tu sai che cosa vuol dire AMP?
+Chi è il suo batterista preferito?
+Tom considera Mary come la sua migliore amica.
+Ti piacciono i film di fantascienza?
+Tom andò a fare un giro in bicicletta.
+Quale bici le piace di più?
+Sembra che lui non sia capace di nuotare.
+Dovrebbe provare ad essere di più come Tom.
+Che bravo ragazzo che sei, Tom!
+Lo sai cosa ti aspetta!
+Appena arriva al semaforo, giri a destra.
+Decisi di essere un avvocato.
+Chi ha detto che i soldi non fanno la felicità?
+Qual è l'ultimo concerto che ha visto?
+Sono uno studente di questa scuola.
+Per favore, dimmi come avviare il motore.
+Il guidatore ha detto che non abbiamo i freni!
+A che ora arrivi domani?
+Magari riuscirò anche ad aggiungerle.
+Il test di biochimica era una sciocchezza.
+Ogni tanto vado in Svezia a trovare il mio moroso.
+Grazie per l'invito, ma resto a casa.
+Tutti sanno che faccio fotografie.
+Ted l'ha aspettata per molto tempo.
+È in viaggio intorno al mondo.
+In Francia si studiano gli uomini, in Germania i libri.
+Essendo domenica, non mi sono alzata presto.
+Tom ha qualcosa da dirti.
+Tom deve andare a fare shopping ora.
+Tom spera che ti piaccia.
+L'arte contemporanea mi piace molto.
+Quando mia madre arriverà, mi darà i soldi per comprare i libri.
+Questo studente studia la sociologia.
+La nostra destinazione è ancora molto distante.
+Mi mancano le tue perle di saggezza.
+Cosa ti ricorda questo cappello?
+Vi sentite minacciate dai semafori?
+Volevo stendermi per rendere meglio.
+Dove state andando di preciso?
+Ho comprato un magnifico orologio per lei.
+Pensi che me la sia bevuta?
+Tom non va in ufficio al sabato.
+Chiunque governerà questa Italia, dovrà fare del suo meglio per renderla migliore.
+Anche il deserto può riservarti delle sorprese.
+Noi facciamo degli affari molto buoni.
+Tom dev'essere lì per le 2:30.
+Non me ne frega nulla.
+Lei andò in Italia a studiare la musica.
+Ieri è stato un caso.
+I soldi sono sul tavolo.
+Lui sta studiando all'Università di Kyoto.
+C'è un urgente bisogno d'acqua.
+La nostra mela è patetica.
+Tom ha finto la sua morte.
+Non si sa che fare.
+Quanti soldi devi a Tom?
+Lui è un grande codardo.
+Ci sono stata due volte.
+La lezione di cinese è molto interessante.
+Ho una gomma a terra.
+Ho lavorato in un ufficio postale durante le vacanze estive.
+Non voglio andare in Italia.
+Recitava una parte minore nella commedia.
+Vivo con mia madre, mio fratello e i miei nonni.
+Ho espresso il soggetto di riferimento.
+Chi non lavora non mangia!
+La vita dà e toglie.
+Yumi ha studiato l'inglese la scorsa notte.
+Tom ora è in prigione.
+Quelle foto sono le sue.
+Lui sta lavando la sua macchina.
+Stai tutto il tempo davanti alla TV.
+Lei si è fermata per fumare.
+Stavo facendo il bagno quando è arrivato.
+Quando perse l'orologio, non sembrò preoccuparsene.
+Non ti piace il cibo cinese?
+Stavo così bene senza i miei a casa.
+Loro devono pagare in anticipo.
+Occhio! C'è un grande buco lì.
+Che fatica tornare a casa.
+La nonna abbracciò il nipotino e lo baciò teneramente.
+Tom sarà assente oggi perché ha il raffreddore.
+Tom venne colpito da un fulmine e morì.
+Lui mi ha tenuto un posto.
+Spero sia una foto vecchia oppure un bellissimo fotomontaggio.
+Non ho parole per esprimere la mia gratitudine.
+Ogni uomo dovrebbe imparare come cucinare.
+Chissà se è ancora in galera!
+I prodotti con OGM sono pericolosi per la vita umana.
+Quando hai incontrato Tom per la prima volta?
+Quando sarà pubblicato il tuo nuovo romanzo?
+Mi hai dato soltanto cinquanta centesimi.
+Per fortuna che mi sono lavata questa notte.
+Il ricavato andrà in beneficenza a due orfanotrofi in Sud America.
+Stavo chiamando il mio amico.
+Mi piace il modo in cui parlate.
+Possiede un'auto che si possono permettere solo i ricchi.
+Sono dotato di un talento?
+La nostra squadra vinse la partita.
+Signora Crouch, ha un lavoro?
+Kate è tornata a casa in autobus.
+Solo da me non nevica?
+Vuoi bere tè o caffè?
+L'inglese è la mia lingua madre.
+Quanto dista da qui a casa sua?
+È molto lontana da qui.
+Ha chiesto un po' di soldi.
+Ci sono dei negozi lungo la strada.
+Qual è la tua bevanda preferita in un giorno freddo?
+La corte lo giudicò colpevole.
+È salita su un taxi.
+Mi stai facendo rischiare il licenziamento!
+Cucinò per suo marito una torta di mele.
+Continuò a nevicare per tutto il giorno.
+Lui mantiene sempre la sua parola.
+Questo è l'uomo a cui dovete parlare.
+Oltre a giocare a tennis, scia molto bene.
+Sono ancora disponibili delle prevendite.
+Cosa faccio tutto il giorno?
+Te lo dico col cuore!
+A me piacciono gli uomini.
+Chi ha la pancia piena non capisce chi l'ha vuota.
+Spero di portarti nei miei sogni.
+Lui sa nuotare come un pesce.
+Non sanno più cosa inventarsi.
+Io ho comprato molti tessuti.
+Occhio! Quell'auto ti ha quasi colpito.
+Non ci sono ancora commenti.
+Perché siete sempre in ritardo?
+È da una vita che non ci sentiamo.
+I fan vogliono avere i loro autografi.
+Io ho fede in te.
+Le gazze sono animali molto intelligenti.
+Tom spera di fare dei profitti quest'anno, sebbene piccoli.
+Il mio volo è stato cancellato e non posso partire fino a domani.
+Sto cercando di tenere traccia di tutti i film che ho visto.
+Ultimamente ci faccio spesso caso!
+Ci sarà il sole domani?
+Andava al mercato una volta alla settimana.
+Lui è un insegnante di fisica, però sa anche insegnare matematica.
+Io ho lavorato qui per dieci anni.
+I miei pasti vengono preparati da mia madre.
+I falsi moralisti proprio non si possono sentire!
+E fu così che andai a letto truccata e vestita.
+Ti giuro che la stavo cantando!
+Siamo in periodo di saldi.
+Non credo ci sia altro da aggiungere.
+Comandante, ha abbandonato la nave?
+Volevo prenotare anche io, ma c'era tutto pieno!
+Lei ha un problema cardiaco.
+Ci sono alcuni libri sulla scrivania.
+Io questo posto lo conosco.
+Riesce a distinguere Jane dalla sua sorella gemella?
+È impossibile imparare l'inglese in un mese.
+Non ci fai una bella figura.
+Vedo un bel manto di neve dalla finestra di casa mia.
+Voi sapete se domani la palestra sarà chiusa per maltempo o no?
+Arrivò tardi come al solito.
+Lei si sposò a diciassette anni.
+Non sono sicuro di come debba pronunciare quella parola.
+Lei pagò per assistere al concerto.
+Attraverso chi ti sei assicurata?
+Sentimmo un rumore nella camera da letto.
+Il prigioniero è stato messo in libertà ieri.
+Sono sopravvissuti grazie a questo.
+Adesso finalmente sento l'atmosfera natalizia!
+Queste sono le ultime lacrime.
+Sono passati cinque anni da quando sono arrivate in Giappone.
+Può dargli le prime cure?
+Mangia la tua zuppa prima che diventi fredda.
+Lei si è dimenticata di scrivergli.
+Siamo venuti qui per divertirci.
+Vuol dire che avete trovato il lavoro?
+Perché sei così incredibilmente perfetta?
+Questo libro è molto piccolo.
+Questo apparecchio non va installato all'aperto, nemmeno se lo spazio è riparato da una tettoia.
+L'hai comprato al mercato nero?
+Che cos'ha comprato al negozio?
+Non è così tanto caldo!
+Nessuno ne aveva mai sentito parlare.
+Ci ho messo dentro di tutto.
+Mi gusto molto volentieri il mio ottimo caffè appena fatto.
+Questa gonnella ti sta molto bene.
+È stato uno dei migliori investimenti professionali della mia vita.
+"Dannazione! Ho scordato l'ombrello sul treno." "Sbadato!"
+Cosa c'è lì da fare?
+Le ha cantate come si dovevano cantare.
+La fortuna va sempre dove non deve.
+Il problema è: che fare di questo denaro?
+Chi non rispetta le regole se ne va!
+Non si può avere tutto.
+Ma cosa lo paghiamo a fare?
+Nessuno può interrompere le vere amicizie.
+Tom si arruolò nell'esercito quando aveva 18 anni.
+Una violenta battaglia ha avuto luogo a Monte Cassino.
+Non capitava dal settembre scorso.
+Speriamo che questa settimana passi alla svelta.
+Il regalo mi è piaciuto un sacco!
+Ero sorpreso dalla sua apparizione improvvisa.
+Il dottore ha infranto il Giuramento di Ippocrate.
+Per colpa di qualcuno non si fa più credito.
+Mi riferisco alla e-mail che ti ho appena mandato.
+Siamo andate a Londra l'anno scorso.
+Nella stanza era cambiato qualcosa, ma Marco non riusciva a capire cosa.
+Kyoto riceve molti visitatori da tutto il mondo.
+Piuttosto che studiare mi metterei a pulir casa!
+Quella è entrata nella storia!
+Il curriculum è un documento formale.
+Bisogna mettere i livelli di conoscenza di scritto e parlato delle lingue conosciute.
+Tu non hai mai tempo per le cose importanti!
+E che ne dici di un caffè?
+Mi piace il tuo ottimismo.
+Lui è più forte di me.
+Sono sicura che lui verrà.
+C'era caldo, quindi accesi il ventilatore.
+Ormai sei diventata una professionista.
+La partita di domenica sarà decisiva.
+Cominciò a regnare all'età di quarant'anni.
+Forse possiamo sistemare le cose.
+La sua auto nuova è fantastica.
+Sono sicuro della mia frase.
+Farò il compito per casa.
+La tua amicizia ha un grande valore per me.
+Dovresti consultarti con un farmacista prima di comprare quella medicina.
+Il cane di Ken è bianco.
+È parte di un discorso più ampio.
+Se vuoi conoscere un paese, devi apprenderne la storia.
+Ho già le valigie pronte.
+La scorsa notte ho dormito bene.
+La storia non coincide coi fatti.
+Fare pipì seduti non è poi così male.
+Non avrei mai alzato le mani a nessuno.
+Può portarmi il conto, per piacere?
+È stato più forte di me.
+Ha deciso di esporre la sua tesi di laurea.
+Lei mi ha detto di aprire la finestra.
+Dove sei andato per le vacanze estive?
+Da parte mia, preferisco restare da me leggendo un romanzo.
+Mia sorella adora i bambini.
+Qualsiasi piatto andrà bene se delizioso.
+A che ora si è alzato stamattina?
+Lei piangeva mentre leggeva la lettera.
+Abbiamo molte cose da fare.
+L'uomo lasciò il ristorante senza pagare.
+Sono grato per la mia famiglia.
+Il mio nome è Ludwig.
+Anche se trafficata, Rio è una bella città, purché ci si guardi le spalle.
+Tom è bravo ad evitare le risse.
+È una persona molto strana.
+Riesce a ricordare il suo nome?
+Questo terreno è la mia proprietà.
+A me non piace parlare in pubblico.
+Ha risolto il problema facilmente.
+Il sole tramonta sempre ad ovest.
+Che cosa le impedì di lavorare?
+Anita lava la vasca da bagno.
+Possono prendere fuoco più facilmente.
+Quei fratelli gemelli hanno volti simili.
+Lui lasciò il cane libero nel giardino.
+Di solito piove molto in autunno.
+Mary guarda la TV tutte le sere.
+C'è troppa gente. Andiamo da qualche altra parte.
+Abita in una casa enorme.
+Tom non vuole la compassione di Mary.
+Una volta erano molto utili.
+Hai finito i compiti, vero?
+Abbiamo bisogno del tuo aiuto!
+Loro non sanno cosa si stanno perdendo.
+Dimmi perché ieri non sei venuto.
+Perché vuole comprare questo libro?
+Quando era giovane guardava spesso il baseball.
+Ho bisogno di un buon consiglio.
+Era un uomo di successo in molti settori.
+Migliaia di persone andarono alla spiaggia per vedere il delfino.
+Sta scrivendo un libro ora.
+Io andrò in bici anche se piove.
+Vado al cinema molto di rado.
+Che lingue si parlano in America?
+Perché c'è gente in soggiorno?
+Rischiò la vita per proteggere il suo bambino.
+Lo comprerei, ma costa troppo.
+Il violinista ha una tecnica eccellente.
+Tom non ha certamente votato per lei.
+Sono tutti qui tranne lui.
+Ho trovato questo libro su un vecchio scaffale.
+Immagino ne avrete sentito parlare.
+Io non sto pensando ad altro che a lei.
+Sembra che lui abbia terminato il suo lavoro.
+È una questione di orgoglio.
+Non siamo più negli anni '80.
+Io penso che lui sia un uomo onesto.
+Secondo voi è giusto che gli artisti si muovano così?
+Puoi permetterti di prendere le ferie quest'estate?
+È solo questione di foreste?
+Fui abbastanza fortunata da avere un buon posto.
+Ho le minute della riunione.
+Sono stufa della sua pigrizia.
+Io sono un po' perplessa.
+Mi piacerebbe andare negli Stati Uniti.
+Quanti studenti ci sono in tutto?
+Si colora sempre i capelli.
+Alla fine non sono io quello che non capisce.
+Il corso di portoghese è partito.
+La settimana scorsa non sono stato occupato.
+Tu non senti la casa tremare?
+Il vostro orologio ha dieci minuti di ritardo.
+Non è altro che uno scherzo.
+Non potete sopravvivere senza denaro.
+Quando sono con voi sono felice.
+Direi che siamo molto fotogeniche.
+John è troppo grasso per correre velocemente.
+Traduca questo libro in inglese.
+Grazie per il suo consiglio.
+Dopo mi passi le fotocopie.
+Io penso che farà del suo meglio.
+Gira la pagina, per piacere.
+Non riesco a inviare la mia parola.
+Gli uccelli stavano cantando nel bosco.
+Questo è il nuovo interesse della mia vita.
+Mia madre ha apparecchiato la tavola.
+Non fa altro che lamentarsi.
+Questi temi sono già stati discussi e disputati molto.
+A Tom piace provare cose nuove.
+Allora esiste la primavera anche qui!
+Mercoledì ho un esame al pomeriggio.
+Così prendo due piccioni con una fava.
+È posseduto da una strana idea.
+Possiamo considerare il problema da parecchi punti di vista.
+Per lui, è un affare molto importante.
+A loro piaceva passare tutto il giorno a giocare insieme.
+L'amore è vederla nei sogni.
+La prossima stagione sarà ancora meglio.
+Prima di riuscire ad amare gli altri, devi imparare ad amare te stesso.
+Io feci il lavoro in tre giorni.
+Dobbiamo morire prima o dopo.
+Questo è un campione molto raro.
+È maleducato guardare fisso qualcuno.
+Molte nazioni hanno firmato un trattato per eliminare le armi nucleari.
+Durante la notte mia nonna è venuta a mancare, senza soffrire.
+Qual è il peso della vostra valigia?
+Avete anche invitato le vostre amiche?
+Chi deciderà quali manifestazioni autorizzare e quali no?
+A me non piace viaggiare con gruppi numerosi.
+Deve avere quaranta anni o giù di lì.
+Lui non si vergogna della sua cattiva condotta.
+Vedete un edificio bianco ai piedi della collina.
+Lui è sicuro che sia curry.
+Lei è la meno brava in scienze.
+Loro lasciano il Giappone domani.
+Che ha fatto con tutti i soldi?
+Cerca la definizione di 'tipo' nel tuo dizionario.
+Quando verrete ancora a Melbourne?
+Mi guardi quando le parlo!
+Portatemi un foglio di carta, per piacere.
+Hai qualcosa di leggero da mangiare?
+Ha lasciato la scuola due anni fa.
+Oggi ho ricevuto una minaccia di morte.
+La polizia trovò un cadavere in una macchina abbandonata vicino al parco.
+Tu devi studiare molto più duramente.
+Ken è alto, io no.
+Io cedo a tutti i suoi capricci.
+Loro cedono a tutti i suoi capricci.
+Va intorno al sole in 365 giorni.
+È andato a scuola solamente per pochi anni.
+Ci sono un po' di prodotti da bagno?
+Io spreco molto tempo a fantasticare.
+Bisogna migliorare la gestione energetica.
+Questo luogo è ben aerato.
+Il treno arriva al binario numero 5.
+Io ho poco appetito in questi giorni.
+Io ti considero come il mio migliore amico.
+Non sto parlando con te; sto parlando con la scimmia.
+Il presidente della compagnia, a cui ti ho presentato venerdì scorso, vuole rivederti.
+I frutti contengono dei semi.
+E anche questa è fatta.
+Mi vergogno a farle una domanda così sciocca.
+È economicamente indipendente dai suoi genitori.
+Metta gli animali nella gabbia.
+Bisogna approvare quel piano quadriennale.
+Non sei più mia amica.
+Siamo andate a scuola in autobus.
+Qualcuno mi deve dei soldi.
+Non mi ha dato soltanto dei consigli, ma anche dei soldi.
+Mio marito è un essere inutile.
+Tom sta versando un bicchiere di latte.
+La mancanza di denaro è la fonte di tutto il male.
+Lei beve una bottiglia di latte ogni mattina.
+Pagherei oro per fare una cosa così.
+Non hai nemmeno salutato prima di andartene.
+Sai dove sono i miei vecchi occhiali?
+John è il più alto dei due ragazzi.
+Questo terribile mostro era la Sfinge.
+John è invidioso della tua nuova automobile.
+Hanno giocato così male che non vale nemmeno la pena di fare un commento.
+Il diaframma è un muscolo.
+Tom ha scommesso 300$ sulla corsa.
+Che vi guardate di bello questa sera?
+La lapide e il loculo sono due cose diverse.
+Questa macchina contiene cinque persone.
+È la prima volta che applico questo unguento sulla mia ferita.
+È la prima volta che schiaccio uno scarafaggio.
+Non posso rimanere incinta. Io sono sterile.
+Tagliamo la corda in fretta.
+I negozi erano così tanti!
+Rispetto il mio insegnante d'inglese, il signor Taniguchi.
+Lui è un creatore di impieghi.
+Se dici la verità, non devi ricordare nulla.
+Avete fatto riferimento a mio padre.
+Ciò che è successo appartiene al passato.
+Lui si sentiva triste perché ha perso suo padre.
+Abbiamo due cani, tre gatti e sei polli.
+È sempre un fannullone e un buono a nulla.
+Lui è morto pochi giorni più tardi.
+Questo cucchiaio è per la zuppa.
+Quello è mio. Non so dove sia il tuo.
+Sembra un lavoro interessante. Che cosa fai esattamente?
+Io sono andato là dozzine di volte.
+Il vero problema è chi lo vota.
+Chi ha approvato questa intollerabile spazzatura per TV?
+Non ci sarò per una settimana!
+Successivamente realizzai che i pechinesi camminano lentamente.
+Io vorrei parlare l'inglese fluentemente.
+Non dovete pagare in contanti.
+Il mio è più grande del tuo.
+Lui venne improvvisamente attaccato da una misteriosa malattia.
+La matematica non è solamente la memorizzazione di formule.
+Io non ho nulla da fare al momento.
+Andrai negli Stati Uniti il mese prossimo?
+Lui ha fame e sete.
+Sono andato al parco ieri.
+Scusatemi. Mi potreste indicare la stazione della metropolitana più vicina?
+Ho deciso di andare via con i pellegrini.
+Voi avete mai cenato con la vostra famiglia?
+Vi sono mai capitate situazioni simili?
+Mi ha minacciato, però non avevo paura.
+Rifiutai il suo invito a cena.
+A volte è meglio fare dei disegni.
+Non me ne frega un accidente!
+In realtà pretendono di non essere sgozzati.
+Dal momento che nella fortezza mancavano i viveri, i suoi difensori dovettero arrendersi.
+Sei arrivata tre giorni fa.
+Puoi aiutarmi con il mio lavoro?
+Quale prenderai, questo o quello?
+Quello che cucini è molto buono.
+Io so che il libro è molto difficile per noi.
+Fingete di essere morte così non venite uccise!
+Riuniamo i nostri sforzi nella ricerca sulle origini precise di questa malattia.
+Fa tre volte più soldi di me.
+Voi venite alla mia festa?
+Rimangono le strutture sportive per eventi futuri.
+Ken è stato in Inghilterra in passato.
+La città vuole prolungare la strada.
+Per me è troppo difficile rispondere a questa domanda.
+Magari fosse così semplice distinguere i buoni dai cattivi.
+Mi fanno male gli occhi.
+Io vado tutti i giorni al bar a prendere un caffè.
+Non ha ancora scritto la lettera.
+Quelle tecniche rappresentano il futuro.
+Tom non ha ancora tagliato l'albero.
+Lui ci portò allo zoo.
+Non so chi ha scritto questa lettera.
+Ci ha convinti della sua innocenza.
+Ha vinto una medaglia d'oro.
+Lui vinse una medaglia d'oro.
+Forse la Commissione non si sforza abbastanza di comunicare il messaggio.
+Ho bisogno di un po' di pane integrale.
+Non devi essere nervoso per l'esame di domani.
+A chi lo hai dato?
+C'erano molti algerini in Germania?
+Che cosa vi piace in Germania?
+Tom vuole diventare un elettricista.
+È sicuro di passare l'esame.
+Vedete questa casa? È la mia casa.
+Che tipo di aiuto possiamo fornire?
+È stata un'ottima scelta prendere gli spaghetti.
+Non hai nemmeno una ragione di lamentarti.
+La disponibilità a correggere è un segno di saggezza.
+“Vediamo” disse Tom, prendendo il cannocchiale puntandolo in direzione della macchia nera.
+Ho lavorato con un contratto annuale.
+Sto studiando per due ore.
+Io di solito ceno tra le 19 e le 20.
+Io feci un calcolo rapido.
+Non è assolutamente una cosa normale.
+Io sono ansioso di mio.
+Guardate quel gatto. È del signor Brown.
+La sua sorella maggiore è più grande del mio fratello maggiore.
+Mia sorella è abbastanza grande per andare a un corso di aerobica da sola.
+Io non posso litigare con mia sorella perché lei è molto buona.
+La mia sorella maggiore va a correre tutti i giorni.
+Il video è stato rimosso.
+Le chiedo quindi di concludere con una frase.
+La risoluzione prosegue dicendo “con o senza diritto di parola”.
+Io torno a metà settembre.
+Siamo autorizzati a usare l'ascensore?
+È inutile che ci giri intorno.
+Su questo mi interesserebbe saperne di più.
+La nostra città è destinata a indicare la strada.
+Che cosa stai nascondendo nel tuo turbante?
+Mio padre è un colonnello.
+Questa è follia allo stato puro.
+Ti sbagli, questo non è vero.
+Nessun amore è maggiore di quello di una madre.
+Me la diede per nulla.
+Si è sposato in Nicaragua.
+Chi è il vostro chitarrista heavy metal preferito?
+Quanti ascensori ci sono in questo centro commerciale?
+La Francia condivide un confine con la Spagna.
+Uomini siate e non pecore matte.
+Io ero troppo timida per guardarla in faccia.
+Ti invidio perché non sei timido e impacciato come me.
+Lui è stato il capo della sua tribù per 35 anni.
+Ha finito questo lavoro da solo.
+Mi lavo i denti ogni mattina.
+Quando abitavo a Roma, prendevo ogni giorno la metropolitana.
+Ha usato la margarina invece del burro.
+Ascoltare musica è il mio svago preferito.
+I bambini non stanno mai fermi.
+Se fossi stato libero, avrei accettato il vostro invito.
+Politici che litigano ne abbiamo visti tanti.
+Sei un benefattore della patria.
+Non ti ho salutato perché ti avevo scambiato per qualcun altro.
+Il mio nome è rumeno; il suo è americano.
+Dal nulla arriva il nulla.
+Ho regalato a mio fratello la mia vecchia bicicletta.
+Un gatto vede molto meglio di notte.
+Il futuro ha molti nomi.
+Lui è un musicista di grande qualità.
+Tom non si aspettava che Mary si presentasse in orario.
+Non sei mai stata in Europa, vero?
+Ho usato una penna di Marco perché avevo dimenticato a casa la mia.
+Soltanto se non è troppo disturbo.
+Sei mai stato in Africa?
+Non sono una coppia ben assortita.
+Quel negozio vende abbigliamento da uomo.
+Dopo aver che si è creata una cattiva abitudine, non è possibile sbarazzarsene facilmente.
+Non si preoccupi delle inezie.
+Il mio abbonamento scade a maggio.
+Morirono nel tentativo di salvare altri.
+Sembrerebbe che i bikini siano di moda quest'anno.
+È una cosa che succede.
+Dove si può mangiare diversamente per studiare bene?
+Marco prese le sue cose e uscì.
+Come dite XXX in olandese?
+Qual è il suo problema?
+Tokyo si è arresa in pochi giorni.
+Lui ha reso il passaggio in Inglese.
+Il mese scorso Tom ha vinto trentamila dollari.
+Il Medioevo è durato 1000 anni.
+Quello è ciò che dice la gente.
+Sarebbe utile informarsi prima di scrivere.
+Io dovevo cambiare il piano.
+Voi avreste dovuto rifiutare la sua offerta.
+Il metallo si contrae quando viene raffreddato.
+Qui ho un deposito di mille dollari.
+Ora le ho viste proprio tutte.
+Se ne va a dormire.
+Guarda tutta la roba ganza.
+Pensate che legga ancora i miei messaggi?
+Diventa volgare quando si arrabbia.
+Che cosa ci azzecca ora?
+A dire la verità, lui non mi piace.
+Le realtà del passato sono diverse dalle realtà odierne.
+Noi ci amiamo l'un l'altro.
+Lui è il mio collega.
+Lui è venuto al piano di sotto.
+Lui seguirà il mio consiglio.
+Venga dentro, la porta è aperta.
+La storiografia tendeva a ricostruire solamente le dinastie e la storia del potere.
+Ordina lo stesso piatto ogni volta che viene qui.
+Io non posso essere d'accordo con voi su quel punto.
+Bisognava rinnovare lo studio del Medioevo.
+È occupata ora e non riesce a parlare con te.
+Lei è impegnata al momento e non riesce a parlare con te.
+Non è la morte che temo, ma morire.
+Credo che lei abbia 40 anni.
+Sto camminando al suo fianco.
+Io non ho né tempo né denaro.
+Karam è un nuovo professore.
+Io sono infastidito dalla loro sfacciataggine.
+Indovina chi ho sentito l'altra sera.
+Io sto risparmiando per comprare una nuova macchina.
+È quella con una famiglia.
+La famiglia estesa indiana fornisce una specie di rifugio.
+Il sangue è più spesso dell'acqua.
+Sinceramente, inizio a pensare che mi stia pedinando.
+In Spagna non c'è il dollaro.
+Il viaggio è stato estenuante.
+Ogni regola ha le sue eccezioni.
+Tom è stato ucciso dal marito della donna con cui stava uscendo.
+Tom ha comprato un condominio vicino al lago.
+Le donne erano molto aggressive con i bambini.
+Ogni volta che parlano, litigano.
+Non sono uno specialista, ma solo un dilettante.
+Keiichi, il tempura è pronto, quindi porta un piatto.
+Non serve a niente provare a ingannarmi.
+Perché non ho preso un caffè?
+Tu non hai detto niente.
+Io non voglio essere ricco.
+Lo guardava continuare a combattere il più duramente possibile.
+Abbiamo ancora gli occhi lucidi.
+Io non vi faccio della pubblicità.
+Io non vi rendo omaggio.
+Fatemi vedere le vostre foto in Armenia.
+Io sto decorando la mia camera con dei simboli berberi.
+A me piace la cioccolata.
+Le produzioni appartengono al proprietario.
+Sanno parlare sia il berbero che l'arabo.
+Non preoccuparti se ne trovi uno verde che ti piace.
+Hanno avuto problemi a trovare il posto.
+L'ignoranza non si può nascondere ed è la causa dei peggiori mali del mondo.
+Si sono alzati e hanno abbandonato il loro posto.
+Lei fornisce una visione alternativa di casa.
+Servono per un futuro migliore?
+A me piacerebbe conoscere Tom.
+Io credo che sia onesto.
+Hai ragione. I tagliolini in brodo qui sono un po' costosi.
+Tom ha rubato il computer di Mary.
+La sorella di George mi ha fatto qualche sandwich.
+Io non penso che lei sia schizofrenica.
+Non mangio tanta carne quanto ero abituato prima.
+Mi vanno stretti i pantaloni, sarò ingrassato?
+Sta piovendo che Dio la manda stanotte.
+Io non ho fatto nulla.
+Io chiedere il rimborso, oppure lo farei pagare alla giunta precedente.
+Il Texas confina col Messico.
+Io ho bisogno di voi qui.
+Il professore ha dato un premio a John.
+Penso che sia interessato a me.
+Era spaventato a morte dalle Barbie.
+Io ti ho fatto un favore.
+Un cane la morse alla gamba.
+È un nuotatore molto veloce.
+Non è un uomo per me.
+Tom ha parlato con Mary.
+Lui raccontò la sua storia in lacrime.
+Io ho visto cos'hai fatto.
+Devo comprare un nuovo scanner.
+Quello è successo tre giorni fa.
+Dopo essersi laureato all'università, lui ha insegnato l'inglese per due anni.
+Non posso disegnare un uccello.
+Io spero che voi abbiate ragione.
+Tom non è in carica.
+Solleva anche delle questioni di religione.
+Sono una madre single con quattro figli.
+Io e Bob siamo grandi amici.
+Ho fatto un sogno incredibile.
+Alloggerò in una camera con quattro letti.
+Non riesco a sentire una cosa.
+Io mi feci controllare le orecchie.
+Io ho perso la cognizione del tempo.
+Dissi a Tom la verità.
+Io non sto per morire.
+Mi siete mancati la scorsa notte.
+C'è un caldo terribile questa mattina.
+Questa stanza misura venti piedi per ventiquattro.
+Facciamo finta che questo non sia mai accaduto.
+Ho appena ricevuto la tua e-mail.
+Perché non fai riparare la tua moto?
+Lei dà sempre in escandescenza quando si discute.
+Io apprezzo il vostro lavoro.
+Lui fa il bagno ogni mattina.
+Come fai a dire che non sono vere?
+Smettila di essere così drammatico.
+Non puoi fidarti di una traduzione automatica.
+Dovrebbe imparare ad andare in bici.
+Emily ha risposto correttamente alla domanda.
+Pensate che Tom sia morto?
+Io ci ho pensato molto.
+Penso che siate troppo difficili.
+Esiste un modo di dire simile a questo in giapponese?
+Magari fossero solo i regali!
+Tom si è sistemato gli occhiali.
+E poi mi chiedete di abbonarmi.
+Ma credete davvero di essere gli eletti della trasparenza?
+Tom ha aperto la porta con un calcio.
+Non possiamo fidarci di nessuno ora.
+Ha smesso con le sigarette?
+Avrebbe fatto meglio a non utilizzare quelle parole di quattro lettere.
+Ho proprio ricevuto la mia copia la settimana scorsa.
+Stavo provando a trovare Tom.
+In teoria dovrebbe essere il contrario.
+Ce ne dovrebbero essere 3, credo.
+Pensavo che ti fossi trasferito a Boston.
+Tom ha dei problemi a farsi delle amicizie.
+Madre Teresa era una monaca cattolica che viveva e lavorava a Calcutta, in India.
+Tom è uscito dalla macchina.
+Non la seguo molto bene.
+Lui aveva un buon aspetto.
+Le vostre amiche sembrano gentili.
+A me piacciono i viaggi.
+Questo andrebbe bene a te.
+Ma la notizia dove sarebbe?
+Oggi pomeriggio farò una torta!
+Tom stava ascoltando il suo iPod mentre faceva esercizi.
+Ho bisogno di un pesce.
+Non apriamo ferite ancora troppo aperte, ti prego.
+Dovevano fargli fare saltare tutto?
+Dove posso trovare le foto della serata di ieri?
+Le tariffe dei taxi a Shanghai sono costose.
+Una volta al mese c'è questo evento.
+A me non fanno impazzire i dolci.
+È ora di andare per me.
+Spero solo nel buon senso degli italiani.
+L'hanno trattato fin troppo bene.
+L'uomo si rivelò essere un investigatore privato.
+Dato che non è un esperto, la sua opinione non conta nulla.
+Ti passo a prendere alle 2:30.
+La durata della vita di una farfalla è breve.
+Questo è impossibile per me.
+Tom non ci ha detto tutto.
+Era fiero di essere stato scelto dal popolo.
+Così sui due piedi non sono in grado di dirtelo.
+Si parte con la verità.
+Ma è idiota quel tipo!
+Lui ha lavorato come diplomatico per molti anni.
+Io sono economicamente indipendente dai miei genitori.
+Questo dizionario è prezioso per noi.
+Io avrei potuto uccidervi, però non l'ho fatto.
+Perché pensi che Tom e Mary stiano pensando di divorziare?
+Tom non sa con certezza chi sia il moroso di Mary.
+Una delle riviste è per i ragazzi e l'altra per le ragazze.
+Tom vuole abitare in campagna dopo la pensione.
+I matrimoni di Hollywood raramente durano.
+Il giardino è davanti alla casa.
+Scappiamo finché siamo in tempo!
+Le persone del suo paese non hanno disciplina mentale.
+Tom si è scordato di portare la sua macchina fotografica.
+Avete beccato la vostra fidanzata che baciava un altro?
+Ancora un paio di giorni e lo cancellano.
+La prima volta che ho visto i calciatori romeni è stata a Madrid.
+È vero che era a Madrid all'epoca?
+Lui doveva lasciare la città, quindi si trasferì a Berlino.
+Si parla di storia, ragazzi miei!
+Usando la seconda forma della coniugazione parliamo a qualcuno in maniera informale.
+È ancora tutto nuovo per me.
+Io non lo faccio da un po'.
+Oltre ad essere un chirurgo, era anche un famoso scrittore.
+Pensavo che Tom potesse essere in carcere.
+Qualcuno mi ha chiusa a chiave nella stanza.
+Tom ha delle riunioni tutto il giorno oggi.
+Siete consapevoli che Okinawa è più vicina alla Cina che a Honshu?
+Il salario minimo a Okinawa è 642 yen all'ora.
+Io pensavo di essere figo.
+Stava piangendo per un giocattolo.
+Un popolo ignorante è un popolo senza forza!
+Pensavo che avrei potuto trovarvi qui.
+Da bambino, Bob viveva a Boston.
+Guarda il treno che sta passando sul ponte!
+Io sto passeggiando da oltre quattro ore.
+A giudicare dal suo aspetto, è malato.
+Qual è il suo hotel preferito a Boston?
+Lui lavorò duramente per mantenere il Kansas pacifico.
+Io voglio un biglietto andata e ritorno per Chicago.
+Quanto tempo ci vuole ad arrivare a Chicago da qui?
+State scegliendo il vestito per sabato?
+Oggi è il mio giorno.
+Appartiene al club del tennis?
+Mi chiedo perché quando fa freddo mi sento tanto sola.
+Disse di avere un leggero raffreddore.
+La vecchia signora sembrava sul punto di cadere in qualunque momento.
+Se vuoi terminare il lavoro prima di giugno devi lavorare molto meglio.
+Odio le donne sicure di sé.
+Ha una padronanza completa dell'inglese.
+Improvvisamente udii un fracasso nel vicolo e andai a vedere cos'era successo.
+Ha un dono per far felici gli altri.
+Queste biro sono le sue.
+Questa è la mia risposta alla vostra domanda.
+Io condivido un appartamento con mio fratello.
+Noi siamo sulla pista sbagliata.
+Se è chi penso io, mi dispiace.
+Ha deciso di diventare dottore.
+Tu non sei brasiliano, vero?
+Io sto solo portando due valigie.
+Era il mio turno di pulire la stanza.
+Lo sa che non mi piacciono gli incontri faccia a faccia.
+È naturale che lui dovrebbe rifiutare quella richiesta.
+Tom ha lasciato la sua casa prima del tramonto.
+Io mi sento sempre tetro.
+Feci così tanto che mi sentii stanco.
+Tom non smetterà mai di amare Mary.
+Voglio studiare all'estero, anche se i miei genitori ne sono contrari.
+Spero che si buchi la bicicletta e che cada la catena!
+Ping-pong è anche chiamato tennis da tavolo.
+Ero calma finché non ho visto la siringa!
+Riesci a venire domenica sera?
+Le cose concrete sono visibili, quelle astratte sono invisibili.
+Lei è giovane e attraente.
+Tu dopo lavi i piatti.
+Sua figlia è rapida nei movimenti.
+Qui tutto è permeato dello spirito della storia.
+Chi è la ragazza in questa fotografia?
+Mi ha presentato a suo fratello.
+È mai stato in Gran Bretagna?
+Ma che corbellerie ti inventi?
+Loro erano sorpresi di sentire le notizie.
+Ci si vede al supermercato di tanto in tanto.
+Lui morì per aver mangiato troppo.
+Hai ancora molto da imparare.
+Lo sapete che devo andare.
+Lei crede che la televisione faccia male ai bambini?
+E soprattutto non dire bugie.
+Tom pensava che Mary non volesse comprare una macchina così piccola.
+Quanti di voi sono soli stanotte?
+Compì il suicidio saltando dal ponte.
+Il problema è che realizzare il suo piano costerebbe troppo.
+Perché sono così da sola?
+Gli han fatto solo un favore.
+Lei non può licenziare Tom.
+Le macchine tedesche sono molto popolari.
+Ho parecchi hobbies, ad esempio pescare e arrampicarmi.
+Loro stanno parlando con Tom.
+Sei buono come il pane.
+Tom ha promesso di venire a casa presto stasera.
+La verità sulla corruzione è venuta fuori.
+Alcune persone non la pensano così.
+La cultura distrugge le lingue.
+Ci sono sei gradi sotto zero.
+Tom è un ragazzo ribelle.
+Le dispiace se mi tolgo la maglia?
+Io non posso tornare in prigione.
+Non voglio un lavoro a Boston.
+Quelle sono lacrime di coccodrillo.
+Voi scrivete delle lettere d'amore?
+La camera di mio figlio è piena di giocattoli.
+Io persuasi il poliziotto a non sparare alla scimmia.
+Secondo te chi può essere?
+Mi fa piacere fare nuove amicizie!
+Immagino che eravamo felici allora.
+Mi ha messa in contatto con i rapitori.
+Non posso sopportare di perderla.
+Non ti ho vista ubriaca.
+I banditi rubarono il Sacro Graal.
+Tom ammirava davvero il coraggio di Mary.
+La superficie del lago riflette il panorama circostante.
+La maggior parte delle morsicature degli insetti è più fastidiosa che pericolosa.
+Ricorda che dormire troppo non è una scusa per essere in ritardo.
+Le anatre si nutrono di vermi, crostacei, insetti acquatici e alghe.
+Tom abita accanto a Mary.
+Che ne dice di una partita a scacchi?
+Lui non avrebbe dovuto farlo.
+Penso che Tom non andrà.
+Io non riesco a capire perché Tom non ci lascerà andare.
+No, è sufficiente. Sono pieno.
+Mi sta accusando di qualcosa?
+Io non mi arrenderò, Tom.
+Loro non lasceranno fuggire Tom.
+State facendo delle amicizie qui?
+Devo trovare il posto perfetto.
+Lui prese una scorciatoia attraverso la foresta.
+Prestai a Tom tutti i miei soldi.
+Il fulmine è un fenomeno elettrico.
+Io non riesco a vedere il colibrì perché è troppo lontano.
+Lei era l'ultima persona che mi aspettavo di vedere in un posto del genere.
+Ho ricevuto il tuo messaggio ieri.
+Io faccio quello che è meglio per il mio paese.
+Io ero pieno di energia.
+La boxe è stata definita come l'arte di colpire senza essere colpiti.
+Il mio capo non mi ha mai invitata a casa sua.
+Preferirei giocare a tennis che nuotare.
+Ho trovato un gatto smarrito che stava venendo cercato dal suo padrone.
+Sembra che Tom non riesca a fare nulla di giusto.
+Tom dubita che Mary verrà a scuola oggi.
+Io voglio essere suo amico.
+Nessuna di loro è presente.
+Lei fece il lavoro da sola.
+Io vorrei andare in America.
+Oggi è un giorno festivo.
+Forse sa dove sono i miei libri?
+Ditele che io sto imparando a guidare.
+Quando è tornata da Londra?
+Non si fidano a vicenda.
+Il gioco è diventato emozionante.
+Io voglio sentire il resto della storia.
+Le piccole aziende sono state assorbite in una grande organizzazione.
+Tutto ha i suoi limiti.
+Devo scoprire cos'ha ucciso Tom.
+Io vorrei aiutare, però non posso.
+Trovai il libro molto interessante.
+Mary è la figlia più grande di Tom dal suo terzo matrimonio.
+Potevo dire dal suo accento che lui era un francese.
+Non capivo quello che loro dicevano in cinese.
+Chi vuole guardare un video?
+Io non ho niente da fare questo pomeriggio.
+Ci sono dei film in aereo?
+Io dovevo fare qualche chiamata.
+Lei non viene mai invitata alle feste.
+Io ho comprato dieci matite, metà delle quali dovevano essere date a mio fratello.
+Non sono completamente d'accordo con voi.
+Mi dia una pausa, OK?
+Va molto d'accordo con le sue amiche.
+Io potrei essere in grado di aiutare.
+Quali libri si è scordata di portare?
+Non fermò l'auto al semaforo rosso.
+Vorrei il tuo permesso per usarla.
+Sono sicura che lei partirà presto.
+Ha una foto di Tom?
+Io aspettai un'ora la mia amica.
+Nessuno ha preso sul serio queste parole.
+Lei è schiava della moda.
+Mi ha versato una tazza di tè.
+Deve credere in se stesso.
+Qui Tom si fermò, ansimante, confuso e spaventato.
+Sono un dottore. E lei?
+Entrambi i cani stanno dormendo.
+Io l'ho letto alla mia famiglia.
+Preferirebbe mangiare un topo o una tarantola?
+Non avvertii la sua presenza.
+Ha le braccia molto forti.
+Non è la mia lingua madre.
+Non scordi la regola numero 72.
+Lui ha scambiato degli yen con dei dollari.
+Lui è arrivato passando per Lione.
+Tu sei mai stato in Scandinavia?
+I tabloid asseriscono che il cetriolo killer abbia sodomizzato la mucca pazza.
+Ha speso tutte le sue entrate a bere.
+Il wrestler è un lottatore di wrestling.
+Chi è il suo artista country preferito?
+Sarò alla festa stanotte qualunque cosa accada.
+L'albero, su cui sedeva una gazza, era una betulla.
+È più anziano di quel che sembra.
+Che ne dite di una tazza di tè?
+Loro si riferirono a Chaucer come il padre della poesia inglese.
+Io scriverò a Judy una lettera.
+Mi aiuterebbe, per favore, a tradurre questa?
+Io ero piena di gioia.
+Io passeggio in un parco.
+Come mai avete scelto questa azienda?
+Tom dice che non ha paura.
+Non dobbiamo parlare in biblioteca.
+Questo libro di testo ha un sistema olistico ben realizzato.
+Non devi fare calcoli complicati per ricordare il numero di vittorie.
+Se mi collassi lì, ti prendo a calci.
+Io abito vicino a una diga.
+Lui abita di fianco a me.
+Il combattente eroico ha venduto cara la pelle.
+In realtà, io non sono sicura su chi sia Tom.
+Io penso che voi stiate sottovalutando Tom.
+Mi fa venire voglia di vomitare.
+Non raccomando di mangiare in quel ristorante. Il cibo è terribile.
+Decisi di provare a imparare l'esperanto, giusto per fare una nuova esperienza.
+A dire il vero, io non sono d'accordo con te.
+Lui ha proposto che le biciclette vengano portate via.
+Siete ancora arrabbiate con me?
+Voi non dovete entrare in contatto con lui.
+Si aspettava davvero che lui le dicesse la verità?
+Penso che Tom voglia qualcosa.
+Non vi conosco molto bene.
+Qual è il significato esatto di "precise"?
+Era Tom quello con cui vi ho viste la scorsa notte?
+Conoscerai la verità un giorno.
+Tu hai il codice sorgente?
+Io volevo assicurarmi che tu fossi qui.
+Quella è la ragione per cui non volevo uscire con Tom.
+Vostro zio ha fatto queste fotografie, vero?
+Ho già sentito questa canzone.
+Le mie bambine escono raramente.
+Mi è passato il mal di testa.
+Non sapevo che la macchina di Tom è stata rubata.
+Ora che è anziano, è vostro dovere prendervi cura di lui.
+Tom non lo sapeva che Mary aveva già comprato il pane.
+E adesso cosa vorreste fare?
+Non si riesce a salire di un livello.
+Ma perché questa acredine ingiustificata contro i media?
+Ho le informazioni che avete richiesto.
+Voi avete un buon senso dell'umorismo.
+Io mi sento al sicuro qui.
+Il mio orologio è rotto.
+Io non le mento mai.
+Non mi piace il vostro gusto per i colori.
+Ci abitano molte persone nella tua città?
+Aah, sono arrabbiato per una qualche ragione!
+Tenete il resto, per favore.
+Stai alla larga da me.
+La ragazza che sta suonando il pianoforte si chiama Akiko.
+I lumaconi muoiono se gli si mette sopra del sale?
+Lui ha detto che si alza alle 6 ogni giorno.
+Ho messo in moto la macchina.
+Il colpo di stato fu eseguito meticolosamente.
+Sono sicuro che voi mi disprezzate.
+Noi abbiamo visto il barlume di un faro distante.
+Non passare tutta la notte a prepararti.
+Non voglio sentire ciò che hai fatto ieri.
+Io riesco a incontrarvi alle 2:30.
+Mi puoi aiutare, per favore?
+I dottori ci danno delle informazioni sulla nostra salute.
+Io sogno di andare a vivere in Lituania.
+Dovete fare spazio per il televisore.
+Molta gente non è felice.
+Pensavo le potesse piacere un po' di compagnia.
+Chi mette in giro questa roba?
+"Tu non sei messicana?" "Sì, anche se adesso vivo in Argentina."
+Con amici del genere, chi ha bisogno di nemici?
+Due cacciatori si vedono: tutti e due morti.
+Lei non mi ama più?
+Tom lavora come buttafuori in un locale notturno.
+La ragazza sta comprando latte al supermercato.
+Chi è che viene in moto allora?
+Tom sta aspettando che Mary chiami.
+Mescola la zuppa con regolarità.
+Io sto tornando a casa in autobus.
+Sarà facile trovare qualcuno a cui affittare questa casa.
+Imparate a camminare prima di correre.
+Atterrammo su di un'isola solitaria.
+Il Queens è il mio quartiere preferito.
+Quand'è nata la Regina Vittoria?
+Datemi una tazza di caffè.
+Conosco già il suo segreto.
+Guardi, chi ha fatto la telefonata non è in casa al momento.
+Lui grida soltanto quando ha fame.
+Lui non mangia carne, vero?
+Qual è il suo film Disney preferito?
+Chiesi a Tom cosa non andava.
+Io sto mostrando le fotografie a mia sorella.
+A lui piacciono le crocchette di pollo.
+Che cosa vuole da noi Tom?
+Lei dovrebbe trascorrere più tempo fuori e meno tempo dentro.
+Ovunque c'è la birra ci sono pure io!
+Sembra che lei abbia trovato un moroso.
+Io non posso dire che condivido il tuo entusiasmo per l'idea.
+Io non ho bisogno del permesso di nessuno.
+Vennero chiamati dei dottori alla Casa Bianca.
+Tom disse di essere infelice.
+Noi abbiamo ancora molto tempo.
+Noi dobbiamo cambiare il nostro piano.
+Lui mi ama per ciò che sono.
+Sia come me e prenda un bicchiere di vino.
+Lui ha tirato un sasso nel lago.
+Entro il 2030 il 21 per cento della popolazione sarà costituito di persone over 65.
+Fareste meglio ad andare di persona.
+Io volevo che l'insegnante scrivesse una lettera in inglese.
+Se hai fame, prendi qualcosa da mangiare.
+Io ho restituito la borsa a Ken.
+Ho bisogno di un asciugamano.
+Qualcosa del genere può capitare a chiunque.
+Perché ti sei arruolato nell'Esercito?
+Non dirlo al mio ragazzo.
+Quest'uomo è tuo amico, giusto?
+Noi non ci siamo divertite molto.
+Io devo andarmene da qui.
+Io ho finito di pensare.
+Io ho perso il mio volo.
+Non sai cosa ti stai perdendo.
+Io ero fiero di Tom.
+Non le farei mai del male.
+Io sto andando a fare shopping.
+Mi serve un favore enorme.
+La e-mail stampata andrà benissimo!
+Tom ascolta solo il punk rock.
+Io ho provato a chiamare Tom.
+Mi chiedo chi sia il prossimo.
+Io farei meglio ad andare.
+Bush non è amico di Bin Laden.
+La domenica io mi riposo.
+Avrò bisogno di un po' di aiuto.
+Terrò le dita incrociate per te.
+Quello è il disegno di Tom.
+Lo sapevo che ce l'avrebbe fatta.
+Tom non aveva fretta di sposarsi.
+Lui è un famoso cantante popolare in Giappone.
+Io non devo prendere un appuntamento.
+Ho aspettato per molto tempo.
+Io sono nato su una nave.
+È contento dell'amore di suo figlio per i libri.
+È la festa di Tom stanotte e non ho nulla da mettere!
+Si sta prendendo gioco di me?
+Come avete conosciuto i miei genitori?
+Lui ha battuto un fuori campo nel primo inning.
+Questo bebè ha strappato una banconota da dieci dollari.
+Tom era qui prima di me.
+In questo paese la superstizione regna sovrana.
+Loro possono andare in biblioteca.
+Michel è andato al ristorante?
+Io non la tradirei mai.
+Non ho alcun amico con cui parlarne.
+Si deve usare la ragione.
+Abbiamo bisogno di un leader.
+Perché non scrive con il nuovo font?
+È vero che hai comprato una casa a Londra?
+Il prossimo anno voglio questi.
+Dedico questa canzone a lei.
+Lui è tutto quello che ho.
+I miei calzoni alla zuava sono bagnati.
+Io non posso permettermi una macchina fotografica buona come la sua.
+Loro non ti faranno del male.
+Questa è una fotografia di mia sorella.
+Passi lo zucchero, per piacere.
+È bello vedere Tom così felice.
+Tom e Mary dormono entrambi.
+Tom e Mary sono impegnati.
+Sia a Tom che a Mary piacciono i film vecchi.
+Lo sai che sei bella?
+Tom e Mary vogliono parlarti.
+Vi ho chiamate perché ho bisogno di un favore.
+Tom ha comprato per Mary una macchina fotografica.
+Tom è venuto in Giappone dall'Australia.
+Tom non può giocare a tennis qui.
+Tom non riesce a leggere.
+Tom non ha fatto niente.
+Due giorni fa ho letto quel libro.
+Sto ascoltando il vostro CD stamattina.
+"Dov'è Tom?" "Sta giocando a tennis con Mary."
+Non ho una migliore amica.
+Io la amo più di ieri e meno di domani.
+Mentre giocava a rugby si è infortunato.
+Sono appassionata di calcio, rugby, football e così via.
+Vuole vedere che tipo di studente sei stato in questi anni.
+Tom è molto interessato al jazz.
+Non conosco nessuna di queste cinque donne.
+Tom non è d'accordo con voi.
+Tom non va al lavoro di domenica.
+Sono buona con te stamattina.
+Tom non lo disse a nessuno.
+È stato un bel viaggio in generale.
+Lui non riesce né a vedere né a sentire.
+Per piacere, tolga quella sedia perché è nei piedi.
+Non fotta mai con un coglione!
+Lui suona spesso la chitarra.
+Di recente Tom non traduce le mie frasi. Mi odia?
+Non so nulla di lui.
+C'è una scultura di vetro in giardino.
+Non puoi essere un dottore.
+Gliel'ho detto che ci saremmo incontrati di nuovo.
+La sua patente di guida è scaduta.
+Qual è il suo testo di canzone preferito?
+Io non capisco la trama di questo romanzo.
+Ha dato un'occhiata al giornale prima di andare a letto.
+In realtà piaccio a Tom.
+Quali misteri nascondono ancora le piramidi?
+Ho detto che ci penserò.
+Quest'automobile usata è in vendita.
+Tom non era neppure spaventato.
+Temo che quella non sia accettabile.
+Le è piaciuta quella cena?
+Voi vivete a San Pietroburgo.
+Lei ha aspettato per ore e ore.
+Come si può tradurre quello che non si capisce?
+Lo so che Tom dice che non gli piaccio.
+Lui è meticoloso con le regole.
+Lei colleziona ancora dei francobolli?
+Metta più sale nella zuppa.
+Adesso voglio andare a farlo.
+Io sto pranzando con mia sorella.
+Penso che la sua opinione sia di grande importanza.
+"Voi venite dall'Australia?", chiese il filippino.
+Si sbrighi! Mancano solo 30 minuti prima che il treno parta.
+Le scorte alimentari dei soldati stanno finendo.
+E anche la Scozia è nostra!
+Spero che loro siano amichevoli.
+È più lento del cavallo di un cattivo.
+Di solito non mangio in posti come questo.
+Ho intenzione di essere in anticipo.
+Lo so che non volevi ferire Tom.
+Tom andò in pensione quando aveva 65 anni.
+Io sono famosa come voi.
+Le hai parlato di recente?
+Io sono orgoglioso di mio fratello.
+Mi dirai come arrivare a Shinjuku?
+Tom non pensa che sia divertente.
+Qual è il vero motivo per cui non vuoi fare questo?
+Spero che non diventerai mai comunista.
+Avete già mangiato un po' di torta?
+Tom sta nascondendo un segreto terribile.
+Pensavo che avessimo detto le 2:30.
+A Tom piace fare fotografie.
+C'era proprio bisogno di sottolinearlo anche qui?
+È cresciuto un dente permanente proprio accanto a un dente da latte.
+Salve, mi sapreste dire dov'è una cabina telefonica?
+A me piace ballare con Mary.
+Vi piace praticare gli sport?
+Mi piace giocare ai videogiochi, e a te?
+Sono il sostituto di Tom.
+Tom è capace di nuotare bene.
+Basta per oggi! Io sono stanco.
+Non sarà molto più lungo.
+Tom tenne un discorso in francese.
+Sono sempre stato appassionato di football.
+Io non mi ricordo niente di più ora.
+Era un gioco da ragazzi risolvere il problema!
+Assicuratevi di venire alle tre.
+Lei è una persona piccola.
+Tom ha una bella auto.
+Credo sul serio che lui era un grande uomo.
+A che ora parte il primo treno?
+Lui ha dei grandi baffi a manubrio.
+Guardate questo uccello che ho appena trovato.
+Non ho mai visto nulla del genere.
+Noi vogliamo delle frasi complete.
+Tom sta affilando un coltello.
+Il nuovo negozio aprirà la settimana prossima.
+Ne vale la pena fare un tentativo.
+Tom non può guidare un'auto.
+Io non riesco a venire domani.
+Non mi sento così intelligente.
+Ne ho abbastanza di questo tempo umido.
+Smettetela di essere così curiosi.
+Non sono mai stato a sciare prima.
+Io sto per abbaiare come un cane.
+Io penso che lei stia fingendo.
+Datti una mossa! Il concerto sta iniziando.
+Non riesco a distinguere una gemella dall'altra.
+È venuto a Tokyo in cerca di un impiego.
+Non sapevo foste così brave in francese.
+Lei distrusse i suoi nemici.
+Non ci capisco più niente!
+Ci si aspetta dei buoni risultati.
+Io ho appena ricevuto una chiamata da Tom.
+Ma che ho fatto di male per meritarmi tutto ciò?
+Non è potuto venire perché è ammalato.
+Di solito ottengo quello che voglio.
+Una volta i suoi genitori ci amavano davvero.
+Fecero un regalo a Tom.
+Io non sono appassionata di animali domestici.
+Mary ama studiare la musica.
+Mi sono laureato in letteratura all'università.
+Io non sto dicendo che è colpa di Tom.
+Io odio le cipolle crude.
+Non può fare niente per fermarli?
+Io ho dovuto lavorare lo scorso fine settimana.
+È questa la ragione per cui non siete voluti venire con me?
+Non mi aspetto che voi ricordiate.
+Sono dovuto andare a piedi perché la mia macchina si è rotta.
+Non penso che potrei trascorrere sei ore da solo con lei.
+L'ultima persona a cui ho raccontato la mia idea ha pensato che io fossi pazzo.
+Io sono tornato al mio posto.
+Io non sto comprando nulla.
+Aveva un sacco di tempo.
+È questa la sua idea di divertimento?
+Non riesco a farla da sola.
+Non vengo pagato a sufficienza.
+Questo calvario non finirà più!
+Sarò proprio dietro di te.
+Prese in giro i miei sforzi.
+Io ho sempre voluto possedere un'auto sportiva.
+Va in treno o in macchina?
+È l'unico amico di cui posso davvero fidarmi.
+Sono io che mi sono sbagliata.
+So a malapena dove cominciare.
+È ovvio che tutti ti evitano se sei sempre così.
+Io vedo cos'ha fatto lì.
+Ti piace qualcuna di queste foto?
+Io non sarò dispiaciuto a vedere Tom partire.
+C'è qualcosa che dovresti vedere.
+Hanno raggiunto il loro obbiettivo.
+Vado raramente in una biblioteca.
+Se hai finito di leggere il libro, restituiscilo alla biblioteca.
+Sto spalmando della senape su una fetta di pane.
+Ci sono dei ratti in cucina.
+Forse non dovrei essere così sospettosa.
+Io ho vissuto per anni e anni.
+Ci sono molti cinema in questa città.
+I guasti della guerra non hanno fine.
+Tom ha chiesto a Mary di non andare.
+Quello che ha chiamato si è rifiutato di dirci il suo nome.
+Non si può inseguire un proiettile.
+Lei non è stupida come sembra.
+Avete fatto una scelta saggia.
+Siete pro o contro il progetto di legge?
+Tu sei favorevole o contrario a questo?
+Tu avresti fatto meglio ad andare.
+È molto gentile da parte vostra mostrarmi la strada.
+Io non ho bisogno di loro.
+Sono passata di lì ieri sera.
+Io sono stato il primo moroso di vostra madre.
+Si è fatto male qualcuno?
+Ci prende una tristezza enorme.
+Sono solamente una passante innocente.
+I nostri visitatori sono sulla porta.
+Non crederete a ciò che ho sentito.
+Non sarò in grado di trasportare Tom dall'altra parte del ponte.
+Lei chiese dei consigli alla sua insegnante.
+Mary ha detto che Tom era un effemminato.
+Tom ha riconosciuto Mary dalla sua voce.
+Io devo fare molte cose oggi.
+Lei usa una bici a scatto fisso.
+Si getta in un mare o in un lago.
+Noi dobbiamo parlare riguardo alla nostra relazione.
+Immagino che tu non l'abbia comprata per conto tuo.
+Farò un'eccezione solo per stavolta.
+Io non ho risposto a nessuna lettera.
+Io voglio che voi ve ne andiate.
+A casa è Liisa che copre il ruolo di capofamiglia.
+Noi abbiamo bisogno di lei.
+Io sono arrivato a Kobe verso le due e mezza.
+Mio zio arrivò inaspettatamente da Kobe.
+Per quanto avete vissuto a Kobe?
+Mi piacerebbe abitare nei sobborghi di Kobe.
+John sarà un bravo marito e un bravo padre.
+Questi sono due tipi diversi di bici.
+Voi avete mai scalato il Monte Fuji?
+Questo è il miglior gruppo del mondo.
+Sei una povera bestia ignorante.
+Avete mai sentito parlare di umiltà?
+Di colpo si spense la luce.
+Io non sono innamorata di Tom.
+È vero che non hai mai giocato a poker prima?
+Chi è la sua fidanzata?
+Io penso che sarebbe saggio.
+Tom ha giocato a poker con noi.
+Voglio sapere come si chiama questa.
+Bisogna avere una competenza linguistica.
+Non può essere fuggita senza lo champagne.
+Sembra stretta anche a me.
+La torta ha la forma di un albero.
+La sua testa era grigia.
+È brava con i pixel?
+La monarchia francese sembrava invincibile, però è stata deposta.
+L'ufficio del presidente è sulla sinistra.
+Quand'è stata l'ultima volta che è andato in spiaggia?
+Penso che voi stiate facendo un errore.
+Amatevi gli uni gli altri, come io ho amato voi.
+Ci vorrebbe un prete esorcista per questi tizi.
+Se non conosce il significato di una parola, la cerchi in un dizionario.
+Ecco una foto della mia famiglia.
+Ho sonno, quindi vado a letto.
+È facile per lei farsi delle amicizie.
+Lo show è rovinato ora!
+Le arance sono più grandi dei mandarini.
+Qual è il suo nemico subacqueo preferito?
+Gli ho fatto il tuo nome.
+Io pratico il karate da quando ero bambino.
+Mary ama il kung fu.
+Perché stavi indossando una giacca?
+Mi sono congratulata con lui per aver passato l'esame d'ingresso.
+Di che colore sono i vostri capelli?
+Loro non conoscono le regole.
+Ho i miei dubbi che capisca.
+È difficile per me garantire il tuo successo.
+Sto facendo fatica a rispondere alla tua domanda.
+Tu sei in pericolo, Tom.
+Io volevo diventare un dottore.
+Il mio fidanzato si rifiuta di utilizzare il forno a microonde.
+Non sei nelle condizioni di parlare.
+Sto chiamando per lamentarmi di qualcosa.
+A che ora inizia la tua pausa?
+Non lavora nel campo del marketing?
+Non posso crescere nostro figlio da solo.
+Lui sembrava essere molto appassionato di musica.
+La conferenza avrà luogo a Tokyo.
+È un finale già scritto.
+A volte andiamo a pescare.
+Torna da dove sei uscito!
+Non posso partire prima che il lavoro sia completato.
+Il professore gli ha detto di studiare duramente l'inglese.
+Io ho catturato quella di Belen.
+Va bene, possiamo fare alla romana stanotte.
+Bisogna scegliere il proprio destino.
+Questa è la giornata giusta.
+Lui entrò con un fucile in mano.
+Le sue vene contengono acqua.
+È perché non gli importa.
+Chi ha il ruolo principale?
+Perse la pazienza e colpì il ragazzo.
+Non devi dimenticare di svegliarmi domani mattina.
+Il termometro segna tre gradi sotto zero.
+Non avevo idea che fosse così stupido.
+Se non sbaglio l'ho data a lui.
+Vai avanti tu, io ti seguirò a breve distanza.
+Tom non crederà ad una sola parola di quello che tu gli dici.
+Non ogni libro sulla scrivania appartiene a me.
+Penso che oggi non verrò a scuola.
+Chi inviterai alla tua festa di compleanno?
+Prima o poi la corda si spezza.
+Ho perso il mio taccuino oggi.
+Tom dovrebbe essere ancora a letto.
+Loro cosa stanno facendo lì dentro?
+Mi sono fatta rasare e tagliare i capelli.
+Tom ha deciso di non andare.
+Le scatole sono dei regali. Cosa contengono?
+Tom ha iniziato a piangere ancora.
+Tu sei un discreto artista.
+Tom è in sala da pranzo.
+Pensate che Tom sia divertente?
+Ti va di rispondere alla mia domanda?
+Tu devi fare più pratica.
+Tom non mi diede nulla.
+Mette dello zucchero nel tè?
+Ti stai immaginando le cose, Tom.
+Tom ha ucciso Mary per il suo denaro.
+Tom ha sposato la ragazza della porta accanto.
+Lei ricorda il suo primo bacio?
+Tom ha avuto un'esperienza di prossimità alla morte.
+Io ho comprato un Nintendo 3DS.
+Non ho notato niente di strano.
+Tom non vuole essere coinvolto.
+Tom ha portato la valigia di Mary per lei.
+Vorreste uscire dopo il lavoro?
+Dovete imparare ad andare in bici.
+Sembrava che loro volessero ucciderti.
+Potrebbero non esserci soluzioni a questo problema.
+Ha dato i documenti alla persona sbagliata.
+Vi riporterò il libro domani.
+Nessuno piace a Tom e lui non piace a nessuno.
+Io mi sto sentendo molto traballante.
+Alcuni dei miei amici parlano bene l'inglese.
+Ma sei poi riuscita a prenderla quella cosa?
+Non sono venuto, perché nessuno mi ha invitato.
+Lui è una buona forchetta.
+Ha divorziato da lei dopo anni di infelicità.
+Ha scritto un libro mentre era in Cina.
+Noi siamo già preparate per il millennium bug.
+Sua madre è in casa ora?
+Ho trascorso la maggior parte della mia vita a Boston.
+Ti piace il tè o il caffè?
+Deve davvero essere lì domani alle 2:30.
+Noi ce ne andremo tra un'ora.
+Gli elfi sono molto volgari.
+Lo so che mi sta nascondendo qualcosa.
+È vero che gli americani amano la pizza.
+Ora è una figura del passato.
+Non ci serve una scala.
+Non lo conosco, né mi interessa conoscerlo.
+Vengo con te, se me lo permetti.
+Non posso commentare questa frase, dato che non parlo russo.
+Per piacere, datemi una tazza di riso.
+Noi vorremmo prenotare una camera che dia sul giardino.
+Gli alunni negligenti falliscono spesso agli esami.
+Io non sono andata al mio ballo studentesco.
+Io mi chiedo chi porterà al ballo studentesco Tom.
+Ha fatto apposta a rompere la finestra.
+Le ho dato la casa.
+Vorrei che lei mi ascoltasse.
+Non sono sicuro che sia già rientrato.
+Sotto le circostanze, la bancarotta è inevitabile.
+Io sto avendo lo stesso problema.
+Ma tu lo sai cosa pensano gli italiani di te?
+Era sdraiato con gli occhi chiusi.
+Dev'essere tutto pronto prima del loro arrivo.
+Quali canzoni sarebbero nel tuo elenco?
+A chi appartiene questo appartamento?
+Devono lavorare 8 ore al giorno.
+A me non capita mai di vedere queste cose.
+Vado da Marsiglia fino a Parigi.
+A me piace cantare delle canzoni.
+Sono disperato, non so che fare.
+Chiunque voglia partecipare dovrà rivolgersi alla nostra agenzia.
+Era arrabbiato con la sua studentessa.
+Prendete i libri che sono sullo scaffale.
+Io ho corrotto il poliziotto.
+Io lo so che non sono affari miei.
+Non ce la farò in tempo.
+Potrei provare a procurarvi un biglietto.
+Mi scuso per la risposta in ritardo.
+Io non riesco a sopportare questo calore.
+È molto pericoloso attraversare questa strada.
+La democrazia è una tale moda passeggera!
+Io non posso incolpare loro.
+La sua risposta è corretta.
+Dove abita il vostro migliore amico?
+Per favore, non dire nulla.
+Dirò a Tom che avete finito il rapporto.
+Sono passati 10 giorni da quando il mio fidanzato è andato in galera.
+Ci sarebbe qualcuno disposto a darmi ripetizioni di matematica?
+Su quale nave sei arrivata?
+È sul punto di partire.
+Lei ha scelto il vestito rosso.
+C'è stato un terremoto e, in aggiunta, anche uno tsunami.
+Quanto dobbiamo ancora pagare per la pace è un indovinello.
+Lui è rimasto ucciso in un incidente aereo.
+Io non lo vedo da domenica scorsa.
+La scatola che ha trovato lei era vuota.
+Penso che per te ci sia più di quel che sembra, Tom.
+Lui fuggì dagli Stati Uniti.
+A causa della malattia ha dovuto smettere di insegnare.
+A noi piacciono i film.
+Ho dimenticato di dirvi il mio numero di telefono.
+Che cosa c'è adesso, Tom?
+La mamma è a casa.
+Conchita decise di dire a Mary la verità.
+Lui sta pulendo il suo armadio.
+La nuova morosa di Tom è vegetariana.
+Questi pigmenti naturali si possono usare in mille modi.
+Lei parla inglese, francese o tedesco?
+Il vettore nullo è la risposta.
+Hai spento l'incendio con della sabbia?
+Io sarò il suo professore.
+Io preparerò un po' di caffè.
+Non c'è niente di cui essere orgogliosi.
+Il tuo passaporto, per favore.
+Penso che voi abbiate l'influenza.
+E poi ci danno degli ignoranti!
+Inizieranno fra poco la costruzione della nuova palestra.
+È bastato qualche giorno per mettere tutto in ordine.
+Sarai un ottimo compagno di stanza.
+Non dipendeva più dai suoi genitori.
+Tom fece bollire un po' d'acqua.
+Lui adesso è a bordo della nave.
+Io penso di avere una tendinite.
+Tom lanciò un cuscino a Mary.
+L'acqua era profonda cinque piedi.
+Hanno detto che è stata licenziata.
+Io in realtà sono un bastardo.
+Tom ha molte cose da fare stamattina prima che esca di casa.
+Dovresti sapere che io sono un procrastinatore.
+Perché non è a Boston?
+Io sì che so come divertirmi al sabato sera.
+Questo negozio vende dei libri antichi.
+Tom non crede a Mary. Pensa che stia mentendo.
+Posso avere il vostro numero di stanza?
+Io ho appena ottenuto un aumento.
+Le rane sono delle creature così straordinarie.

@@ -6,6 +6,7 @@ import fr.junade.taipo.dictionary.Dictionary
 import fr.junade.taipo.KeyboardLanguage
 import fr.junade.taipo.dictionary.ContextualCorrection
 import fr.junade.taipo.dictionary.FrenchContextCorrector
+import fr.junade.taipo.dictionary.InflectionRule
 import fr.junade.taipo.dictionary.InflectionRules
 import fr.junade.taipo.dictionary.KeyProximity
 import fr.junade.taipo.dictionary.NgramModel
@@ -148,6 +149,39 @@ object AutocorrectBench {
         "tools/autocorrect-bench/de/sentences-ok.txt", "tools/autocorrect-bench/de/context-cases.tsv", "tools/autocorrect-bench/de/baseline.txt",
         AccentPolicy.GERMAN,
     )
+
+    // ------------------------------------------------------------------
+    // Italien, portugais, néerlandais (07/11/2026) : clavier QWERTY (accents en appui long, hors de la grille).
+    // Les profils *_LEGACY gardent le comportement d'avant leur calibrage, pour comparer ; ils n'ont pas de référence.
+    // ------------------------------------------------------------------
+
+    private fun italian(confidence: CorrectionConfidence, inflections: InflectionRules, accents: AccentPolicy, contextual: Boolean, baseline: String) = Profile(
+        KeyboardLanguage.IT, QWERTY, inflections, 102L, confidence,
+        if (contextual) { text, f -> ContextualCorrection.correctWithoutHabits(KeyboardLanguage.IT, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f) } else { _, _ -> null },
+        "tools/autocorrect-bench/it/sentences-ok.txt", "tools/autocorrect-bench/it/context-cases.tsv", baseline, accents,
+    )
+
+    private fun portuguese(confidence: CorrectionConfidence, inflections: InflectionRules, accents: AccentPolicy, contextual: Boolean, baseline: String) = Profile(
+        KeyboardLanguage.PT, QWERTY, inflections, 91L, confidence,
+        if (contextual) { text, f -> ContextualCorrection.correctWithoutHabits(KeyboardLanguage.PT, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f) } else { _, _ -> null },
+        "tools/autocorrect-bench/pt/sentences-ok.txt", "tools/autocorrect-bench/pt/context-cases.tsv", baseline, accents,
+    )
+
+    private fun dutch(confidence: CorrectionConfidence, inflections: InflectionRules, accents: AccentPolicy, contextual: Boolean, baseline: String) = Profile(
+        KeyboardLanguage.NL, QWERTY, inflections, 77L, confidence,
+        if (contextual) { text, f -> ContextualCorrection.correctWithoutHabits(KeyboardLanguage.NL, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f) } else { _, _ -> null },
+        "tools/autocorrect-bench/nl/sentences-ok.txt", "tools/autocorrect-bench/nl/context-cases.tsv", baseline, accents,
+    )
+
+    val ITALIAN_LEGACY = italian(CorrectionConfidence.NONE, InflectionRules.NONE, AccentPolicy.FRENCH, false, "tools/autocorrect-bench/it/baseline-legacy.txt")
+    val PORTUGUESE_LEGACY = portuguese(
+        CorrectionConfidence.NONE, InflectionRules(listOf(InflectionRule("s"))), AccentPolicy.FRENCH, false, "tools/autocorrect-bench/pt/baseline-legacy.txt",
+    )
+    val DUTCH_LEGACY = dutch(CorrectionConfidence.NONE, InflectionRules.NONE, AccentPolicy.FRENCH, false, "tools/autocorrect-bench/nl/baseline-legacy.txt")
+
+    val ITALIAN = italian(CorrectionConfidence.ITALIAN, InflectionRules.NONE, AccentPolicy.ITALIAN, true, "tools/autocorrect-bench/it/baseline.txt")
+    val PORTUGUESE = portuguese(CorrectionConfidence.PORTUGUESE, InflectionRules.PORTUGUESE, AccentPolicy.PORTUGUESE, true, "tools/autocorrect-bench/pt/baseline.txt")
+    val DUTCH = dutch(CorrectionConfidence.DUTCH, InflectionRules.DUTCH, AccentPolicy.DUTCH, true, "tools/autocorrect-bench/nl/baseline.txt")
 
     private var profile: Profile = FRENCH
 
@@ -314,7 +348,7 @@ object AutocorrectBench {
                         result == null || result == typo -> missed++
                         else -> {
                             wrong++
-                            if (wrongExamples.size < 25) wrongExamples += "  [$setName/${kind.label}] $typo -> $result (attendu $word)"
+                            if (wrongExamples.size < 25 || (kind == Kind.ACCENT && System.getProperty("dbgaccent") != null)) wrongExamples += "  [$setName/${kind.label}] $typo -> $result (attendu $word)"
                         }
                     }
                 }
@@ -848,6 +882,12 @@ fun main(args: Array<String>) {
         "--lang=en" in args -> AutocorrectBench.ENGLISH
         "--lang=es" in args -> AutocorrectBench.SPANISH
         "--lang=de" in args -> AutocorrectBench.GERMAN
+        "--lang=it" in args -> AutocorrectBench.ITALIAN
+        "--lang=pt" in args -> AutocorrectBench.PORTUGUESE
+        "--lang=nl" in args -> AutocorrectBench.DUTCH
+        "--lang=it-legacy" in args -> AutocorrectBench.ITALIAN_LEGACY
+        "--lang=pt-legacy" in args -> AutocorrectBench.PORTUGUESE_LEGACY
+        "--lang=nl-legacy" in args -> AutocorrectBench.DUTCH_LEGACY
         else -> AutocorrectBench.FRENCH
     }
     val report = AutocorrectBench.run(root, profile)

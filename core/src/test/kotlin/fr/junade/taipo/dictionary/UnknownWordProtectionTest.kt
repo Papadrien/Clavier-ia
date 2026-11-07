@@ -45,4 +45,12 @@ class UnknownWordProtectionTest {
         assertNull(dictionary.correctionFor("cjoen"))
         assertEquals("chien", dictionary.correctionFor("cjoen", previousWord = "le"))
     }
+
+    @Test
+    fun `une apostrophe initiale ou finale apres un mot connu est voulue`() {
+        val italianLike = Dictionary.withFrequencies(mapOf("po" to 9_000L, "is" to 90_000L, "avonds" to 500L), InflectionRules.NONE)
+        assertNull(italianLike.correctionFor("'s"), "néerlandais « 's avonds » : pas « is »")
+        assertNull(italianLike.correctionFor("'t"))
+        assertNull(italianLike.correctionFor("po'"), "italien « un po' »")
+    }
 }

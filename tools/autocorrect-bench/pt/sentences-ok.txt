@@ -1,0 +1,67 @@
+# Frases portuguesas corretas: a autocorreção não deve alterar nenhuma (mede as falsas correções).
+# Uma frase por linha. As linhas que começam com # são ignoradas.
+Olá, tudo bem?
+Ele e ela foram ao cinema.
+Eu e você precisamos conversar.
+Isso e aquilo são diferentes.
+Não é verdade.
+É muito difícil para mim.
+Você está bem?
+Onde está o meu telefone?
+Esta casa é muito bonita.
+Como esta casa é bonita!
+Esta noite vamos sair.
+Estas flores são para você.
+Há muito tempo que não te vejo.
+Vou a Lisboa amanhã.
+Ela foi à praia com os amigos.
+Mas eu não quero ir.
+Quero mais café, por favor.
+Nunca mais faço isso.
+Por que você não veio?
+Não fui porque estava doente.
+O agente da polícia chegou cedo.
+A gente se vê amanhã.
+Com certeza, pode contar comigo.
+De repente começou a chover.
+A partir de hoje tudo vai mudar.
+Por isso eu não fui.
+Vamos tentar de novo.
+Nós vamos jantar fora.
+Ele nos ajudou muito.
+O meu pai trabalha num banco.
+O Brasil é um país enorme.
+Os meus pais moram no Porto.
+Obrigado pela ajuda.
+Não entendi a pergunta.
+Preciso ir à farmácia.
+Temos tempo para um café?
+A minha irmã é professora.
+O comboio está atrasado.
+O ônibus está atrasado.
+Está frio hoje.
+Eu te amo.
+Boa noite e bons sonhos.
+Podes ajudar-me com isto?
+Deixei as chaves no carro.
+É melhor sair cedo.
+Estou muito cansado.
+Eu sei, mas não posso fazer nada.
+Tem muita gente na praça.
+Eu disse para ele vir.
+O gato dorme no sofá.
+Você já comeu?
+Eu também quero ir.
+Esta é a minha amiga Ana.
+Falamos amanhã com calma.
+Que bom te ver!
+Até logo.
+Não há nada a fazer.
+É possível reservar uma mesa?
+Ele pode vir amanhã.
+Ela sabia a resposta.
+O avô e a avó chegaram.
+Para onde você vai?
+Só um minuto, por favor.
+Ele está a trabalhar.
+Vocês estão prontos?

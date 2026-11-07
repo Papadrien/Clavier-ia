@@ -1,0 +1,64 @@
+# Correcte Nederlandse zinnen: de autocorrectie mag er geen enkele veranderen (meet de valse correcties).
+# Eén zin per regel. Regels die met # beginnen worden genegeerd.
+Hoi, hoe gaat het?
+Ik word morgen dertig.
+Hij wordt morgen dertig.
+Word jij ook zo moe van dit weer?
+Wordt het niet eens tijd?
+Het wordt koud vanavond.
+Ik vind het een goed idee.
+Vind jij dat ook?
+Zij vindt het niet leuk.
+Ik houd van jou.
+Hij houdt van voetbal.
+Wat is er gebeurd?
+Het is gisteren gebeurd.
+Dat gebeurt wel vaker.
+Dat woord ken ik niet.
+Dit is voor jou.
+Is dit jouw fiets?
+Ik heb jouw boek gelezen.
+Zij hebben het gedaan.
+Ik heb het hun gegeven.
+Hun huis is erg groot.
+'s Avonds kijk ik televisie.
+'s Morgens drink ik koffie.
+Zo'n mooie dag hebben we lang niet gehad.
+Ik ben groter dan mijn broer.
+Als je wilt, kunnen we gaan.
+Een of twee, dat maakt niet uit.
+Er is één probleem.
+Dank je wel voor de hulp.
+Ik heb de vraag niet begrepen.
+Ik moet naar de apotheek.
+Hebben we tijd voor een kopje koffie?
+Mijn zus werkt bij een bank.
+De trein heeft tien minuten vertraging.
+Het is koud vandaag.
+Ik hou van je.
+Welterusten en slaap lekker.
+Kun je me helpen met mijn huiswerk?
+Ik heb mijn sleutels in de auto laten liggen.
+Het is beter om vroeg te vertrekken.
+Ik ben doodmoe.
+Ik weet het, maar ik kan er niets aan doen.
+Er zijn veel mensen op het plein.
+Ik heb hem gezegd dat hij moet komen.
+De kat slaapt op de bank.
+Heb je al gegeten?
+Ik wil ook mee.
+Dit is mijn vriendin Anna.
+We praten morgen rustig verder.
+Wat leuk je te zien!
+Tot straks.
+Er is niets aan te doen.
+Kan ik een tafel reserveren?
+Mijn fiets staat in de fietsenstalling.
+We gaan dit weekend naar het strand.
+De kinderen spelen in de tuin.
+Hij antwoordt nooit op mijn berichten.
+Ik antwoord morgen wel.
+Waar woon jij?
+Zij woont in Amsterdam.
+Het café op de hoek is gezellig.
+Hij komt vóór vijf uur thuis.

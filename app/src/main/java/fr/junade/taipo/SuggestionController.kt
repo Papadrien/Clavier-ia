@@ -673,7 +673,8 @@ class SuggestionController(
                 allowRetro = allowRetro,
                 dictionary = dictionary,
                 personalWords = personalWords,
-                // Corrections de contexte : français, anglais (EnglishConfusions), espagnol (SpanishConfusions) et allemand (GermanConfusions) ; les autres langues n'en ont pas encore.
+                // Corrections de contexte : chaque langue du clavier a sa table (FrenchConfusions, EnglishConfusions, SpanishConfusions, GermanConfusions,
+                // ItalianConfusions, PortugueseConfusions, DutchConfusions).
                 contextual = host.language() in CONTEXTUAL_LANGUAGES,
                 habitsFor = { habitContextFor(it) },
                 stats = autocorrectStats,
@@ -692,7 +693,7 @@ class SuggestionController(
         private const val TAG = "SuggestionController"
 
         /** Langues qui ont des règles de contexte (homophones, confusions de mots) : voir [ContextualCorrection]. */
-        private val CONTEXTUAL_LANGUAGES = setOf(KeyboardLanguage.FR, KeyboardLanguage.EN, KeyboardLanguage.ES, KeyboardLanguage.DE)
+        private val CONTEXTUAL_LANGUAGES = KeyboardLanguage.entries.toSet()
 
         /** Phase 6 (debug) : le rapport des compteurs de l'autocorrection est écrit dans logcat tous les 100 mots examinés. */
         private const val STATS_LOG_EVERY = 100L

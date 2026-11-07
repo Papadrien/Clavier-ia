@@ -189,3 +189,14 @@ Produits par tools/build_ngrams.py : seuls les comptes de paires de mots conséc
 conservés, pas les phrases ; mots du dictionnaire de la langue seulement ; paires vues au moins 2 fois ; au plus 400 000 paires
 (fr : 255 111, en : 400 000). Une phrase sur 50 n'est jamais comptée : elle sert au banc (tools/autocorrect-bench/heldout/<code>.txt,
 2 000 phrases Tatoeba par langue, même licence). Voir docs/autocorrection-roadmap.md.
+
+
+=== Italien, portugais, néerlandais : listes réparées et bigrammes (it.txt, pt.txt, nl.txt, bigrams/) — 07/11/2026 ===
+tools/complete_from_tatoeba.py, à partir des mêmes phrases Tatoeba (CC BY 2.0 FR) que les bigrammes :
+- ajoutés : mots à apostrophe vus au moins 50 fois (it : 282, dont c'è, dov'è, l'ho ; nl : zo'n, m'n, z'n) et quelques mots courants
+  absents (it : un ; pt : agente, d'água) ; fréquence = nombre Tatoeba x rapport médian liste / Tatoeba ;
+- rétrogradés à la fréquence 1 (sous le seuil de validité) : formes sans accent que Tatoeba n'emploie presque jamais (moins de 0,5 % de
+  la forme accentuée vue au moins 20 fois) : it 342 (piu, cosi, citta...), pt 1 094 (nao, voce, tambem...), nl 24 (cafe, israel...) ;
+  fautes d'accent italiennes (perchè, finchè, poichè...) ;
+- gardés valides à la fréquence 5 (remplacés par les règles de contexte) : qual'è, qual'era ; concerteza, derrepente, apartir, porisso, denovo.
+Bigrammes it (280 356 paires), pt (201 915), nl (87 976) : tools/build_ngrams.py. Voir docs/autocorrection-roadmap.md.

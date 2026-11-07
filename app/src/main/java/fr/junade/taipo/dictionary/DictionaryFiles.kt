@@ -59,7 +59,8 @@ object DictionaryFiles {
     fun bigramRemoteUrl(language: KeyboardLanguage): String = "$SERVER_BASE_URL$REMOTE_DIRECTORY/bigrams/${language.tag}.txt"
 
     /** Langues dont les bigrammes existent et dont l'autocorrection s'en sert (`CorrectionConfidence.contextWeight`). */
-    val BIGRAM_LANGUAGES: Set<KeyboardLanguage> = setOf(KeyboardLanguage.FR, KeyboardLanguage.EN)
+    val BIGRAM_LANGUAGES: Set<KeyboardLanguage> =
+        setOf(KeyboardLanguage.FR, KeyboardLanguage.EN, KeyboardLanguage.IT, KeyboardLanguage.PT, KeyboardLanguage.NL)
 
     /** Vrai si [language] a des bigrammes et qu'ils ne sont pas encore là. */
     fun bigramsMissing(filesDir: File, language: KeyboardLanguage): Boolean =

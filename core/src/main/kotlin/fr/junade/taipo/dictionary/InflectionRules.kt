@@ -75,6 +75,18 @@ class InflectionRules(
     companion object {
         val NONE = InflectionRules(emptyList())
 
+        /** Portugais : pluriel en « s », la seule flexion assez régulière pour ne pas fausser les corrections (comme avant). */
+        val PORTUGUESE = InflectionRules(listOf(InflectionRule("s")))
+
+        /**
+         * Néerlandais : pluriel ou possessif en « 's » après une voyelle (« foto's », « Maria's ») et mots composés (« fietsenstalling »),
+         * comme l'allemand, avec les liaisons néerlandaises (« s », « en », « e »).
+         */
+        val DUTCH = InflectionRules(
+            listOf(InflectionRule("'s")),
+            compounds = CompoundRules(links = listOf("", "s", "en", "e")),
+        )
+
         /** Allemand : pas de flexion régulière (les formes fléchies sont dans les listes), mais des composés. */
         val GERMAN = InflectionRules(emptyList(), compounds = CompoundRules.GERMAN)
 

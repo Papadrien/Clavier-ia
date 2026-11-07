@@ -39,7 +39,7 @@ object ContextualCorrection {
         return corrected
     }
 
-    /** La correction de contexte de [language] seule (français, anglais, espagnol ou allemand), sans habitudes ; null : rien à changer ou langue sans contexte. */
+    /** La correction de contexte de [language] seule (chaque langue du clavier a sa table), sans habitudes ; null : rien à changer. */
     fun correctWithoutHabits(
         language: KeyboardLanguage,
         text: String,
@@ -51,7 +51,9 @@ object ContextualCorrection {
         KeyboardLanguage.EN -> EnglishContextCorrector.correct(text, textMayBeTruncated, allowRetro, frequencyOf)
         KeyboardLanguage.ES -> SpanishContextCorrector.correct(text, textMayBeTruncated, allowRetro, frequencyOf)
         KeyboardLanguage.DE -> GermanContextCorrector.correct(text, textMayBeTruncated, allowRetro, frequencyOf)
-        else -> null
+        KeyboardLanguage.IT -> ItalianContextCorrector.correct(text, textMayBeTruncated, allowRetro, frequencyOf)
+        KeyboardLanguage.PT -> PortugueseContextCorrector.correct(text, textMayBeTruncated, allowRetro, frequencyOf)
+        KeyboardLanguage.NL -> DutchContextCorrector.correct(text, textMayBeTruncated, allowRetro, frequencyOf)
     }
 
     /**

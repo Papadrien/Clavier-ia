@@ -165,23 +165,28 @@ object DictionaryLoader {
         language == KeyboardLanguage.DE && GermanVariants.usesSwissSpelling(java.util.Locale.getDefault().country)
 
     /**
-     * Décision de déclenchement de l'autocorrection (phase 3) : calibrée sur le français et sur l'anglais (docs/autocorrection-bench.md) ;
-     * l'espagnol a des valeurs de départ non mesurées ; les autres langues gardent le comportement d'avant tant qu'elles n'ont pas leur banc.
+     * Décision de déclenchement de l'autocorrection (phase 3) : chaque langue a la sienne, mesurée sur son banc (docs/autocorrection-bench.md,
+     * docs/autocorrection-roadmap.md) ; l'espagnol garde des valeurs de départ.
      */
     private fun confidenceOf(language: KeyboardLanguage): CorrectionConfidence = when (language) {
         KeyboardLanguage.FR -> CorrectionConfidence.STANDARD
         KeyboardLanguage.EN -> CorrectionConfidence.ENGLISH
         KeyboardLanguage.ES -> CorrectionConfidence.SPANISH
         KeyboardLanguage.DE -> CorrectionConfidence.GERMAN
-        else -> CorrectionConfidence.NONE
+        KeyboardLanguage.IT -> CorrectionConfidence.ITALIAN
+        KeyboardLanguage.PT -> CorrectionConfidence.PORTUGUESE
+        KeyboardLanguage.NL -> CorrectionConfidence.DUTCH
     }
 
-    /** Seuil des oublis d'accent : celui du français partout, sauf en espagnol où l'accent distingue souvent deux mots justes (esta / está). */
+    /** Seuil des oublis d'accent de chaque langue (voir [AccentPolicy]) : l'accent distingue souvent deux mots justes (esta / está, e / è). */
     private fun accentPolicyOf(language: KeyboardLanguage): AccentPolicy =
         when (language) {
             KeyboardLanguage.ES -> AccentPolicy.SPANISH
             KeyboardLanguage.DE -> AccentPolicy.GERMAN
-            else -> AccentPolicy.FRENCH
+            KeyboardLanguage.IT -> AccentPolicy.ITALIAN
+            KeyboardLanguage.PT -> AccentPolicy.PORTUGUESE
+            KeyboardLanguage.NL -> AccentPolicy.DUTCH
+            KeyboardLanguage.FR, KeyboardLanguage.EN -> AccentPolicy.FRENCH
         }
 
     /** Prénoms de [language] : `names/<code>.txt`, un par ligne, « # » = commentaire. Absent : aucun nom. */
@@ -198,10 +203,11 @@ object DictionaryLoader {
         KeyboardLanguage.FR -> InflectionRules.FRENCH
         KeyboardLanguage.EN -> InflectionRules.ENGLISH
         KeyboardLanguage.ES -> InflectionRules.SPANISH
-        // Pluriel en « s » (portugais) : la seule flexion assez régulière pour ne pas fausser les corrections.
-        KeyboardLanguage.PT -> InflectionRules(listOf(InflectionRule("s")))
+        KeyboardLanguage.PT -> InflectionRules.PORTUGUESE
         KeyboardLanguage.DE -> InflectionRules.GERMAN
-        KeyboardLanguage.IT, KeyboardLanguage.NL -> InflectionRules.NONE
+        // Néerlandais : « foto's » et mots composés (voir InflectionRules.DUTCH) ; italien : les formes fléchies sont dans la liste.
+        KeyboardLanguage.NL -> InflectionRules.DUTCH
+        KeyboardLanguage.IT -> InflectionRules.NONE
     }
 
     private fun readFile(file: File, minFrequency: Long): Map<String, Long> =

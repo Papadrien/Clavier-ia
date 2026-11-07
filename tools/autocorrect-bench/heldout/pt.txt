@@ -1,0 +1,2001 @@
+# Phrases Tatoeba (CC BY 2.0 FR) jamais comptées dans dictionaries/bigrams/pt.txt : voir tools/build_ngrams.py.
+Este é o homem que eu vejo no trem todos os dias.
+Ele foi ferido na guerra.
+Ela gosta de ouvir música clássica.
+Não coma entre as refeições.
+Meu irmão tem muito prazer em sua coleção de selos.
+Isso é suficiente para cinco dias.
+Ele construiu uma mesa e dois bancos para nós.
+Faça-me o favor de passar o sal.
+Eu não sei quando ela pode vir.
+Quantos ovos você conseguiu ontem?
+É rude da parte dele não me ligar.
+Como a palavra é acentuada?
+Ele não tinha a intenção de esperar por três horas.
+O nome daquele garoto é Shintaro Wada.
+Eu tenho um irmão mais velho.
+Ele vai para Nova York próximo mês.
+O clima daqui não concorda comigo.
+Um mês lunar é mais curto que um mês no calendário.
+Ele foi convertido do budismo para o cristianismo.
+Eu nasci há vinte anos atrás.
+Veja, eu abandonei a escola quando tinha treze anos.
+Ele é um dos nossos diretores mais experientes.
+Ele podia estar no ginásio.
+Eu queria que você tivesse me contado a verdade naquele momento.
+Detroit é famosa pela sua indústria automobilística.
+Não se atrase para a escola.
+Você deve fazer o que te mandam.
+As luzes se apagaram nesse instante.
+Eu imaginei se eu conseguiria fazer tal coisa.
+John é meu irmão mais novo.
+Não envelheça, fique mais experiente!
+Você pode manter o barulho baixo?
+Adivinha! Eu vou estudar na Nova Zelândia!
+A companhia tem um capital de 500 mil.
+Ele mudou muito desde a última vez.
+A conversa diplomática ajudou a pôr fim ao conflito.
+Olhe para mim quando eu falar com você!
+Eu vivi em Sendai por dez anos antes de vir para Tóquio.
+Eu vou lhe escrever cartas tão frequentemente quanto eu puder.
+Ela tem dois anos, mas já consegue contar até 100.
+Todos os homens são iguais.
+A palavra francesa "chat" significa "gato".
+Mostre-me o passaporte, por favor.
+O cachorro dele o segue aonde ele for.
+Eu não consigo achar meu guarda-chuva.
+Parece que você é da Índia.
+Ele é alemão de nascimento.
+Se o mundo não fosse como ele é hoje, eu poderia confiar em qualquer um.
+Me dê uma razão para fazer isso.
+Eu não posso gastar nem um iene.
+Eu nunca vi uma geladeira vermelha.
+Meu pai é meio careta.
+O carro bateu no muro.
+São todos do mesmo tipo?
+Não importa o que ele disse, não confie nele.
+O inglês se tornou uma língua internacional.
+Eu não sabia como responder a sua questão.
+"Ela gosta de música." "Eu também."
+Nos tempos modernos as pessoas estão distantes umas das outras.
+A vida começa quando você está pronto para vivê-la.
+Ele é argentino e dá aula de tênis.
+Há altos e baixos na vida.
+Há várias coisas que devem ser feitas. Você quer ajuda?
+Ela está à beira de um colapso nervoso.
+Eu moro perto do mar, então eu frequentemente vou para a praia.
+Vale a pena lembrar do problema.
+Eu próprio já paguei multas por estacionamento proibido algumas vezes.
+Algum problema se eu parar por um tempo?
+Todos os homens se odeiam naturalmente.
+Foi Alistem quem matou Bárbara.
+Ele disse que sofria de uma forte dor de cabeça.
+Ele gosta de fazer tudo ele mesmo.
+Eu vou ler um livro.
+Eu serei o deus do novo mundo.
+Eu não pude reconhecê-lo porque eu nunca o vi anteriormente.
+Não se pode negar que o prisioneiro é culpado.
+Um corvo é tão negro quanto carvão.
+Charlie decidiu riscar a última palavra.
+Caminhar é um bom exercício.
+Havia muitas maçãs estragadas na cesta.
+Deixe que eu me viro só.
+Gosto mais dos meus irmãos do que das minhas irmãs.
+Minha casa é mais confortável do que a sua.
+Nosso time está cinco pontos à frente.
+Pior a calmaria que a tormenta.
+Você não precisa fazer de uma vez só.
+Discuti o assunto com ela.
+Eu toco em uma banda.
+Ela é casada com um estrangeiro.
+Roupa suja lava-se em casa.
+O que você vai fazer?
+Helen está a brincar no quintal.
+O balde estava cheio d'água.
+Você pode me emprestar um grampeador?
+Enfio meus livros na gaveta.
+Meu irmão casou-se com a mulher do seu amigo no ano passado.
+Ele é o tipo de cara que não leva as mulheres muito a sério.
+Nós deveríamos preservar um pouco de comida.
+Estou com uma terrível dor de cabeça.
+Nunca mais minta para mim.
+Por que não podemos fazer cócegas um no outro?
+Papai está tentando calcular os impostos.
+Ele estava determinado a viajar pro exterior.
+A que horas sai o seu voo?
+Você pode consertar o pneu furado agora?
+Eu sei onde ela está.
+Uma língua é um dialeto com exército e marinha.
+Os trens passam com mais frequência do que os ônibus.
+Eu estava muito ocupado ontem.
+Seria melhor se você viesse comigo.
+Poderia me ver uma água, por favor?
+Algumas pessoas não gostam de acordar cedo de manhã.
+Ele está sofrendo de perda de memória.
+Passaram a noite toda comigo no quarto.
+Mary é uma menina muito linda.
+O problema é que eu não consigo me lembrar onde eu estacionei o carro.
+Um carro com oito anos quase não tem valor.
+O número de acidentes de trânsito está aumentando a cada ano.
+Jimmy se feriu em um acidente de trânsito.
+Alguns amigos meus falam bem inglês.
+Ele estava bêbado demais para dirigir para casa.
+Dizem que ele era músico quando era mais jovem.
+Ultimamente como é que você está indo?
+Ele deu a entender sua intenção.
+O cabelo do papai ficou branco.
+Ele perdeu o trem das oito e meia.
+O lápis rolou e caiu da beira da minha mesa.
+Me desculpe, a culpa é toda minha!
+Ele pediu a ela explicação sobre como ela utilizou o dinheiro.
+Tenho uma forte dor de dentes.
+Meu neto ainda é um bebê.
+Eles sempre vão esquiar no inverno.
+Este é o melhor restaurante de frutos do mar da vizinhança.
+Meus pais me enviaram um cartão-postal.
+Ontem não fazia muito frio.
+Meu canário foi morto por um gato.
+Por que você está no banheiro?
+Eu não o vejo há anos.
+Isso está fora da minha especialidade.
+Você mencionou algo sobre minha mãe.
+O poder é o maior afrodisíaco.
+A menina usava fitas vermelhas no cabelo.
+Eu gosto da foto que estou vendo aí.
+Que filme vocês estão vendo?
+Eu estou vendo que está chovendo.
+Aquela é a casa onde eu fico.
+O carro é do Brian.
+Como você acha que essa mudança será recebida?
+O meu dinheiro foi roubado.
+Então fale agora ou cale-se para sempre.
+Talvez você queira quinze queijos.
+O que separa Guangdong de Guangxi?
+A nossa sala se mantinha limpa.
+Somos influenciados por nosso meio.
+Sente-se aqui e se esquente.
+O menino tem um jornal.
+O que você gostaria de beber? Café?
+Ela geralmente vem aqui às terças.
+Ela está sempre vestida de preto.
+O inglês é a minha língua materna.
+Ele sempre diz a mesma coisa.
+Há certas crenças sobre vacas na Índia.
+O presidente fala como um verdadeiro patriota.
+Eu sei que eu não sei.
+Eu não gosto desta jaqueta.
+Seu melhor amigo do escritório veio visitá-lo.
+Bill estava no seu quarto.
+O parque estava cheio de gente.
+Tema a vingança do mini pepino!
+Não posso chegar lá em uma hora.
+Parece que amanhã vai ser um dia ensolarado bem quente.
+Ela foi vê-lo o outro dia.
+Ela o visitou em Boston.
+Ela arriscou sua vida para salvá-lo.
+Ela o persuadiu a fazê-lo.
+Ela o interrompeu enquanto falava com meu pai.
+Ela nunca esteve em um carro dirigido por ele.
+Ela possivelmente sabe a resposta.
+Ela esperava que ele aceitasse o suborno.
+Ela não queria que ele morresse.
+Eles se esqueceram de travar a porta.
+Você parece ser um homem honesto.
+Acusaram-no de estar na sala de aula para causar confusão.
+A teoria do Big Bang foi proposta em 1927 e expandida em 1929.
+Seu método de ensinar inglês é absurdo.
+Em 1972, a doutora Francine Patterson começou a ensinar a língua de sinais a Koko.
+Ele ensina artes e ofícios numa escola.
+Ele está ensinando espanhol às crianças.
+Ela me acompanhou no piano.
+A princesa implorou perdão ao imperador.
+Eu tirei a mesa do meio.
+Eu estava ciente do perigo.
+Não importa se ele chega atrasado ou não.
+Não consigo achar outra solução.
+Ela era um gênio em matemática.
+Exalou um profundo ar de desânimo.
+A ilha está muitos quilômetros distante da costa.
+Eles apagaram meu nome da lista.
+A América é sem igual em recursos naturais.
+Um júri tem geralmente 12 membros.
+Eu acho que é hora de eu arranjar um emprego.
+Eu acho que é hora de eu desligar a TV.
+Você sabia que ele é bom em fazer café?
+Você se importa se eu abrir a porta?
+A Itália está longe do Brasil.
+Quantos anos você acha que eu tenho?
+Eu sei que ela está dormindo.
+Exercícios físicos diários são indispensáveis para sua saúde.
+Isso pode parecer loucura, mas acho que quero voltar e fazer de novo.
+Não quero ir à escola hoje.
+Esta ilha era habitada por pescadores.
+Não sei exatamente quando estarei de volta.
+Eu não quero ser antissocial, mas estou cansado.
+Não se case. Seja feliz!
+Você já foi a Veneza?
+Você já viu a figura pintada por Picasso?
+Você já foi testemunha num caso de tribunal?
+O presidente era um fazendeiro quando ele era jovem.
+Ele raramente vai ao cinema.
+O homem lendo um jornal é o pai dele.
+O jantar está pronto, pai.
+O supermercado está aberto todos os dias, menos de domingo.
+Ele disse: "Quero ser cientista."
+Ele almoça aqui de vez em quando.
+Ele devia ter jantado conosco.
+Qual você acha ser o melhor filme que viu esse ano?
+Coloque um pouco mais de açúcar.
+Ela colocou muito açúcar no café.
+Nunca vi algo assim antes.
+Ele nunca disse obrigado por tudo o que eu fiz por ele.
+Acho que ela tem 40 anos.
+Traga-me um pouco de água gelada.
+Eu o segurei pelo braço antes que ele caísse.
+Eu fico imaginando - por que ele está atrasado?
+Minha garganta dói quando eu engulo algo.
+Você pode me explicar a diferença entre o chá preto e o chá verde?
+Já que estava cansado, foi para a cama cede.
+O maiô dela chama nossa atenção.
+Eu perguntei a ela se eu poderia ler o livro.
+Meu pai precisa executar o trabalho.
+Eu comprei este livro na livraria em frente à estação.
+Ela é a esposa de Alain.
+Para jogar baralho precisamos de mais uma pessoa.
+Ele se machucou seriamente no acidente de trânsito.
+Por favor, ajuste a imagem da televisão.
+Os elefantes africanos são maiores que os elefantes asiáticos.
+Você tira xerox? Preciso de dez cópias.
+Dirija direito! Você quase atingiu aquele senhor!
+Não te preocupes com o dia seguinte.
+Dói-me dizer isso, mas você está demitido.
+Você se apaixonou por ela à primeira vista?
+Ela tem um namorado turco.
+Às vezes dói muito saber a verdade.
+Faz muitas coisas pelas pessoas pobres.
+Posso lhe fazer uma pergunta?
+Eu não quero que ele me toque.
+Esta frase está a ponto de ser traduzida.
+Ele observou muitos tipos de criaturas lá.
+Seu filho estava com a saúde delicada.
+Ele respondeu de forma breve.
+O barco não está à venda.
+Você deveria levar seu passaporte ao banco.
+Você é muito jovem para namorar.
+Seus bigodes postiços começaram a descolar de um lado.
+Minha mãe me fez uma linda saia.
+Costumava nadar todos os dias quando era pequeno.
+Todos os dias volto para casa cedo.
+Minha tia me trouxe algumas flores.
+Algumas pessoas estavam lá fora paradas esperando.
+Ela não gostava de seu marido.
+Cada ciência tem sua própria terminologia.
+Você deveria fazer sua tarefa agora.
+Estou com um pneu furado.
+Eles se separaram e nunca mais se viram novamente.
+Não o critique em público.
+Quando ele caiu, machucou seu joelho.
+A leitura é meu passatempo.
+Minha mãe tem medo de elevadores.
+Quais são os átomos que formam uma molécula de água?
+Não lembro com exatidão a cara de meu pai.
+Não posso suportar ser incomodado no trabalho.
+Você não é tão baixo quanto eu.
+Ele foi à Áustria com o propósito de estudar música.
+Você poderia cuidar do bebê por um tempinho?
+Alguém esteve aqui enquanto eu estava fora?
+Vai um chiclete, minha jovem?
+Seu marido vive em Tóquio agora.
+Eu tive uma noite excelente.
+Ele não parece ser um garoto muito inteligente.
+Ano passado foi abril o mês mais caloroso.
+O elefante é um animal bem grande.
+Este abrigo é bonito, mas caro demais.
+Depois dele, eu sou o corredor mais rápido da nossa classe.
+Tive minhas primeiras experiências sexuais com uma mulher vários anos mais velha que eu.
+A notícia exagerou o número de vítimas.
+Não sei o que significa esta palavra. Vou procurá-la no dicionário.
+Tenho certeza de que Bob passará no exame.
+O que você quer que eu faça?
+Pouco importa se é bom, façamos mesmo assim.
+Cinco galões de gasolina, por favor.
+É hora dela ir para casa.
+Mary continuou trabalhando apesar de sua doença.
+Tem cadeiras suficientes para todos?
+Vou lhe contar a história da minha vida.
+Escreva a sua data de nascimento aqui.
+Eu gosto mais da bicicleta verde do que da rosa.
+Eu me perdi. Você pode me ajudar, por favor?
+O abacaxi é uma fruta ácida.
+Quando te vejo, lembro-me de seu irmão mais velho.
+Quase sofremos um acidente de carro após atropelarmos uma tartaruga na pista.
+Não cheguem perto do cachorro.
+Meu caçula de três anos põe mesmo a prova minha paciência.
+Não acontece nada deixar que o bebê chore de vez em quando.
+Comprei um relógio e a caixa veio vazia.
+A caixa quebrou devido ao peso da carga.
+Você sabia que a caixa preta não é preta, mas laranja?
+Comprei um novo conjunto de caixas de som.
+Deixe a massa do pão descansar numa folha de bananeira.
+O que está escrito nesta folha?
+Mamãe deu-me todo o amor de que precisava.
+Ele estava procurando algo na escuridão.
+Há relação entre o tabaco e o cancro de pulmão?
+A loja esteve cheia de gente ontem.
+Para que queres um carro se não o diriges?
+Chaplin deixou a América do Norte para sempre.
+Metade dos ovos vieram estragados.
+Você sabia que os ovos de Páscoa têm origem pagã?
+A única razão que a levou a aceitar foi porque você o pediu.
+A mancha desapareceu depois de lavarmos a camisa.
+Nem é preciso dizer que camelos são muito úteis no Oriente Médio.
+Ao retirar a lâmpada me queimei, devido à alta temperatura que se encontrava o vidro.
+Você está vendo aquele ponto preto? É um avião.
+Eu fiquei desapontado com o discurso dele.
+Fiquei muito zangado porque ele mentiu para mim.
+Muito se fala sobre a estrela de cinco pontas invertida.
+A vida no campo é muito tranquila comparada a vida na cidade.
+Eu consigo nadar bem rápido.
+O piloto pulou de paraquedas poucos instantes antes da queda do avião.
+Ele entregou-me uma carta nos últimos instantes de sua vida.
+Este país tem um clima temperado.
+Fez um corte no dedo indicador.
+Não tem nada mais refrescante que uma cerveja gelada num dia caloroso.
+Amy vai todas as manhãs a pé à estação.
+Eu gostaria de telefonar para os meus pais.
+Todo homem tem seus próprios pontos fortes.
+Antigamente a Internet custava os olhos da cara.
+Seu desejo de mergulhar custou-lhe a vida.
+Por fim, deu-se conta de seu erro.
+Não se preocupe, já estou aqui.
+Você é linda de qualquer jeito.
+De que jeito você estuda?
+Os assuntos da empresa devem ficar na empresa.
+Quanto fica se eu comprar três desses e dois daqueles?
+E o mesmo sucedeu nos oito dias seguintes.
+Acho que assistir à TV é uma perda de tempo.
+Essa noite fazia muito frio.
+Nem sempre é fácil contar uma boa piada.
+O livro "Mein Kampf", de Hitler, foi concluído na cadeia.
+"Este é o caminho mais curto", concluiu o caminhoneiro.
+Este medicamento é inodoro e insípido.
+Tu irás comigo à loja?
+O número de automóveis circulando na cidade tem aumentado.
+A mãe penteou o cabelo da filha.
+Sentimos muito pelo erro dele.
+Se você se sentir ameaçada, não hesite em acudir à minha casa.
+Nem todas as crianças gostam de maçãs.
+Ele colocou um anúncio no jornal.
+O piloto insinuou que poderia ser um OVNI.
+Está preocupada por sua segurança.
+Ele começou a fazer o curso justamente quando eu concluía o meu.
+Muitos pacientes de cancro perdem seu cabelo por causa da quimioterapia.
+A gente tem tempo para caramba.
+Esta é uma advertência médica.
+Sinto muito, não está em casa.
+Dá-me um bom motivo para que eu te ouça agora.
+A comemoração do aniversário de Marta acabou em morte.
+Aconselho este filme a todos. É deveras interessante.
+O homem veio carregando a filha nos ombros da igreja até em casa.
+Todos queremos que baixem os preços.
+Escove os dentes depois de cada refeição.
+Chegará um momento em que você se arrependerá disto.
+Sou surdo, e não posso escutá-lo.
+Ela só vê em mim as minhas qualidades.
+A festa estava boa, mas a qualidade da decoração deixou a desejar.
+Não posso fazer outra coisa.
+É bom para a saúde.
+Ele gosta do jazz, e eu também.
+O governo torturou o cidadão a fim de que ele confessasse.
+Muitas pessoas negam que o homem seja semelhante a Deus.
+Que critérios você usa ao decidir em quem votar?
+Tenho frio. Você se importa em fechar a janela?
+Ele sempre me deu proteção, porém eu nunca retribuí.
+Dê-me dois litros de leite, por favor.
+Anne sugeriu que chamássemos você para nos ajudar.
+Foi um espanto para ela ouvir sobre a morte do amigo.
+Onde é que você estava metida?
+Eles tinham pouco combustível para se aquecer e cozinhar.
+Como você diz não ter ninguém? Você possui a mim!
+Ela é a minha única fonte de inspiração.
+Você tem algo mais barato?
+A viúva escreveu sobre a pedra tumular: "Descanse em paz - até nos reencontrarmos."
+Os coalas estão cheirando o eucalipto.
+Ela parecia possuída por um espírito maligno.
+Preciso de uma faca de ponta fina para desparafusar isto.
+A translação terrestre é circunstância necessária para que hajam as diferentes estações.
+Diga apenas ao senhor Tate que Helen Cartwright está aqui para vê-lo.
+Deixei o teu livro no carro.
+Paris é um lugar de grande encanto para as mulheres japonesas.
+Um dos meus hobbies é coletar selos antigos.
+O leão zela o seu território e as suas crias acima de tudo.
+Mesmo sentindo-se tentada, a mulher devolveu o dinheiro encontrado ao dono.
+O incidente fez que nos separássemos.
+Pedimos batatas fritas e refrigerante.
+Um rapaz morreu esmagado nesta prensa.
+Alguns animais são obrigados a cantar a fim de conquistarem a fêmea.
+Cerca de 50 pessoas morreram no local.
+A primeira geração de robôs surgiu em 1962.
+As lentes de contato machucam meus olhos.
+Você é assinante dessa revista?
+Obrigado por me convidar à sua festa de aniversário.
+Você gosta de ter que ficar esperando?
+O único propósito dela na vida era ficar rica.
+Seria interessante termos uma filmadora para que pudéssemos registrar seu aniversário.
+Um barranco separa os dois bairros.
+Era uma chácara completa, com piscina, churrasqueira, campo de futebol e mesa de bilhar.
+Você acessa a Internet em casa ou no trabalho?
+Apenas o lado esquerdo do meu fone de ouvido funciona.
+Bill Gates doou US$ 28 bilhões à caridade.
+Pensei que você não queria vir.
+Ele nunca fica furioso seja qual for o porquê.
+A que dicionário te referias?
+Tamara parecia uma alma penada porque andava sempre só, cabisbaixa, melancólica.
+Ele disse que deve acabar o trabalho por volta de meio-dia.
+Tinha as mãos grandes e os pés pequenos.
+Talvez você consiga se tentar de novo.
+Pouca gente sabe o que a palavra "hipster" quer dizer.
+O elevador não tem capacidade para tanta gente.
+O canguru salta muito alto.
+Ele é mais alto que eu.
+A teoria dele está baseada em vários fatos.
+Ele nos concedeu o direito de usar seu iate.
+Ele é bem mais alto do que todo o resto da classe.
+Quando se inteirou do êxito dos demais, ficou verde de inveja.
+Que linda é esta flor!
+As ruas estavam decoradas com bandeiras.
+Os investigadores criminais estão debruçados sobre o caso de assassinato.
+Ele deu o nome de Popeye a seu cachorro.
+Eu achei que algumas pessoas iriam praticar esqui aquático conosco, mas absolutamente ninguém apareceu.
+Sempre fui alvo de suas ameaças.
+Tivemos a visita de dois mil internautas britânicos este fim de semana.
+Sua ajuda caiu como uma luva.
+O projeto de lei ficou à deriva durante anos.
+Estarei em segurança caso o denuncie?
+Levei 5 minutos para resolver esse problema.
+Muitos foram os chamados a prestar depoimento à polícia.
+Eu sei que supostamente eu devia gostar dessa aula, mas não gosto.
+Você apresenta algum problema de audição?
+Nunca pensei que seria tão fácil hackear seu site.
+Eu não acredito que você vai dar todo seu dinheiro.
+Ele não gosta de usar camisas sociais.
+"O que é que você ia me dizer?" "Na hora do recreio eu te conto."
+Resolvi todos os exercícios em menos de meia hora.
+Não se pode morar em família num apartamento tão pequeno assim.
+Domingo é o primeiro dia da semana no calendário português.
+Se estiveres ocupado agora, posso voltar mais tarde.
+Tom pegou um pouco de torta.
+A placa dizia para tomar cuidado com o cão.
+Você me empresta a lição de história?
+Os preços continuam a subir.
+Diz-se que comer mais devagar é uma maneira de comer menos.
+Esta expressão pode revelar-se útil.
+O homem é uma criatura de emoções.
+O senhor me permite recomendar outro hotel?
+Eu não sei se ele trancou a porta.
+O eclipse ocorreu na noite desta sexta-feira.
+Você lembra quando foi que você comeu neste restaurante pela primeira vez?
+Ele fez ao professor perguntas estúpidas.
+Os atores devem sentir os seus personagens.
+Eu não sou o ladrão, você é testemunha!
+Jacarandá é nome de árvore.
+Você não conseguirá nada fazendo isso.
+Por que ele parece preto?
+É um conceituado professor de Física.
+Com certeza ele acredita em você, já que ele ainda lhe dá uma oportunidade.
+Muitos consideram o Norte e o Sul brasileiros dois países distintos.
+Estuda música há 7 anos e não sabe tocar um Beethoven.
+Eu conheço um bom restaurante italiano.
+Muitos conseguem entrar ilegalmente nos EUA.
+Qual é o seu sabor de sorvete favorito?
+Você saiu nos jornais, viu só?
+O professor exigiu que o trabalho fosse manuscrito.
+Pedi ao mordomo que nos servisse um café.
+A classe não parava de falar enquanto via o filme.
+A mesquita de Sevilla virou a catedral depois da Reconquista.
+Estou a montar um quebra-cabeça de 750 peças.
+Não aceita as ordens do pai.
+Sinto-me abandonado pela única mulher que amo.
+O médico a aconselhou que ficasse em casa.
+Durante a história da química, vários modelos atômicos foram propostos.
+O conto está sujeito a distintas interpretações.
+Perdão, Jorge! Não tinha te visto!
+Sua mulher é acusada de assassinato.
+Um pássaro está cantando na árvore.
+O videocassete data da década de 50.
+Reciclando, diminuímos o acúmulo de lixo.
+Um é novo. O outro é velho.
+Se o medicamento não funciona, talvez devamos aumentar a dose.
+A mineralogia é a ciência dos minerais.
+Você já terminou de ler o jornal?
+A lista telefônica é do ano passado, mas ainda serve para vários contatos.
+A sala precisa de uma cortina nova.
+Ele está falando ao telefone.
+O que você disse é verdade.
+Deixe a linguiça assando mais um pouco, que ainda está crua.
+Como é prazeroso ver você feliz!
+Com certeza ela tentará outra vez.
+Meu filho ainda não tem idade para ir à escola.
+Para mim, este livro é difícil de ler.
+Em qual sorveteria vocês querem ir?
+Comprando uma peça, você leva um brinde.
+Quer comer pão ao meio-dia?
+Por razões que eu desconheço, ela não quer falar comigo.
+É a primeira vez que vejo meu pai biológico.
+Obterei meu diploma em dois anos.
+Este porta-moedas é de papel.
+Ela se casou com um zé-ninguém.
+Tire as mãos do meu trabalho!
+Levantei-me e fui à escola.
+Que tipo de pessoa maltrata os próprios avós?
+A carne vermelha é um alimento proteico.
+O ladrão disse à polícia que não roubara nada.
+Esse filme foi muito chato.
+No começo, os indianos eram amigáveis.
+Não vou mais tolerar isso!
+Não, não sou brasileiro. Sou português.
+Você mora em Portugal ou no Brasil?
+Helga é um nome sueco.
+"Onde fica o Rio de Janeiro?" "Fica no Brasil."
+A mãe disse que eu não falasse com estranhos.
+Ela explicou-me o ocorrido em detalhes.
+Vocês podem comer tudo o que quiserem.
+Não gosto de papai embriagado.
+O fogo derrubou a porta.
+Os bandidos fizeram um túnel e roubaram o banco.
+Se eu fosse rico, viajaria.
+Esta é uma reunião muito importante.
+Encontrei dois livros: um amarelo e um vermelho.
+Esta foto tem uma história bem interessante.
+Estou te dizendo, não vou.
+Florencia é do Chile. Ela é chilena.
+Meu primo é do Egito. Ele é egípcio.
+Falaremos sobre isso mais tarde.
+Fomos à cidade onde nasceu mamãe.
+Rosa, sua mãe e sua irmã estão em São Paulo.
+Mostra-me os jornais de hoje.
+Sara tem trinta e uma canetas.
+As pessoas estão falando uma de cada vez.
+Cheque de novo semana que vem.
+O Rio de Janeiro faz divisa com Minas Gerais.
+Seu cachorro sempre late para mim.
+A família toma café da manhã na sacada.
+Deve-se ajudar os amigos em momentos tão difíceis.
+Quero falar contigo em privado. Chama-me.
+O tomate dá num tomateiro.
+Diz-se frequentemente que o japonês é uma língua difícil de aprender.
+Tenho estado cometendo o mesmo erro por toda minha vida.
+Eu não gosto de chá, em geral eu bebo café com o meu pequeno-almoço.
+Eu me chamo Edgar Degas.
+Você faz trezentos abdominais por dia? Isso me parece totalmente impossível!
+Não há nada de interessante na bandeja.
+Se meu irmão estivesse lá, saberia o que fazer.
+Que mulher bonita a que te acompanha!
+É o melhor que podemos fazer?
+Com quem tenho a honra de falar?
+Aqui estão o senhor e a senhora Almeida.
+Em cima da mesa havia muito dinheiro.
+Consinto desde que ela venha.
+Ele disse algo ao meu amigo.
+Faz um ano que eu escrevo este texto.
+Foi Tom que salvou a garota.
+De qual livro você precisa?
+Não pule por cima da cerca!
+Faça o favor de mostrar-me o seu passaporte.
+Resta pouca tinta para imprimir.
+Como você conseguiu aprender línguas tão depressa e bem?
+Você deve estudar cinco páginas por dia.
+Ficarei muito alegre pela sua visita, se você tiver tempo para visitar-me.
+Iremos hoje depois do meio-dia visitar o sr. Souza?
+Quando a conta deve ser paga?
+Que é feito de sua sogra?
+Boa tarde, moça, como vai você?
+Ele não deixa passar nada!
+Eles se casaram quando ainda eram jovens.
+Entre, a porta não está trancada.
+Permite que eu me retire?
+Cuidado, que o cão morde.
+Desejo muito falar com você.
+Moro na Rua dos Urubus.
+Você pensa que, tão tarde assim, ainda acharemos bons lugares?
+Você está aqui a negócio ou por prazer?
+Receio parecer vestido com muita cerimônia.
+Moro na rua Rio Comprido, número duzentos e vinte.
+Ela é vaidosa como pavão.
+De preferência um pouco mais cedo.
+Você então não ficou com ciúmes?
+Acabei de receber uma carta do Brasil.
+Escreverei a você depois de amanhã.
+Você deve dizer, mas não isso.
+Amo o ambiente de vossa casa.
+Agradeço-te pelo teu amável telegrama.
+E correu logo a bater nela.
+Contra a vontade de Deus nada ajudará.
+Gema e chore, mas até o fim trabalhe.
+Uma coroa de glória não ajuda um caldeirão vazio.
+O acordo constrói, a guerra destrói.
+Uma cabeça é para isto: para que cuide de tudo.
+Mais vale um acordo do que um documento judicial.
+Escuta prudentemente quem escuta atentamente.
+Dar um ganso para receber um pardal.
+De quem sou hóspede festejo a festa.
+Uma mão lava uma mão.
+Escravo com mão forte é o maior tirano.
+Vida moderada é vida sem perigo.
+Desejo e inclinação não obedecem ordens.
+Papel da mulher - boa dona de casa.
+Ele se afoga em detalhes.
+Pequeno peso, mas grande preço.
+O ausente sempre está sem razão.
+O sinete ainda não foi posto.
+Contra todo tédio existe remédio.
+Contra mão forte a lei é inútil.
+Agradecemos honrarias se nos falta o que comer.
+Dizem que amendoim é afrodisíaco.
+Um estudante quer te ver.
+Tom tem um salário decente.
+A vida é bonita demais para ser insignificante.
+A verdade é raramente pura, e jamais simples.
+Nós vimos um castelo ao longe.
+Os dentes do leão são agudos.
+A mão do João está limpa.
+O papel é muito branco, mas a neve é mais branca.
+Partiremos antes que vocês cheguem.
+Aprendizes e instrutores devem ser bons amigos.
+Quando você chegar, ele já terá partido.
+Eu comprei uma dúzia de colheres e duas dúzias de garfos.
+No inverno aquecem-se os fogões.
+Hospedar-se na casa do irmão.
+Você já encontrou seu relógio?
+Nós estejamos alegres, nós usemos bem a vida, pois a vida não é longa.
+Ele sempre me dizia a verdade.
+Em vez de café ele me deu chá com açúcar, mas sem creme.
+Ele está hoje de mau humor.
+Deu-te ele resposta afirmativa ou negativa?
+Sobre a árvore achavam-se muitos pássaros.
+Uns são bons e outros são maus.
+Um inimigo entrou em nossa terra.
+Hoje está um belo tempo glacial, por isso pegarei meus patins e irei patinar.
+Pedro, Ana e Isabel são meus irmãos.
+Os tripulantes devem obedecer ao capitão do navio.
+O medroso teme até sua própria sombra.
+Eu o farei independente de você concordar ou não.
+Trabalhou durante anos numa loja de roupas.
+Não sei de onde ele vem.
+Por que você está tão nervoso com ele?
+Você cometeu este erro de propósito, não é mesmo?
+Tom é um grande motociclista.
+Ainda que eles tenham asas, os carros ainda não são completamente capazes de voar.
+Ele dá um pouco de carne para o cachorro.
+O piquenique foi adiado por conta da chuva.
+O Tom e a Mary não têm muito em comum.
+Não fosse a minha família, eu não teria trabalhado tanto.
+Quantos livros você pensa ter lido até agora?
+Tom está com o aluguel atrasado.
+Tom andou silenciosamente pela floresta.
+Ninguém é jovem demais ou velho demais para apreciar certo tipo de música.
+Ele não foi à escola porque estava doente.
+Como seria o alemão sem vírgulas?
+Eu lembro da minha juventude quando ouço essa música.
+Eu não costumava gostar de vinho, mas agora eu adoro.
+Eu nunca serei seu amigo.
+O garoto comprou um livro.
+Você não tem boa memória.
+Diz a lenda que há diamantes no local.
+Tenho saudade do meu povo.
+Se eu ganhasse na loteria, não doaria nada aos meus irmãos.
+Sentimos todos um grande dó dele.
+Você é o único espelho para mim.
+Sua casa é à beira do rio.
+Por que você xingou a mãe dele?
+Tom caiu no sono no trem.
+Cavalos e asnos são diferentes.
+Saber escrever deveria ser direito de todos.
+Ele dormiu com a janela aberta.
+Nós não estamos na floresta.
+É só minha opinião, não estou certo de nada.
+Tom quase caiu de sua cadeira.
+Ele ficou no hotel por vários dias.
+Quem é que ele está procurando?
+Vocês me fizeram perder a paciência.
+Você não quer outro copo de leite?
+Não é possível acreditar nas suas histórias.
+A cidade está muito perto, pode-se ir de bicicleta.
+Eu gostaria, mas é impossível responder a tantas perguntas de uma vez.
+Isto é o que eu teria dito.
+Pergunto-me se você realmente é feliz.
+Você ouviu a notícia no rádio hoje de manhã?
+Estou dando água aos cães.
+Essa garota é muito bonita.
+Não gosto de chocolate, o gosto é muito enjoativo.
+Amanhã vou recitar um poema de Pessoa.
+Ela sempre mantém seu quarto limpo.
+Quero ir jantar num restaurante.
+Se você não sabe a resposta, de que adianta coçar a cabeça?
+A moça deu um fora no rapaz quando este a convidou para dançar.
+Quero uma folha de reclamações.
+Justin Bieber nunca alcançará a puberdade.
+Ela pintou as paredes de branco.
+Eu não tenho nenhuma vontade de morar em uma grande cidade.
+Tom não conseguiu encontrar o que estava procurando.
+Pouco me importa quem é eleito.
+Com esses resultados, você não conseguirá entrar na universidade.
+Visitarei a sua casa amanhã.
+Tom não tem ingresso para o concerto desta noite.
+Tom queimou os dedos com uma frigideira quente.
+Qual é o seu tipo de música favorito?
+Tom terminou o trabalho em três horas.
+Ele não vive mais aqui.
+Faça o favor de me seguir.
+Não precisa levar guarda-chuva; deu no noticiário hoje que fará sol a tarde inteira.
+Eu acho que ainda estamos na Polônia!
+De quem vocês estão falando?
+O Tom limpou o banheiro.
+Ele será meu representante enquanto eu estiver fora.
+Eu deixei minha pasta no ônibus.
+Quantos cômodos tem a tua casa?
+Eu tenho confiança em Ken.
+Dê-me um pouco mais de tempo.
+Ele me disse aonde ir.
+Não faça dele um inimigo.
+Se você tivesse me dito a verdade, eu não estaria brava agora.
+Eu não tenho uma espada.
+Pelos meus cálculos, ela deveria estar na Índia a essa hora.
+Ouvi dizer que você é um bom tenista.
+Jack cometeu muitos erros em sua redação.
+Que posso fazer para te ajudar?
+Ele estava ardendo de raiva.
+É uma obra de arte maravilhosa.
+Os seres vivos são todos máquinas cujo programa é crescer e se reproduzir.
+Há tempo suficiente para um lanchinho rápido.
+Eu visito a cidade anualmente.
+A saia vermelha é nova.
+A gata está debaixo da cadeira.
+A ruptura do exoesqueleto ocorre por contrações abdominais.
+Ela perde muito tempo se arrumando.
+O maracatu é uma espécie de carnaval fora de época.
+Nunca se deve deixar de ter em casa uma boa e completa enciclopédia.
+Eu tenho apenas dez livros.
+Estados Unidos tinha um tratado de amizade com o México.
+Meu avô se levanta cedo.
+Meu filho vai para a França semana que vem.
+Meu melhor amigo trabalha para uma ONG no Afeganistão.
+Meu pai gasta muito em roupa.
+Ele se ofereceu para ajudar.
+O cachorro tem quatro patas.
+Após o tombo no palco, o cantor recebeu o apoio do público.
+Como estávamos em três, sentamo-nos numa mesa triangular.
+Minha mulher não se veste bem.
+Esse jornal é de graça.
+Espere até amanhã de manhã.
+Tom é o chefe de Mary.
+Um garçom francês foi contratado para servir o jantar desta noite.
+A possibilidade de que isso aconteça algum dia é muito pequena.
+Ele faz que não entende, mas na verdade é especialista no assunto.
+Todos gostamos de andar de bicicleta.
+Tem o costume de chupar o lápis.
+Ele é um completo idiota.
+Sigo o destino que me é imposto.
+Ele me forçou a ir.
+Ele é um mau condutor.
+O árbitro deve ser igual com ambos os times.
+Eu sou um aluno novo.
+Você pode usar a minha caneta.
+Eu não estou livre hoje.
+Emi é uma boa menina.
+Tom foi o primeiro amor de Mary.
+Tom se sentiu muito só.
+Tom é difícil de agradar.
+Crianças, creiam nas palavras de seus pais!
+O menino atirou uma pedra.
+Ela virá mesmo que esteja cansada.
+O nariz do menino está sangrando.
+Não posso ocultar meus sentimentos por você.
+Você já foi a Kobe?
+A capital da Polônia é Varsóvia.
+Eu a amo tanto que poderia morrer.
+Eu estudei muito gatos e filósofos. A sabedoria dos gatos é infinitamente superior.
+Você pode pegar o livro.
+Sabe o que eu farei? Nada.
+Nós compartilhamos o mesmo destino.
+Trinta crianças vietnamitas nadam todos os dias para poder ir à escola.
+"O trem sai às nove." "Não se preocupe, chegamos a tempo."
+Ele se recusou a dar entrevista.
+A presidente demitiu vários ministros durante o seu mandato.
+Terminar o trabalho até terça-feira será mamão com açúcar.
+Este bolo é muito delicioso.
+Ele me mostrou como se faz um bolo.
+Você não comeu o bolo que eu fiz; a sua irmã comeu.
+Seu nome está no topo da lista.
+Tom não consegue entender por que Mary ficou tão zangada.
+Por favor, ajudem a minha filha.
+Ele acha que é alguém, mas de fato ele não é ninguém.
+Não quero mais ver isso.
+É melhor você ir para casa.
+Ele me deu dez mil ienes.
+O bebê estava dormindo no berço.
+Eu posso ir lá, com a condição de que eu volte antes das cinco.
+Traz as chaves ao teu irmão.
+Onde se pode jogar futebol de mesa?
+Quem é a que canta melhor?
+Ela comprou um brinquedo para a criança.
+Meu sabor preferido é o chocolate.
+Minha família viveu aqui durante vinte anos.
+A cultura armênia data de milênios antes do nascimento de Cristo.
+Espere até que a chaleira comece a assobiar.
+Não tenho intenção de lhe perguntar.
+Desejo comprar um dicionário barato.
+Meu nome é Tamako, e qual é o seu?
+Filósofos tendem a ter pouco contato com o mundo exterior.
+Que língua as pessoas falam na Coreia?
+Quero um queijo de soja picante, e uma sopa de letras em francês.
+Um sol claro brilha no céu.
+Falo, e não ouvis; choro, e rides: acaso sois surdos ou de pedra?
+Ontem fizemos uma visita ao morro do Corcovado.
+Maria é nossa vizinha; sua casa é muito bonita.
+Aquele é o meu chapéu.
+A vida é bela? - Sim, ela é bela.
+O pai chamou o filho.
+Eu dei-lhe dois bolos e perguntei: “Tu os comerás ambos?”
+Os bêbados veem como se tudo fosse duplo.
+Nas janelas havia belas cortinas verdes de quatro metros cada uma.
+Cada qual suspira por sua felicidade.
+Vocês, meus amigos, me conhecem.
+Quantos segundos tem um minuto? - Um minuto tem sessenta segundos.
+E o filhinho respondeu: “Eu não a vi, mas sei quem era”.
+Quem respondeu? - O filhinho respondeu.
+Ele estava gravemente enfermo, mas agora começa a recuperar a saúde.
+Eles viveram felizes? - Sim, eles viveram felizes.
+O marido da filha do Carlos é genro do Carlos.
+Por sobre nós surgiam as primeiras estrelas; a Natureza em breve adormecia.
+Ontem, tendo despejado a água, eu tinha enchido o copo.
+Oh! dois passarinhos que estão mortos por causa do frio.
+Amanhã, a estas horas, já teremos chegado.
+Tendo de voltar para meu país, fui ao consulado.
+Em breve minha casa estará construída.
+Muitos livros são lidos, mas poucos são bem compreendidos.
+Volte o mais breve possível!
+Tua faca está mais afiada do que a minha.
+Não nos aflijam as injustiças humanas, porque grande é só a justiça de Deus.
+O médico perguntou ainda: Com apetite?
+Em todo homem há muitos erros a corrigir.
+E os adjetivos, com qual vogal eles terminam?
+Forme o tempo passado dos verbos das seguintes frases.
+Uns dormiam, outros estavam de guarda.
+Minha vida passada foi apenas como que um pesadelo tecido por algum feiticeiro.
+Eis uma coisa completamente diferente.
+Em Esperanto qualquer palavra é fácil de ler.
+Em vez de qualquer resposta, ele sacudiu negativamente a cabeça.
+Difícil é dizer o que será amanhã.
+Tudo isso que dizes é para mim algo de novo.
+Todas aquelas que eu chamar deverão se levantar.
+Que tipo de obras você prefere: literárias ou científicas? - Prefiro romances.
+A infeliz menina em breve morreu num canto duma floresta.
+Eu aprovo tudo quanto você fez, menos isto.
+Fariam isso somente tais homens que fossem desmiolados.
+Você é de opinião que a morte é um aniquilamento? - Sim, eu tenho tal opinião.
+Mais do que nunca, o vento estava furioso.
+Por acaso você tem aí algum dinheiro? - Infelizmente, não tenho nada.
+Sempre fui fiel a você, e assim permanecerei para sempre.
+Sem ter ouvido, não condenes.
+Em uma palavra, poderíamos dizer o seguinte.
+Com a minha entrada ele levantou a cabeça de sobre a máquina.
+Não passe por defronte da nossa loja!
+O mineiro desceu para debaixo da terra, pois trabalha debaixo da terra.
+Nós o acompanharemos até à rua.
+Ele certa vez me derramou uma garrafa de vinho sobre a cabeça.
+O cavalo saltou por cima do obstáculo.
+Contudo, a ideia não é de todo má, e poderia ser aceita.
+Todas as minhas esperanças já estão longe.
+E assim por diante (etc.).
+Foi bom o meu conselho.
+Todos terão o direito de falar, cada um por seu turno.
+Não torne frequentes demais as suas visitas a ela.
+Possuía biblioteca de boas obras, como talvez não a possuíssem muitos na cidade.
+Sob o sagrado signo da esperança se reúnem pacíficos batalhadores.
+Se aquele homem cometer mais um erro eu vou demiti-lo.
+O perigo da guerra já passou.
+Eu regresso e aí vejo, inerte, o corpo de um homem jovem.
+Organize uma lista com as palavras que não conhece.
+Tom se feriu durante um roubo.
+O menino fugiu ao me ver.
+Na Internet, ninguém conhece ninguém.
+Meu professor de história é um velho português.
+Esse tufão causou muitos danos a essa vila.
+Eles não encontraram tais provas.
+Acordei às dez e meia da manhã.
+Transforme os problemas grandes em pequenos e reduza os pequenos a nada.
+Onde posso estacionar meu automóvel?
+Não posso falar com as pessoas.
+Essas maçãs parecem muito frescas.
+Você tem que voltar em 30 minutos.
+Gostaria de me casar com alguém como ela.
+Jane me perguntou se eu gostaria de cozinhar.
+Gostaria de conhecer o pai dela.
+Gostaria de ficar uma noite mais, se puder.
+Gostaria de chá em vez de café.
+Gostaria de reservar um lugar.
+Gostaria de tomar algo quente.
+Quem é seu diretor de cinema favorito?
+Você pode me ajudar a procurar minha carteira, por favor?
+Ele tocava o piano e ela cantava.
+Este guia é sobre a cidade de São Paulo.
+Eu não acho que ela entenderia.
+Cada um tem o seu quarto.
+Bote o livro em cima da carteira.
+Mary aproximou-se de Tom na festa e disse-lhe que estava apaixonada por ele.
+É muito complicado arquivar os e-mails neste site.
+Tom está usando a Internet para aprender espanhol.
+Tom está com uma severa dor de cabeça.
+Tom baixa filmes muitas vezes.
+Tom explicou as circunstâncias a Mary.
+Você pode contar com ele.
+Eu gosto dos meus amigos.
+Tom fez o que eu lhe disse.
+Comprei um jornal escrito em inglês.
+Chama a polícia, por favor.
+Amanhã eu vou comprar um celular.
+Ficaria muito feliz de aceitar o seu convite.
+Toda palavra neste dicionário é importante.
+Não há sinais de vida em Marte.
+Ficamos jogando até tarde da noite.
+O líder governou seu país por mais de 50 anos.
+Você está cansado. Eu também estou cansado.
+O que eu preciso fazer?
+Você não deveria rir do Tom.
+Não posso ficar sem fazer nada!
+A menina que está tocando piano é minha irmã.
+Se isso fosse verdade, o que vocês fariam?
+Aos setenta anos de idade, ela ainda tem todos os dentes.
+Ele interrompeu a oração dela.
+Não me culpe por seus erros.
+Ela é capaz de viajar sozinha pelo país.
+João e Maria terminaram na semana passada.
+Não sou tão alta quanto ele.
+Ele não é sábio, mas esperto.
+Você não é tão baixo como eu.
+Você poderia me dar a receita para a sua salada?
+Ele foi educado numa escola pública.
+O escândalo foi um obstáculo para sua promoção.
+Pode falar tanto quanto queira.
+Ele quer aprender a cozinhar.
+E o que há de bom numa tempestade?
+Eu disse para vocês não se mexerem.
+Hoje não estou em forma.
+Ela disse que era feliz.
+Disseram aos estudantes que aprendessem o poema de cor.
+Se não fosse o meu conselho, você teria fracassado.
+Acredite ou não, os vilões não são sempre os personagens mais distorcidos.
+Não tenho nenhum interesse em comer comida inglesa.
+Onde você iria se pudesse viajar no tempo?
+Se acontecer de chover amanhã, eles não irão.
+Tom ajudou Maria a entrar no carro.
+Felipe quer ganhar massa muscular.
+Depois de jantar dou um passeio pela praia.
+Muitos estudantes estrangeiros sonham falar como um nativo.
+Esta é a sua cor!
+Ele sabe muito de animais selvagens.
+Já procuraste debaixo da cama?
+É difícil deixar de fumar.
+Isto é um abano chinês.
+As andorinhas foram embora, mas na primavera elas voltarão.
+Volte já para o seu lugar!
+A senhora subiu as escadas com dificuldade.
+Ela não conseguiu ficar sem chorar.
+Eu não queria te surpreender.
+O que você prefere, maçãs ou laranjas?
+As frutas devem ser lavadas antes de comidas.
+Provavelmente estaremos ausentes por alguns dias.
+Tem uma barata no banheiro.
+Hoje é o aniversário da minha mulher.
+Pouco importa a sua opinião.
+Para dizer a verdade, eu já vi esse filme.
+Não toco numa raquete de tênis há anos.
+Dez contra um que Bob será reprovado no exame de entrada.
+Pelo seu silêncio, acho que você não está satisfeito com a minha resposta.
+Vou pagar com meu cartão.
+Perdi o avião por causa de um minuto.
+Meu pai não gosta do calor estival.
+A tosse atrapalha o seu sono?
+Tom sabia a verdade, mas não deixou que ninguém soubesse que sabia.
+Obrigada por ser o meu guia.
+Eu conheço o homem que está sentado ali do outro lado.
+O restaurante fica no térreo.
+O filho da mãe quase me enganou.
+Vamos à cidade fazer compras.
+Preciso de uma faca para cortar a corda.
+Se eu tivesse dinheiro, compraria este computador.
+Ele não tirou nenhuma foto do festival.
+Durante a semana oito voos foram cancelados devido à forte nevasca.
+Tom não sabe quando aconteceu.
+Eu não tenho medo de morrer.
+Adicione três colheradas de vinho branco.
+Estamos juntos há cinco anos, e hoje vou pedi-la em casamento.
+Ela fechou todas as janelas do quarto.
+Siga o seu coração, pois ele nunca mente.
+Pilotar sem capacete é ilegal.
+Há pouquíssimas pessoas que têm dois carros.
+Ele quer tomar algo gelado.
+Tome cuidado para não cair no sono.
+Meu pai nunca me deu muitos conselhos.
+Ainda é melhor que nada.
+Não posso sair de casa, nem por um instante.
+Meu cachorro às vezes come capim.
+Você comprou mais selos do que o necessário.
+Só disse a Tom o que Mary me disse.
+Tom acha que nada de mau pode lhe acontecer.
+Sinto muito, mas sou contra esse projeto.
+Os semáforos estavam todos vermelhos.
+A bebida em excesso pode ser prejudicial à saúde.
+A casa estava em chamas.
+Quando voltava para casa, eu me encontrei com ele.
+Como líder, ele é admirado por todos.
+Se eu fosse homossexual, isso seria um pecado?
+Eu confesso que ele tem razão.
+Acabamos de receber um novo modelo.
+Eles estão andando sem sapatos.
+Ele estava sozinho no quarto.
+Ele se comportou de maneira estúpida.
+Em alguns meses, isso será esquecido.
+Os resultados no experimento nos decepcionaram muito.
+Como diz o provérbio, tempo é dinheiro.
+Não consigo mais aguentar esta dor.
+Estive aqui várias vezes este ano.
+Agora devem ser umas dez e quinze.
+O filme de hoje será "Gêmeos".
+Tom não deveria ter feito o que fez.
+Com licença. Onde está o meu assento, por favor?
+Este filme foi baseado no livro de mesmo nome.
+Amanhã teremos uma visita muito especial.
+Quando o assunto é política, eu não sei nada.
+Ela viu alguém a esperando perto da escola.
+Pegue um lenço; seu nariz está escorrendo.
+Elas o fazem toda semana.
+Eu me lembro de você; nos conhecemos há três anos.
+Eu tenho três vezes mais dinheiro que você.
+Todas as personagens deste quadrinho são mulheres.
+Onde você encontrou a sua chave?
+Pelo que eu sei, ele nunca chegou na hora.
+Você deveria se esforçar o máximo possível em tudo o que faz.
+De agora em diante as coisas vão mudar. Para pior.
+No ano passado choveu muito.
+Ela gosta de ir à biblioteca.
+Tom realmente admirou a coragem de Mary.
+Tom deixou a televisão ligada a noite toda.
+Ele nos disse que devemos manter o segredo.
+Não o toque. Deixe-o como está.
+Este é o avestruz mais bonito que eu já vi.
+Você acredita em olho gordo?
+O sono é o melhor remédio para um resfriado.
+O senhor cometeu o mesmo erro.
+É bem provável que o ônibus se atrase. Por que não chamamos um táxi?
+Está esquentando cada vez mais.
+Esta loja não é muito grande.
+Celebramos o Natal todo ano.
+Ela me pegou de surpresa.
+Você é novo aqui, não é?
+A qualidade do arroz está piorando.
+Kate foi obrigada a ler o livro.
+Este café está com um gosto amargo.
+Eu vou passar a tarde inteira ouvindo música.
+Fui pego com as calças abaixadas.
+Ele foi despedido pelo chefe da fábrica.
+Não havendo táxis, eu tive que andar.
+Me ajuda a fazer a comida.
+Somos cinco em nossa família.
+Onde está o meu outro sapato?
+Ele nunca anota nada em sala de aula, mas sempre consegue tirar boas notas.
+Não aceite carona de estranhos.
+Tome os seus amigos como exemplo.
+Quando eu cheguei, você tinha acabado de sair.
+Você não percebe que está errada?
+Como éramos 24, formamos quatro grupos de seis.
+O clube não o aceitou como membro.
+Tom enfiou um garfo na tomada.
+Bill é um completo idiota.
+Pelo que eu sei, ele sempre cumpre suas promessas.
+Quando for adulta, ela será uma admirável pianista.
+Jamais tinha ouvido falar de tal coisa.
+Ele não é tão forte como antes.
+A chuva durou três dias.
+Ela está tentando economizar o máximo de dinheiro que puder.
+Ele tem a mente aberta.
+A superfície desta mesa é polida.
+Há muitas flores no jardim.
+Não precisa ser deste jeito.
+Peguem as chaves do seu carro.
+Meus pais tentaram me fazer pensar como eles.
+Disse-lhe que saísse do quarto.
+Começaremos a considerar o conceito de "prestação".
+Você quer que eu te ensine palavrões?
+Hamilton morreu no último dia.
+Hoje foi também uma noite sem vento.
+Mal sabiam que imaginamos nos encontrar em Paris.
+Poucas pessoas falam a minha língua.
+Há muitos lugares para ver em Hokkaido.
+Devemos recuperar o tempo perdido.
+Eu vi ele em vez do pai.
+Não consigo lembrar o seu nome.
+Quando cheguei, ele já havia ido embora.
+Eu não posso te odiar.
+Envie-nos o que quer traduzir.
+Posso ajudá-los a encontrar algo?
+O serviço foi muito ruim.
+Vocês deveriam ficar longe dela.
+Eu odeio o barulho que faz o papel celofane ao amassá-lo.
+Ela é muito difícil de agradar.
+Ela me convidou a sua festa de aniversário.
+Nunca esquecei o dia em que nos conhecemos.
+Bob nada como uma pedra.
+O filho dele quer ser advogado.
+Tenho um amigo que trabalha para a NASA.
+Duvido que Tom seja solteiro.
+Um ótimo aluno é o que o professor espera ser.
+Ela lhe pediu que fosse embora e levasse todos os seus pertences.
+Nada do que Tom disse era verdade.
+Ontem minha bicicleta foi roubada.
+Quioto é uma cidade extraordinariamente bela.
+Judy falará do Japão amanhã.
+Tenho dois irmãos. Um mora no Japão e os outros dois, no exterior.
+Em 1939, assim como em 1914, o mundo estava à beira da guerra.
+Meu pai gosta de pizza.
+Eu não sei como ela vai reagir quando souber que é adotada.
+Eu sou a mãe de um filho da puta.
+Os beijos, os abraços, as carícias... era tudo falsidade.
+Tom vive agora nas Ilhas Cayman.
+Ele vai mudar algum dia?
+Ele fugiu com outra mulher.
+Se não se renderem, morrerão!
+Sua esposa morreu no parto.
+Nunca lhe diga "Eu não sei a resposta".
+Isto poderia ser o começo de algo grande?
+Maria está apaixonada pelo garoto loiro.
+Por que a senhora tem dois carros?
+Não posso encorajar Ken. Ele é meu adversário.
+Não posso ferver água. Não tem gás.
+O meu carro está quebrado.
+Se não tiver condições de pagar a inscrição, peça isenção ao governo.
+João aderiu a um programa de bolsas de estudo no exterior.
+Todos os passageiros morreram, mas ele sobreviveu.
+Estou pensando em assinar uma revista.
+Ela sabe. Ela sempre sabe.
+Este é o camelo de Tom.
+Você não pode pagar alguém para dormir por você.
+Não posso revisar com este barulho.
+Eles não sabiam o que fazer com ele.
+Na semana que vem, pego o avião para Chicago.
+Que tal jogar golfe amanhã?
+Quando me vir, não finja que não me conhece.
+Ela não é tão paciente como você.
+Façamos uma análise de urina.
+Ela está caidinha por este moço.
+Dedico esta música ao meu povo.
+A maioria dos estudantes odeia História.
+Depois de almoçar, fomos esquiar.
+Essa informação não é muito útil.
+Como foi sua primeira noite em Paris?
+"Alguém da sua família teve Alzheimer?" "Não que eu me lembre."
+Se precisar de um amigo, sabe onde me encontrar.
+Ele não mudou de opinião.
+Na semana passada, um meteorito iluminou a noite de Madri como se fosse de dia.
+Cada animal cuida de seu ninho.
+Mais uma vez, mil desculpas.
+Você vai fazer isso hoje, certo?
+Tom não consegue escolher qual câmera comprar.
+Já comi o bastante; meu estômago está cheio.
+Qual é a data de validade do produto?
+Os ratos não têm sobrinhos.
+Você trabalhou mais do que eu.
+Vocês têm um hábito de que me alegro.
+Seja muito boazinha e não conte aos seus pais sobre isso!
+Você já deu dinheiro a um mendigo?
+Vocês já incentivaram seus filhos a fazer regime?
+Você já respirou ar puro?
+Ele gosta da flor mais bonita.
+Estas flores florescem antes de outras.
+Mamãe comprou um guarda-chuva amarelo para meu irmão.
+Que tipo de emprego você está procurando?
+É inconfortável ficar sentado nesta cadeira.
+Você já visitou a sua irmã?
+A árvore se reconhece por meio de seus frutos.
+Eu me pergunto se vocês são mesmo felizes.
+Atirei uma pedra ao pássaro.
+Ele não assistiu à reunião.
+"Ela está lendo um livro?" "Está, sim."
+Será que esse boato é verdadeiro?
+Será que eles vão se divorciar?
+O resultado da prova foi negativo.
+Ficarei aqui por pouco tempo.
+Eu sai vestido muito quente e eu morri de calor.
+Quem assou este frango? Está cru.
+Lave as mãos depois de dar descarga.
+"Alô." "Oi, é o Maurício. Posso falar com a Ana?"
+Se eu não tivesse contado, alguém o teria feito.
+E para onde vão todas essas órfãs?
+De onde vêm essas marteladas?
+A tua irmã estuda aí?
+"Cadê a minha mulher?" "Está na cadeia."
+Seus argumentos estão mal estruturados.
+Guarde a comida na despensa.
+Acho que jamais saberemos o porquê.
+Mal entramos na casa, percebemos que havíamos sido roubados.
+Aquele grupo feminista foi às ruas outra vez; desta vez, todas protestaram nuas.
+Longe de casa ele é outra pessoa.
+Escrevam as informações mais importantes com caneta vermelha.
+Ele tinha caído, então tive de levá-lo à sala de emergências.
+Por que você está usando este computador velho?
+"Como está o tempo?" — "Está frio lá fora." — "É, e está começando a chover."
+Não pescaram com nenhum barco. Pescaram na beira do rio.
+Ele é o pai do meu pai. É meu avô paterno.
+Este é o primeiro avião a desembarcar no novo aeroporto.
+Espera-se o resultado dos exames.
+Era um pai muito presente o Luís.
+O atirador de elite acertou em cheio.
+A polícia ainda não pegou a pessoa que cometeu este crime horrível.
+Por que não agradece um pouco à sua esposa?
+Em suma: não sei, nem quero saber.
+A professora de alemão parecia uma alemã.
+Tom teve uma briga feia com Maria.
+Eu e o professor estávamos sentados cara a cara.
+Ela não é poeta, mas romancista.
+Todos esperavam um cartão vermelho, mas o árbitro mostrou apenas o amarelo.
+Ontem estive livre a maior parte do dia, mas hoje estou completamente ocupada.
+Em quem você quer que creiamos?
+Não precisarei adicionar textos manualmente.
+"Experiência" é simplesmente o nome que damos aos nossos erros.
+Isso não foi barato, foi?
+O acidente causou um engarrafamento.
+De onde vocês são, pessoal?
+Onde você deixou os seus sapatos?
+Ninguém quer visitar o meu país.
+Minha esposa sempre foi insensível comigo.
+Não revele o que descobriu a ninguém.
+Quem escreve cartas hoje em dia?
+Não é mesmo tão difícil assim.
+Eles estavam tão ocupados que nem se deram conta da hora.
+Não há ninguém sentado aqui.
+Ele toca piano melhor que eu.
+Ontem elas foram ao cinema.
+Ela tem no máximo dezoito anos.
+Tudo seria mais fácil se pudéssemos flutuar.
+Embora seja pequeno, é um ótimo carro.
+Envia um telegrama quando chegares.
+O que eu quero é um processador de texto.
+Já chegou o Ano Novo.
+Estes exercícios são mais fáceis que os de ontem.
+Gostaria de que todos vencessem.
+Comenta-se que ninguém foi aprovado.
+Maria tomou uma atitude que não pode ser compreendida.
+A pessoa em questão agora está nos Estados Unidos.
+Quero ver o seu verdadeiro rosto.
+Em que cadeira você colocou o livro?
+O nevoeiro limitou a visibilidade a 100 metros.
+Roma é muito charmosa para mim.
+Fadiga é o resultado natural de excesso de trabalho.
+Tudo saiu conforme o planejado.
+Nada te impede de ir embora.
+Tenho de varrer o meu quarto.
+Você nunca saberá onde ele está.
+Quem foi enviado para salvar a princesa?
+Tom queria bater em Maria, mas ele se controlou.
+Você já iniciou ou está frequentando algum curso superior?
+Sua renda familiar mensal está entre três e cinco salários mínimos.
+Eles não têm nada do que reclamar.
+Um carro tão velho era praticamente inútil.
+Por favor, dê-me uma mão com os deveres.
+Ela era jovem e inocente.
+Os japoneses são pessoas valentes.
+Ela dormiu por algumas horas.
+Não diga nada à minha namorada!
+Essas mercadorias são melhores na quantidade que na qualidade.
+Três vezes cinco é igual a quinze.
+Eles o aclamaram como seu líder.
+Ela quer comprar um presente ao namorado.
+Tu serás minha para sempre.
+Você deveria vir comigo alguma vez.
+A expansão do Universo se acelera.
+A ideia se formou na sua cabeça.
+Não sei como terminar o meu casamento.
+João não sabe localizar seu próprio país no mapa.
+Não existe nem Deus nem Buda.
+Fomos ao parque e jogamos lá.
+Por favor, não toque neste assunto novamente.
+Um avestruz não consegue voar mais que um canguru.
+Quero mandar uma carta por avião para a Polónia.
+Acho que ele está mentindo.
+Eu paguei cinco dólares a mais.
+João é um tremendo bebedor de água.
+Eu ainda não me despedi.
+Ele chegou aqui dez minutos antes.
+Eu nunca quis ir embora de Boston.
+Obrigada por ser meu amigo.
+Há uma multidão de mulheres ao redor do Tom.
+Esta é a minha esposa.
+O idoso chamou ao brinquedo de madeira Pinóquio.
+Maria nasceu em março, digo, em maio.
+Antes de morrer, passou mais de um mês hospitalizado.
+É para isso que servem os amigos.
+Ela veio nos ver ontem.
+Esta música me deixa feliz.
+Ele só queria ser útil.
+O que você acha que ele queria dizer com isso?
+A criança pequena ficou acordada a noite toda esperando a chegada dos Reis Magos.
+Não vejo o teu assento.
+Vejo um monte de terra.
+A vida do homem é curta.
+Com que frequência você lava seus lençóis?
+Se não houvesse pessimistas, tampouco haveria otimistas.
+A senhora reconheceria o Tom?
+Você está desfrutando, não está?
+Tom está erguendo um muro.
+Quero ver a sua irmã.
+O protagonista morre no final do livro.
+Ele foi à cidade para que não visse o pai.
+É uma flor bem bonita.
+Ontem eu te vi no show.
+Pretendo comer assim que sair do trabalho.
+Eu gostaria de fazer uma pergunta.
+Eu penso em ti o tempo todo.
+Três dos corpos tinham ferimentos a bala.
+Se você puder matar seu inimigo, faça-o; senão, faça dele seu amigo.
+Este aspirador de pó faz muito barulho.
+Paga este pedaço de giz e escreve na lousa.
+Agora ele está praticando violino.
+Ela está aprendendo a tocar piano.
+Qual é o nome do edifício cujo telhado se consegue ver?
+Ele pintou a parede de vermelho.
+Ele é o melhor jogador do nosso time.
+Como sempre, Mike estava atrasado para a reunião essa tarde.
+Este livro é melhor que aquele.
+A tua irmã não estava no templo hoje.
+Ele gosta muito de dar aulas.
+Em que navio o Tom chegou?
+Vale a pena ler esta estória.
+Sempre tomo duas xícaras de café de manhã.
+Sua amizade significa muito para mim.
+Este é um problema a ser resolvido.
+Eu tenho uma bicicleta do último modelo.
+Estatisticamente, João errou uma de cada quatro questões.
+João nunca tirou nota vermelha.
+Olá, eu sou um usuário novo.
+Eu estou com muito sono, e preciso ir dormir.
+Eu não quero matar você.
+Você não quer conhecer o Tom?
+Eu quero que vocês cavem um buraco.
+Estou atrasado para o trabalho.
+Tu sabes como cozinhar lagosta?
+Tom me contou que ela estava realmente feliz aqui.
+Vocês deveriam ter visitado a nossa feira de ciências. Teriam aprendido muito.
+Aqui está seu cachorro. Onde está o meu?
+Que droga, não chegamos a tempo!
+Meu cachorro foi internado. A veterinária disse que há poucas chances dele sobreviver.
+Se comparado com os suecos, os salários dos espanhóis são baixíssimos.
+Você pensa que estou louco?
+Estamos mais perto do que jamais estivemos.
+Ela saiu quando terminou o trabalho.
+Ele sonhou ser um herói.
+Ela é a sua amiga.
+A senhora deveria ter se apresentado.
+Ela estava descendo as escadas.
+Ninguém de nós é imortal.
+Tudo o que eu quero é o teu amor.
+É necessário que você faça o melhor uso de seu tempo.
+Posso pegar esta caneta emprestada?
+Isso acaba sendo a mesma coisa.
+Se você sobreviver, você lerá.
+Pode me passar aquela caixa?
+De quais esportes vocês gostam?
+O sol foi para atrás das nuvens.
+Você seria capaz de resolver o quebra-cabeça se você tivesse um pouquinho mais de paciência.
+Como posso chegar ao zoológico daqui?
+Tom disse que ele amou Mary.
+Tom é um amigo de um amigo.
+Ele estendeu os braços e nos deu as boas-vindas.
+Tom não gosta de comer cebolas.
+Não importa quão rico se é: Não se pode comprar o amor.
+Urgentemente preciso ir ao banheiro.
+Por favor, vocês poderiam abrir uma janela? - Claro.
+Não vamos esquecer dos direitos humanos.
+A cor é mais roxa do que rosa.
+Tom achou que seria uma boa idéia ir ao médico.
+Ele não pode ter contado uma mentira.
+Seus CDs não são comprados pelos jovens.
+Daqui em diante iremos a pé.
+Ele caminha toda manhã pelo parque.
+Você não tem o direito de fazer isso.
+"Hum!", exclamou João, dando de ombros.
+Discuti com ele sobre isso.
+Quanto devo pagar por isso?
+Este é um país banhado pelo mar.
+Não sei montar a cavalo.
+Uma abelha saiu voando pela janela.
+O ódio é um amor fracassado.
+Ele é tímido com estranhos.
+Ele sempre me impõe sua opinião.
+Garotos, por regra, são mais alto que garotas.
+Não sei o que aconteceu com você.
+Ele está na cama com gripe.
+Ele teve de abandonar a escola porque era pobre.
+Amanhã vocês não virão à festa?
+Pensei que fosse esperar o Tom.
+Pensei que fosse ir a Harvard.
+Onde posso comprar um mapa?
+Esta câmara fotográfica é a preferida do Tom.
+Creio que um dia será rico.
+O John nasceu nos US.
+Há três pessoas na foto.
+A família dela se mudou para o Brasil.
+Vocês acreditam que haja vida depois da morte?
+Você sabia que era falso.
+Já é tempo para que tu comeces a limpar a mesa.
+A senhora não pode comprar este medicamento sem receita médica.
+Qualquer um pode fazer isto.
+Eu voltarei em cerca de duas horas.
+Todos os meus amigos gostam de jogos de computador.
+A senhora atingiu seu objetivo?
+Eu lhe pedi, mas ele ainda não me deu a resposta.
+Não consigo mais suportar isso.
+A experiência mostrou que o dinheiro não traz felicidade.
+Isso é o que eu mais quero no mundo.
+Não quero que ninguém nos veja.
+Quer ir para a cadeia?
+Qual a sua comida de verão favorita?
+Parece que ele chegou atrasado à reunião de ontem.
+O tornado assolou todo o povoado.
+Entre; está frio aí fora!
+Se quer que algo saia bem, você mesmo deve fazê-lo.
+Ela correu para fora para ver o que tinha acontecido.
+O senhor não pôs o número de volumes.
+Eu estou um pouco nervoso.
+Eu amo o verão norueguês.
+Há quanto tempo o Ricardo é casado?
+Há uma semana que o Milton não dorme bem.
+Eu ia falar com ele, mas ele saiu cedo.
+Ele sempre teve uma grande curiosidade sobre o planeta.
+Algumas pessoas são difíceis de agradar.
+Eu gosto de música, especialmente de música clássica.
+Se ele tivesse me contado a verdade desde o princípio, não estaria bravo agora.
+Enquanto comemos nós falamos sobre o que tínhamos feito naquele dia.
+Olha, um ponto e uma maiúscula.
+Tom escondeu a arma no pote de bolachas em cima da geladeira.
+Acho que quero ser professor de inglês.
+Fecha a janela antes de ir para a cama.
+Ela não toma conta dos filhos.
+O que você tem contra o Tom?
+Eles gostam de ver televisão.
+Mary é mais inteligente que sua irmã.
+Tom esqueceu onde deixara o guarda-chuva.
+Nenhum de nós esteve no Havaí.
+Você tem de estar aqui antes das cinco.
+Quando é mesmo o intervalo?
+Parece que eu conheço esta rua.
+Tom ficou sabendo que Mary conseguiu um emprego.
+Inspecione os arbustos onde o inimigo pode estar escondido.
+Se importa se eu sentar aqui?
+O Tom estava olhando as fotos que a Mary tirou quando eu entrei no quarto.
+Ele se aproveitou da oportunidade.
+Raramente ele sai aos domingos.
+Não consigo lembrar de seu nome neste momento.
+Quero dois cachorros-quentes com mostarda e ketchup.
+Se ele propuser, você também proporá.
+Se você intervier, ele também intervirá.
+Não sei o que me mordeu, mas acho que foi um inseto.
+Você não é brasileira, é?
+A sua doação é um ato de amor.
+Eu tenho medo de me apaixonar por ela.
+Eu vou bater um suco.
+Vocês só vão até o centro?
+Ela queria testar os seus limites.
+Devemos sempre levar em conta o interesse público.
+Estará pronto dentro de uma semana, ou seja, no dia 3 de Maio.
+Ela tinha um pequeno objeto redondo em sua mão.
+Estava escurecendo e, para piorar, começou a chover.
+O alicerce mantém a estrutura do edifício.
+Você está dificultando meu trabalho.
+No caminho para a escola eu perdi minha carteira.
+Gostei do que você fez ontem.
+"Ela gostou do filme?" - "Sim, gostou."
+O exército Americano põe muita importância em uniformidade.
+Estou carregando um livro em minha mão.
+Não consigo esquecer aquelas pessoas bondosas.
+A conferência estava tão chata que ele caiu no sono.
+Este é o seu cavalo.
+Havia um furo de bala no para-brisas.
+Minha irmã mais velha toma um banho todos os dias.
+Você está tapando suas orelhas com algodão quando você vai ao concerto?
+Acho que já terminei meu trabalho por aqui...
+Eu sabia que Tom gostaria de Mary.
+Meu objetivo é falar seu idioma.
+Meu sonho é viver tranquilamente nessa vila.
+Fiquem todos calmos, por favor.
+Eu não moro mais aqui.
+Ela estará em Paris por hora.
+Nós vamos discutir esse problema em seguida.
+Eles esperam na varanda até parar de chover.
+Você anotou o nome desse livro?
+Você terminou de trabalhar, não terminou?
+Vamos estabelecer algumas regras básicas.
+Não faça de qualquer jeito.
+João foi criado por seus tios.
+Vai mais para o lado.
+Apenas entre nós, aquela é minha namorada.
+Como médico, eu te aconselho a parar de fumar.
+Como vocês duas se conheceram?
+Está mais fácil e seguro conhecer uma pessoa na internet do que pessoalmente.
+Não há futuro para ela.
+Estou muito cansado, mas bem.
+Vou comprar uma caneta dele.
+Tom convenceu Mary a não ir.
+Ele pode falar tanto inglês quanto francês.
+Por favor, me diga que você está brincando.
+O rosto dela, de repente, ficou vermelho.
+No Japão as pessoas tiram os sapatos quando entram em uma casa.
+Eu não podia deixar o Tom partir.
+Posso lhe pedir um favor?
+O professor abriu a caixa e tirou uma bola.
+Até que horas vocês ficam abertos?
+Quem poderia lidar melhor com o problema?
+Nós já discutimos esse assunto outro dia.
+Eu vim cobrar o aluguel.
+Será que eu estou apaixonado?
+À primeira vista, a ideia parecia absurda.
+No desporto, a harmonia em equipa é vital para o sucesso.
+Aqui não se pode fazer isso.
+Eu quero saber quem começou.
+Eu não consigo imaginar minha vida sem você.
+Eu tomei café demais hoje.
+Não me arrependo de nada.
+Sob estas circunstâncias, não posso aceitar a oferta.
+Ela me reconheceu na hora.
+Nós temos apenas um pequeno jardim.
+Suponho que queria que convide o Tom para o casamento.
+Ele ficou doente durante a viagem.
+O seu nascimento foi um acidente.
+Eu quero que tudo funcione perfeitamente.
+Qual é a temperatura média aqui?
+Eles estavam a ponto de desmaiar.
+A carne de porco continua sendo a mais consumida pelos belgas.
+Eu sou professor de francês.
+Como nos metemos nesta situação?
+Talvez eu devesse estudar francês.
+O Tom estudará francês no semestre que vem.
+Ele quer ter o meu número de telefone.
+Ninguém pôde dizer onde ela estava.
+O que a palavra ''next'' significa?
+A minha opinião é similar a sua.
+Para mim não tem importância se você vai ou não.
+Este quarto foi decorado com objetos japoneses.
+Ela é sempre a pior da classe.
+Eu acho que você é o maior.
+Eu acho que é melhor você desistir.
+Eu tenho que te mostrar uma coisa.
+Ela tem uma família amável.
+Por quê você não vai em meu lugar?
+Por algum motivo o microfone não estava funcionando antes.
+Eu lembro de ter tido uma discussão calorosa sobre o problema com ele.
+Acho que você sabe por que estou aqui.
+O Tom pronuncia muitas palavras erradas.
+O meu pai é um professor de inglês.
+Minha língua nativa é o espanhol.
+Eu não sei o que você quer que eu diga.
+Eu só acho que o Tom deveria ser capaz de ir aonde ele quisesse.
+Ele, secretamente, me mostrou a foto dela.
+O Tom não queria que eu vendesse o meu caminhão velho.
+Não se preocupe. O Tom vai ficar bem.
+Eu nunca tinha visto ele antes.
+Ele não prestou atenção ao meu aviso.
+Eu preciso abrir esta porta.
+Em que a sua opinião difere da dele?
+Ele tem uma amiga séria.
+Me sinto péssimo por causa daquilo.
+Eu acabei de falar com o médico do Tom.
+Eu quebrei o braço quando era criança.
+Por que eu estou assistindo a isto?
+Fui acordado às cinco horas.
+O Tom conhece a Mary desde que ela era uma garotinha.
+Elas estão cientes da dificuldades.
+Eu não falo bem o francês.
+Graças à sua ajuda, eu posso conseguir.
+Eles zombaram de meu sotaque.
+Eu não estou aguentando este barulho.
+A última coisa que quero fazer é deixar o Tom triste.
+Tom me ensinou um pouco de francês.
+Ela ainda não consegue formar frases.
+Eu fiquei em casa porque eu estava doente.
+O Tom disse à Mary que mentir era errado.
+Aqueles são os meus amigos.
+Eu não quero ir a lugar nenhum.
+Eu gosto de fazer as palavras-cruzadas do jornal.
+O abade rezou a missa.
+Eles se levantaram de trás do sofá e correram em direção à porta dos fundos.
+Este material é mais econômico.
+Meus parabéns! Você é um palhaço!
+Dois sacos de cimento serão suficientes.
+A sua camisa está manchada.
+O governo americano executou um programa secreto de grampos telefônicos.
+Estamos a menos de um ano do Mundial.
+O que você fez é antiético.
+Eu não digo não a ninguém.
+A causa disso tudo é a inflação.
+A calculadora que eu comprei é uma HP.
+Eu estou com o coração partido.
+De vez em quando ela me liga.
+Ele não é tão alto quanto você.
+Você não pode dormir na minha cama!
+Você estava com ciúmes de mim.
+Os processos administrativos levam tempo.
+O João é perito criminal.
+Quando eu crescer, quero ser bombeiro.
+Eu te farei uns sanduíches!
+Ela achou a experiência divertida.
+O que ele poderia estar fazendo lá?
+É a primeira vez que eu derrubo uma árvore.
+É a primeira vez que eu me sinto nauseado.
+Esta é a primeira vez que eu adiciono uma frase em holandês.
+Como se chama o seu amigo?
+O Tom detesta levantar-se cedo.
+É possível que ele faça uma proposta, mas eu não vou aceitar.
+A Meg aceitou o plano do Ken.
+Não deixe ela sair quando estiver escuro.
+Eu não posso sair de Boston.
+Ela sempre sabe mais que o chefe.
+Este fruto contém uma única semente.
+Eu sou favorável ao voto distrital.
+O chumbo é um elemento químico de símbolo Pb.
+O promécio é um elemento químico de símbolo Pm.
+Os lipídios são popularmente denominados gorduras.
+Os principais componentes da atmosfera terrestre são o nitrogênio e o oxigênio.
+Esta área pode ser calculada sem utilizar conceitos de cálculo integral.
+Este automóvel faz 11 quilômetros por litro de etanol.
+O Dean come demasiadamente, não acha?
+Temístocles viveu muitos anos antes que Demóstenes.
+Os ímãs supercondutores podem ser usados para armazenar energia.
+Eu consigo falar um pouco de francês.
+O que as senhoras estão fazendo?
+Ela é uma menina tão adorável.
+Esta é a cidade de que eu te falei.
+Eu gostaria de ajudar, se puder.
+Isto é pior do que uma bomba!
+Você liga para que tipo de música nós escutamos?
+É como se eu os conhecesse por toda a vida.
+Vocês não gostariam de morar aqui?
+Você não pode estacionar aqui porque há uma placa.
+Parece que o Tom conseguiu o que queria.
+Ele ficou muito feliz de vê-lo.
+Há uma biblioteca em cada cidade nos Estados Unidos.
+Tom sente-se muito bem consigo mesmo.
+Não coma tanto. Você vai ficar gorda.
+Ela desmaiou ao ver sangue.
+Eu cancelei meu encontro por causa de um assunto urgente.
+O Tom está comendo ostras.
+Tóquio é uma das maiores cidades do mundo.
+Foi genial. Eu fui a Quioto.
+Eu ainda estou com fome.
+Vejo o cão quase todo dia.
+Ainda não me adaptei bem a este bairro.
+Não sou eu quem deveria ir embora.
+Eu ainda não tenho certeza do que fazer.
+Eu tenho certeza de que você não está surpresa.
+O Bill sabe falar um pouco de japonês.
+Você já tentou contar uma piada em francês?
+A maioria das placas por aqui está escrita em francês.
+Começaremos, assim que vocês estiverem prontos.
+Ele tem grande chance de ganhar.
+Tom joga xadrez melhor do que eu.
+Eu não conseguia mais andar.
+Nunca perca a fé em você mesmo... Você pode fazer tudo que você quer fazer.
+Tom não gosta de falar francês.
+Você pode tomar banho aqui.
+Todo dia precisamos de um incentivo, uma palavra amiga.
+Você é quem deveria liderar esse time.
+Atualmente, as pessoas não se interessam muito em aprender um segundo idioma.
+Eu não faltei um dia sequer ao trabalho.
+Não teremos combustível suficiente para chegar ao outro lado.
+É um procedimento de difícil execução.
+É uma droga de fácil acesso.
+O Tom não costuma usar pijamas.
+Eu espero que estejam todas corretas.
+Ele não pode nos escutar nem nos ver.
+Tome uma atitude de homem!
+Eu não tive tempo para tomar uma decisão.
+Nós precisamos encontrar uma solução.
+O Tom deve estar bravo.
+De que será que se tratava?
+Eu estou lidando com o problema agora.
+O Tom está planejando uma festa surpresa para a Mary.
+Eu terei terminado o trabalho pelo meio dia.
+Você não tem por que disfarçar.
+O futuro está logo à frente.
+Mary é bela, não é?
+É incrível! – dizia o turista americano: Na Hungria, todo "cavalo" é "baixo"!
+O Tom e a Mary são muito felizes.
+A polícia queria evitar um banho de sangue.
+O meu avô era um ávido colecionador de selos.
+Ele jogou um sete de ouros.
+Um teorema, para ser verdadeiro, precisa de uma hipótese, uma tese e uma demonstração.
+Ela me escreveu quatro cartas.
+A morte é a mais dura pena.
+Eu vou bem, mas o meu irmão está doente.
+Desculpe, quem é a senhora?
+A importância da regularidade da acentuação não deve ser exagerada.
+Eu ando muito, pois é saudável.
+A Maria o esperou, mas ele não veio.
+Eles o condenaram sem lhe ouvir a defesa.
+O Tom não sabe amarrar os sapatos.
+O Tom respondeu a todas as perguntas de Mary.
+O Tom respondeu a minha pergunta.
+O estudo da mitologia é indispensável para a perfeita inteligência de muitas obras de arte.
+O Tom fez uma pergunta à Mary.
+Comia moscas e dizia que eram um tanto azedas.
+O seu pai faleceu quando ela era jovem.
+O Tom te ama sim.
+O Tom não está no trabalho.
+Nem por todo o ouro do mundo!
+Preciso estudar muitas línguas estrangeiras.
+Os gastos chegam ao total de cem euros.
+Eles estão propensos a colaborar.
+Eu falhei em conseguir a posição que eu queria.
+Um desconhecido me abordou na rua.
+Eu desejo a ela felicidade.
+Ela desceu do cavalo dela.
+O aluno vai ser interrogado oralmente.
+É necessário adaptar o ensino à idade dos alunos.
+O amor não respeita cor, distância ou idade.
+O plano ainda pode sofrer algumas mudanças.
+Eu sei o que tenho de fazer.
+Ame se você quer ser amado.
+Normalmente, havia muitos peixes em qualquer rio do Japão.
+Os faróis do carro que se aproxima me ofuscaram.
+Tom encheu o carrinho de mão com areia.
+O medo penetrou sorrateiramente em meu coração e ali se instalou.
+Há uma coisa que quero te dar.
+Eu li o seu livro.
+O ministro foi criticado pelos jornalistas.
+A beleza favorece o amor.
+Sua morte representa uma grande perda.
+Ela se embeleza com as penas do pavão.
+Li algumas das mais belas páginas desse escritor.
+Aqueça a água até ao ponto de ebulição.
+Ela é irônica até à impertinência.
+Adotei todas as cautelas necessárias.
+Havia ali objetos de todos os tamanhos.
+Você poderia pressionar o botão?
+Não estaria tão certo disso.
+O padre celebrou duas missas no mesmo dia.
+Boa reputação vale mais que cinto de ouro.
+Nós duas estamos na mesma aula.
+O Japão tem carência de terras cultiváveis.
+Pode me dar o número do seu celular?
+Irei para lá de avião.
+Esse reservatório está deixando escapar gás.
+A solução desse problema é uma condição indispensável para a paz.
+Queriam tão somente uma paz justa.
+Para nós, o turismo é muito importante.
+Devem-se deduzir os custos do lucro bruto.
+Meu relógio caiu dentro de uma poça de água.
+A água está saindo em gotas da parede.
+Isso vem sendo objeto de muitos estudos.
+Essa criança não vai viver muito tempo.
+Devido ao avançado da hora, desistimos de sair.
+Ela está ganhando muito bem.
+Ele teve de desembolsar uma soma muito grande.
+São muito felizes ao lado um do outro.
+Eu sei o que está dentro dessa caixa.
+Ele não era um favorito da fortuna.
+Dizem que ferradura traz sorte.
+Isso me deixou um pouco triste.
+Você tem um menino ou uma menina?
+Não quero apressar-te, mas vamos pegar o próximo ônibus.
+Sua casa fica do outro lado da ponte.
+Eu só queria que me aceitasses.
+Betty leu quatro contos durante as férias.
+Eu e ele somos da mesma idade.
+Vou à casa do Tom.
+Eu nunca vi isso acontecer.
+E qual foi a razão?
+O livro dela é muito interessante.
+Helen é sempre a melhor aluna da turma.
+Você sabe de quem é esse carro?
+Ele tirou a sorte grande.
+Cenoura faz bem à vista. Você já viu coelho de óculos?
+A situação foi de mal a pior.
+Ele deixou a salsicha cair no chão.
+Isso é o que o mundo tem a oferecer.
+Vamos sair agora. Não está mais chovendo.
+Em 1848, as pessoas iam para a Califórnia procurar ouro.
+Por acaso encontrei tua mãe na biblioteca.
+Ela mostrou-me seu carro novo.
+Pavel almoça a uma da tarde.
+Poderia dizer-me, por favor, onde fica a estação do metrô mais próxima?
+Eles eram duas pessoas ‒ um irmão e uma irmã.
+Marina gosta muito de âmbar.
+Ele e eu somos amigos.
+Nenhum outro esporte no Brasil é tão popular quanto o futebol.
+Você não é obrigado a ser responsável.
+Por que convidamos o Tom para vir à festa?
+Escreva para o endereço residencial dele.
+Alegro-me em ser honrado por vós.
+A praça do mercado fica do outro lado da ponte.
+Ele me deu uma caixa de brinquedos.
+Tom não foi capaz de nadar.
+Todos foram à excursão, mas eu fiquei no hotel.
+Eu sou inteligente, sensível e criativo.
+E agora ele descansa em casa.
+Bem que eu queria poder te ajudar.
+Ou ele está bêbado, ou é louco.
+Tenho certeza de que todos nós sentiremos saudades dela.
+Você deveria se sentir confiante.
+Você está apaixonado pela Mary?
+Quantas vezes vou ter de te explicar que aqui é tudo ao contrário!
+Essa gravador precisa de reparos.
+Ela tem de manter os poderes dela escondidos da família.
+Estamos mais ou menos aqui.
+O Tom disse-nos que esperaria por nós em frente do correio.
+Tom não compreendeu aquilo tudo.
+Nós podemos ainda ser amigos?
+Aqui na cidade não nos compreendem, nem são mesmo capazes de compreender.
+Eu o respeito e considero uma grande honra apertar-lhe a mão! — continuou ele com entusiasmo.
+Tenho vinte e sete anos.
+Longe da presença do médico ficava silenciosa e triste.
+Ele não é capaz de compreender isto.
+Eu não posso fazer isso tudo sozinho.
+Tom, você não é engraçado.
+Eu nunca visitei o sistema do planeta Júpiter.
+Você se importaria de aguardar um instante?
+Vi um homem vestido como um ninja.
+Partiremos tão breve quanto estejas pronto.
+O Alpha FC empatou com o FC Ômega Rockets.
+O Tom tem um cachecol de seda.
+Meu pai ouve música clássica.
+Quando vocês irão se casar?
+Você se importaria em passar o sal?
+Qual é sua opinião a respeito disso?
+A propósito, vocês não sabem onde por aqui tem um bom restaurante?
+Tanto Tom quanto Mary queriam ir a Boston, mas nenhum deles conseguiu tirar férias.
+Eu gosto de me recordar da minha infância.
+Uma doença frustrou seus planos de viagem.
+Sei que você está cansado.
+Quantas vezes por dia o ônibus passa?
+Vocês são os melhores, rapazes.
+Você tem que proteger sua família.
+Um artifício se burla com outro artifício.
+Eu conheço muito bem este lugar.
+É melhor andar sozinho do que mal acompanhado.
+Tenho certeza de que foi um elefante.
+Depois de amanhã é aniversário de Marina.
+Eu a cumprimento de todo o coração por seu aniversário.
+Não há nada certo no mundo.
+A estória dela trouxe-me de volta à minha infância.
+Por que você foge de mim?
+O Tom não tinha nada para comer.
+Ele entrou silenciosamente para não despertar a família.
+Não faço nenhuma objeção ao que você quer fazer.
+Obrigado, Tom. Você é a pessoa mais gentil do mundo.
+Ao comprar roupas, você se pergunta onde elas são feitas?
+Você precisa de um lugar onde ficar?
+Ela estava vestida de preto.
+Ele morreu nos braços dela.
+Eu sorrio toda vez que eu a vejo.
+Eu vi esse filme duas vezes.
+As bruxas punham unhas humanas nas infusões que preparavam.
+O que você aprendeu até aqui?
+É rude apontar para alguém.
+Ele não entende o princípio da coisa.
+Ela disse: "Cheguei aqui ontem."
+Tom achou hilária a piada de Mary.
+Vá lavar o rosto e as mãos antes do jantar.
+Tom e Mary estão dançando.
+Minha mãe tem carteira de motorista, mas não dirige.
+Em meu país ninguém quer ser pobre.
+Eu vejo ele de vez em quando.
+A minha mãe não fala muito inglês.
+Tome este remédio durante as refeições.
+Eu ali te darei o meu amor.
+Ele sugeriu que saíssemos para assistir um filme.
+O Tom não se importou em ajudar a Mary a lavar a louça.
+Talvez isso seja um problema real.
+Eu não quero contar para a minha namorada.
+Eu estava só tentando ajudar.
+A porta estará pintada amanhã.
+O Tom também é um artista.
+Ele perdeu sua posição só porque ele se recusou a contar uma mentira.
+E você chama isso de uma sala de reunião?
+Não quero levantar falsas conclusões.
+Você visitou Boston, não visitou?
+Eu não posso fazer este trabalho sem você.
+Eu não consigo viver sem meu gato.
+Tom e Mary não chegaram a um acordo.
+Nós vamos ficar algumas semanas juntos.
+O que o Tom disse que isso é?
+Tudo na Natureza contém todas as forças da Natureza.
+Saia da minha vida e não volte.
+Depois do silêncio, o que chega mais perto de exprimir o inexprimível é a música.
+Eu quero ser como o Picasso.
+Esta é uma amostra grátis.
+Não, não acho que a culpa seja minha.
+Há uma caneta sobre a mesa.
+Ficarei em Quioto com meu tio.
+Você tem uma memória de mosquito.
+Alguém aqui traduzirá essa frase?
+Os italianos sempre dormem durante uma hora depois do almoço.
+Era para você ter descido naquele ponto.
+As palavras machucam mais do que os punhos.
+Diz que o certo é o branco, mas faz o preto.
+Ela se contorce qual uma cobra.
+Ele é um cabeça de vento.
+Como são máquinas, amam a numerologia.
+Era justamente de você que eu estava precisando.
+Se eu tivesse dinheiro, compraria o computador.
+Não consigo ler sem óculos.
+"Como se pronuncia o símbolo "@" nesta língua?" "Arroba."
+Você já chorou por uma mulher?
+Façam o favor de trancar a porta quando saírem.
+O molho está precisando de mais pimenta.
+Tom nunca vai dormir antes de meia-noite.
+Ele se orgulha se que sua mulher seja uma boa cozinheira.
+Você tem toda a razão.
+Ela se queimou enquanto acendia um cigarro.
+Quantos estudantes há na escola?
+Ele é o defensor dos fracos e oprimidos.
+Tive um sonho muito ruim ontem à noite.
+Tua biblioteca é teu paraíso.
+Não é tão difícil como você pensa.
+O amor pertence àqueles que pensam nele.
+Não quero falar com você nunca mais.
+Às 19 horas; portanto, a loja ainda ficará aberta mais duas horas.
+Quero também uma garrafa de água mineral com gás.
+Roskilde, uma das cidades mais antigas da Dinamarca, é a décima maior cidade do país.
+Aqui não é permitido entrada de animais.
+Tão simples, e não se consegue perceber.
+O lago está completamente congelado.
+Quando ele estava saindo do hotel, foi baleado.
+A TV representa uma parte importante da vida diária.
+Não sei se estou permitido a falar sobre isso.
+Lindas flores estão aparecendo em toda a parte.
+O comércio ilegal de marfim cria conflitos e fornece dinheiro ao crime organizado.
+Ele foi forçado a fazer isso.
+Este mundo está cheio de dificuldades e perigos.
+Devido ao mau tempo, não pudemos sair.
+Talvez o Tom vai apenas ir embora.
+Qual é o seu programa preferido de tevê?
+Minha casa estava sendo construída (mas não concluída).
+Nós o perdemos de vista há mais de meia hora.
+Que é a arte? A natureza concentrada.
+Em todo caso, que horas são?
+Ele está tentando cometer suicídio.
+Ele vai se apresentar como candidato no próximo ano.
+As únicas coisas que a preocupação traz são cabelos brancos, receita de remédios e remédios.
+Esse automóvel foi fabricado no Japão.
+A leoa se aproximou da presa sem fazer ruído.
+Sempre que lava pratos, ela quebra algum.
+Sua maneira de falar me causa arrepios.
+Onde fica a agência postal mais próxima?
+Este é um vinho de boa marca.
+Qual é a previsão do tempo para esta semana?
+Com um aceno de mão eu lhes disse adeus.
+Bach não te diz nada?
+Ela diz as coisas com uma ingenuidade que desarma.
+O que estou te dizendo também vale para teu amigo.
+Ele rezava sua missa fosse na catedral fosse em seu oratório.
+A decência impede-me de repetir o que ele disse.
+Eu não saberia escrever minha própria biografia.
+A erosão é uma espécie de ablação.
+Um intelectual hábil é um prestidigitador do pensamento.
+Como puderam vocês fazer isso comigo?
+O senhor carece tanto de lógica quanto de coerência.
+Consideramos indispensável fazer uma revisão desse texto.
+Aquilo foi um acontecimento independente de nossa vontade.
+Eles aguardam a ajuda de vocês.
+Não reduzas tuas atividades mais do que for necessário.
+Ele tem mais livros do que eu.
+Esta dor de estômago é insuportável.
+Muitas pessoas não suportam o álcool de forma nenhuma.
+O corpo humano tem uma simetria.
+Obrigaram-no a labutar do amanhecer ao anoitecer.
+O tempo apagou a memória desses fatos.
+Você sabe isso de fato?
+O Ajax empatou no segundo tempo.
+Não resta sequer a sombra de uma dúvida.
+O exército se dispersou depois de iniciada a batalha.
+A caridade é a virtude suprema.
+Vocês não são muito engraçados.

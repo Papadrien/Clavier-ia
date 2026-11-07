@@ -1,0 +1,66 @@
+# Référence du banc d'autocorrection (docs/autocorrection-bench.md). Générée par `main --write-baseline`.
+# À régénérer volontairement quand une phase de la refonte change le comportement, jamais pour masquer une régression.
+[metrics]
+typos.courants.voisine.ok=95.9
+typos.courants.oubli.ok=83.2
+typos.courants.doublon.ok=97.8
+typos.courants.inversion.ok=99.2
+typos.courants.ajout.ok=97.8
+typos.courants.accent.ok=99.8
+typos.courants.apostrophe.ok=100.0
+typos.courants.ok=96.24
+typos.courants.missed=1.57
+typos.courants.wrong=2.19
+typos.courants.surMotValide=24.18
+typos.varies.voisine.ok=93.6
+typos.varies.oubli.ok=78.3
+typos.varies.doublon.ok=97.5
+typos.varies.inversion.ok=98.5
+typos.varies.ajout.ok=97.5
+typos.varies.accent.ok=98.5
+typos.varies.apostrophe.ok=100.0
+typos.varies.ok=94.84
+typos.varies.missed=1.73
+typos.varies.wrong=3.43
+typos.varies.surMotValide=28.96
+valides.courants.faux=0.0
+valides.courants.restaure=0.1
+valides.varies.faux=0.0
+valides.varies.restaure=0.12
+longues.courants.deux.ok=89.33
+longues.courants.deux.wrong=7.33
+longues.courants.trois.ok=63.0
+longues.courants.trois.wrong=17.0
+longues.varies.deux.ok=90.0
+longues.varies.deux.wrong=5.0
+longues.varies.trois.ok=74.67
+longues.varies.trois.wrong=11.33
+inconnus.courants.faux=83.67
+inconnus.varies.faux=75.33
+phrases.justes.changees=0.0
+contexte.e-è.ok=100.0
+contexte.c'è.ok=100.0
+contexte.po'.ok=100.0
+contexte.ho.ok=100.0
+contexte.ha.ok=100.0
+contexte.hanno.ok=100.0
+contexte.qual è.ok=100.0
+contexte.dà.ok=100.0
+contexte.sì.ok=100.0
+contexte.accenti.ok=60.0
+contexte.errori.ok=75.0
+contexte.total.ok=91.67
+heldout.fautes.ok=98.4
+heldout.fautes.wrong=0.86
+heldout.fautes.missed=0.74
+heldout.fautes.sansContexte.ok=95.54
+heldout.fautes.surMotValide=20.3
+completion.frappesEconomisees.ok=46.32
+completion.fautes.ok=88.35
+heldout.justes.faux=0.0
+heldout.justes.restaure=0.0
+[failing-cases]
+accenti	La citta e bella.
+accenti	Pero non ho tempo.
+errori	Sono molto stancho.
+[changed-sentences]

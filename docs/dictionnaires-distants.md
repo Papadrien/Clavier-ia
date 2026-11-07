@@ -8,7 +8,7 @@ le bucket R2 (même Worker que les modèles, `https://taipo-worker.junade-models
 - `dictionaries/<code>.txt` (liste complète) et `dictionaries/names/<code>.txt` (prénoms).
 (Les listes `<code>_50k.txt` de secours ont été supprimées le 04/11/2026 : le repli mémoire relit la liste complète avec un seuil de fréquence ; l'app efface les `_50k` déjà téléchargés. Elles peuvent être retirées du bucket une fois les anciennes versions de l'app retirées.)
 (Dossier du bucket : « dictionaries », constante `DictionaryFiles.REMOTE_DIRECTORY` ; il s'appelait « dictionnaries » jusqu'au 07/11/2026.)
-- Facultatif, français et anglais seulement : `dictionaries/bigrams/<code>.txt` (paires de mots, voir `docs/autocorrection-roadmap.md`).
+- Facultatif (français, anglais, italien, portugais, néerlandais) : `dictionaries/bigrams/<code>.txt` (paires de mots, voir `docs/autocorrection-roadmap.md`).
   Une langue est installée sans lui ; `BigramDownloadWorker` le télécharge au mieux (une tentative par processus, aucun message en cas
   d'échec) et le dictionnaire est relu au champ suivant. À déposer depuis `dictionaries/bigrams/`.
 

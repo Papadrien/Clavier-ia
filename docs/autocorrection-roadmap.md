@@ -56,3 +56,47 @@ python3 tools/build_ngrams.py --lang en --sentences eng_sentences.tsv.bz2
 
 L'outil réécrit aussi les phrases du banc (`tools/autocorrect-bench/heldout/<code>.txt`) : une phrase Tatoeba sur 50 n'est jamais comptée dans
 les bigrammes. Relancer ensuite le banc et relire la différence des références avant de les régénérer.
+
+## Autres langues : italien, portugais, néerlandais (07/11/2026)
+
+Les trois langues du clavier qui gardaient le comportement d'avant (réglages du français, aucune règle de contexte) ont maintenant le
+même moteur que le français et l'anglais, adapté à chacune. Banc : `--lang=it`, `--lang=pt`, `--lang=nl` (références
+`tools/autocorrect-bench/<code>/baseline.txt`, gardées par `AutocorrectBaselineTest`) ; `--lang=it-legacy` (etc.) mesure l'état d'avant.
+
+| Mesure | Italien | Portugais | Néerlandais |
+|---|---|---|---|
+| Phrases justes changées à tort | 8,6 -> 0 % | 9,2 -> 0 % | 4,8 -> 0 % |
+| Cas de contexte réussis | 8 -> 92 % | 41 -> 97 % | 16 -> 96 % |
+| Fautes en phrase mal corrigées | 3,8 -> 0,9 % | 4,0 -> 1,6 % | 4,7 -> 1,8 % |
+| Fautes en phrase bien corrigées | 96,2 -> 98,4 % | 93,9 -> 95,6 % | 95,3 -> 97,0 % |
+| Fautes isolées mal corrigées (courants) | 5,4 -> 2,2 % | 4,2 -> 2,7 % | 4,8 -> 2,9 % |
+| Mots justes inconnus remplacés (courants) | 98 -> 84 % | 81 -> 73 % | 96 -> 79 % |
+| Mot retrouvé malgré une faute au début | 83 -> 88 % | 82 -> 86 % | 82 -> 86 % |
+| Accent oublié rétabli (courants) | 86 -> 99,8 % | 99,3 -> 95,9 % (1) | 100 % |
+
+(1) Baisse de mesure, pas de moteur : 1 094 formes sans accent du corpus (« nao », « voce ») sont désormais des fautes, donc comptées ;
+les échecs restants sont surtout des formes fautives tirées comme mot attendu (« vocé », « coraçao ») ou des variantes Portugal / Brésil
+(« blasfémia » / « blasfêmia »).
+
+**Ce qui change** :
+
+- **Listes de mots réparées** (`tools/complete_from_tatoeba.py`) : les listes d'origine avaient perdu les mots à apostrophe (it : « c'è »,
+  « dov'è », 282 mots ; nl : « zo'n », « m'n ») et des mots très courants (it : « un », d'où « un problema » -> « in problema » ; pt :
+  « agente »). Les formes sans accent des sous-titres (it : « piu », « cosi », « citta » ; pt : « nao », « voce », « tambem » ; nl : « cafe »,
+  « israel ») sont rétrogradées quand Tatoeba, correctement accentué, ne les emploie presque jamais (moins de 0,5 % de la forme accentuée) ;
+  les paires justes (« torno » / « tornò », « forca » / « força ») restent. Fautes d'accent italiennes « perchè », « finchè »... rétrogradées.
+- **Réglages** : `CorrectionConfidence.ITALIAN` / `PORTUGUESE` / `DUTCH` (seuils de l'anglais, mot précédent, score unique, protection des
+  mots inconnus ; seul l'italien rétablit les élisions) ; `AccentPolicy.ITALIAN` / `PORTUGUESE` / `DUTCH` (seuil de 10 et paires justes :
+  e / è, esta / está, een / één...) ; `InflectionRules.DUTCH` (« foto's » et mots composés, comme l'allemand) et `PORTUGUESE`.
+- **Règles de contexte** : `ItalianConfusions` (e / è, c'è, po', ho / ha / hanno devant un participe, dà, sì, qual è),
+  `PortugueseConfusions` (e / é, esta / está, há, mais, a gente, mots soudés), `DutchConfusions` (d / dt de worden, vinden, houden,
+  antwoorden ; jou / jouw ; hun / zij ; 's avonds, zo'n). Chacune liste ce qu'elle ne couvre volontairement pas.
+- **Bigrammes** Tatoeba : it 280 000 paires, pt 202 000, nl 88 000 (`dictionaries/bigrams/`).
+- **Moteur, toutes langues** : une apostrophe initiale (« 's », « 't ») ou finale après un mot connu (« po' ») est voulue, jamais corrigée.
+
+**À faire de ton côté** : déposer sur R2 les bigrammes `dictionaries/bigrams/{it,pt,nl}.txt` **et les listes modifiées**
+`dictionaries/{it,pt,nl}.txt`. Attention : l'app ne remplace pas une liste déjà téléchargée (`docs/dictionnaires-distants.md`, « Limites ») ;
+les utilisateurs qui ont déjà l'italien, le portugais ou le néerlandais gardent l'ancienne liste tant qu'elle n'est pas retéléchargée.
+
+**Restent en échec dans le banc** (objectifs) : it « la citta e bella » (« e » + adjectif après un nom, ambigu : « rosso e bello ») et
+« pero » (vrai mot, le poirier) ; pt « amanhá » -> « amanhã » ; nl « trien » (mot de la liste).
