@@ -28,6 +28,13 @@ dependencies {
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+    // Le message d'un test en échec (par exemple la liste des régressions du banc) apparaît dans les logs de la CI.
+    testLogging {
+        events("failed")
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        showCauses = true
+        showStackTraces = false
+    }
 }
 
 // La CI lance `./gradlew testDebugUnitTest` : cet alias fait que les tests du module core en font partie
