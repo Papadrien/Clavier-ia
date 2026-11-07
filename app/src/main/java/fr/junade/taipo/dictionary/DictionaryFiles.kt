@@ -4,7 +4,7 @@ import fr.junade.taipo.KeyboardLanguage
 import java.io.File
 
 /**
- * Les 2 fichiers d'une langue. Le même chemin relatif sert sur le serveur (`dictionnaries/<chemin>`) et dans le
+ * Les 2 fichiers d'une langue. Le même chemin relatif sert sur le serveur (`dictionaries/<chemin>`) et dans le
  * stockage de l'app (`filesDir/dictionaries/<chemin>`).
  */
 enum class DictionaryFile {
@@ -33,8 +33,8 @@ object DictionaryFiles {
     /** Même serveur (Worker Cloudflare devant R2) que les modèles : voir `VoiceModelFile` et `AiModel`. */
     const val SERVER_BASE_URL = "https://taipo-worker.junade-models.workers.dev/"
 
-    /** Dossier du bucket R2 (orthographe du bucket : « dictionnaries »). */
-    const val REMOTE_DIRECTORY = "dictionnaries"
+    /** Dossier du bucket R2 (même nom que le dossier local). */
+    const val REMOTE_DIRECTORY = "dictionaries"
 
     fun directory(filesDir: File): File = File(filesDir, DIRECTORY_NAME)
 

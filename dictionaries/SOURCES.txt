@@ -129,7 +129,7 @@ Les listes <code>_50k.txt (fr, en, es, de, it, pt, nl) citées plus haut n'exist
 complète ne se chargeait pas faute de mémoire. Le repli relit maintenant <code>.txt en ne gardant que les mots de fréquence >=
 DictionaryLoader.candidateMinFrequency (fr 100, en 149, es 183, de 61, it 102, pt 91, nl 77), soit ~50 000 mots : les mêmes que
 ceux proposés en correction (vérifié par DictionaryAssetsIntegrityTest). Les fichiers _50k déjà téléchargés sont supprimés de
-l'appareil au chargement suivant (DictionaryFiles.deleteObsoleteBackup). Sur le bucket R2, dictionnaries/<code>_50k.txt peuvent être
+l'appareil au chargement suivant (DictionaryFiles.deleteObsoleteBackup). Sur le bucket R2, dictionaries/<code>_50k.txt peuvent être
 supprimés une fois les anciennes versions de l'app retirées (elles les téléchargent encore).
 
 == en.txt : nettoyage du 05/11/2026 (tools/clean_en_dictionary.py) ==

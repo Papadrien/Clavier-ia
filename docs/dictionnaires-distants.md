@@ -5,10 +5,10 @@ Non compilé ni exécuté dans l'environnement de développement : à valider au
 ## Principe
 Les listes de mots ne sont plus dans l'APK. Pour chaque langue (fr, en, es, de, it, pt, nl), 2 fichiers sont téléchargés depuis
 le bucket R2 (même Worker que les modèles, `https://taipo-worker.junade-models.workers.dev/`) :
-- `dictionnaries/<code>.txt` (liste complète) et `dictionnaries/names/<code>.txt` (prénoms).
+- `dictionaries/<code>.txt` (liste complète) et `dictionaries/names/<code>.txt` (prénoms).
 (Les listes `<code>_50k.txt` de secours ont été supprimées le 04/11/2026 : le repli mémoire relit la liste complète avec un seuil de fréquence ; l'app efface les `_50k` déjà téléchargés. Elles peuvent être retirées du bucket une fois les anciennes versions de l'app retirées.)
-(Orthographe du dossier du bucket : « dictionnaries », constante `DictionaryFiles.REMOTE_DIRECTORY`.)
-- Facultatif, français et anglais seulement : `dictionnaries/bigrams/<code>.txt` (paires de mots, voir `docs/autocorrection-roadmap.md`).
+(Dossier du bucket : « dictionaries », constante `DictionaryFiles.REMOTE_DIRECTORY` ; il s'appelait « dictionnaries » jusqu'au 07/11/2026.)
+- Facultatif, français et anglais seulement : `dictionaries/bigrams/<code>.txt` (paires de mots, voir `docs/autocorrection-roadmap.md`).
   Une langue est installée sans lui ; `BigramDownloadWorker` le télécharge au mieux (une tentative par processus, aucun message en cas
   d'échec) et le dictionnaire est relu au champ suivant. À déposer depuis `dictionaries/bigrams/`.
 

@@ -36,8 +36,8 @@ lettre suivante (touches adaptatives, `NextLetterModel`), ce qui couvre l'essent
 
 ## À faire de ton côté
 
-1. **Déposer les bigrammes sur R2** : `dictionaries/bigrams/fr.txt` et `dictionaries/bigrams/en.txt` vers `dictionnaries/bigrams/fr.txt` et
-   `dictionnaries/bigrams/en.txt` (voir `docs/dictionnaires-distants.md`). Sans eux, le clavier fonctionne exactement comme avant : le fichier est
+1. **Déposer les bigrammes sur R2** : `dictionaries/bigrams/fr.txt` et `dictionaries/bigrams/en.txt` vers `dictionaries/bigrams/fr.txt` et
+   `dictionaries/bigrams/en.txt` (voir `docs/dictionnaires-distants.md`). Sans eux, le clavier fonctionne exactement comme avant : le fichier est
    facultatif, téléchargé au mieux une fois par processus (`BigramDownloadWorker`).
 2. **Vérifier sur un téléphone** : temps de la bande de suggestions avec la complétion tolérante (2,1 ms au p95 sur PC, la recherche parcourt les
    50 000 mots proposables) et mémoire des bigrammes (environ 5 Mo pour l'anglais).

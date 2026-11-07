@@ -497,7 +497,7 @@ test `GermanNounsTest`.
 - **Attendu au banc** : `contexte.nomen.ok` 0 -> ~100 % (les 16 cas ; « hausaufgaben » est dans la liste), `contexte.vorname.ok` inchangé, `phrases.justes.changees` 0
   (vérifié en Python : aucun mot en minuscules des 144 phrases justes n'est dans la liste, depuis le retrait de « Recht »). **Non mesuré** : ni Kotlin ni Gradle ici ;
   à faire chez toi : `./gradlew :core:test` puis `./gradlew :core:run --args="--lang=de --write-baseline"`, relire la référence avant de l'enregistrer.
-- **À faire côté app** : déposer le nouveau `names/de.txt` sur R2 (`dictionnaries/names/de.txt`). Le module `app` n'a pas été modifié ni compilé.
+- **À faire côté app** : déposer le nouveau `names/de.txt` sur R2 (`dictionaries/names/de.txt`). Le module `app` n'a pas été modifié ni compilé.
 
 **Extension de la liste de noms (07/11/2026)** : `names/de.txt` passe de 442 à 1 884 entrées (1 442 de plus : 1 161 noms communs, singuliers et pluriels courants, et 282 prénoms
 allemands et internationaux). Choix à la main parmi les mots les plus fréquents de `de.txt` ; chaque forme est présente dans `de.txt`. Écartés : les noms dont la forme en
@@ -506,7 +506,7 @@ sans doublon), aucun mot en minuscules de `sentences-ok.txt` ni de `valid-rare-w
 **Non fait** : filtres « ambigu » et « verbe » (pas de lexique ici), banc et tests Kotlin non exécutés. À faire chez toi : `./gradlew :core:test`, puis le banc `--lang=de` et comparer à
 `baseline.txt` avant de l'enregistrer (surveiller `phrases.justes.changees`, qui doit rester à 0 : un mot qui y bouge est un nom ambigu à retirer de `nomen-seed.txt`) ;
 si tu relances `build_de_names.py --lexicon ...`, relire `dropped.txt` : des noms valides en première partie de composé (Garten, Kinder...) peuvent y figurer, à ajouter à `ambigu-ok.txt` ;
-déposer `names/de.txt` sur R2 (`dictionnaries/names/de.txt`).
+déposer `names/de.txt` sur R2 (`dictionaries/names/de.txt`).
 
 
 ### Phase 4 : mots composés (06/11/2026)
