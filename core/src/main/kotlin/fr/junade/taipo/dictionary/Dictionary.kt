@@ -718,6 +718,66 @@ class Dictionary private constructor(
         return List(size) { bestWords[it]!! }
     }
 
+    /**
+     * Point 5 de docs/autocorrection-roadmap.md : complétions tolérantes à UNE faute dans le début tapé (« aujoudr » -> « aujourd'hui »,
+     * « ordona » -> « ordinateur »), les plus fréquentes d'abord, au plus [count]. Seuls les mots dont un début est à exactement une
+     * erreur (touche remplacée, oubliée, ajoutée ou inversion) de [prefix] y figurent : ceux qui commencent par [prefix] sont déjà
+     * dans [topCompletions]. Rien pour un début de moins de [FUZZY_MIN_PREFIX] lettres (trop de mots à une erreur près).
+     */
+    internal fun fuzzyCompletions(prefix: String, count: Int): List<String> {
+        val n = prefix.length
+        if (n < FUZZY_MIN_PREFIX || count <= 0) return emptyList()
+        val bestWords = ArrayList<String>(count + 1)
+        val bestFrequencies = ArrayList<Long>(count + 1)
+        // Lignes de la distance d'édition (avec inversion) entre [prefix] et le début du mot, réutilisées d'un mot à l'autre.
+        var before = IntArray(n + 1)
+        var previous = IntArray(n + 1)
+        var current = IntArray(n + 1)
+        // Pré-filtre : à une erreur près, au plus une lettre du début tapé manque au mot (même idée que [searchCandidates]).
+        val typedMask = letterMask(prefix)
+        for (i in candidateWords.indices) {
+            if ((typedMask and candidateMasks[i].inv()).countOneBits() > 1) continue
+            val frequency = candidateFrequencies[i]
+            if (bestWords.size == count && frequency <= bestFrequencies[count - 1]) continue
+            val word = candidateWords[i]
+            if (word.length < n || word.startsWith(prefix)) continue
+            // Début du mot à une erreur de [prefix] : la ligne j = n - 1, n ou n + 1 lettres du mot doit atteindre 1 en colonne n.
+            for (k in 0..n) previous[k] = k
+            var found = false
+            var j = 1
+            val lastRow = minOf(word.length, n + 1)
+            while (j <= lastRow) {
+                current[0] = j
+                var rowMin = j
+                val c = word[j - 1]
+                for (k in 1..n) {
+                    val cost = if (prefix[k - 1] == c) 0 else 1
+                    var value = minOf(previous[k] + 1, current[k - 1] + 1, previous[k - 1] + cost)
+                    if (j > 1 && k > 1 && prefix[k - 1] == word[j - 2] && prefix[k - 2] == c) value = minOf(value, before[k - 2] + 1)
+                    current[k] = value
+                    if (value < rowMin) rowMin = value
+                }
+                if (j >= n - 1 && current[n] <= 1) { found = true; break }
+                if (rowMin > 1) break
+                val recycled = before
+                before = previous
+                previous = current
+                current = recycled
+                j++
+            }
+            if (!found || word in dominatedByAccented) continue
+            var position = bestWords.size
+            while (position > 0 && frequency > bestFrequencies[position - 1]) position--
+            bestWords.add(position, word)
+            bestFrequencies.add(position, frequency)
+            if (bestWords.size > count) {
+                bestWords.removeAt(count)
+                bestFrequencies.removeAt(count)
+            }
+        }
+        return bestWords
+    }
+
     /** Forme accentuée trouvée pour une forme tapée. */
     private class Restoration(val word: String)
 
@@ -910,6 +970,9 @@ class Dictionary private constructor(
 
         /** Story 1.17 : nombre d'emplacements de mots de la bande de suggestions. */
         const val SUGGESTION_LIMIT = 3
+
+        /** Longueur minimale du début tapé pour proposer des complétions malgré une faute ([fuzzyCompletions]). */
+        private const val FUZZY_MIN_PREFIX = 4
 
         /** Pénalité d'une erreur d'édition dans le score unique quand la proximité des touches est inconnue (voir [searchCandidates]). */
         private const val NO_PROXIMITY_EDIT_PENALTY = 40.0

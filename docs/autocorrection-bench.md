@@ -599,3 +599,7 @@ puis à régénérer avec `--write-baseline`.
 (« danne » -> « d'anne », « sins » -> « s'ins », « leiner » -> « l'einer »). Nouveau profil `CorrectionConfidence.GERMAN` = `NONE` sans élision,
 utilisé par `DictionaryLoader` et le banc. Banc : `typos.courants.wrong` 3,88 -> 3,64, `contexte.tippfehler.ok` 86,67 -> 93,33, aucune mesure en baisse ;
 référence `de/baseline.txt` régénérée. L'italien garde ses élisions ; le portugais et le néerlandais restent sur `NONE` (non mesurés).
+
+**Feuille de route fr/en (07/11/2026)** : bigrammes livrés, score unique, protection des mots inconnus et complétion tolérante aux
+fautes, avec un banc sur phrases réelles (`heldout.*`, `completion.*`). Détail, mesures et suites dans `docs/autocorrection-roadmap.md`.
+Le banc lit `dictionaries/bigrams/<code>.txt` s'il existe ; les références fr et en sont régénérées.

@@ -289,6 +289,10 @@ internal class DictionarySuggestions(private val d: Dictionary) {
         if (result.size < limit) {
             for (word in d.topCompletions(lower, limit + 1)) offer(WordForms.applyOriginalCasing(typed, word), word)
         }
+        // Point 5 : emplacements encore libres, faute dans le début tapé (« aujoudr » -> « aujourd'hui ») : complétions à une erreur près.
+        if (result.size < limit && !hasElision && lower.all { it.isLetter() }) {
+            for (word in d.fuzzyCompletions(lower, limit + 1)) offer(WordForms.applyOriginalCasing(typed, word), word)
+        }
         // Après une élision française (« t'insc »), mots du dictionnaire qui complètent le mot collé à
         // l'apostrophe (« t'inscrire »), à condition qu'il commence par une voyelle ou un h (« l'ordi »
         // oui, « l'cheval » non). Les contractions du dictionnaire (« j'ai ») restent proposées avant.

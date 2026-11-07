@@ -180,3 +180,12 @@ tools/build_de_names.py. Aucun corpus avec casse ni lexique de clavier n'était 
 Écartés à la main : noms dont la forme en minuscules est aussi un verbe, un adjectif, un adverbe ou une particule courants (Essen, Leben, Liebe, Glaube, Stelle,
 Frage, Waren, Krieg, Klasse, Fest, Paar, Wert, Stolz, Morgen, Alter, Folgen, Sorgen, Spiele, Treffen, Weg, Junge, Schlaf...). Les 10 noms que les lexiques avaient retirés
 (Arm, Junge, Klasse, Kosten, Laden, Regen, Rücken, Schmerzen, Stimme, Weg) restent absents, plus Schlaf (« schlaf » est dans sentences-ok.txt).
+
+
+=== Bigrammes français et anglais (bigrams/fr.txt, bigrams/en.txt) — 07/11/2026 ===
+Source : phrases du corpus collaboratif Tatoeba (https://tatoeba.org), exports « per_language » fra_sentences.tsv.bz2 et
+eng_sentences.tsv.bz2 du 07/11/2026, licence CC BY 2.0 FR (attribution requise : mention ajoutée dans l'écran « Licences »).
+Produits par tools/build_ngrams.py : seuls les comptes de paires de mots consécutifs (et le total de chaque mot comme contexte) sont
+conservés, pas les phrases ; mots du dictionnaire de la langue seulement ; paires vues au moins 2 fois ; au plus 400 000 paires
+(fr : 255 111, en : 400 000). Une phrase sur 50 n'est jamais comptée : elle sert au banc (tools/autocorrect-bench/heldout/<code>.txt,
+2 000 phrases Tatoeba par langue, même licence). Voir docs/autocorrection-roadmap.md.

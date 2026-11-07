@@ -730,10 +730,67 @@ object AutocorrectBench {
             }
             if (changedHere && changedExamples.size < 25) changedExamples += "  $sentence -> $typed"
         }
+        completionMeasures(dictionary, sentences, metrics, details)
         metrics["heldout.justes.faux"] = percent(changedWords, words)
         metrics["heldout.justes.restaure"] = percent(restoredWords, words)
         details += "Phrases justes mises de côté changées à tort :"
         details += changedExamples
+    }
+
+    private const val COMPLETION_SENTENCES = 250
+    private const val COMPLETION_MIN_LENGTH = 6
+
+    /**
+     * Complétion (point 5 de docs/autocorrection-roadmap.md), sur les phrases mises de côté, mots d'au moins [COMPLETION_MIN_LENGTH]
+     * lettres qui suivent un autre mot :
+     * - `completion.frappesEconomisees.ok` : lettres économisées si l'on touche le mot dès qu'il apparaît dans la bande ;
+     * - `completion.fautes.ok` : une touche voisine se glisse dans les deux premières lettres ; part des mots qui apparaissent
+     *   quand même dans la bande avant d'être tapés en entier.
+     */
+    private fun completionMeasures(
+        dictionary: Dictionary,
+        sentences: List<String>,
+        metrics: LinkedHashMap<String, Double>,
+        details: MutableList<String>,
+    ) {
+        val random = Random(SEED + 41)
+        var letters = 0
+        var saved = 0
+        var withTypo = 0
+        var foundWithTypo = 0
+        val missedExamples = ArrayList<String>()
+        val timings = ArrayList<Long>()
+        fun firstShown(typed: String, word: String, previous: String): Int? {
+            for (k in 1 until typed.length) {
+                val t0 = System.nanoTime()
+                val slots = dictionary.suggestionSlotsFor(typed.substring(0, k), previousWord = previous)
+                timings += (System.nanoTime() - t0) / 1_000
+                if (slots.any { it != null && it.text.lowercase() == word }) return k
+            }
+            return null
+        }
+        for (sentence in sentences.take(COMPLETION_SENTENCES)) {
+            for ((original, previous) in wordsWithPrevious(sentence)) {
+                val word = original.lowercase()
+                if (previous == null || word.length < COMPLETION_MIN_LENGTH || !word.all { it.isLetter() }) continue
+                letters += word.length
+                firstShown(word, word, previous)?.let { saved += word.length - it }
+                val i = random.nextInt(2)
+                val options = profile.proximity.neighborsOf(word[i]).filter { it.isLetter() }.sorted()
+                if (options.isEmpty()) continue
+                val typo = word.substring(0, i) + options[random.nextInt(options.size)] + word.substring(i + 1)
+                withTypo++
+                if (firstShown(typo, word, previous) != null) foundWithTypo++ else if (missedExamples.size < 15) missedExamples += "  $previous $typo (attendu $word)"
+            }
+        }
+        metrics["completion.frappesEconomisees.ok"] = percent(saved, letters)
+        metrics["completion.fautes.ok"] = percent(foundWithTypo, withTypo)
+        timings.sort()
+        if (timings.isNotEmpty()) {
+            details += "Temps de suggestionSlotsFor (µs, cette machine) : p50=${timings[timings.size / 2]} p95=${timings[timings.size * 95 / 100]} max=${timings.last()}"
+        }
+        details += "Complétion : mots jamais proposés malgré une faute au début :"
+        details += missedExamples
     }
 
     private fun dataLines(file: File): List<String> =

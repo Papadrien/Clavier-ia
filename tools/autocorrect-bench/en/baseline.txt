@@ -28,15 +28,15 @@ valides.courants.restaure=0.28
 valides.varies.faux=0.02
 valides.varies.restaure=0.26
 longues.courants.deux.ok=90.67
-longues.courants.deux.wrong=6.67
+longues.courants.deux.wrong=6.33
 longues.courants.trois.ok=73.33
 longues.courants.trois.wrong=13.67
-longues.varies.deux.ok=91.0
-longues.varies.deux.wrong=5.33
+longues.varies.deux.ok=91.33
+longues.varies.deux.wrong=5.0
 longues.varies.trois.ok=77.0
-longues.varies.trois.wrong=10.0
-inconnus.courants.faux=63.33
-inconnus.varies.faux=68.33
+longues.varies.trois.wrong=9.33
+inconnus.courants.faux=58.33
+inconnus.varies.faux=63.67
 phrases.justes.changees=0.0
 contexte.its-it's.ok=100.0
 contexte.your-you're.ok=100.0
@@ -52,6 +52,15 @@ contexte.glued-words.ok=100.0
 contexte.apostrophe.ok=100.0
 contexte.typo.ok=100.0
 contexte.total.ok=95.51
+heldout.fautes.ok=95.51
+heldout.fautes.wrong=1.23
+heldout.fautes.missed=3.26
+heldout.fautes.sansContexte.ok=92.81
+heldout.fautes.surMotValide=19.68
+completion.frappesEconomisees.ok=48.1
+completion.fautes.ok=93.62
+heldout.justes.faux=0.0
+heldout.justes.restaure=0.0
 [failing-cases]
 to-too	Its to early to tell.
 then-than	I would rather walk then drive.
