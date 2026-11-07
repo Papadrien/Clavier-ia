@@ -38,7 +38,10 @@ object Autocorrection {
         val trace = if (stats != null) DecisionTrace() else null
         val habits = habitsFor(textBeforeCursor)
         // Une correction refusée deux fois est déjà écartée par le dictionnaire (voir [Dictionary.correctionFor]).
-        val dictionaryFix = dictionary.correctionFor(word, personalWords = personalWords, habits = habits, trace = trace)?.takeIf { it != word }
+        // Mot précédent (point 1, bigrammes) : la bande de suggestions le passe aussi, pour montrer en gras ce qui sera appliqué.
+        val previousWord = NgramModel.previousWordOf(textBeforeCursor.dropLast(word.length))
+        val dictionaryFix = dictionary.correctionFor(word, personalWords = personalWords, habits = habits, trace = trace, previousWord = previousWord)
+            ?.takeIf { it != word }
         var result = if (dictionaryFix != null) textBeforeCursor.dropLast(word.length) + dictionaryFix else textBeforeCursor
         var contextApplied = false
         if (contextual) {

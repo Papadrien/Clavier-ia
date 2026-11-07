@@ -73,6 +73,16 @@ object LicenseNotices {
             licenseUrl = "https://creativecommons.org/licenses/by-sa/4.0/",
         ),
         LicenseNotice(
+            id = "tatoeba",
+            section = LicenseSection.DICTIONARIES,
+            name = "Tatoeba",
+            licenseName = "Creative Commons Attribution 2.0 France (CC BY 2.0 FR)",
+            usageRes = R.string.licenses_usage_tatoeba,
+            noticeRes = R.string.licenses_notice_tatoeba,
+            projectUrl = "https://tatoeba.org",
+            licenseUrl = "https://creativecommons.org/licenses/by/2.0/fr/",
+        ),
+        LicenseNotice(
             id = "litertlm",
             section = LicenseSection.SOFTWARE,
             name = "LiteRT-LM (Google)",

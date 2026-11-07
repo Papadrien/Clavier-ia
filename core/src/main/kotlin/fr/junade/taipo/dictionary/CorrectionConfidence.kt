@@ -65,6 +65,11 @@ class CorrectionConfidence(
      * par un autre chemin, qui reste actif.
      */
     val restoresElisions: Boolean = true,
+    /**
+     * Poids du mot précédent ([NgramModel.bonus]) dans le score d'un candidat (point 1 de docs/autocorrection-roadmap.md). 0 : le
+     * contexte est ignoré (langues sans bigrammes ou non calibrées). 1 : une unité de bonus vaut une unité de ln(fréquence).
+     */
+    val contextWeight: Double = 0.0,
 ) {
 
     /** Distance d'édition de la recherche à mots longs. */
@@ -124,6 +129,8 @@ class CorrectionConfidence(
             longWordMaxCost = 12,
             singleLetterElisionMinRest = 4,
             cElisionOnlyBeforeE = true,
+            // Point 1 (bigrammes) : réglé sur le banc des phrases mises de côté (0,5 / 1 / 1,5 / 2 : 1 est le meilleur compromis).
+            contextWeight = 1.0,
         )
 
         /**
@@ -145,6 +152,7 @@ class CorrectionConfidence(
             singleLetterElisionMinRest = 4,
             cElisionOnlyBeforeE = true,
             restoresElisions = false,
+            contextWeight = 1.0,
         )
 
         /**

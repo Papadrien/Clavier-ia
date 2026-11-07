@@ -24,6 +24,8 @@ class Dictionary private constructor(
     properNames: Collection<String> = emptyList(),
     internal val confidence: CorrectionConfidence = CorrectionConfidence.NONE,
     private val accentPolicy: AccentPolicy = AccentPolicy.FRENCH,
+    /** Bigrammes livrés (point 1 de docs/autocorrection-roadmap.md) ; leur poids est [CorrectionConfidence.contextWeight]. */
+    internal val ngrams: NgramModel = NgramModel.EMPTY,
 ) {
 
     // Prénoms et noms propres courants (forme avec majuscule, « Adrien », « Éric ») : les listes de fréquence sont
@@ -275,8 +277,9 @@ class Dictionary private constructor(
         personalWords: Collection<String> = emptyList(),
         habits: HabitContext? = null,
         trace: DecisionTrace? = null,
+        previousWord: String? = null,
     ): String? {
-        val correction = correctionWithoutNames(word, maxDistance, personalWords, habits, trace)
+        val correction = correctionWithoutNames(word, maxDistance, personalWords, habits, trace, previousWord)
         val result = properNameForm(word, correction, personalWords) ?: correction
         // Phase 5 : une correction annulée deux fois (voir [HabitContext.isRefused]) n'est plus proposée nulle part, ni à
         // l'espace ni dans la bande : celle-ci montre toujours ce que l'autocorrection applique.
@@ -336,6 +339,7 @@ class Dictionary private constructor(
         personalWords: Collection<String>,
         habits: HabitContext?,
         trace: DecisionTrace?,
+        previousWord: String? = null,
     ): String? {
         if (word.length < MIN_WORD_LENGTH_FOR_CORRECTION) return null
         if (word.any { it.isDigit() }) return digitSlipCorrection(word)
@@ -360,6 +364,9 @@ class Dictionary private constructor(
             // « j'étais » 276 000) : « tes » / « t'es » restent intacts, les deux formes étant courantes.
             val contraction = contractionsFolded[lower] ?: contractionsWithoutApostrophe[lower] ?: return null
             if (frequencies.getValue(contraction) < frequencies.getValue(lower) * CONTRACTION_DOMINANCE) return null
+            // Point 1 (bigrammes) : le mot précédent dit lequel des deux est attendu (« la lune » reste « lune », pas « la l'une » ;
+            // « fallen ill » reste « ill », pas « I'll »).
+            if (contextPrefers(previousWord, lower, contraction)) return null
             return applyOriginalCasing(word, contraction)
         }
 
@@ -398,12 +405,12 @@ class Dictionary private constructor(
         // Rien d'appris : aucun départage possible, on ne calcule rien (résultat identique à l'absence d'habitudes).
         val activeHabits = habits?.takeUnless { it.isInert() }
 
-        var contest = searchCandidates(lower, allowedDistance, personal, activeHabits)
+        var contest = searchCandidates(lower, allowedDistance, personal, activeHabits, previousWord)
         // Mot long sans aucun candidat à distance 2 ou moins : trois erreurs d'édition sont tentées (phase 3), sous réserve
         // d'une marge forte (voir [CorrectionConfidence]). Pas si l'appelant a volontairement limité la distance.
         if (contest.best == null && maxDistance >= 2 && confidence.allowsThreeEditsFor(lower.length)) {
             trace?.threeEditsSearched = true
-            contest = searchCandidates(lower, confidence.longWordDistance, personal, activeHabits)
+            contest = searchCandidates(lower, confidence.longWordDistance, personal, activeHabits, previousWord)
         }
 
         // Décision de déclenchement (phase 3) : le meilleur candidat ne s'applique que si sa marge sur le suivant atteint
@@ -423,6 +430,12 @@ class Dictionary private constructor(
         return if (stored != null && stored != stored.lowercase()) stored else applyOriginalCasing(word, correction)
     }
 
+    /** Vrai si, après [previousWord], le modèle de bigrammes attend nettement plus [typed] que [replacement] (point 1). */
+    private fun contextPrefers(previousWord: String?, typed: String, replacement: String): Boolean {
+        if (previousWord == null || confidence.contextWeight <= 0.0 || ngrams.contextCount(previousWord) == 0) return false
+        return ngrams.bonus(previousWord, typed) > ngrams.bonus(previousWord, replacement)
+    }
+
     /**
      * Cherche dans les listes, les mots personnels et les prénoms les candidats à au plus [allowedDistance] erreurs
      * d'édition de [lower] et les range dans un [CandidateContest] (le meilleur, le suivant, la marge). Ne décide rien.
@@ -432,8 +445,11 @@ class Dictionary private constructor(
         allowedDistance: Int,
         personal: Map<String, String>,
         activeHabits: HabitContext?,
+        previousWord: String? = null,
     ): CandidateContest {
         val contest = CandidateContest()
+        // Point 1 (bigrammes) : le mot précédent départage les candidats, s'il est connu du modèle et que la langue lui donne un poids.
+        val context = previousWord?.takeIf { confidence.contextWeight > 0.0 && ngrams.contextCount(it) > 0 }
 
         fun consider(candidate: String, frequency: Long, isPersonal: Boolean = false) {
             // Distance bornée : renvoie allowedDistance + 1 dès que le candidat est trop loin (même
@@ -450,7 +466,9 @@ class Dictionary private constructor(
             val cost = proximity.editCost(lower, candidate)
             // À distance égale, le meilleur score gagne (voir [CandidateScore] : mot personnel, habitudes, plausibilité de la
             // faute au clavier, inversion, fréquence). L'écart avec le suivant est la marge de confiance.
-            contest.offer(candidate, distance, CandidateScore.of(frequency, cost, isSwap, isPersonal, habit), cost, isSwap)
+            var score = CandidateScore.of(frequency, cost, isSwap, isPersonal, habit)
+            if (context != null) score += confidence.contextWeight * ngrams.bonus(context, candidate)
+            contest.offer(candidate, distance, score, cost, isSwap)
         }
 
         val minLength = maxOf(0, lower.length - allowedDistance)
@@ -491,7 +509,8 @@ class Dictionary private constructor(
         limit: Int = SUGGESTION_LIMIT,
         personalWords: Collection<String> = emptyList(),
         habits: HabitContext? = null,
-    ): List<String> = suggestions.suggestionsFor(typed, limit, personalWords, habits)
+        previousWord: String? = null,
+    ): List<String> = suggestions.suggestionsFor(typed, limit, personalWords, habits, previousWord)
 
     /** Story 1.17 : contenu des [SUGGESTION_LIMIT] emplacements de mots de la bande (null = vide). */
     fun suggestionSlotsFor(
@@ -499,7 +518,8 @@ class Dictionary private constructor(
         personalWords: Collection<String> = emptyList(),
         habits: HabitContext? = null,
         participle: ParticipleFix? = null,
-    ): List<WordSuggestion?> = suggestions.suggestionSlotsFor(typed, personalWords, habits, participle)
+        previousWord: String? = null,
+    ): List<WordSuggestion?> = suggestions.suggestionSlotsFor(typed, personalWords, habits, participle, previousWord)
 
     /** Emplacements quand le curseur est posé sur un mot déjà écrit ([typed]) ; voir [DictionarySuggestions]. */
     fun placementSlotsFor(
@@ -508,7 +528,8 @@ class Dictionary private constructor(
         previousForm: String? = null,
         habits: HabitContext? = null,
         participle: ParticipleFix? = null,
-    ): List<WordSuggestion?> = suggestions.placementSlotsFor(typed, personalWords, previousForm, habits, participle)
+        previousWord: String? = null,
+    ): List<WordSuggestion?> = suggestions.placementSlotsFor(typed, personalWords, previousForm, habits, participle, previousWord)
 
     /** Au plus [limit] alternatives pour le mot entier [typed] ; voir [DictionarySuggestions]. */
     fun alternativesFor(
@@ -553,6 +574,11 @@ class Dictionary private constructor(
         personalWords: Collection<String>,
     ): ApostropheResult? {
         val apostrophe = lower.indexOf('\'')
+        // Possessif d'un pluriel (« teachers' », « days' ») : le mot est juste si le pluriel l'est (banc des phrases, 07/11/2026).
+        if (apostrophe == lower.length - 1 && apostrophe > 1 && lower[apostrophe - 1] == 's') {
+            val head = lower.substring(0, apostrophe)
+            if (head in frequencies || isInflectedForm(head)) return ApostropheResult(null)
+        }
         if (apostrophe <= 0 || apostrophe >= lower.length - 1) return null
         val head = lower.substring(0, apostrophe)
         val tail = lower.substring(apostrophe + 1)
@@ -914,17 +940,18 @@ class Dictionary private constructor(
             properNames: Collection<String> = emptyList(),
             confidence: CorrectionConfidence = CorrectionConfidence.NONE,
             accentPolicy: AccentPolicy = AccentPolicy.FRENCH,
+            ngrams: NgramModel = NgramModel.EMPTY,
         ): Dictionary {
             // Liste déjà en minuscules (cas des listes de l'application) : pas de copie, ce qui évite de
             // doubler la mémoire avec une liste complète de plusieurs centaines de milliers de mots.
-            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence, accentPolicy)
+            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence, accentPolicy, ngrams)
             val merged = HashMap<String, Long>(entries.size)
             entries.forEach { (word, count) ->
                 val key = word.lowercase()
                 val previous = merged[key]
                 if (previous == null || count > previous) merged[key] = count
             }
-            return Dictionary(merged, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence, accentPolicy)
+            return Dictionary(merged, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence, accentPolicy, ngrams)
         }
 
         // Relais vers EditDistance et WordForms (audit 2.1, étape 6) : l'API de Dictionary reste celle d'avant.

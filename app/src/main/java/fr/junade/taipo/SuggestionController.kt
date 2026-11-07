@@ -11,6 +11,8 @@ import fr.junade.taipo.dictionary.CorrectionHistory
 import fr.junade.taipo.dictionary.Dictionary
 import fr.junade.taipo.dictionary.DictionaryFiles
 import fr.junade.taipo.dictionary.NextLetterModel
+import fr.junade.taipo.dictionary.NgramModel
+import fr.junade.taipo.dictionary.download.BigramDownloadWorker
 import fr.junade.taipo.dictionary.DictionaryLoader
 import fr.junade.taipo.dictionary.download.DictionaryDownloadScheduler
 import fr.junade.taipo.dictionary.download.DictionaryDownloadState
@@ -382,6 +384,8 @@ class SuggestionController(
             val habits = habitContextFor(textBeforeCursor) // lu ici (thread principal), consulté pendant le calcul
             // Texte avant le curseur jusqu'au mot entier (partie après le curseur comprise), pour lire l'auxiliaire qui le précède.
             val textUpToWord = textBeforeCursor.dropLast(WordText.trailingWord(textBeforeCursor).length) + typed
+            // Mot précédent : le même que celui que lit l'autocorrection (Autocorrection.correctedText), pour que le gras soit ce qui sera appliqué.
+            val previousWord = NgramModel.previousWordOf(textBeforeCursor.dropLast(WordText.trailingWord(textBeforeCursor).length))
             val french = language == KeyboardLanguage.FR
             val truncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND
             currentWordSuggestions = emptyList() // un appui sur un mot périmé est ignoré
@@ -404,9 +408,10 @@ class SuggestionController(
                             previousForm = correctionHistory.originalOf(typed),
                             habits = habits,
                             participle = participle,
+                            previousWord = previousWord,
                         )
                     } else {
-                        dictionary.suggestionSlotsFor(typed, personalWords = personalWords, habits = habits, participle = participle)
+                        dictionary.suggestionSlotsFor(typed, personalWords = personalWords, habits = habits, participle = participle, previousWord = previousWord)
                     }
                 }
                 autocorrectStats?.recordLatency(AutocorrectStats.Section.SUGGESTIONS, System.nanoTime() - suggestionsStarted)
@@ -520,6 +525,8 @@ class SuggestionController(
      */
     fun preloadDictionaries() {
         val language = host.language()
+        // Bigrammes facultatifs (mot précédent, point 1 de docs/autocorrection-roadmap.md) : téléchargés au mieux, une fois par processus.
+        if (DictionaryFiles.isInstalled(appContext.filesDir, language)) BigramDownloadWorker.ensure(appContext, language)
         if (DictionaryLoader.peek(language) != null) {
             // Dictionnaire déjà là : seul le modèle de la lettre suivante peut manquer (réglage activé depuis).
             if (nextLettersAllowed && DictionaryLoader.peek(language)?.nextLetterModelIfBuilt == null) {

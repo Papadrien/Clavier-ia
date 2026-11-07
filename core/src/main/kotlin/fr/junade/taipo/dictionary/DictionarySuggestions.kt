@@ -27,10 +27,11 @@ internal class DictionarySuggestions(private val d: Dictionary) {
         limit: Int = Dictionary.SUGGESTION_LIMIT,
         personalWords: Collection<String> = emptyList(),
         habits: HabitContext? = null,
+        previousWord: String? = null,
     ): List<String> {
         if (limit <= 0 || !isSuggestible(typed)) return emptyList()
         // Tournure habituelle : à défaut de faute, un mot valide que les habitudes remplacent clairement (voir PhraseHabits).
-        val correction = d.correctionFor(typed, personalWords = personalWords, habits = habits)
+        val correction = d.correctionFor(typed, personalWords = personalWords, habits = habits, previousWord = previousWord)
             ?: d.habitPhraseCorrectionFor(typed, personalWords, habits)
         return (listOfNotNull(correction) + completionsFor(typed, limit, personalWords, listOfNotNull(correction))).take(limit)
     }
@@ -56,11 +57,12 @@ internal class DictionarySuggestions(private val d: Dictionary) {
         personalWords: Collection<String> = emptyList(),
         habits: HabitContext? = null,
         participle: ParticipleFix? = null,
+        previousWord: String? = null,
     ): List<WordSuggestion?> {
         val empty = List<WordSuggestion?>(Dictionary.SUGGESTION_LIMIT) { null }
         if (!isSuggestible(typed)) return empty
         // Même règle que l'autocorrection : la tournure habituelle affichée en gras est celle qui sera appliquée.
-        val correction = d.correctionFor(typed, personalWords = personalWords, habits = habits)
+        val correction = d.correctionFor(typed, personalWords = personalWords, habits = habits, previousWord = previousWord)
             ?: d.habitPhraseCorrectionFor(typed, personalWords, habits)
         // Mot valide qui suit un auxiliaire (« il a observe ») : le participe est proposé au centre.
         if (correction == null && participle != null) return participleSlots(typed, participle, personalWords)
@@ -92,10 +94,11 @@ internal class DictionarySuggestions(private val d: Dictionary) {
         previousForm: String? = null,
         habits: HabitContext? = null,
         participle: ParticipleFix? = null,
+        previousWord: String? = null,
     ): List<WordSuggestion?> {
         val empty = List<WordSuggestion?>(Dictionary.SUGGESTION_LIMIT) { null }
         if (!isSuggestible(typed)) return empty
-        val correction = d.correctionFor(typed, personalWords = personalWords, habits = habits)
+        val correction = d.correctionFor(typed, personalWords = personalWords, habits = habits, previousWord = previousWord)
         val exclude = HashSet<String>()
         exclude += typed.lowercase()
         correction?.let { exclude += it.lowercase() }

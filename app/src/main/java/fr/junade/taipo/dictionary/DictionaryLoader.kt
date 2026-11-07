@@ -134,7 +134,26 @@ object DictionaryLoader {
             properNames = names,
             confidence = confidenceOf(language),
             accentPolicy = accentPolicyOf(language),
+            ngrams = readBigrams(context, language),
         )
+    }
+
+    /**
+     * Bigrammes de [language] s'ils sont téléchargés (facultatifs, voir [DictionaryFiles.bigramFile]) ; sinon, ou si la mémoire
+     * manque, aucun : l'autocorrection fonctionne alors sans le mot précédent, comme avant.
+     */
+    private fun readBigrams(context: Context, language: KeyboardLanguage): NgramModel {
+        val file = DictionaryFiles.bigramFile(context.filesDir, language)
+        if (language !in DictionaryFiles.BIGRAM_LANGUAGES || !file.isFile) return NgramModel.EMPTY
+        return try {
+            file.bufferedReader(Charsets.UTF_8).useLines { NgramModel.parse(it) }
+        } catch (e: OutOfMemoryError) {
+            AppLog.e(TAG, "mémoire insuffisante pour les bigrammes $language : autocorrection sans contexte", e)
+            NgramModel.EMPTY
+        } catch (e: java.io.IOException) {
+            AppLog.w(TAG, "bigrammes $language illisibles : autocorrection sans contexte", e)
+            NgramModel.EMPTY
+        }
     }
 
     /**

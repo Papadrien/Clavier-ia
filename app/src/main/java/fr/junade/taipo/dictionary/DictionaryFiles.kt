@@ -49,6 +49,22 @@ object DictionaryFiles {
     fun deleteObsoleteBackup(filesDir: File, language: KeyboardLanguage): Boolean =
         File(directory(filesDir), "${language.tag}_50k.txt").let { it.isFile && it.delete() }
 
+    /**
+     * Bigrammes de [language] (point 1 de docs/autocorrection-roadmap.md) : `bigrams/<code>.txt`, FACULTATIFS. Ils ne font pas partie
+     * de [DictionaryFile] : une langue est installée sans eux, et leur absence (pas encore sur le serveur, pas de réseau) laisse
+     * l'autocorrection telle qu'avant. Seules les langues de [BIGRAM_LANGUAGES] en ont.
+     */
+    fun bigramFile(filesDir: File, language: KeyboardLanguage): File = File(directory(filesDir), "bigrams/${language.tag}.txt")
+
+    fun bigramRemoteUrl(language: KeyboardLanguage): String = "$SERVER_BASE_URL$REMOTE_DIRECTORY/bigrams/${language.tag}.txt"
+
+    /** Langues dont les bigrammes existent et dont l'autocorrection s'en sert (`CorrectionConfidence.contextWeight`). */
+    val BIGRAM_LANGUAGES: Set<KeyboardLanguage> = setOf(KeyboardLanguage.FR, KeyboardLanguage.EN)
+
+    /** Vrai si [language] a des bigrammes et qu'ils ne sont pas encore là. */
+    fun bigramsMissing(filesDir: File, language: KeyboardLanguage): Boolean =
+        language in BIGRAM_LANGUAGES && bigramFile(filesDir, language).let { !it.isFile || it.length() == 0L }
+
     fun remoteUrl(language: KeyboardLanguage, file: DictionaryFile): String =
         "$SERVER_BASE_URL$REMOTE_DIRECTORY/${file.relativePath(language)}"
 

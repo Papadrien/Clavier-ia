@@ -8,6 +8,7 @@ import fr.junade.taipo.dictionary.ContextualCorrection
 import fr.junade.taipo.dictionary.FrenchContextCorrector
 import fr.junade.taipo.dictionary.InflectionRules
 import fr.junade.taipo.dictionary.KeyProximity
+import fr.junade.taipo.dictionary.NgramModel
 import fr.junade.taipo.suggestion.WordText
 import java.io.File
 import java.util.Random
@@ -210,7 +211,14 @@ object AutocorrectBench {
             entries, profile.inflections, profile.candidateMinFrequency, profile.proximity, properNames = names,
             confidence = profile.confidence, // la même décision que la langue de l'application (DictionaryLoader)
             accentPolicy = profile.accentPolicy,
+            ngrams = loadNgrams(root),
         )
+    }
+
+    /** Bigrammes de la langue (`dictionaries/bigrams/<code>.txt`, voir tools/build_ngrams.py) ; vide s'il n'y en a pas. */
+    fun loadNgrams(root: File): NgramModel {
+        val file = File(root, "dictionaries/bigrams/${profile.code}.txt").takeIf { it.isFile } ?: return NgramModel.EMPTY
+        return file.bufferedReader(Charsets.UTF_8).useLines { NgramModel.parse(it) }
     }
 
     fun run(root: File, profile: Profile = FRENCH): Report {
@@ -232,6 +240,7 @@ object AutocorrectBench {
         rareValidWordMeasures(root, dictionary, metrics, details)
         val changedSentences = sentenceMeasures(root, dictionary, metrics)
         val failingCases = contextMeasures(root, dictionary, metrics, details)
+        heldoutMeasures(root, dictionary, frequencies, metrics, details)
 
         timings.sort()
         fun percentile(p: Double) = if (timings.isEmpty()) 0L else timings[minOf(timings.size - 1, (timings.size * p).toInt())]
@@ -574,8 +583,9 @@ object AutocorrectBench {
     private fun autocorrect(dictionary: Dictionary, textBeforeCursor: String): String {
         val word = WordText.trailingWord(textBeforeCursor)
         if (word.isEmpty()) return textBeforeCursor
-        val fix = dictionary.correctionFor(word)?.takeIf { it != word }
-        var result = if (fix != null) textBeforeCursor.dropLast(word.length) + fix else textBeforeCursor
+        val before = textBeforeCursor.dropLast(word.length)
+        val fix = dictionary.correctionFor(word, previousWord = NgramModel.previousWordOf(before))?.takeIf { it != word }
+        var result = if (fix != null) before + fix else textBeforeCursor
         val contextual = profile.context(result, dictionary::frequencyOf)
         if (contextual != null) result = contextual
         return result
@@ -618,6 +628,112 @@ object AutocorrectBench {
         }
         metrics["contexte.total.ok"] = percent(passed, total)
         return failing
+    }
+
+    // ------------------------------------------------------------------
+    // Phrases mises de côté (point 6 de docs/autocorrection-roadmap.md)
+    // ------------------------------------------------------------------
+
+    private const val HELDOUT_TYPED_SENTENCES = 1_000
+    private val SENTENCE_TYPO_KINDS = listOf(Kind.NEIGHBOR, Kind.OMISSION, Kind.DOUBLE, Kind.SWAP, Kind.INSERT)
+
+    /** Mots d'une phrase (découpage du clavier) avec le mot qui les précède à une seule espace (null sinon). */
+    private fun wordsWithPrevious(sentence: String): List<Pair<String, String?>> {
+        val result = ArrayList<Pair<String, String?>>()
+        var i = 0
+        while (i < sentence.length) {
+            if (!WordText.isWordChar(sentence[i])) { i++; continue }
+            var end = i
+            while (end < sentence.length && WordText.isWordChar(sentence[end])) end++
+            result += sentence.substring(i, end) to NgramModel.previousWordOf(sentence.substring(0, i))
+            i = end
+        }
+        return result
+    }
+
+    /**
+     * Phrases réelles jamais vues par les bigrammes (`tools/autocorrect-bench/heldout/<code>.txt`, tirées de Tatoeba) :
+     * - `heldout.fautes.*` : une faute de frappe (touche voisine, oubli, doublon, inversion, ajout) dans un mot qui suit un autre
+     *   mot ; corrigée avec le mot précédent (comme au clavier) ; `sansContexte.ok` : même faute sans le mot précédent, pour voir ce
+     *   qu'apporte le contexte ; `surMotValide` : la faute donne un autre mot juste ;
+     * - `heldout.justes.faux` : les phrases justes frappées mot à mot ; part des mots changés à tort (taux d'erreur par mot
+     *   ajouté par le clavier sur un texte juste).
+     * Absent si le fichier n'existe pas.
+     */
+    private fun heldoutMeasures(
+        root: File,
+        dictionary: Dictionary,
+        frequencies: Map<String, Long>,
+        metrics: LinkedHashMap<String, Double>,
+        details: MutableList<String>,
+    ) {
+        val file = File(root, "tools/autocorrect-bench/heldout/${profile.code}.txt").takeIf { it.isFile } ?: return
+        val sentences = dataLines(file)
+        val random = Random(SEED + 31)
+        var ok = 0
+        var wrong = 0
+        var missed = 0
+        var okWithout = 0
+        var onValid = 0
+        val examples = ArrayList<String>()
+        for (sentence in sentences) {
+            for ((original, previous) in wordsWithPrevious(sentence)) {
+                if (previous == null) continue
+                val word = original.lowercase()
+                if (word.length < 3 || !word.all { it.isLetter() } || word !in frequencies) continue
+                val kind = SENTENCE_TYPO_KINDS[random.nextInt(SENTENCE_TYPO_KINDS.size)]
+                val typo = makeTypo(word, kind, random) ?: continue
+                if (typo == word) continue
+                if (dictionary.contains(typo)) { onValid++; continue }
+                val result = dictionary.correctionFor(typo, previousWord = previous)
+                // Le mot attendu est en minuscules (phrase passée en minuscules) : « Paul » pour « paul » est juste.
+                when {
+                    result?.lowercase() == word -> ok++
+                    result == null || result == typo -> missed++
+                    else -> {
+                        wrong++
+                        if (examples.size < 25) examples += "  [${kind.label}] $previous $typo -> $result (attendu $word)"
+                    }
+                }
+                if (dictionary.correctionFor(typo)?.lowercase() == word) okWithout++
+            }
+        }
+        val total = ok + wrong + missed
+        metrics["heldout.fautes.ok"] = percent(ok, total)
+        metrics["heldout.fautes.wrong"] = percent(wrong, total)
+        metrics["heldout.fautes.missed"] = percent(missed, total)
+        metrics["heldout.fautes.sansContexte.ok"] = percent(okWithout, total)
+        metrics["heldout.fautes.surMotValide"] = percent(onValid, total + onValid)
+        details += "Phrases mises de côté : $total fautes en contexte, mauvaises corrections :"
+        details += examples
+
+        var words = 0
+        var changedWords = 0
+        var restoredWords = 0
+        val changedExamples = ArrayList<String>()
+        for (sentence in sentences.take(HELDOUT_TYPED_SENTENCES)) {
+            val typed = typeSentence(dictionary, sentence)
+            val expected = wordsWithPrevious(sentence).map { it.first }
+            val got = wordsWithPrevious(typed).map { it.first }
+            words += expected.size
+            if (typed == sentence) continue
+            if (got.size != expected.size) {
+                changedWords += expected.size
+                if (changedExamples.size < 25) changedExamples += "  $sentence -> $typed"
+                continue
+            }
+            var changedHere = false
+            for (i in expected.indices) {
+                if (expected[i] == got[i]) continue
+                // Accent ou majuscule seulement (« plait » -> « plaît », « he » -> « hé ») : voulu, compté à part.
+                if (benchFold(expected[i].lowercase()) == benchFold(got[i].lowercase())) restoredWords++ else { changedWords++; changedHere = true }
+            }
+            if (changedHere && changedExamples.size < 25) changedExamples += "  $sentence -> $typed"
+        }
+        metrics["heldout.justes.faux"] = percent(changedWords, words)
+        metrics["heldout.justes.restaure"] = percent(restoredWords, words)
+        details += "Phrases justes mises de côté changées à tort :"
+        details += changedExamples
     }
 
     private fun dataLines(file: File): List<String> =

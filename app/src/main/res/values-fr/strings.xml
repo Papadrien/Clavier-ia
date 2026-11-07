@@ -391,6 +391,8 @@
     <string name="licenses_usage_nemotron">Modèle de dictée vocale (français et anglais), téléchargé à la demande et utilisé sur votre appareil.</string>
     <string name="licenses_notice_nemotron">Distribué sous l\'OpenMDW License Agreement, version 1.1. Taipo utilise un export ONNX (int8) de ce modèle, exécuté avec sherpa-onnx.</string>
     <string name="licenses_usage_frequencywords">Listes de mots pour l\'autocorrection et les suggestions dans les sept langues du clavier : français, anglais, espagnol, allemand, italien, portugais et néerlandais.</string>
+    <string name="licenses_usage_tatoeba">Paires de mots (quel mot suit habituellement un autre) qui aident l\'autocorrection à choisir le bon mot en français et en anglais.</string>
+    <string name="licenses_notice_tatoeba">Comptes de paires de mots calculés par Taipo à partir des phrases du corpus collaboratif Tatoeba (tatoeba.org), sous licence CC BY 2.0 FR. Seuls les comptes de paires de mots consécutifs sont conservés, pas les phrases.</string>
     <string name="licenses_notice_frequencywords">Listes de mots adaptées de FrequencyWords de Hermit Dave (contenu 2018, issu du corpus OpenSubtitles 2018), sous licence CC BY-SA 4.0. Modifications apportées par Taipo : mots passés en minuscules et normalisés ; fragments, abréviations, entrées contenant des chiffres ou des caractères d\'autres alphabets retirés ; mots rares et fautes de frappe probables retirés ; quelques entrées ajoutées à la main. Les listes ainsi adaptées sont partagées sous la même licence, CC BY-SA 4.0.</string>
     <string name="licenses_usage_litertlm">Moteur qui exécute les modèles Gemma sur votre appareil.</string>
     <string name="licenses_usage_sherpa">Moteur de reconnaissance vocale de la dictée.</string>

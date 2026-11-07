@@ -74,7 +74,7 @@ class AutocorrectionCoherenceTest {
                     habitsFor = { null },
                 )
                 val fix = ContextualCorrection.lastWordFix(text, false, dictionary::frequencyOf, habitsFor = { null })
-                val slots = dictionary.suggestionSlotsFor(typed, emptyList(), null, fix)
+                val slots = dictionary.suggestionSlotsFor(typed, emptyList(), null, fix, NgramModel.previousWordOf(text.dropLast(typed.length)))
                 val bold = slots.firstOrNull { it?.kind == WordSuggestion.Kind.AUTOCORRECTION }?.text
                 val appliedToLastWord = corrected != text && text.dropLast(typed.length) == corrected.dropLast(lastWord(corrected).length)
                 val message = "« $text » : bande=$bold, autocorrection=$corrected"
