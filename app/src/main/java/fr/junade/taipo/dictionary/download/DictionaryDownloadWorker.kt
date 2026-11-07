@@ -18,7 +18,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 /**
- * Télécharge les fichiers manquants du dictionnaire d'une langue (prénoms, liste de secours, liste complète), l'un après
+ * Télécharge les fichiers manquants du dictionnaire d'une langue (prénoms, liste complète), l'un après
  * l'autre, avec le mécanisme sûr des modèles ([ModelFileFetcher] : HTTPS, `.tmp`, reprise `Range`, relances après une
  * coupure, rename atomique). Pas d'empreinte de référence : les listes changent quand elles sont mises à jour sur le
  * serveur ; [DictionaryContentCheck] écarte seulement un contenu qui n'est pas une liste. Pas de service au premier plan :

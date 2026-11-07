@@ -1,0 +1,81 @@
+# categoría<TAB>texto tecleado<TAB>texto esperado tras la autocorrección (palabra por palabra, como en el teclado)
+# Los casos que fallan hoy son OBJETIVOS ; se listan en baseline.txt.
+interrogativo	¿como estas?	¿cómo estás?
+interrogativo	¿Que haces?	¿Qué haces?
+interrogativo	¿Por que no vienes?	¿Por qué no vienes?
+interrogativo	¿Porque no vienes?	¿Por qué no vienes?
+interrogativo	¿Quien eres?	¿Quién eres?
+interrogativo	¿Cuando llegas?	¿Cuándo llegas?
+interrogativo	¿A donde vas?	¿A dónde vas?
+interrogativo	¿De donde eres?	¿De dónde eres?
+interrogativo	¿Cual prefieres?	¿Cuál prefieres?
+interrogativo	¿Cuanto cuesta?	¿Cuánto cuesta?
+interrogativo	¿Y como estas?	¿Y cómo estás?
+interrogativo	¿Como? No entendí.	¿Cómo? No entendí.
+interrogativo	¿Donde esta?	¿Dónde está?
+interrogativo	¿Donde esta mi casa?	¿Dónde está mi casa?
+interrogativo	¿Que esta pasando?	¿Qué está pasando?
+interrogativo	¿Cuantos años tienes?	¿Cuántos años tienes?
+interrogativo	¿Para que sirve?	¿Para qué sirve?
+exclamacion	¡Que bonito!	¡Qué bonito!
+exclamacion	¡Que pena!	¡Qué pena!
+exclamacion	¡Que suerte tienes!	¡Qué suerte tienes!
+exclamacion	¡Que horror!	¡Qué horror!
+saber	No se como hacerlo.	No sé cómo hacerlo.
+saber	Dime donde vives.	Dime dónde vives.
+saber	No se si viene.	No sé si viene.
+saber	Yo se que tienes prisa.	Yo sé que tienes prisa.
+saber	No se nada.	No sé nada.
+saber	Sabes cuando empieza?	Sabes cuándo empieza?
+tu-tú	Tu eres mi amigo.	Tú eres mi amigo.
+tu-tú	Tu sabes que es verdad.	Tú sabes que es verdad.
+tu-tú	Tu estas muy guapa.	Tú estás muy guapa.
+tu-tú	Tú casa es grande.	Tu casa es grande.
+tu-tú	Tú madre te llamó.	Tu madre te llamó.
+el-él	El es mi hermano.	Él es mi hermano.
+el-él	El tiene un perro.	Él tiene un perro.
+el-él	Hablé con el, pero no me escuchó.	Hablé con él, pero no me escuchó.
+el-él	Voy con el. Luego vuelvo.	Voy con él. Luego vuelvo.
+el-él	Dijo que el había salido.	Dijo que él había salido.
+mi-mí	A mi me gusta.	A mí me gusta.
+mi-mí	Esto es para mi, no para ti.	Esto es para mí, no para ti.
+mi-mí	Mí casa es grande.	Mi casa es grande.
+mi-mí	Para mi no es importante.	Para mí no es importante.
+si-sí	Si, claro.	Sí, claro.
+si-sí	Dijo que si, pero no vino.	Dijo que sí, pero no vino.
+si-sí	Lo hizo por si mismo.	Lo hizo por sí mismo.
+de-dé	Quiero que me de una respuesta.	Quiero que me dé una respuesta.
+de-dé	Espero que te de tiempo.	Espero que te dé tiempo.
+de-dé	Dile que le de las gracias.	Dile que le dé las gracias.
+aun-aún	Aun no he terminado.	Aún no he terminado.
+aun-aún	Aun hay tiempo.	Aún hay tiempo.
+aun-aún	Aun tengo hambre.	Aún tengo hambre.
+a-ha	Ella a venido.	Ella ha venido.
+a-ha	Ya a llegado tarde.	Ya ha llegado tarde.
+a-ha	No a dicho nada.	No ha dicho nada.
+a-ha	Voy ha comprar pan.	Voy a comprar pan.
+a-ha	Va ha ser difícil.	Va a ser difícil.
+a-ver	Haber si me llamas.	A ver si me llamas.
+a-ver	Aver si llueve.	A ver si llueve.
+hecho-echo	He echo la tarea.	He hecho la tarea.
+hecho-echo	Te hecho de menos.	Te echo de menos.
+soldadas	Aveces pienso en ti.	A veces pienso en ti.
+soldadas	Porfavor ayúdame.	Por favor ayúdame.
+soldadas	Osea no importa.	O sea no importa.
+soldadas	Sinembargo no cambió.	Sin embargo no cambió.
+soldadas	Alomejor llueve.	A lo mejor llueve.
+soldadas	Atraves de la ventana.	A través de la ventana.
+soldadas	Apesar de todo.	A pesar de todo.
+acentos	Tambien quiero ir.	También quiero ir.
+acentos	Aqui no hay nadie.	Aquí no hay nadie.
+acentos	Hablo espanol.	Hablo español.
+acentos	Manana voy.	Mañana voy.
+acentos	Despues de comer.	Después de comer.
+acentos	Habia mucha gente.	Había mucha gente.
+acentos	Esta casa es nueva.	Esta casa es nueva.
+acentos	Estas manzanas son rojas.	Estas manzanas son rojas.
+acentos	Mi papa vino.	Mi papa vino.
+acentos	Ella es seria.	Ella es seria.
+faltas	Muchas gracais por todo.	Muchas gracias por todo.
+faltas	Qiero ir a casa.	Quiero ir a casa.
+faltas	Buenos dias.	Buenos días.

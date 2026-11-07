@@ -59,6 +59,12 @@ class CorrectionConfidence(
     val singleLetterElisionMinRest: Int = 3,
     /** Si vrai, une élision en « c' » n'est rétablie que devant « e » (« c'est », « c'était », « c'en »). */
     val cElisionOnlyBeforeE: Boolean = false,
+    /**
+     * Rétablir une apostrophe d'élision oubliée (« tinquiete » -> « t'inquiete »). Propre au français (et à l'italien) :
+     * l'anglais n'a pas d'élision, « therr » ne devient pas « t'herr » ; ses contractions (« dont » -> « don't ») passent
+     * par un autre chemin, qui reste actif.
+     */
+    val restoresElisions: Boolean = true,
 ) {
 
     /** Distance d'édition de la recherche à mots longs. */
@@ -112,6 +118,50 @@ class CorrectionConfidence(
             longWordMaxCost = 12,
             singleLetterElisionMinRest = 4,
             cElisionOnlyBeforeE = true,
+        )
+
+        /**
+         * Seuils de l'anglais (clavier QWERTY), calibrés avec `AutocorrectBench --lang=en` (docs/autocorrection-bench.md).
+         * Les valeurs de départ sont celles du français ; chaque changement se mesure.
+         */
+        val ENGLISH = CorrectionConfidence(
+            minMargin = mapOf(
+                FaultKind.SWAP to 0.75,
+                FaultKind.NEIGHBOR to 0.5,
+                FaultKind.MISSING to 0.5,
+                FaultKind.EXTRA to 0.75,
+                FaultKind.SUBSTITUTION to 0.75,
+                FaultKind.TWO_EDITS to 1.0,
+                FaultKind.THREE_EDITS to 6.0,
+            ),
+            longWordMinLength = 8,
+            longWordMaxCost = 12,
+            singleLetterElisionMinRest = 4,
+            cElisionOnlyBeforeE = true,
+            restoresElisions = false,
+        )
+
+        /**
+         * Seuils de l'espagnol (clavier QWERTY avec Ñ). Valeurs de DÉPART, celles de l'anglais : elles n'ont pas été mesurées (le banc
+         * `--lang=es` existe mais n'a pas pu être lancé là où ce code a été écrit : docs/autocorrection-bench.md, section Espagnol).
+         * L'espagnol conjugue beaucoup (hablo / hable / habla, une lettre d'écart) : les quasi-égalités entre formes d'un même verbe
+         * y sont plus fréquentes qu'en français, d'où des marges au moins aussi prudentes que celles de l'anglais. Pas d'élision.
+         */
+        val SPANISH = CorrectionConfidence(
+            minMargin = mapOf(
+                FaultKind.SWAP to 0.75,
+                FaultKind.NEIGHBOR to 0.5,
+                FaultKind.MISSING to 0.5,
+                FaultKind.EXTRA to 0.75,
+                FaultKind.SUBSTITUTION to 0.75,
+                FaultKind.TWO_EDITS to 1.0,
+                FaultKind.THREE_EDITS to 6.0,
+            ),
+            longWordMinLength = 8,
+            longWordMaxCost = 12,
+            singleLetterElisionMinRest = 4,
+            cElisionOnlyBeforeE = true,
+            restoresElisions = false,
         )
     }
 }

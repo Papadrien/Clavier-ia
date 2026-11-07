@@ -1,5 +1,6 @@
 package fr.junade.taipo.dictionary
 
+import fr.junade.taipo.KeyboardLanguage
 import fr.junade.taipo.suggestion.WordText
 
 /**
@@ -14,7 +15,7 @@ object Autocorrection {
     /**
      * Le texte [textBeforeCursor] une fois son dernier mot terminé et corrigé (le même texte s'il n'y a rien à changer).
      * [textMayBeTruncated] : la fenêtre de texte est coupée au début ; [allowRetro] : autorise la révision du mot précédent
-     * (désactivé juste après une annulation) ; [contextual] : appliquer aussi les corrections de contexte (français) ;
+     * (désactivé juste après une annulation) ; [contextual] : appliquer aussi les corrections de contexte de [language] (français ou anglais) ;
      * [habitsFor] : les habitudes pour le dernier mot du texte qu'on lui passe (null : apprentissage désactivé ou interdit).
      * [stats] (phase 6, debug seulement : null sinon) : reçoit les décisions et la durée du calcul, sans jamais changer le
      * résultat ni retenir de texte (voir [AutocorrectStats]).
@@ -29,6 +30,7 @@ object Autocorrection {
         contextual: Boolean,
         habitsFor: (String) -> HabitContext?,
         stats: AutocorrectStats? = null,
+        language: KeyboardLanguage = KeyboardLanguage.FR,
     ): String {
         val word = WordText.trailingWord(textBeforeCursor)
         if (word.isEmpty()) return textBeforeCursor
@@ -40,7 +42,7 @@ object Autocorrection {
         var result = if (dictionaryFix != null) textBeforeCursor.dropLast(word.length) + dictionaryFix else textBeforeCursor
         var contextApplied = false
         if (contextual) {
-            ContextualCorrection.apply(result, textMayBeTruncated, allowRetro, dictionary::frequencyOf, habitsFor)?.let {
+            ContextualCorrection.apply(result, textMayBeTruncated, allowRetro, dictionary::frequencyOf, habitsFor, language)?.let {
                 if (it != result) contextApplied = true
                 result = it
             }

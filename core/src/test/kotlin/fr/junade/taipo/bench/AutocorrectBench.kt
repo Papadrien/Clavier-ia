@@ -1,7 +1,10 @@
 package fr.junade.taipo.bench
 
+import fr.junade.taipo.dictionary.AccentPolicy
 import fr.junade.taipo.dictionary.CorrectionConfidence
 import fr.junade.taipo.dictionary.Dictionary
+import fr.junade.taipo.KeyboardLanguage
+import fr.junade.taipo.dictionary.ContextualCorrection
 import fr.junade.taipo.dictionary.FrenchContextCorrector
 import fr.junade.taipo.dictionary.InflectionRules
 import fr.junade.taipo.dictionary.KeyProximity
@@ -31,7 +34,6 @@ object AutocorrectBench {
     private const val SAMPLES_PER_KIND = 1_000
     private const val VALID_SAMPLES = 5_000
     private const val MIN_FREQUENCY = 5L
-    private const val CANDIDATE_MIN_FREQUENCY = 100L
 
     /** Proximité des touches AZERTY de Taipo (mêmes rangées et mêmes poids que KeyboardLayout et PruneDictionaryTypos). */
     private val AZERTY: KeyProximity = run {
@@ -45,6 +47,108 @@ object AutocorrectBench {
             ),
         )
     }
+
+    /**
+     * Ce qui change d'une langue à l'autre dans le banc : dictionnaire, seuils, clavier, décision de déclenchement, correction
+     * de contexte et jeux de phrases. [FRENCH] est le profil historique (la référence `baseline.txt` du français).
+     */
+    class Profile(
+        val language: KeyboardLanguage,
+        val proximity: KeyProximity,
+        val inflections: InflectionRules,
+        /** Fréquence minimale pour être proposé (`DictionaryLoader.candidateMinFrequency`). */
+        val candidateMinFrequency: Long,
+        val confidence: CorrectionConfidence,
+        /** Correction de contexte appliquée après celle du dictionnaire : texte corrigé, ou null. */
+        val context: (text: String, frequencyOf: (String) -> Long) -> String?,
+        val sentencesPath: String,
+        val casesPath: String,
+        val baselinePath: String,
+        /** Politique des oublis d'accent (`DictionaryLoader.accentPolicyOf`). */
+        val accentPolicy: AccentPolicy = AccentPolicy.FRENCH,
+    ) {
+        val code: String get() = language.tag
+    }
+
+    private val QWERTY: KeyProximity = run {
+        fun row(letters: String) = letters.map { KeyProximity.KeyBox(it, 1f) }
+        KeyProximity.fromRows(
+            listOf(
+                row("qwertyuiop"),
+                listOf(KeyProximity.KeyBox(null, 0.5f)) + row("asdfghjkl") + listOf(KeyProximity.KeyBox(null, 0.5f)),
+                listOf(KeyProximity.KeyBox(null, 1.5f)) + row("zxcvbnm") + listOf(KeyProximity.KeyBox(null, 1.5f)),
+            ),
+        )
+    }
+
+    val FRENCH = Profile(
+        KeyboardLanguage.FR, AZERTY, InflectionRules.FRENCH, 100L, CorrectionConfidence.STANDARD,
+        { text, f -> FrenchContextCorrector.correct(text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f) },
+        "tools/autocorrect-bench/sentences-ok.txt", "tools/autocorrect-bench/context-cases.tsv", "tools/autocorrect-bench/baseline.txt",
+    )
+
+    /** QWERTY espagnol : la touche Ñ ferme la rangée du milieu (10 lettres, sans marge). */
+    private val QWERTY_N: KeyProximity = run {
+        fun row(letters: String) = letters.map { KeyProximity.KeyBox(it, 1f) }
+        KeyProximity.fromRows(
+            listOf(
+                row("qwertyuiop"),
+                row("asdfghjklñ"),
+                listOf(KeyProximity.KeyBox(null, 1.5f)) + row("zxcvbnm") + listOf(KeyProximity.KeyBox(null, 1.5f)),
+            ),
+        )
+    }
+
+    /**
+     * Espagnol : QWERTY avec Ñ, seuil de proposition de `DictionaryLoader`, valeurs de départ de `CorrectionConfidence.SPANISH`
+     * (non mesurées), contexte de `SpanishConfusions` et politique d'accents de l'espagnol.
+     */
+    val SPANISH = Profile(
+        KeyboardLanguage.ES, QWERTY_N, InflectionRules.SPANISH, 183L, CorrectionConfidence.SPANISH,
+        { text, f -> ContextualCorrection.correctWithoutHabits(KeyboardLanguage.ES, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f) },
+        "tools/autocorrect-bench/es/sentences-ok.txt", "tools/autocorrect-bench/es/context-cases.tsv", "tools/autocorrect-bench/es/baseline.txt",
+        AccentPolicy.SPANISH,
+    )
+
+    /** Anglais : clavier QWERTY, seuil de proposition de `DictionaryLoader`, décision et contexte de l'anglais. */
+    val ENGLISH = Profile(
+        KeyboardLanguage.EN, QWERTY, InflectionRules.ENGLISH, 149L, CorrectionConfidence.ENGLISH,
+        { text, f -> ContextualCorrection.correctWithoutHabits(KeyboardLanguage.EN, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f) },
+        "tools/autocorrect-bench/en/sentences-ok.txt", "tools/autocorrect-bench/en/context-cases.tsv", "tools/autocorrect-bench/en/baseline.txt",
+    )
+
+    /** L'anglais tel qu'avant ce travail (aucune décision de déclenchement, aucun contexte) : pour comparer. Aucune référence écrite. */
+    val ENGLISH_LEGACY = Profile(
+        KeyboardLanguage.EN, QWERTY, InflectionRules.ENGLISH, 149L, CorrectionConfidence.NONE, { _, _ -> null },
+        ENGLISH.sentencesPath, ENGLISH.casesPath, "tools/autocorrect-bench/en/baseline-legacy.txt",
+    )
+
+    /** QWERTZ allemand : Y et Z échangés par rapport au QWERTY ; les umlauts (ä, ö, ü) et ß sont en appui long, hors de la grille. */
+    private val QWERTZ: KeyProximity = run {
+        fun row(letters: String) = letters.map { KeyProximity.KeyBox(it, 1f) }
+        KeyProximity.fromRows(
+            listOf(
+                row("qwertzuiop"),
+                listOf(KeyProximity.KeyBox(null, 0.5f)) + row("asdfghjkl") + listOf(KeyProximity.KeyBox(null, 0.5f)),
+                listOf(KeyProximity.KeyBox(null, 1.5f)) + row("yxcvbnm") + listOf(KeyProximity.KeyBox(null, 1.5f)),
+            ),
+        )
+    }
+
+    /**
+     * Allemand, **état d'avant tout calibrage** (phase 0 du plan du 06/11/2026) : seuil de proposition de `DictionaryLoader`,
+     * aucune décision de déclenchement (`NONE`), politique d'accents d'origine, aucune règle de contexte. Les phases suivantes
+     * changent ce profil et se jugent contre la référence que ce profil produit. La proximité est celle d'un QWERTZ simple
+     * (les largeurs exactes de `KeyboardLayout` ne sont pas dans le module `core`).
+     */
+    val GERMAN = Profile(
+        KeyboardLanguage.DE, QWERTZ, InflectionRules.GERMAN, 41L, CorrectionConfidence.NONE,
+        { text, f -> ContextualCorrection.correctWithoutHabits(KeyboardLanguage.DE, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f) },
+        "tools/autocorrect-bench/de/sentences-ok.txt", "tools/autocorrect-bench/de/context-cases.tsv", "tools/autocorrect-bench/de/baseline.txt",
+        AccentPolicy.GERMAN,
+    )
+
+    private var profile: Profile = FRENCH
 
     class Report(
         /** Mesures en pour cent (« typos.courants.ok » = 93,4), dans l'ordre d'affichage. */
@@ -88,25 +192,27 @@ object AutocorrectBench {
     }
 
     fun loadDictionary(root: File, without: Set<String> = emptySet()): Dictionary {
-        val frequencies = File(root, "dictionaries/fr.txt").bufferedReader(Charsets.UTF_8).useLines { lines ->
+        val frequencies = File(root, "dictionaries/${profile.code}.txt").bufferedReader(Charsets.UTF_8).useLines { lines ->
             Dictionary.parseFrequencyLines(lines, MIN_FREQUENCY)
         }
-        val names = File(root, "dictionaries/names/fr.txt").takeIf { it.isFile }?.readLines(Charsets.UTF_8)
+        val names = File(root, "dictionaries/names/${profile.code}.txt").takeIf { it.isFile }?.readLines(Charsets.UTF_8)
             ?.map { it.trim() }?.filter { it.isNotEmpty() && !it.startsWith("#") }.orEmpty()
         // [without] : mots retirés des listes (mesure des mots justes inconnus du dictionnaire, voir [unknownWordMeasures]).
         val entries = if (without.isEmpty()) frequencies else frequencies.filterKeys { it !in without }
         return Dictionary.withFrequencies(
-            entries, InflectionRules.FRENCH, CANDIDATE_MIN_FREQUENCY, AZERTY, properNames = names,
-            confidence = CorrectionConfidence.STANDARD, // la même décision que le français de l'application (DictionaryLoader)
+            entries, profile.inflections, profile.candidateMinFrequency, profile.proximity, properNames = names,
+            confidence = profile.confidence, // la même décision que la langue de l'application (DictionaryLoader)
+            accentPolicy = profile.accentPolicy,
         )
     }
 
-    fun run(root: File): Report {
+    fun run(root: File, profile: Profile = FRENCH): Report {
+        this.profile = profile
         val started = System.nanoTime()
         val dictionary = loadDictionary(root)
         val loadMillis = (System.nanoTime() - started) / 1_000_000
-        val frequencies = File(root, "dictionaries/fr.txt").bufferedReader(Charsets.UTF_8).useLines { lines ->
-            Dictionary.parseFrequencyLines(lines, CANDIDATE_MIN_FREQUENCY)
+        val frequencies = File(root, "dictionaries/${profile.code}.txt").bufferedReader(Charsets.UTF_8).useLines { lines ->
+            Dictionary.parseFrequencyLines(lines, profile.candidateMinFrequency)
         }
         val metrics = LinkedHashMap<String, Double>()
         val details = ArrayList<String>()
@@ -116,6 +222,7 @@ object AutocorrectBench {
         validWordMeasures(dictionary, frequencies, metrics, details)
         longWordMeasures(dictionary, frequencies, metrics, details)
         unknownWordMeasures(root, frequencies, metrics, details)
+        rareValidWordMeasures(root, dictionary, metrics, details)
         val changedSentences = sentenceMeasures(root, dictionary, metrics)
         val failingCases = contextMeasures(root, dictionary, metrics, details)
 
@@ -132,7 +239,16 @@ object AutocorrectBench {
     private enum class Kind(val label: String) {
         NEIGHBOR("voisine"), OMISSION("oubli"), DOUBLE("doublon"), SWAP("inversion"), INSERT("ajout"),
         ACCENT("accent"), APOSTROPHE("apostrophe"),
+
+        /** Allemand seulement : « ss » tapé pour « ß » (Straße -> Strasse). */
+        ESZETT("ss-pour-eszett"),
+
+        /** Allemand seulement : « ae / oe / ue » tapé pour « ä / ö / ü » (für -> fuer). */
+        TRANSLIT("ae-oe-ue"),
     }
+
+    /** Types de fautes propres à l'allemand : ignorés pour les autres langues, dont les références ne changent donc pas. */
+    private val GERMAN_ONLY = setOf(Kind.ESZETT, Kind.TRANSLIT)
 
     private fun typoMeasures(
         dictionary: Dictionary,
@@ -143,6 +259,8 @@ object AutocorrectBench {
     ) {
         val plain = frequencies.keys.filter { w -> w.length >= 4 && w.all { it.isLetter() } }.sorted()
         val accented = plain.filter { Dictionary.foldAccents(it) != it }
+        val eszett = plain.filter { 'ß' in it }
+        val umlauts = plain.filter { w -> w.any { it in "äöü" } }
         val contractions = frequencies.keys.filter { '\'' in it && it.length >= 4 && it.count { c -> c == '\'' } == 1 }.sorted()
         for (weighted in listOf(true, false)) {
             val setName = if (weighted) "courants" else "varies"
@@ -153,11 +271,15 @@ object AutocorrectBench {
             var onValidWord = 0
             val wrongExamples = ArrayList<String>()
             for (kind in Kind.values()) {
+                if (kind in GERMAN_ONLY && profile.language != KeyboardLanguage.DE) continue
                 val pool = when (kind) {
                     Kind.ACCENT -> accented
                     Kind.APOSTROPHE -> contractions
+                    Kind.ESZETT -> eszett
+                    Kind.TRANSLIT -> umlauts
                     else -> plain
                 }
+                if (pool.isEmpty()) continue // anglais : ni accents ni contractions oubliées sans pool
                 val sampler = Sampler(pool, frequencies, weighted, random)
                 var kindOk = 0
                 var kindTotal = 0
@@ -222,7 +344,7 @@ object AutocorrectBench {
     private fun makeTypo(word: String, kind: Kind, random: Random): String? = when (kind) {
         Kind.NEIGHBOR -> {
             val i = random.nextInt(word.length)
-            val options = AZERTY.neighborsOf(word[i]).filter { it.isLetter() }.sorted()
+            val options = profile.proximity.neighborsOf(word[i]).filter { it.isLetter() }.sorted()
             if (options.isEmpty()) null else word.substring(0, i) + options[random.nextInt(options.size)] + word.substring(i + 1)
         }
         Kind.OMISSION -> {
@@ -239,11 +361,13 @@ object AutocorrectBench {
         }
         Kind.INSERT -> {
             val i = random.nextInt(word.length)
-            val options = AZERTY.neighborsOf(word[i]).filter { it.isLetter() }.sorted()
+            val options = profile.proximity.neighborsOf(word[i]).filter { it.isLetter() }.sorted()
             if (options.isEmpty()) null else word.substring(0, i + 1) + options[random.nextInt(options.size)] + word.substring(i + 1)
         }
         Kind.ACCENT -> Dictionary.foldAccents(word)
         Kind.APOSTROPHE -> word.replace("'", "")
+        Kind.ESZETT -> word.replace("ß", "ss")
+        Kind.TRANSLIT -> word.replace("ä", "ae").replace("ö", "oe").replace("ü", "ue")
     }
 
     // ------------------------------------------------------------------
@@ -269,7 +393,7 @@ object AutocorrectBench {
                 val result = dictionary.correctionFor(word)
                 if (result == null || result == word) return@repeat
                 // Accent rétabli ou majuscule d'un prénom (« ca » -> « ça », « kevin » -> « Kévin ») : voulu, pas une erreur.
-                if (Dictionary.foldAccents(result.lowercase()) == Dictionary.foldAccents(word)) {
+                if (benchFold(result.lowercase()) == benchFold(word)) {
                     restored++
                 } else {
                     changed++
@@ -341,7 +465,7 @@ object AutocorrectBench {
         val i = 1 + random.nextInt(word.length - 2)
         return when (random.nextInt(5)) {
             0 -> {
-                val options = AZERTY.neighborsOf(word[i]).filter { it.isLetter() }.sorted()
+                val options = profile.proximity.neighborsOf(word[i]).filter { it.isLetter() }.sorted()
                 if (options.isEmpty()) word else word.substring(0, i) + options[random.nextInt(options.size)] + word.substring(i + 1)
             }
             1 -> word.removeRange(i, i + 1)
@@ -387,6 +511,42 @@ object AutocorrectBench {
     }
 
     // ------------------------------------------------------------------
+    // Mots justes rares (allemand : composés)
+    // ------------------------------------------------------------------
+
+    /**
+     * Mots justes (validés par des lexiques de clavier, voir `tools/de_bench_data.py`) que `de.txt` ne contient pas :
+     * surtout des composés (« abendkleid »). Tapés tels quels, le moteur ne doit pas les remplacer. `faux` = remplacé par un
+     * autre mot ; `restaure` = seul l'accent, le ß ou la majuscule est rétabli. Mesure présente seulement si le fichier
+     * `valid-rare-words.txt` existe à côté des jeux de phrases de la langue.
+     */
+    private fun rareValidWordMeasures(
+        root: File,
+        dictionary: Dictionary,
+        metrics: LinkedHashMap<String, Double>,
+        details: MutableList<String>,
+    ) {
+        val file = File(File(root, profile.sentencesPath).parentFile, "valid-rare-words.txt").takeIf { it.isFile } ?: return
+        val words = dataLines(file).map { it.trim() }.filter { it.isNotEmpty() }
+        var changed = 0
+        var restored = 0
+        val examples = ArrayList<String>()
+        for (word in words) {
+            val result = dictionary.correctionFor(word)?.takeIf { it != word } ?: continue
+            if (benchFold(result.lowercase()) == benchFold(word)) {
+                restored++
+            } else {
+                changed++
+                if (examples.size < 40) examples += "  $word -> $result"
+            }
+        }
+        metrics["composes.rares.faux"] = percent(changed, words.size)
+        metrics["composes.rares.restaure"] = percent(restored, words.size)
+        details += "Mots justes rares (absents de la liste) remplacés par un autre mot (${words.size} tirés), exemples :"
+        details += examples
+    }
+
+    // ------------------------------------------------------------------
     // Phrases
     // ------------------------------------------------------------------
 
@@ -409,18 +569,13 @@ object AutocorrectBench {
         if (word.isEmpty()) return textBeforeCursor
         val fix = dictionary.correctionFor(word)?.takeIf { it != word }
         var result = if (fix != null) textBeforeCursor.dropLast(word.length) + fix else textBeforeCursor
-        val contextual = FrenchContextCorrector.correct(
-            text = result,
-            textMayBeTruncated = false,
-            allowRetro = true,
-            frequencyOf = dictionary::frequencyOf,
-        )
+        val contextual = profile.context(result, dictionary::frequencyOf)
         if (contextual != null) result = contextual
         return result
     }
 
     private fun sentenceMeasures(root: File, dictionary: Dictionary, metrics: LinkedHashMap<String, Double>): List<String> {
-        val sentences = dataLines(File(root, "tools/autocorrect-bench/sentences-ok.txt"))
+        val sentences = dataLines(File(root, profile.sentencesPath))
         val changed = sentences.filter { typeSentence(dictionary, it) != it }.map { "$it -> ${typeSentence(dictionary, it)}" }
         metrics["phrases.justes.changees"] = percent(changed.size, sentences.size)
         return changed
@@ -432,7 +587,7 @@ object AutocorrectBench {
         metrics: LinkedHashMap<String, Double>,
         details: MutableList<String>,
     ): List<String> {
-        val cases = dataLines(File(root, "tools/autocorrect-bench/context-cases.tsv")).map { it.split('\t') }
+        val cases = dataLines(File(root, profile.casesPath)).map { it.split('\t') }
         val failing = ArrayList<String>()
         val perCategory = LinkedHashMap<String, IntArray>() // [réussis, total]
         details += "Cas de contexte en échec (résultat obtenu) :"
@@ -461,15 +616,16 @@ object AutocorrectBench {
     private fun dataLines(file: File): List<String> =
         file.readLines(Charsets.UTF_8).filter { it.isNotBlank() && !it.startsWith("#") }
 
+    /** Repli de comparaison du banc : accents ôtés, et « ß » = « ss » (sans effet hors allemand). */
+    private fun benchFold(word: String): String = Dictionary.foldAccents(word.replace("ß", "ss"))
+
     private fun percent(part: Int, total: Int): Double = if (total == 0) 0.0 else Math.round(part * 10_000.0 / total) / 100.0
 
     // ------------------------------------------------------------------
     // Référence (baseline)
     // ------------------------------------------------------------------
 
-    private const val BASELINE_PATH = "tools/autocorrect-bench/baseline.txt"
-
-    fun writeBaseline(root: File, report: Report) {
+    fun writeBaseline(root: File, report: Report, profile: Profile = FRENCH) {
         val text = buildString {
             appendLine("# Référence du banc d'autocorrection (docs/autocorrection-bench.md). Générée par `main --write-baseline`.")
             appendLine("# À régénérer volontairement quand une phase de la refonte change le comportement, jamais pour masquer une régression.")
@@ -480,13 +636,13 @@ object AutocorrectBench {
             appendLine("[changed-sentences]")
             report.changedSentences.forEach { appendLine(it) }
         }
-        File(root, BASELINE_PATH).writeText(text, Charsets.UTF_8)
+        File(root, profile.baselinePath).writeText(text, Charsets.UTF_8)
     }
 
     class Baseline(val metrics: Map<String, Double>, val failingCases: Set<String>, val changedSentences: Set<String>)
 
-    fun readBaseline(root: File): Baseline? {
-        val file = File(root, BASELINE_PATH).takeIf { it.isFile } ?: return null
+    fun readBaseline(root: File, profile: Profile = FRENCH): Baseline? {
+        val file = File(root, profile.baselinePath).takeIf { it.isFile } ?: return null
         val metrics = LinkedHashMap<String, Double>()
         val cases = LinkedHashSet<String>()
         val sentences = LinkedHashSet<String>()
@@ -504,13 +660,20 @@ object AutocorrectBench {
     }
 }
 
-/** `main [--write-baseline]` : affiche le rapport du banc (depuis la racine du projet ou un sous-dossier). */
+/** `main [--lang=en|es|de] [--write-baseline]` : affiche le rapport du banc (depuis la racine du projet ou un sous-dossier). */
 fun main(args: Array<String>) {
     val root = AutocorrectBench.findRoot(File(System.getProperty("user.dir")))
-    val report = AutocorrectBench.run(root)
+    val profile = when {
+        "--lang=en-legacy" in args -> AutocorrectBench.ENGLISH_LEGACY
+        "--lang=en" in args -> AutocorrectBench.ENGLISH
+        "--lang=es" in args -> AutocorrectBench.SPANISH
+        "--lang=de" in args -> AutocorrectBench.GERMAN
+        else -> AutocorrectBench.FRENCH
+    }
+    val report = AutocorrectBench.run(root, profile)
     println(report.render())
     if ("--write-baseline" in args) {
-        AutocorrectBench.writeBaseline(root, report)
-        println("Référence écrite dans tools/autocorrect-bench/baseline.txt")
+        AutocorrectBench.writeBaseline(root, report, profile)
+        println("Référence écrite dans ${profile.baselinePath}")
     }
 }

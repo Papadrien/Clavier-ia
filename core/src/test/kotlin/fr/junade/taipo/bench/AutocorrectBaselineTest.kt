@@ -17,11 +17,22 @@ class AutocorrectBaselineTest {
     private val root: File? = runCatching { AutocorrectBench.findRoot(File(System.getProperty("user.dir"))) }.getOrNull()
 
     @Test
-    fun `l'autocorrection ne regresse pas par rapport a la reference`() {
+    fun `l'autocorrection francaise ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.FRENCH)
+
+    @Test
+    fun `l'autocorrection anglaise ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.ENGLISH)
+
+    @Test
+    fun `l'autocorrection espagnole ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.SPANISH)
+
+    @Test
+    fun `l'autocorrection allemande ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.GERMAN)
+
+    private fun checkNoRegression(profile: AutocorrectBench.Profile) {
         assumeTrue(root != null, "racine du projet introuvable")
-        val baseline = AutocorrectBench.readBaseline(root!!)
-        assumeTrue(baseline != null, "tools/autocorrect-bench/baseline.txt absent")
-        val report = AutocorrectBench.run(root)
+        val baseline = AutocorrectBench.readBaseline(root!!, profile)
+        assumeTrue(baseline != null, "${profile.baselinePath} absent")
+        val report = AutocorrectBench.run(root, profile)
         val problems = ArrayList<String>()
 
         for ((key, reference) in baseline!!.metrics) {
@@ -37,7 +48,7 @@ class AutocorrectBaselineTest {
         report.failingCases.filter { it !in baseline.failingCases }.forEach { problems += "cas de contexte devenu faux : ${it.replace("\t", " | ")}" }
         report.changedSentences.filter { it !in baseline.changedSentences }.forEach { problems += "phrase juste désormais changée : $it" }
 
-        assertTrue(problems.isEmpty(), "Régressions de l'autocorrection :\n" + problems.joinToString("\n"))
+        assertTrue(problems.isEmpty(), "Régressions de l'autocorrection (${profile.code}) :\n" + problems.joinToString("\n"))
     }
 
     private companion object {

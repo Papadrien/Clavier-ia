@@ -388,11 +388,12 @@ class SuggestionController(
             publishEmoji(emoji)
             suggestionJob = scope.launch(Dispatchers.Default) {
                 val suggestionsStarted = if (autocorrectStats != null) System.nanoTime() else 0L
+                val compound = if (language == KeyboardLanguage.DE && !placement && wordAfter.isEmpty()) compoundSuggestion(dictionary, textBeforeCursor, typed) else null
                 val words = traced(Sections.SUGGESTIONS) {
                     // Correction de contexte du mot (« ils on » -> « ont », « il a observe » -> « observé ») ou participe proposé : la
                     // même analyse que l'autocorrection, habitudes et refus compris (voir [ContextualCorrection.lastWordFix]).
-                    val participle = if (french) {
-                        ContextualCorrection.lastWordFix(textUpToWord, truncated, dictionary::frequencyOf) { habits }
+                    val participle = if (french || language in CONTEXTUAL_LANGUAGES) {
+                        ContextualCorrection.lastWordFix(textUpToWord, truncated, dictionary::frequencyOf, { habits }, language)
                     } else {
                         null
                     }
@@ -410,7 +411,7 @@ class SuggestionController(
                 }
                 autocorrectStats?.recordLatency(AutocorrectStats.Section.SUGGESTIONS, System.nanoTime() - suggestionsStarted)
                 withContext(Dispatchers.Main) {
-                    if (sequence == suggestionSequence && promptActive == host.promptActive()) publishWords(withEmail(plainIfNoAutocorrect(words, promptActive), emailSuggestion))
+                    if (sequence == suggestionSequence && promptActive == host.promptActive()) publishWords(withEmail(withCompound(plainIfNoAutocorrect(words, promptActive), compound), emailSuggestion))
                 }
             }
             return
@@ -458,6 +459,19 @@ class SuggestionController(
         return EmailChoice(emails, exclusive = clearlyAnEmail)
     }
 
+    /**
+     * Allemand : deux noms tapés à la suite (« Haus tür ») proposés réunis (« Haustür »). Le mot en cours de frappe [typed] est le second, le premier
+     * le précède, séparé par une seule espace ; null si rien n'est à proposer. Disparaît dès l'espace qui suit le second mot : à toucher avant.
+     */
+    private fun compoundSuggestion(dictionary: Dictionary, textBeforeCursor: String, typed: String): WordSuggestion? {
+        val first = WordText.wordBeforeSingleSpace(textBeforeCursor.dropLast(typed.length))
+        if (first.isEmpty()) return null
+        return dictionary.compoundMergeFor(first, typed)?.let { WordSuggestion(it, WordSuggestion.Kind.COMPOUND) }
+    }
+
+    /** [words] dont le dernier emplacement est pris par [compound] (s'il y en a un) : les deux premiers mots restent visibles. */
+    private fun withCompound(words: List<WordSuggestion?>, compound: WordSuggestion?): List<WordSuggestion?> = withEmail(words, compound)
+
     /** [words] dont le dernier emplacement est pris par [email] (s'il y en a une) : les deux premiers mots restent visibles. */
     private fun withEmail(words: List<WordSuggestion?>, email: WordSuggestion?): List<WordSuggestion?> {
         if (email == null) return words
@@ -500,7 +514,7 @@ class SuggestionController(
 
     /**
      * Charge le dictionnaire de la langue active en arrière-plan (lot 1.4) : lecture et indexation
-     * (liste française complète, ~50 000 mots pour les autres langues), jamais sur le thread principal.
+     * (liste complète de la langue), jamais sur le thread principal.
      * Appelé à la création du service puis à chaque ouverture de champ : sans effet si la langue est déjà
      * chargée, et un changement de langue dans les paramètres charge la nouvelle langue ici.
      */
@@ -652,9 +666,11 @@ class SuggestionController(
                 allowRetro = allowRetro,
                 dictionary = dictionary,
                 personalWords = personalWords,
-                contextual = host.language() == KeyboardLanguage.FR,
+                // Corrections de contexte : français, anglais (EnglishConfusions), espagnol (SpanishConfusions) et allemand (GermanConfusions) ; les autres langues n'en ont pas encore.
+                contextual = host.language() in CONTEXTUAL_LANGUAGES,
                 habitsFor = { habitContextFor(it) },
                 stats = autocorrectStats,
+                language = host.language(),
             )
         }
         logAutocorrectStats(force = false)
@@ -667,6 +683,9 @@ class SuggestionController(
 
     private companion object {
         private const val TAG = "SuggestionController"
+
+        /** Langues qui ont des règles de contexte (homophones, confusions de mots) : voir [ContextualCorrection]. */
+        private val CONTEXTUAL_LANGUAGES = setOf(KeyboardLanguage.FR, KeyboardLanguage.EN, KeyboardLanguage.ES, KeyboardLanguage.DE)
 
         /** Phase 6 (debug) : le rapport des compteurs de l'autocorrection est écrit dans logcat tous les 100 mots examinés. */
         private const val STATS_LOG_EVERY = 100L

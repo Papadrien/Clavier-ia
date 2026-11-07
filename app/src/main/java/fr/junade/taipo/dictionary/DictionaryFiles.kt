@@ -4,15 +4,12 @@ import fr.junade.taipo.KeyboardLanguage
 import java.io.File
 
 /**
- * Les 3 fichiers d'une langue. Le même chemin relatif sert sur le serveur (`dictionnaries/<chemin>`) et dans le
+ * Les 2 fichiers d'une langue. Le même chemin relatif sert sur le serveur (`dictionnaries/<chemin>`) et dans le
  * stockage de l'app (`filesDir/dictionaries/<chemin>`).
  */
 enum class DictionaryFile {
     /** Prénoms avec leur majuscule : `names/<code>.txt`. */
     NAMES,
-
-    /** Liste de secours d'environ 50 000 mots : `<code>_50k.txt`. */
-    BACKUP,
 
     /** Liste complète de la langue : `<code>.txt`. */
     FULL,
@@ -20,7 +17,6 @@ enum class DictionaryFile {
 
     fun relativePath(language: KeyboardLanguage): String = when (this) {
         FULL -> "${language.tag}.txt"
-        BACKUP -> "${language.tag}_50k.txt"
         NAMES -> "names/${language.tag}.txt"
     }
 }
@@ -45,6 +41,14 @@ object DictionaryFiles {
     fun localFile(filesDir: File, language: KeyboardLanguage, file: DictionaryFile): File =
         File(directory(filesDir), file.relativePath(language))
 
+    /**
+     * Ancienne liste de secours (`<code>_50k.txt`), plus utilisée : le repli en cas de mémoire insuffisante relit la liste
+     * complète avec un seuil de fréquence (voir `DictionaryLoader`). Supprime le fichier laissé par une version précédente.
+     * @return true si un fichier a été supprimé.
+     */
+    fun deleteObsoleteBackup(filesDir: File, language: KeyboardLanguage): Boolean =
+        File(directory(filesDir), "${language.tag}_50k.txt").let { it.isFile && it.delete() }
+
     fun remoteUrl(language: KeyboardLanguage, file: DictionaryFile): String =
         "$SERVER_BASE_URL$REMOTE_DIRECTORY/${file.relativePath(language)}"
 
@@ -60,10 +64,9 @@ object DictionaryFiles {
      */
     fun approxBytes(language: KeyboardLanguage, file: DictionaryFile): Long = when (file) {
         DictionaryFile.NAMES -> 1_200L
-        DictionaryFile.BACKUP -> 650_000L
         DictionaryFile.FULL -> when (language) {
             KeyboardLanguage.FR -> 9_155_000L
-            KeyboardLanguage.EN -> 3_900_000L
+            KeyboardLanguage.EN -> 1_606_000L
             KeyboardLanguage.ES -> 4_110_000L
             KeyboardLanguage.DE -> 3_240_000L
             KeyboardLanguage.IT -> 2_910_000L

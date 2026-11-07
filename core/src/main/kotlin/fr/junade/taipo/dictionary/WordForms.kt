@@ -9,15 +9,35 @@ import java.text.Normalizer
 object WordForms {
 
     /**
-     * Mot sans accents ni cédille (« durée » -> « duree », « ça » -> « ca »), œ et æ développés.
+     * Mot sans accents ni cédille (« durée » -> « duree », « ça » -> « ca »), œ et æ développés, ß écrit « ss »
+     * (« straße » -> « strasse », « für » -> « fur » : les umlauts perdent leur tréma, comme au clavier sans appui long).
      * Attend une chaîne en minuscules ; renvoie la même instance si elle est déjà en ASCII.
      */
     fun foldAccents(word: String): String {
         if (word.all { it.code < 128 }) return word
-        val decomposed = Normalizer.normalize(word.replace("œ", "oe").replace("æ", "ae"), Normalizer.Form.NFD)
+        val decomposed = Normalizer.normalize(word.replace("œ", "oe").replace("æ", "ae").replace("ß", "ss"), Normalizer.Form.NFD)
         val builder = StringBuilder(decomposed.length)
         for (c in decomposed) {
             if (Character.getType(c) != Character.NON_SPACING_MARK.toInt()) builder.append(c)
+        }
+        return builder.toString()
+    }
+
+    /**
+     * Transcription allemande d'un mot : ä -> ae, ö -> oe, ü -> ue, ß -> ss (« fuer » pour « für », « strasse » pour « straße »).
+     * Attend une chaîne en minuscules ; renvoie la même instance s'il n'y a rien à transcrire.
+     */
+    fun transliterateGerman(word: String): String {
+        if (word.none { it == 'ä' || it == 'ö' || it == 'ü' || it == 'ß' }) return word
+        val builder = StringBuilder(word.length + 2)
+        for (c in word) {
+            when (c) {
+                'ä' -> builder.append("ae")
+                'ö' -> builder.append("oe")
+                'ü' -> builder.append("ue")
+                'ß' -> builder.append("ss")
+                else -> builder.append(c)
+            }
         }
         return builder.toString()
     }

@@ -3,12 +3,13 @@
 Non compilé ni exécuté dans l'environnement de développement : à valider au premier build.
 
 ## Principe
-Les listes de mots ne sont plus dans l'APK. Pour chaque langue (fr, en, es, de, it, pt, nl), 3 fichiers sont téléchargés depuis
+Les listes de mots ne sont plus dans l'APK. Pour chaque langue (fr, en, es, de, it, pt, nl), 2 fichiers sont téléchargés depuis
 le bucket R2 (même Worker que les modèles, `https://taipo-worker.junade-models.workers.dev/`) :
-- `dictionnaries/<code>.txt` (liste complète), `dictionnaries/<code>_50k.txt` (secours), `dictionnaries/names/<code>.txt` (prénoms).
+- `dictionnaries/<code>.txt` (liste complète) et `dictionnaries/names/<code>.txt` (prénoms).
+(Les listes `<code>_50k.txt` de secours ont été supprimées le 04/11/2026 : le repli mémoire relit la liste complète avec un seuil de fréquence ; l'app efface les `_50k` déjà téléchargés. Elles peuvent être retirées du bucket une fois les anciennes versions de l'app retirées.)
 (Orthographe du dossier du bucket : « dictionnaries », constante `DictionaryFiles.REMOTE_DIRECTORY`.)
 
-Stockage : `filesDir/dictionaries/` (même arborescence), exclu des sauvegardes. Une langue est « installée » quand les 3 fichiers
+Stockage : `filesDir/dictionaries/` (même arborescence), exclu des sauvegardes. Une langue est « installée » quand les 2 fichiers
 sont présents et non vides (rename atomique : un fichier n'apparaît qu'une fois complet).
 
 ## Quand le téléchargement démarre (`DictionaryDownloadScheduler.ensure`)

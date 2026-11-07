@@ -1,5 +1,6 @@
 package fr.junade.taipo.dictionary
 
+import fr.junade.taipo.KeyboardLanguage
 import fr.junade.taipo.suggestion.WordText
 import java.util.Locale
 
@@ -26,8 +27,9 @@ object ContextualCorrection {
         allowRetro: Boolean,
         frequencyOf: (String) -> Long,
         habitsFor: (String) -> HabitContext?,
+        language: KeyboardLanguage = KeyboardLanguage.FR,
     ): String? {
-        val corrected = FrenchContextCorrector.correct(text, textMayBeTruncated, allowRetro, frequencyOf) ?: return null
+        val corrected = correctWithoutHabits(language, text, textMayBeTruncated, allowRetro, frequencyOf) ?: return null
         var common = 0
         val limit = minOf(text.length, corrected.length)
         while (common < limit && text[common] == corrected[common]) common++
@@ -35,6 +37,21 @@ object ContextualCorrection {
         val habits = habitsFor(textUpToChangedWord(text, common)) ?: return corrected
         if (habits.isRefused(changed.first, changed.second) || habits.keepsTyped(changed.first, changed.second)) return null
         return corrected
+    }
+
+    /** La correction de contexte de [language] seule (français, anglais, espagnol ou allemand), sans habitudes ; null : rien à changer ou langue sans contexte. */
+    fun correctWithoutHabits(
+        language: KeyboardLanguage,
+        text: String,
+        textMayBeTruncated: Boolean,
+        allowRetro: Boolean,
+        frequencyOf: (String) -> Long,
+    ): String? = when (language) {
+        KeyboardLanguage.FR -> FrenchContextCorrector.correct(text, textMayBeTruncated, allowRetro, frequencyOf)
+        KeyboardLanguage.EN -> EnglishContextCorrector.correct(text, textMayBeTruncated, allowRetro, frequencyOf)
+        KeyboardLanguage.ES -> SpanishContextCorrector.correct(text, textMayBeTruncated, allowRetro, frequencyOf)
+        KeyboardLanguage.DE -> GermanContextCorrector.correct(text, textMayBeTruncated, allowRetro, frequencyOf)
+        else -> null
     }
 
     /**
@@ -48,14 +65,17 @@ object ContextualCorrection {
         textMayBeTruncated: Boolean,
         frequencyOf: (String) -> Long,
         habitsFor: (String) -> HabitContext?,
+        language: KeyboardLanguage = KeyboardLanguage.FR,
     ): ParticipleFix? {
-        val corrected = apply(text, textMayBeTruncated, allowRetro = false, frequencyOf = frequencyOf, habitsFor = habitsFor)
+        val corrected = apply(text, textMayBeTruncated, allowRetro = false, frequencyOf = frequencyOf, habitsFor = habitsFor, language = language)
         if (corrected != null) {
             val typed = WordText.trailingWord(text)
             val fixed = WordText.trailingWord(corrected)
             val onlyLastWord = typed.isNotEmpty() && fixed.isNotEmpty() && text.dropLast(typed.length) == corrected.dropLast(fixed.length)
             if (onlyLastWord && !fixed.equals(typed, ignoreCase = true)) return ParticipleFix(fixed.lowercase(Locale.ROOT), automatic = true)
         }
+        // Le participe proposé seul (accent oublié) n'existe qu'en français.
+        if (language != KeyboardLanguage.FR) return null
         return FrenchContextCorrector.participleFor(text, frequencyOf)?.takeUnless { fix ->
             fix.automatic && habitsFor(text)?.let { it.isRefused(WordText.trailingWord(text), fix.form) } == true
         }

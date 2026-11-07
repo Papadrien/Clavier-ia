@@ -1,0 +1,60 @@
+# Référence du banc d'autocorrection (docs/autocorrection-bench.md). Générée par `main --write-baseline`.
+# À régénérer volontairement quand une phase de la refonte change le comportement, jamais pour masquer une régression.
+[metrics]
+typos.courants.voisine.ok=93.4
+typos.courants.oubli.ok=78.8
+typos.courants.doublon.ok=93.4
+typos.courants.inversion.ok=97.7
+typos.courants.ajout.ok=96.0
+typos.courants.accent.ok=0.0
+typos.courants.apostrophe.ok=100.0
+typos.courants.ok=93.22
+typos.courants.missed=3.87
+typos.courants.wrong=2.92
+typos.courants.surMotValide=78.24
+typos.varies.voisine.ok=90.2
+typos.varies.oubli.ok=76.6
+typos.varies.doublon.ok=95.4
+typos.varies.inversion.ok=97.4
+typos.varies.ajout.ok=95.6
+typos.varies.accent.ok=0.0
+typos.varies.apostrophe.ok=100.0
+typos.varies.ok=92.53
+typos.varies.missed=3.22
+typos.varies.wrong=4.25
+typos.varies.surMotValide=77.39
+valides.courants.faux=0.0
+valides.courants.restaure=0.28
+valides.varies.faux=0.02
+valides.varies.restaure=0.26
+longues.courants.deux.ok=90.67
+longues.courants.deux.wrong=6.67
+longues.courants.trois.ok=73.33
+longues.courants.trois.wrong=13.67
+longues.varies.deux.ok=91.0
+longues.varies.deux.wrong=5.33
+longues.varies.trois.ok=77.0
+longues.varies.trois.wrong=10.0
+inconnus.courants.faux=63.33
+inconnus.varies.faux=68.33
+phrases.justes.changees=0.0
+contexte.its-it's.ok=100.0
+contexte.your-you're.ok=100.0
+contexte.their-there.ok=100.0
+contexte.to-too.ok=83.33
+contexte.then-than.ok=83.33
+contexte.lose-loose.ok=60.0
+contexte.whose-who's.ok=100.0
+contexte.modal-of.ok=100.0
+contexte.a-an.ok=100.0
+contexte.capital-i.ok=100.0
+contexte.glued-words.ok=100.0
+contexte.apostrophe.ok=100.0
+contexte.typo.ok=100.0
+contexte.total.ok=95.51
+[failing-cases]
+to-too	Its to early to tell.
+then-than	I would rather walk then drive.
+lose-loose	The screw is to lose.
+lose-loose	Let the dog lose in the park.
+[changed-sentences]

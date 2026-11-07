@@ -23,6 +23,7 @@ class Dictionary private constructor(
     private val letterPrefilter: Boolean = true,
     properNames: Collection<String> = emptyList(),
     internal val confidence: CorrectionConfidence = CorrectionConfidence.NONE,
+    private val accentPolicy: AccentPolicy = AccentPolicy.FRENCH,
 ) {
 
     // Prénoms et noms propres courants (forme avec majuscule, « Adrien », « Éric ») : les listes de fréquence sont
@@ -34,11 +35,24 @@ class Dictionary private constructor(
         for ((key, display) in exactNames) {
             val folded = WordForms.foldAccents(key)
             if (folded != key && folded !in exactNames) putIfAbsent(folded, display)
+            // Allemand : « juergen » -> « Jürgen », « uebung » -> « Übung » (transcription ae, oe, ue, ss).
+            if (accentPolicy.transliteration) {
+                val transliterated = WordForms.transliterateGerman(key)
+                if (transliterated != key && transliterated !in exactNames) putIfAbsent(transliterated, display)
+            }
         }
     }
 
     // Fréquence donnée aux prénoms quand ils sont proposés en correction (celle du seuil : jamais devant un vrai mot).
     private val nameFrequency: Long = maxOf(1L, candidateMinFrequency)
+
+    // Noms à proposer en correction faute d'être assez fréquents dans les listes, rangés par longueur (comme les candidats des listes) :
+    // avec une liste de noms allemande de plusieurs dizaines de milliers de mots, parcourir tous les noms à chaque correction coûterait trop cher.
+    private val rareNamesByLength: Array<List<String>> by lazy(LazyThreadSafetyMode.NONE) {
+        val rare = exactNames.keys.filter { (frequencies[it] ?: 0L) < nameFrequency }
+        val maxLength = rare.maxOfOrNull { it.length } ?: 0
+        Array(maxLength + 1) { length -> rare.filter { it.length == length } }
+    }
 
     /**
      * Mots seuls (sans fréquence connue) : tous ont la même fréquence, donc aucun n'est
@@ -151,6 +165,16 @@ class Dictionary private constructor(
         }
     }
 
+    // Allemand : mots à umlaut ou ß indexés par leur transcription (« für » -> « fuer », « straße » -> « strasse »), pour un mot tapé
+    // avec « ae / oe / ue » au lieu de l'umlaut. Vide pour les autres langues ([AccentPolicy.transliteration]).
+    private val accentedByTranslit: Map<String, List<String>> = HashMap<String, MutableList<String>>().apply {
+        if (!accentPolicy.transliteration) return@apply
+        for (word in candidateWords) {
+            val transliterated = WordForms.transliterateGerman(word)
+            if (transliterated != word) getOrPut(transliterated) { ArrayList(2) }.add(word)
+        }
+    }
+
     // Formes sans accent présentes dans les listes mais nettement moins fréquentes que leur forme
     // accentuée : ce sont des fautes du corpus (« ca », « etait », « tres », « duree »), pas des mots.
     // Valeur = forme accentuée à proposer. Assez strict pour laisser « a »/« à », « ou »/« où »,
@@ -159,16 +183,25 @@ class Dictionary private constructor(
     // Deux seuils : une paire « e / é » finale (« tue / tué », « essaye / essayé », « rencontres / rencontrés ») garde
     // le seuil strict, car la forme sans accent est un vrai mot (verbe conjugué, pluriel) ; toute autre paire
     // (« ecoute / écoute », « grace / grâce », « eglise / église ») passe au seuil souple : la forme sans accent n'est
-    // alors presque toujours une faute (sauf quelques exceptions, voir [PLAIN_WORDS_KEPT]).
+    // alors presque toujours une faute (sauf quelques exceptions, voir [AccentPolicy.keptPlain]).
     internal val dominatedByAccented: Map<String, String> = HashMap<String, String>().apply {
         for ((folded, accented) in accentedByFolded) {
             val plainFrequency = frequencies[folded] ?: continue
-            if (folded in PLAIN_WORDS_KEPT) continue
+            if (folded in accentPolicy.keptPlain) continue
             val top = accented.maxOf { frequencies.getValue(it) }
             val leaders = accented.filter { frequencies.getValue(it) == top }
             if (leaders.size != 1) continue
-            val dominance = if (isParticipleVariant(folded, leaders[0])) ACCENT_DOMINANCE else SOFT_ACCENT_DOMINANCE
+            val dominance = accentPolicy.dominanceFor(folded, leaders[0])
             if (top >= plainFrequency * dominance) put(folded, leaders[0])
+        }
+        // Allemand : une transcription présente dans les listes (« ueber », « buero ») mais très rare face au mot à umlaut.
+        for ((transliterated, accented) in accentedByTranslit) {
+            val plainFrequency = frequencies[transliterated] ?: continue
+            if (transliterated in accentPolicy.keptPlain || containsKey(transliterated)) continue
+            val top = accented.maxOf { frequencies.getValue(it) }
+            val leaders = accented.filter { frequencies.getValue(it) == top }
+            if (leaders.size != 1) continue
+            if (top >= plainFrequency * accentPolicy.dominanceFor(transliterated, leaders[0])) put(transliterated, leaders[0])
         }
     }
 
@@ -288,7 +321,12 @@ class Dictionary private constructor(
         if (personalWords.any { it.equals(word, ignoreCase = true) || (correction != null && it.equals(correction, ignoreCase = true)) }) return null
         val target = correction ?: word
         exactNames[target.lowercase()]?.let { return it.takeIf { display -> display != word } }
-        if (correction == null && word == word.lowercase()) foldedNames[word]?.let { return it }
+        if (correction == null && word == word.lowercase()) {
+            val restored = foldedNames[word]
+            // Allemand : la liste contient des noms (« Höhe », « Bär »), dont la forme sans umlaut est parfois un autre mot juste
+            // (« hohe », « bar ») : un mot de la liste n'est jamais remplacé par un nom pour son umlaut seul.
+            if (restored != null && !(accentPolicy.nounsKeepValidWords && word in frequencies)) return restored
+        }
         return null
     }
 
@@ -325,8 +363,15 @@ class Dictionary private constructor(
             return applyOriginalCasing(word, contraction)
         }
 
+        // Contraction écrite sans apostrophe, absente des listes (« thats » -> « that's », « theyre » -> « they're ») : avant les
+        // flexions, car « thats » se lirait « that » + « s », un pluriel régulier.
+        contractionsWithoutApostrophe[lower]?.let { return applyOriginalCasing(word, it) }
+
         // Pluriel, féminin ou conjugaison régulière d'un mot connu : correct, absent des listes.
         if (isInflectedForm(lower)) return null
+
+        // Mot composé (allemand) : juste s'il se découpe en parties connues et n'est pas une faute de frappe d'un mot fréquent.
+        if (isCompoundForm(lower)) return null
 
         // Élision (« t'inscrire », « l'ordinateur ») ou possessif anglais (« today's ») : seul le mot
         // collé à l'apostrophe est examiné, la partie élidée est conservée telle quelle. Sans cela, la
@@ -430,7 +475,10 @@ class Dictionary private constructor(
         }
         for (candidate in personal.keys) if (candidate !in frequencies) consider(candidate, personalFrequency, isPersonal = true)
         // Prénoms courants : proposés en correction même s'ils sont absents des listes ou trop rares pour y être candidats.
-        for (name in exactNames.keys) if ((frequencies[name] ?: 0L) < nameFrequency) consider(name, nameFrequency)
+        val rareNames = rareNamesByLength
+        for (length in minLength..minOf(rareNames.size - 1, lower.length + allowedDistance)) {
+            for (name in rareNames[length]) consider(name, nameFrequency)
+        }
         return contest
     }
 
@@ -525,6 +573,7 @@ class Dictionary private constructor(
      * après une seule lettre élidée, il doit compter au moins 3 lettres (« tai », « lon » sont trop ambigus).
      */
     private fun elisionRestoration(lower: String): String? {
+        if (!confidence.restoresElisions) return null
         for (prefix in ELISION_PREFIXES) {
             if (!lower.startsWith(prefix) || lower.length == prefix.length) continue
             val rest = lower.substring(prefix.length)
@@ -649,6 +698,7 @@ class Dictionary private constructor(
         }
 
         accentedByFolded[folded]?.forEach { offer(it, frequencies.getValue(it)) }
+        accentedByTranslit[lower]?.forEach { offer(it, frequencies.getValue(it)) }
         for (rule in inflections.rules) {
             val base = rule.baseOf(folded) ?: continue
             accentedByFolded[base]?.forEach { accentedBase ->
@@ -663,7 +713,86 @@ class Dictionary private constructor(
     /** Vrai si [lower] est une forme régulière (voir [InflectionRules]) d'un mot du dictionnaire. */
     private fun isInflectedForm(lower: String): Boolean = inflections.rules.any { rule ->
         // Une base qui est une faute du corpus (« duree ») ne valide pas sa forme fléchie (« durees »).
-        rule.baseOf(lower)?.let { it in frequencies && it !in dominatedByAccented } == true
+        rule.baseOf(lower)?.let {
+            it in frequencies && it !in dominatedByAccented && frequencies.getValue(it) >= inflections.minBaseFrequency &&
+                !isUndoubledConsonant(it, rule)
+        } == true
+    }
+
+    /**
+     * Allemand, proposition seulement (jamais appliquée d'office) : « Haus » + « tür » -> « Haustür ». Vrai composé si les deux mots sont des
+     * noms de la liste de noms (voir [properNameForm]) et si leur réunion, avec une liaison de [CompoundRules.links] au besoin
+     * (« Arbeit » + « zimmer » -> « Arbeitszimmer »), est un mot des listes ou un composé valide. Parmi plusieurs liaisons valides, la plus
+     * fréquente l'emporte. Le composé est un nom : majuscule initiale, le second mot passe en minuscules. Null : rien à proposer.
+     *
+     * Limite : la liste de noms contient aussi des prénoms, « Herr Thomas » peut donc être proposé en « Herrthomas » si les deux sont connus.
+     */
+    fun compoundMergeFor(first: String, second: String): String? {
+        val rules = inflections.compounds ?: return null
+        if (first.length < MIN_MERGE_PART_LENGTH || second.length < MIN_MERGE_PART_LENGTH) return null
+        if (!first.all { it.isLetter() } || !second.all { it.isLetter() }) return null
+        val firstLower = first.lowercase()
+        val secondLower = second.lowercase()
+        if (firstLower !in exactNames || secondLower !in exactNames) return null
+        var best: String? = null
+        var bestFrequency = -1L
+        for (link in rules.links) {
+            val merged = firstLower + link + secondLower
+            val frequency = frequencies[merged] ?: 0L
+            val known = frequency >= nameFrequency && merged !in dominatedByAccented
+            if (!known && !isCompoundForm(merged)) continue
+            if (frequency > bestFrequency) {
+                bestFrequency = frequency
+                best = first.replaceFirstChar { it.uppercaseChar() } + link + secondLower
+            }
+        }
+        return best
+    }
+
+    /**
+     * Vrai si [lower] est un composé valide (voir [CompoundRules]) : au moins deux parties connues, et aucun mot fréquent à une faute de
+     * frappe (« krankenhauss » se découpe en « krankenhaus » + « s », mais reste une faute de « krankenhaus »). Un mot à chiffre ou apostrophe
+     * n'est jamais un composé.
+     */
+    private fun isCompoundForm(lower: String): Boolean {
+        val rules = inflections.compounds ?: return false
+        if (lower.length < 2 * rules.minPartLength || !lower.all { it.isLetter() }) return false
+        if (!splitsIntoKnownParts(lower, rules)) return false
+        return searchCandidates(lower, 1, emptyMap(), null).best == null
+    }
+
+    /** Découpe [lower] en parties connues d'au moins [CompoundRules.minPartLength] lettres, reliées par une liaison de [CompoundRules.links]. */
+    private fun splitsIntoKnownParts(lower: String, rules: CompoundRules): Boolean {
+        val length = lower.length
+        val minPart = rules.minPartLength
+        // startsHere[i] : le début de [lower] jusqu'à i est découpé et une partie peut commencer en i.
+        val startsHere = BooleanArray(length + 1)
+        startsHere[0] = true
+        for (start in 0 until length) {
+            if (!startsHere[start]) continue
+            for (end in start + minPart..length) {
+                val part = lower.substring(start, end)
+                if ((frequencies[part] ?: 0L) < nameFrequency || part in dominatedByAccented) continue
+                if (end == length) {
+                    if (start > 0) return true
+                    continue
+                }
+                for (link in rules.links) {
+                    val next = end + link.length
+                    if (next <= length - minPart && lower.startsWith(link, end)) startsHere[next] = true
+                }
+            }
+        }
+        return false
+    }
+
+    /** « occur » + « ed » : la forme juste double le r (« occurred », connue) ; « occured » est une faute. Voir [InflectionRules.checksDoubledConsonant]. */
+    private fun isUndoubledConsonant(base: String, rule: InflectionRule): Boolean {
+        if (!inflections.checksDoubledConsonant || rule.baseEnding.isNotEmpty() || (rule.suffix != "ed" && rule.suffix != "ing")) return false
+        if (base.length < 3) return false
+        val last = base.last()
+        if (last in "aeiouwxy" || base[base.length - 2] !in "aeiou" || base[base.length - 3] in "aeiou") return false
+        return (base + last + rule.suffix) in frequencies
     }
 
     /**
@@ -719,22 +848,6 @@ class Dictionary private constructor(
         /** Story 1.17 : nombre d'emplacements de mots de la bande de suggestions. */
         const val SUGGESTION_LIMIT = 3
 
-        /**
-         * Une forme sans accent déjà présente dans les listes est corrigée si sa version accentuée
-         * est au moins 10 fois plus fréquente (« ca » 190 000 contre « ça » 2 700 000). Seuil des paires
-         * « e / é » finales (« tue / tué »), où la forme sans accent est un vrai mot.
-         */
-        private const val ACCENT_DOMINANCE = 10L
-
-        /**
-         * Seuil des autres paires : la forme accentuée est au moins 2 fois plus fréquente (« ecoute » 38 000 contre
-         * « écoute » 82 000, « grace » contre « grâce »). Les formes sans accent y sont des fautes du corpus.
-         */
-        private const val SOFT_ACCENT_DOMINANCE = 2L
-
-        /** Formes sans accent qui sont de vrais mots (« une tache » n'est pas « une tâche ») : jamais corrigées pour leur accent. */
-        private val PLAIN_WORDS_KEPT = setOf("tache", "taches")
-
         /** Une contraction écrite sans apostrophe est corrigée si la contraction est au moins 100 fois plus fréquente. */
         private const val CONTRACTION_DOMINANCE = 100L
 
@@ -756,17 +869,13 @@ class Dictionary private constructor(
         /** Nombre maximal de formes accentuées proposées en tête de la bande de suggestions. */
         private const val MAX_ACCENT_VARIANTS = 2
 
-        /** Vrai si [accented] ne diffère de [plain] que par un « é » final (ou avant un « s » final) : « tue » / « tué ». */
-        private fun isParticipleVariant(plain: String, accented: String): Boolean {
-            if (plain.length != accented.length) return false
-            val index = if (plain.endsWith("s")) plain.length - 2 else plain.length - 1
-            return index >= 0 && plain[index] == 'e' && accented == plain.substring(0, index) + "é" + plain.substring(index + 1)
-        }
-
         /** Une forme fléchie retrouvée par les règles compte pour 1/4 de la fréquence de son mot de base. */
         private const val INFLECTED_FREQUENCY_DIVISOR = 4L
 
         /** Distance d'édition maximale selon la longueur du mot tapé : 1 pour 4 lettres ou moins. */
+        /** Une partie plus courte qu'un mot (« Bus », « Tür ») reste possible dans une proposition de composé ; moins, non. */
+        private const val MIN_MERGE_PART_LENGTH = 3
+
         private fun maxDistanceForLength(length: Int): Int = if (length <= 4) 1 else Int.MAX_VALUE
 
         /**
@@ -789,17 +898,18 @@ class Dictionary private constructor(
             letterPrefilter: Boolean = true,
             properNames: Collection<String> = emptyList(),
             confidence: CorrectionConfidence = CorrectionConfidence.NONE,
+            accentPolicy: AccentPolicy = AccentPolicy.FRENCH,
         ): Dictionary {
             // Liste déjà en minuscules (cas des listes de l'application) : pas de copie, ce qui évite de
             // doubler la mémoire avec une liste complète de plusieurs centaines de milliers de mots.
-            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence)
+            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence, accentPolicy)
             val merged = HashMap<String, Long>(entries.size)
             entries.forEach { (word, count) ->
                 val key = word.lowercase()
                 val previous = merged[key]
                 if (previous == null || count > previous) merged[key] = count
             }
-            return Dictionary(merged, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence)
+            return Dictionary(merged, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence, accentPolicy)
         }
 
         // Relais vers EditDistance et WordForms (audit 2.1, étape 6) : l'API de Dictionary reste celle d'avant.

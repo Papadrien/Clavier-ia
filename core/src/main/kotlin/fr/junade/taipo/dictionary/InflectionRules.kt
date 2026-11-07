@@ -28,6 +28,25 @@ data class InflectionRule(val suffix: String, val baseEnding: String = "") {
 }
 
 /**
+ * Mots composés (allemand) : un mot absent des listes est juste s'il se découpe en parties connues, séparées au besoin par une
+ * liaison (« Arbeit » + « s » + « zimmer »). Les listes de fréquence ne contiennent qu'une petite part des composés (le banc mesure
+ * 24 % de composés justes remplacés à tort sans cette règle) et le français ou l'anglais n'en ont pas besoin.
+ *
+ * Paramètres réglés sur le banc (`tools/autocorrect-bench/de`, portage Python, voir docs/autocorrection-bench.md), pas à l'intuition :
+ * parties d'au moins [minPartLength] lettres, connues avec la fréquence minimale des candidats du dictionnaire ; un composé à une
+ * faute de frappe (distance 1) d'un mot fréquent n'est jamais accepté : c'est le garde-fou qui ramène les fausses acceptations de 4,9 %
+ * (découpeur seul) à 0,1 % (fautes sur mots courants) et 1,2 % (fautes sur mots variés).
+ */
+class CompoundRules(
+    val minPartLength: Int = 4,
+    val links: List<String> = listOf("", "s", "n", "en", "e", "er", "es"),
+) {
+    companion object {
+        val GERMAN = CompoundRules()
+    }
+}
+
+/**
  * Formes régulières reconnues en plus des mots du dictionnaire. Les listes de fréquence sources
  * (~50 000 mots) ne contiennent pas toutes les formes fléchies (ex. « durée » y est, pas
  * « durées ») : sans ces règles, un mot correct est « corrigé » vers un voisin (« durées » →
@@ -37,10 +56,27 @@ data class InflectionRule(val suffix: String, val baseEnding: String = "") {
  * Volontairement limité aux flexions les plus régulières : les conjugaisons irrégulières ne sont
  * pas couvertes (seules celles présentes dans les listes le sont).
  */
-class InflectionRules(val rules: List<InflectionRule>) {
+class InflectionRules(
+    val rules: List<InflectionRule>,
+    /**
+     * Fréquence minimale du mot de base pour valider sa forme fléchie. 0 : tout mot connu. Un mot de base rare ou douteux
+     * (« rea » pour « realy ») ne doit pas valider une faute de frappe : voir [ENGLISH].
+     */
+    val minBaseFrequency: Long = 0L,
+    /**
+     * Anglais : « occured » n'est pas la forme régulière de « occur » + « ed » quand « occurred » (consonne finale doublée
+     * après une seule voyelle) existe : c'est une faute, corrigée au lieu d'être validée.
+     */
+    val checksDoubledConsonant: Boolean = false,
+    /** Allemand : mots composés valides sans être dans les listes ; null : pas de composés. */
+    val compounds: CompoundRules? = null,
+) {
 
     companion object {
         val NONE = InflectionRules(emptyList())
+
+        /** Allemand : pas de flexion régulière (les formes fléchies sont dans les listes), mais des composés. */
+        val GERMAN = InflectionRules(emptyList(), compounds = CompoundRules.GERMAN)
 
         /**
          * Pluriels (s, x, aux). Pas de règle « es » : « durees » s'y lirait comme « dure » + « es »
@@ -65,6 +101,19 @@ class InflectionRules(val rules: List<InflectionRule>) {
                 InflectionRule("ing"),
                 InflectionRule("ing", "e"),
                 InflectionRule("ly"),
+            ),
+            minBaseFrequency = 1_000L,
+            checksDoubledConsonant = true,
+        )
+
+        /**
+         * Pluriels en « s » (casa / casas) et en « ces » (luz / luces). Pas de règle « es » : « casaes » s'y lirait comme « casa » + « es »
+         * et ne serait plus corrigé. Les pluriels en « es » (ciudades, papeles) et les conjugaisons sont dans la liste (lexiques de clavier).
+         */
+        val SPANISH = InflectionRules(
+            listOf(
+                InflectionRule("s"),
+                InflectionRule("ces", "z"),
             ),
         )
     }

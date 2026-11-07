@@ -21,7 +21,7 @@ class DictionaryContentCheckTest {
     @Test
     fun `une page HTML ou un fichier vide sont refuses`(@TempDir dir: File) {
         assertFalse(DictionaryContentCheck.looksValid(file(dir, "<!DOCTYPE html>\n<html>"), DictionaryFile.FULL))
-        assertFalse(DictionaryContentCheck.looksValid(file(dir, ""), DictionaryFile.BACKUP))
+        assertFalse(DictionaryContentCheck.looksValid(file(dir, ""), DictionaryFile.FULL))
         assertThrows(IOException::class.java) { DictionaryContentCheck.requireValid(file(dir, "<html>"), DictionaryFile.NAMES) }
     }
 

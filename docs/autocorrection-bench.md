@@ -350,3 +350,230 @@ justes changées : 0 ; contexte 67,97 -> 96,48 % ; mesures `longues.*` et `incon
 Même passage : `HabitContext.keepsTyped` comptait une paire et un triplet appris d'un seul passage pour 5 occurrences (le triplet est
 pondéré par 4) et refusait la correction dès la première fois ; la preuve de contexte compte maintenant des occurrences (le plus
 grand de la paire et du triplet), comme l'annonce « une seule fois ne prouve rien ».
+
+## Anglais (05/11/2026)
+
+Le banc sait mesurer l'anglais : `--lang=en` (clavier QWERTY, seuil de proposition 149, `CorrectionConfidence.ENGLISH`, règles de
+contexte `EnglishConfusions`) ; `--lang=en-legacy` rejoue le moteur d'avant (aucune décision de déclenchement, aucun contexte).
+Jeux : `tools/autocorrect-bench/en/sentences-ok.txt` (phrases justes, dont les pièges its / it's, their / there...) et
+`en/context-cases.tsv` (une centaine de cas). La référence est `en/baseline.txt` ; `AutocorrectBaselineTest` la garde.
+
+Ce que le moteur anglais reprend du fonctionnement de Gboard (décrit dans le rapport fourni, jamais son code) : un lexique de clavier
+validé (et non toute la liste du corpus), une décision de déclenchement par type de faute (marge de score), une canonicalisation
+propre à la langue (contractions sans apostrophe : « thats » -> « that's », « i » -> « I »), et des règles de contexte.
+
+| Mesure (courants / variés) | avant (moteur et liste d'origine) | après |
+|---|---|---|
+| Fautes bien corrigées | 81,13 / 86,87 % | 93,22 / 92,53 % |
+| Fautes non corrigées | 13,70 / 7,32 % | 3,87 / 3,22 % |
+| Fautes mal corrigées | 5,17 / 5,82 % | 2,92 / 4,25 % |
+| Mots longs à 3 erreurs rétablis | 0 / 0 % | 73,3 / 77,0 % |
+| Cas de contexte réussis | 15,7 % | 95,5 % |
+| Mots justes remplacés / phrases justes changées | 0 / 0 | 0 / 0 |
+
+Quatre cas de contexte échouent encore, tous ambigus sans le mot suivant ou volontairement non couverts : « Its to early to tell »,
+« rather walk then drive », « The screw is to lose », « Let the dog lose in the park ».
+
+**Seuils testés et non retenus** : abaisser les seuils de marge de l'anglais aux valeurs du français (touche voisine et lettre oubliée
+0,25, lettre en trop et substitution 0,5, deux erreurs 0,5) corrige 0,3 point de fautes en plus (93,22 -> 93,50 %) mais fait passer
+les mauvaises corrections de 2,92 à 3,40 % : environ 1,5 mauvaise correction pour 1 bonne. Un réglage intermédiaire donne le même
+rapport. Les seuils restent ceux de `CorrectionConfidence.ENGLISH`.
+
+**Point à connaître** : le même banc, lancé sur le français avec le `fr.txt` enrichi du 04/11/2026, est un peu en dessous de la référence
+du 01/11/2026 (fautes variées : doublon 92,0 -> 91,2 %, inversion 97,1 -> 95,2 % ; mots longs à 2 erreurs courants 90,0 -> 87,7 %, mal corrigés
+7,3 -> 9,3 %). Le code de l'anglais n'y est pour rien (mêmes chiffres avec le code d'avant) : c'est l'enrichissement. `AutocorrectBaselineTest`
+français échouera tant que la référence n'est pas relue ; elle n'a pas été régénérée ici.
+
+## Espagnol (05/11/2026)
+
+Même démarche que l'anglais : on s'inspire du fonctionnement d'un clavier du commerce (liste de mots validée, décision prudente, contexte), sans reprendre son code. Les lexiques de clavier fournis (`es_ES`, `es_419`, `es_MX`, `es_US`, 4 listes de mots sans fréquence) servent de VALIDATEUR, comme pour l'anglais ; leurs fichiers binaires ne sont pas dans le projet.
+
+**Important : rien de ce qui suit n'a été compilé ni exécuté.** L'environnement de rédaction n'a ni Kotlin ni Gradle. Mesurées : les données (Python). Non mesurées : toute la partie Kotlin et le banc `--lang=es`. Les règles de contexte ont été vérifiées par un portage Python lisant la vraie table de `SpanishConfusions.kt` : 0 faux positif sur les 131 phrases justes, 70 des 81 cas ; les 11 autres dépendent du dictionnaire (accents, fautes de frappe) et attendent le banc.
+
+### Ce qui a changé
+
+1. **Dictionnaire** (`tools/clean_es_dictionary.py`, listes dans `docs/dictionnaire-es-2026-11-05/`) : 335 938 -> 147 805 mots. Retirés : 188 032 mots absents des lexiques (fautes de sous-titres, fusions, mots rares), dont 104 formes sans accent fréquentes (« despues », « habia », « senor ») que le clavier tenait pour justes ; 217 mots anglais fréquents (« the », « to ») passent à la fréquence 20 (valides, jamais proposés) ; 429 formes accentuées plausibles absentes des lexiques (« golpéalo », « olvídenlo ») sont gardées à 20. Aucune fréquence d'un mot de lexique n'est touchée. Mesure simulée (19 255 fautes de frappe sur un QWERTY avec Ñ) : part des fautes qui tombent sur un mot « valide », donc jamais corrigées : 17,2 % -> 9,8 %.
+2. **Politique d'accents** (`AccentPolicy`) : la règle d'origine (« une forme sans accent est une faute si l'accentuée est 2 fois plus fréquente ») était calibrée sur le français. En espagnol elle aurait remplacé à la frappe environ 2 400 mots justes des listes (« esta » -> « está », « paso » -> « pasó », « cual », « quien »). Seuil porté à 10 pour l'espagnol (1 418 paires restent : « tambien », « aqui », « asi », « mas », « corazon »), avec « papa », « seria », « sabia » jamais corrigés. Le français garde exactement son comportement.
+3. **Touche Ñ** : `KeyProximity` repliait « ñ » sur « n » (elle héritait des voisines de « n »). Elle est maintenant une touche à part (voisines : l, p, o, k...).
+4. **Décision de déclenchement** : `CorrectionConfidence.SPANISH`, valeurs de départ (celles de l'anglais), **non calibrées** : à régler avec le banc.
+5. **Flexions** : `InflectionRules.SPANISH` (s, et ces <- z). Pas de règle « es ».
+6. **Contexte** (`SpanishConfusions`, ~90 règles) : interrogatifs après « ¿ » (¿como estas? -> ¿cómo estás?), exclamations, interrogatifs après un verbe de savoir, tu/tú, el/él, mi/mí, si/sí, se/sé, de/dé, aun/aún, a/ha, haber/a ver, echo/hecho, mots soudés. Le mot de tête « ¿ » / « ¡ » est géré par le moteur (`Word.leading`, condition `self`). Branché dans `SuggestionController` pour l'espagnol.
+
+### Pour mesurer
+
+    ./gradlew :core:test --tests '*Spanish*'
+    ./gradlew :core:run --args="--lang=es --write-baseline"   # écrit tools/autocorrect-bench/es/baseline.txt
+
+Le test `AutocorrectBaselineTest` espagnol est ignoré tant que `baseline.txt` n'existe pas. Régler ensuite les marges de `CorrectionConfidence.SPANISH` comme pour l'anglais.
+
+### Non fait
+
+Prédiction du mot suivant, « de el » -> « del » et « a el » -> « al » (le moteur ne remplace qu'un mot), accent selon la variante (es_MX / es_419 : seuls les lexiques les distinguent, pas les fréquences), conjugaisons par règles (les formes viennent des lexiques), « ¿ » automatique.
+
+
+## Allemand, phase 0 : banc (06/11/2026)
+
+Plan : `plan-autocorrection-allemand.md`. Cette phase ne change **aucun comportement** de l'app : elle ajoute le banc et ses jeux de test, pour
+mesurer l'allemand avant les phases suivantes (nettoyage de `de.txt`, umlauts et ß, noms, composés, contexte, variante suisse).
+
+**Rien n'a été compilé ni exécuté** (ni Kotlin ni Gradle dans l'environnement de rédaction) : le banc `--lang=de` et `baseline.txt` sont à produire chez toi.
+
+### Ce qui est ajouté
+- `AutocorrectBench.GERMAN` : QWERTZ simple, seuil de proposition 61 (41 depuis la phase 1), `CorrectionConfidence.NONE`, `AccentPolicy.FRENCH` (`GERMAN` depuis la phase 2),
+  `InflectionRules.NONE`, aucun contexte : l'état actuel de l'allemand. `--lang=de` dans `main`, test `AutocorrectBaselineTest` allemand
+  (ignoré tant que `tools/autocorrect-bench/de/baseline.txt` n'existe pas).
+- Deux types de fautes de frappe **propres à l'allemand** (ignorés pour les autres langues : leurs références ne bougent pas) :
+  `typos.<jeu>.ss-pour-eszett.ok` (Straße -> Strasse) et `typos.<jeu>.ae-oe-ue.ok` (für -> fuer). Le type « accent » couvre déjà u -> ü, o -> ö, a -> ä.
+- `composes.rares.faux` / `composes.rares.restaure` : 1 500 mots justes que `de.txt` ne contient pas (surtout des composés), tapés tels quels ;
+  `faux` = remplacés par un autre mot (doit baisser). Jeu : `tools/autocorrect-bench/de/valid-rare-words.txt`, produit par `tools/de_bench_data.py`
+  à partir des lexiques de_DE / de_AT / de_CH (hors de l'app, comme validateur : c'est un jeu de test, pas une donnée livrée).
+- Comparaison des mots justes : « ß » = « ss » (`benchFold`), sans effet sur les autres langues.
+- `tools/autocorrect-bench/de/sentences-ok.txt` : 144 phrases justes avec pièges (das / dass, seid / seit, wir / wie, wurde / würde, ß, umlauts,
+  composés, élisions « geht's », « hab's »). `context-cases.tsv` : 117 cas dans 12 catégories (umlaut, eszett, translit, nomen, vorname, seid-seit,
+  wir-wie, wurde-würde, das-dass, mal-Mal, tageszeit, tippfehler). Textes écrits sans relecture par un germanophone (décision du 06/11/2026).
+  Les cas `nomen` et `vorname` attendent le futur dictionnaire de noms et prénoms (pas de majuscule automatique par réglage).
+
+### Contrôles faits (Python, sur les fichiers)
+- Les mots des phrases justes sont tous dans `de.txt`, sauf `entkalkt`, `homeoffice`, « e » (E-Mail) et les formes en apostrophe (`geht's`, `gibt's`, `hab's`) :
+  ces phrases peuvent donc légitimement apparaître comme « changées » dans la première référence.
+- Tous les mots des phrases attendues des cas de contexte sont dans `de.txt`.
+- Exposition des composés rares : sur les 1 500 mots, 98 (6,5 %) ont un mot de `de.txt` (fréquence >= 61) à une seule modification. C'est un
+  ordre de grandeur de ce que `composes.rares.faux` peut atteindre à distance 1, pas sa valeur (qui dépend du score et des marges).
+
+### Pour mesurer
+    ./gradlew :core:run --args="--lang=de --write-baseline"   # écrit tools/autocorrect-bench/de/baseline.txt
+Relire le rapport avant d'enregistrer la référence : les cas en échec sont les **objectifs** des phases suivantes.
+
+### Phase 1 : nettoyage de `de.txt` (06/11/2026)
+
+`tools/clean_de_dictionary.py` (lexiques de_DE, de_AT, de_BE ; de_CH non disponible) : `de.txt` passe de 240 489 à 117 170 mots, seuil de
+proposition 61 -> 41 (`DictionaryLoader`, `AutocorrectBench.GERMAN`), 880 formes sans umlaut retirées, ancienne orthographe et OCR retirés,
+mots anglais fréquents rétrogradés à 20, 636 composés rares sauvés à 20. Détail : `docs/dictionnaire-de-2026-11-06/`.
+**Rien n'a été compilé ni exécuté** : relancer `./gradlew :core:run --args="--lang=de --write-baseline"` (et la comparer à une exécution sur
+l'ancien `de.txt` si tu veux l'effet isolé). Attendu : `composes.rares.faux` à surveiller (des mots justes comme `dahinten` ou `idiotin`
+ont été retirés), les fautes `ss-pour-eszett` et `ae-oe-ue` inchangées jusqu'à la phase 2, les fautes sans umlaut (`fur`) enfin non validées.
+
+### Phase 2 : umlauts et ß (06/11/2026)
+
+Fichiers : `WordForms` (repli : ß -> ss ; `transliterateGerman` : ä -> ae, ö -> oe, ü -> ue, ß -> ss), `AccentPolicy.GERMAN`, `Dictionary`
+(index des transcriptions, rattachées au mot à umlaut), `DictionaryLoader.accentPolicyOf`, profil `GERMAN` du banc. Tests : `GermanAutocorrectionTest`,
+`WordFormsGermanTest`.
+- **Mot absent de la liste** : umlaut oublié (« uber » -> « über »), transcription (« fuer », « koennen », « Maedchen ») et « ss » pour ß
+  (« Strasse » -> « Straße ») sont rétablis d'office, avant la recherche par distance (comme les accents français).
+- **Mot présent dans la liste** : corrigé seulement si la forme à umlaut est au moins 50 fois plus fréquente (10 fois pour ß), sauf une table de
+  mots justes (`ware`, `schone`, `hohle`, `masse`, `busse`, `massig`...). Les paires de deux mots justes (konnte / könnte, schon / schön, wurde / würde,
+  wurdest / würdest) ne sont plus tranchées par l'accent seul : c'est le travail du contexte (phase 5). Seuils choisis sur les paires de la nouvelle `de.txt`
+  (à 50 : 66 paires, dont 62 dont la forme sans umlaut est un « mot » des lexiques mais en pratique un oubli d'umlaut : uber, tur, gluck).
+- **Transcription présente dans la liste** (« ueber » 156, « buero » 11) : traitée comme une forme dominée.
+- **Limite connue** : « Strasse », « heiss », « fussball » sont des mots justes en Suisse ; ils sont corrigés vers ß pour tous les claviers jusqu'à la
+  phase 6 (réglage de-CH). « grosser » -> « großer » même quand la phrase veut « größer » (le contexte départagera).
+
+Mesures (banc `--lang=de`, vraie `de.txt` nettoyée ; avant = phase 1 seule) : fautes courantes bien corrigées 82,3 -> 95,6 % (mal corrigées 17,56 -> 4,39 %),
+variées 89,2 -> 96,0 %, `ss-pour-eszett` 34,1 -> 96,8 %, `ae-oe-ue` 55,6 -> 99,5 %, phrases justes changées 1 -> 0 (« Er konnte » n'est plus changé en
+« könnte »), cas de contexte 36,7 -> 56,4 % (eszett 15 -> 92 %, translit 19 -> 100 %). Un cas passait par chance et échoue maintenant (« Was wurdest du tun ? »,
+wurde-würde : contexte, phase 5). `composes.rares.faux` inchangé (23,8 %) : phase 4. Français, anglais, espagnol : mesures identiques à celles d'avant la phase.
+Compilation et banc faits hors Gradle avec le compilateur Kotlin de Gradle ; `tools/autocorrect-bench/de/baseline.txt` est écrit par ce moteur. Le module `app`
+(`DictionaryLoader`) n'est pas compilé.
+
+### Phase 3 : noms et prénoms (06/11/2026)
+
+Décision du 06/11/2026 (D1) : **pas de majuscule automatique** par réglage ni par contexte. Le plan prévoyait un correcteur de contexte (3b) et un
+réglage (3c) : ils ne sont **pas faits**. À la place, une liste de noms communs et de prénoms, comme pour le français (3a). Source des noms (D2) : fixée
+quand on travaillera les dictionnaires ; en attendant, une liste de départ de 363 noms écrite à la main. Textes de test : pas de relecture germanophone (D3).
+
+Fichiers : `tools/build_de_names.py` (construit `dictionaries/names/de.txt`, `--self-test`, `--check`), `tools/de-names/` (`vornamen.txt`, `nomen-seed.txt`,
+`ambigu-ok.txt`), `Dictionary` (`properNameForm`, index des noms rares par longueur, transcription des noms à umlaut), `AccentPolicy.nounsKeepValidWords`,
+test `GermanNounsTest`.
+- **Résultat** : `names/de.txt` = 442 entrées (90 prénoms + 352 noms). « haus » -> « Haus », « hauss » -> « Haus », « krankenhauss » -> « Krankenhaus » ; un nom
+  déjà bien écrit, en capitales ou dans le dictionnaire personnel n'est pas touché ; les annulations passent par le système d'habitudes existant.
+- **Garde-fou propre à l'allemand** : un mot présent dans les listes n'est jamais remplacé par un nom pour son seul umlaut (« hohe » reste « hohe », jamais « Höhe »).
+- **Vitesse** : les noms trop rares pour être candidats sont rangés par longueur (avant : parcours de toute la liste à chaque correction, acceptable pour 90 prénoms,
+  pas pour des dizaines de milliers de noms).
+- **Filtre par les lexiques** : 10 noms de départ retirés (Arm, Junge, Klasse, Kosten, Laden, Regen, Rücken, Schmerzen, Stimme, Weg : vrais mots en minuscules).
+  Les lexiques contiennent aussi des premières parties de composé en minuscules (« kinder », « garten ») : 46 noms relus à la main passent malgré le filtre
+  (`ambigu-ok.txt`). Accord brut avec l'oracle : 90,0 % (398 / 442), **sous l'objectif de 95 %** du plan, à cause de ces 46 : l'objectif se mesurera sur la liste du corpus.
+- **Limite connue** : un nom dont la forme en minuscules est un verbe conjugué absent des lexiques (« ich frage ») ne se détecte pas par eux ; seul le corpus
+  (part de majuscules >= 95 % hors début de phrase) le fera. La liste de départ évite ceux que je connais.
+- **Attendu au banc** : `contexte.nomen.ok` 0 -> ~100 % (les 16 cas ; « hausaufgaben » est dans la liste), `contexte.vorname.ok` inchangé, `phrases.justes.changees` 0
+  (vérifié en Python : aucun mot en minuscules des 144 phrases justes n'est dans la liste, depuis le retrait de « Recht »). **Non mesuré** : ni Kotlin ni Gradle ici ;
+  à faire chez toi : `./gradlew :core:test` puis `./gradlew :core:run --args="--lang=de --write-baseline"`, relire la référence avant de l'enregistrer.
+- **À faire côté app** : déposer le nouveau `names/de.txt` sur R2 (`dictionnaries/names/de.txt`). Le module `app` n'a pas été modifié ni compilé.
+
+**Extension de la liste de noms (07/11/2026)** : `names/de.txt` passe de 442 à 1 884 entrées (1 442 de plus : 1 161 noms communs, singuliers et pluriels courants, et 282 prénoms
+allemands et internationaux). Choix à la main parmi les mots les plus fréquents de `de.txt` ; chaque forme est présente dans `de.txt`. Écartés : les noms dont la forme en
+minuscules est aussi un verbe, un adjectif ou un adverbe courant (voir `dictionaries/SOURCES.txt`). Contrôles faits en Python : format (lettres seulement, majuscule initiale,
+sans doublon), aucun mot en minuscules de `sentences-ok.txt` ni de `valid-rare-words.txt` n'est dans la liste, aucune entrée de l'ancienne liste perdue, `build_de_names.py --check` à jour.
+**Non fait** : filtres « ambigu » et « verbe » (pas de lexique ici), banc et tests Kotlin non exécutés. À faire chez toi : `./gradlew :core:test`, puis le banc `--lang=de` et comparer à
+`baseline.txt` avant de l'enregistrer (surveiller `phrases.justes.changees`, qui doit rester à 0 : un mot qui y bouge est un nom ambigu à retirer de `nomen-seed.txt`) ;
+si tu relances `build_de_names.py --lexicon ...`, relire `dropped.txt` : des noms valides en première partie de composé (Garten, Kinder...) peuvent y figurer, à ajouter à `ambigu-ok.txt` ;
+déposer `names/de.txt` sur R2 (`dictionnaries/names/de.txt`).
+
+
+### Phase 4 : mots composés (06/11/2026)
+
+Fichiers : `CompoundRules` et `InflectionRules.GERMAN` (`InflectionRules.kt`), `Dictionary.isCompoundForm` / `splitsIntoKnownParts` / `compoundMergeFor`,
+branchement dans `DictionaryLoader.inflectionsFor` et dans le profil `GERMAN` du banc, test `GermanCompoundsTest`.
+- **Règle** : un mot absent des listes est juste s'il se découpe en au moins deux parties connues (>= 4 lettres, fréquence >= celle des candidats du dictionnaire,
+  pas une faute dont la forme accentuée domine), reliées par une liaison parmi « », s, n, en, e, er, es ; **sauf** s'il est à une faute de frappe (distance 1) d'un
+  mot fréquent : c'est le garde-fou. Un mot à chiffre ou apostrophe n'est jamais un composé.
+- **Réglage** (portage Python, `de.txt` + les 1 501 composés rares du banc, fautes simulées sur mots courants et variés ; script jeté, non conservé) :
+  | Paramètres (partie min, fréquence des parties, garde-fou) | Rares acceptés | Fausses acceptations (courants / variés) |
+  |---|---|---|
+  | découpeur seul, sans garde-fou (plan) | — | 4,9 % mesuré en version simple |
+  | **4 lettres, fréquence 41, garde-fou distance 1 (retenu)** | **50,3 %** | **0,07 % / 1,17 %** |
+  | 4 lettres, fréquence 200 | 35,3 % | 0,04 % / 1,07 % |
+  | 5 lettres, fréquence 300 | 20,5 % | 0,00 % / 0,27 % |
+  Sur des mots longs à 2 ou 3 fautes : 0,05 à 0,35 % de fausses acceptations. Un réglage plus strict accepte moins de composés rares pour un gain de précision
+  faible : le réglage retenu garde la fréquence des candidats (41).
+- **Attendu au banc** : `composes.rares.faux` 23,8 % -> nettement plus bas (la moitié des rares n'est plus touchée) ; `inconnus.*.faux` en baisse ; fautes non corrigées
+  et `typos.*.wrong` à surveiller (hausse possible de `surMotValide`). **Non mesuré en Kotlin** (ni Kotlin ni Gradle ici).
+- **Proposition de réunion** (« Haus tür » -> « Haustür ») : la logique est faite et testée (`Dictionary.compoundMergeFor`, jamais appliquée d'office) : les deux mots doivent
+  être dans la liste de noms, la réunion être un mot des listes ou un composé valide. **Non branchée dans l'app** : la bande ne sait remplacer que le dernier mot
+  (`ContextualCorrection.lastWordFix` écarte toute correction qui toucherait un autre mot), il faut un emplacement qui remplace « mot + espace + mot ».
+  Limite connue : la liste de noms contient des prénoms, « Herr Thomas » pourrait être proposé en « Herrthomas ».
+
+### Phase 5 : contexte allemand (06/11/2026)
+
+Fichiers : `GermanConfusions.kt` (table de règles + `GermanContextCorrector`), extension du moteur `FrenchConfusions.fixWith` (voir plus bas), branchement dans
+`ContextualCorrection.correctWithoutHabits` (DE), `SuggestionController.CONTEXTUAL_LANGUAGES` (DE) et le profil `GERMAN` du banc, test `GermanConfusionsTest`.
+- **Extensions du moteur** (sans effet sur le français, l'anglais et l'espagnol, dont les règles n'utilisent aucune des deux) : `ConfusionRule.next2` (condition sur le deuxième mot
+  suivant : la règle attend ce mot, `lookahead` = 2) et `ConfusionRule.afterComma` (le mot qui précède peut être suivi d'une virgule : « Ich weiß, das du... »). `fixWith` essaie
+  maintenant les mots à rebours de 2, 1 puis 0 rang ; une règle ne s'applique qu'à `dernier mot - lookahead`, ce qui est exactement l'ancien comportement pour 0 et 1.
+- **Familles** : seid / seit, wie -> wir, wurde(st/n/t) -> würde(st/n/t), das -> dass, mal -> Mal, morgen / abend / nacht / mittag -> majuscule, ihn <-> ihm (voir l'en-tête de
+  `GermanConfusions` pour les contextes exacts et ce qui est volontairement non couvert).
+- **Mesure** (simulateur Python du moteur, mêmes règles que le Kotlin généré ; script jeté, non conservé) : 144 phrases justes du banc et 80 phrases justes pièges écrites pour
+  ce test (« Wie sind die Preise ? », « Ich wurde gefragt », « Das Buch, das er liest », « Ihr seid drei Brüder »...) : **0 changée**. Cas de contexte du banc :
+  seid-seit 6/7, wir-wie 3/7, wurde-würde 4/6, das-dass 6/6, mal-Mal 4/4, tageszeit 5/5 (avant : 0, 0, 0, 16,67, 25, 20 %).
+- **Cas laissés en échec exprès** : « Seit ihr schon fertig ? » (« Seit ihr hier wohnt » est juste), « waren wie im Kino » et « essen wie zu Hause » (« wie » comparatif juste),
+  « Wie gehen jetzt nach Hause » et « Wie können morgen kommen » (« Wie gehen jetzt die Geschäfte ? » est juste), « ich wurde das nie tun » (« Ihm wurde das nie gesagt » est juste),
+  « wurden gern früher gehen » (« wurden gern früher geholt » est juste). Même principe qu'en français : une règle dont le contexte reste possible dans une phrase juste est retirée.
+- **Non mesuré en Kotlin** (ni Kotlin ni Gradle ici) : `./gradlew :core:test`, puis le banc, avant de régénérer `baseline.txt`. Le banc devrait montrer `contexte.total.ok` en hausse nette,
+  `phrases.justes.changees` à 0, et les cas français / anglais / espagnol inchangés (tests `FrenchConfusionsTest`, etc., à relancer pour le moteur étendu).
+- **Pas fait (plan)** : konnte / könnte et hatte / hätte (promesse écartée dès le plan), ihnen, dass -> das, « Seit ihr » en début de phrase.
+
+### Phase 6 : variantes pays (06/11/2026)
+
+Fichiers : `GermanVariants.kt` (`usesSwissSpelling`, `swissFrequencies`, `swissNames`), `DictionaryLoader.load` / `swissSpelling`, formes « weiss », « weisst » et « bloss »
+dans les listes de `GermanConfusions` (das -> dass et seid -> seit), test `GermanVariantsTest`.
+- **de-CH** : pas de « ß » (0 sur environ 149 000 entrées des lexiques suisses). Quand la langue du clavier est l'allemand **et** que la région du système est la Suisse ou le
+  Liechtenstein, le chargeur remplace tous les « ß » par « ss » dans la liste de fréquence (les formes qui se rejoignent, « masse » et « maße », additionnent leurs fréquences)
+  et dans la liste de noms. « strasse » devient un mot juste au lieu d'être rétabli en « straße ». Aucun autre changement : umlauts, composés et contexte sont les mêmes.
+- **de-AT** : rien, comme prévu. Les 50 000 mots propres au lexique autrichien sont surtout des composés ordinaires, déjà acceptés par la phase 4. À faire relire par un Autrichien.
+- **Limites** : la région est lue au chargement du dictionnaire (mis en cache par langue) ; un changement de région du système ne prend effet qu'au rechargement (redémarrage du
+  clavier ou `DictionaryLoader.evict`). Ce n'est pas un réglage dans l'app : c'est la région du système, comme le plan le demandait. La disposition clavier n'est pas touchée (le
+  « ß » reste en appui long sur « s » aussi en Suisse ; à retirer à part si tu veux).
+- **Non mesuré en Kotlin** (ni Kotlin ni Gradle ici) : `./gradlew :core:test`. Pas de banc suisse : le banc `de` mesure l'allemand d'Allemagne.
+
+### Phase 4 (suite) : réunion de deux noms dans la bande (06/11/2026)
+
+Fichiers : `WordSuggestion.Kind.COMPOUND`, `WordText.wordBeforeSingleSpace`, `SuggestionController.compoundSuggestion` / `withCompound`,
+`TaipoIme.insertSuggestedCompound` (champ) et la branche `COMPOUND` de `onPromptWordSuggestionTapped` (prompt), tests dans `GermanCompoundsTest`.
+- **Comportement** : en allemand, quand on tape un nom juste après un autre nom séparé par une seule espace (« Haus tür »), la bande met dans son **dernier** emplacement
+  le composé (« Haustür », avec majuscule). Toucher cet emplacement efface les deux mots et l'espace entre eux, écrit le composé suivi d'une espace, et se défait comme une
+  autre suggestion (`recordUndoEdit`). Jamais appliqué à l'espace ni en gras : seulement si on le touche.
+- **Quand il apparaît** : tant que le second mot est en cours de frappe, curseur à la fin du mot (pas en mode « curseur posé sur un mot »). Il **disparaît dès l'espace** qui suit
+  le second mot : il faut le toucher avant. Choix de départ, le plus simple ; on pourrait le garder après l'espace si ça gêne.
+- **Si une adresse e-mail est aussi proposée**, elle prend le dernier emplacement (comme pour les mots) : le composé n'apparaît pas à ce moment-là.
+- **Non essayé** : ni compilé ni lancé sur un téléphone (pas de Kotlin ni Android ici). À vérifier à la main : taper « Haus tür », voir « Haustür » à droite, le toucher, puis Supprimer
+  pour revenir à « Haus tür » ; même chose dans le prompt.
+

@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap
  * (`filesDir/dictionaries/`, voir [DictionaryFiles] : ils ne sont plus dans l'APK, le clavier les télécharge dès qu'une
  * langue est utilisée). Un fichier texte, une ligne « mot fréquence », triés par fréquence décroissante ; la fréquence
  * sert à départager les corrections, story 1.14). `<code>.txt` : liste COMPLÈTE de la langue (fr, en, es, de, it, pt, nl).
- * `<code>_50k.txt` : liste de ~50 000 mots gardée en secours : si la liste complète ne peut pas être chargée
- * (mémoire insuffisante, fichier illisible), le chargeur bascule dessus au lieu de laisser le clavier sans dictionnaire.
+ * Repli : si la mémoire manque pour la liste complète, le chargeur la relit en ne gardant que les mots proposables
+ * (fréquence >= [candidateMinFrequency], ~50 000 mots) au lieu de laisser le clavier sans dictionnaire.
  *
  * Listes complètes : deux seuils de fréquence ([MIN_FREQUENCY], [candidateMinFrequency], détail sur leurs
  * constantes) gardent la mémoire et la vitesse d'autocorrection proches de celles d'une liste de 50 000 mots.
@@ -45,11 +45,11 @@ object DictionaryLoader {
      * langue (la fréquence du 50 000e mot de chaque liste, les corpus n'ayant pas la même taille). Les mots plus
      * rares restent valides mais ne sont jamais suggérés.
      */
-    private fun candidateMinFrequency(language: KeyboardLanguage): Long = when (language) {
+    internal fun candidateMinFrequency(language: KeyboardLanguage): Long = when (language) {
         KeyboardLanguage.FR -> 100L
         KeyboardLanguage.EN -> 149L
         KeyboardLanguage.ES -> 183L
-        KeyboardLanguage.DE -> 61L
+        KeyboardLanguage.DE -> 41L
         KeyboardLanguage.IT -> 102L
         KeyboardLanguage.PT -> 91L
         KeyboardLanguage.NL -> 77L
@@ -79,7 +79,8 @@ object DictionaryLoader {
             // Fichiers pas (encore) téléchargés : on tape sans autocorrection ni suggestions (dictionnaire vide), sans le
             // mettre en cache.
             if (!DictionaryFiles.isInstalled(context.filesDir, language)) return emptyDictionary(context, language)
-            val dictionary = traced(Sections.DICTIONARY_LOAD) { loadWithBackup(context, language) }
+            DictionaryFiles.deleteObsoleteBackup(context.filesDir, language)
+            val dictionary = traced(Sections.DICTIONARY_LOAD) { loadWithReducedFallback(context, language) }
             cache[language] = dictionary
             return dictionary
         }
@@ -89,9 +90,14 @@ object DictionaryLoader {
     private fun sourceFor(context: Context, language: KeyboardLanguage): Source =
         Source(DictionaryFiles.localFile(context.filesDir, language, DictionaryFile.FULL), MIN_FREQUENCY, candidateMinFrequency(language))
 
-    /** Liste de secours de [language] (`<code>_50k.txt`). */
-    private fun backupSourceFor(context: Context, language: KeyboardLanguage): Source =
-        Source(DictionaryFiles.localFile(context.filesDir, language, DictionaryFile.BACKUP))
+    /**
+     * Repli de [language] : la même liste complète, mais seuls les mots de fréquence >= [candidateMinFrequency] sont gardés
+     * (~50 000 mots, les mêmes que ceux qui sont proposés en correction) ; ceux d'en dessous ne servaient qu'à valider un mot tapé.
+     */
+    private fun reducedSourceFor(context: Context, language: KeyboardLanguage): Source =
+        candidateMinFrequency(language).let {
+            Source(DictionaryFiles.localFile(context.filesDir, language, DictionaryFile.FULL), it, it)
+        }
 
     private fun emptyDictionary(context: Context, language: KeyboardLanguage): Dictionary {
         AppLog.w(TAG, "dictionnaire $language pas encore téléchargé : saisie sans autocorrection ni suggestions")
@@ -102,39 +108,61 @@ object DictionaryLoader {
     private fun proximityOf(context: Context, language: KeyboardLanguage): KeyProximity =
         KeyProximityFactory.forLanguage(language, KeyboardPreferences(context).letterArrangementOf(language))
 
-    /** Charge la liste principale ; si elle échoue (mémoire, lecture) et qu'une liste de secours existe, charge celle-ci. */
-    private fun loadWithBackup(context: Context, language: KeyboardLanguage): Dictionary {
-        val backup = backupSourceFor(context, language).takeIf { it.file.isFile }
+    /** Charge la liste complète ; si la mémoire manque, la recharge réduite aux mots proposables ([reducedSourceFor]). */
+    private fun loadWithReducedFallback(context: Context, language: KeyboardLanguage): Dictionary =
         try {
-            return load(context, language, sourceFor(context, language))
+            load(context, language, sourceFor(context, language))
         } catch (e: OutOfMemoryError) {
-            if (backup == null) throw e
-            AppLog.e(TAG, "mémoire insuffisante pour le dictionnaire $language : repli sur ${backup.file.name}", e)
-        } catch (e: Exception) {
-            if (backup == null) throw e
-            AppLog.e(TAG, "dictionnaire $language illisible : repli sur ${backup.file.name}", e)
+            AppLog.e(TAG, "mémoire insuffisante pour le dictionnaire $language : repli sur la liste réduite", e)
+            load(context, language, reducedSourceFor(context, language))
         }
-        return load(context, language, checkNotNull(backup))
-    }
 
-    private fun load(context: Context, language: KeyboardLanguage, source: Source): Dictionary =
-        Dictionary.withFrequencies(
-            readFile(source.file, source.minFrequency),
+    private fun load(context: Context, language: KeyboardLanguage, source: Source): Dictionary {
+        var frequencies = readFile(source.file, source.minFrequency)
+        // Prénoms (et, en allemand, noms communs) avec leur majuscule (les listes de fréquence sont toutes en minuscules).
+        var names = readNames(context, language)
+        if (swissSpelling(language)) {
+            frequencies = GermanVariants.swissFrequencies(frequencies)
+            names = GermanVariants.swissNames(names)
+        }
+        return Dictionary.withFrequencies(
+            frequencies,
             inflectionsFor(language),
             source.candidateMinFrequency,
             // Proximité des touches de la disposition de la langue : départage les corrections à distance égale.
             proximityOf(context, language),
-            // Prénoms courants avec leur majuscule (les listes de fréquence sont toutes en minuscules).
-            properNames = readNames(context, language),
+            properNames = names,
             confidence = confidenceOf(language),
+            accentPolicy = accentPolicyOf(language),
         )
+    }
 
     /**
-     * Décision de déclenchement de l'autocorrection (phase 3) : calibrée sur le français seulement (docs/autocorrection-bench.md),
-     * les autres langues gardent le comportement d'avant tant qu'elles n'ont pas leur propre banc.
+     * Allemand écrit à la suisse (phase 6) : la région du système est la Suisse ou le Liechtenstein, donc « ss » à la place de « ß » (voir
+     * [GermanVariants]). Lu au chargement : un changement de région du système ne prend effet qu'au prochain chargement du dictionnaire
+     * (redémarrage du clavier ou changement de langue, voir [evict]).
      */
-    private fun confidenceOf(language: KeyboardLanguage): CorrectionConfidence =
-        if (language == KeyboardLanguage.FR) CorrectionConfidence.STANDARD else CorrectionConfidence.NONE
+    private fun swissSpelling(language: KeyboardLanguage): Boolean =
+        language == KeyboardLanguage.DE && GermanVariants.usesSwissSpelling(java.util.Locale.getDefault().country)
+
+    /**
+     * Décision de déclenchement de l'autocorrection (phase 3) : calibrée sur le français et sur l'anglais (docs/autocorrection-bench.md) ;
+     * l'espagnol a des valeurs de départ non mesurées ; les autres langues gardent le comportement d'avant tant qu'elles n'ont pas leur banc.
+     */
+    private fun confidenceOf(language: KeyboardLanguage): CorrectionConfidence = when (language) {
+        KeyboardLanguage.FR -> CorrectionConfidence.STANDARD
+        KeyboardLanguage.EN -> CorrectionConfidence.ENGLISH
+        KeyboardLanguage.ES -> CorrectionConfidence.SPANISH
+        else -> CorrectionConfidence.NONE
+    }
+
+    /** Seuil des oublis d'accent : celui du français partout, sauf en espagnol où l'accent distingue souvent deux mots justes (esta / está). */
+    private fun accentPolicyOf(language: KeyboardLanguage): AccentPolicy =
+        when (language) {
+            KeyboardLanguage.ES -> AccentPolicy.SPANISH
+            KeyboardLanguage.DE -> AccentPolicy.GERMAN
+            else -> AccentPolicy.FRENCH
+        }
 
     /** Prénoms de [language] : `names/<code>.txt`, un par ligne, « # » = commentaire. Absent : aucun nom. */
     private fun readNames(context: Context, language: KeyboardLanguage): List<String> {
@@ -149,9 +177,11 @@ object DictionaryLoader {
     private fun inflectionsFor(language: KeyboardLanguage): InflectionRules = when (language) {
         KeyboardLanguage.FR -> InflectionRules.FRENCH
         KeyboardLanguage.EN -> InflectionRules.ENGLISH
-        // Pluriel en « s » (espagnol, portugais) : la seule flexion assez régulière pour ne pas fausser les corrections.
-        KeyboardLanguage.ES, KeyboardLanguage.PT -> InflectionRules(listOf(InflectionRule("s")))
-        KeyboardLanguage.DE, KeyboardLanguage.IT, KeyboardLanguage.NL -> InflectionRules.NONE
+        KeyboardLanguage.ES -> InflectionRules.SPANISH
+        // Pluriel en « s » (portugais) : la seule flexion assez régulière pour ne pas fausser les corrections.
+        KeyboardLanguage.PT -> InflectionRules(listOf(InflectionRule("s")))
+        KeyboardLanguage.DE -> InflectionRules.GERMAN
+        KeyboardLanguage.IT, KeyboardLanguage.NL -> InflectionRules.NONE
     }
 
     private fun readFile(file: File, minFrequency: Long): Map<String, Long> =

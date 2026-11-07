@@ -6,10 +6,16 @@ internal typealias WordTest = (Word, (String) -> Long) -> Boolean
 /** Un mot du texte tapé : position, forme brute et forme normalisée. */
 internal class Word(val start: Int, val end: Int, val raw: String) {
 
+    /**
+     * Signes d'ouverture « ¿ » et « ¡ » collés au début du mot (espagnol : « ¿como »). Ils ne font pas partie du mot : [core]
+     * est « como » ; la règle qui remplace le mot les remet devant. Vide dans les autres langues.
+     */
+    val leading: String = raw.takeWhile { it == '¿' || it == '¡' }
+
     /** Ponctuation collée à la fin du mot (« la, »), ou null. */
     val trailing: Char? = raw.lastOrNull()?.takeIf { it in TRAILING }
 
-    private val bare: String = if (trailing != null) raw.dropLast(1) else raw
+    private val bare: String = (if (trailing != null) raw.dropLast(1) else raw).drop(leading.length)
 
     /** Le mot ne contient que des lettres, des apostrophes et des traits d'union (pas de chiffre, de guillemet...). */
     val isClean: Boolean = bare.isNotEmpty() && bare.all { it.isLetter() || it == '\'' || it == '’' || it == '-' }
@@ -43,6 +49,7 @@ internal class Word(val start: Int, val end: Int, val raw: String) {
  * - [previous2] : le mot avant celui-là ;
  * - [next] : le mot qui suit. La règle attend alors que ce mot soit tapé (correction « à rebours », comme a / à et ou / où) ;
  * - [sentenceStart] : le mot commence une phrase ;
+ * - [self] : condition sur le mot tapé lui-même (par exemple « il suit un ¿ ») ;
  * - [punctAfter] : le mot est directement suivi d'une ponctuation (« reste la, je reviens »). Même attente que [next].
  *
  * Voir [FrenchConfusions] pour la table, les garde-fous et la liste de ce qui n'est volontairement pas couvert.
@@ -59,15 +66,24 @@ internal class ConfusionRule(
     val skip: Set<String> = emptySet(),
     val punctAfter: Boolean = false,
     val always: Boolean = false,
+    /** Condition sur le mot tapé lui-même (espagnol : il ouvre une question, « ¿como »). */
+    val self: WordTest? = null,
+    /** Condition sur le deuxième mot qui suit (allemand : « wurde gern mitkommen »). Demande [next] ; la règle attend ce deuxième mot. */
+    val next2: WordTest? = null,
+    /** Le mot qui précède est directement suivi d'une virgule (allemand : « Ich weiß, das du... »). Demande [previous]. */
+    val afterComma: Boolean = false,
 ) {
     init {
-        require(always || previous != null || previous2 != null || next != null || sentenceStart || punctAfter) {
+        require(always || previous != null || previous2 != null || next != null || sentenceStart || punctAfter || self != null) {
             "La règle « $name » n'a aucun contexte"
         }
     }
 
     /** Vrai si la règle doit voir le mot suivant : elle s'applique au mot précédent, dès que le mot suivant est tapé. */
     val needsNextWord: Boolean = next != null || punctAfter
+
+    /** Nombre de mots que la règle attend après le mot qu'elle remplace : 0 (le dernier mot), 1 ([next], [punctAfter]) ou 2 ([next2]). */
+    val lookahead: Int = if (next2 != null) 2 else if (needsNextWord) 1 else 0
 }
 
 /**
@@ -93,17 +109,27 @@ internal object FrenchConfusions {
      * Applique les règles à la fin de [text] (le texte avant le curseur, sans la touche qui termine le mot) : d'abord au mot
      * précédent, revu avec le mot qui vient d'être tapé ([allowRetro]), puis au mot courant. Renvoie le texte, corrigé ou non.
      */
-    fun fix(text: String, textMayBeTruncated: Boolean, allowRetro: Boolean, frequencyOf: (String) -> Long): String {
+    fun fix(text: String, textMayBeTruncated: Boolean, allowRetro: Boolean, frequencyOf: (String) -> Long): String =
+        fixWith(RULES, text, textMayBeTruncated, allowRetro, frequencyOf)
+
+    /** Le moteur de [fix] avec une autre table de règles (celle de [EnglishConfusions]) : il ne connaît aucune règle en particulier. */
+    internal fun fixWith(
+        rules: List<ConfusionRule>,
+        text: String,
+        textMayBeTruncated: Boolean,
+        allowRetro: Boolean,
+        frequencyOf: (String) -> Long,
+    ): String {
         var current = text
-        for (offset in intArrayOf(1, 0)) {
-            if (offset == 1 && !allowRetro) continue
+        for (offset in intArrayOf(2, 1, 0)) {
+            if (offset >= 1 && !allowRetro) continue
             val words = tokenize(current)
             val index = words.lastIndex - offset
             if (index < 0) continue
             val word = words[index]
-            val rule = RULES.firstOrNull { matches(it, words, index, textMayBeTruncated, frequencyOf) } ?: continue
+            val rule = rules.firstOrNull { matches(it, words, index, textMayBeTruncated, frequencyOf) } ?: continue
             val replacement = if (word.isCapitalized) rule.replacement.replaceFirstChar { it.uppercaseChar() } else rule.replacement
-            current = current.substring(0, word.start) + replacement + (word.trailing?.toString() ?: "") + current.substring(word.end)
+            current = current.substring(0, word.start) + word.leading + replacement + (word.trailing?.toString() ?: "") + current.substring(word.end)
         }
         return current
     }
@@ -118,8 +144,8 @@ internal object FrenchConfusions {
     ): Boolean {
         val word = words[index]
         if (!word.isClean || word.isAllCaps || word.core != rule.typed) return false
-        // Une règle à mot suivant ne regarde que l'avant-dernier mot ; les autres, que le dernier.
-        if (rule.needsNextWord == (index == words.lastIndex)) return false
+        // Une règle à mot suivant ne regarde que l'avant-dernier mot, une règle à deux mots suivants l'antépénultième ; les autres, que le dernier.
+        if (index != words.lastIndex - rule.lookahead) return false
         if (rule.punctAfter) {
             if (word.trailing == null) return false
         } else if (word.trailing != null) {
@@ -130,6 +156,7 @@ internal object FrenchConfusions {
             val start = if (index == 0) !textMayBeTruncated else words[index - 1].endsSentence
             if (!start) return false
         }
+        if (rule.self != null && !rule.self.invoke(word, frequencyOf)) return false
         return previousMatches(rule, words, index, frequencyOf) && nextMatches(rule, words, index, frequencyOf)
     }
 
@@ -139,7 +166,8 @@ internal object FrenchConfusions {
         val j = previousIndex(words, index, rule.skip)
         if (j < 0) return false
         val previous = words[j]
-        if (!previous.isClean || previous.trailing != null) return false
+        if (!previous.isClean) return false
+        if (previous.trailing != null && !(rule.afterComma && previous.trailing == ',')) return false
         if (rule.previous != null && !rule.previous.invoke(previous, frequencyOf)) return false
         if (rule.previous2 == null) return true
         val k = previousIndex(words, j, emptySet())
@@ -152,7 +180,11 @@ internal object FrenchConfusions {
     private fun nextMatches(rule: ConfusionRule, words: List<Word>, index: Int, frequencyOf: (String) -> Long): Boolean {
         if (rule.next == null) return true
         val following = words[index + 1]
-        return following.isClean && rule.next.invoke(following, frequencyOf)
+        if (!following.isClean || !rule.next.invoke(following, frequencyOf)) return false
+        if (rule.next2 == null) return true
+        // Deuxième mot suivant : pas de ponctuation entre les deux mots qui suivent.
+        val second = words.getOrNull(index + 2) ?: return false
+        return following.trailing == null && second.isClean && rule.next2.invoke(second, frequencyOf)
     }
 
     /** L'indice du mot qui précède words[index], en sautant les mots de [skip] ; -1 s'il n'y en a pas. */
@@ -180,24 +212,24 @@ internal object FrenchConfusions {
     // ------------------------------------------------------------------
 
     /** Le mot (ou le mot après son élision : « qu'ils » -> « ils ») est l'un de [words]. */
-    private fun oneOf(vararg words: String): WordTest {
+    internal fun oneOf(vararg words: String): WordTest {
         val set = words.toSet()
         return { w, _ -> w.core in set || ('\'' in w.core && w.head in set) }
     }
 
     /** Le mot n'est aucun de [words] (même élision comprise). */
-    private fun noneOf(vararg words: String): WordTest {
+    internal fun noneOf(vararg words: String): WordTest {
         val test = oneOf(*words)
         return { w, f -> !test(w, f) }
     }
 
     private fun coreIn(words: Set<String>): WordTest = { w, _ -> w.core in words }
 
-    private fun anyOf(vararg tests: WordTest): WordTest = { w, f -> tests.any { it(w, f) } }
+    internal fun anyOf(vararg tests: WordTest): WordTest = { w, f -> tests.any { it(w, f) } }
 
-    private fun allOf(vararg tests: WordTest): WordTest = { w, f -> tests.all { it(w, f) } }
+    internal fun allOf(vararg tests: WordTest): WordTest = { w, f -> tests.all { it(w, f) } }
 
-    private fun negate(test: WordTest): WordTest = { w, f -> !test(w, f) }
+    internal fun negate(test: WordTest): WordTest = { w, f -> !test(w, f) }
 
     /** Participe passé probable : en -é / -ée (4 lettres ou plus) ou participe irrégulier courant. */
     private val participleLike: WordTest = { w, _ ->

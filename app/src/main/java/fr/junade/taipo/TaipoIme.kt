@@ -959,6 +959,19 @@ class TaipoIme : InputMethodService() {
             afterPromptEdit()
             return
         }
+        if (suggestion.kind == WordSuggestion.Kind.COMPOUND) {
+            val before = prompt.buffer.textBeforeCursor
+            val second = trailingWord(before)
+            val first = WordText.wordBeforeSingleSpace(before.dropLast(second.length))
+            if (second.isEmpty() || first.isEmpty()) return
+            hapticFeedback.perform(hapticIntensity)
+            pendingAutocorrection = null
+            prompt.buffer.deleteBefore(first.length + 1 + second.length)
+            prompt.buffer.insert("${suggestion.text} ")
+            learnFromTyping()
+            afterPromptEdit()
+            return
+        }
         if (suggestion.kind == WordSuggestion.Kind.EMAIL) {
             val before = prompt.buffer.textBeforeCursor.takeLast(TEXT_CONTEXT_LOOKBEHIND)
             val typedEmailStart = EmailText.trailingToken(before, truncated = before.length >= TEXT_CONTEXT_LOOKBEHIND) ?: return
@@ -1162,6 +1175,10 @@ class TaipoIme : InputMethodService() {
             insertSuggestedEmail(ic, suggestion.text)
             return
         }
+        if (suggestion.kind == WordSuggestion.Kind.COMPOUND) {
+            insertSuggestedCompound(ic, suggestion.text)
+            return
+        }
         val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
         val typedBefore = trailingWord(before)
         // Curseur placé dans un mot : le mot entier est visé (la suite du mot après le curseur en fait partie).
@@ -1226,6 +1243,31 @@ class TaipoIme : InputMethodService() {
         ic.endBatchEdit()
         recordUndoEdit(inserted = insertedEmail, original = typed)
         learnFromTyping() // l'adresse choisie compte comme une adresse tapée
+        syncAutoCapitalization()
+        applyState()
+        updateCorrectionBarVisibility()
+    }
+
+    /**
+     * Touche sur un composé proposé (allemand : « Haus tür » -> « Haustür ») : il remplace les DEUX derniers mots tapés (et l'espace entre eux),
+     * suivi d'une espace. Rien n'est fait si le texte avant le curseur n'est plus « mot espace mot ».
+     */
+    private fun insertSuggestedCompound(ic: InputConnection, compound: String) {
+        val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
+        val second = trailingWord(before)
+        val first = WordText.wordBeforeSingleSpace(before.dropLast(second.length))
+        if (second.isEmpty() || first.isEmpty()) return
+        val original = "$first $second"
+        hapticFeedback.perform(hapticIntensity)
+        onUserTyped()
+        clearHighlightIfNeeded()
+        pendingAutocorrection = null
+        ic.beginBatchEdit()
+        ic.deleteSurroundingText(original.length, 0)
+        ic.commitText("$compound ", 1)
+        ic.endBatchEdit()
+        recordUndoEdit(inserted = "$compound ", original = original)
+        learnFromTyping() // le composé choisi compte comme un mot tapé
         syncAutoCapitalization()
         applyState()
         updateCorrectionBarVisibility()

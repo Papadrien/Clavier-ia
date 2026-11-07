@@ -164,6 +164,8 @@ class KeyProximity private constructor(
         private fun fold(c: Char): Char {
             val lower = c.lowercaseChar()
             if (lower.code < 128) return lower
+            // « ñ » est une lettre à part, avec sa propre touche (clavier espagnol) : elle ne se replie pas sur « n ».
+            if (lower == 'ñ') return lower
             return Dictionary.foldAccents(lower.toString()).firstOrNull() ?: lower
         }
     }

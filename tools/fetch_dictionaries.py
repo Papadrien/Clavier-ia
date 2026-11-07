@@ -10,16 +10,15 @@ Source : listes de fréquence FrequencyWords (hermitdave/FrequencyWords, contenu
 licence CC-BY-SA 4.0 (attribution reprise dans dictionaries/SOURCES.txt). Le fichier
 `<code>_full.txt` (une ligne « mot fréquence ») est téléchargé depuis GitHub (miroir Hugging Face en secours) ou lu
 dans le dossier donné par --from, puis nettoyé et écrit sous dictionaries/ (racine du projet ; à envoyer ensuite sur le bucket R2, voir docs/dictionnaires-distants.md) :
-  <code>.txt      liste COMPLÈTE nettoyée ;
-  <code>_50k.txt  ses 50 000 mots les plus fréquents : liste de SECOURS (DictionaryLoader bascule dessus si la
-                  liste complète ne peut pas être chargée). Pour l'anglais, le secours existant est conservé.
+  <code>.txt      liste COMPLÈTE nettoyée (plus de liste « _50k » : le repli mémoire de DictionaryLoader relit cette liste
+                  en ne gardant que les mots de fréquence >= candidateMinFrequency, ~50 000 mots).
 
 Nettoyage : minuscules, forme NFC ; seuls les mots faits des lettres de l'alphabet de la langue sont gardés (avec au
 plus 3 apostrophes ou traits d'union au milieu) : les débris d'encodage et les caractères d'autres alphabets
 sont retirés ; lettres isolées retirées sauf les vrais mots ; mots vus moins de MIN_FREQUENCY fois retirés
 (fautes de frappe du corpus, jamais utilisés par le chargeur).
 Anglais : le corpus sépare les contractions (don + 't) ; les contractions écrites à la main de l'ancienne liste
-(it's, don't...) sont reprises depuis en_50k.txt, et leurs formes sans apostrophe qui ne sont pas des mots
+(it's, don't...) sont reprises depuis l'en.txt existant (lu avant d'être réécrit), et leurs formes sans apostrophe qui ne sont pas des mots
 (dont, im, thats, ive...) sont retirées, comme pour le français.
 """
 import re
@@ -29,7 +28,8 @@ import urllib.request
 from pathlib import Path
 
 MIN_FREQUENCY = 5
-BACKUP_SIZE = 50_000
+# Rang du mot dont la fréquence sert de seuil de repli (DictionaryLoader.candidateMinFrequency) : à reporter dans le chargeur.
+THRESHOLD_RANK = 50_000
 
 # Lettres isolées qui sont de vrais mots.
 SINGLE_LETTER_WORDS = {
@@ -107,9 +107,9 @@ def clean(code: str, raw: str) -> dict[str, int]:
 
 def english_contractions() -> dict[str, int]:
     """Contractions écrites à la main (avec apostrophe) de l'ancienne liste, absentes du corpus."""
-    backup = OUTPUT_DIR / "en_50k.txt"
+    previous = OUTPUT_DIR / "en.txt"
     result: dict[str, int] = {}
-    for line in backup.read_text(encoding="utf-8").splitlines():
+    for line in previous.read_text(encoding="utf-8").splitlines():
         word, _, count = line.partition(" ")
         if "'" in word and count.isdigit():
             result[word] = int(count)
@@ -144,10 +144,9 @@ def main(args: list[str]) -> None:
                 words.pop(non_word, None)
         lines = render(words)
         (OUTPUT_DIR / f"{code}.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
-        print(f"{code} : {len(lines)} mots écrits ; fréquence du {BACKUP_SIZE}e mot = "
-              f"{lines[BACKUP_SIZE - 1].split()[1] if len(lines) >= BACKUP_SIZE else 'n/a'}")
-        if code != "en":  # le secours anglais (en_50k.txt) est l'ancienne liste, conservée telle quelle
-            (OUTPUT_DIR / f"{code}_50k.txt").write_text("\n".join(lines[:BACKUP_SIZE]) + "\n", encoding="utf-8")
+        print(f"{code} : {len(lines)} mots écrits ; fréquence du {THRESHOLD_RANK}e mot = "
+              f"{lines[THRESHOLD_RANK - 1].split()[1] if len(lines) >= THRESHOLD_RANK else 'n/a'} "
+              f"(seuil de repli de DictionaryLoader.candidateMinFrequency)")
 
 
 if __name__ == "__main__":
