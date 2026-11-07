@@ -697,8 +697,11 @@ class Dictionary private constructor(
             }
         }
 
-        accentedByFolded[folded]?.forEach { offer(it, frequencies.getValue(it)) }
-        accentedByTranslit[lower]?.forEach { offer(it, frequencies.getValue(it)) }
+        // Les accents déjà tapés sont gardés : « grösser » -> « größer », pas « großer » (plus fréquent, mais sans le « ö » tapé).
+        // Si aucune forme ne les contient tous, toutes restent possibles (accent mal placé).
+        val direct = (accentedByFolded[folded].orEmpty() + accentedByTranslit[lower].orEmpty())
+        val keepingTyped = direct.filter { keepsTypedAccents(lower, it) }
+        (keepingTyped.ifEmpty { direct }).forEach { offer(it, frequencies.getValue(it)) }
         for (rule in inflections.rules) {
             val base = rule.baseOf(folded) ?: continue
             accentedByFolded[base]?.forEach { accentedBase ->
@@ -708,6 +711,15 @@ class Dictionary private constructor(
         }
         val result = best ?: return null
         return if (tie) null else Restoration(result)
+    }
+
+    /** Vrai si [candidate] contient au moins autant de fois chaque lettre accentuée de [typed] (« größer » pour « grösser », pas « großer »). */
+    private fun keepsTypedAccents(typed: String, candidate: String): Boolean {
+        for (c in typed) {
+            if (c in 'a'..'z') continue
+            if (candidate.count { it == c } < typed.count { it == c }) return false
+        }
+        return true
     }
 
     /** Vrai si [lower] est une forme régulière (voir [InflectionRules]) d'un mot du dictionnaire. */
@@ -757,6 +769,9 @@ class Dictionary private constructor(
     private fun isCompoundForm(lower: String): Boolean {
         val rules = inflections.compounds ?: return false
         if (lower.length < 2 * rules.minPartLength || !lower.all { it.isLetter() }) return false
+        // Un mot des listes qui n'en diffère que par les accents, l'umlaut ou ß l'emporte sur le découpage : « grosszügig » est « großzügig »
+        // oublié, pas « gross » + « zügig » ; « gewissermassen » est « gewissermaßen ».
+        if (accentedByFolded[foldAccents(lower)]?.any { it != lower } == true || accentedByTranslit.containsKey(lower)) return false
         if (!splitsIntoKnownParts(lower, rules)) return false
         return searchCandidates(lower, 1, emptyMap(), null).best == null
     }

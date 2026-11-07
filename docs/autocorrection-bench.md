@@ -582,3 +582,15 @@ Fichiers : `WordSuggestion.Kind.COMPOUND`, `WordText.wordBeforeSingleSpace`, `Su
 (`typos.*.wrong` et `longues.*.wrong` en hausse, `.ok` en baisse). `AutocorrectBench.sameWord` accepte désormais, en allemand seulement, un résultat qui ne diffère du mot attendu que par
 la casse. Le code du moteur n'a pas changé. Le français est inchangé : son écart avec la référence est celui décrit plus haut (enrichissement de `fr.txt` du 04/11/2026), à relire
 puis à régénérer avec `--write-baseline`.
+
+**CI rouge du 07/11/2026 : « ss » pour « ß » et références régénérées** : `AutocorrectBaselineTest` échouait en allemand et en français.
+- Allemand, vraie régression (`typos.*.ss-pour-eszett.ok` 96,8 -> 93,2 et 97,6 -> 88,8). Deux causes dans `Dictionary` :
+  `isCompoundForm` passait avant `accentRestoration`, donc « grosszügig » était accepté comme « gross » + « zügig » au lieu de devenir « großzügig »
+  (idem « gewissermassen », « grosseltern »). Un mot des listes qui ne diffère du mot tapé que par les accents, l'umlaut ou ß l'emporte maintenant
+  sur le découpage. Et `accentRestoration` ignorait l'umlaut déjà tapé (« grösser » -> « großer », plus fréquent). Il garde maintenant les formes
+  qui contiennent les accents tapés, quand il y en a (`keepsTypedAccents`). Résultat : ss-pour-eszett à 99,9 / 99,2. Rien ne change en fr, en et es.
+- Allemand, compromis gardé : `longues.*.deux.ok` perd un cas sur 300 (« komandaten » accepté comme « koma » + « daten »). Chercher les composés
+  à distance 2 le récupère, mais fait monter `inconnus.varies.faux` (81,67 -> 82,67) : on n'a pas fait ce changement.
+- Les deux références sont régénérées avec `--write-baseline`. L'allemande datait d'avant les phases 4 et 5 (`contexte.total.ok` 56,41 -> 90,6) ;
+  la française prend en compte l'enrichissement de `fr.txt` du 04/11/2026 (voir plus haut).
+- À noter : `valides.*.restaure` (non contrôlé) passe de 0,16 à 7,94 en allemand. C'est la majuscule des noms (« haus » -> « Haus ») sur les mots justes.

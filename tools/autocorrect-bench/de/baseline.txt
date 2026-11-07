@@ -1,110 +1,70 @@
 # Référence du banc d'autocorrection (docs/autocorrection-bench.md). Générée par `main --write-baseline`.
 # À régénérer volontairement quand une phase de la refonte change le comportement, jamais pour masquer une régression.
 [metrics]
-typos.courants.voisine.ok=93.6
-typos.courants.oubli.ok=80.8
-typos.courants.doublon.ok=97.8
-typos.courants.inversion.ok=99.0
-typos.courants.ajout.ok=97.3
+typos.courants.voisine.ok=93.7
+typos.courants.oubli.ok=80.9
+typos.courants.doublon.ok=97.9
+typos.courants.inversion.ok=99.2
+typos.courants.ajout.ok=97.8
 typos.courants.accent.ok=100.0
-typos.courants.ss-pour-eszett.ok=96.8
+typos.courants.ss-pour-eszett.ok=99.9
 typos.courants.ae-oe-ue.ok=99.5
-typos.courants.ok=95.6
+typos.courants.ok=96.11
 typos.courants.missed=0.01
-typos.courants.wrong=4.39
+typos.courants.wrong=3.88
 typos.courants.surMotValide=31.9
-typos.varies.voisine.ok=93.6
-typos.varies.oubli.ok=82.0
-typos.varies.doublon.ok=98.4
-typos.varies.inversion.ok=98.9
-typos.varies.ajout.ok=98.2
+typos.varies.voisine.ok=93.8
+typos.varies.oubli.ok=82.1
+typos.varies.doublon.ok=98.5
+typos.varies.inversion.ok=99.0
+typos.varies.ajout.ok=98.3
 typos.varies.accent.ok=99.7
-typos.varies.ss-pour-eszett.ok=97.6
+typos.varies.ss-pour-eszett.ok=99.2
 typos.varies.ae-oe-ue.ok=99.5
-typos.varies.ok=95.99
+typos.varies.ok=96.26
 typos.varies.missed=0.0
-typos.varies.wrong=4.01
+typos.varies.wrong=3.74
 typos.varies.surMotValide=4.28
 valides.courants.faux=0.0
-valides.courants.restaure=0.16
+valides.courants.restaure=7.94
 valides.varies.faux=0.0
-valides.varies.restaure=0.3
-longues.courants.deux.ok=91.0
+valides.varies.restaure=4.14
+longues.courants.deux.ok=90.67
 longues.courants.deux.wrong=9.0
 longues.courants.trois.ok=0.0
 longues.courants.trois.wrong=8.0
-longues.varies.deux.ok=92.33
+longues.varies.deux.ok=92.0
 longues.varies.deux.wrong=7.33
 longues.varies.trois.ok=0.0
 longues.varies.trois.wrong=6.67
-inconnus.courants.faux=98.0
-inconnus.varies.faux=81.67
-composes.rares.faux=23.8
+inconnus.courants.faux=97.33
+inconnus.varies.faux=76.67
+composes.rares.faux=19.67
 composes.rares.restaure=0.4
 phrases.justes.changees=0.0
 contexte.umlaut.ok=94.12
 contexte.eszett.ok=92.31
 contexte.translit.ok=100.0
-contexte.nomen.ok=0.0
+contexte.nomen.ok=100.0
 contexte.vorname.ok=100.0
-contexte.seid-seit.ok=0.0
-contexte.wir-wie.ok=0.0
-contexte.wurde-würde.ok=0.0
-contexte.das-dass.ok=16.67
-contexte.mal-Mal.ok=25.0
-contexte.tageszeit.ok=20.0
+contexte.seid-seit.ok=85.71
+contexte.wir-wie.ok=42.86
+contexte.wurde-würde.ok=66.67
+contexte.das-dass.ok=100.0
+contexte.mal-Mal.ok=100.0
+contexte.tageszeit.ok=100.0
 contexte.tippfehler.ok=86.67
-contexte.total.ok=56.41
+contexte.total.ok=90.6
 [failing-cases]
 umlaut	Ich mochte ein Glas Wasser.
 eszett	Er ist grosser als ich.
-nomen	Ich sehe das haus.
-nomen	Das auto steht vor der garage.
-nomen	Wir haben keine zeit.
-nomen	Der mann liest ein buch.
-nomen	Meine mutter kommt morgen.
-nomen	Ich brauche geld.
-nomen	Die kinder spielen im garten.
-nomen	Das wetter ist heute schön.
-nomen	Er hat einen hund.
-nomen	Wir gehen in die schule.
-nomen	Die frau arbeitet im krankenhaus.
-nomen	Der zug hat verspätung.
-nomen	Ich habe hunger und durst.
-nomen	Das telefon klingelt.
-nomen	Der Lehrer korrigiert die hausaufgaben.
-seid-seit	Ihr seit meine Freunde.
 seid-seit	Seit ihr schon fertig?
-seid-seit	Ich wohne hier seid drei Jahren.
-seid-seit	Er arbeitet seid Montag nicht mehr.
-seid-seit	Wo seit ihr gestern gewesen?
-seid-seit	Seid wann wohnst du hier?
-seid-seit	Ich kenne ihn seid langem.
-wir-wie	Wie sind müde.
-wir-wie	Wie haben keine Zeit.
 wir-wie	Wie gehen jetzt nach Hause.
-wir-wie	Wie müssen los.
 wir-wie	Gestern waren wie im Kino.
 wir-wie	Heute essen wie zu Hause.
 wir-wie	Wie können morgen kommen.
-wurde-würde	Ich wurde gern mitkommen.
-wurde-würde	Er wurde gern schlafen.
 wurde-würde	Ich wurde das nie tun.
-wurde-würde	Wenn ich Zeit hätte, wurde ich kommen.
-wurde-würde	Was wurdest du tun?
 wurde-würde	Sie wurden gern früher gehen.
-das-dass	Ich weiß, das du müde bist.
-das-dass	Ich glaube, das er recht hat.
-das-dass	Er sagt, das sie kommt.
-das-dass	Ich hoffe, das wir uns bald sehen.
-das-dass	Es ist schön, das du da bist.
-mal-Mal	Zum ersten mal war ich in Hamburg.
-mal-Mal	Das nächste mal bringe ich Kuchen mit.
-mal-Mal	Ich war schon einmal dort, das letzte mal im Sommer.
-tageszeit	Heute morgen war ich müde.
-tageszeit	Heute abend gehen wir ins Theater.
-tageszeit	Gestern abend war ich zu Hause.
-tageszeit	Heute nacht habe ich schlecht geschlafen.
 tippfehler	Das ist sher gut.
 tippfehler	Ich möchte einen Kaffe.
 [changed-sentences]
