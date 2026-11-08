@@ -41,7 +41,8 @@ les versions (`ktlint-cli` 1.5.0, `detekt-cli` 1.23.8, dans `gradle/quality.grad
 
 ## Reste à faire
 
-- [ ] `./gradlew ktlintBaseline detektBaseline`, committer `quality/`.
+- [x] `./gradlew ktlintBaseline detektBaseline`, committer `quality/` (08/11/2026, revue de code : `.editorconfig` ajouté, il
+  manquait ; ktlint 1 112 écarts figés au lieu de 10 519 sans lui (règles class-signature et function-signature désactivées : elles contredisent la convention du projet), detekt 326 ; `qualityCheck` lancé par la CI).
 - [ ] `./gradlew qualityCheck` vert.
 - [ ] Étape CI.
 

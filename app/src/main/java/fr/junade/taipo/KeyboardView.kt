@@ -63,8 +63,12 @@ class KeyboardView(context: Context) : View(context) {
         defaultFocusHighlightEnabled = false
     }
 
+    // Revue de code (performance) : l'IME repose la disposition à chaque touche et à chaque déplacement du curseur
+    // (applyState). Les dispositions sont des instances en cache (Keyboards) : la même instance ne relance ni le calcul des
+    // zones, ni l'arbre d'accessibilité, ni surtout une mise en page complète de la vue.
     var layout: KeyboardLayout = Keyboards.letters
         set(value) {
+            if (field === value) return
             field = value
             slotCache = null
             zones = computeZones()
@@ -174,6 +178,7 @@ class KeyboardView(context: Context) : View(context) {
 
     var isShifted: Boolean = false
         set(value) {
+            if (field == value) return
             field = value
             accessibility.invalidateRoot()
             invalidate()
@@ -182,6 +187,7 @@ class KeyboardView(context: Context) : View(context) {
     /** Verrouillage des majuscules (double appui sur Maj) : une barre est dessinée sous la flèche. */
     var isCapsLock: Boolean = false
         set(value) {
+            if (field == value) return
             field = value
             accessibility.invalidateRoot()
             invalidate()

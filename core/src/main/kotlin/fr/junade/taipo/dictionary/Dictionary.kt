@@ -1061,6 +1061,10 @@ class Dictionary private constructor(
         fun parseFrequencyLines(lines: Sequence<String>, minFrequency: Long = 0L): Map<String, Long> =
             WordForms.parseFrequencyLines(lines, minFrequency)
 
+        /** Lecture rapide d'un fichier de fréquences entier (voir [WordForms.parseFrequencyBytes]). */
+        fun parseFrequencyBytes(bytes: ByteArray, minFrequency: Long = 0L, expectedEntries: Int = 0): Map<String, Long> =
+            WordForms.parseFrequencyBytes(bytes, minFrequency, expectedEntries)
+
         fun applyOriginalCasing(original: String, correction: String): String =
             WordForms.applyOriginalCasing(original, correction)
     }

@@ -23,6 +23,7 @@ import fr.junade.taipo.clipboard.ImageAcceptance
 import fr.junade.taipo.clipboard.PasteChipChoice
 import fr.junade.taipo.clipboard.ScreenshotFinder
 import fr.junade.taipo.clipboard.ScreenshotSuggestionState
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -248,6 +249,8 @@ class ClipboardController(
             launch {
                 try {
                     historyRepository.purgeExpired()
+                } catch (e: CancellationException) {
+                    throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
                 } catch (t: Throwable) {
                     AppLog.e(TAG, "Échec de la purge de l'historique du presse-papiers", t)
                 }
@@ -325,6 +328,8 @@ class ClipboardController(
                     return@launch
                 }
                 host.showMessage(pinMessage(result))
+            } catch (e: CancellationException) {
+                throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de l'épinglage", t)
                 host.showMessage(context.getString(R.string.clipboard_pin_error, t.message ?: t.javaClass.simpleName))
@@ -405,6 +410,8 @@ class ClipboardController(
         scope.launch {
             try {
                 pinnedRepository.clearLabel(id)
+            } catch (e: CancellationException) {
+                throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de la suppression d'une étiquette", t)
                 host.showMessage(context.getString(R.string.clipboard_label_delete_error, t.message ?: t.javaClass.simpleName))
@@ -421,6 +428,8 @@ class ClipboardController(
             scope.launch {
                 try {
                     historyRepository.replaceText(previous, text)
+                } catch (e: CancellationException) {
+                    throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
                 } catch (t: Throwable) {
                     AppLog.e(TAG, "Échec de la mise à jour de l'historique après modification", t)
                 }
@@ -449,6 +458,8 @@ class ClipboardController(
                 // Le panneau se met à jour via les flux des éléments épinglés et de l'historique.
                 if (pinnedId != null) pinnedRepository.remove(pinnedId)
                 if (historyId != null) historyRepository.remove(historyId)
+            } catch (e: CancellationException) {
+                throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de la suppression d'un élément du presse-papiers", t)
                 host.showMessage(context.getString(R.string.clipboard_delete_error, t.message ?: t.javaClass.simpleName))
@@ -485,6 +496,8 @@ class ClipboardController(
         scope.launch {
             try {
                 historyRepository.record(snapshot.text, snapshot.copiedAtMillis, snapshot.sensitive)
+            } catch (e: CancellationException) {
+                throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de l'enregistrement dans l'historique du presse-papiers", t)
             }

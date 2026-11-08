@@ -1,20 +1,30 @@
 package fr.junade.taipo
 
-import android.content.Context
 import android.app.Activity
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import android.text.Editable
+import android.text.TextWatcher
+import android.text.format.Formatter
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.CompoundButton
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
+import fr.junade.taipo.ai.AiAcceleration
+import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.analytics.AnalyticsPreferences
 import fr.junade.taipo.model.ModelPreferences
+import fr.junade.taipo.model.ModelRecommendation
 import fr.junade.taipo.model.ModelStatus
 import fr.junade.taipo.model.VoiceModelFile
 import fr.junade.taipo.model.VoiceModelPreferences
@@ -70,10 +80,10 @@ class MainActivity : Activity() {
         step4 = stepViews(4, R.id.step4_card, R.id.step4_badge, R.id.step4_title, R.id.step4_hint, R.id.button_activate_ai)
         tryInput = findViewById(R.id.onboarding_try_input)
         // Étape 3 : faite dès que quelques mots ont été tapés dans le champ d'essai (retenu, l'étape ne revient pas).
-        tryInput.addTextChangedListener(object : android.text.TextWatcher {
+        tryInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-            override fun afterTextChanged(s: android.text.Editable?) {
+            override fun afterTextChanged(s: Editable?) {
                 if (s == null || homePrefs().getBoolean(KEY_TRIED, false) || !OnboardingState.triedWith(s)) return
                 homePrefs().edit().putBoolean(KEY_TRIED, true).apply()
                 renderOnboarding(readOnboardingState())
@@ -168,6 +178,13 @@ class MainActivity : Activity() {
             renderPremium()
         }
         findViewById<View>(R.id.debug_section).visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.button_debug_gpu).setOnClickListener {
+            val acceleration = AiAcceleration(this)
+            acceleration.setGpuRequested(!acceleration.gpuRequested)
+            // Le moteur chargé (processus du clavier) est fermé : le prochain chargement suit le nouveau réglage.
+            Thread { LlmEngineHost.closeEverywhere() }.start()
+            renderPremium()
+        }
         findViewById<View>(R.id.button_debug_premium).setOnClickListener {
             val states = PremiumPass.DebugOverride.entries
             PremiumPass.setDebugOverride(this, states[(PremiumPass.debugOverride.ordinal + 1) % states.size])
@@ -177,7 +194,7 @@ class MainActivity : Activity() {
 
     private fun renderPremium() {
         val active = PremiumPass.isActive
-        val onboarded = readOnboardingState().let { it.enabled && it.selected }
+        val onboarded = (lastOnboarding ?: readOnboardingState()).let { it.enabled && it.selected }
         val dismissed = homePrefs().getBoolean(KEY_PREMIUM_CARD_DISMISSED, false)
         findViewById<View>(R.id.premium_card).visibility = if (onboarded && !active && !dismissed) View.VISIBLE else View.GONE
         findViewById<View>(R.id.button_premium).findViewById<TextView>(R.id.row_subtitle).setText(
@@ -185,7 +202,7 @@ class MainActivity : Activity() {
         )
         // Ligne « Prompts système » : cadenas à la place du chevron sans pass, annoncé par TalkBack.
         val prompts = findViewById<View>(R.id.button_system_prompts)
-        prompts.findViewById<android.widget.ImageView>(R.id.row_chevron)
+        prompts.findViewById<ImageView>(R.id.row_chevron)
             .setImageResource(if (active) R.drawable.ic_chevron_right else R.drawable.ic_lock)
         prompts.contentDescription = if (active) {
             null
@@ -200,6 +217,13 @@ class MainActivity : Activity() {
                 PremiumPass.DebugOverride.INACTIVE -> getString(R.string.home_debug_premium_inactive)
             }
             findViewById<TextView>(R.id.button_debug_premium).text = getString(R.string.home_debug_premium, state)
+            val acceleration = AiAcceleration(this)
+            val gpu = when {
+                !acceleration.gpuRequested -> R.string.home_debug_gpu_cpu
+                acceleration.gpuFailed -> R.string.home_debug_gpu_failed
+                else -> R.string.home_debug_gpu_gpu
+            }
+            findViewById<TextView>(R.id.button_debug_gpu).text = getString(R.string.home_debug_gpu, getString(gpu))
         }
     }
 
@@ -207,8 +231,8 @@ class MainActivity : Activity() {
 
     /** « Mes données » : partage des données d'utilisation anonymes (Aptabase), déplacé ici depuis les paramètres du clavier. */
     private fun setUpAnalyticsSwitch() {
-        val analyticsPreferences = fr.junade.taipo.analytics.AnalyticsPreferences(this)
-        findViewById<android.widget.CompoundButton>(R.id.switch_analytics).apply {
+        val analyticsPreferences = AnalyticsPreferences(this)
+        findViewById<CompoundButton>(R.id.switch_analytics).apply {
             isChecked = analyticsPreferences.isEnabled
             setOnCheckedChangeListener { _, checked ->
                 analyticsPreferences.isEnabled = checked
@@ -328,18 +352,22 @@ class MainActivity : Activity() {
         action = action?.let { findViewById<View>(it) },
     )
 
+    /** Dernier état lu de l'installation : la carte du pass s'en sert sans relire Android (lecture qui interroge le système). */
+    private var lastOnboarding: OnboardingState? = null
+
     private fun renderOnboarding(state: OnboardingState) {
+        lastOnboarding = state
         renderStep(step1, state.activate, R.string.onboarding_step1_title, R.string.onboarding_step1_title_done, R.string.onboarding_step1_hint, R.string.onboarding_step1_hint)
         renderStep(step2, state.choose, R.string.onboarding_step2_title, R.string.onboarding_step2_title_done, R.string.onboarding_step2_hint, R.string.onboarding_step2_hint_locked)
         renderStep(step3, state.tryIt, R.string.onboarding_step3_title, R.string.onboarding_step3_title_done, R.string.onboarding_step3_hint, R.string.onboarding_step3_hint_locked)
         renderStep(step4, state.activateAi, R.string.onboarding_step4_title, R.string.onboarding_step4_title_done, R.string.onboarding_step4_hint, R.string.onboarding_step4_hint_locked)
         // Étape 4 : le modèle recommandé selon la mémoire du téléphone, nommé dans l'explication et sur le bouton.
         if (state.activateAi == StepStatus.CURRENT) {
-            val memory = android.app.ActivityManager.MemoryInfo()
-            getSystemService(android.app.ActivityManager::class.java)?.getMemoryInfo(memory)
-            val model = fr.junade.taipo.model.ModelRecommendation.recommended(memory.totalMem)
+            val memory = ActivityManager.MemoryInfo()
+            getSystemService(ActivityManager::class.java)?.getMemoryInfo(memory)
+            val model = ModelRecommendation.recommended(memory.totalMem)
             val name = model.displayName(this)
-            val size = android.text.format.Formatter.formatShortFileSize(this, model.approxDownloadBytes ?: model.approxSizeBytesMax)
+            val size = Formatter.formatShortFileSize(this, model.approxDownloadBytes ?: model.approxSizeBytesMax)
             step4.hint.text = getString(R.string.onboarding_step4_hint, name)
             (step4.action as? TextView)?.text = getString(R.string.onboarding_step4_button, name, size)
         }

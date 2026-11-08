@@ -210,8 +210,13 @@ object DictionaryLoader {
         KeyboardLanguage.IT -> InflectionRules.NONE
     }
 
+    /**
+     * Revue de code (performance) : le fichier est lu d'un bloc et analysé sur ses octets ([Dictionary.parseFrequencyBytes]) :
+     * aucune chaîne n'est créée pour les lignes écartées par [minFrequency] (près des deux tiers en français).
+     */
     private fun readFile(file: File, minFrequency: Long): Map<String, Long> =
-        file.bufferedReader(Charsets.UTF_8).useLines { lines ->
-            Dictionary.parseFrequencyLines(lines, minFrequency)
-        }
+        Dictionary.parseFrequencyBytes(file.readBytes(), minFrequency, expectedEntries = (file.length() / BYTES_PER_KEPT_ENTRY).toInt())
+
+    /** Estimation de la taille de la table : environ 35 octets de fichier par mot gardé (liste française, seuil 5). */
+    private const val BYTES_PER_KEPT_ENTRY = 35L
 }

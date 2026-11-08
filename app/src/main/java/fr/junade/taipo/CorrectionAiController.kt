@@ -21,6 +21,7 @@ import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.ai.CorrectionCancelledException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -370,6 +371,8 @@ class CorrectionAiController(
                 Analytics.aiAction(context, AnalyticsEvents.AiType.CORRECT, modelId, startedAt)
             } catch (e: CorrectionCancelledException) {
                 AppLog.i(TAG, "correction annulée par l'utilisateur")
+            } catch (e: CancellationException) {
+                throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (t: Throwable) {
                 if (cancelRequested) {
                     // L'arrêt natif a fait échouer l'inférence en cours : c'est la suite attendue de l'annulation.

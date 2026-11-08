@@ -662,4 +662,9 @@
     <string name="tip_move_cursor">Tip: swipe on the space bar to move the cursor.</string>
     <string name="tip_switch_language">Tip: long-press Enter, then slide to the globe to switch language.</string>
     <string name="tip_digits">Tip: long-press a letter of the top row to type its digit.</string>
+    <string name="home_debug_gpu">AI acceleration: %1$s</string>
+    <string name="home_debug_gpu_cpu">CPU</string>
+    <string name="home_debug_gpu_gpu">GPU (trial)</string>
+    <string name="home_debug_gpu_failed">GPU failed, CPU</string>
+    <string name="home_debug_gpu_hint">The model is reloaded at the next AI action. If the GPU fails or crashes the keyboard, Taipo falls back to the CPU on its own.</string>
 </resources>

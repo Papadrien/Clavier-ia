@@ -134,6 +134,12 @@ internal class SpaceBetweenRow(context: Context) : ViewGroup(context) {
         }
 
     private var items: List<View> = emptyList()
+
+    // Revue de code (performance) : listes réutilisées d'une mesure à l'autre (la barre est mesurée souvent) au lieu d'en créer.
+    private val visibleScratch = ArrayList<View>()
+    private val naturalScratch = ArrayList<Int>()
+    private val rolesScratch = ArrayList<RowRole>()
+    private val seenScratch = HashSet<View>()
     private var lefts = IntArray(0)
     private val lastLeft = HashMap<View, Int>()
     private var lastWidth = -1
@@ -169,13 +175,13 @@ internal class SpaceBetweenRow(context: Context) : ViewGroup(context) {
         val height = MeasureSpec.getSize(heightMeasureSpec)
         setMeasuredDimension(width, height)
         val childHeight = (height - paddingTop - paddingBottom).coerceAtLeast(0)
-        val visible = ArrayList<View>()
+        val visible = visibleScratch.apply { clear() }
         for (index in 0 until childCount) {
             val child = getChildAt(index)
             if (child.visibility != GONE) visible.add(child)
         }
-        val natural = ArrayList<Int>()
-        val roles = ArrayList<RowRole>()
+        val natural = naturalScratch.apply { clear() }
+        val roles = rolesScratch.apply { clear() }
         for (child in visible) {
             natural.add(naturalWidth(child, childHeight))
             roles.add(roleOf(child))
@@ -200,7 +206,7 @@ internal class SpaceBetweenRow(context: Context) : ViewGroup(context) {
         val widthChanged = (r - l) != lastWidth
         lastWidth = r - l
         val animate = !widthChanged && isLaidOut && ValueAnimator.areAnimatorsEnabled()
-        val seen = HashSet<View>()
+        val seen = seenScratch.apply { clear() }
         items.forEachIndexed { index, child ->
             val left = paddingLeft + lefts[index]
             child.layout(left, paddingTop, left + child.measuredWidth, paddingTop + child.measuredHeight)

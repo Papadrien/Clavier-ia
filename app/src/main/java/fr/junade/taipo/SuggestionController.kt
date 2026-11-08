@@ -58,6 +58,12 @@ class SuggestionController(
     private val host: Host,
 ) {
 
+    /**
+     * Revue de code (performance) : un seul calcul de la bande de mots à la fois (file sur un fil du pool de calcul). Les
+     * calculs dépassés ne tournent plus en parallèle des nouveaux : moins de processeur et de batterie en frappe rapide.
+     */
+    private val suggestionDispatcher = Dispatchers.Default.limitedParallelism(1)
+
     /** Ce que la bande de suggestions demande à l'IME. */
     interface Host {
         fun inputConnection(): InputConnection?
@@ -274,6 +280,7 @@ class SuggestionController(
     // Lot 1.4 : les mots du dictionnaire sont calculés hors du thread principal, « le dernier gagne » :
     // chaque nouvelle demande annule la précédente, et un résultat périmé n'est jamais affiché.
     private var suggestionJob: Job? = null
+    @Volatile // lu par le calcul en arrière-plan pour abandonner une demande dépassée
     private var suggestionSequence = 0
 
     private data class SuggestionInput(
@@ -390,7 +397,11 @@ class SuggestionController(
             val truncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND
             currentWordSuggestions = emptyList() // un appui sur un mot périmé est ignoré
             publishEmoji(emoji)
-            suggestionJob = scope.launch(Dispatchers.Default) {
+            suggestionJob = scope.launch(suggestionDispatcher) {
+                // Frappe plus rapide que le calcul : une demande déjà dépassée n'est pas calculée du tout. La recherche du
+                // dictionnaire ne s'interrompt pas en cours de route ; avec un seul calcul à la fois, au plus un calcul périmé
+                // finit pendant qu'on tape, au lieu de plusieurs en parallèle.
+                if (sequence != suggestionSequence) return@launch
                 val suggestionsStarted = if (autocorrectStats != null) System.nanoTime() else 0L
                 val compound = if (language == KeyboardLanguage.DE && !placement && wordAfter.isEmpty()) compoundSuggestion(dictionary, textBeforeCursor, typed) else null
                 val words = traced(Sections.SUGGESTIONS) {

@@ -96,7 +96,8 @@ class VoiceController(
         fun promptVoiceField(): VoiceField
     }
 
-    private val voiceEngine by lazy { VoiceEngine(context.applicationContext) }
+    private val voiceEngineHolder = lazy { VoiceEngine(context.applicationContext) }
+    private val voiceEngine by voiceEngineHolder
     private val voiceModelPreferences by lazy { VoiceModelPreferences(context.applicationContext) }
     private var voiceRecorder: VoiceRecorder? = null
 
@@ -142,6 +143,16 @@ class VoiceController(
     }
 
     /** Libère le moteur vocal et les rappels en attente (destruction du service). */
+    /**
+     * Revue de code (mémoire) : libère le modèle de dictée s'il est chargé et qu'aucune dictée n'est en cours (Android manque
+     * de mémoire, clavier masqué longtemps). Il se recharge au prochain appui sur Dicter. Renvoie vrai s'il a été libéré.
+     */
+    fun releaseEngineIfIdle(): Boolean {
+        if (!voiceEngineHolder.isInitialized() || isRecording || isTranscribing) return false
+        voiceEngine.close()
+        return true
+    }
+
     fun release() {
         voiceEngine.close()
         mainHandler.removeCallbacks(longPressRunnable)
@@ -347,6 +358,8 @@ class VoiceController(
                     "mode" to (if (holdMode) "hold" else "tap"),
                     "duration" to AnalyticsEvents.listenBucket(listenedSeconds),
                 )
+            } catch (e: CancellationException) {
+                throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de la transcription vocale", t)
                 host.showMessage(context.getString(R.string.voice_error, t.message ?: t.javaClass.simpleName))
@@ -381,6 +394,8 @@ class VoiceController(
             voicePartialJob = null
             try {
                 recorder.stopAndGetResult()
+            } catch (e: CancellationException) {
+                throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (_: Throwable) {
                 // Le clavier se ferme de toute façon : rien à faire de plus.
             }

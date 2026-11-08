@@ -111,3 +111,43 @@ Mêmes conditions avant / après (batterie, température, autres applis), releas
 l'appareil, avec quatre corpus fixes ; en build debug, `SuggestionController` écrit aussi un histogramme de latence dans logcat
 (filtre `SuggestionController`). Mode d'emploi, lecture des chiffres et tableau à remplir : `docs/autocorrection-bench.md`,
 « Phase 6 ». **Non compilé ni exécuté** depuis l'environnement de développement : aucune mesure n'a encore été prise.
+
+## Revue de code complète : performance (08/11/2026)
+
+Compilé et testé (tests JVM de l'app et de `:core`), **pas mesuré sur appareil** : les gains ci-dessous sont des allers-retours,
+des mises en page et des allocations évités, plus deux mesures sur le serveur de développement (bien plus rapide qu'un téléphone).
+
+### Frappe
+- **Lectures du champ en cache** (`InputTextCache`, `CachingInputConnection`, branchés par `TaipoIme.getCurrentInputConnection`).
+  Avant : environ 8 lectures synchrones du champ par touche (aller-retour vers l'application du champ). Après : une lecture réelle
+  au plus toutes les 500 ms pendant une frappe continue. `commitText` / `deleteSurroundingText` mettent le cache à jour sur place ; toute autre
+  écriture, tout déplacement du curseur qui n'est pas l'écho de nos écritures et le délai de 500 ms le vident. Tests :
+  `InputTextCacheTest`. **À surveiller sur l'appareil** : une application qui modifierait son texte sans déplacer le curseur
+  (cas rare) ; le texte périmé ne dure alors pas plus de 500 ms. Pour couper le cache, faire renvoyer
+  `super.getCurrentInputConnection()` par `TaipoIme.getCurrentInputConnection`.
+- **Plus de mise en page complète à chaque touche** : `KeyboardView.layout`, `isShifted` et `isCapsLock` ignorent une valeur
+  identique (les dispositions sont des instances en cache) ; `applyState` ne relit plus les préférences (disposition, multilingue)
+  qu'au changement de langue ou à l'ouverture d'un champ.
+- **Suggestions** : un seul calcul à la fois (`Dispatchers.Default.limitedParallelism(1)`), une demande déjà dépassée n'est
+  pas calculée.
+- `SpaceBetweenRow` (rangée de la barre) réutilise ses listes à chaque mesure.
+
+### Mémoire et IA
+- **Moteurs libérés** (`MemoryRelease`, `TaipoIme.onTrimMemory`) : modèle IA et modèle de dictée libérés quand Android manque
+  de mémoire (toujours en mémoire critique, seulement clavier masqué en mémoire basse) et après 5 min de clavier masqué. Ils se
+  rechargent à la prochaine action. Les dictionnaires restent.
+- **GPU (essai, builds debug)** : `AiAcceleration`, bouton « Accélération IA » en bas de l'accueil. Repli automatique sur le
+  processeur si le moteur refuse le GPU ; un plantage natif pendant l'essai est détecté au démarrage suivant et coupe le GPU.
+
+### Dictionnaires
+- **Lecture sur octets** (`WordForms.parseFrequencyBytes`) : aucune chaîne créée pour les lignes écartées (470 000 sur 740 000 en
+  français). Même résultat que l'ancienne lecture sur les 7 listes (`WordFormsParseTest`). Mesure sur le serveur : environ
+  65 ms au lieu de 150 ms pour le français, une fois le code chauffé.
+- Mesure de l'empreinte (serveur, JVM) : français environ 35 Mo (dont 26 Mo pour la table des fréquences) et environ 1,1 s de
+  chargement à froid. **Reste à faire** : une structure compacte (tableaux triés ou format binaire lu directement depuis le
+  fichier) pour diviser la mémoire ; c'est un changement profond de `Dictionary`, à faire avec mesures sur le Pixel 9.
+
+### Toujours à faire sur l'appareil
+1. `./gradlew :macrobenchmark:connectedBenchmarkAndroidTest -Ptaipo.benchmark=true` avant / après cette revue, consigner les médianes.
+2. Générer le profil de démarrage (`BaselineProfileGenerator`), le copier en `app/src/main/baseline-prof.txt`.
+3. Essayer le GPU (bouton debug) et comparer la vitesse de génération.
