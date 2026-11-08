@@ -583,7 +583,6 @@
     <string name="theme_choice_system_description">System, automatic</string>
     <string name="theme_choice_dynamic">Dynamic color</string>
     <string name="theme_section_color">Color</string>
-    <string name="theme_color_explanation">The color applies to the Enter key, the buttons and the selections of the keyboard, in light and dark. It has no effect with Dynamic color.</string>
     <string name="accent_violet">Taipo violet</string>
     <string name="accent_indigo">Indigo</string>
     <string name="accent_blue">Bright blue</string>
@@ -593,7 +592,6 @@
     <string name="accent_raspberry">Raspberry</string>
     <string name="accent_magenta">Magenta</string>
     <string name="accent_graphite">Graphite</string>
-    <string name="theme_explanation">The theme applies to the keyboard only. System follows the light or dark mode of your device and changes with it. Dynamic color (Android 12 and later) takes the colors of your wallpaper. The app screens always stay dark.</string>
     <string name="home_row_theme_subtitle">Keyboard colors: %1$s</string>
     <string name="button_theme">Theme</string>
     <string name="languages_title">Languages</string>
@@ -650,6 +648,4 @@
     <string name="home_debug_premium_hint">Tap to switch to the next state. This button only exists in debug builds.</string>
     <string name="clipboard_pin_full_free">Limit reached: 5 pinned items in the free version. The premium pass allows 50.</string>
     <string name="clipboard_pin_full_action">See the pass</string>
-    <string name="system_prompt_locked">Editing prompts is part of the premium pass. The default prompt is used.</string>
-    <string name="system_prompt_locked_custom">Editing prompts is part of the premium pass. Your custom prompt is kept and will be used again with the pass.</string>
 </resources>

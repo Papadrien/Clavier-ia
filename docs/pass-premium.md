@@ -36,10 +36,11 @@ Règles de passage gratuit ↔ premium :
 
 - Écran **Pass premium** (`PremiumActivity`) : prix, les trois avantages, rappel de ce qui reste gratuit, Acheter, Restaurer.
 - **Accueil** : carte d'offre une fois les 3 étapes faites, masquable (elle ne revient pas) ; ligne « Pass premium » dans
-  « À propos ».
+  sa propre carte encadrée de violet, en tête de « À propos ».
 - **Thème** : cadenas sur les 8 couleurs ; en toucher une l'essaie sur les aperçus, avec « Débloquer avec le pass » ; au retour
   avec le pass, elle est appliquée.
-- **Prompts système** : sans pass, champ en lecture seule (prompt par défaut) et bouton « Débloquer avec le pass premium ».
+- **Prompts système** : sans pass, la ligne de l'accueil porte un cadenas à la place du chevron et ouvre l'écran du pass
+  (lecture et modification des prompts réservées) ; avec le pass, elle ouvre la page des prompts.
 - **Clavier** : seulement au 6ᵉ épinglage, message avec « Voir le pass ».
 - Mesure d'usage : `premium_paywall_shown` et `premium_purchased`, avec l'origine (`docs/analytics.md`).
 

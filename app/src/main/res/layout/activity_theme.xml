@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Page « Thème » (lot T5) : cartes d'aperçu (Système, Clair, Sombre, et Couleur dynamique dès Android 12) posées par ThemeActivity, par rangées de trois, une phrase d'explication.
+<!-- Page « Thème » (lot T5) : cartes d'aperçu (Système, Clair, Sombre, et Couleur dynamique dès Android 12) posées par ThemeActivity, par rangées de trois, sans texte d'explication.
      Section « Couleur » : pastilles des couleurs d'accent (AccentPalette), posées par ThemeActivity par rangées de cinq ; prévue pour le pass premium. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -33,13 +33,6 @@
             android:orientation="vertical" />
 
         <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_md"
-            android:text="@string/theme_explanation" />
-
-        <TextView
             style="@style/TaipoText.Section"
             android:id="@+id/theme_color_heading"
             android:layout_width="wrap_content"
@@ -63,12 +56,5 @@
             android:layout_marginTop="@dimen/taipo_settings_gap_md"
             android:text="@string/premium_unlock"
             android:visibility="gone" />
-
-        <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_md"
-            android:text="@string/theme_color_explanation" />
     </LinearLayout>
 </ScrollView>

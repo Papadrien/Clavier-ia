@@ -91,6 +91,15 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.button_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE
         findViewById<View>(R.id.divider_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE
         bindRow(R.id.button_system_prompts, R.string.button_system_prompts, R.string.home_row_system_prompts_subtitle, SystemPromptsActivity::class.java)
+        // Pass premium : sans lui, la ligne porte un cadenas et ouvre l'écran du pass (lecture et modification des prompts réservées).
+        findViewById<View>(R.id.button_system_prompts).setOnClickListener {
+            val target = if (PremiumPass.isActive) {
+                Intent(this, SystemPromptsActivity::class.java)
+            } else {
+                PremiumActivity.intent(this, PremiumActivity.SOURCE_PROMPTS)
+            }
+            startActivity(target)
+        }
         bindRow(R.id.button_backup, R.string.button_backup, R.string.home_row_backup_subtitle, BackupActivity::class.java)
         bindRow(R.id.button_terms, R.string.button_terms, R.string.home_row_terms_subtitle, TermsActivity::class.java)
         bindRow(R.id.button_licenses, R.string.button_licenses, R.string.home_row_licenses_subtitle, LicensesActivity::class.java)
@@ -156,6 +165,15 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.button_premium).findViewById<TextView>(R.id.row_subtitle).setText(
             if (active) R.string.home_row_premium_subtitle_active else R.string.home_row_premium_subtitle_offer,
         )
+        // Ligne « Prompts système » : cadenas à la place du chevron sans pass, annoncé par TalkBack.
+        val prompts = findViewById<View>(R.id.button_system_prompts)
+        prompts.findViewById<android.widget.ImageView>(R.id.row_chevron)
+            .setImageResource(if (active) R.drawable.ic_chevron_right else R.drawable.ic_lock)
+        prompts.contentDescription = if (active) {
+            null
+        } else {
+            getString(R.string.premium_locked_item, getString(R.string.button_system_prompts))
+        }
         if (BuildConfig.DEBUG) {
             val bought = getString(if (PremiumPass.isPurchased) R.string.home_debug_premium_bought else R.string.home_debug_premium_not_bought)
             val state = when (PremiumPass.debugOverride) {

@@ -598,7 +598,6 @@
     <string name="theme_choice_system_description">Système, automatique</string>
     <string name="theme_choice_dynamic">Couleur dynamique</string>
     <string name="theme_section_color">Couleur</string>
-    <string name="theme_color_explanation">La couleur s\'applique à la touche Entrée, aux boutons et aux sélections du clavier, en clair comme en sombre. Elle est sans effet avec la couleur dynamique.</string>
     <string name="accent_violet">Violet Taipo</string>
     <string name="accent_indigo">Indigo</string>
     <string name="accent_blue">Bleu vif</string>
@@ -608,7 +607,6 @@
     <string name="accent_raspberry">Framboise</string>
     <string name="accent_magenta">Magenta</string>
     <string name="accent_graphite">Graphite</string>
-    <string name="theme_explanation">Le thème ne concerne que le clavier. « Système » suit le mode clair ou sombre de votre appareil et change avec lui. « Couleur dynamique » (Android 12 et plus) reprend les couleurs de votre fond d\'écran. Les écrans de l\'application restent toujours sombres.</string>
     <string name="home_row_theme_subtitle">Couleurs du clavier : %1$s</string>
     <string name="button_theme">Thème</string>
     <string name="languages_title">Langues</string>
@@ -665,6 +663,4 @@
     <string name="home_debug_premium_hint">Touchez pour passer à l\'état suivant. Bouton présent dans les builds debug seulement.</string>
     <string name="clipboard_pin_full_free">Limite atteinte : 5 éléments épinglés en version gratuite. Le pass premium en permet 50.</string>
     <string name="clipboard_pin_full_action">Voir le pass</string>
-    <string name="system_prompt_locked">Modifier les prompts est réservé au pass premium. Le prompt par défaut est utilisé.</string>
-    <string name="system_prompt_locked_custom">Modifier les prompts est réservé au pass premium. Votre prompt personnalisé est gardé : il sera réutilisé avec le pass.</string>
 </resources>
