@@ -17,7 +17,6 @@ import android.view.inputmethod.InlineSuggestionsResponse
 import android.view.inputmethod.InputMethodSubtype
 import androidx.annotation.RequiresApi
 import androidx.core.view.inputmethod.EditorInfoCompat
-import android.widget.Toast
 import fr.junade.taipo.ai.AiTranscriptionEngine
 import fr.junade.taipo.ai.CorrectionEngine
 import fr.junade.taipo.ai.LlmEngineHost
@@ -593,7 +592,6 @@ class TaipoIme : InputMethodService() {
         trackKeyboardLanguage()
         syncAutoCapitalization()
         applyState()
-        Toast.makeText(this, next.displayName, Toast.LENGTH_SHORT).show()
     }
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
