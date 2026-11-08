@@ -578,6 +578,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/taipo_settings_gap_xs"
             android:text="@string/home_debug_gpu_hint" />
+
+        <Button
+            style="@style/TaipoButton.Secondary"
+            android:id="@+id/button_debug_diagnostic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md"
+            android:text="@string/home_debug_diagnostic" />
     </LinearLayout>
 
 </LinearLayout>

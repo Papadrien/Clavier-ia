@@ -686,4 +686,13 @@
     <string name="home_debug_gpu_gpu">GPU (essai)</string>
     <string name="home_debug_gpu_failed">GPU en échec, processeur central</string>
     <string name="home_debug_gpu_hint">Le modèle est rechargé à la prochaine action IA. Si le GPU échoue ou fait planter le clavier, Taipo repasse tout seul sur le processeur central.</string>
+    <!-- Diagnostic mémoire (builds debug) -->
+    <string name="diagnostic_title">Diagnostic mémoire</string>
+    <string name="diagnostic_explanation">Mesure la mémoire et la vitesse des dictionnaires de vos langues : table actuelle, table compacte de test et dictionnaire complet. Comptez une minute par langue, sans quitter l\'écran. Aucun mot n\'est rapporté, seulement des nombres.</string>
+    <string name="diagnostic_measure">Mesurer</string>
+    <string name="diagnostic_copy">Copier les résultats</string>
+    <string name="diagnostic_running">Mesure en cours…</string>
+    <string name="diagnostic_done">Terminé.</string>
+    <string name="diagnostic_copied">Résultats copiés.</string>
+    <string name="home_debug_diagnostic">Diagnostic mémoire</string>
 </resources>
