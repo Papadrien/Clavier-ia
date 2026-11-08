@@ -2,7 +2,6 @@ package fr.junade.taipo.dictionary.download
 
 import android.content.Context
 import androidx.work.CoroutineWorker
-import androidx.work.WorkInfo
 import androidx.work.WorkerParameters
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.KeyboardLanguage
@@ -12,6 +11,7 @@ import fr.junade.taipo.model.download.DownloadFailure
 import fr.junade.taipo.model.download.ModelFileFetcher
 import fr.junade.taipo.model.download.ModelInstaller
 import fr.junade.taipo.model.download.PartialDownload
+import fr.junade.taipo.model.download.stoppedByApp
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
@@ -59,7 +59,7 @@ class DictionaryDownloadWorker(context: Context, params: WorkerParameters) : Cor
 
     /** Annulation par l'application : partiels supprimés ; tout autre arrêt vient du système : partiels gardés, « Réessayer ». */
     private fun settleAfterStop(language: KeyboardLanguage) {
-        if (stopReason == WorkInfo.STOP_REASON_CANCELLED_BY_APP) {
+        if (stoppedByApp()) {
             DictionaryFile.entries.forEach {
                 PartialDownload.discard(DictionaryFiles.localFile(applicationContext.filesDir, language, it))
             }
@@ -97,7 +97,7 @@ class DictionaryDownloadWorker(context: Context, params: WorkerParameters) : Cor
                     // Quelques Mo : pas de confirmation en données mobiles.
                     allowMobileData = true,
                     isActive = { scope.isActive },
-                    keepPartialOnStop = { stopReason != WorkInfo.STOP_REASON_CANCELLED_BY_APP },
+                    keepPartialOnStop = { !stoppedByApp() },
                     onTotal = {
                         currentTotal = it
                         report(0L)

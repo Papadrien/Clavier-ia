@@ -24,22 +24,22 @@
     <string name="model_settings_checksum_missing">SHA-256 checksum not computed: choose the file again to compute it.</string>
     <string name="model_settings_file_saved">File saved for the %1$s model</string>
 
-    <string name="button_system_prompts">System prompts</string>
-    <string name="system_prompts_title">System prompts</string>
+    <string name="button_system_prompts">AI instructions</string>
+    <string name="system_prompts_title">AI instructions</string>
     <string name="system_prompt_correction_title">Correction</string>
     <string name="system_prompt_correction_description">Instruction sent to the model for the “Correct” action.</string>
     <string name="system_prompt_generation_title">Prompt mode (chat)</string>
     <string name="system_prompt_generation_description">Instruction sent to the model for prompt mode conversations: length and format of replies.</string>
-    <string name="system_prompt_transcription_title">AI transcription</string>
+    <string name="system_prompt_transcription_title">AI dictation</string>
     <string name="system_prompt_transcription_description">Instruction sent to the model to turn a recording into a well-written message: it understands the meaning, rephrases when needed and uses a list when it fits.</string>
-    <string name="system_prompt_save">Save this prompt</string>
-    <string name="system_prompt_show_default">Show the default prompt</string>
-    <string name="system_prompt_reset">Reset to default prompt</string>
-    <string name="system_prompt_saved">Prompt saved.</string>
-    <string name="system_prompt_default_shown">Default prompt shown: save it to apply it.</string>
-    <string name="system_prompt_reset_done">Default prompt restored.</string>
-    <string name="system_prompt_status_custom">Custom prompt active.</string>
-    <string name="system_prompt_status_default">Default prompt active.</string>
+    <string name="system_prompt_save">Save this instruction</string>
+    <string name="system_prompt_show_default">Show the default instruction</string>
+    <string name="system_prompt_reset">Go back to the default instruction</string>
+    <string name="system_prompt_saved">Instruction saved.</string>
+    <string name="system_prompt_default_shown">Default instruction shown: save it to apply it.</string>
+    <string name="system_prompt_reset_done">Default instruction restored.</string>
+    <string name="system_prompt_status_custom">Custom instruction active.</string>
+    <string name="system_prompt_status_default">Default instruction active.</string>
 
     <string name="correction_button_idle">Correct</string>
     <string name="correction_button_loading">Correcting, tap to cancel</string>
@@ -59,11 +59,11 @@
     <string name="voice_model_current_file">Current file: %1$s</string>
     <string name="voice_model_no_file">No file provided.</string>
 
-    <string name="voice_button_idle">Voice</string>
+    <string name="voice_button_idle">Dictate</string>
     <string name="voice_button_loading">Loading…</string>
     <string name="voice_button_recording">Listening…</string>
     <string name="voice_button_transcribing">Transcribing…</string>
-    <string name="voice_permission_denied">Microphone permission required: tap Voice again after granting it.</string>
+    <string name="voice_permission_denied">Microphone permission required: tap Dictate again after granting it.</string>
     <string name="voice_error">Transcription failed: %1$s</string>
     <string name="voice_mic_unavailable">Microphone unavailable: it may be in use by another app. Try again in a moment.</string>
     <string name="voice_mic_lost">The microphone stopped responding: dictation interrupted.</string>
@@ -108,10 +108,10 @@
     <string name="keyboard_settings_show_period_key">Show the period key</string>
     <string name="keyboard_settings_screenshots_title">Screenshots</string>
     <string name="keyboard_settings_screenshots_switch">Suggest recent screenshots</string>
-    <string name="keyboard_settings_screenshots_description">In Smart Clipboard, offers to paste your latest screenshot (taken less than 10 minutes ago) in apps that accept images. The keyboard only checks that a screenshot exists: the image itself is read on your device when you tap the suggestion, and is never sent anywhere. Requires access to your photos.</string>
+    <string name="keyboard_settings_screenshots_description">Offers to paste your latest screenshot. Asks for access to your photos; nothing is sent.</string>
     <string name="keyboard_settings_screenshots_denied">Access to photos was denied. Allow it in the Android settings to use this option.</string>
     <string name="keyboard_settings_language_title">Keyboard language</string>
-    <string name="keyboard_settings_haptic_title">Haptic feedback</string>
+    <string name="keyboard_settings_haptic_title">Vibration</string>
     <string name="keyboard_settings_haptic_off">Off</string>
     <string name="keyboard_settings_haptic_light">Light</string>
     <string name="keyboard_settings_haptic_medium">Medium</string>
@@ -137,16 +137,16 @@
     <string name="keyboard_settings_height_extra_large">Extra large (120%)</string>
     <string name="keyboard_settings_habits_title">Learning</string>
     <string name="keyboard_settings_habits_switch">Learn from my habits</string>
-    <string name="keyboard_settings_habits_description">On this device, the keyboard counts the corrections you undo or keep, the words you accept and the email addresses you type, so it can adapt to you and suggest your addresses as soon as you start typing one. Only word and correction counters, and your email addresses, are kept, encrypted, never sentences. Nothing is counted in sensitive fields or in private browsing; email addresses are also remembered in address fields, never in password fields.</string>
+    <string name="keyboard_settings_habits_description">The keyboard remembers the corrections you undo and your email addresses, encrypted, on this device only.</string>
     <string name="keyboard_settings_habits_clear">Clear my correction habits</string>
     <string name="keyboard_settings_habits_clear_title">Clear correction habits?</string>
     <string name="keyboard_settings_habits_clear_message">Everything the keyboard has counted about your corrections, words and email addresses will be deleted. This can\'t be undone.</string>
     <string name="keyboard_settings_habits_clear_confirm">Clear</string>
     <string name="keyboard_settings_habits_clear_cancel">Cancel</string>
     <string name="keyboard_settings_habits_cleared">Habits cleared</string>
-    <string name="keyboard_settings_analytics_title">Usage data</string>
     <string name="keyboard_settings_analytics_switch">Share usage data</string>
-    <string name="keyboard_settings_analytics_description">This helps us improve the app. You can turn it off at any time.</string>
+    <string name="keyboard_settings_analytics_description">Anonymous, never your text: it helps us improve Taipo.</string>
+    <string name="keyboard_settings_privacy_link">Learn more about your data</string>
 
     <string name="clipboard_button">Clipboard</string>
     <string name="settings_button_description">Open the app settings</string>
@@ -301,14 +301,14 @@
     <string name="onboarding_try_hint">Type here to test</string>
     <string name="home_section_keyboard">Keyboard</string>
     <string name="home_section_ai">Artificial intelligence</string>
-    <string name="home_row_keyboard_settings_subtitle">Language, number row, haptic feedback, height, learning</string>
+    <string name="home_row_keyboard_settings_subtitle">Number row, vibration, height, one-handed mode, learning</string>
     <string name="home_row_personal_dictionary_subtitle">Add or remove words</string>
     <string name="home_row_model_settings_subtitle">Provide a model file yourself</string>
     <string name="home_row_voice_model_subtitle">Download the dictation model</string>
     <string name="home_status_ready">Ready</string>
     <string name="home_status_missing">To provide</string>
     <string name="home_status_incomplete">%1$d/%2$d files</string>
-    <string name="home_row_system_prompts_subtitle">Instructions given to the AI</string>
+    <string name="home_row_system_prompts_subtitle">What the AI does to correct, chat and dictate</string>
 
     <string name="button_model_download">AI model</string>
     <string name="home_row_model_download_subtitle">Download and choose the correction and generation model</string>
@@ -316,7 +316,7 @@
     <string name="model_download_title">AI model</string>
     <string name="model_download_description">Download a model to enable AI actions. The model then runs on your device, offline. Downloads use Wi-Fi by default.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Some features are not available with this model (AI transcription).</string>
+    <string name="model_download_limited_features">Some features are not available with this model (AI dictation).</string>
     <string name="model_download_badge_active">Active</string>
     <string name="model_download_badge_installed">Installed</string>
     <string name="model_download_badge_recommended">Recommended</string>
@@ -391,7 +391,7 @@
     <string name="licenses_usage_litertlm">Engine that runs the Gemma models on your device.</string>
     <string name="licenses_usage_sherpa">Speech recognition engine for voice dictation.</string>
     <string name="licenses_usage_onnxruntime">Neural network runtime used by sherpa-onnx.</string>
-    <string name="licenses_usage_sqlcipher">Encryption of the databases stored on your device (personal dictionary, Smart Clipboard).</string>
+    <string name="licenses_usage_sqlcipher">Encryption of the databases stored on your device (personal dictionary, clipboard).</string>
     <string name="licenses_usage_androidx">Android building blocks: Room, WorkManager, Activity, Core, Custom View, Autofill, Profile Installer.</string>
     <string name="licenses_usage_kotlin">Programming language and coroutines library used to write Taipo.</string>
     <string name="licenses_usage_aptabase">Anonymous usage statistics, which you can turn off in the settings.</string>
@@ -405,7 +405,7 @@
     <string name="button_backup">Backup and restore</string>
     <string name="home_row_backup_subtitle">Export or restore my dictionary, pinned items and settings</string>
     <string name="backup_title">Backup and restore</string>
-    <string name="backup_intro">To switch devices, export your data to a file, then restore it on the new device. The file contains your personal dictionary, your pinned Smart Clipboard items (with their labels) and your settings (keyboard, chosen model, custom prompts). It does not contain the AI models, which must be downloaded again, nor the clipboard history, nor what the keyboard has learned from your typing.</string>
+    <string name="backup_intro">To switch devices, export your data to a file, then restore it on the new device. The file contains your personal dictionary, your pinned clipboard items (with their labels) and your settings (keyboard, chosen model, custom prompts). It does not contain the AI models, which must be downloaded again, nor the clipboard history, nor what the keyboard has learned from your typing.</string>
     <string name="backup_export_title">Export my data</string>
     <string name="backup_export_button">Export</string>
     <string name="backup_export_warning_title">Unencrypted file</string>
@@ -453,15 +453,17 @@
     <string name="privacy_title">Privacy</string>
     <string name="privacy_updated">Last updated: October 29, 2026</string>
     <string name="privacy_section_1_title">1. On-device processing</string>
-    <string name="privacy_section_1_body">Correction, text generation, voice input and AI transcription run on your device using locally installed models. The text you type, copy or dictate and the audio of your recordings are not sent to any server. The audio of an AI transcription stays in memory while it is processed: it is never saved to a file.</string>
+    <string name="privacy_section_1_body">Correction, text generation, voice input and AI dictation run on your device using locally installed models. The text you type, copy or dictate and the audio of your recordings are not sent to any server. The audio of an AI dictation stays in memory while it is processed: it is never saved to a file.</string>
     <string name="privacy_section_2_title">2. Internet connections</string>
     <string name="privacy_section_2_body">Taipo connects to the Internet to download AI model files, at your request: from a Junadé server for the Gemma 3 models and the voice input models, and from Hugging Face for the Gemma 4 models. It also downloads, from the same Junadé server, the dictionary of each keyboard language you use (a few MB, automatically as soon as a language is selected). These servers receive the usual technical information of a connection (IP address, requested file), never your text or your recordings. Unless you turn it off in the keyboard settings, Taipo also sends anonymous usage analytics to Aptabase, a European service (see section 3). From time to time, Taipo may also offer to let you leave a review: this window is displayed by Google Play, which receives your rating and comment; Taipo does not receive them.</string>
     <string name="privacy_section_3_title">3. No personal data collection</string>
     <string name="privacy_section_3_body">Taipo has no account and no ads. It measures its usage anonymously with Aptabase: events such as “an AI correction succeeded”, “a model was downloaded” or “a setting changed”, along with the app version, the Android version, the device model and its language, plus two coarse ranges: how long the app has been installed and on how many days it was used (for example “8 to 30 days”), never exact values. Never your text, what you copy or dictate, or any identifier of the device or the person, and nothing from password fields. As with any Internet connection, Aptabase\'s servers technically receive the IP address of the request; Taipo itself never sees it or stores it (see Aptabase\'s privacy policy for how it is handled). You can turn it off at any time in Keyboard settings > Usage data. Taipo itself collects no personal data about you.</string>
     <string name="privacy_section_4_title">4. Password fields</string>
-    <string name="privacy_section_4_body">In a password or secret code field, AI actions (Correct, Generate, Voice, AI transcription) and the Smart Clipboard are disabled: the field\'s content is not read and the microphone is not opened.</string>
+    <string name="privacy_section_4_body">In a password or secret code field, AI actions (Correct, Generate, Dictate, AI dictation) and the clipboard are disabled: the field\'s content is not read and the microphone is not opened.</string>
     <string name="privacy_section_5_title">5. What is stored on the device</string>
-    <string name="privacy_section_5_body">Your personal dictionary, Smart Clipboard items and settings stay on your device, in encrypted databases. Uninstalling the app deletes this data. You can also export it to an unencrypted file (My data > Backup and restore): this file only leaves the device if you move it yourself. If you turn on screenshot suggestions (Keyboard settings), Taipo asks for access to your photos: it only checks that a recent screenshot exists, and reads the image itself, on your device, when you tap the suggestion. A temporary copy is kept in the app cache for at most one hour and is never sent anywhere.</string>
+    <string name="privacy_section_5_body">Your personal dictionary, clipboard items and settings stay on your device, in encrypted databases. Uninstalling the app deletes this data. You can also export it to an unencrypted file (My data > Backup and restore): this file only leaves the device if you move it yourself. If you turn on screenshot suggestions (Keyboard settings), Taipo asks for access to your photos: it only checks that a recent screenshot exists, and reads the image itself, on your device, when you tap the suggestion. A temporary copy is kept in the app cache for at most one hour and is never sent anywhere.</string>
+    <string name="privacy_section_6_title">6. Learning and typing accuracy</string>
+    <string name="privacy_section_6_body">On this device, the keyboard counts the corrections you undo or keep, the words you accept and the email addresses you type, so it can adapt to you and suggest your addresses as soon as you start typing one. Only word and correction counters, and your email addresses, are kept, encrypted, never sentences. Nothing is counted in sensitive fields or in private browsing; email addresses are also remembered in address fields, never in password fields. The touch area of the letters most likely to come next grows a little, so a slightly off-center tap still lands on the right key. The keys keep their look and size. Computed on this device from the word you are typing; nothing is stored or sent. Not used in password, email or web address fields.</string>
     <string name="button_terms">Terms of use</string>
     <string name="home_row_terms_subtitle">Rules for using Taipo and the AI</string>
     <string name="terms_title">Terms of use</string>
@@ -510,13 +512,13 @@
     <string name="button_voice_model_local">Local voice model</string>
     <string name="home_row_voice_model_local_subtitle">Provide the voice model files yourself</string>
 
-    <string name="sensitive_field_actions_disabled">Disabled in password fields: nothing is read or sent to the AI or the smart clipboard.</string>
+    <string name="sensitive_field_actions_disabled">Disabled in password fields: nothing is read or sent to the AI or the clipboard.</string>
 
-    <string name="ai_transcription_button_description">AI transcription: record, then transcribe</string>
-    <string name="ai_transcription_button_recording">AI transcription: stop recording and transcribe</string>
-    <string name="ai_transcription_button_processing">AI transcription in progress: tap to cancel</string>
-    <string name="ai_transcription_button_cancelling">Cancelling AI transcription…</string>
-    <string name="ai_transcription_no_audio_model">AI transcription requires the Monkey or Elephant model (Gemma 4). Choose one in the app.</string>
+    <string name="ai_transcription_button_description">AI dictation: record, then transcribe</string>
+    <string name="ai_transcription_button_recording">AI dictation: stop recording and transcribe</string>
+    <string name="ai_transcription_button_processing">AI dictation in progress: tap to cancel</string>
+    <string name="ai_transcription_button_cancelling">Cancelling AI dictation…</string>
+    <string name="ai_transcription_no_audio_model">AI dictation requires the Monkey or Elephant model (Gemma 4). Choose one in the app.</string>
     <string name="ai_transcription_busy">A dictation, correction or generation is in progress.</string>
     <string name="ai_transcription_permission_denied">Microphone permission required. Grant it, then tap again.</string>
     <string name="ai_transcription_mic_unavailable">The microphone couldn\'t be opened.</string>
@@ -524,10 +526,10 @@
     <string name="ai_transcription_cancelling_wait">Cancelling, one moment…</string>
     <string name="ai_transcription_no_speech">No speech detected in the recording.</string>
     <string name="ai_transcription_error_model_file">The model file is missing or unreadable. Download it again from the app.</string>
-    <string name="ai_transcription_error_memory">Not enough memory for AI transcription. Close other apps and try again.</string>
+    <string name="ai_transcription_error_memory">Not enough memory for AI dictation. Close other apps and try again.</string>
     <string name="ai_transcription_error_model_incompatible">The model couldn\'t be loaded: it may be incompatible or corrupted. Download it again from the app.</string>
     <string name="ai_transcription_error_too_long">The recording is too long for the model. Make a shorter one.</string>
-    <string name="ai_transcription_failed">AI transcription failed. Try again, or choose another model.</string>
+    <string name="ai_transcription_failed">AI dictation failed. Try again, or choose another model.</string>
 
     <!-- Model names, file hints and size/checksum warnings (previously hard-coded in Kotlin) -->
     <string name="model_name_ultra_leger">Ant</string>
@@ -570,12 +572,12 @@
     <string name="digit_swipe_tip">Swipe down</string>
     <string name="keyboard_settings_touch_title">Typing accuracy</string>
     <string name="keyboard_settings_touch_switch">Adaptive key areas</string>
-    <string name="keyboard_settings_touch_description">The touch area of the letters most likely to come next grows a little, so a slightly off-center tap still lands on the right key. The keys keep their look and size. Computed on this device from the word you are typing; nothing is stored or sent. Not used in password, email or web address fields.</string>
+    <string name="keyboard_settings_touch_description">The most likely letters become a little easier to hit. Computed on the device, nothing is kept.</string>
     <string name="keyboard_settings_touch_zones_debug">Show key areas (debug)</string>
 
     <!-- Écran « Langues » (piste C) : liste des langues, détail d'une langue (disposition, dictionnaire, retrait). -->
     <!-- Page « Thème » (lot T5) -->
-    <string name="theme_title">Theme</string>
+    <string name="theme_title">Appearance</string>
     <string name="theme_section_keyboard">Keyboard</string>
     <string name="theme_choice_system">System</string>
     <string name="theme_choice_light">Light</string>
@@ -583,7 +585,6 @@
     <string name="theme_choice_system_description">System, automatic</string>
     <string name="theme_choice_dynamic">Dynamic color</string>
     <string name="theme_section_color">Color</string>
-    <string name="theme_color_explanation">The color applies to the Enter key, the buttons and the selections of the keyboard, in light and dark. It has no effect with Dynamic color.</string>
     <string name="accent_violet">Taipo violet</string>
     <string name="accent_indigo">Indigo</string>
     <string name="accent_blue">Bright blue</string>
@@ -593,9 +594,8 @@
     <string name="accent_raspberry">Raspberry</string>
     <string name="accent_magenta">Magenta</string>
     <string name="accent_graphite">Graphite</string>
-    <string name="theme_explanation">The theme applies to the keyboard only. System follows the light or dark mode of your device and changes with it. Dynamic color (Android 12 and later) takes the colors of your wallpaper. The app screens always stay dark.</string>
-    <string name="home_row_theme_subtitle">Keyboard colors: %1$s</string>
-    <string name="button_theme">Theme</string>
+    <string name="home_row_theme_subtitle">%1$s · %2$s</string>
+    <string name="button_theme">Appearance</string>
     <string name="languages_title">Languages</string>
     <string name="languages_section_keyboard">Keyboard languages</string>
     <string name="languages_summary_device">%1$s · device language</string>
@@ -616,8 +616,8 @@
     <string name="premium_tagline">One time, for life. Everything stays on your phone.</string>
     <string name="premium_colors_title">Nine keyboard colors</string>
     <string name="premium_colors_text">Indigo, Lagoon, Raspberry… The Enter key, the buttons and the selections take the chosen color, in light and dark.</string>
-    <string name="premium_prompts_title">Your own prompts</string>
-    <string name="premium_prompts_text">Rewrite the instructions of correction, chat and transcription so the AI writes like you.</string>
+    <string name="premium_prompts_title">Your own AI instructions</string>
+    <string name="premium_prompts_text">Rewrite the instructions for correction, chat and dictation so the AI writes like you.</string>
     <string name="premium_prompts_example">“Fix the mistakes without changing my style or my wording.”</string>
     <string name="premium_clipboard_title">Extended clipboard</string>
     <string name="premium_clipboard_text">Copies kept 7 days instead of 12 h. Up to 50 pinned items instead of 5.</string>
@@ -626,7 +626,7 @@
     <string name="premium_buy_with_price">Buy the pass · %1$s</string>
     <string name="premium_restore">Restore my purchase</string>
     <string name="premium_active_title">Pass active</string>
-    <string name="premium_active_thanks">Thank you! Colors, custom prompts and the extended clipboard are unlocked.</string>
+    <string name="premium_active_thanks">Thank you! Colors, your AI instructions and the extended clipboard are unlocked.</string>
     <string name="premium_status_pending">Payment pending: the pass will turn on as soon as Google Play confirms it.</string>
     <string name="premium_status_unavailable">Google Play is not available on this device, or the pass could not be loaded. Check your connection and try again.</string>
     <string name="premium_status_error">The purchase did not go through. Nothing was charged; you can try again.</string>
@@ -635,10 +635,10 @@
     <string name="premium_unlock">Unlock with the premium pass</string>
     <string name="premium_locked_item">%1$s, premium pass only</string>
     <string name="home_premium_card_title">Premium pass</string>
-    <string name="home_premium_card_text">Nine keyboard colors, your own prompts and a clipboard that keeps your copies for 7 days.</string>
+    <string name="home_premium_card_text">Nine keyboard colors, your own AI instructions and a clipboard that keeps your copies for 7 days.</string>
     <string name="home_premium_card_button">Discover</string>
     <string name="home_premium_card_close">Hide</string>
-    <string name="home_row_premium_subtitle_offer">Colors, custom prompts, extended clipboard</string>
+    <string name="home_row_premium_subtitle_offer">Colors, AI instructions, extended clipboard</string>
     <string name="home_row_premium_subtitle_active">Active, thank you!</string>
     <string name="home_section_debug">Debug</string>
     <string name="home_debug_premium">Premium pass: %1$s</string>
@@ -650,6 +650,21 @@
     <string name="home_debug_premium_hint">Tap to switch to the next state. This button only exists in debug builds.</string>
     <string name="clipboard_pin_full_free">Limit reached: 5 pinned items in the free version. The premium pass allows 50.</string>
     <string name="clipboard_pin_full_action">See the pass</string>
-    <string name="system_prompt_locked">Editing prompts is part of the premium pass. The default prompt is used.</string>
-    <string name="system_prompt_locked_custom">Editing prompts is part of the premium pass. Your custom prompt is kept and will be used again with the pass.</string>
+    <!-- Onboarding, steps 3 and 4 -->
+    <string name="onboarding_step3_title_done">Test done</string>
+    <string name="onboarding_step4_title">Turn on AI</string>
+    <string name="onboarding_step4_title_done">AI ready</string>
+    <string name="onboarding_step4_hint">Correct, Chat and dictation need a model, downloaded once and used offline. Recommended for your phone: %1$s.</string>
+    <string name="onboarding_step4_hint_locked">Available once Taipo is selected.</string>
+    <string name="onboarding_step4_button">Download %1$s (%2$s)</string>
+    <!-- Gesture tips (once each) -->
+    <string name="tip_delete_words">Tip: swipe left on ⌫ to delete whole words.</string>
+    <string name="tip_move_cursor">Tip: swipe on the space bar to move the cursor.</string>
+    <string name="tip_switch_language">Tip: long-press Enter, then slide to the globe to switch language.</string>
+    <string name="tip_digits">Tip: long-press a letter of the top row to type its digit.</string>
+    <string name="home_debug_gpu">AI acceleration: %1$s</string>
+    <string name="home_debug_gpu_cpu">CPU</string>
+    <string name="home_debug_gpu_gpu">GPU (trial)</string>
+    <string name="home_debug_gpu_failed">GPU failed, CPU</string>
+    <string name="home_debug_gpu_hint">The model is reloaded at the next AI action. If the GPU fails or crashes the keyboard, Taipo falls back to the CPU on its own.</string>
 </resources>

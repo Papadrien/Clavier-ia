@@ -28,17 +28,9 @@ class SystemPromptsActivity : Activity() {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }
 
-    /** État du pass à la construction des sections : s'il change (achat depuis l'écran du pass), la page est reconstruite. */
-    private var builtWithPremium = false
-
-    override fun onResume() {
-        super.onResume()
-        if (PremiumPass.isActive != builtWithPremium) recreate()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        builtWithPremium = PremiumPass.isActive
+        // Pass premium : la page n'est ouverte qu'avec le pass (la ligne de l'accueil est verrouillée sinon, voir MainActivity).
         setContentView(R.layout.activity_system_prompts)
         val container = findViewById<LinearLayout>(R.id.container_system_prompts)
 
@@ -95,18 +87,7 @@ class SystemPromptsActivity : Activity() {
                 if (preferences.isCustom()) R.string.system_prompt_status_custom else R.string.system_prompt_status_default,
             )
         }
-        // Pass premium : sans lui, le champ montre le prompt utilisé (celui par défaut), en lecture seule ; « Enregistrer » ouvre le pass.
         val save = section.findViewById<Button>(R.id.button_save_system_prompt)
-        if (!PremiumPass.isActive) {
-            edit.isEnabled = false
-            save.setText(R.string.premium_unlock)
-            section.findViewById<View>(R.id.button_show_default_system_prompt).visibility = View.GONE
-            status.setText(if (preferences.isCustom()) R.string.system_prompt_locked_custom else R.string.system_prompt_locked)
-            edit.setText(preferences.get())
-            save.setOnClickListener { startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_PROMPTS)) }
-            section.findViewById<View>(R.id.button_reset_system_prompt).visibility = View.GONE
-            return
-        }
         edit.setText(preferences.get())
         refreshStatus()
 

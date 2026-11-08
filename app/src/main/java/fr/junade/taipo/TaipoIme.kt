@@ -41,6 +41,7 @@ import fr.junade.taipo.model.ModelPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
@@ -210,6 +211,27 @@ class TaipoIme : InputMethodService() {
     private val correctionEngine by lazy { CorrectionEngine(applicationContext, llmHost) }
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
     private val keyboardPreferences by lazy { KeyboardPreferences(applicationContext) }
+
+    /** Revue UX : astuces de gestes, une fois chacune, dans le bandeau du clavier. */
+    private val gestureTips by lazy { GestureTips(applicationContext) }
+
+    /** Dernier déplacement du curseur par la barre d'espace (ms) : ce n'est pas un déplacement « à la main » dans le champ. */
+    private var lastSpaceCursorMoveAt = 0L
+
+    private fun showGestureTip(tip: GestureTips.Tip?) {
+        tip ?: return
+        val shown = messagePopup.showTip(
+            getString(
+                when (tip) {
+                    GestureTips.Tip.DELETE_WORDS -> R.string.tip_delete_words
+                    GestureTips.Tip.MOVE_CURSOR -> R.string.tip_move_cursor
+                    GestureTips.Tip.SWITCH_LANGUAGE -> R.string.tip_switch_language
+                    GestureTips.Tip.DIGITS -> R.string.tip_digits
+                },
+            ),
+        )
+        if (shown) gestureTips.shown(tip) // pas affichée (clavier pas encore visible) : elle reviendra plus tard
+    }
     private val hapticFeedback by lazy { HapticFeedbackPlayer(applicationContext) }
     private val keySounds by lazy { KeySoundPlayer(applicationContext) }
 
@@ -348,6 +370,26 @@ class TaipoIme : InputMethodService() {
     }
 
 
+    /**
+     * Revue de code (performance) : lectures du champ mises en cache ([InputTextCache]). Toute la saisie passe par
+     * [getCurrentInputConnection], qui renvoie la connexion enveloppée : ni les contrôleurs ni Android n'ont à le savoir.
+     */
+    private val inputTextCache = InputTextCache(SystemClock::uptimeMillis)
+    private var cachingConnection: CachingInputConnection? = null
+
+    override fun getCurrentInputConnection(): InputConnection? {
+        val target = super.getCurrentInputConnection() ?: return null
+        cachingConnection?.takeIf { it.wrapped === target }?.let { return it }
+        inputTextCache.reset() // nouvelle connexion : autre champ, rien n'est connu
+        return CachingInputConnection(target, inputTextCache).also { cachingConnection = it }
+    }
+
+    override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
+        super.onStartInput(attribute, restarting)
+        // Champ (re)lancé : le texte a pu changer ; la sélection initiale donnée par l'éditeur sert de point de départ.
+        inputTextCache.reset(attribute?.initialSelStart ?: -1, attribute?.initialSelEnd ?: -1)
+    }
+
     override fun onCreate() {
         super.onCreate()
         KeyboardTheme.updateSystemConfiguration(resources.configuration)
@@ -412,6 +454,7 @@ class TaipoIme : InputMethodService() {
 
     private fun startInputView(info: EditorInfo?) {
         if (!viewComposer.isComposed) return
+        invalidateLayoutSettings() // réglages modifiés dans l'application pendant que le clavier était masqué
         // onCurrentInputMethodSubtypeChanged() ne se déclenche que sur un
         // *changement* de subtype : on resynchronise ici explicitement au cas
         // où le subtype actif (choisi avant l'affichage du clavier, ou par
@@ -484,6 +527,10 @@ class TaipoIme : InputMethodService() {
         viewComposer.recentEmojiBar.scrollToLatest()
         updateCorrectionBarVisibility()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) inlineSuggestions.applyPending()
+        // Astuce : clavier multilingue, comment changer de langue (une fois, quand le clavier est affiché).
+        if (MultilingualChoice.isActive(keyboardPreferences.multilingualLanguages)) {
+            keyboardView.postDelayed({ showGestureTip(gestureTips.onMultilingualField()) }, LANGUAGE_TIP_DELAY_MS)
+        }
     }
 
     /** Dernière langue envoyée à la mesure d'usage : l'événement ne repart que si elle change (pas à chaque champ). */
@@ -558,6 +605,7 @@ class TaipoIme : InputMethodService() {
      * directement à l'autre ; davantage : liste de choix. Sans effet si le mode n'est pas actif.
      */
     private fun onGlobeSelected() {
+        gestureTips.learned(GestureTips.Tip.SWITCH_LANGUAGE)
         val languages = keyboardPreferences.multilingualLanguages
         when {
             languages.size == 2 -> MultilingualChoice.next(languages, controller.state.language)?.let { switchLanguage(it) }
@@ -635,6 +683,39 @@ class TaipoIme : InputMethodService() {
     override fun onWindowHidden() {
         super.onWindowHidden()
         prompt.resetConversation()
+        // Revue de code (mémoire) : clavier masqué longtemps, les gros moteurs (IA, dictée) sont libérés.
+        idleReleaseJob?.cancel()
+        idleReleaseJob = serviceScope.launch {
+            delay(MemoryRelease.IDLE_RELEASE_MS)
+            releaseHeavyEngines("clavier masqué depuis ${MemoryRelease.IDLE_RELEASE_MS / 60_000} min")
+        }
+    }
+
+    override fun onWindowShown() {
+        super.onWindowShown()
+        idleReleaseJob?.cancel()
+        idleReleaseJob = null
+    }
+
+    /** Libération différée des moteurs quand le clavier reste masqué ([MemoryRelease.IDLE_RELEASE_MS]). */
+    private var idleReleaseJob: Job? = null
+
+    /** Android manque de mémoire : les gros moteurs sont libérés selon [MemoryRelease.shouldRelease]. */
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        if (MemoryRelease.shouldRelease(level, keyboardShown = isInputViewShown)) releaseHeavyEngines("mémoire basse (niveau $level)")
+    }
+
+    /**
+     * Libère le modèle IA et le modèle de dictée s'ils ne servent pas en ce moment (ils se rechargent à la prochaine
+     * utilisation). Le moteur IA est fermé hors du thread principal (la libération d'un gros modèle peut prendre un instant).
+     */
+    private fun releaseHeavyEngines(reason: String) {
+        val voiceReleased = voice.releaseEngineIfIdle()
+        serviceScope.launch {
+            val aiReleased = withContext(Dispatchers.Default) { llmHost.releaseIfIdle() }
+            if (aiReleased || voiceReleased) AppLog.d(TAG, "moteurs libérés ($reason) : IA=$aiReleased dictée=$voiceReleased")
+        }
     }
 
     // ------------------------------------------------------------------
@@ -663,6 +744,7 @@ class TaipoIme : InputMethodService() {
         candidatesEnd: Int,
     ) {
         super.onUpdateSelection(oldSelStart, oldSelEnd, newSelStart, newSelEnd, candidatesStart, candidatesEnd)
+        inputTextCache.onSelectionUpdate(newSelStart, newSelEnd, candidatesStart, candidatesEnd) // avant toute lecture du champ
         // Mode prompt : un tap de l'utilisateur dans le champ de l'application (curseur ou sélection déplacés,
         // hors écho de nos propres insertions comme « Ajouter le texte ») ferme le mode et lui rend le champ.
         val selectionMoved = newSelStart != oldSelStart || newSelEnd != oldSelEnd
@@ -672,6 +754,12 @@ class TaipoIme : InputMethodService() {
         // Dictée en cours : un toucher sur un mot du champ (à corriger) ou l'écho de nos insertions.
         if (isRecording) voice.onCursorMoved(oldSelEnd, newSelStart, newSelEnd, suggestions.typedRecently())
         correction.onSelectionUpdated(newSelStart, newSelEnd)
+        // Astuce : le curseur posé à la main dans le champ (pas par la frappe, la dictée, l'IA ni la barre d'espace).
+        val manualMove = viewComposer.isComposed && newSelStart == newSelEnd && newSelStart != oldSelStart &&
+            !prompt.active && !isRecording && !correctionInProgress && !correction.isSelfEditEcho() &&
+            !suggestions.typedRecently() &&
+            android.os.SystemClock.uptimeMillis() - lastSpaceCursorMoveAt > SPACE_MOVE_ECHO_MS
+        if (manualMove) showGestureTip(gestureTips.onManualCursorMove())
         if (!correctionInProgress && viewComposer.isComposed) {
             updateCorrectionBarVisibility()
         }
@@ -710,9 +798,15 @@ class TaipoIme : InputMethodService() {
 
     private fun onKeyPressed(key: Key) {
         hapticFeedback.perform(hapticIntensity)
+        messagePopup.dismissBannerOnKey() // un message d'information s'efface à la frappe suivante (une astuce reste)
         if (keySoundEnabled) keySounds.play(KeySound.forAction(key.action))
         suggestions.markTyping() // le curseur qui bouge ensuite suit la frappe (suggestions de complétion)
         clearHighlightIfNeeded()
+        // Astuces : ⌫ appuyé plusieurs fois de suite (effacer des mots en glissant), chiffre tapé depuis les symboles.
+        val action = key.action
+        val digitFromSymbols = action is KeyAction.TypeChar && action.char.isDigit() &&
+            controller.state.activeLayout != LayoutId.LETTERS && !numberRowEnabled
+        showGestureTip(gestureTips.onKey(backspace = action == KeyAction.Backspace, digitFromSymbols = digitFromSymbols))
 
         // Story 5.1 : en mode prompt, tout passe par le tampon du prompt, avec les mêmes traitements que
         // le champ de l'application (autocorrection et annulation, double espace, apprentissage,
@@ -1075,6 +1169,8 @@ class TaipoIme : InputMethodService() {
      * éventuelle sélection et respecte les caractères composés du champ.
      */
     private fun onCursorMoved(steps: Int) {
+        lastSpaceCursorMoveAt = android.os.SystemClock.uptimeMillis()
+        gestureTips.learned(GestureTips.Tip.MOVE_CURSOR)
         if (prompt.active) {
             hapticFeedback.perform(hapticIntensity.cursorMoveFeedback())
             if (keySoundEnabled) keySounds.play(KeySound.CURSOR_MOVE)
@@ -1474,13 +1570,34 @@ class TaipoIme : InputMethodService() {
         bottomRowKeys = keyboardPreferences.bottomRowKeys
     }
 
+    /**
+     * Réglages de disposition lus par [applyState], qui tourne à chaque touche et à chaque déplacement du curseur : relus
+     * seulement quand la langue change ou à l'ouverture d'un champ ([invalidateLayoutSettings]), pas à chaque appel.
+     */
+    private class LayoutSettings(val language: KeyboardLanguage, val arrangement: LetterArrangement, val compactEnter: Boolean)
+
+    private var layoutSettings: LayoutSettings? = null
+
+    /** Les réglages ont pu changer (ouverture d'un champ) : relus au prochain [applyState]. */
+    private fun invalidateLayoutSettings() {
+        layoutSettings = null
+    }
+
+    private fun layoutSettings(language: KeyboardLanguage): LayoutSettings =
+        layoutSettings?.takeIf { it.language == language } ?: LayoutSettings(
+            language,
+            // Disposition des lettres choisie pour la langue active (écran « Langues » des paramètres).
+            keyboardPreferences.letterArrangementOf(language),
+            // Multilingue : le globe est en exposant sur Entrée, qui se rétrécit au profit de l'espace.
+            MultilingualChoice.isActive(keyboardPreferences.multilingualLanguages),
+        ).also { layoutSettings = it }
+
     private fun applyState() {
         // Hauteur constante : les pages de symboles (4 rangées) prennent la hauteur du clavier de lettres affiché,
         // qui compte une rangée de plus avec la rangée de chiffres. Évite de faire défiler l'application dessous.
-        // Disposition des lettres choisie pour la langue active (écran « Langues » des paramètres).
-        val arrangement = keyboardPreferences.letterArrangementOf(controller.state.language)
-        // Multilingue : le globe est en exposant sur Entrée, qui se rétrécit au profit de l'espace.
-        val compactEnter = MultilingualChoice.isActive(keyboardPreferences.multilingualLanguages)
+        val settings = layoutSettings(controller.state.language)
+        val arrangement = settings.arrangement
+        val compactEnter = settings.compactEnter
         keyboardView.minRowCount =
             Keyboards.layoutOf(LayoutId.LETTERS, controller.state.language, numberRowEnabled, fieldType, bottomRowKeys, arrangement, compactEnter).rows.size
         keyboardView.layout =
@@ -1494,6 +1611,10 @@ class TaipoIme : InputMethodService() {
 
     companion object {
         private const val TAG = "TaipoIme"
+
+        /** Astuces : délai avant celle de la langue (le clavier finit d'apparaître), écho d'un déplacement par l'espace. */
+        private const val LANGUAGE_TIP_DELAY_MS = 800L
+        private const val SPACE_MOVE_ECHO_MS = 600L
 
         /** « Remplacer le texte » : nombre maximal de caractères lus de part et d'autre du curseur pour vider le champ. */
         private const val REPLACE_MAX_CHARS = 10_000

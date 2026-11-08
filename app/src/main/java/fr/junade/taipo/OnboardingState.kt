@@ -9,9 +9,15 @@ enum class StepStatus { DONE, CURRENT, LOCKED }
  *
  * - Étape 1 faite quand Taipo figure parmi les méthodes de saisie activées.
  * - Étape 2 inaccessible tant que Taipo n'est pas activé ; faite quand c'est la méthode de saisie par défaut.
- * - Étape 3 (essai) accessible quand Taipo est sélectionné ; elle n'est jamais « faite » (rien ne permet de le savoir).
+ * - Étape 3 (essai) accessible quand Taipo est sélectionné ; faite quand quelques mots ont été tapés dans le champ d'essai ([tried]).
+ * - Étape 4 (activer l'IA) accessible quand Taipo est sélectionné ; faite quand un modèle IA est installé ([aiReady]).
  */
-data class OnboardingState(val enabled: Boolean, val selected: Boolean) {
+data class OnboardingState(
+    val enabled: Boolean,
+    val selected: Boolean,
+    val tried: Boolean = false,
+    val aiReady: Boolean = false,
+) {
 
     val activate: StepStatus = if (enabled) StepStatus.DONE else StepStatus.CURRENT
 
@@ -21,17 +27,42 @@ data class OnboardingState(val enabled: Boolean, val selected: Boolean) {
         else -> StepStatus.CURRENT
     }
 
-    val tryIt: StepStatus = if (enabled && selected) StepStatus.CURRENT else StepStatus.LOCKED
+    val tryIt: StepStatus = when {
+        !(enabled && selected) -> StepStatus.LOCKED
+        tried -> StepStatus.DONE
+        else -> StepStatus.CURRENT
+    }
+
+    val activateAi: StepStatus = when {
+        !(enabled && selected) -> StepStatus.LOCKED
+        aiReady -> StepStatus.DONE
+        else -> StepStatus.CURRENT
+    }
+
+    /** Les quatre étapes sont faites. */
+    val complete: Boolean get() = enabled && selected && tried && aiReady
 
     companion object {
         /**
          * [enabledImePackages] : paquets des méthodes de saisie activées ; [defaultImeId] : identifiant de la méthode
          * par défaut (« paquet/.Service », null si inconnu) ; [packageName] : paquet de l'application.
          */
-        fun from(enabledImePackages: Collection<String>, defaultImeId: String?, packageName: String): OnboardingState {
+        fun from(
+            enabledImePackages: Collection<String>,
+            defaultImeId: String?,
+            packageName: String,
+            tried: Boolean = false,
+            aiReady: Boolean = false,
+        ): OnboardingState {
             val enabled = packageName in enabledImePackages
             val selected = defaultImeId?.substringBefore('/') == packageName
-            return OnboardingState(enabled = enabled, selected = enabled && selected)
+            return OnboardingState(enabled = enabled, selected = enabled && selected, tried = tried, aiReady = aiReady)
         }
+
+        /** Nombre de mots tapés dans le champ d'essai pour que l'étape 3 soit faite. */
+        const val TRY_WORDS = 3
+
+        /** L'essai est réussi : au moins [TRY_WORDS] mots dans [text]. */
+        fun triedWith(text: CharSequence): Boolean = text.split(Regex("\\s+")).count { it.isNotBlank() } >= TRY_WORDS
     }
 }

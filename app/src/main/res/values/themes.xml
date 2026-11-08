@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Open Sans (lot 02) : police par défaut des composants standards. Les vues du clavier la posent
          explicitement (voir TaipoType), car elles ne reçoivent pas ce thème. -->
     <!-- Écrans de l'application : toujours sombres, quel que soit le thème du système ou du clavier (KeyboardTheme.wrap force
@@ -11,7 +11,7 @@
         <!-- Lot 16 : fond des écrans = fond du clavier (#0E0E0E). Visible aussi sous les barres système (bord à bord). -->
         <item name="android:windowBackground">@color/keyboard_background</item>
         <item name="android:colorAccent">@color/accent</item>
-        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
         <item name="android:fontFamily">@font/open_sans</item>
         <!-- Lot 17 : contrôles standards aux couleurs de la charte (styles : styles.xml). -->
         <item name="android:textColorPrimary">@color/text_primary</item>
@@ -39,7 +39,7 @@
     <!-- Story 2.6 : fenêtre de modification d'un élément du presse-papiers. -->
     <style name="EditDialogTheme" parent="android:Theme.Material.Dialog.NoActionBar">
         <item name="android:colorAccent">@color/accent</item>
-        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
         <item name="android:fontFamily">@font/open_sans</item>
         <!-- Lot 17 : contrôles standards aux couleurs de la charte (styles : styles.xml). -->
         <item name="android:textColorPrimary">@color/text_primary</item>
@@ -60,7 +60,7 @@
     <!-- Pop-up d'information du clavier (remplace les toasts). -->
     <style name="MessageDialogTheme" parent="android:Theme.Material.Dialog.Alert">
         <item name="android:colorAccent">@color/accent</item>
-        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
         <item name="android:fontFamily">@font/open_sans</item>
         <!-- Lot 17 : contrôles standards aux couleurs de la charte (styles : styles.xml). -->
         <item name="android:textColorPrimary">@color/text_primary</item>

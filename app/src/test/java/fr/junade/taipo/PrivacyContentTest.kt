@@ -59,16 +59,16 @@ class PrivacyContentTest {
     )
 
     @Test
-    fun `les 5 sections ont chacune un titre et un texte`() {
+    fun `les 6 sections ont chacune un titre et un texte`() {
         for (l in locales) {
             val strings = l.strings
-            for (n in 1..5) {
+            for (n in 1..6) {
                 assertTrue(!strings["privacy_section_${n}_title"].isNullOrBlank(), "${l.folder} : titre $n")
                 assertTrue(!strings["privacy_section_${n}_body"].isNullOrBlank(), "${l.folder} : texte $n")
             }
-            assertEquals(5, Regex("privacy_section_\\d+_title").findAll(strings.keys.joinToString(" ")).count())
+            assertEquals(6, Regex("privacy_section_\\d+_title").findAll(strings.keys.joinToString(" ")).count())
         }
-        assertEquals(PrivacyContent.sections.size, 5)
+        assertEquals(PrivacyContent.sections.size, 6)
     }
 
     @Test

@@ -1,20 +1,30 @@
 package fr.junade.taipo
 
-import android.content.Context
 import android.app.Activity
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import android.text.Editable
+import android.text.TextWatcher
+import android.text.format.Formatter
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.CompoundButton
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
+import fr.junade.taipo.ai.AiAcceleration
+import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.analytics.AnalyticsPreferences
 import fr.junade.taipo.model.ModelPreferences
+import fr.junade.taipo.model.ModelRecommendation
 import fr.junade.taipo.model.ModelStatus
 import fr.junade.taipo.model.VoiceModelFile
 import fr.junade.taipo.model.VoiceModelPreferences
@@ -36,6 +46,7 @@ class MainActivity : Activity() {
     private lateinit var step1: StepViews
     private lateinit var step2: StepViews
     private lateinit var step3: StepViews
+    private lateinit var step4: StepViews
     private lateinit var tryInput: EditText
 
     /** Relit l'achat du pass chez Google Play à chaque retour sur l'accueil (achat fait ailleurs, remboursement). */
@@ -66,7 +77,21 @@ class MainActivity : Activity() {
         step1 = stepViews(1, R.id.step1_card, R.id.step1_badge, R.id.step1_title, R.id.step1_hint, R.id.button_enable)
         step2 = stepViews(2, R.id.step2_card, R.id.step2_badge, R.id.step2_title, R.id.step2_hint, R.id.button_select)
         step3 = stepViews(3, R.id.step3_card, R.id.step3_badge, R.id.step3_title, R.id.step3_hint, null)
+        step4 = stepViews(4, R.id.step4_card, R.id.step4_badge, R.id.step4_title, R.id.step4_hint, R.id.button_activate_ai)
         tryInput = findViewById(R.id.onboarding_try_input)
+        // Étape 3 : faite dès que quelques mots ont été tapés dans le champ d'essai (retenu, l'étape ne revient pas).
+        tryInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            override fun afterTextChanged(s: Editable?) {
+                if (s == null || homePrefs().getBoolean(KEY_TRIED, false) || !OnboardingState.triedWith(s)) return
+                homePrefs().edit().putBoolean(KEY_TRIED, true).apply()
+                renderOnboarding(readOnboardingState())
+            }
+        })
+        findViewById<View>(R.id.button_activate_ai).setOnClickListener {
+            startActivity(Intent(this, ModelDownloadActivity::class.java))
+        }
 
         findViewById<View>(R.id.button_enable).setOnClickListener {
             startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS))
@@ -77,6 +102,7 @@ class MainActivity : Activity() {
         }
         bindRow(R.id.button_keyboard_settings, R.string.button_keyboard_settings, R.string.home_row_keyboard_settings_subtitle, KeyboardSettingsActivity::class.java)
         bindRow(R.id.button_theme, R.string.button_theme, R.string.home_row_theme_subtitle, ThemeActivity::class.java)
+        bindRow(R.id.button_home_languages, R.string.languages_title, R.string.languages_title, LanguagesActivity::class.java)
         bindRow(R.id.button_personal_dictionary, R.string.button_personal_dictionary, R.string.home_row_personal_dictionary_subtitle, PersonalDictionaryActivity::class.java)
         bindRow(R.id.button_model_download, R.string.button_model_download, R.string.home_row_model_download_subtitle, ModelDownloadActivity::class.java)
         bindRow(R.id.button_model_settings, R.string.button_model_settings, R.string.home_row_model_settings_subtitle, ModelSettingsActivity::class.java)
@@ -91,11 +117,21 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.button_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE
         findViewById<View>(R.id.divider_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE
         bindRow(R.id.button_system_prompts, R.string.button_system_prompts, R.string.home_row_system_prompts_subtitle, SystemPromptsActivity::class.java)
+        // Pass premium : sans lui, la ligne porte un cadenas et ouvre l'écran du pass (lecture et modification des prompts réservées).
+        findViewById<View>(R.id.button_system_prompts).setOnClickListener {
+            val target = if (PremiumPass.isActive) {
+                Intent(this, SystemPromptsActivity::class.java)
+            } else {
+                PremiumActivity.intent(this, PremiumActivity.SOURCE_PROMPTS)
+            }
+            startActivity(target)
+        }
         bindRow(R.id.button_backup, R.string.button_backup, R.string.home_row_backup_subtitle, BackupActivity::class.java)
         bindRow(R.id.button_terms, R.string.button_terms, R.string.home_row_terms_subtitle, TermsActivity::class.java)
         bindRow(R.id.button_licenses, R.string.button_licenses, R.string.home_row_licenses_subtitle, LicensesActivity::class.java)
         bindRow(R.id.button_privacy, R.string.button_privacy, R.string.home_row_privacy_subtitle, PrivacyActivity::class.java)
         setUpPremium()
+        setUpAnalyticsSwitch()
 
         // Titres de groupe annoncés comme des titres par TalkBack (navigation par titres).
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_keyboard), true)
@@ -115,6 +151,7 @@ class MainActivity : Activity() {
         renderOnboarding(readOnboardingState())
         renderModelStatuses()
         renderThemeRow()
+        renderLanguagesRow()
         renderPremium()
         billing.refresh()
     }
@@ -141,6 +178,13 @@ class MainActivity : Activity() {
             renderPremium()
         }
         findViewById<View>(R.id.debug_section).visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.button_debug_gpu).setOnClickListener {
+            val acceleration = AiAcceleration(this)
+            acceleration.setGpuRequested(!acceleration.gpuRequested)
+            // Le moteur chargé (processus du clavier) est fermé : le prochain chargement suit le nouveau réglage.
+            Thread { LlmEngineHost.closeEverywhere() }.start()
+            renderPremium()
+        }
         findViewById<View>(R.id.button_debug_premium).setOnClickListener {
             val states = PremiumPass.DebugOverride.entries
             PremiumPass.setDebugOverride(this, states[(PremiumPass.debugOverride.ordinal + 1) % states.size])
@@ -150,12 +194,21 @@ class MainActivity : Activity() {
 
     private fun renderPremium() {
         val active = PremiumPass.isActive
-        val onboarded = readOnboardingState().let { it.enabled && it.selected }
+        val onboarded = (lastOnboarding ?: readOnboardingState()).let { it.enabled && it.selected }
         val dismissed = homePrefs().getBoolean(KEY_PREMIUM_CARD_DISMISSED, false)
         findViewById<View>(R.id.premium_card).visibility = if (onboarded && !active && !dismissed) View.VISIBLE else View.GONE
         findViewById<View>(R.id.button_premium).findViewById<TextView>(R.id.row_subtitle).setText(
             if (active) R.string.home_row_premium_subtitle_active else R.string.home_row_premium_subtitle_offer,
         )
+        // Ligne « Prompts système » : cadenas à la place du chevron sans pass, annoncé par TalkBack.
+        val prompts = findViewById<View>(R.id.button_system_prompts)
+        prompts.findViewById<ImageView>(R.id.row_chevron)
+            .setImageResource(if (active) R.drawable.ic_chevron_right else R.drawable.ic_lock)
+        prompts.contentDescription = if (active) {
+            null
+        } else {
+            getString(R.string.premium_locked_item, getString(R.string.button_system_prompts))
+        }
         if (BuildConfig.DEBUG) {
             val bought = getString(if (PremiumPass.isPurchased) R.string.home_debug_premium_bought else R.string.home_debug_premium_not_bought)
             val state = when (PremiumPass.debugOverride) {
@@ -164,10 +217,29 @@ class MainActivity : Activity() {
                 PremiumPass.DebugOverride.INACTIVE -> getString(R.string.home_debug_premium_inactive)
             }
             findViewById<TextView>(R.id.button_debug_premium).text = getString(R.string.home_debug_premium, state)
+            val acceleration = AiAcceleration(this)
+            val gpu = when {
+                !acceleration.gpuRequested -> R.string.home_debug_gpu_cpu
+                acceleration.gpuFailed -> R.string.home_debug_gpu_failed
+                else -> R.string.home_debug_gpu_gpu
+            }
+            findViewById<TextView>(R.id.button_debug_gpu).text = getString(R.string.home_debug_gpu, getString(gpu))
         }
     }
 
     private fun homePrefs() = getSharedPreferences(HOME_PREFS, MODE_PRIVATE)
+
+    /** « Mes données » : partage des données d'utilisation anonymes (Aptabase), déplacé ici depuis les paramètres du clavier. */
+    private fun setUpAnalyticsSwitch() {
+        val analyticsPreferences = AnalyticsPreferences(this)
+        findViewById<CompoundButton>(R.id.switch_analytics).apply {
+            isChecked = analyticsPreferences.isEnabled
+            setOnCheckedChangeListener { _, checked ->
+                analyticsPreferences.isEnabled = checked
+                if (checked) Analytics.setting(this@MainActivity, "analytics", true)
+            }
+        }
+    }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
@@ -177,11 +249,19 @@ class MainActivity : Activity() {
         }
     }
 
-    /** Lot T5 : sous-titre de la ligne « Thème » = thème choisi, relu au retour de la page (le choix s'y fait). */
+    /** Ligne « Apparence » : thème et couleur choisis (« Sombre · Lagon »), relus au retour de la page (le choix s'y fait). */
     private fun renderThemeRow() {
-        val choice = KeyboardPreferences(this).themeChoice
+        val preferences = KeyboardPreferences(this)
+        val palette = AccentPalette.effective(preferences.accentPalette, PremiumPass.isActive)
         findViewById<View>(R.id.button_theme).findViewById<TextView>(R.id.row_subtitle).text =
-            getString(R.string.home_row_theme_subtitle, getString(choice.labelRes()))
+            getString(R.string.home_row_theme_subtitle, getString(preferences.themeChoice.labelRes()), getString(palette.labelRes()))
+    }
+
+    /** Ligne « Langues » : les langues en service (« Français, English »), comme dans les paramètres du clavier. */
+    private fun renderLanguagesRow() {
+        val languages = KeyboardPreferences(this).languageSetup.inUse(automaticKeyboardLanguage())
+        findViewById<View>(R.id.button_home_languages).findViewById<TextView>(R.id.row_subtitle).text =
+            languages.joinToString(", ") { it.displayName }
     }
 
     /**
@@ -250,7 +330,9 @@ class MainActivity : Activity() {
         val manager = getSystemService(InputMethodManager::class.java)
         val enabledPackages = manager?.enabledInputMethodList.orEmpty().map { it.packageName }
         val defaultId = Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
-        return OnboardingState.from(enabledPackages, defaultId, packageName)
+        val models = ModelPreferences(this)
+        val aiReady = models.activeModel()?.let(models::isInstalled) == true
+        return OnboardingState.from(enabledPackages, defaultId, packageName, homePrefs().getBoolean(KEY_TRIED, false), aiReady)
     }
 
     /** Ligne de réglage de l'accueil (lot UX 3) : pose le titre et le sous-titre, ouvre [target] au toucher. */
@@ -270,11 +352,27 @@ class MainActivity : Activity() {
         action = action?.let { findViewById<View>(it) },
     )
 
+    /** Dernier état lu de l'installation : la carte du pass s'en sert sans relire Android (lecture qui interroge le système). */
+    private var lastOnboarding: OnboardingState? = null
+
     private fun renderOnboarding(state: OnboardingState) {
+        lastOnboarding = state
         renderStep(step1, state.activate, R.string.onboarding_step1_title, R.string.onboarding_step1_title_done, R.string.onboarding_step1_hint, R.string.onboarding_step1_hint)
         renderStep(step2, state.choose, R.string.onboarding_step2_title, R.string.onboarding_step2_title_done, R.string.onboarding_step2_hint, R.string.onboarding_step2_hint_locked)
-        renderStep(step3, state.tryIt, R.string.onboarding_step3_title, R.string.onboarding_step3_title, R.string.onboarding_step3_hint, R.string.onboarding_step3_hint_locked)
-        tryInput.visibility = if (state.tryIt == StepStatus.CURRENT) View.VISIBLE else View.GONE
+        renderStep(step3, state.tryIt, R.string.onboarding_step3_title, R.string.onboarding_step3_title_done, R.string.onboarding_step3_hint, R.string.onboarding_step3_hint_locked)
+        renderStep(step4, state.activateAi, R.string.onboarding_step4_title, R.string.onboarding_step4_title_done, R.string.onboarding_step4_hint, R.string.onboarding_step4_hint_locked)
+        // Étape 4 : le modèle recommandé selon la mémoire du téléphone, nommé dans l'explication et sur le bouton.
+        if (state.activateAi == StepStatus.CURRENT) {
+            val memory = ActivityManager.MemoryInfo()
+            getSystemService(ActivityManager::class.java)?.getMemoryInfo(memory)
+            val model = ModelRecommendation.recommended(memory.totalMem)
+            val name = model.displayName(this)
+            val size = Formatter.formatShortFileSize(this, model.approxDownloadBytes ?: model.approxSizeBytesMax)
+            step4.hint.text = getString(R.string.onboarding_step4_hint, name)
+            (step4.action as? TextView)?.text = getString(R.string.onboarding_step4_button, name, size)
+        }
+        // Le champ d'essai reste là tant que l'étape 3 est en cours, et juste après (pour finir sa phrase).
+        tryInput.visibility = if (state.tryIt == StepStatus.CURRENT || (state.tryIt == StepStatus.DONE && tryInput.hasFocus())) View.VISIBLE else View.GONE
     }
 
     private fun renderStep(
@@ -304,5 +402,6 @@ class MainActivity : Activity() {
     private companion object {
         const val HOME_PREFS = "home_prefs"
         const val KEY_PREMIUM_CARD_DISMISSED = "premium_card_dismissed"
+        const val KEY_TRIED = "onboarding_tried"
     }
 }

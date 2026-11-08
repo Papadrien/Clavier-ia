@@ -247,6 +247,9 @@ internal class SuggestionHost(private val ime: ImeHostContext) : SuggestionContr
 internal class MessagePopupHost(private val ime: ImeHostContext) : MessagePopup.Host {
     override fun windowToken(): IBinder? =
         if (ime.viewComposer.isComposed && ime.keyboardView.isAttachedToWindow) ime.keyboardView.windowToken else null
+
+    override fun bannerAnchor(): View? =
+        if (ime.viewComposer.isComposed && ime.correctionBar.isShown) ime.correctionBar else null
 }
 
 /** Mode prompt (conversation, génération, zone de chat) : voir [PromptModeController]. */

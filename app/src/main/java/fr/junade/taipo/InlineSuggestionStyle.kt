@@ -1,7 +1,10 @@
 package fr.junade.taipo
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Icon
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.autofill.inline.UiVersions
 import androidx.autofill.inline.common.TextViewStyle
 import androidx.autofill.inline.common.ViewStyle
@@ -12,6 +15,11 @@ import androidx.autofill.inline.v1.InlineSuggestionUi
  * (voir [InlineSuggestionColors]) : fond de la pastille, couleur du titre et du sous-titre. Les icônes gardent leurs
  * couleurs d'origine (logo du gestionnaire de mots de passe).
  */
+// Android 11+ seulement (appelé par InlineSuggestionsController.createRequest, lui-même réservé à l'API 30).
+// `ViewStyle.Builder.setBackground` est marqué « restreint » dans androidx.autofill alors que c'est l'API documentée pour
+// le fond des pastilles : faux positif connu du lint, supprimé ici seulement.
+@RequiresApi(Build.VERSION_CODES.R)
+@SuppressLint("RestrictedApi")
 internal fun buildInlineSuggestionStyle(context: Context): UiVersions.Style {
     val colors = InlineSuggestionColors.forMode(
         KeyboardTheme.mode,

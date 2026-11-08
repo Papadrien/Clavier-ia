@@ -66,7 +66,9 @@ tasks.register<JavaExec>("ktlintBaseline") {
     description = "ktlint : régénère quality/ktlint-baseline.xml (dette acceptée à ce jour)."
     ktlintSetup()
     isIgnoreExitValue = true
-    doFirst { ktlintBaselineOnDisk.delete() }
+    // Fichier capturé dans une variable locale : compatible avec le cache de configuration de Gradle (gradle.properties).
+    val baselineToDelete = ktlintBaselineOnDisk
+    doFirst { baselineToDelete.delete() }
     args(listOf("--relative", "--baseline=$ktlintBaselineFile") + ktlintPatterns)
 }
 
