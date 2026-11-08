@@ -46,6 +46,9 @@
     <dimen name="taipo_space_bar_length">22dp</dimen>
     <!-- Demi-longueur ci-dessus ; épaisseur (lot 06 : 6 px fixes avant, soit ~2,3 dp sur Pixel 9). -->
     <dimen name="taipo_space_bar_thickness">3dp</dimen>
+    <!-- Nom de la langue active, écrit sur la barre d'espace à la place du trait ; marge gardée de chaque côté de la touche. -->
+    <dimen name="taipo_space_label_text_size">13dp</dimen>
+    <dimen name="taipo_space_label_margin">10dp</dimen>
 
     <!-- ===== Bulle d'accents (appui long) ===== -->
     <dimen name="taipo_popup_corner_radius">20dp</dimen>

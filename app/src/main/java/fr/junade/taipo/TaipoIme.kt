@@ -1488,6 +1488,7 @@ class TaipoIme : InputMethodService() {
         keyboardView.layout =
             Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled, fieldType, bottomRowKeys, arrangement, compactEnter)
         keyboardView.isShifted = controller.state.isShifted
+        keyboardView.spaceLabel = controller.state.language.displayName // nom de la langue sur l'espace, à la place du trait
         keyboardView.isCapsLock = controller.state.isCapsLock
         keyboardView.showsGlobeOnEnter = compactEnter
     }
