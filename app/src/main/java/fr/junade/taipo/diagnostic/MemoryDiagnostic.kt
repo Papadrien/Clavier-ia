@@ -65,7 +65,7 @@ class MemoryDiagnostic(private val context: Context) {
         val probes = words + words.map { it + "q" }
         val mapLookupNs = timeLookups(probes) { map[it] ?: -1L }
         val compactLookupNs = timeLookups(probes) { compact.frequencyOf(it) }
-        report("Recherche (ns par mot) : actuelle ${mapLookupNs}, compacte $compactLookupNs")
+        report("Recherche (ns par mot) : actuelle $mapLookupNs, compacte $compactLookupNs")
 
         // 4. Mots courants pour les corrections types : les plus fréquents de 5 lettres et plus, deux lettres inversées.
         val typos = map.entries.asSequence().filter { it.key.length >= MIN_TYPO_LENGTH && it.key.all(Char::isLetter) }

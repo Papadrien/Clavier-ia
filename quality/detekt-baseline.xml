@@ -10,6 +10,7 @@
     <ID>ComplexCondition:EditDistance.kt$EditDistance$i &gt; 1 &amp;&amp; j &gt; 1 &amp;&amp; a[i - 1] == b[j - 2] &amp;&amp; a[i - 2] == b[j - 1]</ID>
     <ID>ComplexCondition:EmojiTabsView.kt$EmojiTabsView.TabsAccessibility$icons.isEmpty() || x &lt; 0f || x &gt;= width || y &lt; 0f || y &gt;= height</ID>
     <ID>ComplexCondition:EnglishAutocorrectionTest.kt$EnglishAutocorrectionTest$!(c.isLetter() || c == '\'' || c == '-') &amp;&amp; text.isNotEmpty() &amp;&amp; !text.last().isWhitespace()</ID>
+    <ID>ComplexCondition:FieldEditor.kt$FieldEditor$selected.isNotEmpty() || (start &gt;= 0 &amp;&amp; end &gt;= 0 &amp;&amp; start != end)</ID>
     <ID>ComplexCondition:FrenchConfusions.kt$FrenchConfusions$j &gt;= 0 &amp;&amp; words[j].isClean &amp;&amp; words[j].trailing == null &amp;&amp; words[j].core in skip</ID>
     <ID>ComplexCondition:FrenchContextCorrector.kt$FrenchContextCorrector$k &gt;= 0 &amp;&amp; skipped &lt; 2 &amp;&amp; tokens[k].isPlain &amp;&amp; tokens[k].core in ADVERBS_BETWEEN</ID>
     <ID>ComplexCondition:FrenchContextCorrector.kt$FrenchContextCorrector$previous == null &amp;&amp; sentenceStart &amp;&amp; (index &gt; 0 || (next != null &amp;&amp; next.isPlain &amp;&amp; next.head.isNotEmpty()))</ID>
@@ -24,14 +25,13 @@
     <ID>ComplexCondition:LlmEngineHost.kt$LlmEngineHost$current != null &amp;&amp; loadedModel == model &amp;&amp; loadedFile?.path == file.path &amp;&amp; (loadedWithAudio || !withAudio)</ID>
     <ID>ComplexCondition:ModelFileFetcher.kt$ModelFileFetcher$requestedFrom &lt;= 0 || range == null || range.start != requestedFrom || range.end != range.total - 1</ID>
     <ID>ComplexCondition:ModelInstaller.kt$ModelInstaller$directory != null &amp;&amp; !directory.isDirectory &amp;&amp; !directory.mkdirs() &amp;&amp; !directory.isDirectory</ID>
+    <ID>ComplexCondition:PromptKeyHandler.kt$PromptKeyHandler$autocorrection != null &amp;&amp; key.action == KeyAction.Space &amp;&amp; result.commit == " " &amp;&amp; spaceAlreadyAfter</ID>
     <ID>ComplexCondition:PromptModeController.kt$PromptModeController$host.isRecording() || host.isCorrectionInProgress() || host.isTranscriptionInProgress() || generationBusy()</ID>
     <ID>ComplexCondition:ProtectedWords.kt$ProtectedWords$(before == null || !isWordChar(before)) &amp;&amp; (after == null || !isWordChar(after))</ID>
     <ID>ComplexCondition:SendIconDrawable.kt$SendIconDrawable$ValueAnimator.areAnimatorsEnabled() &amp;&amp; (mode == SendIconMode.LOADING || launching || ringTime &gt;= 0f)</ID>
     <ID>ComplexCondition:SpaceBetweenRow.kt$SpaceBetweenRow$animate &amp;&amp; previous != null &amp;&amp; previous != left &amp;&amp; role != RowRole.FILL &amp;&amp; !BarReveal.isEntering(child)</ID>
-    <ID>ComplexCondition:TaipoIme.kt$TaipoIme$(isRecording &amp;&amp; !voice.wordPickActive) || correctionInProgress || hasSelection()</ID>
-    <ID>ComplexCondition:TaipoIme.kt$TaipoIme$autocorrection != null &amp;&amp; key.action == KeyAction.Space &amp;&amp; result.commit == " " &amp;&amp; prompt.buffer.textAfterCursor.startsWith(" ")</ID>
-    <ID>ComplexCondition:TaipoIme.kt$TaipoIme$key.action == KeyAction.Space &amp;&amp; autocorrection == null &amp;&amp; !hasSelection() &amp;&amp; fieldType.doubleSpacePeriod</ID>
-    <ID>ComplexCondition:TaipoIme.kt$TaipoIme$selected.isNotEmpty() || (lastSelectionStart &gt;= 0 &amp;&amp; lastSelectionEnd &gt;= 0 &amp;&amp; lastSelectionStart != lastSelectionEnd)</ID>
+    <ID>ComplexCondition:TaipoIme.kt$TaipoIme$(isRecording &amp;&amp; !voice.wordPickActive) || correctionInProgress || fieldEditor.hasSelection()</ID>
+    <ID>ComplexCondition:TaipoIme.kt$TaipoIme$key.action == KeyAction.Space &amp;&amp; autocorrection == null &amp;&amp; !fieldEditor.hasSelection() &amp;&amp; fieldType.doubleSpacePeriod</ID>
     <ID>ComplexCondition:TaipoIme.kt$TaipoIme$viewComposer.isComposed &amp;&amp; prompt.active &amp;&amp; selectionMoved &amp;&amp; !correction.isSelfEditEcho()</ID>
     <ID>ComplexCondition:WordForms.kt$WordForms$word.none { it == 'ä' || it == 'ö' || it == 'ü' || it == 'ß' }</ID>
     <ID>CyclomaticComplexMethod:AutocorrectBench.kt$AutocorrectBench$private fun heldoutMeasures( root: File, dictionary: Dictionary, frequencies: Map&lt;String, Long&gt;, metrics: LinkedHashMap&lt;String, Double&gt;, details: MutableList&lt;String&gt;, )</ID>
@@ -52,9 +52,9 @@
     <ID>CyclomaticComplexMethod:ModelDownloadActivity.kt$ModelDownloadActivity$private fun render(model: AiModel)</ID>
     <ID>CyclomaticComplexMethod:ModelInstaller.kt$ModelInstaller$fun install( input: InputStream, destination: File, expectedBytes: Long, expectedSha256: String?, isCancelled: () -&gt; Boolean = { false }, onProgress: (Long) -&gt; Unit = {}, onVerifying: () -&gt; Unit = {}, beforeCommit: () -&gt; Unit = {}, resumeFrom: Long = 0L, keepPartial: () -&gt; Boolean = { false }, ): InstallResult</ID>
     <ID>CyclomaticComplexMethod:NextWordModel.kt$NextWordModel.Companion$fun tokenize(text: String): List&lt;String&gt;</ID>
+    <ID>CyclomaticComplexMethod:PromptKeyHandler.kt$PromptKeyHandler$fun onKey(key: Key)</ID>
     <ID>CyclomaticComplexMethod:SuggestionController.kt$SuggestionController$fun refresh(textBeforeCursor: String)</ID>
     <ID>CyclomaticComplexMethod:TaipoIme.kt$TaipoIme$private fun onKeyPressed(key: Key)</ID>
-    <ID>CyclomaticComplexMethod:TaipoIme.kt$TaipoIme$private fun onPromptKeyPressed(key: Key)</ID>
     <ID>CyclomaticComplexMethod:TaipoIme.kt$TaipoIme$private fun onWordSuggestionTapped(suggestion: WordSuggestion)</ID>
     <ID>CyclomaticComplexMethod:TaipoIme.kt$TaipoIme$private fun startInputView(info: EditorInfo?)</ID>
     <ID>CyclomaticComplexMethod:VoiceModelDownloadActivity.kt$VoiceModelDownloadActivity$private fun renderVoice()</ID>

@@ -151,3 +151,17 @@ des mises en page et des allocations évités, plus deux mesures sur le serveur 
 1. `./gradlew :macrobenchmark:connectedBenchmarkAndroidTest -Ptaipo.benchmark=true` avant / après cette revue, consigner les médianes.
 2. Générer le profil de démarrage (`BaselineProfileGenerator`), le copier en `app/src/main/baseline-prof.txt`.
 3. Essayer le GPU (bouton debug) et comparer la vitesse de génération.
+
+## Diagnostic mémoire sur le téléphone (08/11/2026)
+
+Sans ordinateur, le journal du système n'est pas lisible : l'écran **Diagnostic mémoire** (builds debug, section Debug en bas
+de l'accueil) mesure sur le téléphone, pour chaque langue en service :
+- la table des fréquences actuelle (`HashMap<String, Long>`) : mots, mémoire, temps de lecture ;
+- le prototype compact `CompactWordTable` (core) : tous les mots dans un seul tableau de caractères, fréquences dans un
+  tableau, table de hachage d'entiers ; mémoire, temps de construction, part de la table actuelle ;
+- la vitesse de recherche des deux tables (mots présents et absents) ;
+- le dictionnaire complet tel que le clavier le construit (mémoire, chargement), la durée de 100 corrections types
+  (deux lettres inversées dans des mots courants) et de 100 calculs de la bande de suggestions.
+
+« Copier les résultats » met le texte dans le presse-papiers. Aucun mot n'est rapporté. Le prototype n'est **pas** branché
+dans le clavier : il le sera si les mesures montrent un gain net de mémoire sans perte de vitesse.
