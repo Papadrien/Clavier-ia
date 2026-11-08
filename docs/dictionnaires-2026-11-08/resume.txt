@@ -1,0 +1,7 @@
+fr: 735098 lignes, 251704 valides ; inconnus des deux sources : 113230 ; retirés : 35643 ; ajoutés : 54454 (dont 2649 proposables)
+en: 133339 lignes, 133339 valides ; inconnus des deux sources : 35745 ; retirés : 12161 ; ajoutés : 16496 (dont 782 proposables)
+es: 147805 lignes, 147805 valides ; inconnus des deux sources : 33103 ; retirés : 12247 ; ajoutés : 50780 (dont 544 proposables)
+de: 117170 lignes, 117170 valides ; inconnus des deux sources : 19168 ; retirés : 9754 ; ajoutés : 120540 (dont 4142 proposables)
+it: 237227 lignes, 236874 valides ; inconnus des deux sources : 104633 ; retirés : 32034 ; ajoutés : 66277 (dont 2852 proposables)
+pt: 238176 lignes, 237082 valides ; inconnus des deux sources : 88239 ; retirés : 26775 ; ajoutés : 58315 (dont 783 proposables)
+nl: 245630 lignes, 245606 valides ; inconnus des deux sources : 102598 ; retirés : 27632 ; ajoutés : 54685 (dont 1992 proposables)

@@ -1,207 +1,207 @@
-ik 48571
-de 41373
-het 35267
-is 33010
-een 29606
-je 26859
-tom 23581
-dat 22180
-niet 20620
-van 16594
-in 16415
-hij 15516
-te 15173
-zijn 14057
-ze 11847
-heb 10491
-mijn 9498
-heeft 9438
-op 9357
-we 9210
-en 8712
-wat 8471
-met 8194
-er 8182
-voor 7531
-om 7147
-was 7071
-naar 6594
-ben 6534
-me 6222
-aan 6049
-u 5748
+ik 48575
+de 41596
+het 35340
+is 33019
+een 29785
+je 26879
+tom 23579
+dat 22183
+niet 20623
+van 16631
+in 16419
+hij 15519
+te 15176
+zijn 14097
+ze 11852
+heb 10494
+mijn 9530
+heeft 9445
+op 9362
+we 9211
+en 8741
+wat 8477
+met 8210
+er 8192
+voor 7542
+om 7152
+was 7072
+naar 6596
+ben 6535
+me 6225
+aan 6053
+u 5749
 kan 5474
-dit 5311
-geen 5215
-als 5190
-die 4792
-haar 4501
-hebben 4118
-wil 3966
-jullie 3936
-maar 3891
-deze 3858
+dit 5312
+geen 5248
+als 5195
+die 4803
+haar 4509
+hebben 4121
+wil 3965
+jullie 3938
+deze 3903
+maar 3892
 zal 3780
-zou 3737
-moet 3651
-nog 3632
+zou 3738
+moet 3652
+nog 3633
 weet 3268
-hem 3243
-hoe 3186
-dan 3045
-waar 2996
-zo 2943
-veel 2885
+hem 3242
+hoe 3187
+dan 3047
+waar 2997
+zo 2940
+veel 2917
 waarom 2690
 had 2652
-uit 2570
-zij 2540
+uit 2572
+zij 2542
+over 2445
+hier 2443
 mij 2439
-over 2438
-hier 2436
 mary 2422
-al 2404
+al 2407
 maria 2339
-meer 2271
-wie 2188
-of 2169
-moeten 2134
+meer 2276
+wie 2189
+of 2171
+moeten 2135
 bij 2098
-kunnen 2092
-ons 2085
+kunnen 2093
+ons 2088
 ga 2084
-goed 1968
+goed 1971
 bent 1860
-zich 1849
-nooit 1848
+zich 1851
+nooit 1849
 nu 1822
-erg 1782
-uw 1769
+erg 1781
+uw 1775
 denk 1762
 laat 1731
-jij 1698
-iets 1696
-door 1687
+jij 1699
+iets 1698
+door 1691
 heel 1679
-gaat 1672
-werd 1583
-sami 1568
+gaat 1673
+werd 1581
+sami 1567
 laten 1558
-ook 1507
-hebt 1501
+ook 1508
+hebt 1500
 altijd 1490
 hou 1487
 zei 1479
 gaan 1435
-tijd 1391
-mensen 1366
+tijd 1392
+mensen 1369
+twee 1343
+jaar 1342
 alleen 1341
-jaar 1340
-daar 1336
+daar 1337
 niets 1321
-twee 1312
-tot 1278
-echt 1266
+tot 1279
+echt 1267
+graag 1254
 wij 1247
-graag 1245
 wanneer 1216
 alles 1202
 wordt 1201
-huis 1172
-onze 1164
-tegen 1155
+huis 1175
+onze 1165
+tegen 1157
 ging 1149
-hun 1132
-drie 1106
+hun 1143
+drie 1121
 niemand 1095
 vandaag 1073
 waren 1073
 willen 1052
 toen 1047
 geld 1045
-hoeveel 1020
+hoeveel 1031
 dag 1009
 iemand 1002
-iedereen 999
+iedereen 1000
+jouw 988
 kon 983
-jouw 981
-kunt 974
-eens 961
+kunt 975
 morgen 961
+eens 960
 boek 959
 kom 955
 wel 954
 komt 949
-ge 941
+ge 940
 houdt 933
+nieuwe 919
 zullen 919
-nieuwe 909
-wist 907
-leven 904
+wist 906
+leven 905
 doe 901
-zonder 898
+zonder 900
 auto 886
 mag 874
-vroeg 867
+vroeg 866
 wilde 854
 staat 847
-alle 838
-men 836
-goede 825
+alle 843
+men 837
+goede 830
 geef 818
 beter 816
 kwam 807
-worden 796
+worden 799
 zit 794
-vind 789
+vind 790
 man 776
 toms 772
 vader 771
-hele 768
-ooit 739
+hele 767
 gisteren 738
+ooit 738
 steeds 737
 doen 736
 kinderen 728
 keer 722
-doet 718
+doet 717
 weer 712
 dacht 709
 vraag 705
 elke 704
-werk 700
+werk 701
 zeker 695
-misschien 689
+andere 690
+misschien 688
 weten 688
-andere 682
 na 680
-af 676
+af 675
 net 669
 uur 669
-eerste 661
+eerste 664
 lijkt 652
-onder 640
+onder 641
 helemaal 639
-grote 632
+grote 635
 hond 632
-welke 626
+welke 630
 vaak 623
 moeder 619
+één 618
 ziet 617
-één 617
+omdat 616
 deed 615
-omdat 615
 eten 612
 eet 611
 nodig 604
-gewoon 600
 maakt 600
-spreekt 594
-zag 593
+gewoon 599
+zag 594
 gaf 592
-allemaal 589
-vrouw 589
+allemaal 591
+spreekt 591
 jou 588
+vrouw 587
 elkaar 583
 zin 579
 moest 577
@@ -214,42 +214,42 @@ terug 559
 bijna 558
 kamer 551
 lang 550
-beetje 546
-genoeg 546
+genoeg 548
 water 546
-neem 543
-snel 536
+beetje 545
+neem 544
+snel 537
 toch 536
-hoop 519
+hoop 520
 zegt 514
 wilt 504
 maak 501
-zeg 499
 bang 498
+zeg 498
 woont 491
 mee 481
 ligt 480
 even 477
+oude 469
 taal 468
+paar 467
 per 467
-oude 464
 week 464
 hen 460
 ken 460
-paar 457
-plan 456
+plan 457
 moeilijk 454
 school 452
-naam 451
-komen 449
-zeer 447
+komen 450
+naam 448
+zeer 448
 laatste 443
 zouden 442
 spreek 439
 wou 435
 alsjeblieft 431
 deur 431
-enige 429
+enige 430
 engels 427
 volgende 426
 kijk 423
@@ -262,18 +262,18 @@ zeggen 409
 maken 408
 werkt 408
 leuk 407
+tien 407
+beste 406
 ouders 406
-tien 406
 wees 406
-zoals 405
-beste 402
+zoals 406
 groot 401
-vijf 400
+vijf 401
 broer 399
+leren 399
 vrienden 399
 hadden 398
-leren 398
-tussen 395
+tussen 397
 probleem 393
 toe 392
 land 388
@@ -294,28 +294,28 @@ gelukkig 363
 spijt 363
 woon 359
 geleden 354
-oud 351
-stad 346
-mooie 344
+oud 352
+mooie 348
+stad 345
 zelf 344
 kind 343
 buiten 338
 gedaan 337
+enkele 335
 haat 335
 hulp 335
 stond 334
 zelfs 333
-enkele 331
 blij 330
+maakte 330
 brief 329
 meisje 329
-maakte 328
 achter 326
 vragen 325
 tijdens 322
 trein 322
-liever 321
 zat 321
+liever 320
 boeken 319
 spreken 319
 waarheid 319
@@ -323,27 +323,27 @@ gezegd 317
 voel 316
 samen 313
 plaats 312
-probeer 310
+probeer 311
 alsof 307
 denkt 307
 kent 305
 vindt 300
-dus 298
+dus 299
+zult 298
 vertel 297
-zult 297
 kleine 296
 jongen 295
-heet 294
-nam 291
+nam 294
+heet 291
 ogen 291
 kerstmis 290
 probeerde 290
 wacht 287
+zoveel 285
 layla 284
-zoveel 284
 idee 281
 koffie 281
-liet 281
+liet 280
 alstublieft 278
 bus 277
 leraar 277
@@ -353,34 +353,34 @@ dood 271
 vertelde 271
 volgens 271
 ervan 269
+vier 269
 film 268
 hoelang 268
 staan 267
-woord 267
+woord 266
 zitten 264
 liefde 263
 viel 263
-vier 263
 manier 261
 praat 260
-gebruik 258
-vroeger 258
+gebruik 259
+vroeger 259
 zorgen 258
-iedere 255
-werden 255
+iedere 256
+werden 256
 terwijl 254
 soms 253
 talen 253
 keek 252
+lange 252
 vergeet 252
-lange 250
 fiets 248
 zinnen 248
 begrijp 247
 geeft 247
 hoeft 246
+klein 245
 eerst 244
-klein 244
 nacht 242
 hard 241
 zoek 241
@@ -389,32 +389,32 @@ bel 237
 dezelfde 237
 stop 237
 best 236
-druk 236
+druk 235
 kocht 235
 moe 235
 familie 234
 yanni 234
 zo'n 234
 eerder 233
+zes 232
 gingen 231
 voordat 231
-zes 231
 deel 230
 hand 227
 denken 225
 muziek 225
 sinds 224
+sommige 224
 bleef 223
 leer 223
 maand 223
-sommige 223
+binnen 222
 fout 222
+grootste 222
 langer 222
 slaap 222
 zus 222
 antwoord 221
-binnen 221
-grootste 221
 speelt 221
 pijn 220
 politie 220
@@ -427,25 +427,26 @@ woorden 216
 mogelijk 215
 pas 215
 werken 215
-god 214
 schoenen 214
-weinig 213
+weinig 214
 bed 212
+god 212
 blijven 211
 voelde 211
 slecht 210
+vol 210
 bestaat 209
 foto 209
+telefoon 209
 allebei 208
 dokter 208
 hield 208
 hoorde 208
 kreeg 208
-telefoon 208
 vanavond 208
-vol 208
 zichzelf 208
 ziek 208
+favoriete 207
 gek 207
 drink 206
 minuten 206
@@ -455,54 +456,54 @@ minder 205
 verteld 205
 vorige 205
 kost 204
+soort 204
+welk 204
 bedankt 203
-favoriete 203
 open 203
-welk 203
 john 202
 precies 202
-soort 201
 ter 201
 later 199
 vinden 199
 word 197
 bloemen 195
+geloven 195
 leek 195
 verhaal 195
 want 195
-geloven 194
 japan 194
+problemen 194
 zet 194
 esperanto 193
 half 193
-problemen 193
 rijk 193
 vrouwen 193
 brood 192
+verschillende 192
 vertellen 191
 moment 190
+rode 190
 allergisch 189
-licht 189
+belangrijk 189
 mens 189
-belangrijk 188
-rode 188
+licht 188
 echte 187
 liep 187
+slechte 187
 droeg 186
 geven 186
 gezien 186
-verschillende 186
 wakker 186
 breng 185
 ergens 185
-slechte 185
 ver 185
 helpen 184
 vriendin 184
+hetzelfde 183
 kijkt 183
 vast 183
-hetzelfde 182
 meest 182
+meeste 182
 naast 182
 boos 181
 drinkt 181
@@ -511,7 +512,6 @@ ongeveer 181
 eigenlijk 180
 gebruikt 179
 heen 179
-meeste 179
 reis 179
 zeven 179
 kans 178
@@ -524,22 +524,22 @@ zon 176
 begin 175
 handen 175
 loopt 175
-enkel 173
-mannen 172
+enkel 174
+mannen 173
 uiteindelijk 172
 duidelijk 171
+jaren 171
 jong 171
 slechts 171
 ten 171
 besloten 170
-jaren 170
 koud 170
 tweede 170
 gebeurd 169
+vergeten 169
 zeiden 169
 computer 168
 ouder 168
-vergeten 168
 gelijk 167
 zomer 167
 groter 166
@@ -562,11 +562,11 @@ gemaakt 159
 praten 159
 vorig 159
 vanaf 158
+kwamen 157
 maanden 157
 trots 157
 acht 156
 dertig 156
-kwamen 156
 moeite 156
 geboren 155
 rivier 155
@@ -576,32 +576,33 @@ gemakkelijk 154
 hart 154
 lezen 154
 luister 153
+neemt 153
 niks 153
-neemt 152
-vele 152
+vele 153
 woordenboek 152
-gij 151
+gij 150
 ongeluk 150
 raam 150
+witte 150
 einde 149
-witte 149
+vergadering 149
 kijken 148
 spelen 148
-vergadering 148
+aantal 147
+ieder 147
 nieuws 147
 boven 146
-ieder 146
 oorlog 146
 hoor 144
 krijg 144
 onmiddellijk 144
 thee 144
 verliefd 144
-aantal 143
 gisteravond 143
+lucht 143
 straat 143
+foto's 142
 honger 142
-lucht 142
 nieuw 142
 studenten 142
 glas 141
@@ -613,9 +614,9 @@ winkel 140
 aarde 139
 dochter 139
 makkelijk 139
+speel 139
 overal 138
 restaurant 138
-speel 138
 vreemde 138
 zoiets 138
 valt 137
@@ -655,6 +656,7 @@ gelooft 128
 begonnen 127
 noch 127
 schreef 127
+sprak 127
 staten 127
 vliegtuig 127
 drinken 126
@@ -663,17 +665,16 @@ haal 126
 kleren 126
 paraplu 126
 gezicht 125
-sprak 125
 dikwijls 124
 gebeurt 124
 genoemd 124
 leert 124
+nemen 124
 station 124
 bank 123
-betekent 123
 fouten 123
-nemen 123
 normaal 123
+betekent 122
 buurt 122
 raakte 122
 zwarte 122
@@ -682,28 +683,29 @@ lag 121
 raad 121
 eieren 120
 hoed 120
-hotel 120
 nadat 120
 tv 120
 vlees 120
+hotel 119
 kennen 119
 zette 119
 honden 118
 horloge 118
 kleur 118
-new 118
 geïnteresseerd 117
+japanse 117
 mening 117
 mond 117
+new 117
 paard 117
 plek 117
 proberen 117
 verder 117
 appel 116
+jonge 116
 sleutel 116
 vanwege 116
 dollar 115
-jonge 115
 natuurlijk 115
 voelt 115
 dieren 114
@@ -723,9 +725,10 @@ pak 112
 probeert 112
 stoppen 112
 baby 111
+beide 111
 eruit 111
 gelieve 111
-japanse 111
+nauwelijks 111
 punt 111
 doos 110
 gekocht 110
@@ -733,20 +736,17 @@ getrouwd 110
 koning 110
 langs 110
 les 110
-nauwelijks 110
 spel 110
 baas 109
-daarna 109
 duits 109
 duitsland 109
 hangt 109
 nogal 109
 zijt 109
-beide 108
 brengt 108
+daarna 108
 gewoonlijk 108
 lijken 108
-meneer 108
 zondag 108
 aardig 107
 geval 107
@@ -755,6 +755,7 @@ leest 107
 leg 107
 vogels 107
 zaak 107
+bestaan 106
 feest 106
 frankrijk 106
 katten 106
@@ -768,11 +769,11 @@ stopte 106
 toekomst 106
 vakantie 106
 verdient 106
-bestaan 105
 draag 105
 gevonden 105
 jas 105
 juist 105
+meneer 105
 situatie 105
 zodra 105
 appels 104
@@ -784,15 +785,16 @@ krijgen 104
 loop 104
 tevreden 104
 bekend 103
+schrijft 103
 stuk 103
 zorg 103
+zulke 103
 contact 102
 jongens 102
 krijgt 102
 pizza 102
 hielp 101
 japans 101
-schrijft 101
 klopt 100
 twintig 100
 voet 100
@@ -801,45 +803,45 @@ behalve 99
 bezig 99
 gevoel 99
 kop 99
+kopen 99
 schip 99
 warm 99
-zulke 99
 beginnen 98
 cadeau 98
+hoge 98
 indruk 98
 juiste 98
 kantoor 98
-kopen 98
 rende 98
 vogel 98
 wind 98
+zowel 98
 bedrijf 97
 begrijpen 97
 buitenland 97
-hoge 97
+volledig 97
 wiens 97
-zowel 97
+europese 96
 gebruiken 96
 hekel 96
 leerlingen 96
 negen 96
 regent 96
+rood 96
 televisie 96
-volledig 96
 winter 96
 belde 95
 bezoek 95
 eentje 95
-europese 95
 fles 95
 hoef 95
 lopen 95
-rood 95
 bleek 94
 ermee 94
 geschreven 94
 las 94
 mezelf 94
+prachtige 94
 slapen 94
 trok 94
 verkeerde 94
@@ -847,7 +849,8 @@ zee 94
 advies 93
 last 93
 onmogelijk 93
-prachtige 93
+president 93
+sterk 93
 vrije 93
 zaten 93
 zout 93
@@ -856,9 +859,7 @@ erin 92
 europa 92
 gebouw 92
 gehad 92
-president 92
 rijdt 92
-sterk 92
 verloren 92
 vertrouwen 92
 doel 91
@@ -869,7 +870,6 @@ binnenkort 90
 erover 90
 piano 90
 algerije 89
-allen 89
 berg 89
 bomen 89
 liggen 89
@@ -877,6 +877,7 @@ plezier 89
 reed 89
 tas 89
 waarop 89
+allen 88
 amerika 88
 gesproken 88
 hoefde 88
@@ -887,6 +888,7 @@ schuld 88
 stap 88
 student 88
 wens 88
+amerikaanse 87
 dom 87
 duurt 87
 gezond 87
@@ -902,27 +904,26 @@ ondanks 86
 radio 86
 smaakt 86
 vanuit 86
-amerikaanse 85
 beslissing 85
 mes 85
+miljoen 85
 sleutels 85
 sneller 85
 zelden 85
 helaas 84
-miljoen 84
+hoog 84
+moesten 84
 vertrouw 84
 voorzichtig 84
 zagen 84
 chinees 83
+duitse 83
 eraan 83
 groene 83
-hoog 83
-moesten 83
 ruikt 83
 studeer 83
 taxi 83
 bereid 82
-laatst 82
 opende 82
 stonden 82
 vrees 82
@@ -930,16 +931,19 @@ geprobeerd 81
 gevaarlijk 81
 grond 81
 hoeven 81
+laatst 81
+legde 81
 lichaam 81
 naartoe 81
 ochtend 81
 stil 81
+verkoopt 81
+belangrijkste 80
 daarmee 80
-duitse 80
+dronken 80
 geheim 80
 ijs 80
 jonger 80
-legde 80
 onlangs 80
 rekening 80
 waard 80
@@ -950,43 +954,40 @@ voorbij 79
 wet 79
 bril 78
 donker 78
-dronken 78
+grootvader 78
 haast 78
 honderd 78
 m'n 78
 regels 78
 schijnt 78
+studeert 78
 tokio 78
 veilig 78
 wilden 78
 zaken 78
 avond 77
 beiden 77
-belangrijkste 77
 bloed 77
+gele 77
 gewend 77
-grootvader 77
 hemel 77
 kaart 77
 steek 77
-studeert 77
 suiker 77
 twaalf 77
 vissen 77
+vooral 77
 vriendelijk 77
 wit 77
+auto's 76
 derde 76
 gedachten 76
-gele 76
 marie 76
 mocht 76
 parijs 76
 verjaardag 76
-verkoopt 76
 verliet 76
-vooral 76
 brak 75
-china 75
 dol 75
 gevangenis 75
 gewond 75
@@ -996,6 +997,7 @@ momenteel 75
 pen 75
 planeet 75
 trek 75
+china 74
 concert 74
 eén 74
 geleerd 74
@@ -1038,6 +1040,7 @@ bezocht 70
 brug 70
 dromen 70
 duurde 70
+geweldige 70
 haalde 70
 hoort 70
 hopen 70
@@ -1048,11 +1051,11 @@ verloor 70
 vertrekt 70
 weekend 70
 begreep 69
+betere 69
 diep 69
 dorp 69
 gedacht 69
 gestopt 69
-geweldige 69
 liedje 69
 mooiste 69
 ruzie 69
@@ -1062,8 +1065,8 @@ vergat 69
 warme 69
 angst 68
 bad 68
+bal 68
 beroemd 68
-betere 68
 ernaar 68
 fijn 68
 huizen 68
@@ -1079,11 +1082,13 @@ wedstrijd 68
 wegens 68
 zwart 68
 algemeen 67
-bal 67
 gesprek 67
+internationale 67
 meter 67
+namen 67
 plannen 67
 universiteit 67
+waarin 67
 welkom 67
 zingt 67
 avonds 66
@@ -1094,10 +1099,8 @@ kende 66
 keuze 66
 lid 66
 lied 66
-namen 66
 regering 66
 schiet 66
-waarin 66
 z'n 66
 adem 65
 arme 65
@@ -1106,16 +1109,15 @@ daarover 65
 geluid 65
 geweldig 65
 gitaar 65
-internationale 65
 kerst 65
 luistert 65
 rust 65
 soep 65
-storm 65
 tegenwoordig 65
 vannacht 65
 verrast 65
 volgend 65
+werkelijk 65
 beloof 64
 gras 64
 interesseert 64
@@ -1126,9 +1128,9 @@ potlood 64
 roman 64
 schuldig 64
 spaans 64
+storm 64
 thomas 64
 verkopen 64
-werkelijk 64
 adres 63
 bos 63
 feestje 63
@@ -1144,6 +1146,7 @@ verantwoordelijk 63
 wisten 63
 zul 63
 aandacht 62
+belangrijke 62
 bezit 62
 bioscoop 62
 enig 62
@@ -1153,6 +1156,7 @@ ontslag 62
 oplossing 62
 rest 62
 rook 62
+sla 62
 succes 62
 tranen 62
 vlag 62
@@ -1164,11 +1168,9 @@ kerk 61
 lerares 61
 natuur 61
 onderzoek 61
-sla 61
 steen 61
 voedsel 61
 voorstel 61
-belangrijke 60
 blauw 60
 ding 60
 enorme 60
@@ -1185,6 +1187,7 @@ rij 60
 toestemming 60
 vlug 60
 waarmee 60
+zware 60
 bibliotheek 59
 bill 59
 dragen 59
@@ -1200,13 +1203,14 @@ past 59
 sterven 59
 tijdje 59
 zingen 59
-zware 59
 bewust 58
 brengen 58
 dikke 58
 geloofde 58
 gezin 58
+groep 58
 lachen 58
+soorten 58
 vertaling 58
 voeg 58
 vorm 58
@@ -1218,12 +1222,9 @@ eiland 57
 gevaar 57
 gooi 57
 goud 57
-groep 57
 kosten 57
 koude 57
 onschuldig 57
-soorten 57
-toevallig 57
 totdat 57
 vanochtend 57
 verboden 57
@@ -1240,6 +1241,7 @@ lunch 56
 papier 56
 sliep 56
 tante 56
+toevallig 56
 wachtte 56
 weigerde 56
 york 56
@@ -1251,12 +1253,12 @@ gegeten 55
 geslaagd 55
 interessante 55
 kasteel 55
-klas 55
 koopt 55
 langzaam 55
 lijst 55
 schilderij 55
 sprong 55
+sterke 55
 stuurde 55
 vertrek 55
 vraagt 55
@@ -1269,11 +1271,12 @@ beer 54
 eenvoudig 54
 ervaring 54
 italiaans 54
+klas 54
 lawaai 54
 ongeval 54
 populair 54
 prijzen 54
-sterke 54
+rijden 54
 vallen 54
 vijftig 54
 vreselijk 54
@@ -1286,7 +1289,7 @@ beslist 53
 bleven 53
 ontmoette 53
 opa 53
-rijden 53
+verlaten 53
 vertrok 53
 vlak 53
 vloog 53
@@ -1305,7 +1308,6 @@ slot 52
 spanje 52
 stellen 52
 taak 52
-verlaten 52
 verleden 52
 artikel 51
 dief 51
@@ -1313,6 +1315,7 @@ dik 51
 erger 51
 excuses 51
 ideeën 51
+menselijke 51
 oudste 51
 rijke 51
 rusland 51
@@ -1335,7 +1338,6 @@ italië 50
 kilometer 50
 koeien 50
 kunst 50
-menselijke 50
 papa 50
 paspoort 50
 rima 50
@@ -1357,6 +1359,7 @@ gelezen 49
 geniet 49
 groenten 49
 harde 49
+hoogste 49
 huwelijk 49
 interesse 49
 kleiner 49
@@ -1376,9 +1379,11 @@ blijkbaar 48
 blik 48
 camera 48
 dichter 48
+fijne 48
 gekregen 48
-hoogste 48
+moderne 48
 muis 48
+nederlandse 48
 overtuigd 48
 patiënt 48
 persoonlijk 48
@@ -1398,7 +1403,6 @@ betaald 47
 bob 47
 brieven 47
 ernstig 47
-fijne 47
 gebeuren 47
 gegaan 47
 grootmoeder 47
@@ -1410,9 +1414,6 @@ lessen 47
 liepen 47
 lift 47
 medicijn 47
-mijnheer 47
-moderne 47
-nederlandse 47
 ochtends 47
 onderwerp 47
 ontbreekt 47
@@ -1463,12 +1464,12 @@ latijn 45
 leerling 45
 leger 45
 luisteren 45
+mijnheer 45
 officiële 45
 politiek 45
 rookt 45
 schelen 45
 sloot 45
-waarvoor 45
 zuster 45
 aten 44
 bewijs 44
@@ -1498,6 +1499,7 @@ tekst 44
 telefoonnummer 44
 veranderde 44
 vijand 44
+waarvoor 44
 amerikanen 43
 des 43
 deuren 43
@@ -1534,13 +1536,13 @@ gedicht 42
 gewicht 42
 heer 42
 kookt 42
-mevrouw 42
 onderweg 42
 ongelukkig 42
 pensioen 42
 project 42
 riep 42
 rijbewijs 42
+snelle 42
 spullen 42
 ufo 42
 uitgenodigd 42
@@ -1552,6 +1554,7 @@ auteur 41
 bergen 41
 betaalt 41
 betalen 41
+boerderij 41
 boter 41
 bureau 41
 geest 41
@@ -1562,6 +1565,7 @@ kast 41
 kerstboom 41
 langste 41
 macht 41
+mevrouw 41
 olie 41
 pauze 41
 regelmatig 41
@@ -1579,7 +1583,6 @@ zojuist 41
 aangezien 40
 band 40
 beurt 40
-boerderij 40
 buurman 40
 chocolade 40
 controleer 40
@@ -1591,6 +1594,7 @@ jongste 40
 keken 40
 knoop 40
 kracht 40
+links 40
 mars 40
 pakte 40
 personen 40
@@ -1605,7 +1609,6 @@ trui 40
 uitstekende 40
 uren 40
 veranderen 40
-vlucht 40
 wast 40
 ziel 40
 akkoord 39
@@ -1617,6 +1620,7 @@ echtgenote 39
 eindigt 39
 hing 39
 hobby 39
+hoger 39
 hopelijk 39
 huilen 39
 lieten 39
@@ -1635,6 +1639,7 @@ stropdas 39
 tenminste 39
 val 39
 vertrouwt 39
+website 39
 wellicht 39
 werkelijkheid 39
 zocht 39
@@ -1653,7 +1658,6 @@ glazen 38
 glimlach 38
 hamer 38
 herinnert 38
-hoger 38
 kerel 38
 klimaat 38
 kwijt 38
@@ -1671,10 +1675,10 @@ studeerde 38
 veertig 38
 veroorzaakt 38
 verzoek 38
+vlucht 38
 voelen 38
 vork 38
 vrijdag 38
-website 38
 winkels 38
 zorgt 38
 aangenaam 37
@@ -1697,7 +1701,6 @@ houten 37
 huur 37
 kleding 37
 kus 37
-links 37
 middag 37
 mike 37
 mogelijkheid 37
@@ -1705,7 +1708,6 @@ ogenblik 37
 orde 37
 praatte 37
 rozen 37
-snelle 37
 spiegel 37
 sport 37
 venster 37
@@ -1737,6 +1739,7 @@ smaak 36
 teleurgesteld 36
 tenzij 36
 tijden 36
+verkoop 36
 verlies 36
 vermoord 36
 verre 36
@@ -1772,11 +1775,12 @@ sterker 35
 telt 35
 toegang 35
 top 35
+toren 35
 trouwde 35
 verborgen 35
 verdween 35
 verkocht 35
-verkoop 35
+verliezen 35
 vlieg 35
 vroegen 35
 zwanger 35
@@ -1793,18 +1797,18 @@ hel 34
 honderden 34
 honkbal 34
 huil 34
+keerde 34
 koos 34
 leidt 34
 liefst 34
 mogelijke 34
 morgenochtend 34
 neef 34
+noem 34
 slaapkamer 34
 speciale 34
 supermarkt 34
-toren 34
 verhalen 34
-verliezen 34
 veroorloven 34
 vooraleer 34
 voorstellen 34
@@ -1826,7 +1830,6 @@ herfst 33
 hete 33
 heuvel 33
 huid 33
-keerde 33
 kilo 33
 knop 33
 kranten 33
@@ -1834,7 +1837,6 @@ levend 33
 levende 33
 liedjes 33
 maaltijd 33
-noem 33
 oceaan 33
 papieren 33
 perfect 33
@@ -1860,9 +1862,11 @@ dame 32
 degenen 32
 docent 32
 eeuw 32
+elektrische 32
 geheel 32
 gewone 32
 gewonnen 32
+grotere 32
 handdoek 32
 harder 32
 huilt 32
@@ -1895,10 +1899,8 @@ zondags 32
 alcohol 31
 bagage 31
 bepaald 31
-elektrische 31
 geheugen 31
 genomen 31
-grotere 31
 haatte 31
 india 31
 inwoners 31
@@ -1937,12 +1939,14 @@ wapen 31
 wassen 31
 wetenschappers 31
 zanger 31
+zestig 31
 zuiden 31
 afhankelijk 30
 bananen 30
 betaalde 30
 dankzij 30
 dima 30
+duizenden 30
 ei 30
 enorm 30
 erbij 30
@@ -1962,7 +1966,6 @@ mooier 30
 nodigde 30
 ontkende 30
 opgegroeid 30
-pakje 30
 postzegels 30
 redenen 30
 spaanse 30
@@ -1985,7 +1988,6 @@ blind 29
 computers 29
 cultuur 29
 dienst 29
-duizenden 29
 dure 29
 e 29
 eenvoudige 29
@@ -2005,7 +2007,10 @@ omstandigheden 29
 overkant 29
 overleden 29
 pagina 29
+pakje 29
+perfecte 29
 rechts 29
+roze 29
 sinaasappelsap 29
 spinnen 29
 trekt 29
@@ -2047,19 +2052,17 @@ middernacht 28
 onbeleefd 28
 opdracht 28
 opzet 28
-perfecte 28
 plus 28
 pop 28
 producten 28
 reactie 28
 rechten 28
-roze 28
+sociale 28
 software 28
 staart 28
 stoelen 28
 stoort 28
 straks 28
-symbool 28
 uzelf 28
 verantwoordelijkheid 28
 verdwaald 28
@@ -2069,10 +2072,8 @@ veronderstel 28
 verrassing 28
 verstopte 28
 vertrokken 28
-vlakbij 28
 warmer 28
 wijs 28
-zestig 28
 aangekomen 27
 alice 27
 badkamer 27
@@ -2097,7 +2098,6 @@ hersenen 27
 hierover 27
 hoopt 27
 ijzer 27
-jack 27
 jean 27
 kaarten 27
 klagen 27
@@ -2116,7 +2116,7 @@ planeten 27
 plant 27
 rent 27
 slag 27
-sociale 27
+symbool 27
 tomaten 27
 uitzicht 27
 unie 27
@@ -2126,6 +2126,7 @@ verdienen 27
 vermogen 27
 verzamelen 27
 vijanden 27
+vlakbij 27
 vliegt 27
 voorkeur 27
 vos 27
@@ -2155,12 +2156,15 @@ grijze 26
 groeten 26
 groot-brittannië 26
 heerlijk 26
+heleboel 26
 hierheen 26
 hitte 26
 honing 26
 ie 26
 indien 26
 islamitische 26
+jack 26
+kleinste 26
 knie 26
 langzamer 26
 leeuw 26
@@ -2209,12 +2213,10 @@ ertoe 25
 flessen 25
 gast 25
 geheime 25
-heleboel 25
 herkende 25
 kameel 25
 kerstfeest 25
 kikker 25
-kleinste 25
 leraren 25
 moord 25
 onafhankelijk 25
@@ -2227,7 +2229,6 @@ post 25
 pot 25
 prins 25
 raadde 25
-ren 25
 rondom 25
 schade 25
 schilderijen 25
@@ -2253,6 +2254,7 @@ wierp 25
 woede 25
 zetten 25
 acteur 24
+baby's 24
 barstte 24
 behoren 24
 beren 24
@@ -2276,7 +2278,6 @@ gerust 24
 gevolgen 24
 gezonde 24
 goedkoper 24
-google 24
 grieks 24
 helder 24
 helm 24
@@ -2300,6 +2301,7 @@ plicht 24
 praktijk 24
 punten 24
 regenboog 24
+ren 24
 ruik 24
 schaam 24
 schaken 24
@@ -2386,10 +2388,12 @@ stilte 23
 stinkt 23
 stroom 23
 tamelijk 23
+turkse 23
 uitleg 23
 vecht 23
 veranderd 23
 verplicht 23
+volwassen 23
 voordeel 23
 vuile 23
 vóór 23
@@ -2422,6 +2426,8 @@ gemeen 22
 geregeld 22
 gevangen 22
 golf 22
+google 22
+griekse 22
 heelal 22
 heilige 22
 jackson 22
@@ -2436,6 +2442,7 @@ nood 22
 ongelijk 22
 ontving 22
 openbaar 22
+openbare 22
 overleed 22
 potloden 22
 romans 22
@@ -2449,15 +2456,14 @@ snelheid 22
 stal 22
 tegenovergestelde 22
 toegeven 22
-turkse 22
 tweeduizend 22
 uitgeput 22
 universum 22
 verbeter 22
 verbonden 22
 verstopt 22
+vertaalde 22
 virus 22
-volwassen 22
 voorkomen 22
 wezen 22
 wijsheid 22
@@ -2470,18 +2476,20 @@ beeld 21
 begraven 21
 bescherming 21
 beschermt 21
+bijvoorbeeld 21
 daaraan 21
 daarheen 21
 daarop 21
 dames 21
 draak 21
+drugs 21
 dutje 21
+duurder 21
 economische 21
 emmer 21
 friet 21
 gekozen 21
 geldt 21
-griekse 21
 hielpen 21
 kaartjes 21
 keel 21
@@ -2494,6 +2502,7 @@ leende 21
 lichten 21
 lui 21
 min 21
+moedertaalspreker 21
 moeilijkheden 21
 naakt 21
 nadenken 21
@@ -2503,7 +2512,6 @@ olifant 21
 olifanten 21
 online 21
 ontdekte 21
-openbare 21
 paarse 21
 periode 21
 plat 21
@@ -2528,6 +2536,7 @@ uitspraak 21
 vals 21
 veranderingen 21
 vergeleken 21
+vermijd 21
 verslaafd 21
 vervangen 21
 verveel 21
@@ -2549,7 +2558,6 @@ beschouwd 20
 beschuldigd 20
 beweren 20
 bijbel 20
-bijvoorbeeld 20
 bliksem 20
 bloeddruk 20
 boog 20
@@ -2560,9 +2568,7 @@ dagelijks 20
 danst 20
 dieven 20
 doodde 20
-drugs 20
 dubbele 20
-duurder 20
 eender 20
 eerlijke 20
 gedronken 20
@@ -2599,12 +2605,12 @@ ontslagen 20
 ontwikkeling 20
 onzin 20
 overheid 20
-pasta 20
 paul 20
 pleegde 20
 poging 20
 populaire 20
 probeerden 20
+qua 20
 rauwe 20
 red 20
 reeds 20
@@ -2622,9 +2628,7 @@ type 20
 vaderland 20
 vegetariër 20
 veiligheid 20
-vermijd 20
 verspil 20
-vertaalde 20
 vertrouwde 20
 verzameling 20
 vriendinnen 20
@@ -2641,7 +2645,6 @@ zwakke 20
 aarzelde 19
 algiers 19
 amerikaans 19
-as 19
 automatisch 19
 bedenken 19
 belgië 19
@@ -2661,10 +2664,10 @@ doorbrengen 19
 draai 19
 eenheid 19
 eeuwige 19
-ervaren 19
 fuji 19
 gedachte 19
 gefeliciteerd 19
+gemeenschappelijke 19
 generatie 19
 geopend 19
 gescheiden 19
@@ -2700,6 +2703,7 @@ oostenrijk 19
 opeens 19
 operatie 19
 overleven 19
+pasta 19
 plaatselijke 19
 ploeg 19
 poets 19
@@ -2708,7 +2712,6 @@ pond 19
 prettige 19
 productie 19
 proef 19
-qua 19
 reken 19
 romeinen 19
 san 19
@@ -2750,6 +2753,7 @@ achttien 18
 adviseerde 18
 algemene 18
 algerijnse 18
+as 18
 bedankte 18
 bedoelde 18
 begrafenis 18
@@ -2771,6 +2775,7 @@ doorgaans 18
 driemaal 18
 drukte 18
 dwingen 18
+ervaren 18
 examens 18
 expres 18
 flink 18
@@ -2859,6 +2864,7 @@ voormalige 18
 voorstelling 18
 vooruit 18
 vredesnaam 18
+vrouwelijke 18
 wasmachine 18
 werkwoorden 18
 wijdde 18
@@ -2871,6 +2877,7 @@ aardbeien 17
 allerlei 17
 apen 17
 apparaat 17
+arabische 17
 bak 17
 bekeek 17
 bekeerde 17
@@ -2898,10 +2905,10 @@ gas 17
 gebakken 17
 geboorte 17
 gemakkelijke 17
-gemeenschappelijke 17
 gemiddeld 17
 geruchten 17
 getal 17
+getallen 17
 gewassen 17
 glimlacht 17
 handtas 17
@@ -2957,7 +2964,6 @@ voer 17
 vooraf 17
 voornamelijk 17
 vreemdeling 17
-vrouwelijke 17
 vuil 17
 waardevolle 17
 wachtten 17
@@ -2976,12 +2982,12 @@ aanwezigheid 16
 aard 16
 aardbevingen 16
 aarzel 16
+accent 16
 achterkant 16
 actrice 16
 afbeelding 16
 allergische 16
 anna 16
-arabische 16
 baard 16
 banden 16
 behandelde 16
@@ -3005,13 +3011,13 @@ centimeter 16
 danste 16
 deelde 16
 detail 16
+dienen 16
 dozijn 16
 drukke 16
 evenveel 16
 fins 16
 gehele 16
 gelukkiger 16
-getallen 16
 goden 16
 gods 16
 graf 16
@@ -3023,10 +3029,10 @@ grot 16
 hangen 16
 heerlijke 16
 heerst 16
-hondje 16
 hongaars 16
 ideale 16
 ijsberen 16
+inclusief 16
 ingang 16
 inkopen 16
 kerstcadeautjes 16
@@ -3034,7 +3040,6 @@ kerstkaart 16
 kopjes 16
 kritiek 16
 kwalijk 16
-la 16
 leed 16
 lepel 16
 letterlijk 16
@@ -3074,11 +3079,13 @@ stand 16
 stelen 16
 technologie 16
 tegenstelling 16
+tekent 16
 telefoontje 16
 teruggekomen 16
 terugkeer 16
 ticket 16
 totale 16
+tweehonderd 16
 uitgegeven 16
 vaders 16
 velden 16
@@ -3097,6 +3104,8 @@ washington 16
 wed 16
 weeg 16
 wenen 16
+wier 16
+zachte 16
 zaklamp 16
 zevende 16
 zichtbaar 16
@@ -3107,7 +3116,6 @@ zwaard 16
 zwom 16
 zwommen 16
 aangevallen 15
-accent 15
 bakker 15
 ballon 15
 beantwoord 15
@@ -3124,13 +3132,13 @@ buurvrouw 15
 dans 15
 depressief 15
 diamant 15
-dienen 15
 dikker 15
 dinsdag 15
 doodsbang 15
 drank 15
 duitsers 15
 eekhoorn 15
+egel 15
 egypte 15
 erheen 15
 essentieel 15
@@ -3153,9 +3161,9 @@ grootouders 15
 grootte 15
 hawaï 15
 hierna 15
+hondje 15
 hongaarse 15
 humor 15
-inclusief 15
 januari 15
 kabels 15
 kanten 15
@@ -3169,6 +3177,7 @@ kleedde 15
 kleinkinderen 15
 kleinzoon 15
 koste 15
+la 15
 leen 15
 leerkracht 15
 leider 15
@@ -3216,16 +3225,17 @@ sturen 15
 tapijt 15
 teen 15
 tekenen 15
-tekent 15
 telefonisch 15
 titel 15
-tokyo 15
 tomaat 15
 trof 15
 trump 15
+typisch 15
+uien 15
 uiteraard 15
 uitslag 15
 vaart 15
+vel 15
 venetië 15
 verbergt 15
 verbeteren 15
@@ -3233,17 +3243,16 @@ verborg 15
 verbrand 15
 verdriet 15
 verschenen 15
+vlaamse 15
 vochten 15
 voordelen 15
 waaruit 15
 watermeloen 15
 werkten 15
 wezens 15
-wier 15
 wint 15
 woonkamer 15
 wortel 15
-zachte 15
 zitplaats 15
 zonde 15
 zongen 15
@@ -3282,7 +3291,6 @@ drijft 14
 drong 14
 droomde 14
 durft 14
-egel 14
 eisen 14
 file 14
 functie 14
@@ -3331,6 +3339,7 @@ meende 14
 meervoud 14
 mijzelf 14
 milieu 14
+militaire 14
 munt 14
 naald 14
 negeer 14
@@ -3369,19 +3378,15 @@ super 14
 tellen 14
 tentoonstelling 14
 terecht 14
-the 14
 tijger 14
+tokyo 14
 traditie 14
 treinstation 14
-tweehonderd 14
 tweeling 14
 twitter 14
-typisch 14
-uien 14
 vak 14
 varken 14
 varkens 14
-vel 14
 verbaast 14
 verfde 14
 verkleedde 14
@@ -3498,7 +3503,6 @@ mannelijke 13
 mantel 13
 merendeel 13
 microfoon 13
-militaire 13
 moeilijkste 13
 nagedacht 13
 nationaliteit 13
@@ -3530,6 +3534,7 @@ reservering 13
 rijken 13
 rijkste 13
 roemeens 13
+romaanse 13
 schakel 13
 scheelt 13
 schop 13
@@ -3563,7 +3568,6 @@ verward 13
 verwijderd 13
 vieze 13
 vijfhonderd 13
-vlaamse 13
 vlam 13
 vlogen 13
 voegen 13
@@ -3589,6 +3593,7 @@ zwitserse 13
 aangereden 12
 aardappels 12
 adelaar 12
+afschuwelijke 12
 agent 12
 antieke 12
 architect 12
@@ -3601,6 +3606,7 @@ bekendste 12
 bemoei 12
 bepalen 12
 beperkt 12
+beroemdste 12
 beschermde 12
 beviel 12
 bewegen 12
@@ -3651,6 +3657,7 @@ geneeskunde 12
 gesneden 12
 gespannen 12
 gespeeld 12
+gestoken 12
 getroffen 12
 gevangenisstraf 12
 gezelschap 12
@@ -3658,10 +3665,10 @@ gids 12
 gordel 12
 grappige 12
 groenland 12
+grotendeels 12
 halsketting 12
 hamburger 12
 handschrift 12
-heten 12
 historische 12
 houding 12
 inkomen 12
@@ -3736,7 +3743,6 @@ rekent 12
 restjes 12
 revolutie 12
 roemeense 12
-romaanse 12
 romantische 12
 rots 12
 sammy 12
@@ -3751,6 +3757,7 @@ spreekwoord 12
 steekt 12
 strak 12
 strikt 12
+tempo 12
 troost 12
 uitgaven 12
 uitgevonden 12
@@ -3767,6 +3774,7 @@ vergissing 12
 vermoedde 12
 verschilt 12
 verzeker 12
+video's 12
 vies 12
 voorwerpen 12
 waaronder 12
@@ -3788,7 +3796,6 @@ aanvaarden 11
 aanval 11
 accepteer 11
 accepteerde 11
-afschuwelijke 11
 anderhalf 11
 andermans 11
 apotheek 11
@@ -3802,7 +3809,6 @@ bediende 11
 beloven 11
 benijd 11
 bereikt 11
-beroemdste 11
 beschaving 11
 beslag 11
 besmettelijke 11
@@ -3825,6 +3831,7 @@ ceremonie 11
 champagne 11
 chauffeur 11
 chocolademelk 11
+communiceren 11
 conclusie 11
 condoom 11
 conflict 11
@@ -3869,7 +3876,6 @@ gepast 11
 gerechtigheid 11
 geslagen 11
 geslapen 11
-gestoken 11
 getuige 11
 gevangenen 11
 gezocht 11
@@ -3877,12 +3883,12 @@ giet 11
 gisternacht 11
 gordijn 11
 groepen 11
-grotendeels 11
 haan 11
 hamburgers 11
 handel 11
 handje 11
 herstellen 11
+heten 11
 heus 11
 hoefden 11
 horizon 11
@@ -3915,9 +3921,11 @@ letten 11
 levert 11
 maart 11
 makkelijke 11
+maling 11
 marika 11
 massa 11
 media 11
+middeleeuwen 11
 misbruik 11
 misverstand 11
 monster 11
@@ -3955,6 +3963,7 @@ potje 11
 puntje 11
 raket 11
 rechtstreeks 11
+reeks 11
 respecteert 11
 richt 11
 rivieren 11
@@ -3987,7 +3996,6 @@ springt 11
 startte 11
 ste 11
 stilletjes 11
-tempo 11
 terugkeren 11
 testen 11
 tijdperk 11
@@ -4068,7 +4076,7 @@ btw 10
 carlos 10
 caïro 10
 christus 10
-communiceren 10
+collega's 10
 concentreer 10
 cool 10
 dapper 10
@@ -4117,6 +4125,7 @@ jaag 10
 james 10
 journalisten 10
 kanaal 10
+kapotte 10
 karakter 10
 ketel 10
 kijkje 10
@@ -4137,13 +4146,11 @@ liter 10
 logica 10
 luxemburg 10
 madrid 10
-maling 10
 marokko 10
 medisch 10
 meid 10
 meng 10
 meubilair 10
-middeleeuwen 10
 middellandse 10
 minimumloon 10
 ministerie 10
@@ -4175,6 +4182,7 @@ originele 10
 overdosis 10
 overweeg 10
 paars 10
+pagina's 10
 pakken 10
 parkeerde 10
 picasso 10
@@ -4188,9 +4196,9 @@ pure 10
 ratten 10
 realiseren 10
 rede 10
-reeks 10
 regenseizoen 10
 rijker 10
+risico's 10
 rookte 10
 schaamt 10
 schadelijk 10
@@ -4223,6 +4231,7 @@ telefoontjes 10
 tennissen 10
 testament 10
 thailand 10
+the 10
 toegevoegd 10
 toetsenbord 10
 training 10
@@ -4276,7 +4285,6 @@ wc 10
 weggaan 10
 werkloosheid 10
 wijzigingen 10
-windows 10
 woedend 10
 wraak 10
 yumi 10
@@ -4299,7 +4307,6 @@ allah 9
 aller 9
 alpen 9
 ambassadeur 9
-american 9
 anne 9
 argumenten 9
 auto-ongeluk 9
@@ -4308,7 +4315,6 @@ baat 9
 balkon 9
 banken 9
 bedacht 9
-bedoelt 9
 beest 9
 begrip 9
 begroette 9
@@ -4357,12 +4363,14 @@ drankjes 9
 dreigde 9
 dreigt 9
 durven 9
+egyptische 9
 eigendom 9
 eng 9
 engel 9
 eva 9
 factor 9
 farid 9
+festival 9
 gedeelte 9
 gedragen 9
 geduurd 9
@@ -4412,7 +4420,6 @@ juli 9
 julia 9
 kalender 9
 kamergenoot 9
-kapotte 9
 keizer 9
 kerken 9
 kern 9
@@ -4566,11 +4573,13 @@ vrezen 9
 waart 9
 warms 9
 wasmiddel 9
+webstek 9
 wee 9
 weigeren 9
 weliswaar 9
 wiel 9
 wijzer 9
+windows 9
 wisselen 9
 wisselgeld 9
 worst 9
@@ -4590,6 +4599,7 @@ ali 8
 alsjeblief 8
 ambitie 8
 ambtenaar 8
+american 8
 ana 8
 antarctica 8
 appelen 8
@@ -4602,6 +4612,7 @@ bakte 8
 bankje 8
 beantwoordde 8
 bedekte 8
+bedoelt 8
 bedreigd 8
 begeleidde 8
 behoud 8
@@ -4627,6 +4638,7 @@ buitenaardse 8
 bukte 8
 burger 8
 canadezen 8
+cd's 8
 cellen 8
 centrale 8
 chocola 8
@@ -4659,7 +4671,6 @@ edison 8
 eenvoud 8
 eenzaamheid 8
 effectief 8
-egyptische 8
 eigenschappen 8
 elleboog 8
 essentie 8
@@ -4669,7 +4680,6 @@ exacte 8
 factuur 8
 familieleden 8
 fan 8
-festival 8
 filosoof 8
 fluit 8
 gebruikersnaam 8
@@ -4751,6 +4761,7 @@ oefende 8
 oefent 8
 omgaan 8
 omgevallen 8
+omtrent 8
 onbeschoft 8
 onderteken 8
 oneerlijk 8
@@ -4824,6 +4835,7 @@ straffen 8
 strekte 8
 strenge 8
 strijk 8
+strikte 8
 taarten 8
 taro 8
 tatoeage 8
@@ -4886,6 +4898,7 @@ weerbericht 8
 werknemer 8
 winnende 8
 wisselden 8
+youtube 8
 zegene 8
 ziekten 8
 zinloos 8
@@ -4936,6 +4949,7 @@ beschouwde 7
 beschrijft 7
 beschuldig 7
 besta 7
+bestaande 7
 bestudeer 7
 bestudeerde 7
 bestudeert 7
@@ -5070,7 +5084,6 @@ journalistiek 7
 kaak 7
 kale 7
 kamperen 7
-karen 7
 kassa 7
 katholieke 7
 kers 7
@@ -5125,7 +5138,6 @@ oefeningen 7
 oekraïens 7
 okinawa 7
 omhelsden 7
-omtrent 7
 omzet 7
 onderaan 7
 onderbroek 7
@@ -5137,6 +5149,7 @@ ongebruikelijk 7
 ongelukken 7
 ongerust 7
 ongewoon 7
+onnodige 7
 ontbreken 7
 ontdekken 7
 onthou 7
@@ -5203,6 +5216,7 @@ seksuele 7
 shirts 7
 slaagt 7
 slaapkamers 7
+smeer 7
 smoorverliefd 7
 snapte 7
 snelst 7
@@ -5218,7 +5232,6 @@ stijve 7
 stonk 7
 stopcontact 7
 stralen 7
-strikte 7
 strooide 7
 struikelde 7
 studente 7
@@ -5300,8 +5313,8 @@ wespen 7
 white 7
 wijst 7
 winnaar 7
+wk 7
 wonderen 7
-youtube 7
 zakje 7
 zaklantaarn 7
 ziekenwagen 7
@@ -5364,7 +5377,6 @@ beschikken 6
 beschrijving 6
 beslis 6
 besmet 6
-bestaande 6
 betrapte 6
 bevallen 6
 bevatte 6
@@ -5397,6 +5409,7 @@ claude 6
 coach 6
 compromis 6
 concentreren 6
+conservatieve 6
 contactlenzen 6
 corrigeert 6
 creativiteit 6
@@ -5485,6 +5498,7 @@ ijdelheid 6
 importeert 6
 indrukwekkend 6
 ingenieurs 6
+inhaalverbod 6
 installatie 6
 interessantste 6
 interpretatie 6
@@ -5502,6 +5516,7 @@ juwelier 6
 kanarie 6
 kapitaal 6
 karel 6
+karen 6
 kastanjes 6
 katje 6
 keiko 6
@@ -5580,7 +5595,6 @@ onderwerpen 6
 onderwijzen 6
 ongeneeslijke 6
 onmogelijke 6
-onnodige 6
 onschuld 6
 ontbrak 6
 onthield 6
@@ -5664,7 +5678,6 @@ slapeloze 6
 sloop 6
 sluw 6
 smal 6
-smeer 6
 snijdt 6
 spaargeld 6
 sparen 6
@@ -5763,7 +5776,6 @@ wales 6
 werkers 6
 werking 6
 wijziging 6
-wk 6
 wonden 6
 wonnen 6
 woordje 6
@@ -5866,6 +5878,7 @@ boodschappenlijstje 5
 borstelde 5
 borstelt 5
 bowl 5
+brandde 5
 brandend 5
 breedte 5
 breken 5
@@ -5875,16 +5888,17 @@ broncode 5
 bureaulamp 5
 californië 5
 calorieën 5
+camera's 5
 cathy 5
 cel 5
 chagrijnig 5
+chaos 5
 citaat 5
 clown 5
 componist 5
 concept 5
 concurrentie 5
 conditie 5
-conservatieve 5
 corrigeren 5
 criminaliteit 5
 curry 5
@@ -5985,7 +5999,6 @@ gewrichten 5
 gezang 5
 goedkeuring 5
 goedkoopste 5
-gold 5
 goocheltrucs 5
 gooit 5
 gouverneur 5
@@ -6234,6 +6247,7 @@ tegengestelde 5
 tegenwoordige 5
 tennist 5
 tentamen 5
+thema's 5
 thuisgekomen 5
 til 5
 tin 5
@@ -6434,7 +6448,6 @@ boffen 4
 borstvoeding 4
 bosnische 4
 bosnië 4
-brandde 4
 brandstoffen 4
 brave 4
 broekspijpen 4
@@ -6448,7 +6461,6 @@ burgerlijke 4
 buskruit 4
 capaciteit 4
 catalaans 4
-chaos 4
 checkte 4
 chemie 4
 chemisch 4
@@ -6528,6 +6540,7 @@ gehoorzamen 4
 gelukwensen 4
 gemaaid 4
 genade 4
+geneeskundestudenten 4
 genezing 4
 georgië 4
 gepaard 4
@@ -6703,6 +6716,7 @@ obsessie 4
 ochtendgloren 4
 officier 4
 omheining 4
+onbepaalde 4
 onderdrukking 4
 onderging 4
 ondersteunt 4
@@ -6723,6 +6737,7 @@ ontwikkel 4
 ontwikkelen 4
 ontwikkelingen 4
 onvergetelijk 4
+onvertaalbare 4
 oogsten 4
 ophield 4
 opiaten 4
@@ -6775,6 +6790,7 @@ roerde 4
 romanschrijver 4
 ruil 4
 ruimtevaarder 4
+ruw 4
 ruïnes 4
 sally 4
 samenlevingen 4
@@ -6827,6 +6843,7 @@ tafeltje 4
 tegengekomen 4
 tegenhouden 4
 teleurstelling 4
+televisietoren 4
 tennisspeler 4
 termen 4
 ternauwernood 4
@@ -6838,7 +6855,7 @@ tijdverspilling 4
 tocht 4
 toegekend 4
 toestel 4
-toonaangevende 4
+toetsenbordindeling 4
 tornado 4
 treden 4
 trekke 4
@@ -6914,6 +6931,7 @@ verzwegen 4
 vezels 4
 vierkantswortel 4
 vijs 4
+virtuoze 4
 vleierij 4
 vn 4
 voederde 4
@@ -6952,7 +6970,6 @@ wijzig 4
 wis 4
 wolkendek 4
 woordvoerder 4
-world 4
 wreef 4
 xxx 4
 zangers 4
@@ -6968,6 +6985,7 @@ zondagochtend 4
 zonne-energie 4
 zonnebrand 4
 zorgzame 4
+zuil 4
 zwakker 4
 zwaluw 4
 aanbidt 3
@@ -7012,7 +7030,6 @@ antenne 3
 apes 3
 arabië 3
 arresteerden 3
-arthur 3
 artritis 3
 astma 3
 astma-aanval 3
@@ -7021,6 +7038,7 @@ atoomnummer 3
 aubergine 3
 audiovisuele 3
 auteursrechtelijk 3
+axiomatisch 3
 baarde 3
 babylon 3
 bach 3
@@ -7088,6 +7106,7 @@ brandden 3
 brouwde 3
 buitenaards 3
 buitenwijken 3
+bureaulampen 3
 centraal-afrikaanse 3
 central 3
 check-up 3
@@ -7107,7 +7126,6 @@ concurrenten 3
 consumptie 3
 correctie 3
 corrupt 3
-da 3
 dagje 3
 dakloos 3
 dakterras 3
@@ -7188,6 +7206,7 @@ geconcludeerd 3
 gecontacteerd 3
 gediagnosticeerd 3
 geestelijk 3
+gegevensverzameling 3
 gehaast 3
 gehaat 3
 geheimzinnig 3
@@ -7237,6 +7256,7 @@ hartslag 3
 hartverwarmend 3
 havik 3
 havre 3
+hebreeuwse 3
 hechtte 3
 helderblauwe 3
 hepatitis 3
@@ -7256,6 +7276,7 @@ huurder 3
 huwelijkspartner 3
 identieke 3
 ideologie 3
+idiomatische 3
 ii 3
 impact 3
 indiaas 3
@@ -7395,7 +7416,6 @@ omlaag 3
 omvergereden 3
 onafscheidelijke 3
 onbelangrijke 3
-onbepaalde 3
 onderarm 3
 onderdrukt 3
 ondergaat 3
@@ -7462,6 +7482,7 @@ proficiat 3
 programmeur 3
 queen 3
 raadselachtige 3
+radio's 3
 rechtermouw 3
 rechtszaak 3
 reciteerde 3
@@ -7489,7 +7510,6 @@ rotsblok 3
 rouw 3
 rubberen 3
 rukte 3
-ruw 3
 ryoko 3
 saffraan 3
 samantha 3
@@ -7555,6 +7575,7 @@ tafels 3
 tang 3
 ted 3
 teef 3
+televisieprogramma's 3
 terras 3
 terrorisme 3
 terugbrengen 3
@@ -7570,6 +7591,7 @@ tippen 3
 toegepaste 3
 toelaten 3
 tolereert 3
+toonaangevende 3
 transplantatie 3
 treed 3
 treurig 3
@@ -7622,6 +7644,7 @@ vernietigden 3
 vernoemd 3
 verplichting 3
 verrichtte 3
+verser 3
 versliep 3
 verslindt 3
 verstikte 3
@@ -7643,7 +7666,6 @@ vestiging 3
 vesting 3
 vijfduizend 3
 vijfenzestig 3
-virtuoze 3
 vivisectie 3
 vleesetende 3
 vlugger 3
@@ -7652,6 +7674,7 @@ volharding 3
 volkstelling 3
 voorafgaande 3
 voorbarige 3
+voorbeeldzin 3
 voorbereidingen 3
 voorgedaan 3
 voorgestelde 3
@@ -7696,6 +7719,7 @@ wurgde 3
 zaaiden 3
 zalm 3
 zegeningen 3
+zelfrijdende 3
 zelfvertrouwen 3
 zelfverzekerd 3
 zeug 3
@@ -7707,7 +7731,6 @@ zonnen 3
 zoogdier 3
 zooitje 3
 zuckerberg 3
-zuil 3
 zwaarmoedigheid 3
 zwanen 3
 zwavel 3
@@ -7725,7 +7748,9 @@ aansporing 2
 aanzetten 2
 abonneren 2
 abstract 2
+accu's 2
 achterbak 2
+achtervoegsel 2
 ademden 2
 ademhalen 2
 aders 2
@@ -7733,6 +7758,7 @@ afdruk 2
 afgaan 2
 afhangen 2
 afrodisiaca 2
+afslijpen 2
 aftreden 2
 afvalstoffen 2
 afweek 2
@@ -7751,7 +7777,6 @@ anderzijds 2
 andromedanevel 2
 andromedastelsel 2
 antigua 2
-architectural 2
 argwaan 2
 armin 2
 arrestaties 2
@@ -7768,6 +7793,7 @@ baar 2
 balde 2
 barbecueën 2
 baseer 2
+basiseenheid 2
 bast 2
 bebouwde 2
 bedekten 2
@@ -7853,7 +7879,7 @@ cadeaubon 2
 cafeïnevrije 2
 chan 2
 cheeta 2
-cheetah 2
+cholesterolverlagend 2
 christian 2
 commandant 2
 commons 2
@@ -7862,16 +7888,16 @@ community 2
 complicaties 2
 confituur 2
 congo 2
-conservation 2
 container 2
 contrast 2
 cornwall 2
 costa 2
 creationisme 2
-creative 2
 croissant 2
 cyrillische 2
+da 2
 daarnaar 2
+dankdag 2
 dankuwel 2
 dario 2
 debatteren 2
@@ -7884,9 +7910,7 @@ detroit 2
 dicaprio 2
 dieptes 2
 dierenriem 2
-digest 2
 dineer 2
-diogo 2
 directeur-generaal 2
 discrimineren 2
 diversificatie 2
@@ -7900,8 +7924,8 @@ doorbladerde 2
 doorbrak 2
 doorelkaar 2
 down 2
-drag 2
 drogist 2
+droogheid 2
 drukbezet 2
 drummen 2
 duidt 2
@@ -7927,7 +7951,6 @@ etter 2
 experimenteren 2
 facetten 2
 federico 2
-fidget 2
 figurant 2
 filterde 2
 flanel 2
@@ -7974,6 +7997,7 @@ genoom 2
 genoteerd 2
 geobserveerd 2
 geplakt 2
+geprefereerde 2
 geregeerd 2
 gerenommeerde 2
 gerhard 2
@@ -8004,6 +8028,7 @@ graaft 2
 grace 2
 graham 2
 grapefruit 2
+grasmaaimachine 2
 grasmachine 2
 greene 2
 grenada 2
@@ -8024,7 +8049,6 @@ hartkwaal 2
 hartruis 2
 haruko 2
 hazelworm 2
-hebreeuwse 2
 heelt 2
 hees 2
 hein 2
@@ -8087,6 +8111,7 @@ invaliden 2
 investeren 2
 inwoneraantal 2
 ironische 2
+islamofobie 2
 island 2
 jacksons 2
 jamaica 2
@@ -8098,7 +8123,6 @@ joel 2
 joggingpak 2
 jongs 2
 joshua 2
-junko 2
 kaartspelen 2
 kalmerend 2
 kameroen 2
@@ -8108,7 +8132,6 @@ kanoën 2
 kanselier 2
 kapt 2
 karin 2
-kati 2
 keizerlijk 2
 keller 2
 kenmerken 2
@@ -8123,7 +8146,6 @@ keukens 2
 keurt 2
 kiem 2
 kiertje 2
-kinder 2
 kindermisbruik 2
 kinds 2
 kindvriendelijke 2
@@ -8197,17 +8219,17 @@ meineed 2
 mengeling 2
 merel 2
 merrie 2
-mi 2
+meterstanden 2
 miami 2
 migraines 2
 miljardair 2
 minsk 2
-mio 2
 misbruikt 2
 misselijkheid 2
 mistlampen 2
 mistlichten 2
 modeltrein 2
+moedertalen 2
 moediger 2
 moeizame 2
 mokken 2
@@ -8224,11 +8246,11 @@ mythologie 2
 nachtclub 2
 nachtegaal 2
 narcan 2
-nationele 2
 nauwer 2
 nauwgezetheid 2
 neerleggen 2
 neil 2
+netvliesloslating 2
 neuraal 2
 news 2
 nieren 2
@@ -8258,7 +8280,6 @@ ondervraagt 2
 ongeloofwaardig 2
 ongelukkigste 2
 onlosmakelijk 2
-only 2
 onnoemelijke 2
 onopgeloste 2
 ontbering 2
@@ -8266,6 +8287,7 @@ ontdekkingsreiziger 2
 ontkenning 2
 ontvankelijk 2
 ontwenningsverschijnselen 2
+onverrichter 2
 onvoorzichtigheid 2
 ooglid 2
 oogverblindend 2
@@ -8309,10 +8331,10 @@ palm 2
 panama 2
 panorama 2
 parker 2
+participeerden 2
 pasfoto 2
 patriottische 2
 paulina 2
-pcp 2
 pedofiel 2
 penicilline 2
 pepperspray 2
@@ -8327,6 +8349,7 @@ plantjes 2
 plantkunde 2
 plastische 2
 poffertjes 2
+populairwetenschappelijke 2
 pretzels 2
 privéleraar 2
 procentpunt 2
@@ -8335,9 +8358,7 @@ prostaatproblemen 2
 python 2
 races 2
 radio-uitzending 2
-rainbow 2
 rammel 2
-raport 2
 rassen 2
 ratelen 2
 real 2
@@ -8355,6 +8376,7 @@ riekt 2
 ringvinger 2
 roet 2
 rogge 2
+roggemeel 2
 rollende 2
 rommeltje 2
 romp 2
@@ -8401,7 +8423,6 @@ souvenirwinkel 2
 span 2
 spatiebalk 2
 spendeert 2
-spice 2
 spinners 2
 splinternieuwe 2
 spoedden 2
@@ -8437,6 +8458,7 @@ stulpje 2
 suggereert 2
 sukkels 2
 symfonieën 2
+taalniveau 2
 takuya 2
 tampa 2
 tegengehouden 2
@@ -8449,7 +8471,6 @@ teruggestuurd 2
 thai 2
 thanksgiving 2
 thermostaat 2
-thunder 2
 tig 2
 timing 2
 tips 2
@@ -8461,7 +8482,6 @@ toi 2
 topgeheim 2
 topje 2
 touwtjes 2
-trade 2
 transport 2
 trapleuning 2
 traumatische 2
@@ -8486,6 +8506,7 @@ vasile 2
 vaststelling 2
 vaticaanstad 2
 veelal 2
+veelgelezen 2
 veelvraat 2
 veldfles 2
 venijn 2
@@ -8568,6 +8589,8 @@ wedloop 2
 weerspiegeling 2
 wek 2
 wereldeconomie 2
+wereldproductie 2
+werklustig 2
 werner 2
 wezenloos 2
 wijzers 2
@@ -11712,6 +11735,7 @@ eens naar 39
 eens wat 39
 er werd 39
 ergens anders 39
+foto's van 39
 gedacht dat 39
 geen goede 39
 haar haar 39
@@ -13137,6 +13161,7 @@ dan maria 27
 de beurt 27
 de dagen 27
 de duivel 27
+de foto's 27
 de heer 27
 de kaart 27
 de menselijke 27
@@ -14011,6 +14036,7 @@ een belangrijk 23
 een dagboek 23
 een gelukkig 23
 een kwestie 23
+een moedertaalspreker 23
 een rivier 23
 een storm 23
 een tandarts 23
@@ -14576,6 +14602,7 @@ deed je 21
 dertig dollar 21
 deze bloemen 21
 deze buurt 21
+deze foto's 21
 die kerel 21
 die u 21
 dit heeft 21
@@ -16351,6 +16378,7 @@ tom sprong 17
 tom stuurde 17
 tom vertellen 17
 trek je 17
+twee auto's 17
 uw hond 17
 uw kinderen 17
 vader een 17
@@ -17815,6 +17843,7 @@ is zo'n 14
 jaren niet 14
 je ergens 14
 je excuses 14
+je foto's 14
 je hart 14
 je heb 14
 je hoort 14
@@ -18048,6 +18077,7 @@ van ze 14
 vandaag naar 14
 vanuit het 14
 veel eten 14
+veel foto's 14
 veel geluk 14
 veel nieuwe 14
 veel studenten 14
@@ -19054,6 +19084,7 @@ dat onze 12
 dat toms 12
 dat vaak 12
 de amerikanen 12
+de auto's 12
 de basis 12
 de batterij 12
 de bovenste 12
@@ -21273,6 +21304,7 @@ fabriek produceert 10
 familie woont 10
 fiets voor 10
 fijne verjaardag 10
+foto's zijn 10
 frans geleerd 10
 frans in 10
 franse zin 10
@@ -22200,6 +22232,7 @@ zij houden 10
 zij komt 10
 zij wonen 10
 zijn armen 10
+zijn collega's 10
 zijn door 10
 zijn droom 10
 zijn fouten 10
@@ -22284,6 +22317,7 @@ arme man 9
 auto al 9
 auto moet 9
 auto wassen 9
+auto's zijn 9
 baan gevonden 9
 bal met 9
 bed ga 9
@@ -25470,6 +25504,7 @@ vaak van 8
 vader zijn 8
 valt er 8
 van af 8
+van auto's 8
 van denken 8
 van dezelfde 8
 van frans 8
@@ -26501,6 +26536,8 @@ fijne dag 7
 film gaan 7
 fles met 7
 formulier in 7
+foto's laten 7
+foto's zien 7
 fototoestel is 7
 fout heeft 7
 fout zit 7
@@ -26541,6 +26578,7 @@ geen benzine 7
 geen commentaar 7
 geen computer 7
 geen duits 7
+geen foto's 7
 geen hart 7
 geen kerstcadeau 7
 geen les 7
@@ -27439,6 +27477,7 @@ mist zijn 7
 mocht u 7
 moderne kunst 7
 moeder had 7
+moedertaalspreker van 7
 moeilijk het 7
 moeilijke situatie 7
 moest blijven 7
@@ -29009,6 +29048,7 @@ deur staat 6
 deur stond 6
 deur toe 6
 deur uit 6
+deze auto's 6
 deze dag 6
 deze gegevens 6
 deze gitaar 6
@@ -29108,6 +29148,7 @@ draag een 6
 draagt nooit 6
 draait om 6
 draak is 6
+drie auto's 6
 drie de 6
 drie verschillende 6
 drie zonen 6
@@ -29420,6 +29461,10 @@ film met 6
 financiële problemen 6
 flessen wijn 6
 foto maken 6
+foto's gemaakt 6
+foto's in 6
+foto's maken 6
+foto's op 6
 fout zijn 6
 frankrijk en 6
 frankrijk gaan 6
@@ -32253,6 +32298,9 @@ auto reed 5
 auto uit 5
 auto verkopen 5
 auto zien 5
+auto's en 5
+auto's per 5
+auto's rechts 5
 avondeten klaar 5
 baan kwijt 5
 baan op 5
@@ -32722,6 +32770,7 @@ de praat 5
 de recente 5
 de revolutie 5
 de rijn 5
+de risico's 5
 de robot 5
 de roemeense 5
 de romeinse 5
@@ -32740,6 +32789,7 @@ de straf 5
 de stukken 5
 de technologie 5
 de tel 5
+de televisietoren 5
 de tien 5
 de tiende 5
 de tijger 5
@@ -32764,6 +32814,7 @@ de vroegere 5
 de vulkaan 5
 de wachtzaal 5
 de warmste 5
+de webstek 5
 de wereldbevolking 5
 de westelijke 5
 de wijsheid 5
@@ -33055,6 +33106,7 @@ een hoofd 5
 een huisdier 5
 een huwelijk 5
 een ideale 5
+een inhaalverbod 5
 een insect 5
 een iphone 5
 een job 5
@@ -33425,6 +33477,7 @@ fossiele brandstoffen 5
 foto die 5
 foto heeft 5
 foto te 5
+foto's gezien 5
 fout hebt 5
 fout was 5
 fouten die 5
@@ -33716,6 +33769,7 @@ goede zwemmer 5
 gooi hem 5
 gooide zijn 5
 goud in 5
+graag foto's 5
 graag ik 5
 graag rond 5
 graag uit 5
@@ -35732,6 +35786,7 @@ opnieuw zal 5
 optimistisch zijn 5
 oren niet 5
 oud boek 5
+oude foto's 5
 oude schuur 5
 oude tijd 5
 ouder uit 5
@@ -36582,6 +36637,7 @@ verkeerd begrijpen 5
 verkeerd verbonden 5
 verkeerd verstaan 5
 verkoop van 5
+verkoopt auto's 5
 verlangen om 5
 verleden is 5
 verlegen en 5
@@ -37709,6 +37765,9 @@ auto ging 4
 auto maar 4
 auto ons 4
 auto verkocht 4
+auto's is 4
+auto's op 4
+auto's van 4
 avond om 4
 avonds altijd 4
 azijn en 4
@@ -37720,6 +37779,7 @@ baas niet 4
 baas was 4
 baby heeft 4
 baby huilde 4
+baby's en 4
 bacteriën zijn 4
 bad genomen 4
 bad nemen 4
@@ -38581,6 +38641,7 @@ de wielen 4
 de wijk 4
 de winters 4
 de wolven 4
+de woordvolgorde 4
 de worst 4
 de zangeres 4
 de zetel 4
@@ -38818,6 +38879,7 @@ doof aan 4
 door heel 4
 door hen 4
 door iemand 4
+door moedertaalsprekers 4
 door van 4
 door veel 4
 door wie 4
@@ -39213,6 +39275,7 @@ een vliegtuigongeluk 4
 een vloek 4
 een vluchtige 4
 een volledige 4
+een voorbeeldzin 4
 een voordeel 4
 een voorgevoel 4
 een vooruitgang 4
@@ -39404,6 +39467,7 @@ enkel bewijs 4
 enkel dat 4
 enkel idee 4
 enkel verstuikt 4
+enkele foto's 4
 enkele zin 4
 enorme hond 4
 er absoluut 4
@@ -39552,6 +39616,8 @@ fluitje van 4
 foto nemen 4
 foto op 4
 foto zien 4
+foto's aan 4
+foto's en 4
 fototoestel gekocht 4
 fototoestel voor 4
 fout die 4
@@ -40544,6 +40610,7 @@ hield me 4
 hielp mijn 4
 hielpen mij 4
 hier binnen 4
+hier bureaulampen 4
 hier dichtbij 4
 hier dikwijls 4
 hier doen 4
@@ -40677,6 +40744,7 @@ hoelang nog 4
 hoelang zou 4
 hoeveel borden 4
 hoeveel eilanden 4
+hoeveel foto's 4
 hoeveel hamburgers 4
 hoeveel inwoners 4
 hoeveel jongens 4
@@ -42239,6 +42307,7 @@ mijn brieven 4
 mijn cd 4
 mijn deel 4
 mijn flat 4
+mijn foto's 4
 mijn gasten 4
 mijn geboorte 4
 mijn geboortestad 4
@@ -44171,6 +44240,7 @@ vecht tegen 4
 vechten tegen 4
 veel aandacht 4
 veel aangekomen 4
+veel auto's 4
 veel belang 4
 veel beroemde 4
 veel bier 4
@@ -44694,6 +44764,7 @@ wat aangekomen 4
 wat andere 4
 wat brengt 4
 wat drinken 4
+wat foto's 4
 wat geef 4
 wat gij 4
 wat hen 4
@@ -45668,6 +45739,7 @@ aankondiging gelezen 3
 aankopen in 3
 aanleg voor 3
 aansteller zijn 3
+aantal auto's 3
 aantal fouten 3
 aantal jaren 3
 aantal keer 3
@@ -46033,6 +46105,7 @@ andere leerlingen 3
 andere meneer 3
 andere persoon 3
 andere stad 3
+andere stemacteur 3
 andere tijd 3
 andere uitweg 3
 andere vormen 3
@@ -46142,6 +46215,9 @@ auto willen 3
 auto wordt 3
 auto zat 3
 auto zitten 3
+auto's botsten 3
+auto's in 3
+auto's te 3
 avond dat 3
 avond naar 3
 avond thuis 3
@@ -46150,6 +46226,7 @@ avond voor 3
 avondeten aan 3
 avondeten gemaakt 3
 avondeten niet 3
+axiomatisch is 3
 baan aangeboden 3
 baan hebben 3
 baan is 3
@@ -46166,6 +46243,7 @@ baat om 3
 baby begon 3
 baby op 3
 baby slaapt 3
+baby's geboren 3
 bad aan 3
 bad en 3
 bad is 3
@@ -47304,6 +47382,7 @@ de eerstvolgende 3
 de eettafel 3
 de egyptenaren 3
 de eigenschappen 3
+de eikenprocessierups 3
 de ekster 3
 de elektriciteit 3
 de elfde 3
@@ -47327,6 +47406,7 @@ de geboorteplaats 3
 de gebraden 3
 de gebroeders 3
 de gebroken 3
+de gegevensverzameling 3
 de gelijkenis 3
 de gemakkelijkste 3
 de genezing 3
@@ -47567,6 +47647,7 @@ de tekening 3
 de telefoons 3
 de theems 3
 de theepot 3
+de thema's 3
 de tijden 3
 de tiran 3
 de toearegs 3
@@ -48120,6 +48201,7 @@ dragen jullie 3
 dragen voor 3
 dragen wat 3
 drankje in 3
+drie baby's 3
 drie euro 3
 drie flesjes 3
 drie fouten 3
@@ -48428,6 +48510,7 @@ een fort 3
 een fotograaf 3
 een fractie 3
 een framboos 3
+een frikandel 3
 een fris 3
 een frisdrank 3
 een furry 3
@@ -49419,6 +49502,8 @@ foto hangt 3
 foto in 3
 foto met 3
 foto was 3
+foto's nemen 3
+foto's toe 3
 fotograferen is 3
 fototoestel verloren 3
 fout toe 3
@@ -50772,6 +50857,7 @@ heeft ontslag 3
 heeft opgenomen 3
 heeft overgewicht 3
 heeft pannenkoeken 3
+heeft pilav 3
 heeft plaatsgevonden 3
 heeft regelmatig 3
 heeft smalle 3
@@ -50965,6 +51051,7 @@ het andromedastelsel 3
 het arme 3
 het atoom 3
 het atoomnummer 3
+het axiomatisch 3
 het badwater 3
 het bedrag 3
 het bekijken 3
@@ -51067,6 +51154,7 @@ het ideale 3
 het iedereen 3
 het ijlen 3
 het inderdaad 3
+het inhaalverbod 3
 het insect 3
 het interieur 3
 het invullen 3
@@ -51161,6 +51249,7 @@ het smeergeld 3
 het soms 3
 het spaanse 3
 het spellen 3
+het stadsbeeld 3
 het stel 3
 het stemmen 3
 het sterrenbeeld 3
@@ -51259,6 +51348,7 @@ hier beter 3
 hier doet 3
 hier eigenlijk 3
 hier familieleden 3
+hier foto's 3
 hier frans 3
 hier gaan 3
 hier gaat 3
@@ -51608,6 +51698,7 @@ huilt vaak 3
 huis begint 3
 huis bij 3
 huis binnengaat 3
+huis foto's 3
 huis gebracht 3
 huis gekomen 3
 huis geschilderd 3
@@ -52122,6 +52213,7 @@ is enkel 3
 is familie 3
 is filosofie 3
 is financieel 3
+is foto's 3
 is fris 3
 is frisjes 3
 is gebleven 3
@@ -53700,6 +53792,7 @@ likt de 3
 linda houdt 3
 linkerhand te 3
 links aan 3
+links invoegt 3
 links moeten 3
 links zijn 3
 linux is 3
@@ -54017,6 +54110,7 @@ me eerlijk 3
 me eindelijk 3
 me enorm 3
 me erover 3
+me foto's 3
 me frans 3
 me gaat 3
 me gebreid 3
@@ -54385,7 +54479,9 @@ mijn brein 3
 mijn bronnen 3
 mijn bruiloft 3
 mijn cadeau 3
+mijn cd's 3
 mijn cijfers 3
+mijn collega's 3
 mijn cv 3
 mijn dagen 3
 mijn derde 3
@@ -54401,6 +54497,7 @@ mijn geboorteplaats 3
 mijn geweer 3
 mijn haren 3
 mijn held 3
+mijn hobby's 3
 mijn hoede 3
 mijn hondje 3
 mijn hoop 3
@@ -54443,6 +54540,7 @@ mijn portefeuille 3
 mijn punt 3
 mijn ramen 3
 mijn rechterknie 3
+mijn rechterneusgat 3
 mijn rekeningen 3
 mijn reuk 3
 mijn rivaal 3
@@ -54703,6 +54801,7 @@ mooi meer 3
 mooi toen 3
 mooi woord 3
 mooie blauwe 3
+mooie foto's 3
 mooie glimlach 3
 mooie halsketting 3
 mooie jas 3
@@ -54839,6 +54938,7 @@ nader inzien 3
 nadruk op 3
 nagedachtenis aan 3
 nakomelingen van 3
+nam foto's 3
 nam nog 3
 namen de 3
 namen ongeveer 3
@@ -55523,6 +55623,7 @@ ontvoerd door 3
 ontwijk je 3
 ontwikkelde zich 3
 ontzettend druk 3
+onvertaalbare zinnen 3
 onze baby 3
 onze bagage 3
 onze benzine 3
@@ -55724,6 +55825,7 @@ oven laten 3
 oven voor 3
 over anderen 3
 over astronomie 3
+over auto's 3
 over denken 3
 over denkt 3
 over dingen 3
@@ -55781,6 +55883,7 @@ paella bevat 3
 paella gegeten 3
 pagina om 3
 pagina uit 3
+pagina's van 3
 pak de 3
 pak en 3
 pak hem 3
@@ -56614,6 +56717,7 @@ snel zal 3
 snel ze 3
 snelle auto 3
 snelle eter 3
+snelle loopster 3
 snelle loper 3
 sneller aan 3
 sneller is 3
@@ -57169,6 +57273,7 @@ telefoonnummer van 3
 telefoonnummer vergeten 3
 teleurgesteld uit 3
 televisie uit 3
+televisietoren is 3
 telkens wanneer 3
 tellen in 3
 telt voor 3
@@ -58397,6 +58502,8 @@ veters zijn 3
 via overschrijving 3
 video filmen 3
 video op 3
+video's in 3
+video's op 3
 viel er 3
 viel mary 3
 viel tegen 3
@@ -58404,6 +58511,7 @@ viel wel 3
 vielen flauw 3
 vier jij 3
 vier kinderen 3
+vier naamvallen 3
 vier personen 3
 vier pond 3
 vier poten 3
@@ -58568,6 +58676,7 @@ vond wat 3
 vonden jullie 3
 vonden we 3
 voor alcohol 3
+voor auto's 3
 voor ben 3
 voor biologie 3
 voor bloed 3
@@ -60211,6 +60320,7 @@ zijn broekspijpen 3
 zijn buurland 3
 zijn buurlanden 3
 zijn buurman 3
+zijn cd's 3
 zijn column 3
 zijn conservatief 3
 zijn daad 3
@@ -60668,6 +60778,7 @@ zulk slecht 3
 zulk weer 3
 zulke mensen 3
 zulke momenten 3
+zulke onvertaalbare 3
 zulke vrienden 3
 zulke woorden 3
 zulke zinnen 3
@@ -60977,6 +61088,7 @@ accepteer je 2
 accepteerde het 2
 accepteren dat 2
 accepteren zoals 2
+accu's zijn 2
 acht dollar 2
 acht nemen 2
 acht planeten 2
@@ -61006,6 +61118,7 @@ achterstevoren op 2
 achtertuin leidt 2
 achtertuin moeten 2
 achteruit van 2
+achtervoegsel of 2
 achtervolgd door 2
 achtervolgt een 2
 achthonderd leerlingen 2
@@ -61111,6 +61224,7 @@ afscheid en 2
 afscheid genomen 2
 afscheid is 2
 afschuwelijke misdaden 2
+afslijpen van 2
 afspraak hadden 2
 afspraak naar 2
 afspraak niet 2
@@ -61932,7 +62046,6 @@ arbeiders verloren 2
 arbeiders zo 2
 archief van 2
 architect van 2
-architectural digest 2
 argument te 2
 argumenten om 2
 argwaan jegens 2
@@ -61978,7 +62091,6 @@ arriveerde in 2
 arriveerde te 2
 arriveert er 2
 arrogantie is 2
-arthur kalel 2
 artikel geweldig 2
 artikel in 2
 artikel uit 2
@@ -62092,6 +62204,12 @@ auto weggesleept 2
 auto wil 2
 auto zit 2
 auto zou 2
+auto's aan 2
+auto's door 2
+auto's gestolen 2
+auto's naar 2
+auto's voor 2
+auto's worden 2
 auto-ongeluk gehad 2
 auto-ongeluk om 2
 automatisch uit 2
@@ -62153,6 +62271,9 @@ baby wakker 2
 baby was 2
 baby wordt 2
 baby zag 2
+baby's borstvoeding 2
+baby's hebben 2
+baby's worden 2
 babylon was 2
 bach gecomponeerd 2
 bad dronk 2
@@ -62214,6 +62335,7 @@ barstende hoofdpijn 2
 barstte de 2
 baseball gespeeld 2
 baseer je 2
+basiseenheid van 2
 basketbal gespeeld 2
 basketbal is 2
 basketbal spelen 2
@@ -64060,6 +64182,7 @@ bureau in 2
 bureau komen 2
 bureau te 2
 bureau van 2
+bureaulampen uit 2
 buren aan 2
 buren uit 2
 buren uitgenodigd 2
@@ -64123,6 +64246,7 @@ camera die 2
 camera gekocht 2
 camera in 2
 camera van 2
+camera's zijn 2
 campagne voor 2
 canada gaan 2
 canada gegaan 2
@@ -64145,6 +64269,7 @@ caïro naar 2
 cd gekocht 2
 cd lenen 2
 cd te 2
+cd's in 2
 cel komt 2
 cellen hebben 2
 cellen van 2
@@ -64171,7 +64296,6 @@ chauffeur was 2
 check je 2
 check-up gehad 2
 cheeta is 2
-cheetah conservation 2
 chef is 2
 chemie is 2
 chemisch element 2
@@ -64204,6 +64328,7 @@ chocola eten 2
 chocola is 2
 chocolade in 2
 chocolademelk met 2
+cholesterolverlagend medicijn 2
 christenen en 2
 christian andersen 2
 cia houdt 2
@@ -64226,6 +64351,7 @@ code gekraakt 2
 collega die 2
 collega en 2
 collega in 2
+collega's uit 2
 columbus dacht 2
 columbus ontdekte 2
 comfortabel in 2
@@ -64280,7 +64406,6 @@ conflict onvermijdelijk 2
 congo is 2
 congres er 2
 conservatieve partij 2
-conservation fund 2
 constant in 2
 constant ruzie 2
 constant tegen 2
@@ -64320,7 +64445,6 @@ costa rica 2
 couplet in 2
 couscous wordt 2
 creationisme is 2
-creative commons 2
 creativiteit is 2
 creditcard betalen 2
 criminaliteit is 2
@@ -64655,6 +64779,7 @@ dank ik 2
 dank zij 2
 dankbaar moeten 2
 dankbaarheid is 2
+dankdag voor 2
 dankuwel voor 2
 dankzij dit 2
 dankzij jouw 2
@@ -64813,7 +64938,6 @@ dat product 2
 dat propaganda 2
 dat raad 2
 dat raar 2
-dat raport 2
 dat relevant 2
 dat repareren 2
 dat rode 2
@@ -64911,6 +65035,7 @@ de aanschaf 2
 de aanwezige 2
 de aardolie 2
 de abt 2
+de accu's 2
 de achterbak 2
 de achterstand 2
 de achttien 2
@@ -64936,7 +65061,6 @@ de appelboom 2
 de arabieren 2
 de arbeid 2
 de architecten 2
-de architectural 2
 de arrestatie 2
 de artiest 2
 de artikelen 2
@@ -64946,10 +65070,10 @@ de astronomen 2
 de atoombom 2
 de aubergine 2
 de automatische 2
-de azan 2
 de aziatische 2
 de azteekse 2
 de baai 2
+de baby's 2
 de badkamerspiegel 2
 de bakplaat 2
 de balpen 2
@@ -64959,6 +65083,7 @@ de barakken 2
 de barbier 2
 de barman 2
 de barometer 2
+de basiseenheid 2
 de basisregels 2
 de bast 2
 de beatles 2
@@ -65145,6 +65270,7 @@ de eredivisie 2
 de eregast 2
 de ernstigste 2
 de es 2
+de esperantisten 2
 de eucalyptus 2
 de expeditie 2
 de export 2
@@ -65198,6 +65324,7 @@ de gelijkmaker 2
 de gelovigen 2
 de gemeenschappelijke 2
 de gemeenteraad 2
+de geneeskundestudenten 2
 de geneugten 2
 de gerechtelijke 2
 de gesmolten 2
@@ -65418,11 +65545,13 @@ de maximale 2
 de maximumsnelheid 2
 de medicatie 2
 de meer 2
+de meestvoorkomende 2
 de melkveehouderij 2
 de merel 2
 de meren 2
 de mest 2
 de met 2
+de meterstanden 2
 de microgolfoven 2
 de middelvinger 2
 de mierikswortel 2
@@ -65445,6 +65574,7 @@ de moto 2
 de muil 2
 de munten 2
 de musea 2
+de muziekpers 2
 de naar 2
 de nachtdienst 2
 de nadelen 2
@@ -65452,7 +65582,6 @@ de nagel 2
 de nakomelingen 2
 de narcis 2
 de nasa 2
-de nationele 2
 de natuurkundige 2
 de neef 2
 de negatieve 2
@@ -65581,6 +65710,7 @@ de puppy 2
 de purpere 2
 de pyreneeën 2
 de quarantaine 2
+de radio's 2
 de radio-uitzending 2
 de radioactieve 2
 de radiozender 2
@@ -65654,6 +65784,7 @@ de snelst 2
 de snelwegen 2
 de snijtanden 2
 de snoepjes 2
+de snorfietsen 2
 de solidariteit 2
 de sollicitant 2
 de spanjaarden 2
@@ -65667,7 +65798,6 @@ de spelling 2
 de spion 2
 de spoorweg 2
 de spot 2
-de spree 2
 de spuit 2
 de stakers 2
 de stalen 2
@@ -65802,6 +65932,7 @@ de vlakte 2
 de vlammen 2
 de vloek 2
 de vn 2
+de voedingssector 2
 de voedselproductie 2
 de voetgangers 2
 de voetnoot 2
@@ -65810,6 +65941,7 @@ de volgorde 2
 de volkeren 2
 de volmaaktheid 2
 de vooravond 2
+de voorbeeldzinnen 2
 de voorgeschreven 2
 de voorgestelde 2
 de voorraden 2
@@ -65851,6 +65983,7 @@ de weeën 2
 de weilanden 2
 de weinige 2
 de wensen 2
+de wereldproductie 2
 de werkaanbieding 2
 de werkbank 2
 de werken 2
@@ -66124,6 +66257,7 @@ deze oefening 2
 deze oefeningen 2
 deze of 2
 deze oktober 2
+deze onderwijsmethode 2
 deze onzin 2
 deze opdracht 2
 deze orchideeën 2
@@ -66266,13 +66400,13 @@ die documentaire 2
 die documenten 2
 die druiven 2
 die duitse 2
-die dungeon 2
 die echt 2
 die eindigt 2
 die erg 2
 die erin 2
 die ervan 2
 die eten 2
+die foto's 2
 die functie 2
 die ge 2
 die gearresteerd 2
@@ -66452,7 +66586,6 @@ dierentuin met 2
 dieven op 2
 dieven verdeelden 2
 diezelfde fout 2
-digest van 2
 digitale display 2
 dik aan 2
 dik geweest 2
@@ -66514,7 +66647,6 @@ dingen zien 2
 dinosauriërs behalve 2
 dinosauriërs en 2
 dinsdag was 2
-diogo keek 2
 diploma gekregen 2
 diploma van 2
 direct in 2
@@ -66956,7 +67088,6 @@ draait linux 2
 draait zich 2
 draak met 2
 draak vecht 2
-drag queen 2
 dragen een 2
 dragen en 2
 dragen in 2
@@ -66980,6 +67111,7 @@ drie bedreigende 2
 drie bestanden 2
 drie bier 2
 drie brieven 2
+drie camera's 2
 drie centimeter 2
 drie delen 2
 drie doen 2
@@ -67089,11 +67221,13 @@ dronk uit 2
 dronk vaak 2
 dronk wijn 2
 dronken ben 2
+dronken foto's 2
 dronken gezien 2
 dronken man 2
 dronken worden 2
 droog jaar 2
 droogde haar 2
+droogheid op 2
 droogste juni 2
 droogste zes 2
 droogt niet 2
@@ -67519,6 +67653,7 @@ een chaos 2
 een chemisch 2
 een chemische 2
 een chihuahua 2
+een cholesterolverlagend 2
 een chronische 2
 een chronometer 2
 een cilinder 2
@@ -67534,7 +67669,6 @@ een conclusie 2
 een condensator 2
 een controlefreak 2
 een countryzanger 2
-een creative 2
 een cruciale 2
 een crèche 2
 een crêpe 2
@@ -67579,7 +67713,6 @@ een doorlopende 2
 een doorsnede 2
 een doorsnee 2
 een draadje 2
-een drag 2
 een dressoir 2
 een droevig 2
 een dronkelap 2
@@ -67678,6 +67811,7 @@ een getuige 2
 een geur 2
 een gevallen 2
 een geweten 2
+een gewichtseenheid 2
 een gewoon 2
 een gezegende 2
 een gezellig 2
@@ -67773,6 +67907,7 @@ een hotdog 2
 een hotelkamer 2
 een huichelaar 2
 een huisarts 2
+een huisjesslak 2
 een huiszoekingsbevel 2
 een husky 2
 een huurauto 2
@@ -67868,6 +68003,7 @@ een krop 2
 een kruidenrek 2
 een kruising 2
 een kuil 2
+een kunstboek 2
 een kunstgebit 2
 een kunstmatig 2
 een kurkentrekker 2
@@ -67882,6 +68018,7 @@ een lammetje 2
 een lampje 2
 een landgoed 2
 een langere 2
+een langslaper 2
 een laser 2
 een lastig 2
 een lat-relatie 2
@@ -67974,6 +68111,7 @@ een nee 2
 een negatieve 2
 een nepaccount 2
 een net 2
+een netvliesloslating 2
 een neutraal 2
 een nieraandoening 2
 een niet-roker 2
@@ -68045,6 +68183,7 @@ een orang-oetan 2
 een orgaan 2
 een orgasme 2
 een ouderwets 2
+een ouwel 2
 een overlevende 2
 een overtuigd 2
 een overzicht 2
@@ -68110,6 +68249,7 @@ een profeet 2
 een projectiel 2
 een prooi 2
 een prostituee 2
+een protozoön 2
 een psychische 2
 een psycholoog 2
 een pullover 2
@@ -68268,6 +68408,7 @@ een tang 2
 een tattoo 2
 een taxichauffeur 2
 een teckel 2
+een tegenpaus 2
 een tekening 2
 een tekst 2
 een telraam 2
@@ -68327,6 +68468,7 @@ een vals 2
 een vampier 2
 een varkentje 2
 een veelbelovende 2
+een veelgelezen 2
 een veilig 2
 een verantwoordelijke 2
 een verbetering 2
@@ -68356,6 +68498,7 @@ een verstandig 2
 een verstopte 2
 een vertrouwde 2
 een vervalsing 2
+een verver 2
 een verwant 2
 een verwoestende 2
 een verzinsel 2
@@ -68409,6 +68552,7 @@ een vuist 2
 een vuistje 2
 een vulkaan 2
 een vulpen 2
+een waadvogel 2
 een waardevol 2
 een walgelijk 2
 een wandelstok 2
@@ -68419,6 +68563,7 @@ een waterdruppel 2
 een waterman 2
 een waterput 2
 een web 2
+een webstek 2
 een weduwnaar 2
 een weerman 2
 een wegenkaart 2
@@ -69435,6 +69580,7 @@ er pizza 2
 er plezier 2
 er plotseling 2
 er raakten 2
+er risico's 2
 er room 2
 er ruimte 2
 er scheelt 2
@@ -69475,6 +69621,7 @@ er versterking 2
 er vertrouwen 2
 er verveeld 2
 er vervolgens 2
+er verwerkingskosten 2
 er vies 2
 er vijanden 2
 er volkomen 2
@@ -69914,7 +70061,6 @@ feliciteerden hem 2
 felle zon 2
 fenomeen geworden 2
 festival was 2
-fidget spinners 2
 fier dat 2
 fier over 2
 fier zijn 2
@@ -70034,6 +70180,10 @@ foto toe 2
 foto verloor 2
 foto zie 2
 foto ziet 2
+foto's heb 2
+foto's is 2
+foto's te 2
+foto's trekken 2
 fototoestel en 2
 fototoestel geven 2
 fout al 2
@@ -70537,6 +70687,7 @@ geen airconditioning 2
 geen alcoholische 2
 geen alcoholprobleem 2
 geen allergieën 2
+geen annotaties 2
 geen arrestaties 2
 geen asperges 2
 geen avondeten 2
@@ -70677,6 +70828,7 @@ geen mening 2
 geen menselijke 2
 geen meubels 2
 geen mobiele 2
+geen moedertaalspreker 2
 geen mos 2
 geen moslims 2
 geen motivatie 2
@@ -70711,13 +70863,16 @@ geen plezier 2
 geen pools 2
 geen post 2
 geen president 2
+geen privéprobleem 2
 geen raam 2
+geen radio's 2
 geen rauwe 2
 geen religie 2
 geen reservering 2
 geen rijk 2
 geen rijke 2
 geen risico 2
+geen risico's 2
 geen rode 2
 geen rood 2
 geen rook 2
@@ -70734,6 +70889,7 @@ geen slaap 2
 geen slippers 2
 geen smaak 2
 geen snars 2
+geen sneeuwketting 2
 geen sneeuwkettingen 2
 geen snelle 2
 geen socialist 2
@@ -70843,6 +70999,7 @@ gegeven hebt 2
 gegeven paard 2
 gegevens niet 2
 gegevens op 2
+gegevensverzameling begint 2
 gegooid om 2
 gegrilde zalm 2
 gehaald door 2
@@ -71113,6 +71270,7 @@ gemakkelijker te 2
 gemarteld en 2
 gemeen bent 2
 gemeenschap van 2
+gemeenschappelijke vooroudertaal 2
 gemeenschappen en 2
 gemene deler 2
 gemene dingen 2
@@ -71129,6 +71287,7 @@ geneer me 2
 geneeskunde studeer 2
 geneeskunde te 2
 geneeskunde zijn 2
+geneeskundestudenten luisteren 2
 genegeerd te 2
 geneigd de 2
 geneigd het 2
@@ -71191,6 +71350,7 @@ geplakt toen 2
 gepraat heeft 2
 gepraat met 2
 gepraat over 2
+geprefereerde voornaamwoord 2
 geprezen worden 2
 geprobeerd dat 2
 geprobeerd hebt 2
@@ -71937,13 +72097,11 @@ goeie hemel 2
 goeie vriend 2
 gogh was 2
 gokken is 2
-gold digger 2
 golf ligt 2
 golflengtes te 2
 golven en 2
 goocheltrucs doen 2
 goocheltrucs zijn 2
-google translator 2
 gooi dat 2
 gooi dit 2
 gooi maar 2
@@ -72051,6 +72209,7 @@ gras op 2
 gras roept 2
 gras van 2
 gras voor 2
+grasmaaimachine lenen 2
 grasmachine lenen 2
 gratis inschrijven 2
 gratis naar 2
@@ -72297,6 +72456,7 @@ haar eerder 2
 haar enkel 2
 haar ergens 2
 haar examen 2
+haar foto's 2
 haar fout 2
 haar gaf 2
 haar gebeld 2
@@ -72405,6 +72565,7 @@ haar schulden 2
 haar sinaasappelsap 2
 haar sinds 2
 haar skischoenen 2
+haar skistokken 2
 haar slechts 2
 haar sleutels 2
 haar spaargeld 2
@@ -72763,6 +72924,7 @@ heb en 2
 heb ernstige 2
 heb ervoor 2
 heb eten 2
+heb foto's 2
 heb frans 2
 heb gebeld 2
 heb gedroomd 2
@@ -72824,6 +72986,7 @@ heb twintig 2
 heb uit 2
 heb urenlang 2
 heb verloren 2
+heb verser 2
 heb vertaald 2
 heb vlinders 2
 heb vooraf 2
@@ -73493,6 +73656,7 @@ het afhandelen 2
 het afluisteren 2
 het afmaken 2
 het afronden 2
+het afslijpen 2
 het aftreden 2
 het afvallen 2
 het afvegen 2
@@ -73561,7 +73725,6 @@ het bruine 2
 het bureaublad 2
 het canada 2
 het cement 2
-het cheetah 2
 het christelijke 2
 het commando 2
 het concentreren 2
@@ -73768,6 +73931,7 @@ het leed 2
 het leeg 2
 het leerboek 2
 het leest 2
+het leeuwenaandeel 2
 het leidingwater 2
 het lekkerst 2
 het lesgeven 2
@@ -73873,6 +74037,7 @@ het plotseling 2
 het plotselinge 2
 het plukken 2
 het poeder 2
+het populairwetenschappelijke 2
 het praatje 2
 het prachtige 2
 het presidentschap 2
@@ -74077,6 +74242,7 @@ het wild 2
 het wiskundeboek 2
 het wiskundeproefwerk 2
 het wonen 2
+het woordaccent 2
 het zakenleven 2
 het zebrapad 2
 het zeeleven 2
@@ -74596,6 +74762,7 @@ hoeveel broden 2
 hoeveel brood 2
 hoeveel broodjes 2
 hoeveel calorieën 2
+hoeveel cd's 2
 hoeveel chemische 2
 hoeveel denk 2
 hoeveel dit 2
@@ -75046,6 +75213,7 @@ humeur omdat 2
 humor is 2
 humor zal 2
 hun aandacht 2
+hun auto's 2
 hun baby 2
 hun bedden 2
 hun beleid 2
@@ -75054,6 +75222,7 @@ hun bloed 2
 hun boerderij 2
 hun bruiloft 2
 hun buit 2
+hun bureaulampen 2
 hun buren 2
 hun cultuur 2
 hun dagelijks 2
@@ -75091,6 +75260,7 @@ hun leiders 2
 hun leraar 2
 hun leraren 2
 hun misdaden 2
+hun moedertalen 2
 hun nesten 2
 hun nog 2
 hun paard 2
@@ -75172,6 +75342,7 @@ identieke tweeling 2
 identiteit niet 2
 identiteitsbewijs te 2
 ideologie van 2
+idiomatische uitdrukkingen 2
 idioot heeft 2
 idioot kan 2
 ie je 2
@@ -75565,6 +75736,7 @@ ik remde 2
 ik rennen 2
 ik riep 2
 ik rustte 2
+ik röntgenfoto's 2
 ik sap 2
 ik schaak 2
 ik schaats 2
@@ -75715,7 +75887,6 @@ in boekarest 2
 in boekvorm 2
 in buenos 2
 in bydgoszcz 2
-in cairo 2
 in cambodja 2
 in cambridge 2
 in castilië 2
@@ -75807,7 +75978,6 @@ in rechten 2
 in rijke 2
 in rook 2
 in samenwerking 2
-in sanda 2
 in schaapskleren 2
 in scheikunde 2
 in schilderen 2
@@ -75833,6 +76003,7 @@ in togo 2
 in toki 2
 in tunesië 2
 in u 2
+in ufo's 2
 in uit 2
 in utrecht 2
 in veiligheid 2
@@ -75891,6 +76062,7 @@ ingevlogen vanuit 2
 ingewikkeld ook 2
 ingewikkelder dan 2
 ingeënt geweest 2
+inhaalverbod voor 2
 inherent aan 2
 initiatief van 2
 injectie te 2
@@ -76438,6 +76610,7 @@ islam op 2
 islamitische naam 2
 islamitische restaurants 2
 islamitische studenten 2
+islamofobie is 2
 island is 2
 israël een 2
 israël heeft 2
@@ -76476,6 +76649,7 @@ jaar dit 2
 jaar duits 2
 jaar eenzaamheid 2
 jaar eerder 2
+jaar foto's 2
 jaar gaat 2
 jaar gebruikt 2
 jaar gedaan 2
@@ -76556,6 +76730,7 @@ japans kan 2
 japans of 2
 japans snoep 2
 japans vertaald 2
+japanse auto's 2
 japanse keuken 2
 japanse muziek 2
 japanse pop 2
@@ -76658,6 +76833,7 @@ je bureau 2
 je buurman 2
 je china 2
 je cijfers 2
+je collega's 2
 je commentaar 2
 je concentreren 2
 je constant 2
@@ -77222,10 +77398,12 @@ jouw bier 2
 jouw bijnaam 2
 jouw brief 2
 jouw bril 2
+jouw dataset 2
 jouw dromen 2
 jouw e-mailadres 2
 jouw echtgenote 2
 jouw eerste 2
+jouw foto's 2
 jouw geboorteland 2
 jouw gezin 2
 jouw glas 2
@@ -77257,6 +77435,7 @@ jouw opinie 2
 jouw problemen 2
 jouw profielfoto 2
 jouw situatie 2
+jouw ski's 2
 jouw spullen 2
 jouw stem 2
 jouw t-shirt 2
@@ -77460,7 +77639,6 @@ jullie zwemmen 2
 jullie zwommen 2
 juni is 2
 juni zijn 2
-junko is 2
 jupiter heeft 2
 jupiter zijn 2
 jurk aanheeft 2
@@ -77717,7 +77895,6 @@ kathedraal heeft 2
 kathedraal in 2
 kathedraal is 2
 katholieke kerk 2
-kati wolf 2
 katje is 2
 kato was 2
 katten als 2
@@ -78013,7 +78190,6 @@ kind waarvan 2
 kind woonde 2
 kind wordt 2
 kind zou 2
-kinder en 2
 kinderachtig plan 2
 kinderen achter 2
 kinderen aten 2
@@ -80706,6 +80882,7 @@ meer bestaat 2
 meer bewijs 2
 meer boos 2
 meer cadeautjes 2
+meer cd's 2
 meer contact 2
 meer details 2
 meer dingen 2
@@ -80763,6 +80940,7 @@ meer tot 2
 meer tussen 2
 meer uithouden 2
 meer veel 2
+meer video's 2
 meer voorbeelden 2
 meer voordat 2
 meer vreemd 2
@@ -81031,6 +81209,7 @@ met antiaanbaklaag 2
 met antibiotica 2
 met appels 2
 met arseen 2
+met auto's 2
 met baar 2
 met babbelen 2
 met bakken 2
@@ -81064,6 +81243,7 @@ met esdoornsiroop 2
 met esperanto 2
 met europa 2
 met fabrieksafval 2
+met foto's 2
 met fouten 2
 met fruit 2
 met gebarentaal 2
@@ -81199,6 +81379,7 @@ meter de 2
 meter dik 2
 meter in 2
 meter ver 2
+meterstanden op 2
 methode heeft 2
 methode is 2
 methode van 2
@@ -81222,7 +81403,6 @@ mezelf kan 2
 mezelf op 2
 mezelf praten 2
 mezelf toe 2
-mi jn 2
 miami rijden 2
 microfoon en 2
 microfoon staat 2
@@ -81456,6 +81636,7 @@ mijn liedje 2
 mijn lievelingsfilm 2
 mijn lievelingsjurk 2
 mijn lievelingsliedje 2
+mijn lievelingsschrijvers 2
 mijn lievelingsspel 2
 mijn lievelingsstad 2
 mijn linkerbeen 2
@@ -81493,6 +81674,7 @@ mijn onderbroeken 2
 mijn operatie 2
 mijn oprechte 2
 mijn opstel 2
+mijn oudvader 2
 mijn overjas 2
 mijn paasei 2
 mijn pagina 2
@@ -81661,7 +81843,6 @@ minuut de 2
 minuut heeft 2
 minuut later 2
 minuut scoorde 2
-mio is 2
 mis australië 2
 mis deze 2
 mis een 2
@@ -81798,6 +81979,8 @@ moeders zijn 2
 moedertaal hebben 2
 moedertaal was 2
 moedertaal zeggen 2
+moedertaalspreker gecontroleerd 2
+moedertalen te 2
 moedig tom 2
 moedig ze 2
 moedigde me 2
@@ -82558,7 +82741,6 @@ nationale sport 2
 nationale taal 2
 nationaliteit hadden 2
 nationaliteit heeft 2
-nationele feestdag 2
 natrium is 2
 natte kleren 2
 natuur in 2
@@ -82716,6 +82898,7 @@ net verzonnen 2
 net wakker 2
 netjes als 2
 netjes op 2
+netvliesloslating gehad 2
 neuraal netwerk 2
 neus ademen 2
 neus bevalt 2
@@ -83263,6 +83446,7 @@ nog bezig 2
 nog blijven 2
 nog boeken 2
 nog btw 2
+nog cd's 2
 nog doet 2
 nog duits 2
 nog familie 2
@@ -83552,6 +83736,7 @@ of dinsdag 2
 of dokter 2
 of door 2
 of dorst 2
+of droogheid 2
 of frans 2
 of ga 2
 of geringste 2
@@ -83964,7 +84149,6 @@ onlangs overgegeven 2
 online kan 2
 online verkocht 2
 onlosmakelijk verbonden 2
-only you 2
 onmiddellijk beginnen 2
 onmiddellijk contact 2
 onmiddellijk door 2
@@ -84180,6 +84364,7 @@ onverklaarbare blauwe 2
 onverklaarbare duizeligheid 2
 onverklaarbare pijn 2
 onverklaarbare zwellingen 2
+onverrichter zake 2
 onverwacht bezoek 2
 onverwacht is 2
 onverwachte resultaten 2
@@ -84456,6 +84641,7 @@ op bescherming 2
 op betere 2
 op bezemstelen 2
 op bijna 2
+op breedbeeldtelevisies 2
 op cake 2
 op cyprus 2
 op dagen 2
@@ -84923,6 +85109,7 @@ paar bladen 2
 paar bloemen 2
 paar boodschappen 2
 paar ernstige 2
+paar foto's 2
 paar glazen 2
 paar hele 2
 paar houten 2
@@ -84932,6 +85119,7 @@ paar kleine 2
 paar laarzen 2
 paar medische 2
 paar minuutjes 2
+paar pagina's 2
 paar potloden 2
 paar problemen 2
 paar rode 2
@@ -84965,6 +85153,7 @@ pagina in 2
 pagina met 2
 pagina negen 2
 pagina twee 2
+pagina's per 2
 pak gekocht 2
 pak kopen 2
 pak lenen 2
@@ -85041,6 +85230,7 @@ parlement is 2
 parlement of 2
 parlementaire democratie 2
 parlementen en 2
+participeerden in 2
 partij de 2
 partij en 2
 partijen moeten 2
@@ -85117,7 +85307,6 @@ pauze roken 2
 pauze te 2
 pauze van 2
 pauze werk 2
-pcp of 2
 pech gehad 2
 pech hebben 2
 pech omdat 2
@@ -85413,6 +85602,7 @@ popcorn en 2
 populair geweest 2
 populair geworden 2
 populaire zanger 2
+populairwetenschappelijke werk 2
 populariteit buiten 2
 populariteit van 2
 portemonnee heeft 2
@@ -85766,9 +85956,9 @@ radio uitgevonden 2
 radio uitzetten 2
 radio van 2
 radio zal 2
+radio's scharen 2
 radio-uitzending niet 2
 radioactieve stoffen 2
-rainbow bridge 2
 raken de 2
 raket ging 2
 raket met 2
@@ -85780,7 +85970,6 @@ ramen moeten 2
 ramen opendoe 2
 rammel van 2
 ramp kunnen 2
-raport geschreven 2
 rapport gelezen 2
 rapport in 2
 rapport morgen 2
@@ -86107,6 +86296,9 @@ risico genomen 2
 risico om 2
 risico op 2
 risico van 2
+risico's nemen 2
+risico's niet 2
+risico's te 2
 riskeren in 2
 riskeren voor 2
 rit heeft 2
@@ -86161,6 +86353,7 @@ roerde de 2
 roest niet 2
 roet is 2
 rogge werd 2
+roggemeel gekocht 2
 rok en 2
 rok leuk 2
 rok niet 2
@@ -86977,6 +87170,7 @@ snel werken 2
 snel werkt 2
 snel zou 2
 snelheid op 2
+snelle auto's 2
 snelle maatregelen 2
 sneller doen 2
 sneller en 2
@@ -87195,7 +87389,6 @@ spelletje spelen 2
 spelling als 2
 spelling van 2
 spendeert veel 2
-spice of 2
 spiegel en 2
 spiegel is 2
 spiegel reflecteert 2
@@ -87247,6 +87440,7 @@ spot altijd 2
 spot van 2
 sprak alleen 2
 sprak haar 2
+sprak hakkelend 2
 sprak heel 2
 sprak mij 2
 sprak niet 2
@@ -87911,6 +88105,7 @@ taal waar 2
 taal wil 2
 taal wilt 2
 taal zo 2
+taalniveau bereiken 2
 taart en 2
 taart eten 2
 taart onder 2
@@ -88297,6 +88492,7 @@ televisie heeft 2
 televisie met 2
 televisie niet 2
 televisie staat 2
+televisieprogramma's in 2
 telkens weer 2
 telraam kunt 2
 telt dit 2
@@ -88399,6 +88595,7 @@ thee aanbieden 2
 thee aangeboden 2
 thee van 2
 thema van 2
+thema's van 2
 theoretisch gezien 2
 theorie vinden 2
 theorieën over 2
@@ -88434,7 +88631,6 @@ thuis zullen 2
 thuisblijven en 2
 thuisgekomen met 2
 thuiskwam was 2
-thunder giant 2
 ticket gekocht 2
 ticket moeten 2
 ticket naar 2
@@ -88629,6 +88825,8 @@ toestemming vragen 2
 toetreden tot 2
 toets die 2
 toetsenbord is 2
+toetsenbordindeling heb 2
+toetsenbordindeling heeft 2
 toeval een 2
 toeval is 2
 toeval kunnen 2
@@ -89049,7 +89247,6 @@ trachten de 2
 trachtte hij 2
 trachtte te 2
 tractor en 2
-trade center 2
 traditie om 2
 traditie van 2
 traditionele japanse 2
@@ -89199,8 +89396,10 @@ twee borden 2
 twee buitenlandse 2
 twee cadeautjes 2
 twee dekens 2
+twee driefasige 2
 twee duitse 2
 twee een 2
+twee foto's 2
 twee gasten 2
 twee gehoord 2
 twee groene 2
@@ -89259,6 +89458,7 @@ tweedehandsauto te 2
 tweeduizend en 2
 tweeduizend jaar 2
 tweeduizend yen 2
+tweehonderd auto's 2
 tweehonderd euro 2
 tweelingen zijn 2
 tweemaal gered 2
@@ -89491,6 +89691,7 @@ uit plichtsgevoel 2
 uit portugal 2
 uit rio 2
 uit roemenië 2
+uit roggemeel 2
 uit saitama 2
 uit sapporo 2
 uit schrik 2
@@ -89978,6 +90179,7 @@ van elf 2
 van enige 2
 van enorme 2
 van ervaring 2
+van esperantisten 2
 van fabrieken 2
 van fanta 2
 van fantasie 2
@@ -90131,6 +90333,7 @@ van naderbij 2
 van nancy 2
 van natasha 2
 van naties 2
+van neologismen 2
 van neptunus 2
 van nergens 2
 van nessie 2
@@ -90172,6 +90375,7 @@ van pruimen 2
 van qatar 2
 van ramses 2
 van rauw 2
+van risico's 2
 van roken 2
 van romans 2
 van ruimte-tijd 2
@@ -90481,6 +90685,7 @@ veel planning 2
 veel religies 2
 veel rendieren 2
 veel rijst 2
+veel risico's 2
 veel romeinse 2
 veel schilderijen 2
 veel schoten 2
@@ -90519,6 +90724,7 @@ veel zetmeel 2
 veel ziekten 2
 veel zout 2
 veelal uit 2
+veelgelezen boek 2
 veelvoorkomende fout 2
 veelvraat is 2
 veganist geworden 2
@@ -91050,6 +91256,7 @@ verschil te 2
 verschil zien 2
 verschillen per 2
 verschillende afmetingen 2
+verschillende auto's 2
 verschillende boeken 2
 verschillende culturele 2
 verschillende culturen 2
@@ -91073,6 +91280,7 @@ verschrikking van 2
 verschrikkingen van 2
 verse sneeuw 2
 verse vruchten 2
+verser brood 2
 versie beter 2
 versierden hun 2
 versieren met 2
@@ -91767,6 +91975,7 @@ voor hoe 2
 voor hoed 2
 voor hoelang 2
 voor honkbal 2
+voor huisstof 2
 voor infecties 2
 voor informatie 2
 voor invaliden 2
@@ -91812,6 +92021,7 @@ voor syfilis 2
 voor tandartsen 2
 voor tegenliggers 2
 voor ten 2
+voor toetsenbordindeling 2
 voor tomatensoep 2
 voor tuberculose 2
 voor twaalf 2
@@ -91852,6 +92062,7 @@ vooraleer het 2
 voorbeeld moeten 2
 voorbeeld voor 2
 voorbeelden nodig 2
+voorbeeldzin in 2
 voorbehoedsmiddelen elke 2
 voorbereid moeten 2
 voorbereid waren 2
@@ -93057,6 +93268,7 @@ we rijst 2
 we rustig 2
 we schatten 2
 we schuilden 2
+we skieden 2
 we slaagden 2
 we snel 2
 we stelden 2
@@ -93102,6 +93314,8 @@ we zweten 2
 we zwijgen 2
 website vinden 2
 website zou 2
+webstek is 2
+webstek van 2
 wedde is 2
 weddenschap niet 2
 wederzijdse controle 2
@@ -93393,6 +93607,7 @@ welke soorten 2
 welke sport 2
 welke staat 2
 welke te 2
+welke toetsenbordindeling 2
 welke u 2
 welke universiteit 2
 welke vakken 2
@@ -93554,6 +93769,7 @@ wereldeconomie is 2
 wereldoorlog niet 2
 wereldoorlog was 2
 wereldoorlog zal 2
+wereldproductie van 2
 wereldreis maken 2
 werelds meest 2
 wereldwijd een 2
@@ -93613,6 +93829,7 @@ werken zijn 2
 werken zonder 2
 werkloos is 2
 werkloosheid neemt 2
+werklustig volk 2
 werknemer is 2
 werknemers hebben 2
 werknemers van 2
@@ -94331,7 +94548,6 @@ wordt zal 2
 wordt zelden 2
 wordt zelfs 2
 wordt zo 2
-world trade 2
 wormpje in 2
 worstjes met 2
 wortel uit 2
@@ -94965,6 +95181,7 @@ zelf opgelost 2
 zelf oplossen 2
 zelf wat 2
 zelf wou 2
+zelfrijdende auto's 2
 zelfs bij 2
 zelfs dat 2
 zelfs denken 2
@@ -94996,6 +95213,7 @@ zesduizend jaar 2
 zesendertig jaar 2
 zeshoek heeft 2
 zestig en 2
+zestig pagina's 2
 zet alsjeblieft 2
 zet dit 2
 zet doen 2
@@ -95314,6 +95532,7 @@ zijn arabieren 2
 zijn argumentatie 2
 zijn armoede 2
 zijn astrologen 2
+zijn auto's 2
 zijn avondeten 2
 zijn aziaten 2
 zijn bal 2
@@ -95405,6 +95624,7 @@ zijn feiten 2
 zijn flat 2
 zijn flauwgevallen 2
 zijn fluit 2
+zijn foto's 2
 zijn fotocollectie 2
 zijn garage 2
 zijn garnalen 2
@@ -95637,6 +95857,7 @@ zijn schuldig 2
 zijn scooter 2
 zijn sinaasappels 2
 zijn sindsdien 2
+zijn skistokken 2
 zijn slagers 2
 zijn slavische 2
 zijn slechter 2
@@ -95888,7 +96109,6 @@ zo doet 2
 zo door 2
 zo dun 2
 zo efficiënt 2
-zo egoistisch 2
 zo emotioneel 2
 zo enthousiast 2
 zo fantastisch 2

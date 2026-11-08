@@ -48,8 +48,8 @@ object DictionaryLoader {
     internal fun candidateMinFrequency(language: KeyboardLanguage): Long = when (language) {
         KeyboardLanguage.FR -> 100L
         KeyboardLanguage.EN -> 149L
-        KeyboardLanguage.ES -> 183L
-        KeyboardLanguage.DE -> 41L
+        KeyboardLanguage.ES -> 142L // 08/11/2026 : listes alignées sur AOSP et LibreOffice (tools/align_open_lexicons.py), 50 000e mot
+        KeyboardLanguage.DE -> 48L // idem
         KeyboardLanguage.IT -> 102L
         KeyboardLanguage.PT -> 91L
         KeyboardLanguage.NL -> 77L

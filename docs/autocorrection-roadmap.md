@@ -100,3 +100,60 @@ les utilisateurs qui ont déjà l'italien, le portugais ou le néerlandais garde
 
 **Restent en échec dans le banc** (objectifs) : it « la citta e bella » (« e » + adjectif après un nom, ambigu : « rosso e bello ») et
 « pero » (vrai mot, le poirier) ; pt « amanhá » -> « amanhã » ; nl « trien » (mot de la liste).
+
+## Listes de mots alignées sur AOSP et LibreOffice (08/11/2026)
+
+Les sept listes (`dictionaries/<code>.txt`) sont passées par `tools/align_open_lexicons.py`, avec deux sources ouvertes :
+
+- **AOSP** (listes du clavier Android d'origine, Apache 2.0, publiées par HeliBoard : https://codeberg.org/Helium314/aosp-dictionaries,
+  `wordlists/main_<locale>.combined`, versions « legacy ») : pour valider ET ajouter. Le portugais du Brésil (`main_pt_BR`, liste AOSP
+  modifiée par un tiers, licence introuvable) sert seulement à valider ; les ajouts portugais viennent de `main_pt_PT`. Les listes
+  « experimental » (corpus Leipzig) ne sont pas utilisées : elles ont les mêmes défauts que nos sous-titres.
+- **LibreOffice** (dictionnaires Hunspell : https://github.com/LibreOffice/dictionaries) : pour valider seulement, aucun mot recopié.
+
+**Retraits** (mot inconnu des deux sources, fréquence < 1 000), trois cas seulement : faute d'accent (« plutot », « riprendera »,
+« mantem ») ; faute de frappe d'un mot au moins 50 fois plus fréquent (« appeller », « mourrir ») ; mot anglais dans une autre langue
+(« said », « sugar »). Un mot inconnu des deux sources peut être juste : prénoms, argot (« lol », « vc »), diminutifs, impératifs
+familiers allemands (« lern ») restent, de même qu'un mot employé dans Tatoeba, un mot que remplace une règle de contexte (« aswell »),
+une élision, une forme régulière ou un composé de mots connus.
+**Ajouts** : mots AOSP de note f >= 30 absents de la liste (en dessous : surtout des noms de famille et du bruit, « sher »), avec la
+fréquence qu'ont dans la liste les mots AOSP de même note, plafonnée à 3 fois le seuil de proposition.
+
+| Langue | Retirés | Ajoutés (dont proposables) |
+|---|---|---|
+| fr | 35 643 | 54 454 (2 649) |
+| en | 12 161 | 16 496 (782) |
+| es | 12 247 | 50 780 (544) |
+| de | 9 754 | 120 540 (4 142) |
+| it | 32 034 | 66 277 (2 852) |
+| pt | 26 775 | 58 315 (783) |
+| nl | 27 632 | 54 685 (1 992) |
+
+Seuils de proposition recalés pour garder environ 50 000 mots proposables : espagnol 183 -> 142, allemand 41 -> 48.
+
+**Mesure** : retirer des faux mots fait entrer dans le calcul des fautes qui tombaient avant sur eux (jamais corrigées au clavier, mais
+écartées du banc). Les taux bruts du banc ne se comparent donc plus ; voici les taux sur **toutes** les fautes tirées :
+
+| Langue | Fautes en phrase bien corrigées (1) | mal corrigées (1) | tombées sur un faux mot valide | Fautes isolées bien corrigées (1) | Frappes économisées |
+|---|---|---|---|---|---|
+| fr | 80,2 → 83,6 % | 2,7 → 2,9 % | 13,2 → 10,8 % | 29,1 → 74,8 % | 44,6 → 42,6 % |
+| en | 76,7 → 81,3 % | 1,0 → 1,2 % | 19,7 → 14,6 % | 20,3 → 20,5 % | 48,1 → 47,0 % |
+| es | — | — | — | 71,4 → 77,1 % | — |
+| de | — | — | — | 65,7 → 65,9 % | — |
+| it | 78,4 → 88,6 % | 0,7 → 1,1 % | 20,3 → 9,4 % | 73,0 → 76,3 % | 46,3 → 43,8 % |
+| pt | 79,4 → 85,1 % | 1,3 → 1,7 % | 16,9 → 11,2 % | 20,2 → 20,8 % | 42,9 → 41,4 % |
+| nl | 73,5 → 82,1 % | 1,3 → 1,6 % | 24,2 → 15,1 % | 19,0 → 43,3 % | 45,8 → 44,5 % |
+
+(1) Sur toutes les fautes tirées, y compris celles qui tombent sur un mot valide. « Fautes en phrase » : phrases mises de côté
+(`heldout`), pas encore de jeu pour l'espagnol et l'allemand. Les cas de contexte et les phrases justes ne bougent pas (0 % de phrases
+justes changées dans les sept langues) ; les mots composés allemands justes remplacés à tort passent de 18,4 à 11,8 %.
+
+**Compromis connu** : les frappes économisées sur un texte juste baissent de 1 à 2,5 points. Quand le début d'un mot tapé était lui-même
+un faux mot valide (« beca… »), la bande montrait trois complétions ; il reçoit maintenant une correction en gras, et une seule
+complétion reste visible. Piste : garder deux complétions quand la correction porte sur un mot encore en cours de frappe.
+
+Références de toutes les langues régénérées (`AutocorrectBaselineTest`) ; l'espagnol a désormais la sienne. Détail des mots retirés
+(avec la raison) et extrait des ajouts : `docs/dictionnaires-2026-11-08/`. Mention AOSP (Apache 2.0) ajoutée dans l'écran « Licences ».
+
+**À faire de ton côté** : redéposer sur R2 les sept listes `dictionaries/<code>.txt` et les bigrammes `dictionaries/bigrams/{fr,en,it,pt,nl}.txt`.
+Rappel : l'app ne remplace pas une liste déjà téléchargée.

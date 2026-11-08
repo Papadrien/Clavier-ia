@@ -73,6 +73,17 @@ object LicenseNotices {
             licenseUrl = "https://creativecommons.org/licenses/by-sa/4.0/",
         ),
         LicenseNotice(
+            id = "aosp-dictionaries",
+            section = LicenseSection.DICTIONARIES,
+            name = "AOSP keyboard dictionaries (Android Open Source Project, via HeliBoard)",
+            licenseName = APACHE_NAME,
+            copyright = "© The Android Open Source Project",
+            usageRes = R.string.licenses_usage_aosp_dictionaries,
+            noticeRes = R.string.licenses_notice_aosp_dictionaries,
+            projectUrl = "https://codeberg.org/Helium314/aosp-dictionaries",
+            licenseUrl = APACHE_URL,
+        ),
+        LicenseNotice(
             id = "tatoeba",
             section = LicenseSection.DICTIONARIES,
             name = "Tatoeba",

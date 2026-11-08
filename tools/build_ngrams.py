@@ -45,6 +45,7 @@ def main():
     parser.add_argument("--lang", required=True)
     parser.add_argument("--sentences", required=True, help="export Tatoeba <iso3>_sentences.tsv.bz2")
     parser.add_argument("--root", default=".")
+    parser.add_argument("--rewrite-heldout", action="store_true", help="réécrire les phrases de banc même si elles existent")
     args = parser.parse_args()
     root = Path(args.root)
 
@@ -103,6 +104,10 @@ def main():
             break
     bench = root / "tools" / "autocorrect-bench" / "heldout" / f"{args.lang}.txt"
     bench.parent.mkdir(parents=True, exist_ok=True)
+    # Le choix dépend du vocabulaire : les phrases existantes sont gardées (sinon les mesures du banc ne se comparent plus).
+    if bench.is_file() and not args.rewrite_heldout:
+        print(f"{args.lang}: {len(kept)} paires gardées, {len(unigrams)} contextes ; phrases de banc inchangées ({bench})")
+        return
     with open(bench, "w", encoding="utf-8", newline="\n") as f:
         f.write(f"# Phrases Tatoeba (CC BY 2.0 FR) jamais comptées dans dictionaries/bigrams/{args.lang}.txt : voir tools/build_ngrams.py.\n")
         for sentence in selected:

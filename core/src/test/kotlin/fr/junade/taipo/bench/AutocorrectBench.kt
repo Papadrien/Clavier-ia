@@ -106,7 +106,7 @@ object AutocorrectBench {
      * (non mesurées), contexte de `SpanishConfusions` et politique d'accents de l'espagnol.
      */
     val SPANISH = Profile(
-        KeyboardLanguage.ES, QWERTY_N, InflectionRules.SPANISH, 183L, CorrectionConfidence.SPANISH,
+        KeyboardLanguage.ES, QWERTY_N, InflectionRules.SPANISH, 142L, CorrectionConfidence.SPANISH,
         { text, f -> ContextualCorrection.correctWithoutHabits(KeyboardLanguage.ES, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f) },
         "tools/autocorrect-bench/es/sentences-ok.txt", "tools/autocorrect-bench/es/context-cases.tsv", "tools/autocorrect-bench/es/baseline.txt",
         AccentPolicy.SPANISH,
@@ -144,7 +144,7 @@ object AutocorrectBench {
      * (les largeurs exactes de `KeyboardLayout` ne sont pas dans le module `core`).
      */
     val GERMAN = Profile(
-        KeyboardLanguage.DE, QWERTZ, InflectionRules.GERMAN, 41L, CorrectionConfidence.GERMAN,
+        KeyboardLanguage.DE, QWERTZ, InflectionRules.GERMAN, 48L, CorrectionConfidence.GERMAN,
         { text, f -> ContextualCorrection.correctWithoutHabits(KeyboardLanguage.DE, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f) },
         "tools/autocorrect-bench/de/sentences-ok.txt", "tools/autocorrect-bench/de/context-cases.tsv", "tools/autocorrect-bench/de/baseline.txt",
         AccentPolicy.GERMAN,

@@ -200,3 +200,16 @@ tools/complete_from_tatoeba.py, à partir des mêmes phrases Tatoeba (CC BY 2.0 
   fautes d'accent italiennes (perchè, finchè, poichè...) ;
 - gardés valides à la fréquence 5 (remplacés par les règles de contexte) : qual'è, qual'era ; concerteza, derrepente, apartir, porisso, denovo.
 Bigrammes it (280 356 paires), pt (201 915), nl (87 976) : tools/build_ngrams.py. Voir docs/autocorrection-roadmap.md.
+
+
+=== Les sept listes alignées sur AOSP et LibreOffice — 08/11/2026 ===
+tools/align_open_lexicons.py (voir docs/autocorrection-roadmap.md et docs/dictionnaires-2026-11-08/) :
+- AJOUTS : mots des listes du clavier AOSP (Android Open Source Project, Apache License 2.0, publiées par HeliBoard :
+  https://codeberg.org/Helium314/aosp-dictionaries ; main_fr, main_en_US, main_en_GB, main_es, main_de__legacy, main_it, main_pt_PT,
+  main_nl) de note f >= 30, absents de la liste ; fréquence calculée par Taipo. Attribution : « Portions © The Android Open Source
+  Project, Apache License 2.0 » (mention dans l'écran « Licences »).
+- RETRAITS : mots inconnus d'AOSP et des dictionnaires Hunspell de LibreOffice (https://github.com/LibreOffice/dictionaries, utilisés
+  seulement pour vérifier, rien n'en est recopié), de fréquence < 1 000, qui sont une faute d'accent, une faute de frappe d'un mot au moins
+  50 fois plus fréquent, ou un mot anglais dans une autre langue. main_pt_BR (licence non vérifiée) sert seulement à vérifier.
+- Retirés / ajoutés : fr 35 643 / 54 454 ; en 12 161 / 16 496 ; es 12 247 / 50 780 ; de 9 754 / 120 540 ; it 32 034 / 66 277 ;
+  pt 26 775 / 58 315 ; nl 27 632 / 54 685. Bigrammes fr, en, it, pt, nl reconstruits sur le nouveau vocabulaire.
