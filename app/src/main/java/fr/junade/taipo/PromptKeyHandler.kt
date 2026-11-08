@@ -43,8 +43,9 @@ internal class PromptKeyHandler(
         }
         autocorrections.pending = null
 
-        // Le mot qui vient de se terminer est vérifié juste avant que la touche qui le termine soit traitée.
-        val autocorrection = if (TypingRules.isWordBoundaryKey(key)) applyAutocorrection() else null
+        // Le mot qui vient de se terminer est vérifié juste avant que la touche qui le termine soit traitée, seulement s'il vient
+        // d'être tapé (jamais à Entrée, qui envoie le prompt) : voir [AutocorrectionMemory.onKey].
+        val autocorrection = if (autocorrections.onKey(key, SystemClock.uptimeMillis())) applyAutocorrection() else null
 
         // Double espace : l'espace précédente devient « . » (la correction d'un mot, elle, passe avant).
         val doubleSpace = key.action == KeyAction.Space && autocorrection == null && FieldType.TEXT.doubleSpacePeriod

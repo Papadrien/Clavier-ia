@@ -35,6 +35,32 @@ internal class AutocorrectionMemory {
      */
     private var revertedTail: String? = null
 
+    // Instant (horloge uptime) de la dernière touche qui a modifié le mot en cours ; 0 = aucun mot en cours de frappe.
+    private var wordTypedAt = 0L
+
+    /**
+     * À appeler pour chaque touche du clavier, avant de la traiter, avec l'instant [now] (horloge uptime). Vrai si [key] termine
+     * un mot qui vient d'être tapé : l'autocorrection s'applique alors, comme sur Gboard, seulement à l'espace ou à la ponctuation
+     * qui suit la frappe de près ([WORD_WINDOW_MS]), jamais à Entrée, ni sur un mot laissé de côté (pause, curseur déplacé).
+     */
+    fun onKey(key: Key, now: Long): Boolean {
+        if (TypingRules.isWordBoundaryKey(key)) {
+            val fresh = wordTypedAt != 0L && now - wordTypedAt <= WORD_WINDOW_MS
+            wordTypedAt = 0L // le mot est terminé : une deuxième espace ou ponctuation ne le revoit pas
+            return fresh
+        }
+        when {
+            TypingRules.editsWord(key) -> wordTypedAt = now
+            key.action == KeyAction.Enter -> wordTypedAt = 0L
+        }
+        return false
+    }
+
+    /** Le curseur a été posé ailleurs (toucher, glissement sur l'espace) ou le champ a changé : le mot n'est plus en cours de frappe. */
+    fun onCursorPlaced() {
+        wordTypedAt = 0L
+    }
+
     /** L'utilisateur vient de rétablir [restored] (mot tapé et son séparateur). */
     fun onReverted(restored: String) {
         revertedTail = restored.takeLast(REVERTED_TAIL_LENGTH)
@@ -51,6 +77,12 @@ internal class AutocorrectionMemory {
         /** Délai après une autocorrection pendant lequel la touche Supprimer peut encore l'annuler. */
         const val UNDO_WINDOW_MS = 5_000L
 
+        /**
+         * Délai entre la dernière touche d'un mot et l'espace (ou la ponctuation) qui le termine au-delà duquel le mot n'est plus
+         * corrigé : après une pause, l'utilisateur a pu relire le mot et le garder tel quel.
+         */
+        const val WORD_WINDOW_MS = 5_000L
+
         /** Longueur du texte retenu quand une autocorrection est annulée. */
         private const val REVERTED_TAIL_LENGTH = 12
     }
@@ -59,12 +91,24 @@ internal class AutocorrectionMemory {
 /** Règles de frappe communes au champ et au prompt (sorties de [TaipoIme]). Logique pure. */
 internal object TypingRules {
 
-    /** Une touche qui termine un mot (espace, Entrée, ponctuation) : le mot qui précède est vérifié par l'autocorrection. */
+    /**
+     * Une touche qui termine un mot (espace, ponctuation) : le mot qui précède est vérifié par l'autocorrection. Entrée n'en fait
+     * pas partie : un retour à la ligne (ou un envoi) garde le mot tel qu'il est tapé, comme sur Gboard.
+     */
     fun isWordBoundaryKey(key: Key): Boolean = when (val action = key.action) {
-        KeyAction.Space, KeyAction.Enter -> true
-        is KeyAction.TypeChar -> !action.char.isLetterOrDigit() && action.char != '\'' && action.char != '-'
+        KeyAction.Space -> true
+        is KeyAction.TypeChar -> !isWordChar(action.char)
         else -> false
     }
+
+    /** Une touche qui modifie le mot en cours : lettre, chiffre, apostrophe, trait d'union ou suppression. */
+    fun editsWord(key: Key): Boolean = when (val action = key.action) {
+        KeyAction.Backspace -> true
+        is KeyAction.TypeChar -> isWordChar(action.char)
+        else -> false
+    }
+
+    private fun isWordChar(char: Char): Boolean = char.isLetterOrDigit() || char == '\'' || char == '-'
 
     /**
      * Séparateur ajouté après un mot suggéré touché : une espace, sauf si une virgule suit déjà le mot
