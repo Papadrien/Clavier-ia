@@ -76,7 +76,7 @@ class CorrectionEngine(
         try {
             correctLocked(model, text, protectedWords, isCancelled, onLoading)
         } catch (e: Exception) {
-            // GPU en échec pendant la réponse (essai des builds debug) : une seule relance, sur le processeur central.
+            // GPU en échec pendant la réponse : une seule relance, sur le processeur central.
             if (e is CorrectionCancelledException || !host.abandonGpuAfter(e)) throw e
             correctLocked(model, text, protectedWords, isCancelled, onLoading)
         }

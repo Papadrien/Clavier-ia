@@ -99,7 +99,7 @@ class GenerationSession(
             try {
                 sendLocked(model, history, prompt, onLoading, tracked)
             } catch (e: Exception) {
-                // GPU en échec avant le premier morceau (essai des builds debug) : une seule relance, sur le processeur central.
+                // GPU en échec avant le premier morceau : une seule relance, sur le processeur central.
                 // Après un premier morceau, l'erreur remonte : l'appelant garde le partiel déjà affiché.
                 if (received || stopRequested || !host.abandonGpuAfter(e)) throw e
                 sendLocked(model, history, prompt, onLoading, tracked)

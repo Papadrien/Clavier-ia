@@ -322,6 +322,10 @@
     <string name="home_status_to_download">À télécharger</string>
     <string name="model_download_title">Modèle IA</string>
     <string name="model_download_description">Téléchargez un modèle pour activer les actions IA. Le modèle est ensuite utilisé sur votre appareil, sans connexion. Le téléchargement se fait en Wi-Fi par défaut.</string>
+    <string name="model_gpu_section">Accélération</string>
+    <string name="model_gpu_switch">Utiliser le GPU (expérimental)</string>
+    <string name="model_gpu_description">Le processeur graphique peut générer le texte plus vite, mais il ne fonctionne pas sur tous les téléphones. S\'il échoue ou fait planter le clavier, Taipo repasse tout seul sur le processeur central. Le modèle est rechargé à la prochaine action IA.</string>
+    <string name="model_gpu_failed">Le GPU n\'a pas fonctionné sur cet appareil : Taipo utilise le processeur central. Réactivez l\'interrupteur pour réessayer.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
     <string name="model_download_limited_features">Certaines fonctions ne sont pas disponibles avec ce modèle (dictée IA).</string>
     <string name="model_download_badge_active">Actif</string>
@@ -681,11 +685,6 @@
     <string name="tip_move_cursor">Astuce : glissez sur la barre d\'espace pour déplacer le curseur.</string>
     <string name="tip_switch_language">Astuce : appui long sur Entrée, puis glissez jusqu\'au globe pour changer de langue.</string>
     <string name="tip_digits">Astuce : appui long sur une lettre de la rangée du haut pour taper son chiffre.</string>
-    <string name="home_debug_gpu">Accélération IA : %1$s</string>
-    <string name="home_debug_gpu_cpu">processeur central</string>
-    <string name="home_debug_gpu_gpu">GPU (essai)</string>
-    <string name="home_debug_gpu_failed">GPU en échec, processeur central</string>
-    <string name="home_debug_gpu_hint">Le modèle est rechargé à la prochaine action IA. Si le GPU échoue ou fait planter le clavier, Taipo repasse tout seul sur le processeur central.</string>
     <!-- Diagnostic mémoire (builds debug) -->
     <string name="diagnostic_title">Diagnostic mémoire</string>
     <string name="diagnostic_explanation">Mesure la mémoire et la vitesse des dictionnaires de vos langues : table actuelle, table compacte de test et dictionnaire complet. Comptez une minute par langue, sans quitter l\'écran. Aucun mot n\'est rapporté, seulement des nombres.</string>

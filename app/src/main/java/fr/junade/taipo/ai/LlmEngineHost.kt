@@ -35,7 +35,7 @@ import java.util.WeakHashMap
  */
 class LlmEngineHost(private val appContext: Context) {
 
-    /** Processeur central ou GPU (essai des builds debug, voir [AiAcceleration]). */
+    /** Processeur central ou GPU (au choix de l'utilisateur, voir [AiAcceleration]). */
     private val acceleration = AiAcceleration(appContext).also { it.checkPreviousCrash() }
 
     /** Verrou d'inférence, à tenir pendant toute utilisation du moteur (chargement compris). */
@@ -45,7 +45,7 @@ class LlmEngineHost(private val appContext: Context) {
     private var loadedModel: AiModel? = null
     private var loadedFile: File? = null
 
-    /** Le moteur chargé tourne sur GPU (essai des builds debug) : un échec de réponse peut alors venir du GPU. */
+    /** Le moteur chargé tourne sur GPU (choix de l'utilisateur) : un échec de réponse peut alors venir du GPU. */
     private var loadedOnGpu = false
 
     /** Le moteur chargé a un backend audio (spike 14.1) : plus lourd en mémoire, mais utilisable aussi pour le texte. */
@@ -98,7 +98,7 @@ class LlmEngineHost(private val appContext: Context) {
         loadingListener?.invoke(true)
         val newEngine: Engine
         try {
-            // Essai du GPU (builds debug, texte seulement) : en cas d'échec, repli sur le processeur central.
+            // GPU si l'utilisateur l'a choisi (texte seulement) : en cas d'échec, repli sur le processeur central.
             newEngine = if (acceleration.useGpu && !withAudio) loadOnGpuOrCpu(file) else loadEngine(file, withAudio, Backend.CPU())
         } catch (e: CancellationException) {
             throw e
@@ -242,7 +242,7 @@ class LlmEngineHost(private val appContext: Context) {
     companion object {
         private const val TAG = "LlmEngineHost"
 
-        /** Ferme tous les moteurs du processus (changement d'accélération dans les réglages debug). Hors du thread principal. */
+        /** Ferme tous les moteurs du processus (changement d'accélération dans l'écran « Modèle IA »). Hors du thread principal. */
         fun closeEverywhere() {
             val hosts = synchronized(liveHosts) { liveHosts.toList() }
             hosts.forEach { host -> runBlocking { host.inferenceLock.withLock { host.close() } } }

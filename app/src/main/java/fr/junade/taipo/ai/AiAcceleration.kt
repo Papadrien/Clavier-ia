@@ -2,12 +2,12 @@ package fr.junade.taipo.ai
 
 import android.annotation.SuppressLint
 import android.content.Context
-import fr.junade.taipo.BuildConfig
 
 /**
  * Accélération du modèle IA (revue de code, performance) : processeur central (par défaut) ou processeur graphique (GPU),
- * souvent bien plus rapide pour générer du texte. **Essai réservé aux builds debug** (bouton en bas de l'accueil) : un échec
- * d'initialisation sur GPU peut planter le clavier au niveau natif, sans exception à attraper.
+ * souvent bien plus rapide pour générer du texte. Au choix de l'utilisateur, dans toutes les versions (interrupteur de l'écran
+ * « Modèle IA », [fr.junade.taipo.ModelDownloadActivity]) : un échec d'initialisation sur GPU peut planter le clavier au niveau
+ * natif, sans exception à attraper, d'où les garde-fous ci-dessous.
  *
  * Garde-fous :
  * - échec d'initialisation (exception) : repli immédiat sur le processeur central, GPU marqué en échec ([gpuFailed]) ;
@@ -26,7 +26,7 @@ class AiAcceleration(context: Context) {
     val gpuFailed: Boolean get() = prefs.getBoolean(KEY_GPU_FAILED, false)
 
     /** Le GPU est à essayer pour le prochain chargement. */
-    val useGpu: Boolean get() = BuildConfig.DEBUG && gpuRequested && !gpuFailed
+    val useGpu: Boolean get() = gpuRequested && !gpuFailed
 
     /** Active ou coupe l'essai du GPU ; l'activer efface un échec précédent (nouvel essai). */
     fun setGpuRequested(requested: Boolean) {

@@ -315,6 +315,10 @@
     <string name="home_status_to_download">To download</string>
     <string name="model_download_title">AI model</string>
     <string name="model_download_description">Download a model to enable AI actions. The model then runs on your device, offline. Downloads use Wi-Fi by default.</string>
+    <string name="model_gpu_section">Acceleration</string>
+    <string name="model_gpu_switch">Use the GPU (experimental)</string>
+    <string name="model_gpu_description">The graphics processor can generate text faster, but it does not work on every phone. If it fails or crashes the keyboard, Taipo falls back to the CPU on its own. The model is reloaded at the next AI action.</string>
+    <string name="model_gpu_failed">The GPU did not work on this device: Taipo uses the CPU. Turn the switch back on to try again.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
     <string name="model_download_limited_features">Some features are not available with this model (AI dictation).</string>
     <string name="model_download_badge_active">Active</string>
@@ -662,11 +666,6 @@
     <string name="tip_move_cursor">Tip: swipe on the space bar to move the cursor.</string>
     <string name="tip_switch_language">Tip: long-press Enter, then slide to the globe to switch language.</string>
     <string name="tip_digits">Tip: long-press a letter of the top row to type its digit.</string>
-    <string name="home_debug_gpu">AI acceleration: %1$s</string>
-    <string name="home_debug_gpu_cpu">CPU</string>
-    <string name="home_debug_gpu_gpu">GPU (trial)</string>
-    <string name="home_debug_gpu_failed">GPU failed, CPU</string>
-    <string name="home_debug_gpu_hint">The model is reloaded at the next AI action. If the GPU fails or crashes the keyboard, Taipo falls back to the CPU on its own.</string>
     <!-- Memory diagnostic (debug builds) -->
     <string name="diagnostic_title">Memory diagnostic</string>
     <string name="diagnostic_explanation">Measures the memory and speed of the dictionaries of your languages: current table, compact test table and full dictionary. Allow one minute per language, without leaving the screen. No word is reported, only numbers.</string>

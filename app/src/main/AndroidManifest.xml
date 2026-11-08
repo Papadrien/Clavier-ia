@@ -55,7 +55,7 @@
         android:theme="@style/AppTheme">
 
         <!--
-            Accélération GPU du modèle IA (essai des builds debug, voir AiAcceleration) : depuis Android 12, une application ne
+            Accélération GPU du modèle IA (au choix dans l'écran « Modèle IA », voir AiAcceleration) : depuis Android 12, une application ne
             voit les bibliothèques du constructeur que si elle les demande. Sans libOpenCL.so, LiteRT-LM charge le modèle sur GPU
             puis échoue à la première réponse (« Can not find OpenCL library on this device »). Facultatives : sans elles, le
             clavier reste sur le processeur central. Voir la doc Kotlin de LiteRT-LM (« GPU backend »).

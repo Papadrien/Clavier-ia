@@ -136,8 +136,10 @@ des mises en page et des allocations évités, plus deux mesures sur le serveur 
 - **Moteurs libérés** (`MemoryRelease`, `TaipoIme.onTrimMemory`) : modèle IA et modèle de dictée libérés quand Android manque
   de mémoire (toujours en mémoire critique, seulement clavier masqué en mémoire basse) et après 5 min de clavier masqué. Ils se
   rechargent à la prochaine action. Les dictionnaires restent.
-- **GPU (essai, builds debug)** : `AiAcceleration`, bouton « Accélération IA » en bas de l'accueil. Repli automatique sur le
-  processeur si le moteur refuse le GPU ; un plantage natif pendant l'essai est détecté au démarrage suivant et coupe le GPU.
+- **GPU (expérimental, toutes versions)** : `AiAcceleration`, interrupteur « Utiliser le GPU » de l'écran « Modèle IA ». Repli
+  automatique sur le processeur si le moteur refuse le GPU, ou si une réponse échoue sur GPU (réponse relancée sur le processeur) ;
+  un plantage natif pendant l'essai est détecté au démarrage suivant et coupe le GPU. `libOpenCL.so` et `libvndksupport.so` sont
+  déclarées dans le manifeste (`uses-native-library`), comme l'exige LiteRT-LM pour le GPU depuis Android 12.
 
 ### Dictionnaires
 - **Lecture sur octets** (`WordForms.parseFrequencyBytes`) : aucune chaîne créée pour les lignes écartées (470 000 sur 740 000 en
