@@ -91,83 +91,106 @@ class GenerationSession(
     ): GenerationOutcome {
         stopRequested = false
         return host.inferenceLock.withLock {
-            val engine = host.ensureLoaded(model, onLoading)
-            if (stopRequested) return@withLock GenerationOutcome("", completed = false)
-
-            // Prompt système lu à chaque envoi : un changement de langue du clavier (ou de prompt) rouvre la conversation.
-            val system = systemPrompt()
-            val reusable = conversation != null && exchangesInConversation == history.size && conversationSystem == system
-            val userTurn: String
-            val active: Conversation
-            if (reusable) {
-                active = conversation!!
-                userTurn = prompt
-            } else {
-                closeConversation()
-                active = engine.createConversation(
-                    ConversationConfig(systemInstruction = Contents.of(system)),
-                )
-                conversation = active
-                conversationSystem = system
-                userTurn = ChatTranscript.build(history, prompt)
+            var received = false
+            val tracked: (String) -> Unit = { chunk ->
+                received = true
+                onChunk(chunk)
             }
-
-            val received = StringBuilder()
-            var chunks = 0
-            var failure: Throwable? = null
-            val startedAt = SystemClock.elapsedRealtime()
             try {
-                withContext(Dispatchers.Default) {
-                    coroutineScope {
-                        val job = launch {
-                            active.sendMessageAsync(userTurn).collect { message ->
-                                if (stopRequested) return@collect // morceau arrivé après le stop : ignoré
-                                val chunk = chunkText(message.toString())
-                                if (chunk.isNotEmpty()) {
-                                    received.append(chunk)
-                                    chunks++
-                                    onChunk(chunk)
-                                }
+                sendLocked(model, history, prompt, onLoading, tracked)
+            } catch (e: Exception) {
+                // GPU en échec avant le premier morceau (essai des builds debug) : une seule relance, sur le processeur central.
+                // Après un premier morceau, l'erreur remonte : l'appelant garde le partiel déjà affiché.
+                if (received || stopRequested || !host.abandonGpuAfter(e)) throw e
+                sendLocked(model, history, prompt, onLoading, tracked)
+            }
+        }
+    }
+
+    /** Un envoi (voir [send]), avec [LlmEngineHost.inferenceLock] tenu. */
+    private suspend fun sendLocked(
+        model: AiModel,
+        history: List<ChatExchange>,
+        prompt: String,
+        onLoading: () -> Unit,
+        onChunk: (String) -> Unit,
+    ): GenerationOutcome {
+        val engine = host.ensureLoaded(model, onLoading)
+        if (stopRequested) return GenerationOutcome("", completed = false)
+
+        // Prompt système lu à chaque envoi : un changement de langue du clavier (ou de prompt) rouvre la conversation.
+        val system = systemPrompt()
+        val reusable = conversation != null && exchangesInConversation == history.size && conversationSystem == system
+        val userTurn: String
+        val active: Conversation
+        if (reusable) {
+            active = conversation!!
+            userTurn = prompt
+        } else {
+            closeConversation()
+            active = engine.createConversation(
+                ConversationConfig(systemInstruction = Contents.of(system)),
+            )
+            conversation = active
+            conversationSystem = system
+            userTurn = ChatTranscript.build(history, prompt)
+        }
+
+        val received = StringBuilder()
+        var chunks = 0
+        var failure: Throwable? = null
+        val startedAt = SystemClock.elapsedRealtime()
+        try {
+            withContext(Dispatchers.Default) {
+                coroutineScope {
+                    val job = launch {
+                        active.sendMessageAsync(userTurn).collect { message ->
+                            if (stopRequested) return@collect // morceau arrivé après le stop : ignoré
+                            val chunk = chunkText(message.toString())
+                            if (chunk.isNotEmpty()) {
+                                received.append(chunk)
+                                chunks++
+                                onChunk(chunk)
                             }
                         }
-                        generationJob = job
-                        if (stopRequested) requestNativeStop(active, job) // stop arrivé entre le test précédent et le lancement
-                        job.join()
                     }
+                    generationJob = job
+                    if (stopRequested) requestNativeStop(active, job) // stop arrivé entre le test précédent et le lancement
+                    job.join()
                 }
-            } catch (e: kotlinx.coroutines.CancellationException) {
-                // Coroutine appelante annulée (fermeture du clavier) : le flux Kotlin est coupé, mais la
-                // génération native tourne encore. On l'arrête puis on lui laisse le temps de finir.
-                stopNative(active)
-                closeConversationOffMain(waitForNative = true)
-                throw e
-            } catch (e: Exception) {
-                failure = e
-            } finally {
-                generationJob = null
             }
-
-            val completed = failure == null && !stopRequested
-            if (completed) {
-                exchangesInConversation = history.size + 1
-            } else {
-                // Tour interrompu ou en échec : on ne sait pas ce que le moteur en a retenu, donc on
-                // referme. Le prompt suivant rouvrira avec l'historique de l'appelant.
-                // Hors du thread principal : close() peut attendre l'arrêt de la génération native, ce qui
-                // gelait le clavier après un stop.
-                closeConversationOffMain(waitForNative = stopRequested)
-            }
-            // Diagnostic : jamais le texte lui-même, seulement les longueurs et la durée.
-            AppLog.i(
-                TAG,
-                "génération: modèle=${model.id} historique=${history.size} échange(s) prompt=${prompt.length} car. " +
-                    "reçu=${received.length} car. morceaux=$chunks terminée=$completed " +
-                    "rejouée=${!reusable} durée=${SystemClock.elapsedRealtime() - startedAt} ms",
-            )
-            // Un stop demandé n'est pas une erreur ; toute autre erreur remonte à l'appelant.
-            if (failure != null && !stopRequested) throw failure
-            GenerationOutcome(received.toString().trim(), completed)
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            // Coroutine appelante annulée (fermeture du clavier) : le flux Kotlin est coupé, mais la
+            // génération native tourne encore. On l'arrête puis on lui laisse le temps de finir.
+            stopNative(active)
+            closeConversationOffMain(waitForNative = true)
+            throw e
+        } catch (e: Exception) {
+            failure = e
+        } finally {
+            generationJob = null
         }
+
+        val completed = failure == null && !stopRequested
+        if (completed) {
+            exchangesInConversation = history.size + 1
+        } else {
+            // Tour interrompu ou en échec : on ne sait pas ce que le moteur en a retenu, donc on
+            // referme. Le prompt suivant rouvrira avec l'historique de l'appelant.
+            // Hors du thread principal : close() peut attendre l'arrêt de la génération native, ce qui
+            // gelait le clavier après un stop.
+            closeConversationOffMain(waitForNative = stopRequested)
+        }
+        // Diagnostic : jamais le texte lui-même, seulement les longueurs et la durée.
+        AppLog.i(
+            TAG,
+            "génération: modèle=${model.id} historique=${history.size} échange(s) prompt=${prompt.length} car. " +
+                "reçu=${received.length} car. morceaux=$chunks terminée=$completed " +
+                "rejouée=${!reusable} durée=${SystemClock.elapsedRealtime() - startedAt} ms",
+        )
+        // Un stop demandé n'est pas une erreur ; toute autre erreur remonte à l'appelant.
+        if (failure != null && !stopRequested) throw failure
+        return GenerationOutcome(received.toString().trim(), completed)
     }
 
     /**

@@ -73,6 +73,23 @@ class CorrectionEngine(
         isCancelled: () -> Boolean = { false },
         onLoading: () -> Unit,
     ): String = host.inferenceLock.withLock {
+        try {
+            correctLocked(model, text, protectedWords, isCancelled, onLoading)
+        } catch (e: Exception) {
+            // GPU en échec pendant la réponse (essai des builds debug) : une seule relance, sur le processeur central.
+            if (e is CorrectionCancelledException || !host.abandonGpuAfter(e)) throw e
+            correctLocked(model, text, protectedWords, isCancelled, onLoading)
+        }
+    }
+
+    /** Une correction, avec [LlmEngineHost.inferenceLock] tenu. */
+    private suspend fun correctLocked(
+        model: AiModel,
+        text: String,
+        protectedWords: List<String>,
+        isCancelled: () -> Boolean,
+        onLoading: () -> Unit,
+    ): String {
         val activeEngine = host.ensureLoaded(model, onLoading)
         if (isCancelled()) throw CorrectionCancelledException()
         // Le moteur ne porte qu'une conversation à la fois : on ferme celle de la génération par
@@ -86,7 +103,7 @@ class CorrectionEngine(
         // avec les mots du dictionnaire personnel présents dans le texte (voir CorrectionPrompt.userTurn).
         val userTurn = CorrectionPrompt.userTurn(text, protectedWords)
         val startedAt = SystemClock.elapsedRealtime()
-        withContext(Dispatchers.Default) {
+        return withContext(Dispatchers.Default) {
             activeEngine.createConversation(conversationConfig).use { conversation ->
                 nativeCancelRequested = false
                 runningConversation = conversation

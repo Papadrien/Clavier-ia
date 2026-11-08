@@ -45,6 +45,9 @@ class LlmEngineHost(private val appContext: Context) {
     private var loadedModel: AiModel? = null
     private var loadedFile: File? = null
 
+    /** Le moteur chargé tourne sur GPU (essai des builds debug) : un échec de réponse peut alors venir du GPU. */
+    private var loadedOnGpu = false
+
     /** Le moteur chargé a un backend audio (spike 14.1) : plus lourd en mémoire, mais utilisable aussi pour le texte. */
     private var loadedWithAudio = false
     private var conversationReleaser: (() -> Unit)? = null
@@ -157,9 +160,26 @@ class LlmEngineHost(private val appContext: Context) {
         }
         if (gpu != null) {
             acceleration.endGpuInit(success = true)
+            loadedOnGpu = true
             return gpu
         }
         return loadEngine(file, withAudio = false, backend = Backend.CPU())
+    }
+
+    /**
+     * Un échec de réponse ([failure]) alors que le moteur tourne sur GPU : le GPU s'initialise sur certains appareils mais échoue
+     * à la première réponse (Pixel 9 : « Can not find OpenCL library on this device », puis `VK_ERROR_DEVICE_LOST`). Le GPU est
+     * alors marqué en échec et le moteur fermé (hors du thread principal) : le prochain [ensureLoaded] le recharge sur le
+     * processeur central. Vrai si l'appelant peut relancer sa réponse ; faux si le moteur n'est pas sur GPU ou si l'échec ne
+     * vient pas de lui (mémoire, texte trop long : même résultat sur le processeur). À appeler avec [inferenceLock] tenu.
+     */
+    suspend fun abandonGpuAfter(failure: Throwable): Boolean {
+        if (!loadedOnGpu || failure is CancellationException) return false
+        if (InferenceFailureClassifier.classify(failure) != InferenceFailureCause.UNEXPECTED) return false
+        fr.junade.taipo.AppLog.w(TAG, "GPU en échec pendant une réponse : repli sur le processeur central", failure)
+        acceleration.markGpuFailed()
+        withContext(Dispatchers.Default) { close() }
+        return true
     }
 
     /** Un moteur est chargé en mémoire. */
@@ -216,6 +236,7 @@ class LlmEngineHost(private val appContext: Context) {
         loadedModel = null
         loadedFile = null
         loadedWithAudio = false
+        loadedOnGpu = false
     }
 
     companion object {

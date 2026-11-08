@@ -11,6 +11,8 @@ import fr.junade.taipo.BuildConfig
  *
  * Garde-fous :
  * - échec d'initialisation (exception) : repli immédiat sur le processeur central, GPU marqué en échec ([gpuFailed]) ;
+ * - échec pendant une réponse alors que l'initialisation avait réussi (bibliothèque OpenCL absente, GPU perdu) : GPU marqué
+ *   en échec ([markGpuFailed]), moteur rechargé sur le processeur central et réponse relancée (voir [LlmEngineHost.abandonGpuAfter]) ;
  * - plantage pendant l'initialisation : le drapeau [KEY_IN_PROGRESS], écrit de façon synchrone avant l'essai, est encore là
  *   au démarrage suivant ([checkPreviousCrash]) : le GPU est alors marqué en échec, le clavier repart sur le processeur.
  * Le GPU marqué en échec n'est plus essayé tant que l'essai n'est pas relancé ([setGpuRequested]).
@@ -40,6 +42,11 @@ class AiAcceleration(context: Context) {
     /** Initialisation sur GPU terminée ; [success] faux : repli sur le processeur, GPU marqué en échec. */
     fun endGpuInit(success: Boolean) {
         prefs.edit().putBoolean(KEY_IN_PROGRESS, false).apply { if (!success) putBoolean(KEY_GPU_FAILED, true) }.apply()
+    }
+
+    /** Le GPU a échoué pendant une réponse : il n'est plus essayé, jusqu'à un nouvel essai ([setGpuRequested]). */
+    fun markGpuFailed() {
+        prefs.edit().putBoolean(KEY_GPU_FAILED, true).apply()
     }
 
     /** Au démarrage du clavier : un essai sur GPU resté « en cours » a planté le processus. */
