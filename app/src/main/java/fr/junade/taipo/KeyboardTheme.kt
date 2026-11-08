@@ -38,6 +38,13 @@ object KeyboardTheme {
     @Volatile
     private var systemNightOverride: Boolean? = null
 
+    /**
+     * Couleur d'accent choisie (section « Couleur » de la page « Thème »), déjà ramenée au violet si elle n'est pas utilisable
+     * ([AccentPalette.effective]). Posée comme [choice] : au démarrage du processus et à chaque changement du réglage.
+     */
+    @Volatile
+    var palette: AccentPalette = AccentPalette.DEFAULT
+
     /** Palette du clavier en ce moment : le réglage, ou le thème de l'appareil en mode automatique. */
     val mode: Mode get() = choice.resolve(isSystemNight())
 
@@ -45,23 +52,25 @@ object KeyboardTheme {
     val dynamic: Boolean get() = choice.usesDynamicColors(Build.VERSION.SDK_INT)
 
     /**
-     * Apparence effective du clavier : palette claire ou sombre ([mode]) et couleurs du fond d'écran ou non ([dynamic]).
+     * Apparence effective du clavier : palette claire ou sombre ([mode]), couleurs du fond d'écran ou non ([dynamic]) et couleur
+     * d'accent ([accent] ; toujours le violet en couleur dynamique, dont l'accent vient du fond d'écran).
      * [TaipoIme] la compare à celle de la création des vues pour savoir s'il faut les recréer.
      */
-    data class Look(val mode: Mode, val dynamic: Boolean)
+    data class Look(val mode: Mode, val dynamic: Boolean, val accent: AccentPalette = AccentPalette.DEFAULT)
 
-    val look: Look get() = Look(mode, dynamic)
+    val look: Look get() = dynamic.let { isDynamic -> Look(mode, isDynamic, if (isDynamic) AccentPalette.DEFAULT else palette) }
 
     /** Ressources de l'apparence effective, gardées tant qu'elle ne change pas (et jusqu'au prochain changement de configuration). */
     @Volatile
     private var cache: Pair<Look, Resources>? = null
 
-    /** Couleur [id] dans la palette du thème courant du clavier. */
-    fun color(context: Context, @ColorRes id: Int): Int = resources(context).getColor(id, null)
+    /** Couleur [id] dans la palette du thème courant du clavier, avec sa couleur d'accent ([AccentPalette.recolor]). */
+    fun color(context: Context, @ColorRes id: Int): Int = look.accent.recolor(resources(context).getColor(id, null))
 
     /**
      * Couleur [id] dans la palette [mode] (celle du fond d'écran si [dynamic], Android 12+), quel que soit le thème en cours. Sert à
      * la page « Thème » (lots T5 et T7), dont les cartes d'aperçu montrent les palettes alors que l'écran, lui, reste sombre.
+     * Couleur de la charte, sans la couleur d'accent : l'aperçu l'applique lui-même ([AccentPalette.recolor]).
      */
     fun colorIn(context: Context, mode: Mode, @ColorRes id: Int, dynamic: Boolean = false): Int {
         val app = context.applicationContext ?: context

@@ -24,6 +24,12 @@ object AnalyticsEvents {
     const val SETTING_CHANGED = "setting_changed"
     const val FIRST_OPEN = "first_open"
 
+    /** Écran du pass premium ouvert ; `source` : d'où (home, about, theme, prompts, clipboard_pin). */
+    const val PREMIUM_PAYWALL_SHOWN = "premium_paywall_shown"
+
+    /** Pass premium acheté (achat confirmé par Google Play) ; `source` : comme [PREMIUM_PAYWALL_SHOWN]. */
+    const val PREMIUM_PURCHASED = "premium_purchased"
+
     /** Types d'action IA de la propriété `type`. */
     object AiType {
         const val CORRECT = "correct"

@@ -18,6 +18,7 @@ import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.ModelStatus
 import fr.junade.taipo.model.VoiceModelFile
 import fr.junade.taipo.model.VoiceModelPreferences
+import fr.junade.taipo.premium.PremiumBilling
 import fr.junade.taipo.review.InAppReview
 
 class MainActivity : Activity() {
@@ -36,6 +37,9 @@ class MainActivity : Activity() {
     private lateinit var step2: StepViews
     private lateinit var step3: StepViews
     private lateinit var tryInput: EditText
+
+    /** Relit l'achat du pass chez Google Play à chaque retour sur l'accueil (achat fait ailleurs, remboursement). */
+    private lateinit var billing: PremiumBilling
 
     /** Opacité d'une étape pas encore accessible (dimens.xml, valeur décimale). */
     private val lockedAlpha: Float by lazy {
@@ -91,6 +95,7 @@ class MainActivity : Activity() {
         bindRow(R.id.button_terms, R.string.button_terms, R.string.home_row_terms_subtitle, TermsActivity::class.java)
         bindRow(R.id.button_licenses, R.string.button_licenses, R.string.home_row_licenses_subtitle, LicensesActivity::class.java)
         bindRow(R.id.button_privacy, R.string.button_privacy, R.string.home_row_privacy_subtitle, PrivacyActivity::class.java)
+        setUpPremium()
 
         // Titres de groupe annoncés comme des titres par TalkBack (navigation par titres).
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_keyboard), true)
@@ -110,11 +115,66 @@ class MainActivity : Activity() {
         renderOnboarding(readOnboardingState())
         renderModelStatuses()
         renderThemeRow()
+        renderPremium()
+        billing.refresh()
     }
+
+    override fun onDestroy() {
+        billing.close()
+        super.onDestroy()
+    }
+
+    /** Pass premium : carte d'offre, ligne de « À propos » et, en build debug, bouton de forçage tout en bas. */
+    private fun setUpPremium() {
+        billing = PremiumBilling(this, object : PremiumBilling.Listener {
+            override fun onStateChanged(state: PremiumBilling.State) = renderPremium()
+        })
+        val row = findViewById<View>(R.id.button_premium)
+        row.findViewById<TextView>(R.id.row_title).setText(R.string.premium_title)
+        row.setOnClickListener { startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_ABOUT)) }
+        findViewById<View>(R.id.premium_card).isSelected = true // contour violet de la carte
+        findViewById<View>(R.id.button_premium_card).setOnClickListener {
+            startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_HOME))
+        }
+        findViewById<View>(R.id.button_premium_card_close).setOnClickListener {
+            homePrefs().edit().putBoolean(KEY_PREMIUM_CARD_DISMISSED, true).apply()
+            renderPremium()
+        }
+        findViewById<View>(R.id.debug_section).visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.button_debug_premium).setOnClickListener {
+            val states = PremiumPass.DebugOverride.entries
+            PremiumPass.setDebugOverride(this, states[(PremiumPass.debugOverride.ordinal + 1) % states.size])
+            renderPremium()
+        }
+    }
+
+    private fun renderPremium() {
+        val active = PremiumPass.isActive
+        val onboarded = readOnboardingState().let { it.enabled && it.selected }
+        val dismissed = homePrefs().getBoolean(KEY_PREMIUM_CARD_DISMISSED, false)
+        findViewById<View>(R.id.premium_card).visibility = if (onboarded && !active && !dismissed) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.button_premium).findViewById<TextView>(R.id.row_subtitle).setText(
+            if (active) R.string.home_row_premium_subtitle_active else R.string.home_row_premium_subtitle_offer,
+        )
+        if (BuildConfig.DEBUG) {
+            val bought = getString(if (PremiumPass.isPurchased) R.string.home_debug_premium_bought else R.string.home_debug_premium_not_bought)
+            val state = when (PremiumPass.debugOverride) {
+                PremiumPass.DebugOverride.NONE -> getString(R.string.home_debug_premium_none, bought)
+                PremiumPass.DebugOverride.ACTIVE -> getString(R.string.home_debug_premium_active)
+                PremiumPass.DebugOverride.INACTIVE -> getString(R.string.home_debug_premium_inactive)
+            }
+            findViewById<TextView>(R.id.button_debug_premium).text = getString(R.string.home_debug_premium, state)
+        }
+    }
+
+    private fun homePrefs() = getSharedPreferences(HOME_PREFS, MODE_PRIVATE)
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) renderOnboarding(readOnboardingState())
+        if (hasFocus) {
+            renderOnboarding(readOnboardingState())
+            renderPremium() // la carte du pass n'apparaît qu'une fois Taipo choisi (sélecteur qui vient de se fermer)
+        }
     }
 
     /** Lot T5 : sous-titre de la ligne « Thème » = thème choisi, relu au retour de la page (le choix s'y fait). */
@@ -239,5 +299,10 @@ class MainActivity : Activity() {
         views.hint.setText(if (status == StepStatus.LOCKED) hintLockedRes else hintRes)
         views.action?.visibility = if (status == StepStatus.CURRENT) View.VISIBLE else View.GONE
         views.card.alpha = if (status == StepStatus.LOCKED) lockedAlpha else 1f
+    }
+
+    private companion object {
+        const val HOME_PREFS = "home_prefs"
+        const val KEY_PREMIUM_CARD_DISMISSED = "premium_card_dismissed"
     }
 }

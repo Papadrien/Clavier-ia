@@ -182,6 +182,55 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- Pass premium : carte d'offre, montrée une fois les 3 étapes faites, tant que le pass n'est pas actif et qu'elle n'a pas
+         été masquée (MainActivity.renderPremium). Le pass reste accessible par la ligne « Pass premium » de « À propos ». -->
+    <LinearLayout
+        android:id="@+id/premium_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_theme_card"
+        android:padding="@dimen/taipo_settings_card_padding"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_xl"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                style="@style/TaipoText.Section"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/home_premium_card_title" />
+
+            <ImageButton
+                android:id="@+id/button_premium_card_close"
+                android:layout_width="@dimen/taipo_settings_row_min_height"
+                android:layout_height="@dimen/taipo_settings_row_min_height"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_close"
+                android:contentDescription="@string/home_premium_card_close" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/home_premium_card_text" />
+
+        <Button
+            style="@style/TaipoButton.Primary"
+            android:id="@+id/button_premium_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md"
+            android:text="@string/home_premium_card_button" />
+    </LinearLayout>
+
     <TextView
         style="@style/TaipoText.Section"
         android:id="@+id/section_keyboard"
@@ -347,6 +396,18 @@
         android:clipToOutline="true">
 
         <include
+            android:id="@+id/button_premium"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
             android:id="@+id/button_terms"
             layout="@layout/view_settings_row"
             android:layout_width="match_parent"
@@ -375,6 +436,36 @@
             layout="@layout/view_settings_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- Builds debug seulement (MainActivity) : forçage du pass premium, pour tester les deux états sans achat. -->
+    <LinearLayout
+        android:id="@+id/debug_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/taipo_settings_gap_xl"
+        android:visibility="gone">
+
+        <TextView
+            style="@style/TaipoText.Section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm"
+            android:text="@string/home_section_debug" />
+
+        <Button
+            style="@style/TaipoButton.Secondary"
+            android:id="@+id/button_debug_premium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+            android:text="@string/home_debug_premium_hint" />
     </LinearLayout>
 
 </LinearLayout>

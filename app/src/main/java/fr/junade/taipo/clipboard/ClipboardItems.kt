@@ -24,8 +24,11 @@ object ClipboardItems {
     /** Story 2.7 : longueur maximale d'une étiquette (caractères, après retrait des espaces autour). */
     const val MAX_LABEL_CHARS = 15
 
-    /** Nombre maximal d'éléments épinglés. */
+    /** Nombre maximal d'éléments épinglés avec le pass premium (et plafond d'une restauration de sauvegarde). */
     const val MAX_PINNED = 50
+
+    /** Pass premium : sans lui, 5 éléments épinglés au plus (ceux déjà épinglés au-delà sont gardés, aucun n'est ajouté). */
+    const val FREE_MAX_PINNED = 5
 
     /** Story 2.9 : nombre maximal de copies gardées dans l'historique. */
     const val MAX_HISTORY = 20
@@ -35,6 +38,15 @@ object ClipboardItems {
 
     /** Story 2.9 : une copie reste dans l'historique 12 h après avoir été copiée. */
     const val HISTORY_RETENTION_MILLIS = 12 * 60 * 60 * 1000L
+
+    /** Pass premium : une copie reste dans l'historique 7 jours. */
+    const val PREMIUM_HISTORY_RETENTION_MILLIS = 7 * 24 * 60 * 60 * 1000L
+
+    /** Plafond d'épinglage selon le pass premium. */
+    fun maxPinned(premium: Boolean): Int = if (premium) MAX_PINNED else FREE_MAX_PINNED
+
+    /** Durée de l'historique selon le pass premium (sans lui, les copies de plus de 12 h sont purgées). */
+    fun historyRetentionMillis(premium: Boolean): Long = if (premium) PREMIUM_HISTORY_RETENTION_MILLIS else HISTORY_RETENTION_MILLIS
 
     enum class PinResult { PINNED, ALREADY_PINNED, FULL, TOO_LONG, EMPTY, SENSITIVE }
 

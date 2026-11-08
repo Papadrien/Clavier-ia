@@ -1,6 +1,7 @@
 package fr.junade.taipo.backup
 
 import android.content.Context
+import fr.junade.taipo.AccentPalette
 import fr.junade.taipo.HapticIntensity
 import fr.junade.taipo.KeyboardHeight
 import fr.junade.taipo.KeyboardPreferences
@@ -42,7 +43,10 @@ object BackupService {
     suspend fun collect(context: Context, nowMillis: Long = System.currentTimeMillis()): BackupData {
         val appContext = context.applicationContext
         val keyboard = KeyboardPreferences(appContext)
-        val prompts = promptPreferences(appContext).filterValues { it.isCustom() }.mapValues { it.value.get() }
+        // Prompts personnalisés enregistrés, utilisés ou non (sans pass premium, ils sont gardés mais pas utilisés).
+        val prompts = promptPreferences(appContext)
+            .mapNotNull { (usage, preferences) -> preferences.custom()?.let { usage to it } }
+            .toMap()
         return BackupData(
             exportedAtMillis = nowMillis,
             dictionary = PersonalDictionaryProvider.repository(appContext).all(),
@@ -61,6 +65,7 @@ object BackupService {
                 recentEmojis = keyboard.recentEmojis,
                 habitLearning = keyboard.isHabitLearningEnabled,
                 themeChoice = keyboard.themeChoice.storageKey,
+                accentPalette = keyboard.accentPalette.storageKey,
             ),
             ai = BackupAiSettings(
                 activeModelId = ModelPreferences(appContext).activeModel()?.id,
@@ -130,6 +135,10 @@ object BackupService {
         settings.themeChoice?.let { key ->
             // Écrire le réglage met aussi à jour KeyboardTheme.choice. « dynamic » sur un appareil d'avant Android 12 se comporte comme « system ».
             ThemeChoice.entries.firstOrNull { it.storageKey == key }?.let { keyboard.themeChoice = it }
+        }
+        settings.accentPalette?.let { key ->
+            // Écrire le réglage met aussi à jour KeyboardTheme.palette (le violet si la couleur est réservée au pass premium).
+            AccentPalette.entries.firstOrNull { it.storageKey == key }?.let { keyboard.accentPalette = it }
         }
     }
 

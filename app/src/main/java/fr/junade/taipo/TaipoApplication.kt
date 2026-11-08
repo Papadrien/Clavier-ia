@@ -11,7 +11,9 @@ class TaipoApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        KeyboardTheme.choice = KeyboardPreferences(this).themeChoice // avant toute vue du clavier
+        val keyboard = KeyboardPreferences(this) // thème et couleur d'accent : avant toute vue du clavier
+        KeyboardTheme.choice = keyboard.themeChoice
+        PremiumPass.load(this) // pass premium (dernier état connu de Google Play) ; pose aussi la couleur d'accent du clavier
         Analytics.initialize(this)
     }
 }

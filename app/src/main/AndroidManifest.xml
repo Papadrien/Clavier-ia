@@ -70,6 +70,11 @@
             android:exported="false" />
 
         <activity
+            android:name=".PremiumActivity"
+            android:label="@string/premium_title"
+            android:exported="false" />
+
+        <activity
             android:name=".ThemeActivity"
             android:label="@string/theme_title"
             android:exported="false" />

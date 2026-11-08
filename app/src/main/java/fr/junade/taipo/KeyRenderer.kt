@@ -25,6 +25,8 @@ internal class DrawDimens(context: Context) {
     val keyShadowHeight = context.dimen(R.dimen.taipo_key_shadow_height)
     val keyShadowPressedHeight = context.dimen(R.dimen.taipo_key_shadow_pressed_height)
     val spaceBarLength = context.dimen(R.dimen.taipo_space_bar_length)
+    val spaceLabelTextSize = context.dimen(R.dimen.taipo_space_label_text_size)
+    val spaceLabelMargin = context.dimen(R.dimen.taipo_space_label_margin)
     val iconSize = context.dimen(R.dimen.taipo_icon_size)
     val keyTextSize = context.dimen(R.dimen.taipo_key_text_size)
     val keyTextSizeLarge = context.dimen(R.dimen.taipo_key_text_size_large)
@@ -70,6 +72,18 @@ internal class KeyRenderer(private val context: Context) {
     private val spaceBarBlobPath = Path()
     private val spaceBarTint = context.themeColor(R.color.accent_on_key) // lot T6 : violet clair en sombre, violet plein en clair
 
+    /**
+     * Nom de la langue active (« Français »), écrit sur la barre d'espace à la place du trait ; null : le trait. Pendant le
+     * glissement qui déplace le curseur, le mot suit l'animation « Amibe » : il se décale, s'étire et vire au violet comme le trait.
+     */
+    var spaceLabel: String? = null
+    private val spaceLabelColor = context.themeColor(R.color.key_hint)
+    private val spaceLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = spaceLabelColor
+        textAlign = Paint.Align.CENTER
+        useTaipoFont(context)
+    }
+
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = context.themeColor(R.color.text_primary)
         textAlign = Paint.Align.CENTER
@@ -110,8 +124,8 @@ internal class KeyRenderer(private val context: Context) {
     // Lot T6 : Entrée est violette dans les deux thèmes, son icône est donc blanche (text_on_accent), pas la couleur des libellés.
     private val enterIcon = loadKeyIcon(R.drawable.ic_key_enter, R.color.text_on_accent)
     private val emojiIcon = loadKeyIcon(R.drawable.ic_key_emoji)
-    // Petits points de suspension en exposant sur la pilule Entrée violette : blanc, légèrement atténué comme l'indice des chiffres (lot T6).
-    private val globeIcon = loadKeyIcon(R.drawable.ic_key_ellipsis, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
+    // Petit globe en exposant sur la pilule Entrée violette : blanc, légèrement atténué comme l'indice des chiffres (lot T6).
+    private val globeIcon = loadKeyIcon(R.drawable.ic_key_globe, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
 
     /** Clavier multilingue actif : la pilule Entrée affiche un petit globe en exposant (appui long = langue). */
     var showsGlobeOnEnter = false
@@ -151,6 +165,38 @@ internal class KeyRenderer(private val context: Context) {
         spaceBarBlobPath.lineTo(leftX, cy + leftR)
         spaceBarBlobPath.close()
         canvas.drawPath(spaceBarBlobPath, spaceBarBlobPaint)
+    }
+
+    /**
+     * Nom de la langue sur la barre d'espace (voir [spaceLabel]). Au repos, centré, réduit s'il dépasse la touche. Pendant le
+     * glissement, il reprend les deux bouts du trait animé : décalé vers leur milieu, étiré (en largeur) quand le trait s'étire,
+     * teinté comme lui, sans sortir de la touche. Sans allocation.
+     */
+    private fun drawSpaceLabel(canvas: Canvas, label: String, cx: Float, cy: Float) {
+        val paint = spaceLabelPaint
+        paint.textSize = dims.spaceLabelTextSize
+        val room = keyRect.width() - 2f * dims.spaceLabelMargin
+        val textWidth = paint.measureText(label)
+        val fit = if (textWidth > room && textWidth > 0f) room / textWidth else 1f
+        var shift = 0f
+        var scaleX = 1f
+        paint.color = spaceLabelColor
+        val blob = spaceBarAnimation
+        if (blob != null && blob.isRunning) {
+            val half = dims.spaceBarLength
+            val rightX = half + blob.rightOffset
+            val leftX = -half + blob.leftOffset
+            val stretch = SpaceBarPose.stretch(rightX - leftX, 2f * half)
+            scaleX = (1f + stretch * LABEL_STRETCH).coerceIn(LABEL_MIN_SCALE, LABEL_MAX_SCALE)
+            paint.color = SpaceBarPose.blend(spaceLabelColor, spaceBarTint, SpaceBarPose.tint(stretch))
+            val maxShift = ((room - textWidth * fit * scaleX) / 2f).coerceAtLeast(0f)
+            shift = ((rightX + leftX) / 2f).coerceIn(-maxShift, maxShift)
+        }
+        val save = canvas.save()
+        canvas.translate(cx + shift, cy)
+        canvas.scale(fit * scaleX, fit)
+        canvas.drawText(label, 0f, -(paint.ascent() + paint.descent()) / 2f, paint)
+        canvas.restoreToCount(save)
     }
 
     /** Lot 21 : la majuscule à dessiner à la place du libellé (Maj actif sur une lettre), ou [NO_CHAR]. Sans allocation. */
@@ -246,7 +292,10 @@ internal class KeyRenderer(private val context: Context) {
                 val cx = keyRect.centerX()
                 val cy = keyRect.centerY()
                 val blob = spaceBarAnimation
-                if (blob != null && blob.isRunning) {
+                val label = spaceLabel
+                if (label != null) {
+                    drawSpaceLabel(canvas, label, cx, cy)
+                } else if (blob != null && blob.isRunning) {
                     drawSpaceBarBlob(canvas, blob, cx, cy)
                 } else {
                     canvas.drawLine(
@@ -487,6 +536,14 @@ internal class KeyRenderer(private val context: Context) {
         /** Taille du libellé des touches de bascule entre les pages de symboles, par rapport à une touche normale. */
         private const val SYMBOL_PAGE_TEXT_RATIO = 0.75f
         private const val TOGGLE_123_TEXT_RATIO = 0.7f
+
+        /**
+         * Nom de la langue sur l'espace pendant le glissement : part de l'allongement du trait reprise en largeur par le mot
+         * (le trait est court, le mot bien plus long : l'étirer autant le rendrait illisible), bornée.
+         */
+        private const val LABEL_STRETCH = 0.3f
+        private const val LABEL_MIN_SCALE = 0.85f
+        private const val LABEL_MAX_SCALE = 1.3f
 
         // Garde-fou : l'ombre ne dépasse jamais cette part de la hauteur de la touche (rangées basses en paysage).
         private const val MAX_SHADOW_RATIO = 0.15f

@@ -97,6 +97,18 @@ class KeyboardPreferences(context: Context) {
             KeyboardTheme.choice = value
         }
 
+    /**
+     * Couleur d'accent du clavier (section « Couleur » de la page « Thème »). Violet par défaut. C'est le choix enregistré : la
+     * palette appliquée ([KeyboardTheme.palette]) retombe sur le violet si celle-ci est réservée au pass premium et qu'il n'est pas
+     * actif ([AccentPalette.effective]). Écrire le réglage met aussi à jour [KeyboardTheme.palette].
+     */
+    var accentPalette: AccentPalette
+        get() = AccentPalette.fromStorageKey(prefs.getString(KEY_ACCENT_PALETTE, null))
+        set(value) {
+            prefs.edit().putString(KEY_ACCENT_PALETTE, value.storageKey).apply()
+            KeyboardTheme.palette = AccentPalette.effective(value, PremiumPass.isActive)
+        }
+
     /** Son du clavier (tic doux à chaque frappe, plus aigu pour la barre d'espace). Activé par défaut. */
     var isKeySoundEnabled: Boolean
         get() = prefs.getBoolean(KEY_KEY_SOUND, DEFAULT_KEY_SOUND)
@@ -290,6 +302,7 @@ class KeyboardPreferences(context: Context) {
     companion object {
         private const val PREFS_NAME = "keyboard_prefs"
         private const val KEY_THEME_CHOICE = "theme_choice"
+        private const val KEY_ACCENT_PALETTE = "accent_palette"
         private const val KEY_ADAPTIVE_TOUCH = "adaptive_touch_enabled"
         private const val KEY_SHOW_TOUCH_ZONES = "show_touch_zones"
         private const val KEY_NUMBER_ROW = "number_row_enabled"

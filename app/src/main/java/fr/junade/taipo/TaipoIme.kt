@@ -17,7 +17,6 @@ import android.view.inputmethod.InlineSuggestionsResponse
 import android.view.inputmethod.InputMethodSubtype
 import androidx.annotation.RequiresApi
 import androidx.core.view.inputmethod.EditorInfoCompat
-import android.widget.Toast
 import fr.junade.taipo.ai.AiTranscriptionEngine
 import fr.junade.taipo.ai.CorrectionEngine
 import fr.junade.taipo.ai.LlmEngineHost
@@ -593,7 +592,6 @@ class TaipoIme : InputMethodService() {
         trackKeyboardLanguage()
         syncAutoCapitalization()
         applyState()
-        Toast.makeText(this, next.displayName, Toast.LENGTH_SHORT).show()
     }
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
@@ -1488,6 +1486,8 @@ class TaipoIme : InputMethodService() {
         keyboardView.layout =
             Keyboards.layoutOf(controller.state.activeLayout, controller.state.language, numberRowEnabled, fieldType, bottomRowKeys, arrangement, compactEnter)
         keyboardView.isShifted = controller.state.isShifted
+        // Multilingue : nom de la langue active sur l'espace, à la place du trait ; une seule langue : le trait, comme avant.
+        keyboardView.spaceLabel = if (compactEnter) controller.state.language.displayName else null
         keyboardView.isCapsLock = controller.state.isCapsLock
         keyboardView.showsGlobeOnEnter = compactEnter
     }

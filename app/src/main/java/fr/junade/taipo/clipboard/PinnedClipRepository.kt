@@ -26,6 +26,8 @@ class PinnedClipRepository(
     scope: CoroutineScope,
     openDao: () -> PinnedClipDao,
     private val onError: (Throwable) -> Unit = {},
+    /** Plafond d'un nouvel épinglage, relu à chaque fois (pass premium : 50, sinon 5). Une restauration garde [ClipboardItems.MAX_PINNED]. */
+    private val maxPinned: () -> Int = { ClipboardItems.MAX_PINNED },
 ) {
 
     private val dao: Deferred<PinnedClipDao> = scope.async(Dispatchers.IO) { openDao() }
@@ -72,7 +74,7 @@ class PinnedClipRepository(
      */
     suspend fun pin(text: String, nowMillis: Long = System.currentTimeMillis()): ClipboardItems.PinResult {
         ClipboardItems.pinRefusal(text, sensitive = false)?.let { return it }
-        return dao.await().insertBounded(PinnedClipEntity(text = text, pinnedAt = nowMillis), ClipboardItems.MAX_PINNED)
+        return dao.await().insertBounded(PinnedClipEntity(text = text, pinnedAt = nowMillis), maxPinned())
     }
 
     /**

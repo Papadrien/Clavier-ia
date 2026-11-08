@@ -25,10 +25,11 @@ class MessagePopup(private val context: Context, private val host: Host) {
     private var dialog: AlertDialog? = null
 
     /**
-     * Affiche [message] dans un pop-up avec un bouton OK (les toasts passaient inaperçus). Si le clavier n'est plus
-     * affiché (pas de fenêtre pour accrocher le pop-up), repli sur un toast.
+     * Affiche [message] dans un pop-up avec un bouton OK (les toasts passaient inaperçus) et, si [action] est donné, un second
+     * bouton qui ferme le pop-up puis appelle [onAction]. Si le clavier n'est plus affiché (pas de fenêtre pour accrocher le
+     * pop-up), repli sur un toast (sans le bouton d'action).
      */
-    fun show(message: String) {
+    fun show(message: String, action: String? = null, onAction: () -> Unit = {}) {
         val token = host.windowToken()
         if (token == null) {
             Toast.makeText(context, message, Toast.LENGTH_LONG).show()
@@ -38,6 +39,7 @@ class MessagePopup(private val context: Context, private val host: Host) {
         val created = AlertDialog.Builder(ContextThemeWrapper(KeyboardTheme.themed(context), R.style.MessageDialogTheme))
             .setMessage(message)
             .setPositiveButton(R.string.message_dialog_ok, null)
+            .apply { if (action != null) setNegativeButton(action) { _, _ -> onAction() } }
             .create()
         attach(created, token)
         dialog = created

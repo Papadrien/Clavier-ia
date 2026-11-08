@@ -15,7 +15,8 @@ import androidx.annotation.ColorRes
  * claire ou sombre. « Système, automatique » montre les deux moitiés côte à côte (clair à gauche, sombre à droite).
  *
  * Les écrans de l'application restent sombres : les couleurs des deux palettes sont lues par
- * [KeyboardTheme.colorIn], pas par les ressources de l'écran. Aucune allocation au dessin.
+ * [KeyboardTheme.colorIn], pas par les ressources de l'écran. La couleur d'accent choisie ([accent]) est appliquée au dessin, sauf
+ * pour « Couleur dynamique », dont l'accent vient du fond d'écran. Aucune allocation au dessin.
  */
 class ThemePreviewView @JvmOverloads constructor(
     context: Context,
@@ -29,8 +30,15 @@ class ThemePreviewView @JvmOverloads constructor(
             invalidate()
         }
 
+    /** Couleur d'accent montrée (section « Couleur » de la page « Thème »). Changer la valeur redessine l'aperçu. */
+    var accent: AccentPalette = AccentPalette.DEFAULT
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     /** Couleurs d'une palette, lues une fois à la création de la vue. */
-    private class Palette(private val context: Context, private val mode: KeyboardTheme.Mode, private val dynamic: Boolean = false) {
+    private class Palette(private val context: Context, private val mode: KeyboardTheme.Mode, val dynamic: Boolean = false) {
         private fun color(@ColorRes id: Int) = KeyboardTheme.colorIn(context, mode, id, dynamic)
 
         val background = color(R.color.keyboard_background)
@@ -102,13 +110,16 @@ class ThemePreviewView @JvmOverloads constructor(
     }
 
     private fun drawKey(canvas: Canvas, palette: Palette, key: PreviewKey) {
-        val face: Int
-        val shadow: Int
+        var face: Int
+        var shadow: Int
         when (key.kind) {
             PreviewKeyKind.LETTER, PreviewKeyKind.SPACE -> { face = palette.letter; shadow = palette.letterShadow }
             PreviewKeyKind.MODIFIER, PreviewKeyKind.BAR_BUTTON -> { face = palette.modifier; shadow = palette.modifierShadow }
             PreviewKeyKind.ENTER -> { face = palette.enter; shadow = palette.enterShadow }
         }
+        val tint = if (palette.dynamic) AccentPalette.DEFAULT else accent
+        face = tint.recolor(face)
+        shadow = tint.recolor(shadow)
         val shadowHeight = key.height * ThemePreviewGeometry.SHADOW_RATIO
         val faceHeight = key.height - shadowHeight
         // Entrée et boutons de la barre : arrondis complets, comme sur le vrai clavier ; les autres touches, coins des touches.

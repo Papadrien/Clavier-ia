@@ -204,8 +204,8 @@ class KeyboardView(context: Context) : View(context) {
     // Lot 21 : tampon réutilisé (aucun RectF créé par frame) : l'emprise d'une touche pour les bulles.
     private val boundsScratch = RectF()
 
-    // Icône « ... » (bulle d'Entrée, changement de langue) : les autres icônes de touche sont chargées par KeyRenderer.
-    private val globeIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_key_ellipsis)) { "Icône points de suspension introuvable" }
+    // Icône globe (bulle d'Entrée, changement de langue) : les autres icônes de touche sont chargées par KeyRenderer.
+    private val globeIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_key_globe)) { "Icône globe introuvable" }
         .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
 
     // Icône du mode une main (bulle d'Entrée), teintée comme celle du globe.
@@ -262,6 +262,15 @@ class KeyboardView(context: Context) : View(context) {
             if (field == value) return
             field = value
             keyRenderer.showsGlobeOnEnter = value
+            invalidate()
+        }
+
+    /** Nom de la langue active, écrit sur la barre d'espace à la place du trait (null : le trait). Voir [KeyRenderer.spaceLabel]. */
+    var spaceLabel: String? = null
+        set(value) {
+            if (field == value) return
+            field = value
+            keyRenderer.spaceLabel = value
             invalidate()
         }
     private var globeListener: Runnable? = null

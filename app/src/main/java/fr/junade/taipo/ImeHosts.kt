@@ -116,6 +116,9 @@ internal interface ImeHostContext {
     // Déduits des membres ci-dessus
     fun showMessage(message: String) = messagePopup.show(message)
 
+    fun showMessageWithAction(message: String, action: String, onAction: () -> Unit) =
+        messagePopup.show(message, action, onAction)
+
     fun barReady(): Boolean = viewComposer.isComposed
 
     fun isRecording(): Boolean = voice.isRecording
@@ -181,6 +184,8 @@ internal class EmojiHost(private val ime: ImeHostContext) : EmojiController.Host
 /** Smart Clipboard (puce de collage, panneau, épinglés) : voir [ClipboardController]. */
 internal class ClipboardHost(private val ime: ImeHostContext) : ClipboardController.Host {
     override fun showMessage(message: String) = ime.showMessage(message)
+    override fun showMessageWithAction(message: String, action: String, onAction: () -> Unit) =
+        ime.showMessageWithAction(message, action, onAction)
     override fun inputConnection() = ime.inputConnection()
     override fun editorInfo() = ime.editorInfo()
     override fun haptic() = ime.haptic()

@@ -27,6 +27,9 @@ work = "2.10.0"
 # Demande d'avis intégrée (bottom sheet Google Play In-App Review) : voir fr.junade.taipo.review.
 play-review = "2.0.2"
 
+# Pass premium (achat unique) : Google Play Billing. 8.0.0 : API stable connue (achats en attente, QueryProductDetailsResult).
+play-billing = "8.0.0"
+
 # SDK Kotlin d'Aptabase (JitPack). 0.1.0 : compilé contre l'API 37 et Kotlin stdlib 2.2, minSdk 16 (la doc du site cite encore 0.0.8).
 aptabase = "0.1.0"
 
@@ -44,6 +47,7 @@ androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", versi
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 aptabase-kotlin = { module = "com.github.aptabase:aptabase-kotlin", version.ref = "aptabase" }
 play-review = { module = "com.google.android.play:review", version.ref = "play-review" }
+play-billing = { module = "com.android.billingclient:billing-ktx", version.ref = "play-billing" }
 litertlm-android = { module = "com.google.ai.edge.litertlm:litertlm-android", version.ref = "litertlm" }
 
 [plugins]

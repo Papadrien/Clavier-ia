@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import fr.junade.taipo.AppLog
+import fr.junade.taipo.PremiumPass
 
 /**
  * Instances uniques (par processus) des dépôts du presse-papiers : [PinnedClipRepository]
@@ -41,12 +42,14 @@ object ClipboardProvider {
         scope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
         openDao = { database(appContext).pinnedClipDao() },
         onError = { AppLog.e(TAG, "Échec d'accès aux éléments épinglés", it) },
+        maxPinned = { ClipboardItems.maxPinned(PremiumPass.isActive) },
     )
 
     private fun createHistory(appContext: Context) = ClipHistoryRepository(
         scope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
         openDao = { database(appContext).clipHistoryDao() },
         onError = { AppLog.e(TAG, "Échec d'accès à l'historique du presse-papiers", it) },
+        retentionMillis = { ClipboardItems.historyRetentionMillis(PremiumPass.isActive) },
     )
 
     /** La base partagée, ouverte au premier appel (hors thread principal : appelé depuis `openDao`). */

@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
  *   des cartes ([ClipboardItems.build]).
  * - [record] / [updateText] / [replaceText] / [remove] / [purgeExpired] : écritures asynchrones.
  *
- * Rétention de [retentionMillis] (12 h) à partir de la copie, [maxEntries] lignes au plus. La
+ * Rétention de [retentionMillis] (12 h, 7 jours avec le pass premium, relue à chaque usage) à partir de la copie, [maxEntries] lignes au plus. La
  * purge physique des lignes expirées a lieu à l'ouverture de la base, à chaque [record] et à la
  * demande ([purgeExpired], à l'ouverture du panneau). L'horloge est injectable pour les tests.
  * Aucune dépendance Android : la base est fournie par [openDao].
@@ -29,7 +29,7 @@ class ClipHistoryRepository(
     scope: CoroutineScope,
     openDao: () -> ClipHistoryDao,
     private val clock: () -> Long = { System.currentTimeMillis() },
-    private val retentionMillis: Long = ClipboardItems.HISTORY_RETENTION_MILLIS,
+    private val retentionMillis: () -> Long = { ClipboardItems.HISTORY_RETENTION_MILLIS },
     private val maxEntries: Int = ClipboardItems.MAX_HISTORY,
     private val onError: (Throwable) -> Unit = {},
 ) {
@@ -44,7 +44,7 @@ class ClipHistoryRepository(
             try {
                 val opened = dao.await()
                 try {
-                    opened.deleteOlderThan(clock() - retentionMillis) // purge au démarrage de la base
+                    opened.deleteOlderThan(clock() - retentionMillis()) // purge au démarrage de la base
                 } catch (e: CancellationException) {
                     throw e
                 } catch (t: Throwable) {
@@ -77,12 +77,12 @@ class ClipHistoryRepository(
         val now = clock()
         val known = copiedAtMillis > 0
         val copiedAt = if (known) minOf(copiedAtMillis, now) else now
-        return dao.await().record(text, copiedAt, known, sensitive, now, retentionMillis, maxEntries)
+        return dao.await().record(text, copiedAt, known, sensitive, now, retentionMillis(), maxEntries)
     }
 
     /** Supprime les copies expirées (à l'ouverture du panneau). */
     suspend fun purgeExpired() {
-        dao.await().deleteOlderThan(clock() - retentionMillis)
+        dao.await().deleteOlderThan(clock() - retentionMillis())
     }
 
     /**

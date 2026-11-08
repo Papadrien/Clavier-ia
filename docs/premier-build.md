@@ -37,7 +37,7 @@ puce de collage et son expiration (2.2, 2.3), panneau, épinglage, modification,
 historique de 12 h (2.5 à 2.9). L'IME lui parle via `ClipboardController.Host`. La logique pure
 (`ClipboardItems`, `ClipboardSuggestionState`…) reste couverte par les tests existants, inchangés.
 Non compilé ni exécuté ici. Smoke test manuel : copier un texte → puce → collage ; ouverture du panneau,
-collage d'une carte ; épingler, modifier, étiqueter, supprimer ; champ mot de passe (pas de puce) ;
+collage d'une carte ; épingler, modifier, étiqueter, supprimer ; champ mot de passe (puce de collage proposée, copie sensible masquée ; panneau grisé) ;
 puce qui disparaît après 10 min ou à la frappe ; copie sensible (aperçu masqué) ; dictée/correction en cours.
 
 ## Découpage de TaipoIme — étape 3 : PromptModeController (lot 2.3, 03/10/2026)
