@@ -30,6 +30,8 @@ data class BackupKeyboardSettings(
     val habitLearning: Boolean? = null,
     /** Thème du clavier : clé de stockage de [fr.junade.taipo.ThemeChoice] (`system`, `light`, `dark`, `dynamic`). */
     val themeChoice: String? = null,
+    /** Couleur d'accent du clavier : clé de stockage de [fr.junade.taipo.AccentPalette] (`violet`, `indigo`…). */
+    val accentPalette: String? = null,
 )
 
 /**

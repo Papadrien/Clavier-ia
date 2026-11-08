@@ -265,6 +265,10 @@
     <dimen name="taipo_theme_check_margin">6dp</dimen>
     <dimen name="taipo_theme_card_stroke">1dp</dimen>
     <dimen name="taipo_theme_card_stroke_selected">2dp</dimen>
+    <!-- Section « Couleur » de la page « Thème » : pastille d'une couleur d'accent et anneau de la pastille choisie. -->
+    <dimen name="taipo_accent_swatch_size">48dp</dimen>
+    <dimen name="taipo_accent_swatch_ring">2dp</dimen>
+    <dimen name="taipo_accent_swatch_ring_gap">3dp</dimen>
 
     <!-- Aperçu d'une disposition (détail d'une langue) : un carré par touche, écart entre les carrés. -->
     <dimen name="taipo_layout_preview_key">8dp</dimen>

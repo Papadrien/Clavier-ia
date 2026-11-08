@@ -26,6 +26,7 @@ class BackupCodecTest {
             recentEmojis = listOf("😀", "👍"),
             habitLearning = false,
             themeChoice = "dynamic",
+            accentPalette = "lagoon",
         ),
         ai = BackupAiSettings(
             activeModelId = "equilibre",

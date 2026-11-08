@@ -63,6 +63,22 @@ Contrastes vérifiés par `AccessibilityContrastTest` sur les deux palettes (4,5
 - Mesure d'usage : `setting_changed` avec `key = theme_choice` et le mot-clé du thème (voir `docs/analytics.md`).
 - Géométrie de l'aperçu testée par `ThemePreviewGeometryTest` ; le dessin lui-même est à juger à l'écran.
 
+## Couleur d'accent (section « Couleur », 08/11/2026)
+
+- Neuf palettes (`AccentPalette`) : le violet de la charte (par défaut) et Indigo, Bleu vif, Lagon, Émeraude, Ambre, Framboise,
+  Magenta, Graphite. Chacune donne les cinq tons que la charte tire du violet : principale (`taipo_purple`), secondaire
+  (`taipo_purple_shadow`), accent sur touche sombre (`taipo_purple_light`), touche sombre et son ombre (`taipo_key`,
+  `taipo_key_shadow` de la palette sombre, gris teintés de l'accent).
+- Mécanisme : `KeyboardTheme.color` passe chaque couleur résolue dans `AccentPalette.recolor`, qui remplace un ton du violet par celui
+  de la palette. Les rôles suivent sans être énumérés. La palette fait partie de `KeyboardTheme.Look` : la changer recrée les vues du
+  clavier à la prochaine ouverture d'un champ, comme le thème. Sans effet en couleur dynamique. Les écrans de l'application restent violets.
+- Contrastes gardés par `AccentPaletteTest` : blanc sur principale ≥ 4,5:1, principale sur touche claire ≥ 3:1, accent sur touche
+  sombre ≥ 4,4:1 (niveau du violet).
+- Pass premium : toutes les couleurs sauf le violet sont réservées (`AccentPalette.requiresPremium`). `PremiumPass.isActive` vaut
+  toujours vrai tant que le pass n'est pas vendu ; à brancher sur l'achat. Une couleur réservée sans pass retombe sur le violet
+  (`AccentPalette.effective`), et `ThemeActivity.onLockedPalette` est l'endroit où ouvrir l'offre.
+- Réglage `accent_palette` (préférences, sauvegarde `accentPalette`, mesure d'usage `setting_changed`).
+
 ## Limites connues (après T6)
 
 - `ThemeChoice.DEFAULT` est **Système, automatique** : un utilisateur qui n'a jamais ouvert la page « Thème » voit le clavier suivre le thème de l'appareil (clair le jour, sombre la nuit), donc change d'aspect à la mise à jour s'il utilise l'appareil en clair.

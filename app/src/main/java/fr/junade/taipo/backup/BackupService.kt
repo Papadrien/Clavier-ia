@@ -1,6 +1,7 @@
 package fr.junade.taipo.backup
 
 import android.content.Context
+import fr.junade.taipo.AccentPalette
 import fr.junade.taipo.HapticIntensity
 import fr.junade.taipo.KeyboardHeight
 import fr.junade.taipo.KeyboardPreferences
@@ -61,6 +62,7 @@ object BackupService {
                 recentEmojis = keyboard.recentEmojis,
                 habitLearning = keyboard.isHabitLearningEnabled,
                 themeChoice = keyboard.themeChoice.storageKey,
+                accentPalette = keyboard.accentPalette.storageKey,
             ),
             ai = BackupAiSettings(
                 activeModelId = ModelPreferences(appContext).activeModel()?.id,
@@ -130,6 +132,10 @@ object BackupService {
         settings.themeChoice?.let { key ->
             // Écrire le réglage met aussi à jour KeyboardTheme.choice. « dynamic » sur un appareil d'avant Android 12 se comporte comme « system ».
             ThemeChoice.entries.firstOrNull { it.storageKey == key }?.let { keyboard.themeChoice = it }
+        }
+        settings.accentPalette?.let { key ->
+            // Écrire le réglage met aussi à jour KeyboardTheme.palette (le violet si la couleur est réservée au pass premium).
+            AccentPalette.entries.firstOrNull { it.storageKey == key }?.let { keyboard.accentPalette = it }
         }
     }
 

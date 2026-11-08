@@ -582,6 +582,17 @@
     <string name="theme_choice_dark">Dark</string>
     <string name="theme_choice_system_description">System, automatic</string>
     <string name="theme_choice_dynamic">Dynamic color</string>
+    <string name="theme_section_color">Color</string>
+    <string name="theme_color_explanation">The color applies to the Enter key, the buttons and the selections of the keyboard, in light and dark. It has no effect with Dynamic color.</string>
+    <string name="accent_violet">Taipo violet</string>
+    <string name="accent_indigo">Indigo</string>
+    <string name="accent_blue">Bright blue</string>
+    <string name="accent_lagoon">Lagoon</string>
+    <string name="accent_emerald">Emerald</string>
+    <string name="accent_amber">Amber</string>
+    <string name="accent_raspberry">Raspberry</string>
+    <string name="accent_magenta">Magenta</string>
+    <string name="accent_graphite">Graphite</string>
     <string name="theme_explanation">The theme applies to the keyboard only. System follows the light or dark mode of your device and changes with it. Dynamic color (Android 12 and later) takes the colors of your wallpaper. The app screens always stay dark.</string>
     <string name="home_row_theme_subtitle">Keyboard colors: %1$s</string>
     <string name="button_theme">Theme</string>

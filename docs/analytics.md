@@ -53,7 +53,7 @@ de l'appareil** (la doc du SDK le cite ; l'ancien client maison ne l'envoyait pa
 | `clipboard_used` | `action` (`paste`, `pin`) | `ClipboardController` |
 | `undo_used` | aucune | `UndoController` |
 | `keyboard_language` | `lang`, `layout` (disposition choisie pour la langue : `azerty`, `qwerty`, `qwertz`, `qwerty_n`, `colemak`), `auto` | `TaipoIme.startInputView`, une fois par changement de langue |
-| `setting_changed` | `key`, `value` (`true` / `false` ou mot-clé) | `KeyboardSettingsActivity`, `LanguagesActivity` (`language_added`), `LanguageDetailActivity` (`language_removed`, `letter_arrangement` = `<langue>_<disposition>`), `ThemeActivity` (`theme_choice` = `system` / `light` / `dark` / `dynamic`) |
+| `setting_changed` | `key`, `value` (`true` / `false` ou mot-clé) | `KeyboardSettingsActivity`, `LanguagesActivity` (`language_added`), `LanguageDetailActivity` (`language_removed`, `letter_arrangement` = `<langue>_<disposition>`), `ThemeActivity` (`theme_choice` = `system` / `light` / `dark` / `dynamic` ; `accent_palette` = `violet` / `indigo` / `blue` / `lagoon` / `emerald` / `amber` / `raspberry` / `magenta` / `graphite`) |
 | `first_open` | aucune | `MainActivity.onCreate` via `Analytics.firstOpen`, une fois par installation |
 
 Tranches de durée : `ai_action` `lt_1s`, `1_3s`, `3_10s`, `10_30s`, `gt_30s` ; `voice_input` `lt_5s`, `5_15s`, `15_60s`, `gt_60s`.
