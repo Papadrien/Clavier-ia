@@ -22,8 +22,9 @@ import fr.junade.taipo.analytics.Analytics
  * le clavier le prend à la prochaine ouverture d'un champ (lot T4). Les écrans de l'application, celui-ci compris, restent sombres.
  *
  * Section « Couleur » : une pastille par couleur d'accent ([AccentPalette]), par rangées de cinq ; un appui la choisit
- * ([KeyboardPreferences.accentPalette]) et les aperçus des cartes la reprennent. Couleurs réservées au pass premium ([PremiumPass]) :
- * tant qu'il n'est pas vendu, tout est ouvert ; une fois branché, une couleur réservée sans pass n'est pas choisie ([onLockedPalette]).
+ * ([KeyboardPreferences.accentPalette]) et les aperçus des cartes la reprennent. Couleurs réservées au pass premium ([PremiumPass]),
+ * marquées d'un cadenas : sans pass, en toucher une la montre sur les aperçus sans la poser sur le clavier ([onLockedPalette]) et
+ * propose le pass ; au retour avec le pass, elle est appliquée.
  */
 class ThemeActivity : Activity() {
 
@@ -34,6 +35,9 @@ class ThemeActivity : Activity() {
     private lateinit var preferences: KeyboardPreferences
     private val cards = ArrayList<Card>()
     private val swatches = ArrayList<Swatch>()
+
+    /** Couleur réservée touchée sans pass : montrée sur les aperçus, appliquée au retour si le pass a été pris. */
+    private var previewPalette: AccentPalette? = null
 
     // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
     override fun attachBaseContext(newBase: Context) {
@@ -80,6 +84,21 @@ class ThemeActivity : Activity() {
         findViewById<View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
         render(preferences.themeChoice)
+        findViewById<View>(R.id.button_theme_unlock).setOnClickListener {
+            startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_THEME))
+        }
+        renderPalettes(preferences.accentPalette)
+    }
+
+    // Retour de l'écran du pass (ou pass forcé en debug) : la couleur essayée est appliquée, les cadenas disparaissent.
+    override fun onResume() {
+        super.onResume()
+        val tried = previewPalette
+        if (tried != null && tried.isAvailable(PremiumPass.isActive)) {
+            previewPalette = null
+            preferences.accentPalette = tried
+            Analytics.setting(this, "accent_palette", tried.storageKey)
+        }
         renderPalettes(preferences.accentPalette)
     }
 
@@ -127,9 +146,13 @@ class ThemeActivity : Activity() {
     }
 
     private fun selectPalette(palette: AccentPalette) {
-        if (palette == preferences.accentPalette) return
         if (!palette.isAvailable(PremiumPass.isActive)) {
             onLockedPalette(palette)
+            return
+        }
+        previewPalette = null
+        if (palette == preferences.accentPalette) {
+            renderPalettes(palette)
             return
         }
         preferences.accentPalette = palette
@@ -137,23 +160,28 @@ class ThemeActivity : Activity() {
         renderPalettes(palette)
     }
 
-    /**
-     * Couleur réservée au pass premium, touchée sans pass. Jamais appelé tant que [PremiumPass.isActive] vaut toujours vrai : c'est
-     * ici que s'ouvrira l'offre du pass le jour où il sera vendu.
-     */
-    @Suppress("UNUSED_PARAMETER")
-    private fun onLockedPalette(palette: AccentPalette) = Unit
+    /** Couleur réservée au pass premium, touchée sans pass : essayée sur les aperçus, avec le bouton qui ouvre l'écran du pass. */
+    private fun onLockedPalette(palette: AccentPalette) {
+        previewPalette = palette
+        renderPalettes(preferences.accentPalette)
+    }
 
     /** Pastille choisie (anneau, état radio lu par TalkBack) et aperçus des cartes dans cette couleur. */
     private fun renderPalettes(selected: AccentPalette) {
-        val shown = AccentPalette.effective(selected, PremiumPass.isActive)
+        val premium = PremiumPass.isActive
+        val shown = previewPalette ?: AccentPalette.effective(selected, premium)
         for (swatch in swatches) {
             val isSelected = swatch.palette == shown
+            val locked = !swatch.palette.isAvailable(premium)
             swatch.disc.palette = swatch.palette
             swatch.disc.isChosen = isSelected
+            swatch.disc.isLocked = locked
+            val name = getString(swatch.palette.labelRes())
+            swatch.view.contentDescription = if (locked) getString(R.string.premium_locked_item, name) else name
             ViewCompat.setAccessibilityDelegate(swatch.view, radioDelegate(isSelected))
         }
         for (card in cards) card.preview.accent = shown
+        findViewById<View>(R.id.button_theme_unlock).visibility = if (previewPalette != null) View.VISIBLE else View.GONE
     }
 
     private fun select(choice: ThemeChoice) {

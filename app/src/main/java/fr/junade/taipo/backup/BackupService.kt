@@ -43,7 +43,10 @@ object BackupService {
     suspend fun collect(context: Context, nowMillis: Long = System.currentTimeMillis()): BackupData {
         val appContext = context.applicationContext
         val keyboard = KeyboardPreferences(appContext)
-        val prompts = promptPreferences(appContext).filterValues { it.isCustom() }.mapValues { it.value.get() }
+        // Prompts personnalisés enregistrés, utilisés ou non (sans pass premium, ils sont gardés mais pas utilisés).
+        val prompts = promptPreferences(appContext)
+            .mapNotNull { (usage, preferences) -> preferences.custom()?.let { usage to it } }
+            .toMap()
         return BackupData(
             exportedAtMillis = nowMillis,
             dictionary = PersonalDictionaryProvider.repository(appContext).all(),

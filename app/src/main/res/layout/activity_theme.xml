@@ -54,6 +54,16 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
+        <!-- Couleur réservée touchée sans pass : elle est montrée sur les aperçus, ce bouton ouvre l'écran du pass. -->
+        <Button
+            style="@style/TaipoButton.Primary"
+            android:id="@+id/button_theme_unlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md"
+            android:text="@string/premium_unlock"
+            android:visibility="gone" />
+
         <TextView
             style="@style/TaipoText.Caption"
             android:layout_width="match_parent"

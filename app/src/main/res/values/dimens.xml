@@ -272,6 +272,9 @@
     <dimen name="taipo_accent_swatch_size">48dp</dimen>
     <dimen name="taipo_accent_swatch_ring">2dp</dimen>
     <dimen name="taipo_accent_swatch_ring_gap">3dp</dimen>
+    <!-- Pastilles de l'écran « Pass premium » (aperçu des neuf couleurs, sur une ligne) et cadenas d'une pastille réservée. -->
+    <dimen name="taipo_premium_swatch_size">32dp</dimen>
+    <dimen name="taipo_accent_swatch_lock_size">18dp</dimen>
 
     <!-- Aperçu d'une disposition (détail d'une langue) : un carré par touche, écart entre les carrés. -->
     <dimen name="taipo_layout_preview_key">8dp</dimen>

@@ -188,6 +188,9 @@ dependencies {
     // Demande d'avis intégrée à l'application (note + commentaire en bottom sheet) : Google Play In-App Review.
     implementation(libs.play.review)
 
+    // Pass premium (achat unique, voir PremiumPass et premium/PremiumBilling) : Google Play Billing.
+    implementation(libs.play.billing)
+
     // Dictionnaire personnel (story 1.4) : Room chiffré par SQLCipher.
     // La clé de chiffrement est générée aléatoirement et protégée par
     // l'Android Keystore (voir DatabasePassphraseProvider). Room reste à la

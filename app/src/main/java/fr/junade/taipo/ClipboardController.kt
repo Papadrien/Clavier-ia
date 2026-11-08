@@ -49,6 +49,9 @@ class ClipboardController(
     interface Host {
         fun showMessage(message: String)
 
+        /** Message avec un bouton d'action ([action], qui appelle [onAction]) en plus de OK. */
+        fun showMessageWithAction(message: String, action: String, onAction: () -> Unit)
+
         fun inputConnection(): InputConnection?
 
         /** Le champ de saisie courant (collage d'une capture d'écran : `commitContent` en a besoin). */
@@ -102,7 +105,10 @@ class ClipboardController(
 
     // Story 2.2 : puce de collage après une copie récente. Seule la dernière copie est gardée, en
     // mémoire vive ; l'expiration à 10 minutes (story 2.3) est planifiée avec [pasteExpiryRunnable].
-    private val state = ClipboardSuggestionState(clock = { System.currentTimeMillis() })
+    private val state = ClipboardSuggestionState(
+        clock = { System.currentTimeMillis() },
+        panelRetentionMillis = { ClipboardItems.historyRetentionMillis(PremiumPass.isActive) },
+    )
     private val reader by lazy { ClipboardReader(context.applicationContext) { onClipboardChanged() } }
     private var currentPasteSuggestion: ClipboardSuggestionState.Suggestion? = null
 
@@ -275,6 +281,7 @@ class ClipboardController(
                 pinned = pinnedRepository.snapshot(),
                 history = historyRepository.snapshot(),
                 nowMillis = System.currentTimeMillis(),
+                retentionMillis = ClipboardItems.historyRetentionMillis(PremiumPass.isActive),
             ),
         )
     }
@@ -309,11 +316,30 @@ class ClipboardController(
                 if (result == ClipboardItems.PinResult.PINNED) {
                     Analytics.track(context, AnalyticsEvents.CLIPBOARD_USED, "action" to "pin")
                 }
+                // Plafond de la version gratuite : le message propose le pass premium (ouvre son écran dans l'application).
+                if (result == ClipboardItems.PinResult.FULL && !PremiumPass.isActive) {
+                    host.showMessageWithAction(
+                        context.getString(R.string.clipboard_pin_full_free),
+                        context.getString(R.string.clipboard_pin_full_action),
+                    ) { openPremium() }
+                    return@launch
+                }
                 host.showMessage(pinMessage(result))
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de l'épinglage", t)
                 host.showMessage(context.getString(R.string.clipboard_pin_error, t.message ?: t.javaClass.simpleName))
             }
+        }
+    }
+
+    /** Ouvre l'écran du pass premium dans l'application (depuis le clavier : nouvelle tâche). */
+    private fun openPremium() {
+        try {
+            context.startActivity(
+                PremiumActivity.intent(context, PremiumActivity.SOURCE_CLIPBOARD_PIN).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            )
+        } catch (t: Throwable) {
+            AppLog.e(TAG, "Échec de l'ouverture de l'écran du pass premium", t)
         }
     }
 

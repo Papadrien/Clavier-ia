@@ -74,9 +74,7 @@ Contrastes vérifiés par `AccessibilityContrastTest` sur les deux palettes (4,5
   clavier à la prochaine ouverture d'un champ, comme le thème. Sans effet en couleur dynamique. Les écrans de l'application restent violets.
 - Contrastes gardés par `AccentPaletteTest` : blanc sur principale ≥ 4,5:1, principale sur touche claire ≥ 3:1, accent sur touche
   sombre ≥ 4,4:1 (niveau du violet).
-- Pass premium : toutes les couleurs sauf le violet sont réservées (`AccentPalette.requiresPremium`). `PremiumPass.isActive` vaut
-  toujours vrai tant que le pass n'est pas vendu ; à brancher sur l'achat. Une couleur réservée sans pass retombe sur le violet
-  (`AccentPalette.effective`), et `ThemeActivity.onLockedPalette` est l'endroit où ouvrir l'offre.
+- Pass premium : toutes les couleurs sauf le violet sont réservées (`AccentPalette.requiresPremium`), voir `docs/pass-premium.md`.
 - Réglage `accent_palette` (préférences, sauvegarde `accentPalette`, mesure d'usage `setting_changed`).
 
 ## Limites connues (après T6)

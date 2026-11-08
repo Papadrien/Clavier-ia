@@ -68,12 +68,3 @@ enum class AccentPalette(
         fun effective(stored: AccentPalette, premium: Boolean): AccentPalette = if (stored.isAvailable(premium)) stored else DEFAULT
     }
 }
-
-/**
- * Pass premium. Pas encore vendu : tout est ouvert ([isActive] vaut toujours vrai). Pour verrouiller les palettes de couleur (et
- * plus tard d'autres réglages), il suffira de brancher ici l'état réel de l'achat ; la page « Thème » et le clavier lisent cette
- * valeur, une palette réservée choisie sans pass retombe sur le violet ([AccentPalette.effective]).
- */
-object PremiumPass {
-    val isActive: Boolean get() = true
-}
