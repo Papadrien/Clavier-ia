@@ -205,7 +205,7 @@ class KeyboardView(context: Context) : View(context) {
     private val boundsScratch = RectF()
 
     // Icône « ... » (bulle d'Entrée, changement de langue) : les autres icônes de touche sont chargées par KeyRenderer.
-    private val globeIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_key_ellipsis)) { "Icône points de suspension introuvable" }
+    private val globeIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_key_globe)) { "Icône globe introuvable" }
         .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
 
     // Icône du mode une main (bulle d'Entrée), teintée comme celle du globe.

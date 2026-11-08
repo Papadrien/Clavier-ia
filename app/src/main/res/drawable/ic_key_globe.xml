@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Touche de changement de langue (clavier multilingue) : globe au trait de 2 sur une grille de 24, comme les autres icônes Taipo. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/taipo_icon_size"
+    android:height="@dimen/taipo_icon_size"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M3,12 a9,9 0 1 0 18,0 a9,9 0 1 0 -18,0 Z"
+        android:strokeColor="@color/taipo_text"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M3,12 L21,12"
+        android:strokeColor="@color/taipo_text"
+        android:strokeWidth="2"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M12,3 C8,7 8,17 12,21 C16,17 16,7 12,3 Z"
+        android:strokeColor="@color/taipo_text"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

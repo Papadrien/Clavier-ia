@@ -110,8 +110,8 @@ internal class KeyRenderer(private val context: Context) {
     // Lot T6 : Entrée est violette dans les deux thèmes, son icône est donc blanche (text_on_accent), pas la couleur des libellés.
     private val enterIcon = loadKeyIcon(R.drawable.ic_key_enter, R.color.text_on_accent)
     private val emojiIcon = loadKeyIcon(R.drawable.ic_key_emoji)
-    // Petits points de suspension en exposant sur la pilule Entrée violette : blanc, légèrement atténué comme l'indice des chiffres (lot T6).
-    private val globeIcon = loadKeyIcon(R.drawable.ic_key_ellipsis, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
+    // Petit globe en exposant sur la pilule Entrée violette : blanc, légèrement atténué comme l'indice des chiffres (lot T6).
+    private val globeIcon = loadKeyIcon(R.drawable.ic_key_globe, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
 
     /** Clavier multilingue actif : la pilule Entrée affiche un petit globe en exposant (appui long = langue). */
     var showsGlobeOnEnter = false
