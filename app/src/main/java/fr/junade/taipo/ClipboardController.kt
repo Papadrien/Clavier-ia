@@ -467,7 +467,7 @@ class ClipboardController(
 
     /**
      * Rien n'est proposé pendant une dictée ou une correction, sous un panneau (emoji, presse-papiers),
-     * ni dans les champs sans suggestions (mot de passe, e-mail, URL…).
+     * ni dans les champs qui ne sont pas du texte (téléphone, nombre, sauf code PIN : voir SuggestionPolicy.allowsPasteSuggestion).
      */
     private fun pasteSuggestionAllowed(): Boolean =
         pasteAllowedInField && !host.isRecording() && !host.isCorrectionInProgress() &&
