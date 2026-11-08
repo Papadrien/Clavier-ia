@@ -667,4 +667,13 @@
     <string name="home_debug_gpu_gpu">GPU (trial)</string>
     <string name="home_debug_gpu_failed">GPU failed, CPU</string>
     <string name="home_debug_gpu_hint">The model is reloaded at the next AI action. If the GPU fails or crashes the keyboard, Taipo falls back to the CPU on its own.</string>
+    <!-- Memory diagnostic (debug builds) -->
+    <string name="diagnostic_title">Memory diagnostic</string>
+    <string name="diagnostic_explanation">Measures the memory and speed of the dictionaries of your languages: current table, compact test table and full dictionary. Allow one minute per language, without leaving the screen. No word is reported, only numbers.</string>
+    <string name="diagnostic_measure">Measure</string>
+    <string name="diagnostic_copy">Copy the results</string>
+    <string name="diagnostic_running">Measuring…</string>
+    <string name="diagnostic_done">Done.</string>
+    <string name="diagnostic_copied">Results copied.</string>
+    <string name="home_debug_diagnostic">Memory diagnostic</string>
 </resources>

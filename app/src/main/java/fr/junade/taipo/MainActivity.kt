@@ -23,6 +23,7 @@ import fr.junade.taipo.ai.AiAcceleration
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsPreferences
+import fr.junade.taipo.diagnostic.MemoryDiagnosticActivity
 import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.ModelRecommendation
 import fr.junade.taipo.model.ModelStatus
@@ -178,6 +179,9 @@ class MainActivity : Activity() {
             renderPremium()
         }
         findViewById<View>(R.id.debug_section).visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.button_debug_diagnostic).setOnClickListener {
+            startActivity(Intent(this, MemoryDiagnosticActivity::class.java))
+        }
         findViewById<View>(R.id.button_debug_gpu).setOnClickListener {
             val acceleration = AiAcceleration(this)
             acceleration.setGpuRequested(!acceleration.gpuRequested)

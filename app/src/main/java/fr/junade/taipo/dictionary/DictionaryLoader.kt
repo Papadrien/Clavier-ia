@@ -86,6 +86,16 @@ object DictionaryLoader {
         }
     }
 
+    /**
+     * Écran de diagnostic (builds debug) : construit le dictionnaire complet de [language] comme pour le clavier, **sans le
+     * mettre en cache** (pour mesurer sa mémoire et son temps de chargement) ; null si ses fichiers ne sont pas téléchargés.
+     */
+    internal fun buildUncachedForDiagnostic(context: Context, language: KeyboardLanguage): Dictionary? =
+        if (DictionaryFiles.isInstalled(context.filesDir, language)) load(context, language, sourceFor(context, language)) else null
+
+    /** Écran de diagnostic : le fichier de la liste complète de [language] (qu'il soit téléchargé ou non). */
+    internal fun fullListFile(context: Context, language: KeyboardLanguage): File = sourceFor(context, language).file
+
     /** Liste complète de [language] : `<code>.txt`. */
     private fun sourceFor(context: Context, language: KeyboardLanguage): Source =
         Source(DictionaryFiles.localFile(context.filesDir, language, DictionaryFile.FULL), MIN_FREQUENCY, candidateMinFrequency(language))
