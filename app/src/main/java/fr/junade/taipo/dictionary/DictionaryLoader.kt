@@ -90,8 +90,33 @@ object DictionaryLoader {
      * Écran de diagnostic (builds debug) : construit le dictionnaire complet de [language] comme pour le clavier, **sans le
      * mettre en cache** (pour mesurer sa mémoire et son temps de chargement) ; null si ses fichiers ne sont pas téléchargés.
      */
-    internal fun buildUncachedForDiagnostic(context: Context, language: KeyboardLanguage): Dictionary? =
-        if (DictionaryFiles.isInstalled(context.filesDir, language)) load(context, language, sourceFor(context, language)) else null
+    internal fun buildUncachedForDiagnostic(context: Context, language: KeyboardLanguage, timings: LoadTimings? = null): Dictionary? =
+        if (DictionaryFiles.isInstalled(context.filesDir, language)) load(context, language, sourceFor(context, language), timings) else null
+
+    /**
+     * Écran de diagnostic : durée de chaque étape d'un chargement ([buildUncachedForDiagnostic]), dans l'ordre où elles
+     * s'exécutent. « construction » couvre le constructeur de [Dictionary] (tableaux des candidats, index par longueur,
+     * contractions, formes accentuées, noms).
+     */
+    internal class LoadTimings {
+        private val phases = LinkedHashMap<String, Long>()
+
+        /** Étape -> durée en millisecondes. */
+        val millis: Map<String, Long> get() = phases.mapValues { it.value / 1_000_000 }
+
+        fun record(phase: String, nanos: Long) {
+            phases[phase] = (phases[phase] ?: 0L) + nanos
+        }
+    }
+
+    /** Exécute [block] et, si [timings] n'est pas null, y range sa durée sous [name]. Sans mesure : appel direct. */
+    private inline fun <T> phase(timings: LoadTimings?, name: String, block: () -> T): T {
+        if (timings == null) return block()
+        val start = System.nanoTime()
+        val result = block()
+        timings.record(name, System.nanoTime() - start)
+        return result
+    }
 
     /** Écran de diagnostic : le fichier de la liste complète de [language] (qu'il soit téléchargé ou non). */
     internal fun fullListFile(context: Context, language: KeyboardLanguage): File = sourceFor(context, language).file
@@ -127,25 +152,31 @@ object DictionaryLoader {
             load(context, language, reducedSourceFor(context, language))
         }
 
-    private fun load(context: Context, language: KeyboardLanguage, source: Source): Dictionary {
-        var frequencies = readFile(source.file, source.minFrequency)
+    private fun load(context: Context, language: KeyboardLanguage, source: Source, timings: LoadTimings? = null): Dictionary {
+        var frequencies = phase(timings, "table") { readFile(source.file, source.minFrequency) }
         // Prénoms (et, en allemand, noms communs) avec leur majuscule (les listes de fréquence sont toutes en minuscules).
-        var names = readNames(context, language)
+        var names = phase(timings, "noms") { readNames(context, language) }
         if (swissSpelling(language)) {
-            frequencies = GermanVariants.swissFrequencies(frequencies)
-            names = GermanVariants.swissNames(names)
+            phase(timings, "variantes suisses") {
+                frequencies = GermanVariants.swissFrequencies(frequencies)
+                names = GermanVariants.swissNames(names)
+            }
         }
-        return Dictionary.withFrequencies(
-            frequencies,
-            inflectionsFor(language),
-            source.candidateMinFrequency,
-            // Proximité des touches de la disposition de la langue : départage les corrections à distance égale.
-            proximityOf(context, language),
-            properNames = names,
-            confidence = confidenceOf(language),
-            accentPolicy = accentPolicyOf(language),
-            ngrams = readBigrams(context, language),
-        )
+        // Proximité des touches de la disposition de la langue : départage les corrections à distance égale.
+        val proximity = phase(timings, "proximité") { proximityOf(context, language) }
+        val ngrams = phase(timings, "bigrammes") { readBigrams(context, language) }
+        return phase(timings, "construction") {
+            Dictionary.withFrequencies(
+                frequencies,
+                inflectionsFor(language),
+                source.candidateMinFrequency,
+                proximity,
+                properNames = names,
+                confidence = confidenceOf(language),
+                accentPolicy = accentPolicyOf(language),
+                ngrams = ngrams,
+            )
+        }
     }
 
     /**
