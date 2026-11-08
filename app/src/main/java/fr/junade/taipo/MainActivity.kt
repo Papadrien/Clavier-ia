@@ -36,6 +36,7 @@ class MainActivity : Activity() {
     private lateinit var step1: StepViews
     private lateinit var step2: StepViews
     private lateinit var step3: StepViews
+    private lateinit var step4: StepViews
     private lateinit var tryInput: EditText
 
     /** Relit l'achat du pass chez Google Play à chaque retour sur l'accueil (achat fait ailleurs, remboursement). */
@@ -66,7 +67,21 @@ class MainActivity : Activity() {
         step1 = stepViews(1, R.id.step1_card, R.id.step1_badge, R.id.step1_title, R.id.step1_hint, R.id.button_enable)
         step2 = stepViews(2, R.id.step2_card, R.id.step2_badge, R.id.step2_title, R.id.step2_hint, R.id.button_select)
         step3 = stepViews(3, R.id.step3_card, R.id.step3_badge, R.id.step3_title, R.id.step3_hint, null)
+        step4 = stepViews(4, R.id.step4_card, R.id.step4_badge, R.id.step4_title, R.id.step4_hint, R.id.button_activate_ai)
         tryInput = findViewById(R.id.onboarding_try_input)
+        // Étape 3 : faite dès que quelques mots ont été tapés dans le champ d'essai (retenu, l'étape ne revient pas).
+        tryInput.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            override fun afterTextChanged(s: android.text.Editable?) {
+                if (s == null || homePrefs().getBoolean(KEY_TRIED, false) || !OnboardingState.triedWith(s)) return
+                homePrefs().edit().putBoolean(KEY_TRIED, true).apply()
+                renderOnboarding(readOnboardingState())
+            }
+        })
+        findViewById<View>(R.id.button_activate_ai).setOnClickListener {
+            startActivity(Intent(this, ModelDownloadActivity::class.java))
+        }
 
         findViewById<View>(R.id.button_enable).setOnClickListener {
             startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS))
@@ -77,6 +92,7 @@ class MainActivity : Activity() {
         }
         bindRow(R.id.button_keyboard_settings, R.string.button_keyboard_settings, R.string.home_row_keyboard_settings_subtitle, KeyboardSettingsActivity::class.java)
         bindRow(R.id.button_theme, R.string.button_theme, R.string.home_row_theme_subtitle, ThemeActivity::class.java)
+        bindRow(R.id.button_home_languages, R.string.languages_title, R.string.languages_title, LanguagesActivity::class.java)
         bindRow(R.id.button_personal_dictionary, R.string.button_personal_dictionary, R.string.home_row_personal_dictionary_subtitle, PersonalDictionaryActivity::class.java)
         bindRow(R.id.button_model_download, R.string.button_model_download, R.string.home_row_model_download_subtitle, ModelDownloadActivity::class.java)
         bindRow(R.id.button_model_settings, R.string.button_model_settings, R.string.home_row_model_settings_subtitle, ModelSettingsActivity::class.java)
@@ -105,6 +121,7 @@ class MainActivity : Activity() {
         bindRow(R.id.button_licenses, R.string.button_licenses, R.string.home_row_licenses_subtitle, LicensesActivity::class.java)
         bindRow(R.id.button_privacy, R.string.button_privacy, R.string.home_row_privacy_subtitle, PrivacyActivity::class.java)
         setUpPremium()
+        setUpAnalyticsSwitch()
 
         // Titres de groupe annoncés comme des titres par TalkBack (navigation par titres).
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_keyboard), true)
@@ -124,6 +141,7 @@ class MainActivity : Activity() {
         renderOnboarding(readOnboardingState())
         renderModelStatuses()
         renderThemeRow()
+        renderLanguagesRow()
         renderPremium()
         billing.refresh()
     }
@@ -187,6 +205,18 @@ class MainActivity : Activity() {
 
     private fun homePrefs() = getSharedPreferences(HOME_PREFS, MODE_PRIVATE)
 
+    /** « Mes données » : partage des données d'utilisation anonymes (Aptabase), déplacé ici depuis les paramètres du clavier. */
+    private fun setUpAnalyticsSwitch() {
+        val analyticsPreferences = fr.junade.taipo.analytics.AnalyticsPreferences(this)
+        findViewById<android.widget.CompoundButton>(R.id.switch_analytics).apply {
+            isChecked = analyticsPreferences.isEnabled
+            setOnCheckedChangeListener { _, checked ->
+                analyticsPreferences.isEnabled = checked
+                if (checked) Analytics.setting(this@MainActivity, "analytics", true)
+            }
+        }
+    }
+
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
@@ -195,11 +225,19 @@ class MainActivity : Activity() {
         }
     }
 
-    /** Lot T5 : sous-titre de la ligne « Thème » = thème choisi, relu au retour de la page (le choix s'y fait). */
+    /** Ligne « Apparence » : thème et couleur choisis (« Sombre · Lagon »), relus au retour de la page (le choix s'y fait). */
     private fun renderThemeRow() {
-        val choice = KeyboardPreferences(this).themeChoice
+        val preferences = KeyboardPreferences(this)
+        val palette = AccentPalette.effective(preferences.accentPalette, PremiumPass.isActive)
         findViewById<View>(R.id.button_theme).findViewById<TextView>(R.id.row_subtitle).text =
-            getString(R.string.home_row_theme_subtitle, getString(choice.labelRes()))
+            getString(R.string.home_row_theme_subtitle, getString(preferences.themeChoice.labelRes()), getString(palette.labelRes()))
+    }
+
+    /** Ligne « Langues » : les langues en service (« Français, English »), comme dans les paramètres du clavier. */
+    private fun renderLanguagesRow() {
+        val languages = KeyboardPreferences(this).languageSetup.inUse(automaticKeyboardLanguage())
+        findViewById<View>(R.id.button_home_languages).findViewById<TextView>(R.id.row_subtitle).text =
+            languages.joinToString(", ") { it.displayName }
     }
 
     /**
@@ -268,7 +306,9 @@ class MainActivity : Activity() {
         val manager = getSystemService(InputMethodManager::class.java)
         val enabledPackages = manager?.enabledInputMethodList.orEmpty().map { it.packageName }
         val defaultId = Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
-        return OnboardingState.from(enabledPackages, defaultId, packageName)
+        val models = ModelPreferences(this)
+        val aiReady = models.activeModel()?.let(models::isInstalled) == true
+        return OnboardingState.from(enabledPackages, defaultId, packageName, homePrefs().getBoolean(KEY_TRIED, false), aiReady)
     }
 
     /** Ligne de réglage de l'accueil (lot UX 3) : pose le titre et le sous-titre, ouvre [target] au toucher. */
@@ -291,8 +331,20 @@ class MainActivity : Activity() {
     private fun renderOnboarding(state: OnboardingState) {
         renderStep(step1, state.activate, R.string.onboarding_step1_title, R.string.onboarding_step1_title_done, R.string.onboarding_step1_hint, R.string.onboarding_step1_hint)
         renderStep(step2, state.choose, R.string.onboarding_step2_title, R.string.onboarding_step2_title_done, R.string.onboarding_step2_hint, R.string.onboarding_step2_hint_locked)
-        renderStep(step3, state.tryIt, R.string.onboarding_step3_title, R.string.onboarding_step3_title, R.string.onboarding_step3_hint, R.string.onboarding_step3_hint_locked)
-        tryInput.visibility = if (state.tryIt == StepStatus.CURRENT) View.VISIBLE else View.GONE
+        renderStep(step3, state.tryIt, R.string.onboarding_step3_title, R.string.onboarding_step3_title_done, R.string.onboarding_step3_hint, R.string.onboarding_step3_hint_locked)
+        renderStep(step4, state.activateAi, R.string.onboarding_step4_title, R.string.onboarding_step4_title_done, R.string.onboarding_step4_hint, R.string.onboarding_step4_hint_locked)
+        // Étape 4 : le modèle recommandé selon la mémoire du téléphone, nommé dans l'explication et sur le bouton.
+        if (state.activateAi == StepStatus.CURRENT) {
+            val memory = android.app.ActivityManager.MemoryInfo()
+            getSystemService(android.app.ActivityManager::class.java)?.getMemoryInfo(memory)
+            val model = fr.junade.taipo.model.ModelRecommendation.recommended(memory.totalMem)
+            val name = model.displayName(this)
+            val size = android.text.format.Formatter.formatShortFileSize(this, model.approxDownloadBytes ?: model.approxSizeBytesMax)
+            step4.hint.text = getString(R.string.onboarding_step4_hint, name)
+            (step4.action as? TextView)?.text = getString(R.string.onboarding_step4_button, name, size)
+        }
+        // Le champ d'essai reste là tant que l'étape 3 est en cours, et juste après (pour finir sa phrase).
+        tryInput.visibility = if (state.tryIt == StepStatus.CURRENT || (state.tryIt == StepStatus.DONE && tryInput.hasFocus())) View.VISIBLE else View.GONE
     }
 
     private fun renderStep(
@@ -322,5 +374,6 @@ class MainActivity : Activity() {
     private companion object {
         const val HOME_PREFS = "home_prefs"
         const val KEY_PREMIUM_CARD_DISMISSED = "premium_card_dismissed"
+        const val KEY_TRIED = "onboarding_tried"
     }
 }

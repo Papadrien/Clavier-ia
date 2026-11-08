@@ -353,26 +353,20 @@
             android:text="@string/keyboard_settings_habits_clear"
             android:layout_marginTop="@dimen/taipo_settings_gap_md" />
 
+        <!-- Revue UX : le détail de ce que le clavier garde est dans la page Confidentialité (section 6) ; les données
+             d'utilisation se règlent dans « Mes données », sur l'accueil. -->
         <TextView
-            style="@style/TaipoText.Section"
+            style="@style/TaipoText.Body"
+            android:id="@+id/link_privacy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_analytics_title"
             android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
-
-        <Switch
-            android:id="@+id/switch_analytics"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_analytics_switch" />
-
-        <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_analytics_description"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+            android:minHeight="@dimen/taipo_settings_row_min_height"
+            android:gravity="center_vertical"
+            android:textColor="@color/taipo_purple_light"
+            android:textStyle="bold"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="@string/keyboard_settings_privacy_link" />
 
     </LinearLayout>
 </ScrollView>

@@ -24,22 +24,22 @@
     <string name="model_settings_checksum_missing">Empreinte SHA-256 non calculée : choisissez de nouveau le fichier pour la calculer.</string>
     <string name="model_settings_file_saved">Fichier enregistré pour le modèle %1$s</string>
 
-    <string name="button_system_prompts">Prompts système</string>
-    <string name="system_prompts_title">Prompts système</string>
+    <string name="button_system_prompts">Consignes de l\'IA</string>
+    <string name="system_prompts_title">Consignes de l\'IA</string>
     <string name="system_prompt_correction_title">Correction</string>
     <string name="system_prompt_correction_description">Consigne envoyée au modèle pour l\'action « Corriger ».</string>
     <string name="system_prompt_generation_title">Mode prompt (chat)</string>
     <string name="system_prompt_generation_description">Consigne envoyée au modèle pour les conversations du mode prompt : longueur et format des réponses.</string>
-    <string name="system_prompt_transcription_title">Transcription IA</string>
+    <string name="system_prompt_transcription_title">Dictée IA</string>
     <string name="system_prompt_transcription_description">Consigne envoyée au modèle pour transformer un enregistrement en message bien rédigé : il en comprend le sens, reformule si besoin et utilise une liste quand elle convient.</string>
-    <string name="system_prompt_save">Enregistrer ce prompt</string>
-    <string name="system_prompt_show_default">Afficher le prompt par défaut</string>
-    <string name="system_prompt_reset">Réinitialiser au prompt par défaut</string>
-    <string name="system_prompt_saved">Prompt enregistré.</string>
-    <string name="system_prompt_default_shown">Prompt par défaut affiché : enregistrez-le pour l\'appliquer.</string>
-    <string name="system_prompt_reset_done">Prompt par défaut rétabli.</string>
-    <string name="system_prompt_status_custom">Prompt personnalisé actif.</string>
-    <string name="system_prompt_status_default">Prompt par défaut actif.</string>
+    <string name="system_prompt_save">Enregistrer cette consigne</string>
+    <string name="system_prompt_show_default">Afficher la consigne par défaut</string>
+    <string name="system_prompt_reset">Revenir à la consigne par défaut</string>
+    <string name="system_prompt_saved">Consigne enregistrée.</string>
+    <string name="system_prompt_default_shown">Consigne par défaut affichée : enregistrez-la pour l\'appliquer.</string>
+    <string name="system_prompt_reset_done">Consigne par défaut rétablie.</string>
+    <string name="system_prompt_status_custom">Consigne personnalisée active.</string>
+    <string name="system_prompt_status_default">Consigne par défaut active.</string>
 
     <string name="correction_button_idle">Corriger</string>
     <string name="correction_button_loading">Correction en cours, toucher pour annuler</string>
@@ -59,11 +59,11 @@
     <string name="voice_model_current_file">Fichier actuel : %1$s</string>
     <string name="voice_model_no_file">Aucun fichier fourni.</string>
 
-    <string name="voice_button_idle">Vocal</string>
+    <string name="voice_button_idle">Dicter</string>
     <string name="voice_button_loading">Chargement…</string>
     <string name="voice_button_recording">Écoute…</string>
     <string name="voice_button_transcribing">Transcription…</string>
-    <string name="voice_permission_denied">Permission micro requise : appuyez à nouveau sur Vocal après l\'avoir accordée.</string>
+    <string name="voice_permission_denied">Permission micro requise : appuyez à nouveau sur Dicter après l\'avoir accordée.</string>
     <string name="voice_error">Échec de la transcription : %1$s</string>
     <string name="voice_mic_unavailable">Micro indisponible : il est peut-être utilisé par une autre application. Réessayez dans un instant.</string>
     <string name="voice_mic_lost">Le micro ne répond plus : dictée interrompue.</string>
@@ -108,10 +108,10 @@
     <string name="keyboard_settings_show_period_key">Afficher la touche point</string>
     <string name="keyboard_settings_screenshots_title">Captures d\'écran</string>
     <string name="keyboard_settings_screenshots_switch">Proposer les captures d\'écran récentes</string>
-    <string name="keyboard_settings_screenshots_description">Dans le Smart Clipboard, propose de coller votre dernière capture d\'écran (prise il y a moins de 10 minutes) dans les applications qui acceptent les images. Le clavier vérifie seulement qu\'une capture existe : l\'image elle-même est lue sur votre appareil quand vous touchez la suggestion, et n\'est jamais envoyée. Demande l\'accès à vos photos.</string>
+    <string name="keyboard_settings_screenshots_description">Propose de coller votre dernière capture d\'écran. Demande l\'accès à vos photos ; rien n\'est envoyé.</string>
     <string name="keyboard_settings_screenshots_denied">L\'accès aux photos a été refusé. Autorisez-le dans les réglages Android pour utiliser cette option.</string>
     <string name="keyboard_settings_language_title">Langue du clavier</string>
-    <string name="keyboard_settings_haptic_title">Retour haptique</string>
+    <string name="keyboard_settings_haptic_title">Vibrations</string>
     <string name="keyboard_settings_haptic_off">Désactivé</string>
     <string name="keyboard_settings_haptic_light">Léger</string>
     <string name="keyboard_settings_haptic_medium">Moyen</string>
@@ -137,16 +137,16 @@
     <string name="keyboard_settings_height_extra_large">Très grande (120 %)</string>
     <string name="keyboard_settings_habits_title">Apprentissage</string>
     <string name="keyboard_settings_habits_switch">Apprendre de mes habitudes</string>
-    <string name="keyboard_settings_habits_description">Le clavier compte, sur cet appareil, les corrections que vous annulez ou laissez en place, les mots que vous validez et les adresses e-mail que vous tapez, pour s\'adapter à vous et vous proposer vos adresses dès que vous en commencez une. Seuls des compteurs de mots et de corrections, et vos adresses e-mail, sont conservés, chiffrés, jamais de phrases. Rien n\'est compté dans les champs sensibles ni en navigation privée ; les adresses e-mail sont aussi retenues dans les champs d\'adresse, jamais dans les mots de passe.</string>
+    <string name="keyboard_settings_habits_description">Le clavier retient vos corrections annulées et vos adresses e-mail, chiffrées, sur cet appareil seulement.</string>
     <string name="keyboard_settings_habits_clear">Effacer mes habitudes de correction</string>
     <string name="keyboard_settings_habits_clear_title">Effacer les habitudes de correction ?</string>
     <string name="keyboard_settings_habits_clear_message">Tout ce que le clavier a compté sur vos corrections, vos mots et vos adresses e-mail sera supprimé. Cette action est définitive.</string>
     <string name="keyboard_settings_habits_clear_confirm">Effacer</string>
     <string name="keyboard_settings_habits_clear_cancel">Annuler</string>
     <string name="keyboard_settings_habits_cleared">Habitudes effacées</string>
-    <string name="keyboard_settings_analytics_title">Données d\'utilisation</string>
     <string name="keyboard_settings_analytics_switch">Partager les données d\'utilisation</string>
-    <string name="keyboard_settings_analytics_description">Cela nous aide à améliorer l\'application. Vous pouvez le désactiver à tout moment.</string>
+    <string name="keyboard_settings_analytics_description">Anonymes, jamais votre texte : elles nous aident à améliorer Taipo.</string>
+    <string name="keyboard_settings_privacy_link">En savoir plus sur vos données</string>
 
     <string name="clipboard_button">Presse-papiers</string>
     <string name="settings_button_description">Ouvrir les réglages de l\'application</string>
@@ -307,14 +307,14 @@
     <!-- Réglages de l'accueil (lot UX 3) -->
     <string name="home_section_keyboard">Clavier</string>
     <string name="home_section_ai">Intelligence artificielle</string>
-    <string name="home_row_keyboard_settings_subtitle">Langue, rangée de chiffres, retour haptique, hauteur, apprentissage</string>
+    <string name="home_row_keyboard_settings_subtitle">Rangée de chiffres, vibrations, hauteur, mode une main, apprentissage</string>
     <string name="home_row_personal_dictionary_subtitle">Ajouter ou supprimer des mots</string>
     <string name="home_row_model_settings_subtitle">Fournir soi-même un fichier de modèle</string>
     <string name="home_row_voice_model_subtitle">Télécharger le modèle de dictée</string>
     <string name="home_status_ready">Prêt</string>
     <string name="home_status_missing">À fournir</string>
     <string name="home_status_incomplete">%1$d/%2$d fichiers</string>
-    <string name="home_row_system_prompts_subtitle">Instructions données à l\'IA</string>
+    <string name="home_row_system_prompts_subtitle">Ce que l\'IA doit faire pour corriger, discuter et dicter</string>
 
     <!-- Épopée 8 : écran « Modèle IA » avec téléchargement. -->
     <string name="button_model_download">Modèle IA</string>
@@ -323,7 +323,7 @@
     <string name="model_download_title">Modèle IA</string>
     <string name="model_download_description">Téléchargez un modèle pour activer les actions IA. Le modèle est ensuite utilisé sur votre appareil, sans connexion. Le téléchargement se fait en Wi-Fi par défaut.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Certaines fonctions ne sont pas disponibles avec ce modèle (transcription IA).</string>
+    <string name="model_download_limited_features">Certaines fonctions ne sont pas disponibles avec ce modèle (dictée IA).</string>
     <string name="model_download_badge_active">Actif</string>
     <string name="model_download_badge_installed">Installé</string>
     <string name="model_download_badge_recommended">Recommandé</string>
@@ -399,7 +399,7 @@
     <string name="licenses_usage_litertlm">Moteur qui exécute les modèles Gemma sur votre appareil.</string>
     <string name="licenses_usage_sherpa">Moteur de reconnaissance vocale de la dictée.</string>
     <string name="licenses_usage_onnxruntime">Environnement d\'exécution de réseaux de neurones utilisé par sherpa-onnx.</string>
-    <string name="licenses_usage_sqlcipher">Chiffrement des bases de données stockées sur votre appareil (dictionnaire personnel, Smart Clipboard).</string>
+    <string name="licenses_usage_sqlcipher">Chiffrement des bases de données stockées sur votre appareil (dictionnaire personnel, presse-papiers).</string>
     <string name="licenses_usage_androidx">Briques Android : Room, WorkManager, Activity, Core, Custom View, Autofill, Profile Installer.</string>
     <string name="licenses_usage_kotlin">Langage de programmation et bibliothèque de coroutines utilisés pour écrire Taipo.</string>
     <string name="licenses_usage_aptabase">Statistiques d\'usage anonymes, que vous pouvez désactiver dans les réglages.</string>
@@ -414,7 +414,7 @@
     <string name="button_backup">Sauvegarde et restauration</string>
     <string name="home_row_backup_subtitle">Exporter ou restaurer mon dictionnaire, mes éléments épinglés et mes réglages</string>
     <string name="backup_title">Sauvegarde et restauration</string>
-    <string name="backup_intro">Pour changer d\'appareil, exportez vos données dans un fichier, puis restaurez-le sur le nouvel appareil. Le fichier contient votre dictionnaire personnel, vos éléments épinglés du Smart Clipboard (avec leurs étiquettes) et vos réglages (clavier, modèle choisi, prompts personnalisés). Il ne contient pas les modèles IA, à télécharger de nouveau, ni l\'historique du presse-papiers, ni ce que le clavier a appris de votre saisie.</string>
+    <string name="backup_intro">Pour changer d\'appareil, exportez vos données dans un fichier, puis restaurez-le sur le nouvel appareil. Le fichier contient votre dictionnaire personnel, vos éléments épinglés du presse-papiers (avec leurs étiquettes) et vos réglages (clavier, modèle choisi, prompts personnalisés). Il ne contient pas les modèles IA, à télécharger de nouveau, ni l\'historique du presse-papiers, ni ce que le clavier a appris de votre saisie.</string>
     <string name="backup_export_title">Exporter mes données</string>
     <string name="backup_export_button">Exporter</string>
     <string name="backup_export_warning_title">Fichier non chiffré</string>
@@ -462,15 +462,17 @@
     <string name="privacy_title">Confidentialité</string>
     <string name="privacy_updated">Dernière mise à jour : 29 octobre 2026</string>
     <string name="privacy_section_1_title">1. Traitement sur votre appareil</string>
-    <string name="privacy_section_1_body">La correction, la génération de texte, la saisie vocale et la transcription IA sont exécutées sur votre appareil par des modèles installés localement. Le texte que vous saisissez, copiez ou dictez et l\'audio de vos enregistrements ne sont envoyés à aucun serveur. L\'audio d\'une transcription IA reste en mémoire le temps du traitement : il n\'est jamais enregistré dans un fichier.</string>
+    <string name="privacy_section_1_body">La correction, la génération de texte, la saisie vocale et la dictée IA sont exécutées sur votre appareil par des modèles installés localement. Le texte que vous saisissez, copiez ou dictez et l\'audio de vos enregistrements ne sont envoyés à aucun serveur. L\'audio d\'une dictée IA reste en mémoire le temps du traitement : il n\'est jamais enregistré dans un fichier.</string>
     <string name="privacy_section_2_title">2. Connexions Internet</string>
     <string name="privacy_section_2_body">Taipo se connecte à Internet pour télécharger les fichiers des modèles IA, à votre demande : depuis un serveur de Junadé pour les modèles Gemma 3 et les modèles de saisie vocale, et depuis Hugging Face pour les modèles Gemma 4. Il télécharge aussi, depuis ce même serveur de Junadé, le dictionnaire de chaque langue du clavier que vous utilisez (quelques Mo, automatiquement dès qu\'une langue est choisie). Ces serveurs reçoivent les informations techniques habituelles d\'une connexion (adresse IP, fichier demandé), jamais votre texte ni vos enregistrements. Taipo envoie aussi, sauf si vous le désactivez dans les paramètres du clavier, une mesure d\'usage anonyme à Aptabase, un service européen (voir la section 3). De temps en temps, Taipo peut aussi vous proposer de laisser un avis : cette fenêtre est affichée par Google Play, qui reçoit votre note et votre commentaire ; Taipo ne les reçoit pas.</string>
     <string name="privacy_section_3_title">3. Aucune collecte de données personnelles</string>
     <string name="privacy_section_3_body">Taipo n\'a pas de compte et pas de publicité. Il mesure son usage de façon anonyme avec Aptabase : des événements comme « une correction IA a réussi », « un modèle a été téléchargé » ou « un réglage a changé », avec la version de l\'application, la version d\'Android, le modèle de l\'appareil et sa langue, plus deux tranches approximatives : depuis combien de temps l\'application est installée et sur combien de jours elle a été utilisée (par exemple « 8 à 30 jours »), jamais des valeurs exactes. Jamais votre texte, ce que vous copiez ou dictez, ni un identifiant de l\'appareil ou de la personne, et rien depuis les champs de mot de passe. Vous pouvez la désactiver à tout moment dans Paramètres du clavier > Données d\'utilisation. Comme pour toute connexion Internet, les serveurs d\'Aptabase reçoivent techniquement l\'adresse IP de la requête ; Taipo ne la voit ni ne la conserve jamais (voir la politique de confidentialité d\'Aptabase pour son traitement). Taipo lui-même ne collecte aucune donnée personnelle vous concernant.</string>
     <string name="privacy_section_4_title">4. Champs de mot de passe</string>
-    <string name="privacy_section_4_body">Dans un champ de mot de passe ou de code secret, les actions IA (Corriger, Générer, Vocal, Transcription IA) et le Smart Clipboard sont désactivés : le contenu du champ n\'est pas lu et le micro n\'est pas ouvert.</string>
+    <string name="privacy_section_4_body">Dans un champ de mot de passe ou de code secret, les actions IA (Corriger, Générer, Dicter, Dictée IA) et le presse-papiers sont désactivés : le contenu du champ n\'est pas lu et le micro n\'est pas ouvert.</string>
     <string name="privacy_section_5_title">5. Ce qui est conservé sur l\'appareil</string>
-    <string name="privacy_section_5_body">Votre dictionnaire personnel, les éléments du Smart Clipboard et vos réglages restent sur votre appareil, dans des bases chiffrées. Les désinstaller supprime ces données. Vous pouvez aussi les exporter dans un fichier non chiffré (Mes données > Sauvegarde et restauration) : ce fichier ne quitte l\'appareil que si vous le déplacez vous-même. Si vous activez la proposition des captures d\'écran (Paramètres du clavier), Taipo demande l\'accès à vos photos : il vérifie seulement qu\'une capture récente existe, et lit l\'image elle-même, sur votre appareil, quand vous touchez la suggestion. Une copie temporaire reste dans le cache de l\'application une heure au plus et n\'est jamais envoyée.</string>
+    <string name="privacy_section_5_body">Votre dictionnaire personnel, les éléments du presse-papiers et vos réglages restent sur votre appareil, dans des bases chiffrées. Les désinstaller supprime ces données. Vous pouvez aussi les exporter dans un fichier non chiffré (Mes données > Sauvegarde et restauration) : ce fichier ne quitte l\'appareil que si vous le déplacez vous-même. Si vous activez la proposition des captures d\'écran (Paramètres du clavier), Taipo demande l\'accès à vos photos : il vérifie seulement qu\'une capture récente existe, et lit l\'image elle-même, sur votre appareil, quand vous touchez la suggestion. Une copie temporaire reste dans le cache de l\'application une heure au plus et n\'est jamais envoyée.</string>
+    <string name="privacy_section_6_title">6. Apprentissage et précision de frappe</string>
+    <string name="privacy_section_6_body">Le clavier compte, sur cet appareil, les corrections que vous annulez ou laissez en place, les mots que vous validez et les adresses e-mail que vous tapez, pour s\'adapter à vous et vous proposer vos adresses dès que vous en commencez une. Seuls des compteurs de mots et de corrections, et vos adresses e-mail, sont conservés, chiffrés, jamais de phrases. Rien n\'est compté dans les champs sensibles ni en navigation privée ; les adresses e-mail sont aussi retenues dans les champs d\'adresse, jamais dans les mots de passe. La zone de toucher des lettres les plus probables d\'après le mot en cours grandit un peu : un appui légèrement décentré tombe quand même sur la bonne touche. Les touches gardent leur aspect et leur taille. Calculé sur l\'appareil à partir du mot que vous tapez, rien n\'est conservé ni envoyé. Inactif dans les champs de mot de passe, d\'adresse e-mail et d\'adresse web.</string>
     <string name="button_terms">Conditions d\'utilisation</string>
     <string name="home_row_terms_subtitle">Règles d\'usage de Taipo et de l\'IA</string>
     <string name="terms_title">Conditions d\'utilisation</string>
@@ -526,11 +528,11 @@
     <string name="sensitive_field_actions_disabled">Désactivé dans les champs de mot de passe : rien n\'est lu ni envoyé à l\'IA ou au presse-papiers intelligent.</string>
 
     <!-- Épopée 14 : transcription IA par modèle multimodal -->
-    <string name="ai_transcription_button_description">Transcription IA : enregistrer puis transcrire</string>
-    <string name="ai_transcription_button_recording">Transcription IA : arrêter l\'enregistrement et transcrire</string>
-    <string name="ai_transcription_button_processing">Transcription IA en cours : appuyer pour annuler</string>
-    <string name="ai_transcription_button_cancelling">Annulation de la transcription IA…</string>
-    <string name="ai_transcription_no_audio_model">La transcription IA demande le modèle Singe ou Éléphant (Gemma 4). Choisissez-en un dans l\'application.</string>
+    <string name="ai_transcription_button_description">Dictée IA : enregistrer puis transcrire</string>
+    <string name="ai_transcription_button_recording">Dictée IA : arrêter l\'enregistrement et transcrire</string>
+    <string name="ai_transcription_button_processing">Dictée IA en cours : appuyer pour annuler</string>
+    <string name="ai_transcription_button_cancelling">Annulation de la dictée IA…</string>
+    <string name="ai_transcription_no_audio_model">La dictée IA demande le modèle Singe ou Éléphant (Gemma 4). Choisissez-en un dans l\'application.</string>
     <string name="ai_transcription_busy">Une dictée, une correction ou une génération est en cours.</string>
     <string name="ai_transcription_permission_denied">Permission micro requise. Accordez-la puis appuyez à nouveau.</string>
     <string name="ai_transcription_mic_unavailable">Le micro n\'a pas pu être ouvert.</string>
@@ -538,10 +540,10 @@
     <string name="ai_transcription_cancelling_wait">Annulation en cours, un instant…</string>
     <string name="ai_transcription_no_speech">Aucune parole reconnue dans l\'enregistrement.</string>
     <string name="ai_transcription_error_model_file">Le fichier du modèle est introuvable ou illisible. Retéléchargez-le depuis l\'application.</string>
-    <string name="ai_transcription_error_memory">Mémoire insuffisante pour la transcription IA. Fermez d\'autres applications puis réessayez.</string>
+    <string name="ai_transcription_error_memory">Mémoire insuffisante pour la dictée IA. Fermez d\'autres applications puis réessayez.</string>
     <string name="ai_transcription_error_model_incompatible">Le modèle n\'a pas pu être chargé : il est peut-être incompatible ou corrompu. Retéléchargez-le depuis l\'application.</string>
     <string name="ai_transcription_error_too_long">L\'enregistrement est trop long pour le modèle. Faites-en un plus court.</string>
-    <string name="ai_transcription_failed">La transcription IA a échoué. Réessayez, ou choisissez un autre modèle.</string>
+    <string name="ai_transcription_failed">La dictée IA a échoué. Réessayez, ou choisissez un autre modèle.</string>
 
     <!-- Noms des modèles, indications de fichier et avertissements de taille / empreinte (auparavant en dur dans le Kotlin). -->
     <string name="model_name_ultra_leger">Fourmi</string>
@@ -585,12 +587,12 @@
     <string name="digit_swipe_tip">Swipe vers le bas</string>
     <string name="keyboard_settings_touch_title">Précision de frappe</string>
     <string name="keyboard_settings_touch_switch">Zones de frappe adaptatives</string>
-    <string name="keyboard_settings_touch_description">La zone de toucher des lettres les plus probables d\'après le mot en cours grandit un peu : un appui légèrement décentré tombe quand même sur la bonne touche. Les touches gardent leur aspect et leur taille. Calculé sur l\'appareil à partir du mot que vous tapez, rien n\'est conservé ni envoyé. Inactif dans les champs de mot de passe, d\'adresse e-mail et d\'adresse web.</string>
+    <string name="keyboard_settings_touch_description">Les lettres les plus probables deviennent un peu plus faciles à toucher. Calculé sur l\'appareil, rien n\'est conservé.</string>
     <string name="keyboard_settings_touch_zones_debug">Afficher les zones de frappe (debug)</string>
 
     <!-- Écran « Langues » (piste C) : liste des langues, détail d'une langue (disposition, dictionnaire, retrait). -->
     <!-- Page « Thème » (lot T5) -->
-    <string name="theme_title">Thème</string>
+    <string name="theme_title">Apparence</string>
     <string name="theme_section_keyboard">Clavier</string>
     <string name="theme_choice_system">Système</string>
     <string name="theme_choice_light">Clair</string>
@@ -607,8 +609,8 @@
     <string name="accent_raspberry">Framboise</string>
     <string name="accent_magenta">Magenta</string>
     <string name="accent_graphite">Graphite</string>
-    <string name="home_row_theme_subtitle">Couleurs du clavier : %1$s</string>
-    <string name="button_theme">Thème</string>
+    <string name="home_row_theme_subtitle">%1$s · %2$s</string>
+    <string name="button_theme">Apparence</string>
     <string name="languages_title">Langues</string>
     <string name="languages_section_keyboard">Langues du clavier</string>
     <string name="languages_summary_device">%1$s · langue de l\'appareil</string>
@@ -629,8 +631,8 @@
     <string name="premium_tagline">Une fois, à vie. Tout reste sur votre téléphone.</string>
     <string name="premium_colors_title">Neuf couleurs pour le clavier</string>
     <string name="premium_colors_text">Indigo, Lagon, Framboise… La touche Entrée, les boutons et les sélections prennent la couleur choisie, en clair comme en sombre.</string>
-    <string name="premium_prompts_title">Vos propres prompts</string>
-    <string name="premium_prompts_text">Réécrivez les consignes de la correction, du chat et de la transcription pour que l\'IA écrive comme vous.</string>
+    <string name="premium_prompts_title">Vos propres consignes pour l\'IA</string>
+    <string name="premium_prompts_text">Réécrivez les consignes de la correction, du chat et de la dictée pour que l\'IA écrive comme vous.</string>
     <string name="premium_prompts_example">« Corrige les fautes sans changer mon style ni mes tournures. »</string>
     <string name="premium_clipboard_title">Presse-papiers étendu</string>
     <string name="premium_clipboard_text">Copies gardées 7 jours au lieu de 12 h. Jusqu\'à 50 éléments épinglés au lieu de 5.</string>
@@ -639,7 +641,7 @@
     <string name="premium_buy_with_price">Acheter le pass · %1$s</string>
     <string name="premium_restore">Restaurer mon achat</string>
     <string name="premium_active_title">Pass actif</string>
-    <string name="premium_active_thanks">Merci ! Les couleurs, les prompts personnalisés et le presse-papiers étendu sont débloqués.</string>
+    <string name="premium_active_thanks">Merci ! Les couleurs, vos consignes pour l\'IA et le presse-papiers étendu sont débloqués.</string>
     <string name="premium_status_pending">Paiement en attente : le pass s\'activera dès que Google Play l\'aura confirmé.</string>
     <string name="premium_status_unavailable">Google Play n\'est pas disponible sur cet appareil, ou le pass n\'a pas pu être chargé. Vérifiez votre connexion puis réessayez.</string>
     <string name="premium_status_error">L\'achat n\'a pas abouti. Aucun montant n\'a été débité ; vous pouvez réessayer.</string>
@@ -648,10 +650,10 @@
     <string name="premium_unlock">Débloquer avec le pass premium</string>
     <string name="premium_locked_item">%1$s, réservé au pass premium</string>
     <string name="home_premium_card_title">Pass premium</string>
-    <string name="home_premium_card_text">Neuf couleurs pour le clavier, vos propres prompts et un presse-papiers qui garde vos copies 7 jours.</string>
+    <string name="home_premium_card_text">Neuf couleurs pour le clavier, vos propres consignes pour l\'IA et un presse-papiers qui garde vos copies 7 jours.</string>
     <string name="home_premium_card_button">Découvrir</string>
     <string name="home_premium_card_close">Masquer</string>
-    <string name="home_row_premium_subtitle_offer">Couleurs, prompts personnalisés, presse-papiers étendu</string>
+    <string name="home_row_premium_subtitle_offer">Couleurs, consignes de l\'IA, presse-papiers étendu</string>
     <string name="home_row_premium_subtitle_active">Actif, merci !</string>
     <string name="home_section_debug">Debug</string>
     <string name="home_debug_premium">Pass premium : %1$s</string>
@@ -663,4 +665,16 @@
     <string name="home_debug_premium_hint">Touchez pour passer à l\'état suivant. Bouton présent dans les builds debug seulement.</string>
     <string name="clipboard_pin_full_free">Limite atteinte : 5 éléments épinglés en version gratuite. Le pass premium en permet 50.</string>
     <string name="clipboard_pin_full_action">Voir le pass</string>
+    <!-- Installation, étapes 3 et 4 -->
+    <string name="onboarding_step3_title_done">Essai réussi</string>
+    <string name="onboarding_step4_title">Activer l\'IA</string>
+    <string name="onboarding_step4_title_done">IA prête</string>
+    <string name="onboarding_step4_hint">Corriger, Chat et la dictée ont besoin d\'un modèle, téléchargé une fois et utilisé hors ligne. Recommandé pour votre téléphone : %1$s.</string>
+    <string name="onboarding_step4_hint_locked">Disponible une fois Taipo sélectionné.</string>
+    <string name="onboarding_step4_button">Télécharger %1$s (%2$s)</string>
+    <!-- Astuces de gestes (une fois chacune) -->
+    <string name="tip_delete_words">Astuce : glissez vers la gauche sur ⌫ pour effacer des mots entiers.</string>
+    <string name="tip_move_cursor">Astuce : glissez sur la barre d\'espace pour déplacer le curseur.</string>
+    <string name="tip_switch_language">Astuce : appui long sur Entrée, puis glissez jusqu\'au globe pour changer de langue.</string>
+    <string name="tip_digits">Astuce : appui long sur une lettre de la rangée du haut pour taper son chiffre.</string>
 </resources>

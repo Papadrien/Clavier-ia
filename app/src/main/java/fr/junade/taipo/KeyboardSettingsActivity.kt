@@ -15,7 +15,6 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import fr.junade.taipo.analytics.Analytics
-import fr.junade.taipo.analytics.AnalyticsPreferences
 import fr.junade.taipo.clipboard.ScreenshotFinder
 import fr.junade.taipo.dictionary.CorrectionHabitsProvider
 
@@ -158,7 +157,7 @@ class KeyboardSettingsActivity : Activity() {
             isChecked = preferences.showTouchZones
             setOnCheckedChangeListener { _, checked -> preferences.showTouchZones = checked }
         }
-        setUpAnalyticsSwitch()
+        findViewById<View>(R.id.link_privacy).setOnClickListener { startActivity(Intent(this, PrivacyActivity::class.java)) }
         findViewById<Button>(R.id.button_habit_clear).setOnClickListener { confirmClearHabits() }
     }
 
@@ -321,17 +320,6 @@ class KeyboardSettingsActivity : Activity() {
      * « Mesure d'usage anonyme » (Aptabase) : activée par défaut, désactivable ici. Désactivée, plus aucun événement n'est
      * créé (le SDK n'est plus appelé). Le passage à « activé » est le seul réglage de mesure qui est lui-même mesuré.
      */
-    private fun setUpAnalyticsSwitch() {
-        val analyticsPreferences = AnalyticsPreferences(this)
-        findViewById<CompoundButton>(R.id.switch_analytics).apply {
-            isChecked = analyticsPreferences.isEnabled
-            setOnCheckedChangeListener { _, checked ->
-                analyticsPreferences.isEnabled = checked
-                if (checked) Analytics.setting(this@KeyboardSettingsActivity, "analytics", true)
-            }
-        }
-    }
-
     private fun confirmClearHabits() {
         AlertDialog.Builder(ContextThemeWrapper(this, R.style.MessageDialogTheme))
             .setTitle(R.string.keyboard_settings_habits_clear_title)

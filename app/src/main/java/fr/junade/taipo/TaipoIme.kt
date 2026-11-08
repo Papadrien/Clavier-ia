@@ -210,6 +210,27 @@ class TaipoIme : InputMethodService() {
     private val correctionEngine by lazy { CorrectionEngine(applicationContext, llmHost) }
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
     private val keyboardPreferences by lazy { KeyboardPreferences(applicationContext) }
+
+    /** Revue UX : astuces de gestes, une fois chacune, dans le bandeau du clavier. */
+    private val gestureTips by lazy { GestureTips(applicationContext) }
+
+    /** Dernier déplacement du curseur par la barre d'espace (ms) : ce n'est pas un déplacement « à la main » dans le champ. */
+    private var lastSpaceCursorMoveAt = 0L
+
+    private fun showGestureTip(tip: GestureTips.Tip?) {
+        tip ?: return
+        val shown = messagePopup.showTip(
+            getString(
+                when (tip) {
+                    GestureTips.Tip.DELETE_WORDS -> R.string.tip_delete_words
+                    GestureTips.Tip.MOVE_CURSOR -> R.string.tip_move_cursor
+                    GestureTips.Tip.SWITCH_LANGUAGE -> R.string.tip_switch_language
+                    GestureTips.Tip.DIGITS -> R.string.tip_digits
+                },
+            ),
+        )
+        if (shown) gestureTips.shown(tip) // pas affichée (clavier pas encore visible) : elle reviendra plus tard
+    }
     private val hapticFeedback by lazy { HapticFeedbackPlayer(applicationContext) }
     private val keySounds by lazy { KeySoundPlayer(applicationContext) }
 
@@ -484,6 +505,10 @@ class TaipoIme : InputMethodService() {
         viewComposer.recentEmojiBar.scrollToLatest()
         updateCorrectionBarVisibility()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) inlineSuggestions.applyPending()
+        // Astuce : clavier multilingue, comment changer de langue (une fois, quand le clavier est affiché).
+        if (MultilingualChoice.isActive(keyboardPreferences.multilingualLanguages)) {
+            keyboardView.postDelayed({ showGestureTip(gestureTips.onMultilingualField()) }, LANGUAGE_TIP_DELAY_MS)
+        }
     }
 
     /** Dernière langue envoyée à la mesure d'usage : l'événement ne repart que si elle change (pas à chaque champ). */
@@ -558,6 +583,7 @@ class TaipoIme : InputMethodService() {
      * directement à l'autre ; davantage : liste de choix. Sans effet si le mode n'est pas actif.
      */
     private fun onGlobeSelected() {
+        gestureTips.learned(GestureTips.Tip.SWITCH_LANGUAGE)
         val languages = keyboardPreferences.multilingualLanguages
         when {
             languages.size == 2 -> MultilingualChoice.next(languages, controller.state.language)?.let { switchLanguage(it) }
@@ -672,6 +698,12 @@ class TaipoIme : InputMethodService() {
         // Dictée en cours : un toucher sur un mot du champ (à corriger) ou l'écho de nos insertions.
         if (isRecording) voice.onCursorMoved(oldSelEnd, newSelStart, newSelEnd, suggestions.typedRecently())
         correction.onSelectionUpdated(newSelStart, newSelEnd)
+        // Astuce : le curseur posé à la main dans le champ (pas par la frappe, la dictée, l'IA ni la barre d'espace).
+        val manualMove = viewComposer.isComposed && newSelStart == newSelEnd && newSelStart != oldSelStart &&
+            !prompt.active && !isRecording && !correctionInProgress && !correction.isSelfEditEcho() &&
+            !suggestions.typedRecently() &&
+            android.os.SystemClock.uptimeMillis() - lastSpaceCursorMoveAt > SPACE_MOVE_ECHO_MS
+        if (manualMove) showGestureTip(gestureTips.onManualCursorMove())
         if (!correctionInProgress && viewComposer.isComposed) {
             updateCorrectionBarVisibility()
         }
@@ -710,9 +742,15 @@ class TaipoIme : InputMethodService() {
 
     private fun onKeyPressed(key: Key) {
         hapticFeedback.perform(hapticIntensity)
+        messagePopup.dismissBannerOnKey() // un message d'information s'efface à la frappe suivante (une astuce reste)
         if (keySoundEnabled) keySounds.play(KeySound.forAction(key.action))
         suggestions.markTyping() // le curseur qui bouge ensuite suit la frappe (suggestions de complétion)
         clearHighlightIfNeeded()
+        // Astuces : ⌫ appuyé plusieurs fois de suite (effacer des mots en glissant), chiffre tapé depuis les symboles.
+        val action = key.action
+        val digitFromSymbols = action is KeyAction.TypeChar && action.char.isDigit() &&
+            controller.state.activeLayout != LayoutId.LETTERS && !numberRowEnabled
+        showGestureTip(gestureTips.onKey(backspace = action == KeyAction.Backspace, digitFromSymbols = digitFromSymbols))
 
         // Story 5.1 : en mode prompt, tout passe par le tampon du prompt, avec les mêmes traitements que
         // le champ de l'application (autocorrection et annulation, double espace, apprentissage,
@@ -1075,6 +1113,8 @@ class TaipoIme : InputMethodService() {
      * éventuelle sélection et respecte les caractères composés du champ.
      */
     private fun onCursorMoved(steps: Int) {
+        lastSpaceCursorMoveAt = android.os.SystemClock.uptimeMillis()
+        gestureTips.learned(GestureTips.Tip.MOVE_CURSOR)
         if (prompt.active) {
             hapticFeedback.perform(hapticIntensity.cursorMoveFeedback())
             if (keySoundEnabled) keySounds.play(KeySound.CURSOR_MOVE)
@@ -1494,6 +1534,10 @@ class TaipoIme : InputMethodService() {
 
     companion object {
         private const val TAG = "TaipoIme"
+
+        /** Astuces : délai avant celle de la langue (le clavier finit d'apparaître), écho d'un déplacement par l'espace. */
+        private const val LANGUAGE_TIP_DELAY_MS = 800L
+        private const val SPACE_MOVE_ECHO_MS = 600L
 
         /** « Remplacer le texte » : nombre maximal de caractères lus de part et d'autre du curseur pour vider le champ. */
         private const val REPLACE_MAX_CHARS = 10_000

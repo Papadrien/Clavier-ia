@@ -86,3 +86,23 @@ Reste à faire (suite du plan UX) : en-tête commun des sous-pages.
 
 - Le texte d'explication sous le titre (`main_description`, liste des langues du clavier) est supprimé de l'accueil,
   ainsi que ses chaînes FR/EN ; le titre est directement suivi des étapes d'activation.
+
+## Revue UX complète (08/11/2026)
+
+- **Installation en 4 étapes** : l'étape 3 « Essayer » est cochée après 3 mots tapés dans le champ d'essai (retenu) ; nouvelle
+  étape 4 « Activer l'IA », faite quand un modèle est installé, qui nomme le modèle recommandé selon la mémoire
+  (`ModelRecommendation`) et ouvre l'écran « Modèle IA ». Logique dans `OnboardingState` (`UxReviewTest`).
+- **Bandeau dans le clavier** : un message d'information (`MessagePopup.show` sans action) s'affiche en bandeau posé sur la
+  barre du haut, qui disparaît seul, au toucher ou à la frappe suivante. Les choix (action, liste des langues) gardent une fenêtre.
+- **Astuces de gestes** (`GestureTips`, une fois chacune, dans le bandeau) : ⌫ appuyé 5 fois de suite, curseur posé 3 fois à la
+  main, clavier multilingue, chiffre tapé depuis les symboles sans rangée de chiffres. Une astuce dont le geste a servi ne
+  s'affiche pas.
+- **Vocabulaire** : « Consignes de l'IA » (au lieu de Prompts système), « presse-papiers » (au lieu de Smart Clipboard),
+  « Vibrations », « Dicter » (bouton Vocal), « Dictée IA » (Transcription IA).
+- **Textes courts** dans les paramètres du clavier (une phrase par réglage) ; le détail est dans Confidentialité, section 6,
+  avec un lien « En savoir plus sur vos données ».
+- **Accueil** : ligne « Langues » (langues en service) ; « Thème » devient « Apparence » (« Sombre · Lagon ») ; le partage des
+  données d'utilisation passe dans « Mes données ».
+
+À vérifier sur l'appareil : position et lisibilité du bandeau (clair et sombre, mode une main, paysage), apparition de l'astuce
+de langue à l'ouverture d'un champ, étape 4 avec et sans modèle installé.
