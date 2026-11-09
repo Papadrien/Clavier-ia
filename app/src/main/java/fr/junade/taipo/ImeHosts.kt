@@ -250,6 +250,13 @@ internal class MessagePopupHost(private val ime: ImeHostContext) : MessagePopup.
 
     override fun bannerAnchor(): View? =
         if (ime.viewComposer.isComposed && ime.correctionBar.isShown) ime.correctionBar else null
+
+    override fun showBarTip(message: String, durationMs: Long): Boolean =
+        ime.viewComposer.isComposed && ime.correctionBar.showGestureTip(message, durationMs)
+
+    override fun hideBarTip() {
+        if (ime.viewComposer.isComposed) ime.correctionBar.hideGestureTip()
+    }
 }
 
 /** Mode prompt (conversation, génération, zone de chat) : voir [PromptModeController]. */

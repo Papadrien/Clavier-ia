@@ -662,10 +662,11 @@
     <string name="onboarding_step4_hint_locked">Available once Taipo is selected.</string>
     <string name="onboarding_step4_button">Download %1$s (%2$s)</string>
     <!-- Gesture tips (once each) -->
-    <string name="tip_delete_words">Tip: swipe left on ⌫ to delete whole words.</string>
-    <string name="tip_move_cursor">Tip: swipe on the space bar to move the cursor.</string>
-    <string name="tip_switch_language">Tip: long-press Enter, then slide to the globe to switch language.</string>
-    <string name="tip_digits">Tip: long-press a letter of the top row to type its digit.</string>
+    <string name="tip_delete_words">Swipe ← on ⌫ to delete whole words</string>
+    <string name="tip_move_cursor">Swipe on Space to move the cursor</string>
+    <string name="tip_switch_language">Long-press Enter, then the globe</string>
+    <string name="tip_digits">Long-press a top-row letter for its digit</string>
+    <string name="gesture_tip_description">Tip: %1$s</string>
     <!-- Memory diagnostic (debug builds) -->
     <string name="diagnostic_title">Memory diagnostic</string>
     <string name="diagnostic_explanation">Measures the memory and speed of the dictionaries of your languages: current table, compact test table and full dictionary. Allow one minute per language, without leaving the screen. No word is reported, only numbers.</string>

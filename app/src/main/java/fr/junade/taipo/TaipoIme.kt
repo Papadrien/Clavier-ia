@@ -209,7 +209,7 @@ class TaipoIme : InputMethodService() {
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
     private val keyboardPreferences by lazy { KeyboardPreferences(applicationContext) }
 
-    /** Revue UX : astuces de gestes, une fois chacune, dans le bandeau du clavier. */
+    /** Revue UX : astuces de gestes, une fois chacune, dans la barre du haut (GestureTipPillView). */
     private val gestureTips by lazy { GestureTips(applicationContext) }
 
     /** Dernier déplacement du curseur par la barre d'espace (ms) : ce n'est pas un déplacement « à la main » dans le champ. */
