@@ -30,8 +30,11 @@ class NgramModel private constructor(
 
     /** Mêmes paires, mêmes contextes et même total que [other] : sert aux tests ([parseBytes] face à [parse]). */
     internal fun sameContentAs(other: NgramModel): Boolean =
-        totalCount == other.totalCount && pairKeys.contentEquals(other.pairKeys) && pairCounts.contentEquals(other.pairCounts) &&
-            contextKeys.contentEquals(other.contextKeys) && contextCounts.contentEquals(other.contextCounts)
+        totalCount == other.totalCount &&
+            pairKeys.contentEquals(other.pairKeys) &&
+            pairCounts.contentEquals(other.pairCounts) &&
+            contextKeys.contentEquals(other.contextKeys) &&
+            contextCounts.contentEquals(other.contextCounts)
 
     /** Nombre de fois où [second] suit [first] dans le corpus (minuscules attendues). */
     fun pairCount(first: String, second: String): Int = lookup(pairKeys, pairCounts, pairKey(first, second))
@@ -114,38 +117,42 @@ class NgramModel private constructor(
                 while (lineEnd < size && bytes[lineEnd] != NEWLINE) lineEnd++
                 val next = lineEnd + 1
                 if (lineEnd > lineStart && bytes[lineEnd - 1] == CARRIAGE_RETURN) lineEnd--
-                if (lineEnd > lineStart && bytes[lineStart] != HASH) {
-                    // Champs séparés par une espace, comme split(' ') : deux ou trois champs, sinon la ligne est ignorée.
-                    var first = -1
-                    var second = -1
-                    var spaces = 0
-                    for (i in lineStart until lineEnd) {
-                        if (bytes[i] != SPACE) continue
-                        spaces++
-                        if (spaces == 1) first = i else if (spaces == 2) second = i else break
-                    }
-                    when (spaces) {
-                        1 -> {
-                            val count = parseInt(bytes, first + 1, lineEnd)
-                            if (count != NOT_A_NUMBER) {
-                                contexts.add(mixUtf8(FNV_OFFSET, bytes, lineStart, first), count.toInt())
-                                total += count
-                            }
-                        }
-                        2 -> {
-                            val count = parseInt(bytes, second + 1, lineEnd)
-                            if (count != NOT_A_NUMBER) {
-                                val firstHash = mixUtf8(FNV_OFFSET, bytes, lineStart, first)
-                                pairs.add(mixUtf8((firstHash xor 0x20L) * FNV_PRIME, bytes, first + 1, second), count.toInt())
-                            }
-                        }
-                    }
-                }
+                if (lineEnd > lineStart && bytes[lineStart] != HASH) total += parseLine(bytes, lineStart, lineEnd, pairs, contexts)
                 lineStart = next
             }
             val (pk, pc) = pairs.sortedUnique()
             val (ck, cc) = contexts.sortedUnique()
             return NgramModel(pk, pc, ck, cc, total)
+        }
+
+        /**
+         * Une ligne de [parseBytes] (ni vide ni commentaire), champs séparés par une espace comme `split(' ')` : deux champs
+         * (contexte, rangé dans [contexts]) ou trois (paire, dans [pairs]) ; sinon la ligne est ignorée. Renvoie ce qu'elle
+         * ajoute au total des contextes.
+         */
+        private fun parseLine(bytes: ByteArray, from: Int, to: Int, pairs: KeyCounts, contexts: KeyCounts): Long {
+            var first = -1
+            var second = -1
+            var spaces = 0
+            for (i in from until to) {
+                if (bytes[i] != SPACE) continue
+                spaces++
+                when (spaces) {
+                    1 -> first = i
+                    2 -> second = i
+                    else -> return 0L
+                }
+            }
+            val countStart = (if (spaces == 1) first else second) + 1
+            val count = if (spaces == 0) NOT_A_NUMBER else parseInt(bytes, countStart, to)
+            if (count == NOT_A_NUMBER) return 0L
+            val firstHash = mixUtf8(FNV_OFFSET, bytes, from, first)
+            if (spaces == 1) {
+                contexts.add(firstHash, count.toInt())
+                return count
+            }
+            pairs.add(mixUtf8((firstHash xor 0x20L) * FNV_PRIME, bytes, first + 1, second), count.toInt())
+            return 0L
         }
 
         /**
@@ -175,32 +182,8 @@ class NgramModel private constructor(
             var h = hash
             var i = from
             while (i < to) {
-                val b0 = bytes[i].toInt() and 0xff
-                var code: Int
-                var length: Int
-                when {
-                    b0 < 0x80 -> { code = b0; length = 1 }
-                    b0 in 0xc2..0xdf -> { code = b0 and 0x1f; length = 2 }
-                    b0 in 0xe0..0xef -> { code = b0 and 0x0f; length = 3 }
-                    b0 in 0xf0..0xf4 -> { code = b0 and 0x07; length = 4 }
-                    else -> { code = REPLACEMENT; length = 1 }
-                }
-                if (length > 1) {
-                    if (i + length > to) {
-                        code = REPLACEMENT
-                        length = 1
-                    } else {
-                        for (k in 1 until length) {
-                            val b = bytes[i + k].toInt() and 0xff
-                            if (b and 0xc0 != 0x80) {
-                                code = REPLACEMENT
-                                length = 1
-                                break
-                            }
-                            code = (code shl 6) or (b and 0x3f)
-                        }
-                    }
-                }
+                val decoded = decodeUtf8(bytes, i, to)
+                val code = decoded and CODE_MASK
                 if (code >= 0x10000) {
                     val offset = code - 0x10000
                     h = mixChar(h, 0xd800 + (offset ushr 10))
@@ -208,9 +191,32 @@ class NgramModel private constructor(
                 } else {
                     h = mixChar(h, code)
                 }
-                i += length
+                i += decoded ushr LENGTH_SHIFT
             }
             return h
+        }
+
+        /**
+         * Point de code UTF-8 qui commence à [at] (avant [to]) : le point de code dans les bits [CODE_MASK], sa longueur en
+         * octets au-dessus de [LENGTH_SHIFT]. Un octet invalide donne U+FFFD sur un octet.
+         */
+        private fun decodeUtf8(bytes: ByteArray, at: Int, to: Int): Int {
+            val b0 = bytes[at].toInt() and 0xff
+            val length = when {
+                b0 < 0x80 -> return b0 or (1 shl LENGTH_SHIFT)
+                b0 in 0xc2..0xdf -> 2
+                b0 in 0xe0..0xef -> 3
+                b0 in 0xf0..0xf4 -> 4
+                else -> return INVALID
+            }
+            if (at + length > to) return INVALID
+            var code = b0 and (0xff ushr (length + 1))
+            for (k in 1 until length) {
+                val b = bytes[at + k].toInt() and 0xff
+                if (b and 0xc0 != 0x80) return INVALID
+                code = (code shl 6) or (b and 0x3f)
+            }
+            return code or (length shl LENGTH_SHIFT)
         }
 
         private fun mixChar(hash: Long, code: Int): Long {
@@ -246,7 +252,9 @@ class NgramModel private constructor(
         private const val PLUS: Byte = 0x2B
         private const val ZERO: Byte = 0x30
         private const val NOT_A_NUMBER = Long.MIN_VALUE
-        private const val REPLACEMENT = 0xfffd
+        private const val LENGTH_SHIFT = 24
+        private const val CODE_MASK = (1 shl LENGTH_SHIFT) - 1
+        private const val INVALID = 0xfffd or (1 shl LENGTH_SHIFT) // U+FFFD sur un octet
 
         private const val FNV_OFFSET = -0x340d631b7bdddcdbL // 0xcbf29ce484222325
         private const val FNV_PRIME = 0x100000001b3L

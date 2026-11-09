@@ -1,10 +1,10 @@
 package fr.junade.taipo.dictionary
 
+import java.io.File
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.io.File
 
 /** Point 1 de docs/autocorrection-roadmap.md : bigrammes livrés et leur effet sur la correction. */
 class NgramModelTest {
