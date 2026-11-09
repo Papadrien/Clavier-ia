@@ -206,65 +206,65 @@
         <error line="1113" column="83" source="standard:argument-list-wrapping" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/MainActivity.kt">
-        <error line="104" column="17" source="standard:argument-list-wrapping" />
-        <error line="104" column="48" source="standard:argument-list-wrapping" />
-        <error line="104" column="83" source="standard:argument-list-wrapping" />
-        <error line="104" column="129" source="standard:argument-list-wrapping" />
-        <error line="104" column="161" source="standard:max-line-length" />
-        <error line="104" column="165" source="standard:argument-list-wrapping" />
-        <error line="107" column="17" source="standard:argument-list-wrapping" />
-        <error line="107" column="50" source="standard:argument-list-wrapping" />
-        <error line="107" column="87" source="standard:argument-list-wrapping" />
-        <error line="107" column="135" source="standard:argument-list-wrapping" />
-        <error line="107" column="161" source="standard:max-line-length" />
-        <error line="107" column="173" source="standard:argument-list-wrapping" />
+        <error line="102" column="17" source="standard:argument-list-wrapping" />
+        <error line="102" column="48" source="standard:argument-list-wrapping" />
+        <error line="102" column="83" source="standard:argument-list-wrapping" />
+        <error line="102" column="129" source="standard:argument-list-wrapping" />
+        <error line="102" column="161" source="standard:max-line-length" />
+        <error line="102" column="165" source="standard:argument-list-wrapping" />
+        <error line="105" column="17" source="standard:argument-list-wrapping" />
+        <error line="105" column="50" source="standard:argument-list-wrapping" />
+        <error line="105" column="87" source="standard:argument-list-wrapping" />
+        <error line="105" column="135" source="standard:argument-list-wrapping" />
+        <error line="105" column="161" source="standard:max-line-length" />
+        <error line="105" column="173" source="standard:argument-list-wrapping" />
+        <error line="113" column="17" source="standard:argument-list-wrapping" />
+        <error line="113" column="51" source="standard:argument-list-wrapping" />
+        <error line="113" column="89" source="standard:argument-list-wrapping" />
+        <error line="113" column="129" source="standard:argument-list-wrapping" />
+        <error line="113" column="161" source="standard:max-line-length" />
+        <error line="113" column="167" source="standard:argument-list-wrapping" />
         <error line="115" column="17" source="standard:argument-list-wrapping" />
-        <error line="115" column="51" source="standard:argument-list-wrapping" />
-        <error line="115" column="89" source="standard:argument-list-wrapping" />
+        <error line="115" column="48" source="standard:argument-list-wrapping" />
+        <error line="115" column="83" source="standard:argument-list-wrapping" />
         <error line="115" column="129" source="standard:argument-list-wrapping" />
         <error line="115" column="161" source="standard:max-line-length" />
         <error line="115" column="167" source="standard:argument-list-wrapping" />
-        <error line="117" column="17" source="standard:argument-list-wrapping" />
-        <error line="117" column="48" source="standard:argument-list-wrapping" />
-        <error line="117" column="83" source="standard:argument-list-wrapping" />
-        <error line="117" column="129" source="standard:argument-list-wrapping" />
-        <error line="117" column="161" source="standard:max-line-length" />
-        <error line="117" column="167" source="standard:argument-list-wrapping" />
-        <error line="167" column="34" source="standard:wrapping" />
-        <error line="167" column="39" source="standard:wrapping" />
-        <error line="169" column="9" source="standard:wrapping" />
-        <error line="364" column="20" source="standard:argument-list-wrapping" />
-        <error line="364" column="27" source="standard:argument-list-wrapping" />
-        <error line="364" column="43" source="standard:argument-list-wrapping" />
-        <error line="364" column="76" source="standard:argument-list-wrapping" />
-        <error line="364" column="114" source="standard:argument-list-wrapping" />
-        <error line="364" column="146" source="standard:argument-list-wrapping" />
-        <error line="364" column="161" source="standard:max-line-length" />
-        <error line="364" column="176" source="standard:argument-list-wrapping" />
-        <error line="365" column="20" source="standard:argument-list-wrapping" />
-        <error line="365" column="27" source="standard:argument-list-wrapping" />
-        <error line="365" column="41" source="standard:argument-list-wrapping" />
-        <error line="365" column="74" source="standard:argument-list-wrapping" />
-        <error line="365" column="112" source="standard:argument-list-wrapping" />
-        <error line="365" column="144" source="standard:argument-list-wrapping" />
-        <error line="365" column="161" source="standard:max-line-length" />
-        <error line="365" column="181" source="standard:argument-list-wrapping" />
-        <error line="366" column="20" source="standard:argument-list-wrapping" />
-        <error line="366" column="27" source="standard:argument-list-wrapping" />
-        <error line="366" column="40" source="standard:argument-list-wrapping" />
-        <error line="366" column="73" source="standard:argument-list-wrapping" />
-        <error line="366" column="111" source="standard:argument-list-wrapping" />
-        <error line="366" column="143" source="standard:argument-list-wrapping" />
-        <error line="366" column="161" source="standard:max-line-length" />
-        <error line="366" column="180" source="standard:argument-list-wrapping" />
-        <error line="367" column="20" source="standard:argument-list-wrapping" />
-        <error line="367" column="27" source="standard:argument-list-wrapping" />
-        <error line="367" column="45" source="standard:argument-list-wrapping" />
-        <error line="367" column="78" source="standard:argument-list-wrapping" />
-        <error line="367" column="116" source="standard:argument-list-wrapping" />
-        <error line="367" column="148" source="standard:argument-list-wrapping" />
-        <error line="367" column="161" source="standard:max-line-length" />
-        <error line="367" column="185" source="standard:argument-list-wrapping" />
+        <error line="165" column="34" source="standard:wrapping" />
+        <error line="165" column="39" source="standard:wrapping" />
+        <error line="167" column="9" source="standard:wrapping" />
+        <error line="348" column="20" source="standard:argument-list-wrapping" />
+        <error line="348" column="27" source="standard:argument-list-wrapping" />
+        <error line="348" column="43" source="standard:argument-list-wrapping" />
+        <error line="348" column="76" source="standard:argument-list-wrapping" />
+        <error line="348" column="114" source="standard:argument-list-wrapping" />
+        <error line="348" column="146" source="standard:argument-list-wrapping" />
+        <error line="348" column="161" source="standard:max-line-length" />
+        <error line="348" column="176" source="standard:argument-list-wrapping" />
+        <error line="349" column="20" source="standard:argument-list-wrapping" />
+        <error line="349" column="27" source="standard:argument-list-wrapping" />
+        <error line="349" column="41" source="standard:argument-list-wrapping" />
+        <error line="349" column="74" source="standard:argument-list-wrapping" />
+        <error line="349" column="112" source="standard:argument-list-wrapping" />
+        <error line="349" column="144" source="standard:argument-list-wrapping" />
+        <error line="349" column="161" source="standard:max-line-length" />
+        <error line="349" column="181" source="standard:argument-list-wrapping" />
+        <error line="350" column="20" source="standard:argument-list-wrapping" />
+        <error line="350" column="27" source="standard:argument-list-wrapping" />
+        <error line="350" column="40" source="standard:argument-list-wrapping" />
+        <error line="350" column="73" source="standard:argument-list-wrapping" />
+        <error line="350" column="111" source="standard:argument-list-wrapping" />
+        <error line="350" column="143" source="standard:argument-list-wrapping" />
+        <error line="350" column="161" source="standard:max-line-length" />
+        <error line="350" column="180" source="standard:argument-list-wrapping" />
+        <error line="351" column="20" source="standard:argument-list-wrapping" />
+        <error line="351" column="27" source="standard:argument-list-wrapping" />
+        <error line="351" column="45" source="standard:argument-list-wrapping" />
+        <error line="351" column="78" source="standard:argument-list-wrapping" />
+        <error line="351" column="116" source="standard:argument-list-wrapping" />
+        <error line="351" column="148" source="standard:argument-list-wrapping" />
+        <error line="351" column="161" source="standard:max-line-length" />
+        <error line="351" column="185" source="standard:argument-list-wrapping" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/ModelDownloadActivity.kt">
         <error line="3" column="1" source="standard:import-ordering" />
@@ -321,27 +321,27 @@
         <error line="430" column="186" source="standard:argument-list-wrapping" />
         <error line="430" column="201" source="standard:argument-list-wrapping" />
         <error line="430" column="202" source="standard:argument-list-wrapping" />
-        <error line="650" column="34" source="standard:multiline-if-else" />
-        <error line="651" column="14" source="standard:multiline-if-else" />
-        <error line="717" column="1" source="standard:no-blank-line-before-rbrace" />
+        <error line="651" column="34" source="standard:multiline-if-else" />
+        <error line="652" column="14" source="standard:multiline-if-else" />
+        <error line="718" column="1" source="standard:no-blank-line-before-rbrace" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/TaipoIme.kt">
         <error line="3" column="1" source="standard:import-ordering" />
         <error line="49" column="5" source="standard:spacing-between-declarations-with-comments" />
         <error line="355" column="1" source="standard:no-consecutive-blank-lines" />
-        <error line="477" column="88" source="standard:condition-wrapping" />
-        <error line="478" column="32" source="standard:condition-wrapping" />
-        <error line="620" column="53" source="standard:condition-wrapping" />
-        <error line="620" column="81" source="standard:condition-wrapping" />
-        <error line="621" column="31" source="standard:condition-wrapping" />
-        <error line="621" column="47" source="standard:condition-wrapping" />
-        <error line="621" column="72" source="standard:condition-wrapping" />
-        <error line="669" column="64" source="standard:condition-wrapping" />
-        <error line="670" column="66" source="standard:condition-wrapping" />
-        <error line="714" column="71" source="standard:condition-wrapping" />
-        <error line="714" column="97" source="standard:condition-wrapping" />
-        <error line="718" column="16" source="standard:multiline-if-else" />
-        <error line="1095" column="1" source="standard:no-consecutive-blank-lines" />
+        <error line="478" column="88" source="standard:condition-wrapping" />
+        <error line="479" column="32" source="standard:condition-wrapping" />
+        <error line="622" column="53" source="standard:condition-wrapping" />
+        <error line="622" column="81" source="standard:condition-wrapping" />
+        <error line="623" column="31" source="standard:condition-wrapping" />
+        <error line="623" column="47" source="standard:condition-wrapping" />
+        <error line="623" column="72" source="standard:condition-wrapping" />
+        <error line="679" column="64" source="standard:condition-wrapping" />
+        <error line="680" column="66" source="standard:condition-wrapping" />
+        <error line="725" column="71" source="standard:condition-wrapping" />
+        <error line="725" column="97" source="standard:condition-wrapping" />
+        <error line="729" column="16" source="standard:multiline-if-else" />
+        <error line="1106" column="1" source="standard:no-consecutive-blank-lines" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/ThemeActivity.kt">
         <error line="111" column="50" source="standard:statement-wrapping" />
@@ -377,7 +377,7 @@
         <error line="3" column="1" source="standard:import-ordering" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/ai/GenerationSession.kt">
-        <error line="66" column="1" source="standard:spacing-between-declarations-with-annotations" />
+        <error line="67" column="1" source="standard:spacing-between-declarations-with-annotations" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/ai/InferenceFailure.kt">
         <error line="38" column="26" source="standard:argument-list-wrapping" />
@@ -698,15 +698,15 @@
         <error line="286" column="73" source="standard:condition-wrapping" />
         <error line="286" column="97" source="standard:condition-wrapping" />
         <error line="287" column="49" source="standard:condition-wrapping" />
-        <error line="762" column="54" source="standard:statement-wrapping" />
-        <error line="762" column="67" source="standard:statement-wrapping" />
-        <error line="762" column="74" source="standard:statement-wrapping" />
-        <error line="839" column="34" source="standard:condition-wrapping" />
-        <error line="839" column="64" source="standard:condition-wrapping" />
-        <error line="1037" column="34" source="standard:function-literal" />
-        <error line="1037" column="35" source="standard:wrapping" />
-        <error line="1037" column="57" source="standard:function-literal" />
-        <error line="1037" column="161" source="standard:max-line-length" />
+        <error line="795" column="54" source="standard:statement-wrapping" />
+        <error line="795" column="67" source="standard:statement-wrapping" />
+        <error line="795" column="74" source="standard:statement-wrapping" />
+        <error line="872" column="34" source="standard:condition-wrapping" />
+        <error line="872" column="64" source="standard:condition-wrapping" />
+        <error line="1070" column="34" source="standard:function-literal" />
+        <error line="1070" column="35" source="standard:wrapping" />
+        <error line="1070" column="57" source="standard:function-literal" />
+        <error line="1070" column="161" source="standard:max-line-length" />
     </file>
     <file name="core/src/main/kotlin/fr/junade/taipo/dictionary/EnglishConfusions.kt">
         <error line="61" column="30" source="standard:condition-wrapping" />

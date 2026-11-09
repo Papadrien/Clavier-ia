@@ -617,9 +617,7 @@ class TaipoIme : InputMethodService() {
         // Dictée en cours : un toucher sur un mot du champ (à corriger) ou l'écho de nos insertions.
         if (isRecording) voice.onCursorMoved(oldSelEnd, newSelStart, newSelEnd, suggestions.typedRecently())
         correction.onSelectionUpdated(newSelStart, newSelEnd)
-        // Curseur ou sélection déplacés sans frappe récente (toucher, glissement sur l'espace, autre fonctionnalité) : le mot
-        // devant le curseur n'est plus celui qui vient d'être tapé, l'espace suivante ne le corrige pas.
-        if (selectionMoved && !suggestions.typedRecently() && !correction.isSelfEditEcho()) autocorrections.onCursorPlaced()
+        if (selectionMoved) forgetTypedWordIfCursorPlaced()
         // Astuce : le curseur posé à la main dans le champ (pas par la frappe, la dictée, l'IA ni la barre d'espace).
         val manualMove = viewComposer.isComposed && newSelStart == newSelEnd && newSelStart != oldSelStart &&
             !prompt.active && !isRecording && !correctionInProgress && !correction.isSelfEditEcho() &&
@@ -637,6 +635,14 @@ class TaipoIme : InputMethodService() {
             syncAutoCapitalization()
             layoutApplier.apply()
         }
+    }
+
+    /**
+     * Curseur ou sélection déplacés sans frappe récente (toucher, glissement sur l'espace, autre fonctionnalité) : le mot devant le
+     * curseur n'est plus celui qui vient d'être tapé, l'espace suivante ne le corrige pas (voir [AutocorrectionMemory.onKey]).
+     */
+    private fun forgetTypedWordIfCursorPlaced() {
+        if (!suggestions.typedRecently() && !correction.isSelfEditEcho()) autocorrections.onCursorPlaced()
     }
 
     override fun onDestroy() {

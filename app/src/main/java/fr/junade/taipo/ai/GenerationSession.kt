@@ -4,6 +4,7 @@ import android.os.SystemClock
 import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.Conversation
 import com.google.ai.edge.litertlm.ConversationConfig
+import com.google.ai.edge.litertlm.Engine
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.model.AiModel
 import kotlinx.coroutines.CoroutineScope
@@ -107,6 +108,26 @@ class GenerationSession(
         }
     }
 
+    /** Conversation à utiliser pour ce tour, tour utilisateur à lui envoyer, et vrai si la conversation ouverte est reprise. */
+    private data class Turn(val conversation: Conversation, val userTurn: String, val reusable: Boolean)
+
+    /**
+     * Reprend la conversation ouverte si elle porte déjà [history] avec le même prompt système, sinon en ouvre une nouvelle où
+     * l'historique est rejoué. Prompt système lu à chaque envoi : un changement de langue du clavier (ou de prompt) rouvre la conversation.
+     */
+    private fun conversationFor(engine: Engine, history: List<ChatExchange>, prompt: String): Turn {
+        val system = systemPrompt()
+        val open = conversation
+        if (open != null && exchangesInConversation == history.size && conversationSystem == system) {
+            return Turn(open, prompt, reusable = true)
+        }
+        closeConversation()
+        val created = engine.createConversation(ConversationConfig(systemInstruction = Contents.of(system)))
+        conversation = created
+        conversationSystem = system
+        return Turn(created, ChatTranscript.build(history, prompt), reusable = false)
+    }
+
     /** Un envoi (voir [send]), avec [LlmEngineHost.inferenceLock] tenu. */
     private suspend fun sendLocked(
         model: AiModel,
@@ -118,23 +139,7 @@ class GenerationSession(
         val engine = host.ensureLoaded(model, onLoading)
         if (stopRequested) return GenerationOutcome("", completed = false)
 
-        // Prompt système lu à chaque envoi : un changement de langue du clavier (ou de prompt) rouvre la conversation.
-        val system = systemPrompt()
-        val reusable = conversation != null && exchangesInConversation == history.size && conversationSystem == system
-        val userTurn: String
-        val active: Conversation
-        if (reusable) {
-            active = conversation!!
-            userTurn = prompt
-        } else {
-            closeConversation()
-            active = engine.createConversation(
-                ConversationConfig(systemInstruction = Contents.of(system)),
-            )
-            conversation = active
-            conversationSystem = system
-            userTurn = ChatTranscript.build(history, prompt)
-        }
+        val (active, userTurn, reusable) = conversationFor(engine, history, prompt)
 
         val received = StringBuilder()
         var chunks = 0
