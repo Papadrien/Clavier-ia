@@ -54,19 +54,38 @@ class CompactWordTable private constructor(
 
             override fun next(): Map.Entry<String, Long> {
                 if (index >= size) throw NoSuchElementException()
-                val start = offsets[index]
-                val word = String(chars, start, offsets[index + 1] - start)
+                val word = wordAt(index)
                 return SimpleImmutableEntry(word, frequencyAt(index++))
             }
         }
     }
 
-    private fun frequencyAt(index: Int): Long {
+    /** Le mot de rang [index] (0 à [size] - 1), recréé en chaîne. */
+    fun wordAt(index: Int): String {
+        val start = offsets[index]
+        return String(chars, start, offsets[index + 1] - start)
+    }
+
+    /** Longueur du mot de rang [index]. */
+    fun lengthAt(index: Int): Int = offsets[index + 1] - offsets[index]
+
+    /** Caractère [position] du mot de rang [index], sans créer de chaîne. */
+    fun charAt(index: Int, position: Int): Char = chars[offsets[index] + position]
+
+    /** Vrai si le mot de rang [index] contient une lettre hors ASCII (accent, ligature), sans créer de chaîne. */
+    fun hasNonAsciiAt(index: Int): Boolean {
+        for (i in offsets[index] until offsets[index + 1]) if (chars[i].code >= ASCII_LIMIT) return true
+        return false
+    }
+
+    /** Fréquence du mot de rang [index]. */
+    fun frequencyAt(index: Int): Long {
         val ints = intFrequencies
         return if (ints != null) ints[index].toLong() else longFrequencies!![index]
     }
 
-    private fun indexOf(word: CharSequence): Int {
+    /** Rang de [word] (de 0 à [size] - 1), ou -1 s'il est absent. */
+    fun indexOf(word: CharSequence): Int {
         val mask = slots.size - 1
         // Même empreinte que [hash] ; une String garde la sienne en cache (calculée une seule fois par chaîne).
         val h = if (word is String) word.hashCode() else stringHash(word)
@@ -90,6 +109,7 @@ class CompactWordTable private constructor(
 
     companion object {
         const val ABSENT = -1L
+        private const val ASCII_LIMIT = 0x80
 
         fun from(entries: Map<String, Long>): CompactWordTable {
             if (entries is CompactWordTable) return entries
