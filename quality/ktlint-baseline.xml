@@ -172,7 +172,6 @@
     </file>
     <file name="app/src/main/java/fr/junade/taipo/KeyboardLayout.kt">
         <error line="86" column="5" source="standard:spacing-between-declarations-with-comments" />
-        <error line="611" column="1" source="standard:final-newline" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/KeyboardPreferences.kt">
         <error line="256" column="72" source="standard:multiline-if-else" />
