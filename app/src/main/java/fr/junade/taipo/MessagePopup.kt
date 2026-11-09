@@ -25,6 +25,9 @@ import androidx.annotation.StringRes
  * Revue UX : un simple message d'information n'ouvre plus de fenêtre à fermer. Il s'affiche en **bandeau** posé sur la barre du
  * haut, qui disparaît seul (2,5 s, plus pour un long message, 6 s au plus), au toucher ou à la frappe suivante ([dismissBanner]).
  * Les vrais choix gardent une fenêtre : message avec un bouton d'action, liste des langues.
+ *
+ * Les astuces de gestes ([showTip]) ne sont pas un bandeau : elles s'affichent **dans** la barre du haut, à sa hauteur
+ * ([CorrectionBarView.showGestureTip]).
  */
 class MessagePopup(private val context: Context, private val host: Host) {
 
@@ -34,13 +37,16 @@ class MessagePopup(private val context: Context, private val host: Host) {
 
         /** Vue sur laquelle poser le bandeau (barre du haut), ou null si le clavier n'est pas affiché. */
         fun bannerAnchor(): View?
+
+        /** Affiche l'astuce [message] dans la barre du haut pendant [durationMs] ; faux si la barre n'est pas affichée. */
+        fun showBarTip(message: String, durationMs: Long): Boolean
+
+        /** Retire l'astuce de la barre du haut, s'il y en a une. */
+        fun hideBarTip()
     }
 
     private val handler = Handler(Looper.getMainLooper())
     private var banner: PopupWindow? = null
-
-    /** Le bandeau affiché est une astuce : il reste à la frappe (elle se poursuit souvent juste après), pas au toucher. */
-    private var bannerIsTip = false
     private val hideBanner = Runnable { dismissBanner() }
 
     /** Pop-up en cours, s'il y en a un. */
@@ -111,35 +117,35 @@ class MessagePopup(private val context: Context, private val host: Host) {
         }
     }
 
-    /** Ferme le pop-up et le bandeau en cours, s'il y en a. */
+    /** Ferme le pop-up, le bandeau et l'astuce en cours, s'il y en a. */
     fun dismiss() {
         dialog?.dismiss()
         dialog = null
         dismissBanner()
+        host.hideBarTip()
     }
 
-    /** Astuce de geste ([GestureTips]) : bandeau qui reste [TIP_DURATION_MS], même si la frappe continue. */
+    /**
+     * Astuce de geste ([GestureTips]) dans la barre du haut, à sa hauteur : elle reste [TIP_DURATION_MS], même si la frappe
+     * continue (elle se poursuit souvent juste après), et se ferme au toucher.
+     */
     fun showTip(message: String): Boolean {
-        if (!showBanner(message, TIP_DURATION_MS)) return false
-        bannerIsTip = true
-        return true
+        dismiss()
+        return host.showBarTip(message, TIP_DURATION_MS)
     }
 
-    /** La frappe continue : un message d'information s'efface, une astuce reste. */
-    fun dismissBannerOnKey() {
-        if (!bannerIsTip) dismissBanner()
-    }
+    /** La frappe continue : un message d'information s'efface (une astuce, dans la barre, reste). */
+    fun dismissBannerOnKey() = dismissBanner()
 
     /** Ferme le bandeau d'information (frappe suivante, toucher, délai écoulé). */
     fun dismissBanner() {
-        bannerIsTip = false
         handler.removeCallbacks(hideBanner)
         banner?.let { if (it.isShowing) runCatching { it.dismiss() } }
         banner = null
     }
 
     /** Bandeau sur la barre du haut, à la place d'une fenêtre ; faux s'il ne peut pas s'afficher (repli sur la fenêtre). */
-    private fun showBanner(message: String, durationMs: Long = bannerDuration(message)): Boolean {
+    private fun showBanner(message: String): Boolean {
         val anchor = host.bannerAnchor() ?: return false
         if (!anchor.isAttachedToWindow || anchor.width == 0) return false
         dismiss()
@@ -171,7 +177,7 @@ class MessagePopup(private val context: Context, private val host: Host) {
         return try {
             popup.showAsDropDown(anchor, margin, margin)
             banner = popup
-            handler.postDelayed(hideBanner, durationMs)
+            handler.postDelayed(hideBanner, bannerDuration(message))
             true
         } catch (t: Throwable) {
             AppLog.w(TAG, "Bandeau impossible à afficher, repli sur la fenêtre", t)

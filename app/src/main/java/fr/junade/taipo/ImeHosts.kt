@@ -250,6 +250,13 @@ internal class MessagePopupHost(private val ime: ImeHostContext) : MessagePopup.
 
     override fun bannerAnchor(): View? =
         if (ime.viewComposer.isComposed && ime.correctionBar.isShown) ime.correctionBar else null
+
+    override fun showBarTip(message: String, durationMs: Long): Boolean =
+        ime.viewComposer.isComposed && ime.correctionBar.showGestureTip(message, durationMs)
+
+    override fun hideBarTip() {
+        if (ime.viewComposer.isComposed) ime.correctionBar.hideGestureTip()
+    }
 }
 
 /** Mode prompt (conversation, génération, zone de chat) : voir [PromptModeController]. */
@@ -361,12 +368,14 @@ internal class VoiceHost(private val ime: ImeHostContext) : VoiceController.Host
         }
     }
     override fun recordUndoEdit(inserted: String, original: String) = ime.recordUndoEdit(inserted, original)
+    override fun language(): KeyboardLanguage = ime.keyboardLanguage
     override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
 }
 
 /** Épopée 14 : transcription IA par modèle multimodal, voir [AiTranscriptionController]. */
 internal class AiTranscriptionHost(private val ime: ImeHostContext) : AiTranscriptionController.Host {
     override fun showMessage(message: String) = ime.showMessage(message)
+
     // Saisie vocale en cours, y compris pendant la transcription du texte dicté (le micro et le moteur sont pris).
     override fun voiceRecording(): Boolean =
         ime.isRecording() || (ime.viewComposer.isComposed && ime.correctionBar.voiceState != VoiceBarState.IDLE)

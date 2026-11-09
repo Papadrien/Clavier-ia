@@ -681,10 +681,11 @@
     <string name="onboarding_step4_hint_locked">Disponible une fois Taipo sélectionné.</string>
     <string name="onboarding_step4_button">Télécharger %1$s (%2$s)</string>
     <!-- Astuces de gestes (une fois chacune) -->
-    <string name="tip_delete_words">Astuce : glissez vers la gauche sur ⌫ pour effacer des mots entiers.</string>
-    <string name="tip_move_cursor">Astuce : glissez sur la barre d\'espace pour déplacer le curseur.</string>
-    <string name="tip_switch_language">Astuce : appui long sur Entrée, puis glissez jusqu\'au globe pour changer de langue.</string>
-    <string name="tip_digits">Astuce : appui long sur une lettre de la rangée du haut pour taper son chiffre.</string>
+    <string name="tip_delete_words">Glissez ← sur ⌫ pour effacer des mots</string>
+    <string name="tip_move_cursor">Glissez sur Espace pour bouger le curseur</string>
+    <string name="tip_switch_language">Appui long sur Entrée, puis le globe</string>
+    <string name="tip_digits">Appui long sur la rangée du haut : chiffre</string>
+    <string name="gesture_tip_description">Astuce : %1$s</string>
     <!-- Diagnostic mémoire (builds debug) -->
     <string name="diagnostic_title">Diagnostic mémoire</string>
     <string name="diagnostic_explanation">Mesure la mémoire et la vitesse des dictionnaires de vos langues : table actuelle, table compacte de test et dictionnaire complet. Comptez une minute par langue, sans quitter l\'écran. Aucun mot n\'est rapporté, seulement des nombres.</string>

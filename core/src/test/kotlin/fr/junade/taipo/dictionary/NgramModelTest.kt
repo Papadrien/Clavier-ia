@@ -1,5 +1,6 @@
 package fr.junade.taipo.dictionary
 
+import java.io.File
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -23,6 +24,37 @@ class NgramModelTest {
         assertEquals(1000, model.contextCount("je"))
         assertEquals(0, model.contextCount("inconnu"))
         assertEquals(3, model.size)
+    }
+
+    @Test
+    fun `la lecture sur octets donne le meme modele que la lecture par lignes`() {
+        val lines = listOf(
+            "# commentaire", "", "je 1000", "je suis 400", "il suit 50", "l'été 12", "l'été dernier 3", "crème brûlée 7",
+            "œuf 5", "😀 2", "😀 ok 1", "je suis 410", "+7 +3", "neg -4", "trop 2147483648", "max 2147483647", "un deux trois 4",
+            "vide  5", " 9", "mot", "mot pas_un_nombre", "fin 2\r", "fin du 3\r", "#je 5", "pas commentaire 3",
+        )
+        val text = lines.joinToString("\n") + "\nsans fin de ligne 1"
+        val expected = NgramModel.parse(text.lineSequence())
+        val parsed = NgramModel.parseBytes(text.toByteArray(Charsets.UTF_8))
+        assertTrue(parsed.sameContentAs(expected))
+        assertEquals(410, parsed.pairCount("je", "suis"))
+        assertEquals(3, parsed.pairCount("l'été", "dernier"))
+        assertEquals(1, parsed.pairCount("😀", "ok"))
+        assertEquals(0, parsed.contextCount("trop"))
+        assertEquals(3, parsed.pairCount("fin", "du"))
+    }
+
+    @Test
+    fun `la lecture sur octets des bigrammes livres est identique a la lecture par lignes`() {
+        val root = generateSequence(File("").absoluteFile) { it.parentFile }.firstOrNull { File(it, "dictionaries/bigrams").isDirectory }
+            ?: return
+        val files = File(root, "dictionaries/bigrams").listFiles { file -> file.name.endsWith(".txt") }.orEmpty()
+        for (file in files) {
+            val expected = file.bufferedReader(Charsets.UTF_8).useLines { NgramModel.parse(it) }
+            val parsed = NgramModel.parseBytes(file.readBytes())
+            assertTrue(parsed.sameContentAs(expected), file.name)
+            assertTrue(parsed.size > 0, file.name)
+        }
     }
 
     @Test

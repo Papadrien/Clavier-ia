@@ -16,7 +16,11 @@ package fr.junade.taipo.dictionary
  * JVM simple.
  */
 class Dictionary private constructor(
-    frequencies: Map<String, Long>,
+    /**
+     * Liste lue (mot en minuscules -> fréquence). Seuls [candidateWords] et [candidateFrequencies] la lisent : tout le reste passe
+     * par [frequencies], sa copie compacte. Aucune référence n'y est gardée, pour qu'elle soit libérée après la construction.
+     */
+    source: Map<String, Long>,
     private val inflections: InflectionRules,
     candidateMinFrequency: Long,
     internal val proximity: KeyProximity = KeyProximity.NONE,
@@ -27,6 +31,11 @@ class Dictionary private constructor(
     /** Bigrammes livrés (point 1 de docs/autocorrection-roadmap.md) ; leur poids est [CorrectionConfidence.contextWeight]. */
     internal val ngrams: NgramModel = NgramModel.EMPTY,
 ) {
+
+    // minuscule -> fréquence (nombre d'occurrences dans le corpus source), en table compacte ([CompactWordTable]) : environ
+    // 40 % de la mémoire d'une HashMap pour une liste complète. Déclarée en premier : les index ci-dessous la lisent.
+    private val table: CompactWordTable = CompactWordTable.from(source)
+    internal val frequencies: Map<String, Long> = table
 
     // Prénoms et noms propres courants (forme avec majuscule, « Adrien », « Éric ») : les listes de fréquence sont
     // toutes en minuscules, elles ne savent donc pas qu'un mot prend une majuscule. Clé = minuscules.
@@ -73,20 +82,22 @@ class Dictionary private constructor(
         0L,
     )
 
-    // minuscule -> fréquence (nombre d'occurrences dans le corpus source).
-    internal val frequencies: Map<String, Long> = frequencies
-
     // Candidats de correction et de complétion : les mots de fréquence >= candidateMinFrequency. Avec une liste
     // complète (~250 000 mots et plus), les mots rares valident un mot tapé (ils ne sont pas « corrigés ») mais ne
     // sont jamais proposés : la recherche par distance d'édition reste aussi rapide qu'avec 50 000 mots, et les
     // suggestions ne se remplissent pas de fautes du corpus. 0 = tous les mots sont candidats.
     // Copies en tableaux parallèles : parcours des candidats plus rapide que sur la Map.
+    // Lues dans [source] (et non dans la table compacte) : mêmes chaînes, même ordre qu'avant, sans en recréer.
     internal val candidateWords: Array<String> = if (candidateMinFrequency <= 0L) {
-        frequencies.keys.toTypedArray()
+        source.keys.toTypedArray()
     } else {
-        frequencies.entries.asSequence().filter { it.value >= candidateMinFrequency }.map { it.key }.toList().toTypedArray()
+        source.entries.asSequence().filter { it.value >= candidateMinFrequency }.map { it.key }.toList().toTypedArray()
     }
-    internal val candidateFrequencies: LongArray = LongArray(candidateWords.size) { frequencies.getValue(candidateWords[it]) }
+    internal val candidateFrequencies: LongArray = LongArray(candidateWords.size) { source.getValue(candidateWords[it]) }
+
+    // Mots valides mais trop rares pour être candidats (« sédentaire ») : retrouvés seulement par leurs accents (voir
+    // [RareWords]). Null quand tous les mots sont candidats.
+    private val rareWords: RareWords? = RareWords.forCandidates(table, candidateMinFrequency, candidateWords)
 
     /**
      * Probabilité de la lettre suivante d'après le début du mot tapé (zones de frappe adaptatives), sur les candidats.
@@ -415,6 +426,11 @@ class Dictionary private constructor(
         val activeHabits = habits?.takeUnless { it.isInert() }
 
         var contest = searchCandidates(lower, allowedDistance, personal, activeHabits, previousWord)
+        // Accent oublié sur un mot rare (« sedentaire » -> « sédentaire ») : seulement si aucun mot proposable n'est à une seule
+        // faute ; il passe alors devant un mot proposable plus éloigné (« dentaire », à deux fautes). Avant toute recherche, il
+        // prenait la place de fautes de frappe de mots courants (banc d'autocorrection).
+        val rare = if (contest.best == null || contest.bestDistance > 1) rareWords?.accentRestoration(lower, ::keepsTypedAccents) else null
+        if (rare != null) return applyOriginalCasing(word, rare)
         // Mot long sans aucun candidat à distance 2 ou moins : trois erreurs d'édition sont tentées (phase 3), sous réserve
         // d'une marge forte (voir [CorrectionConfidence]). Pas si l'appelant a volontairement limité la distance.
         if (contest.best == null && maxDistance >= 2 && confidence.allowsThreeEditsFor(lower.length)) {
@@ -977,6 +993,7 @@ class Dictionary private constructor(
 
     companion object {
         private const val MIN_WORD_LENGTH_FOR_CORRECTION = 2
+
         private const val DIGIT_SLIP_MIN_LENGTH = 4
 
         /** Élisions françaises (partie avant l'apostrophe, minuscules) : « l'ami », « qu'il », « jusqu'à ». */

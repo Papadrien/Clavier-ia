@@ -510,11 +510,11 @@ class KeyboardLayoutTest {
     }
 
     @Test
-    fun `en multilingue Entree perd une demi unite reprise par la barre espace`() {
+    fun `en multilingue Entree perd 0,35 unite reprise par la barre espace`() {
         val normal = Keyboards.layoutOf(LayoutId.LETTERS).rows.last()
         val compact = Keyboards.layoutOf(LayoutId.LETTERS, compactEnter = true).rows.last()
-        assertEquals(normal.first { it.id == "enter" }.weight - 0.5f, compact.first { it.id == "enter" }.weight, 0.001f)
-        assertEquals(normal.first { it.id == "space" }.weight + 0.5f, compact.first { it.id == "space" }.weight, 0.001f)
+        assertEquals(normal.first { it.id == "enter" }.weight - 0.35f, compact.first { it.id == "enter" }.weight, 0.001f)
+        assertEquals(normal.first { it.id == "space" }.weight + 0.35f, compact.first { it.id == "space" }.weight, 0.001f)
         assertEquals(10f, compact.sumOf { it.weight.toDouble() }.toFloat(), 0.001f)
         assertEquals(normal.first { it.id == "period" }.weight, compact.first { it.id == "period" }.weight, 0.001f)
     }
@@ -551,7 +551,17 @@ class KeyboardLayoutTest {
     fun `entree est une pilule plus large que haute sur les dispositions de lettres`() {
         listOf(Keyboards.letters, Keyboards.lettersEn).forEach { layout ->
             val enter = layout.rows.flatten().single { it.action == KeyAction.Enter }
-            assertTrue(enter.weight >= 2f, "Entrée trop étroite pour une pilule dans ${layout.id} : ${enter.weight}")
+            assertTrue(enter.weight >= 1.5f, "Entrée trop étroite pour une pilule dans ${layout.id} : ${enter.weight}")
         }
+    }
+
+    @Test
+    fun `entree reduite de 30 pour cent au profit de la barre d espace`() {
+        val row = Keyboards.letters.rows.last()
+        assertEquals(2.2f * 0.7f, row.first { it.id == "enter" }.weight, 0.001f)
+        assertEquals(3.4f + 2.2f * 0.3f, row.first { it.id == "space" }.weight, 0.001f)
+        assertEquals(10f, row.sumOf { it.weight.toDouble() }.toFloat(), 0.001f)
+        val compact = Keyboards.layoutOf(LayoutId.LETTERS, compactEnter = true).rows.last()
+        assertEquals(1.7f * 0.7f, compact.first { it.id == "enter" }.weight, 0.001f)
     }
 }

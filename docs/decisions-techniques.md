@@ -21,6 +21,10 @@ Gemma 4 ; WorkManager + service au premier plan, SHA-256 embarqué par modèle).
 ## Transcription vocale
 - **Nemotron 3.5 ASR Streaming** via **sherpa-onnx** (`OnlineRecognizer` / `OnlineStream`), export ONNX multilingue
   français / anglais (sherpa-onnx v1.13.5 ou plus récent, PR #3732 et #3734). Langue alignée sur la langue active du clavier.
+- **Nombres en chiffres** (09/11/2026) : chaque hypothèse de la dictée passe par `SpokenNumbers` (core) avant d'être insérée.
+  Français et anglais : « vingt-trois » -> « 23 », « deux mille vingt-six » -> « 2026 », « trois virgule cinq » -> « 3,5 »,
+  « vingt pour cent » -> « 20 % », « fifty thousand » -> « 50,000 ». Restent en lettres quand ils sont seuls : « un », « une »,
+  « one » (articles) et « neuf » adjectif (« un vélo neuf »). La Dictée IA reçoit la même consigne dans son prompt par défaut.
 - Intégration : les `.so` natifs dans `app/src/main/jniLibs/<abi>/` et 5 sources Kotlin du binding JNI dans
   `app/src/main/java/com/k2fsa/sherpa/onnx/` (pas de coordonnée Maven simple, pas de `.aar` utilisé). Voir les README de ces dossiers.
 - Les `.so` fournis ciblent **arm64-v8a** (Pixel 9) ; l'émulateur x86_64 est possible en debug (voir `app/src/debug/jniLibs/README.md`).

@@ -187,7 +187,7 @@ object DictionaryLoader {
         val file = DictionaryFiles.bigramFile(context.filesDir, language)
         if (language !in DictionaryFiles.BIGRAM_LANGUAGES || !file.isFile) return NgramModel.EMPTY
         return try {
-            file.bufferedReader(Charsets.UTF_8).useLines { NgramModel.parse(it) }
+            NgramModel.parseBytes(file.readBytes())
         } catch (e: OutOfMemoryError) {
             AppLog.e(TAG, "mémoire insuffisante pour les bigrammes $language : autocorrection sans contexte", e)
             NgramModel.EMPTY

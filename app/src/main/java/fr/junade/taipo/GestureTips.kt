@@ -3,7 +3,7 @@ package fr.junade.taipo
 import android.content.Context
 
 /**
- * Revue UX : astuces de gestes, montrées **une seule fois chacune**, au moment où elles servent, dans le bandeau du clavier
+ * Revue UX : astuces de gestes, montrées **une seule fois chacune**, au moment où elles servent, dans la barre du haut
  * ([MessagePopup.showTip]). Une astuce dont le geste a déjà été utilisé ([learned]) n'est jamais montrée.
  *
  * - [Tip.DELETE_WORDS] : plusieurs appuis de suite sur ⌫ → glisser sur ⌫ efface des mots entiers.

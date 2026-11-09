@@ -94,9 +94,11 @@ Reste à faire (suite du plan UX) : en-tête commun des sous-pages.
   (`ModelRecommendation`) et ouvre l'écran « Modèle IA ». Logique dans `OnboardingState` (`UxReviewTest`).
 - **Bandeau dans le clavier** : un message d'information (`MessagePopup.show` sans action) s'affiche en bandeau posé sur la
   barre du haut, qui disparaît seul, au toucher ou à la frappe suivante. Les choix (action, liste des langues) gardent une fenêtre.
-- **Astuces de gestes** (`GestureTips`, une fois chacune, dans le bandeau) : ⌫ appuyé 5 fois de suite, curseur posé 3 fois à la
-  main, clavier multilingue, chiffre tapé depuis les symboles sans rangée de chiffres. Une astuce dont le geste a servi ne
-  s'affiche pas.
+- **Astuces de gestes** (`GestureTips`, une fois chacune) : ⌫ appuyé 5 fois de suite, curseur posé 3 fois à la main, clavier
+  multilingue, chiffre tapé depuis les symboles sans rangée de chiffres. Une astuce dont le geste a servi ne s'affiche pas.
+  Elle s'affiche **dans** la barre du haut, à sa hauteur (`GestureTipPillView`) : pilule de 36dp teintée de l'accent, entre le
+  premier bouton (robot ou Paramètres) et Vocal, ampoule + texte court sur une ligne qui défile une fois s'il ne tient pas.
+  Elle reste 7 s, même pendant la frappe, et se ferme au toucher.
 - **Vocabulaire** : « Consignes de l'IA » (au lieu de Prompts système), « presse-papiers » (au lieu de Smart Clipboard),
   « Vibrations », « Dicter » (bouton Vocal), « Dictée IA » (Transcription IA).
 - **Textes courts** dans les paramètres du clavier (une phrase par réglage) ; le détail est dans Confidentialité, section 6,

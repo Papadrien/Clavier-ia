@@ -11,8 +11,8 @@ import fr.junade.taipo.dictionary.Dictionary
 import fr.junade.taipo.dictionary.DictionaryLoader
 
 /**
- * Mesures de l'écran « Diagnostic mémoire » (builds debug) : pour chaque langue, mémoire et temps de chargement de la table des
- * fréquences actuelle (`HashMap`) et du prototype compact ([CompactWordTable]), vitesse de recherche des deux, puis le
+ * Mesures de l'écran « Diagnostic mémoire » (builds debug) : pour chaque langue, mémoire et temps de lecture de la liste
+ * (`HashMap`, lue puis libérée) et de la table compacte que garde le dictionnaire ([CompactWordTable]), vitesse de recherche des deux, puis le
  * dictionnaire complet tel que le clavier le construit (durée de chaque étape du chargement et des premières utilisations),
  * avec la durée de corrections et de suggestions types.
  *
@@ -42,23 +42,23 @@ class MemoryDiagnostic(private val context: Context) {
         }
         report("== ${language.displayName} (fichier ${mb(file.length())} Mo)")
 
-        // 1. Table des fréquences actuelle.
+        // 1. Liste lue (HashMap, libérée une fois la table compacte construite).
         val base = usedHeap()
         var start = SystemClock.elapsedRealtime()
         var map: Map<String, Long>? = Dictionary.parseFrequencyBytes(file.readBytes(), MIN_FREQUENCY, (file.length() / 35).toInt())
         val parseMs = SystemClock.elapsedRealtime() - start
         val mapBytes = usedHeap() - base
         val entries = map!!.size
-        report("Table actuelle (HashMap) : $entries mots, ${mb(mapBytes)} Mo, lecture $parseMs ms")
+        report("Liste lue (HashMap) : $entries mots, ${mb(mapBytes)} Mo, lecture $parseMs ms")
 
-        // 2. Prototype compact, construit depuis la même table.
+        // 2. Table compacte, celle que garde le dictionnaire, construite depuis la même liste.
         start = SystemClock.elapsedRealtime()
         var compact: CompactWordTable? = CompactWordTable.from(map)
         val compactMs = SystemClock.elapsedRealtime() - start
         val compactBytes = usedHeap() - base - mapBytes
         report(
             "Table compacte : ${mb(compactBytes)} Mo (tableaux ${mb(compact!!.approximateBytes)} Mo), construction $compactMs ms, " +
-                "soit ${percent(compactBytes, mapBytes)} de la table actuelle",
+                "soit ${percent(compactBytes, mapBytes)} de la HashMap",
         )
 
         // 3. Vitesse de recherche : mots présents et absents, mêmes listes pour les deux tables.
@@ -66,7 +66,7 @@ class MemoryDiagnostic(private val context: Context) {
         val probes = words + words.map { it + "q" }
         val mapLookupNs = timeLookups(probes) { map[it] ?: -1L }
         val compactLookupNs = timeLookups(probes) { compact.frequencyOf(it) }
-        report("Recherche (ns par mot) : actuelle $mapLookupNs, compacte $compactLookupNs")
+        report("Recherche (ns par mot) : HashMap $mapLookupNs, compacte $compactLookupNs")
 
         // 4. Mots courants pour les corrections types : les plus fréquents de 5 lettres et plus, deux lettres inversées.
         val typos = map.entries.asSequence().filter { it.key.length >= MIN_TYPO_LENGTH && it.key.all(Char::isLetter) }
