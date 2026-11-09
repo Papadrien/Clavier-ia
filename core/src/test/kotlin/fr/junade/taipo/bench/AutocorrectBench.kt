@@ -252,7 +252,7 @@ object AutocorrectBench {
     /** Bigrammes de la langue (`dictionaries/bigrams/<code>.txt`, voir tools/build_ngrams.py) ; vide s'il n'y en a pas. */
     fun loadNgrams(root: File): NgramModel {
         val file = File(root, "dictionaries/bigrams/${profile.code}.txt").takeIf { it.isFile } ?: return NgramModel.EMPTY
-        return file.bufferedReader(Charsets.UTF_8).useLines { NgramModel.parse(it) }
+        return NgramModel.parseBytes(file.readBytes())
     }
 
     fun run(root: File, profile: Profile = FRENCH): Report {
