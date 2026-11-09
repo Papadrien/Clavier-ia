@@ -368,12 +368,14 @@ internal class VoiceHost(private val ime: ImeHostContext) : VoiceController.Host
         }
     }
     override fun recordUndoEdit(inserted: String, original: String) = ime.recordUndoEdit(inserted, original)
+    override fun language(): KeyboardLanguage = ime.keyboardLanguage
     override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
 }
 
 /** Épopée 14 : transcription IA par modèle multimodal, voir [AiTranscriptionController]. */
 internal class AiTranscriptionHost(private val ime: ImeHostContext) : AiTranscriptionController.Host {
     override fun showMessage(message: String) = ime.showMessage(message)
+
     // Saisie vocale en cours, y compris pendant la transcription du texte dicté (le micro et le moteur sont pris).
     override fun voiceRecording(): Boolean =
         ime.isRecording() || (ime.viewComposer.isComposed && ime.correctionBar.voiceState != VoiceBarState.IDLE)

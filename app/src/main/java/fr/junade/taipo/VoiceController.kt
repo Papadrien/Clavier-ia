@@ -19,6 +19,7 @@ import fr.junade.taipo.ai.VoiceWordPick
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.model.VoiceModelPreferences
+import fr.junade.taipo.voice.SpokenNumbers
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -94,6 +95,9 @@ class VoiceController(
 
         /** Accès à la saisie du prompt, pour la dictée lancée depuis le mode prompt. */
         fun promptVoiceField(): VoiceField
+
+        /** Langue active du clavier : celle des nombres de la dictée ([SpokenNumbers]). */
+        fun language(): KeyboardLanguage
     }
 
     private val voiceEngineHolder = lazy { VoiceEngine(context.applicationContext) }
@@ -117,6 +121,9 @@ class VoiceController(
     // Cible de l'écoute en cours, fixée au démarrage : une dictée lancée dans le mode prompt écrit dans la saisie du prompt
     // jusqu'à son terme, même si le mode est quitté entre-temps (l'écoute est alors annulée par l'IME).
     private var recordingInPrompt = false
+
+    // Langue de l'écoute en cours, fixée au démarrage : les nombres dits en lettres y sont écrits en chiffres ([SpokenNumbers]).
+    private var recordingLanguage = KeyboardLanguage.FR
 
     private var voicePartialJob: Job? = null
 
@@ -240,6 +247,7 @@ class VoiceController(
         host.hapticAi(AiHapticCue.ACTION_START) // le premier appui déclenche le chargement
         host.clearHighlight()
         recordingInPrompt = host.promptActive()
+        recordingLanguage = host.language()
         isRecording = true
         host.clearSuggestions()
         wordPick.reset()
@@ -438,7 +446,7 @@ class VoiceController(
         if (field != null) {
             // Une sélection restante obligerait à insérer par-dessus : on la replie d'abord (champ de l'application seulement).
             if (finalText != null && !recordingInPrompt) host.collapseSelectionBeforeInsert()
-            textSync.finish(field, finalText)
+            textSync.finish(field, finalText?.let { SpokenNumbers.toDigits(it, recordingLanguage) })
             // Le texte dicté (dernière hypothèse, devenue définitive) est une action annulable du champ de l'application.
             if (finalText != null && !recordingInPrompt) host.recordUndoEdit(inserted = textSync.insertedText, original = "")
         }
@@ -448,7 +456,9 @@ class VoiceController(
     /** Insère l'hypothèse courante à la place de la précédente pendant l'enregistrement. */
     private fun applyPartialText(partial: String) {
         val field = currentField() ?: return
-        textSync.applyPartial(field, partial)
+        // Chaque hypothèse couvre toute l'écoute : la convertir entière garde des nombres justes quand la suite arrive
+        // (« vingt » -> « 20 », puis « vingt-trois » -> « 23 »), comme une révision du décodeur.
+        textSync.applyPartial(field, SpokenNumbers.toDigits(partial, recordingLanguage))
     }
 
     /** Là où la dictée en cours écrit : la saisie du prompt, ou le champ de l'application (null s'il n'est pas accessible). */

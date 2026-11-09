@@ -132,9 +132,6 @@
         <error line="582" column="111" source="standard:argument-list-wrapping" />
         <error line="583" column="30" source="standard:argument-list-wrapping" />
     </file>
-    <file name="app/src/main/java/fr/junade/taipo/ImeHosts.kt">
-        <error line="377" column="5" source="standard:spacing-between-declarations-with-comments" />
-    </file>
     <file name="app/src/main/java/fr/junade/taipo/ImeViewComposer.kt">
         <error line="176" column="53" source="standard:function-literal" />
     </file>
