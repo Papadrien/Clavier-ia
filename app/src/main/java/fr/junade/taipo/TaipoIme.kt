@@ -371,6 +371,7 @@ class TaipoIme : InputMethodService() {
         super.onStartInput(attribute, restarting)
         // Champ (re)lancé : le texte a pu changer ; la sélection initiale donnée par l'éditeur sert de point de départ.
         inputTextCache.reset(attribute?.initialSelStart ?: -1, attribute?.initialSelEnd ?: -1)
+        autocorrections.onCursorPlaced() // nouveau champ : aucun mot en cours de frappe
     }
 
     override fun onCreate() {
@@ -616,6 +617,7 @@ class TaipoIme : InputMethodService() {
         // Dictée en cours : un toucher sur un mot du champ (à corriger) ou l'écho de nos insertions.
         if (isRecording) voice.onCursorMoved(oldSelEnd, newSelStart, newSelEnd, suggestions.typedRecently())
         correction.onSelectionUpdated(newSelStart, newSelEnd)
+        forgetTypedWordIfCursorPlaced(selectionMoved)
         // Astuce : le curseur posé à la main dans le champ (pas par la frappe, la dictée, l'IA ni la barre d'espace).
         val manualMove = viewComposer.isComposed && newSelStart == newSelEnd && newSelStart != oldSelStart &&
             !prompt.active && !isRecording && !correctionInProgress && !correction.isSelfEditEcho() &&
@@ -633,6 +635,14 @@ class TaipoIme : InputMethodService() {
             syncAutoCapitalization()
             layoutApplier.apply()
         }
+    }
+
+    /**
+     * Curseur ou sélection déplacés sans frappe récente (toucher, glissement sur l'espace, autre fonctionnalité) : le mot devant le
+     * curseur n'est plus celui qui vient d'être tapé, l'espace suivante ne le corrige pas (voir [AutocorrectionMemory.onKey]).
+     */
+    private fun forgetTypedWordIfCursorPlaced(selectionMoved: Boolean) {
+        if (selectionMoved && !suggestions.typedRecently() && !correction.isSelfEditEcho()) autocorrections.onCursorPlaced()
     }
 
     override fun onDestroy() {
@@ -706,9 +716,10 @@ class TaipoIme : InputMethodService() {
 
         // Story 1.3 : dictionnaire local pour l'autocorrection (pas d'IA, pas
         // d'apprentissage auto) — le mot qui vient de se terminer est vérifié
-        // juste avant que la touche de ponctuation/espace/entrée qui le
-        // termine ne soit elle-même traitée.
-        val autocorrection = if (TypingRules.isWordBoundaryKey(key) && autocorrectionAllowed()) applyDictionaryAutocorrection() else null
+        // juste avant que l'espace ou la ponctuation qui le termine ne soit
+        // elle-même traitée, seulement s'il vient d'être tapé (jamais à Entrée).
+        val endsTypedWord = autocorrections.onKey(key, SystemClock.uptimeMillis())
+        val autocorrection = if (endsTypedWord && autocorrectionAllowed()) applyDictionaryAutocorrection() else null
 
         // Double espace : l'espace précédent est remplacé par ". " (pas de sélection active).
         val doubleSpaceContext = if (key.action == KeyAction.Space && autocorrection == null && !fieldEditor.hasSelection() &&

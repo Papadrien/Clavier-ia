@@ -684,6 +684,33 @@ class Dictionary private constructor(
         if (stored != stored.lowercase()) stored else applyOriginalCasing(typed, stored)
 
     /**
+     * Indices des candidats ([candidateWords]) dans l'ordre alphabétique (ordre de [String.compareTo]) : les mots qui commencent
+     * par un même début y forment une plage contiguë, trouvée par dichotomie ([firstSortedAtLeast]). Avant cet index,
+     * [topCompletions] parcourait tous les candidats à chaque lettre tapée (~0,6 ms sur PC quelle que soit la longueur du début,
+     * 16 à 32 ms mesurés sur Pixel 9 en build debug). Construit à la première demande, ou au préchargement ([warmSuggestionIndex]).
+     */
+    private val sortedCandidates: IntArray by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        candidateWords.indices.sortedWith { a, b -> candidateWords[a].compareTo(candidateWords[b]) }.toIntArray()
+    }
+
+    /** Construit l'index des complétions s'il ne l'est pas encore (préchargement, hors du thread principal). */
+    fun warmSuggestionIndex() {
+        sortedCandidates
+    }
+
+    /** Première position de [sortedCandidates] dont le mot est >= [prefix] (taille de l'index s'il n'y en a pas). */
+    private fun firstSortedAtLeast(prefix: String): Int {
+        val sorted = sortedCandidates
+        var low = 0
+        var high = sorted.size
+        while (low < high) {
+            val middle = (low + high) ushr 1
+            if (candidateWords[sorted[middle]] < prefix) low = middle + 1 else high = middle
+        }
+        return low
+    }
+
+    /**
      * Les [count] mots du dictionnaire qui commencent par [prefix] (minuscules) et sont plus longs
      * que lui : fréquence décroissante, puis longueur croissante, puis ordre alphabétique.
      * Insertion bornée : pas de tri des quelques milliers de mots qui commencent par une lettre.
@@ -701,9 +728,15 @@ class Dictionary private constructor(
             else -> word < otherWord
         }
 
-        for (i in candidateWords.indices) {
+        // Seuls les candidats qui commencent par [prefix] sont parcourus : une plage contiguë de l'index trié (le classement
+        // ne dépend pas de l'ordre de parcours : fréquence, longueur puis ordre alphabétique départagent tout).
+        val sorted = sortedCandidates
+        var at = firstSortedAtLeast(prefix)
+        while (at < sorted.size) {
+            val i = sorted[at++]
             val word = candidateWords[i]
-            if (word.length <= prefix.length || !word.startsWith(prefix)) continue
+            if (!word.startsWith(prefix)) break
+            if (word.length <= prefix.length) continue
             val frequency = candidateFrequencies[i]
             if (size == capacity && !ranksBefore(word, frequency, bestWords[size - 1]!!, bestFrequencies[size - 1])) continue
 

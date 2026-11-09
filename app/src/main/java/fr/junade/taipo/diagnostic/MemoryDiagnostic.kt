@@ -13,7 +13,8 @@ import fr.junade.taipo.dictionary.DictionaryLoader
 /**
  * Mesures de l'écran « Diagnostic mémoire » (builds debug) : pour chaque langue, mémoire et temps de chargement de la table des
  * fréquences actuelle (`HashMap`) et du prototype compact ([CompactWordTable]), vitesse de recherche des deux, puis le
- * dictionnaire complet tel que le clavier le construit, avec la durée de corrections et de suggestions types.
+ * dictionnaire complet tel que le clavier le construit (durée de chaque étape du chargement et des premières utilisations),
+ * avec la durée de corrections et de suggestions types.
  *
  * Bloquant (plusieurs secondes par langue) : à appeler hors du thread principal. Les mesures de mémoire sont des écarts de
  * tas Java après ramasse-miettes : approximatives (à quelques Mo près), mais comparables entre elles. Aucun mot n'est rapporté,
@@ -76,8 +77,9 @@ class MemoryDiagnostic(private val context: Context) {
 
         // 5. Dictionnaire complet, comme pour le clavier (table, index, noms, bigrammes).
         val beforeDictionary = usedHeap()
+        val timings = DictionaryLoader.LoadTimings()
         start = SystemClock.elapsedRealtime()
-        val dictionary = DictionaryLoader.buildUncachedForDiagnostic(context, language)
+        val dictionary = DictionaryLoader.buildUncachedForDiagnostic(context, language, timings)
         val dictionaryMs = SystemClock.elapsedRealtime() - start
         if (dictionary == null) {
             report("Dictionnaire complet : fichiers incomplets, ignoré")
@@ -85,6 +87,17 @@ class MemoryDiagnostic(private val context: Context) {
         }
         val dictionaryBytes = usedHeap() - beforeDictionary
         report("Dictionnaire complet : ${mb(dictionaryBytes)} Mo, chargement $dictionaryMs ms (table, index, noms, bigrammes)")
+        report("Étapes du chargement : " + timings.millis.entries.joinToString(", ") { "${it.key} ${it.value} ms" })
+
+        // 6. Travail repoussé à la première utilisation (lazy) : fait pendant le préchargement ou à la première frappe.
+        val nextLetterMicros = timed { dictionary.nextLetterModel }
+        val firstCorrectionMicros = typos.firstOrNull()?.let { typo -> timed { dictionary.correctionFor(typo) } }
+        val firstSuggestionMicros = prefixes.firstOrNull()?.let { prefix -> timed { dictionary.suggestionSlotsFor(prefix) } }
+        report(
+            "Premières utilisations : lettre suivante ${ms(nextLetterMicros)} ms, " +
+                "première correction ${firstCorrectionMicros?.let(::ms) ?: "?"} ms, " +
+                "premières suggestions ${firstSuggestionMicros?.let(::ms) ?: "?"} ms",
+        )
 
         repeat(WARMUP_ROUNDS) { typos.forEach { dictionary.correctionFor(it) } }
         val corrections = typos.map { typo -> timed { dictionary.correctionFor(typo) } }

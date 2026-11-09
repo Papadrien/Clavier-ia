@@ -556,7 +556,8 @@ class SuggestionController(
         }
         scope.launch(Dispatchers.IO) {
             try {
-                DictionaryLoader.forLanguage(appContext, language)
+                // Index des complétions construit ici, en arrière-plan, plutôt qu'à la première lettre tapée.
+                DictionaryLoader.forLanguage(appContext, language).warmSuggestionIndex()
                 warmNextLetterModel(language)
             } catch (e: CancellationException) {
                 throw e

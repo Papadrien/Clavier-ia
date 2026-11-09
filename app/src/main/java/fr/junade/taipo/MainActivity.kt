@@ -19,8 +19,6 @@ import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
-import fr.junade.taipo.ai.AiAcceleration
-import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsPreferences
 import fr.junade.taipo.diagnostic.MemoryDiagnosticActivity
@@ -182,13 +180,6 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.button_debug_diagnostic).setOnClickListener {
             startActivity(Intent(this, MemoryDiagnosticActivity::class.java))
         }
-        findViewById<View>(R.id.button_debug_gpu).setOnClickListener {
-            val acceleration = AiAcceleration(this)
-            acceleration.setGpuRequested(!acceleration.gpuRequested)
-            // Le moteur chargé (processus du clavier) est fermé : le prochain chargement suit le nouveau réglage.
-            Thread { LlmEngineHost.closeEverywhere() }.start()
-            renderPremium()
-        }
         findViewById<View>(R.id.button_debug_premium).setOnClickListener {
             val states = PremiumPass.DebugOverride.entries
             PremiumPass.setDebugOverride(this, states[(PremiumPass.debugOverride.ordinal + 1) % states.size])
@@ -221,13 +212,6 @@ class MainActivity : Activity() {
                 PremiumPass.DebugOverride.INACTIVE -> getString(R.string.home_debug_premium_inactive)
             }
             findViewById<TextView>(R.id.button_debug_premium).text = getString(R.string.home_debug_premium, state)
-            val acceleration = AiAcceleration(this)
-            val gpu = when {
-                !acceleration.gpuRequested -> R.string.home_debug_gpu_cpu
-                acceleration.gpuFailed -> R.string.home_debug_gpu_failed
-                else -> R.string.home_debug_gpu_gpu
-            }
-            findViewById<TextView>(R.id.button_debug_gpu).text = getString(R.string.home_debug_gpu, getString(gpu))
         }
     }
 

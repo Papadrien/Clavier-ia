@@ -7,9 +7,11 @@ import android.text.format.Formatter
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.CompoundButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import fr.junade.taipo.ai.AiAcceleration
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.model.ActiveModelAfterDeletion
 import fr.junade.taipo.model.AiModel
@@ -69,6 +71,29 @@ class ModelDownloadActivity : ModelScreenActivity() {
             item.applyTaipoFontToTree()
             rows[model] = ModelRowViews.from(item)
             container.addView(item)
+        }
+        setUpGpuSwitch()
+    }
+
+    /**
+     * Accélération GPU du modèle (voir [AiAcceleration]) : l'interrupteur est coché si le GPU est demandé et n'a pas échoué. Le
+     * recocher après un échec relance un essai. Le moteur déjà chargé (processus du clavier) est fermé : le prochain chargement suit
+     * le nouveau réglage.
+     */
+    private fun setUpGpuSwitch() {
+        val acceleration = AiAcceleration(this)
+        val switch = findViewById<CompoundButton>(R.id.switch_gpu)
+        val failed = findViewById<TextView>(R.id.text_gpu_failed)
+        fun render() {
+            switch.isChecked = acceleration.gpuRequested && !acceleration.gpuFailed
+            failed.visibility = if (acceleration.gpuRequested && acceleration.gpuFailed) View.VISIBLE else View.GONE
+        }
+        render()
+        switch.setOnCheckedChangeListener { _, checked ->
+            if (checked == (acceleration.gpuRequested && !acceleration.gpuFailed)) return@setOnCheckedChangeListener
+            acceleration.setGpuRequested(checked)
+            Thread { LlmEngineHost.closeEverywhere() }.start()
+            render()
         }
     }
 
