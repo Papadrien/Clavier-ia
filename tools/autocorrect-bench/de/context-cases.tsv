@@ -1,0 +1,120 @@
+# Kategorie<TAB>getippter Text<TAB>erwarteter Text nach der Autokorrektur (Wort für Wort, wie auf der Tastatur)
+# Fälle, die heute scheitern, sind ZIELE ; sie stehen in baseline.txt. Die Sätze beginnen groß: der Satzanfang ist nicht Gegenstand des Banks.
+# Kategorien nomen/vorname: Ziel des künftigen Wörterbuchs der Nomen und Vornamen (keine automatische Großschreibung per Einstellung).
+umlaut	Das ist fur dich.	Das ist für dich.
+umlaut	Ich komme gleich zuruck.	Ich komme gleich zurück.
+umlaut	Wir mussen fruh aufstehen.	Wir müssen früh aufstehen.
+umlaut	Ich bin sehr mude.	Ich bin sehr müde.
+umlaut	Es ist schon spat.	Es ist schon spät.
+umlaut	Das ist naturlich moglich.	Das ist natürlich möglich.
+umlaut	Wir konnen morgen kommen.	Wir können morgen kommen.
+umlaut	Ich habe eine Frage uber das Thema.	Ich habe eine Frage über das Thema.
+umlaut	Die Madchen spielen im Garten.	Die Mädchen spielen im Garten.
+umlaut	Ich mochte ein Glas Wasser.	Ich möchte ein Glas Wasser.
+umlaut	Die Kinder gehen in die Schule, die Eltern in das Buro.	Die Kinder gehen in die Schule, die Eltern in das Büro.
+umlaut	Ich habe Brotchen gekauft.	Ich habe Brötchen gekauft.
+umlaut	Das Wasser ist kalt, aber ich bin trotzdem schwimmen gegangen, wahrend du geschlafen hast.	Das Wasser ist kalt, aber ich bin trotzdem schwimmen gegangen, während du geschlafen hast.
+umlaut	Bis morgen und gute Nacht, ich wunsche dir viel Spass.	Bis morgen und gute Nacht, ich wünsche dir viel Spaß.
+umlaut	Wir fahren im Sommer nach Osterreich.	Wir fahren im Sommer nach Österreich.
+umlaut	Ich bin gespannt auf die Uberraschung.	Ich bin gespannt auf die Überraschung.
+eszett	Die Strasse ist gesperrt.	Die Straße ist gesperrt.
+eszett	Es ist heiss draussen.	Es ist heiß draußen.
+eszett	Das war ein grosser Fehler.	Das war ein großer Fehler.
+eszett	Ich weiss es nicht.	Ich weiß es nicht.
+eszett	Wir haben viel Spass.	Wir haben viel Spaß.
+eszett	Der Fussball liegt im Garten.	Der Fußball liegt im Garten.
+eszett	Er ist grosser als ich.	Er ist größer als ich.
+eszett	Viele liebe Grusse an deine Familie.	Viele liebe Grüße an deine Familie.
+umlaut	Ich muss noch Gemuse kaufen.	Ich muss noch Gemüse kaufen.
+eszett	Das Essen ist heiss.	Das Essen ist heiß.
+eszett	Wir wohnen in der Hauptstrasse.	Wir wohnen in der Hauptstraße.
+eszett	Sie spricht fliessend Deutsch.	Sie spricht fließend Deutsch.
+eszett	Ich muss dich leider ausschliessen.	Ich muss dich leider ausschließen.
+eszett	Das Fenster ist weit offen, schliess es bitte.	Das Fenster ist weit offen, schließ es bitte.
+translit	Das ist fuer dich.	Das ist für dich.
+translit	Ich komme gleich zurueck.	Ich komme gleich zurück.
+translit	Wir koennen morgen kommen.	Wir können morgen kommen.
+translit	Ich moechte ein Glas Wasser.	Ich möchte ein Glas Wasser.
+translit	Das ist wirklich schoen.	Das ist wirklich schön.
+translit	Ich habe eine Frage ueber das Thema.	Ich habe eine Frage über das Thema.
+translit	Das Maedchen liest ein Buch.	Das Mädchen liest ein Buch.
+translit	Wir muessen frueh aufstehen.	Wir müssen früh aufstehen.
+translit	Ich freue mich auf die Ueberraschung.	Ich freue mich auf die Überraschung.
+translit	Die Aerzte haben alles getan.	Die Ärzte haben alles getan.
+translit	Sie ist heute muede.	Sie ist heute müde.
+translit	Ich haette gern ein Glas Wasser.	Ich hätte gern ein Glas Wasser.
+translit	Er waere gern gekommen.	Er wäre gern gekommen.
+translit	Ich wuerde gern mitkommen.	Ich würde gern mitkommen.
+translit	Das waere schoen.	Das wäre schön.
+translit	Wir waren gestern im Buero.	Wir waren gestern im Büro.
+nomen	Ich sehe das haus.	Ich sehe das Haus.
+nomen	Das auto steht vor der garage.	Das Auto steht vor der Garage.
+nomen	Wir haben keine zeit.	Wir haben keine Zeit.
+nomen	Der mann liest ein buch.	Der Mann liest ein Buch.
+nomen	Meine mutter kommt morgen.	Meine Mutter kommt morgen.
+nomen	Ich brauche geld.	Ich brauche Geld.
+nomen	Die kinder spielen im garten.	Die Kinder spielen im Garten.
+nomen	Das wetter ist heute schön.	Das Wetter ist heute schön.
+nomen	Er hat einen hund.	Er hat einen Hund.
+nomen	Wir gehen in die schule.	Wir gehen in die Schule.
+nomen	Die frau arbeitet im krankenhaus.	Die Frau arbeitet im Krankenhaus.
+nomen	Der zug hat verspätung.	Der Zug hat Verspätung.
+nomen	Ich habe hunger und durst.	Ich habe Hunger und Durst.
+nomen	Das telefon klingelt.	Das Telefon klingelt.
+nomen	Der Lehrer korrigiert die hausaufgaben.	Der Lehrer korrigiert die Hausaufgaben.
+vorname	Ich treffe thomas morgen.	Ich treffe Thomas morgen.
+vorname	Anna und lukas kommen zu Besuch.	Anna und Lukas kommen zu Besuch.
+vorname	Hast du michael gesehen?	Hast du Michael gesehen?
+vorname	Das ist die Tasche von julia.	Das ist die Tasche von Julia.
+vorname	Ich habe sabine angerufen.	Ich habe Sabine angerufen.
+vorname	Alexander kommt später.	Alexander kommt später.
+seid-seit	Ihr seit meine Freunde.	Ihr seid meine Freunde.
+seid-seit	Seit ihr schon fertig?	Seid ihr schon fertig?
+seid-seit	Ich wohne hier seid drei Jahren.	Ich wohne hier seit drei Jahren.
+seid-seit	Er arbeitet seid Montag nicht mehr.	Er arbeitet seit Montag nicht mehr.
+seid-seit	Wo seit ihr gestern gewesen?	Wo seid ihr gestern gewesen?
+seid-seit	Seid wann wohnst du hier?	Seit wann wohnst du hier?
+seid-seit	Ich kenne ihn seid langem.	Ich kenne ihn seit langem.
+wir-wie	Wie sind müde.	Wir sind müde.
+wir-wie	Wie haben keine Zeit.	Wir haben keine Zeit.
+wir-wie	Wie gehen jetzt nach Hause.	Wir gehen jetzt nach Hause.
+wir-wie	Wie müssen los.	Wir müssen los.
+wir-wie	Gestern waren wie im Kino.	Gestern waren wir im Kino.
+wir-wie	Heute essen wie zu Hause.	Heute essen wir zu Hause.
+wir-wie	Wie können morgen kommen.	Wir können morgen kommen.
+wurde-würde	Ich wurde gern mitkommen.	Ich würde gern mitkommen.
+wurde-würde	Er wurde gern schlafen.	Er würde gern schlafen.
+wurde-würde	Ich wurde das nie tun.	Ich würde das nie tun.
+wurde-würde	Wenn ich Zeit hätte, wurde ich kommen.	Wenn ich Zeit hätte, würde ich kommen.
+wurde-würde	Was wurdest du tun?	Was würdest du tun?
+wurde-würde	Sie wurden gern früher gehen.	Sie würden gern früher gehen.
+das-dass	Ich weiß, das du müde bist.	Ich weiß, dass du müde bist.
+das-dass	Ich glaube, das er recht hat.	Ich glaube, dass er recht hat.
+das-dass	Er sagt, das sie kommt.	Er sagt, dass sie kommt.
+das-dass	Ich hoffe, das wir uns bald sehen.	Ich hoffe, dass wir uns bald sehen.
+das-dass	Es ist schön, das du da bist.	Es ist schön, dass du da bist.
+das-dass	Ich finde, dass das Buch gut ist.	Ich finde, dass das Buch gut ist.
+mal-Mal	Zum ersten mal war ich in Hamburg.	Zum ersten Mal war ich in Hamburg.
+mal-Mal	Das nächste mal bringe ich Kuchen mit.	Das nächste Mal bringe ich Kuchen mit.
+mal-Mal	Ich war schon einmal dort, das letzte mal im Sommer.	Ich war schon einmal dort, das letzte Mal im Sommer.
+mal-Mal	Diesmal klappt es bestimmt.	Diesmal klappt es bestimmt.
+tageszeit	Heute morgen war ich müde.	Heute Morgen war ich müde.
+tageszeit	Heute abend gehen wir ins Theater.	Heute Abend gehen wir ins Theater.
+tageszeit	Gestern abend war ich zu Hause.	Gestern Abend war ich zu Hause.
+tageszeit	Morgen früh muss ich zum Arzt.	Morgen früh muss ich zum Arzt.
+tageszeit	Heute nacht habe ich schlecht geschlafen.	Heute Nacht habe ich schlecht geschlafen.
+tippfehler	Ich habe keine Zeti.	Ich habe keine Zeit.
+tippfehler	Das ist sher gut.	Das ist sehr gut.
+tippfehler	Wir sehen uns mrogen.	Wir sehen uns morgen.
+tippfehler	Ich habe das nciht gewusst.	Ich habe das nicht gewusst.
+tippfehler	Kannst du mir helfne?	Kannst du mir helfen?
+tippfehler	Ich bin gestren angekommen.	Ich bin gestern angekommen.
+tippfehler	Wir treffen uns um achr Uhr.	Wir treffen uns um acht Uhr.
+tippfehler	Das war ein shcöner Tag.	Das war ein schöner Tag.
+tippfehler	Danke fur deine Nachricht.	Danke für deine Nachricht.
+tippfehler	Ich weiss das nciht mehr genau.	Ich weiß das nicht mehr genau.
+tippfehler	Wie geth es dir?	Wie geht es dir?
+tippfehler	Ich haeb Hunger.	Ich habe Hunger.
+tippfehler	Das ist ein Problme.	Das ist ein Problem.
+tippfehler	Ich möchte einen Kaffe.	Ich möchte einen Kaffee.
+tippfehler	Wir fahren nach Brelin.	Wir fahren nach Berlin.

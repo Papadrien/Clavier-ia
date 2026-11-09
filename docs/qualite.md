@@ -41,7 +41,8 @@ les versions (`ktlint-cli` 1.5.0, `detekt-cli` 1.23.8, dans `gradle/quality.grad
 
 ## Reste à faire
 
-- [ ] `./gradlew ktlintBaseline detektBaseline`, committer `quality/`.
+- [x] `./gradlew ktlintBaseline detektBaseline`, committer `quality/` (08/11/2026, revue de code : `.editorconfig` ajouté, il
+  manquait ; ktlint 1 112 écarts figés au lieu de 10 519 sans lui (règles class-signature et function-signature désactivées : elles contredisent la convention du projet), detekt 326 ; `qualityCheck` lancé par la CI).
 - [ ] `./gradlew qualityCheck` vert.
 - [ ] Étape CI.
 
@@ -83,3 +84,19 @@ Audit du 14/10/2026 : `TaipoIme` (~1 840 lignes), `Dictionary`, `KeyboardView`, 
 - [x] Découpage terminé : plus aucun fichier de l'audit 2.1 n'est une « classe divine » (`TaipoIme` ~1 280, `KeyboardView` ~640,
       `Dictionary` ~700). Restent proches de 500-680 lignes : `CorrectionAiController`, `SuggestionController`,
       `PromptModeController`, `CorrectionBarView` : à découper seulement si une évolution les touche.
+
+## Découpage de `TaipoIme` (08/11/2026)
+
+`TaipoIme.kt` passe de 1 628 à 1 122 lignes. Sortis dans leurs propres classes, sans changement de comportement, en
+s'appuyant sur `ImeHostContext` comme les contrôleurs existants :
+- `FieldEditor` : retour arrière par caractère entier, effacement d'une sélection, Entrée, « Ajouter » et « Remplacer le texte » du chat ;
+- `ImeLanguages` : langue active, touche globe, liste des langues, mesure d'usage de la langue ;
+- `OneHandedSwitcher` : mode une main ;
+- `ImeMemoryManager` : libération des moteurs IA et dictée (`onTrimMemory`, clavier masqué) ;
+- `KeyboardLayoutApplier` : rangée de chiffres, touches du bas, disposition posée sur la vue ;
+- `AutocorrectionMemory` (+ `AppliedAutocorrection`, `TypingRules`) : dernière autocorrection annulable, partagée par le
+  champ et le prompt ;
+- `PromptKeyHandler` : frappe et mots suggérés en mode prompt.
+
+Restent dans `TaipoIme` : le cycle de vie du service, la frappe dans le champ (touches, autocorrection, mots suggérés) et le
+câblage des contrôleurs. Prochaine étape possible : la frappe dans le champ (`onKeyPressed`, `onWordSuggestionTapped`).

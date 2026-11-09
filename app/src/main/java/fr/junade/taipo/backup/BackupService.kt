@@ -1,9 +1,11 @@
 package fr.junade.taipo.backup
 
 import android.content.Context
+import fr.junade.taipo.AccentPalette
 import fr.junade.taipo.HapticIntensity
 import fr.junade.taipo.KeyboardHeight
 import fr.junade.taipo.KeyboardPreferences
+import fr.junade.taipo.ThemeChoice
 import fr.junade.taipo.ai.CorrectionPromptPreferences
 import fr.junade.taipo.ai.GenerationPromptPreferences
 import fr.junade.taipo.ai.SystemPromptPreferences
@@ -41,7 +43,10 @@ object BackupService {
     suspend fun collect(context: Context, nowMillis: Long = System.currentTimeMillis()): BackupData {
         val appContext = context.applicationContext
         val keyboard = KeyboardPreferences(appContext)
-        val prompts = promptPreferences(appContext).filterValues { it.isCustom() }.mapValues { it.value.get() }
+        // Prompts personnalisés enregistrés, utilisés ou non (sans pass premium, ils sont gardés mais pas utilisés).
+        val prompts = promptPreferences(appContext)
+            .mapNotNull { (usage, preferences) -> preferences.custom()?.let { usage to it } }
+            .toMap()
         return BackupData(
             exportedAtMillis = nowMillis,
             dictionary = PersonalDictionaryProvider.repository(appContext).all(),
@@ -51,10 +56,16 @@ object BackupService {
                 .map { BackupPin(it.text, it.label, it.pinnedAtMillis) },
             keyboard = BackupKeyboardSettings(
                 numberRow = keyboard.isNumberRowEnabled,
+                numberRowPasswordOnly = keyboard.isNumberRowInPasswordFieldsOnly,
+                showEmojiKey = keyboard.isEmojiKeyShown,
+                showCommaKey = keyboard.isCommaKeyShown,
+                showPeriodKey = keyboard.isPeriodKeyShown,
                 hapticIntensity = keyboard.hapticIntensity.storageKey,
                 keyboardHeight = keyboard.keyboardHeight.storageKey,
                 recentEmojis = keyboard.recentEmojis,
                 habitLearning = keyboard.isHabitLearningEnabled,
+                themeChoice = keyboard.themeChoice.storageKey,
+                accentPalette = keyboard.accentPalette.storageKey,
             ),
             ai = BackupAiSettings(
                 activeModelId = ModelPreferences(appContext).activeModel()?.id,
@@ -109,6 +120,10 @@ object BackupService {
     private fun restoreKeyboard(context: Context, settings: BackupKeyboardSettings) {
         val keyboard = KeyboardPreferences(context)
         settings.numberRow?.let { keyboard.isNumberRowEnabled = it }
+        settings.numberRowPasswordOnly?.let { keyboard.isNumberRowInPasswordFieldsOnly = it }
+        settings.showEmojiKey?.let { keyboard.isEmojiKeyShown = it }
+        settings.showCommaKey?.let { keyboard.isCommaKeyShown = it }
+        settings.showPeriodKey?.let { keyboard.isPeriodKeyShown = it }
         settings.hapticIntensity?.let { key ->
             HapticIntensity.entries.firstOrNull { it.storageKey == key }?.let { keyboard.hapticIntensity = it }
         }
@@ -117,6 +132,14 @@ object BackupService {
         }
         settings.recentEmojis?.let { keyboard.recentEmojis = it.take(RecentEmojis.MAX_SIZE) }
         settings.habitLearning?.let { keyboard.isHabitLearningEnabled = it }
+        settings.themeChoice?.let { key ->
+            // Écrire le réglage met aussi à jour KeyboardTheme.choice. « dynamic » sur un appareil d'avant Android 12 se comporte comme « system ».
+            ThemeChoice.entries.firstOrNull { it.storageKey == key }?.let { keyboard.themeChoice = it }
+        }
+        settings.accentPalette?.let { key ->
+            // Écrire le réglage met aussi à jour KeyboardTheme.palette (le violet si la couleur est réservée au pass premium).
+            AccentPalette.entries.firstOrNull { it.storageKey == key }?.let { keyboard.accentPalette = it }
+        }
     }
 
     /**

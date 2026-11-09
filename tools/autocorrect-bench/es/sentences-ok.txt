@@ -1,0 +1,131 @@
+# Frases españolas correctas: la autocorrección no debe cambiar ninguna (mide las falsas correcciones).
+# Una frase por línea. Las líneas que empiezan por # se ignoran.
+Hola, ¿cómo estás?
+¿Qué haces esta noche?
+¿Dónde está mi teléfono?
+¿Por qué no vienes con nosotros?
+No sé cómo hacerlo.
+Dime dónde vives.
+¿Quién te lo dijo?
+¿Cuándo llegas a casa?
+¿A dónde vas tan tarde?
+¿De dónde eres?
+Tú eres mi mejor amigo.
+Tu casa es muy bonita.
+Mi madre trabaja en un hospital.
+Este regalo es para mí.
+A mí me gusta el café.
+Él es mi hermano.
+El perro duerme en el sofá.
+Voy con él al cine.
+Sí, claro que sí.
+Si no vienes, me voy sin ti.
+Si quieres, te ayudo.
+Yo sé que tienes razón.
+No sé si vendrá.
+Quiero que me dé una respuesta.
+Espero que te dé tiempo.
+Aún no he terminado.
+Aun así, seguiré intentándolo.
+Ella ha venido temprano.
+Voy a comprar pan.
+Vamos a ver si llueve.
+A ver si me llamas mañana.
+He hecho la tarea.
+Te echo de menos.
+¡Qué bonito día!
+¡Que te vaya bien!
+¡Que tengas un buen viaje!
+Esa casa es más grande que la de Pedro.
+El habla de la región es muy particular.
+No se puede entrar sin permiso.
+Yo se lo dije ayer.
+Se fue sin decir nada.
+Ella se lo contó todo.
+Me gusta el té con limón.
+Quiero un té caliente, por favor.
+Tú te vas mañana.
+Por favor, ven a verme.
+A veces pienso en eso.
+O sea, no estoy seguro.
+Lo hice en serio.
+Sin embargo, no cambió de opinión.
+A pesar de todo, seguimos adelante.
+A través de la ventana se veía el mar.
+La médula ósea produce células.
+El niño ya ha comido.
+Nunca ha estado aquí.
+Quien ha llegado tarde, que espere.
+¿Cómo te llamas?
+¿Cuánto cuesta esto?
+¿Cuál prefieres?
+¿Y tú qué opinas?
+¿Para qué sirve esto?
+Me pregunto cómo lo hizo.
+No sé dónde dejé las llaves.
+Sabes cuándo empieza la película.
+¿Por qué estás triste?
+Porque no quiero ir.
+Que lo hagas tú.
+Dijo que sí.
+Dijo que no.
+Creo que sí, pero no estoy seguro.
+Quiero ir con mi mamá.
+El que llegó primero ganó.
+Es para ti.
+Hablamos de mí.
+Hazlo por mí.
+Eso es lo que quiero.
+Ya lo he visto.
+Ha dicho que vendrá.
+Voy a ir mañana.
+Va a ser difícil.
+Pienso que él tiene razón.
+Ella dice que él viene.
+Es el mejor día de mi vida.
+El hombre que vino ayer es mi tío.
+Estas manzanas están maduras.
+Esta casa es nueva.
+Estas son mis llaves.
+¿Estás bien?
+Está lloviendo mucho.
+Sé cuál es la respuesta.
+Aquí está el libro.
+Mañana será otro día.
+El año pasado viajé a España.
+Tengo dos años.
+Ella canta muy bien.
+Mis amigos son geniales.
+Mi casa está cerca.
+Tu madre te llamó.
+Si tú quieres, vamos.
+Te quiero mucho.
+Se lo dije a él.
+Compré un regalo para él.
+No hay nada que hacer.
+¿Qué está pasando?
+¿Dónde estás?
+¿Cómo estás hoy?
+¿Cómo está tu familia?
+Hay que ir al médico.
+Ahí está el problema.
+¡Ay, qué susto!
+¡Cómo me gusta esta canción!
+¡Qué suerte tienes!
+Aunque llueva, saldré.
+Aun cuando llueva, saldré.
+Aun los más pequeños ayudaron.
+Todavía no lo sé.
+Hay muchas personas aquí.
+Quiero que vengas con nosotros.
+Le dije que me diera tiempo.
+Dale las gracias a él.
+Salimos de la casa.
+De hecho, tienes razón.
+Lo hecho, hecho está.
+Eso es lo de ayer.
+Quiero que lo de ayer se olvide.
+Mi hermano ha vuelto.
+No sé nada de él.
+El vino tinto es mi favorito.
+Compramos el vino para la cena.

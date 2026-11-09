@@ -41,6 +41,13 @@ class SuggestionZoneState {
     var clipboardPanelOpen: Boolean = false
         private set
 
+    /**
+     * Un tip (ex. « Swipe vers le bas » après un chiffre saisi par appui long) remplace les suggestions de la rangée de saisie
+     * jusqu'à la prochaine frappe ([onTyping]) ou jusqu'à ce qu'il soit retiré ([hideTip]).
+     */
+    var tipRequested: Boolean = false
+        private set
+
     private var liveMenuOpen: Boolean = false
     private var frozen: Shown? = null
 
@@ -68,9 +75,19 @@ class SuggestionZoneState {
         liveMenuOpen = !liveMenuOpen
     }
 
-    /** Début (ou poursuite) de la frappe : le menu se referme, retour aux suggestions de mots. */
+    /** Début (ou poursuite) de la frappe : le menu et le tip se referment, retour aux suggestions de mots. */
     fun onTyping() {
         liveMenuOpen = false
+        tipRequested = false
+    }
+
+    /** Demande l'affichage du tip à la place des suggestions (il n'apparaît que dans la rangée de saisie, menu fermé). */
+    fun showTip() {
+        tipRequested = true
+    }
+
+    fun hideTip() {
+        tipRequested = false
     }
 
     /** Le champ contient (ou non) du texte. */

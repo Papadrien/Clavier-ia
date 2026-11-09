@@ -11,7 +11,7 @@ import androidx.annotation.ColorRes
 
 /**
  * Style commun des boutons de la barre du haut (lot 4.2) : fonds « face + ombre » de la charte Taipo (lots 08, 10 et 11),
- * texte ou icône blanche. Sorti de [CorrectionBarView].
+ * texte ou icône blanche sur violet ou rouge, couleur du texte du thème sur gris (lot T6). Sorti de [CorrectionBarView].
  */
 internal class BarStyle(private val context: Context) {
 
@@ -59,30 +59,36 @@ internal class BarStyle(private val context: Context) {
      * la face, au-dessus de l'épaisseur d'ombre (marge basse = ombre au repos).
      */
     fun styleRoundIconButton(button: ImageButton, iconRes: Int, @ColorRes faceRes: Int = R.color.surface_button) {
-        applyIcon(button, iconRes)
+        applyIcon(button, iconRes, faceRes)
         button.background = roundBackground(faceRes)
         button.setPadding(0, 0, 0, context.dimen(R.dimen.taipo_key_shadow_height).toInt())
     }
 
-    private fun applyIcon(button: ImageButton, iconRes: Int) {
+    private fun applyIcon(button: ImageButton, iconRes: Int, @ColorRes faceRes: Int = R.color.surface_button) {
         button.setImageResource(iconRes)
-        button.imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
+        button.imageTintList = contentTint(faceRes)
         button.scaleType = ImageView.ScaleType.CENTER_INSIDE
     }
+
+    /**
+     * Teinte d'une icône posée sur la face [faceRes] (lot T6) : blanche sur une face violette ou rouge, couleur du texte du thème
+     * sinon (voir [FaceContent]). À reposer quand la face d'un bouton change.
+     */
+    fun contentTint(@ColorRes faceRes: Int): ColorStateList = ColorStateList.valueOf(context.themeColor(FaceContent.colorOn(faceRes)))
 
     /**
      * Bouton à icône blanche de la barre du haut (lot 10), sur un fond [pillBackground] : l'icône garde sa taille et se
      * centre sur la face, au-dessus de l'épaisseur d'ombre.
      */
     fun styleBarIconButton(button: ImageButton, iconRes: Int, @ColorRes faceRes: Int = R.color.surface_button) {
-        applyIcon(button, iconRes)
+        applyIcon(button, iconRes, faceRes)
         button.background = pillBackground(faceRes)
         button.setPadding(0, 0, 0, context.dimen(R.dimen.taipo_key_shadow_height).toInt())
     }
 
     /** Bouton à texte de la barre du haut (lot 10) : Open Sans gras, fond [pillBackground] ; le texte se centre sur la face. */
     fun styleButton(button: Button, @ColorRes backgroundColor: Int) {
-        button.setTextColor(context.themeColor(R.color.text_primary))
+        button.setTextColor(context.themeColor(FaceContent.colorOn(backgroundColor)))
         button.useTaipoFont(TaipoType.Weight.BOLD)
         button.setFixedTextSizeRes(R.dimen.taipo_bar_button_text_size)
         button.isAllCaps = false

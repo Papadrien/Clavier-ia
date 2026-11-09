@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Coche de la carte de thème choisie (lot T5) : disque violet avec coche, plus petit que celui des étapes de l'accueil. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/accent" />
+        </shape>
+    </item>
+    <item
+        android:width="@dimen/taipo_theme_check_icon_size"
+        android:height="@dimen/taipo_theme_check_icon_size"
+        android:gravity="center"
+        android:drawable="@drawable/ic_check" />
+</layer-list>

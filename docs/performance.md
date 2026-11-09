@@ -104,3 +104,101 @@ Mêmes conditions avant / après (batterie, température, autres applis), releas
 - [ ] Lot 21 : `./gradlew assembleDebug testDebugUnitTest ktlintCheck detekt` (fichiers touchés : `KeyboardView`, `BarStyle`,
       `CorrectionBarView`, `SuggestionZoneView`, `RecentEmojiBarView`, `TaipoDimens`, `EmojiCatalog`, `TaipoIme`, `Tracing`,
       `KeyboardBenchmark`, `Targets`) puis les mesures ci-dessus.
+
+## Autocorrection : latence du moteur (phase 6, 01/11/2026)
+
+`AutocorrectionLatencyTest` (`androidTest`) chronomètre `Autocorrection.correctedText` sur le vrai dictionnaire français, sur
+l'appareil, avec quatre corpus fixes ; en build debug, `SuggestionController` écrit aussi un histogramme de latence dans logcat
+(filtre `SuggestionController`). Mode d'emploi, lecture des chiffres et tableau à remplir : `docs/autocorrection-bench.md`,
+« Phase 6 ». **Non compilé ni exécuté** depuis l'environnement de développement : aucune mesure n'a encore été prise.
+
+## Revue de code complète : performance (08/11/2026)
+
+Compilé et testé (tests JVM de l'app et de `:core`), **pas mesuré sur appareil** : les gains ci-dessous sont des allers-retours,
+des mises en page et des allocations évités, plus deux mesures sur le serveur de développement (bien plus rapide qu'un téléphone).
+
+### Frappe
+- **Lectures du champ en cache** (`InputTextCache`, `CachingInputConnection`, branchés par `TaipoIme.getCurrentInputConnection`).
+  Avant : environ 8 lectures synchrones du champ par touche (aller-retour vers l'application du champ). Après : une lecture réelle
+  au plus toutes les 500 ms pendant une frappe continue. `commitText` / `deleteSurroundingText` mettent le cache à jour sur place ; toute autre
+  écriture, tout déplacement du curseur qui n'est pas l'écho de nos écritures et le délai de 500 ms le vident. Tests :
+  `InputTextCacheTest`. **À surveiller sur l'appareil** : une application qui modifierait son texte sans déplacer le curseur
+  (cas rare) ; le texte périmé ne dure alors pas plus de 500 ms. Pour couper le cache, faire renvoyer
+  `super.getCurrentInputConnection()` par `TaipoIme.getCurrentInputConnection`.
+- **Plus de mise en page complète à chaque touche** : `KeyboardView.layout`, `isShifted` et `isCapsLock` ignorent une valeur
+  identique (les dispositions sont des instances en cache) ; `applyState` ne relit plus les préférences (disposition, multilingue)
+  qu'au changement de langue ou à l'ouverture d'un champ.
+- **Suggestions** : un seul calcul à la fois (`Dispatchers.Default.limitedParallelism(1)`), une demande déjà dépassée n'est
+  pas calculée.
+- `SpaceBetweenRow` (rangée de la barre) réutilise ses listes à chaque mesure.
+
+### Mémoire et IA
+- **Moteurs libérés** (`MemoryRelease`, `TaipoIme.onTrimMemory`) : modèle IA et modèle de dictée libérés quand Android manque
+  de mémoire (toujours en mémoire critique, seulement clavier masqué en mémoire basse) et après 5 min de clavier masqué. Ils se
+  rechargent à la prochaine action. Les dictionnaires restent.
+- **GPU (expérimental, toutes versions)** : `AiAcceleration`, interrupteur « Utiliser le GPU » de l'écran « Modèle IA ». Repli
+  automatique sur le processeur si le moteur refuse le GPU, ou si une réponse échoue sur GPU (réponse relancée sur le processeur) ;
+  un plantage natif pendant l'essai est détecté au démarrage suivant et coupe le GPU. `libOpenCL.so` et `libvndksupport.so` sont
+  déclarées dans le manifeste (`uses-native-library`), comme l'exige LiteRT-LM pour le GPU depuis Android 12.
+
+### Dictionnaires
+- **Lecture sur octets** (`WordForms.parseFrequencyBytes`) : aucune chaîne créée pour les lignes écartées (470 000 sur 740 000 en
+  français). Même résultat que l'ancienne lecture sur les 7 listes (`WordFormsParseTest`). Mesure sur le serveur : environ
+  65 ms au lieu de 150 ms pour le français, une fois le code chauffé.
+- Mesure de l'empreinte (serveur, JVM) : français environ 35 Mo (dont 26 Mo pour la table des fréquences) et environ 1,1 s de
+  chargement à froid. Table compacte branchée le 09/11/2026 : voir « Diagnostic mémoire sur le téléphone » plus bas.
+
+### Toujours à faire sur l'appareil
+1. `./gradlew :macrobenchmark:connectedBenchmarkAndroidTest -Ptaipo.benchmark=true` avant / après cette revue, consigner les médianes.
+2. Générer le profil de démarrage (`BaselineProfileGenerator`), le copier en `app/src/main/baseline-prof.txt`.
+3. Essayer le GPU (bouton debug) et comparer la vitesse de génération.
+
+## Diagnostic mémoire sur le téléphone (08/11/2026)
+
+Sans ordinateur, le journal du système n'est pas lisible : l'écran **Diagnostic mémoire** (builds debug, section Debug en bas
+de l'accueil) mesure sur le téléphone, pour chaque langue en service :
+- la table des fréquences actuelle (`HashMap<String, Long>`) : mots, mémoire, temps de lecture ;
+- le prototype compact `CompactWordTable` (core) : tous les mots dans un seul tableau de caractères, fréquences dans un
+  tableau, table de hachage d'entiers ; mémoire, temps de construction, part de la table actuelle ;
+- la vitesse de recherche des deux tables (mots présents et absents) ;
+- le dictionnaire complet tel que le clavier le construit (mémoire, chargement), la durée de 100 corrections types
+  (deux lettres inversées dans des mots courants) et de 100 calculs de la bande de suggestions.
+
+« Copier les résultats » met le texte dans le presse-papiers. Aucun mot n'est rapporté.
+
+### Mesures du 09/11/2026 (Pixel 9, Android 17, build debug, français)
+
+Tas Java max 256 Mo ; tas utilisé au départ 28,8 Mo, natif 70,3 Mo. Liste française : fichier de 8,7 Mo, 251 704 mots gardés.
+
+| Mesure | Résultat |
+| --- | --- |
+| Table `HashMap` | 15,4 Mo, lecture 204 ms |
+| Table compacte (fréquences en `Long`) | 8,8 Mo (56 % de la `HashMap`), construction 130 ms |
+| Recherche d'un mot | `HashMap` 37 ns, compacte 164 ns (voir la remarque plus bas) |
+| Dictionnaire complet | 21,0 Mo, chargement 1 053 ms |
+| Étapes du chargement | table 163 ms, noms 3 ms, proximité 1 ms, **bigrammes 690 ms**, construction 194 ms |
+| Premières utilisations | lettre suivante 77 ms, première correction 5,9 ms, premières suggestions 46 ms |
+| Correction à l'espace (100 fautes types) | médiane 2,36 ms, p95 4,47 ms, max 9,33 ms |
+| Bande de suggestions (100 débuts de mot) | médiane 0,05 ms, p95 0,30 ms, max 2,45 ms |
+
+Lecture des résultats :
+- Les bigrammes faisaient 65 % du chargement. La lecture par lignes (`split`, chaînes, `HashMap<Long, Int>` en boîtes) est
+  remplacée par une lecture sur octets (`NgramModel.parseBytes`) : empreintes calculées en décodant l'UTF-8 au fil de la
+  lecture, tableaux d'entiers triés. Résultat identique sur les 5 fichiers livrés (`NgramModelTest`). Sur le serveur :
+  52 à 105 ms au lieu de 135 à 360 ms.
+- La table compacte gagne 6,6 Mo. Sa recherche paraît 4 fois plus lente, mais la mesure avantage la `HashMap` : les mots
+  cherchés y sont toujours les mêmes chaînes, dont le hash est gardé en cache. Dans le clavier, les mots cherchés sont neufs.
+  La table compacte lit désormais elle aussi le hash en cache d'une `String`. Quelques centaines de recherches par
+  correction : l'écart reste de l'ordre de quelques dizaines de microsecondes.
+- La table compacte est branchée dans `Dictionary` (`frequencies`), avec des fréquences en `Int` quand elles tiennent
+  (environ 1 Mo de moins ; toutes les listes livrées sont sous 30 millions). Le paramètre du constructeur ne servait pas qu'à
+  la construction : le `lazy` des prénoms rares le capturait, ce qui gardait la `HashMap` en mémoire. Il ne sert plus qu'aux
+  candidats et est libéré ensuite. Sur le serveur (JVM) : dictionnaire français 19,5 Mo au lieu de 28,9 Mo, construction
+  inchangée, correction environ 8 % plus lente (0,66 ms au lieu de 0,60), bande de suggestions environ 25 % plus lente
+  (26 µs au lieu de 21).
+- Tout ce qui sert à la frappe reste très en dessous d'une image (16 ms). La lettre suivante (77 ms à la première demande)
+  est construite en arrière-plan au préchargement (`SuggestionController.warmNextLetterModel`) ; la frappe ne lit que
+  `nextLetterModelIfBuilt` et ne la construit jamais.
+
+**À refaire sur le Pixel 9** avec cette version : la ligne « Dictionnaire complet » (mémoire attendue autour de 14 Mo) et
+l'étape « bigrammes » (attendue autour de 200 ms), ainsi que les durées de correction et de suggestions.

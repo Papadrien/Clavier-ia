@@ -4,7 +4,6 @@ import android.app.PendingIntent
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import fr.junade.taipo.AppLog
@@ -106,7 +105,7 @@ class ModelDownloadWorker(
      * système : on l'annonce (« Réessayer ») et le partiel est conservé pour la reprise.
      */
     private fun settleAfterStop(model: AiModel) {
-        if (stopReason == WorkInfo.STOP_REASON_CANCELLED_BY_APP) {
+        if (stoppedByApp()) {
             PartialDownload.discard(ModelFileResolver.localFileFor(applicationContext, model))
             DownloadTracker.update(model, DownloadState.Idle)
         } else {
@@ -129,7 +128,7 @@ class ModelDownloadWorker(
                 acceptContentLength = { model.sizeWarning(it) == null },
                 allowMobileData = allowMobileData,
                 isActive = { scope.isActive },
-                keepPartialOnStop = { stopReason != WorkInfo.STOP_REASON_CANCELLED_BY_APP },
+                keepPartialOnStop = { !stoppedByApp() },
                 onTotal = {
                     total = it
                     DownloadTracker.update(model, DownloadState.Downloading(0, it))

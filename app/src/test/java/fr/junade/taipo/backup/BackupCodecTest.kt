@@ -17,10 +17,16 @@ class BackupCodecTest {
         ),
         keyboard = BackupKeyboardSettings(
             numberRow = true,
+            numberRowPasswordOnly = true,
+            showEmojiKey = false,
+            showCommaKey = true,
+            showPeriodKey = false,
             hapticIntensity = "light",
             keyboardHeight = "large",
             recentEmojis = listOf("😀", "👍"),
             habitLearning = false,
+            themeChoice = "dynamic",
+            accentPalette = "lagoon",
         ),
         ai = BackupAiSettings(
             activeModelId = "equilibre",
@@ -45,6 +51,7 @@ class BackupCodecTest {
         assertEquals(listOf("a"), partial.dictionary)
         assertNull(partial.keyboard.numberRow)
         assertNull(partial.keyboard.recentEmojis)
+        assertNull(partial.keyboard.themeChoice)
         assertNull(partial.ai.activeModelId)
         assertEquals(emptyMap<String, String>(), partial.ai.prompts)
     }

@@ -1,0 +1,27 @@
+# categorie<TAB>getypte tekst<TAB>verwachte tekst na autocorrectie (woord voor woord, zoals op het toetsenbord)
+# Gevallen die vandaag mislukken zijn DOELEN; ze staan in baseline.txt.
+d-t	Hij word morgen dertig.	Hij wordt morgen dertig.
+d-t	Het word koud.	Het wordt koud.
+d-t	Zij word boos.	Zij wordt boos.
+d-t	Ik wordt morgen dertig.	Ik word morgen dertig.
+d-t	Wordt jij ook moe?	Word jij ook moe?
+d-t	Hij vind het leuk.	Hij vindt het leuk.
+d-t	Zij vind dat niet.	Zij vindt dat niet.
+d-t	Ik vindt het leuk.	Ik vind het leuk.
+d-t	Vindt jij dat ook?	Vind jij dat ook?
+d-t	Hij houd van muziek.	Hij houdt van muziek.
+d-t	Ik houdt van jou.	Ik houd van jou.
+d-t	Hij antwoord nooit.	Hij antwoordt nooit.
+d-t	Ik antwoordt morgen.	Ik antwoord morgen.
+jou-jouw	Dit is voor jouw, denk ik.	Dit is voor jou, denk ik.
+jou-jouw	Ik denk aan jouw, echt waar.	Ik denk aan jou, echt waar.
+hun-zij	Hun hebben het gedaan.	Zij hebben het gedaan.
+hun-zij	Hun zijn te laat.	Zij zijn te laat.
+apostrof	s'avonds kijk ik tv.	's avonds kijk ik tv.
+apostrof	s'morgens drink ik koffie.	's morgens drink ik koffie.
+apostrof	Zon mooie dag.	Zo'n mooie dag.
+fouten	Dnak je wel.	Dank je wel.
+fouten	Tot morgne.	Tot morgen.
+fouten	Ik ben heel moe vandaag.	Ik ben heel moe vandaag.
+fouten	Ik heb de trien gemist.	Ik heb de trein gemist.
+fouten	Waar is het staion?	Waar is het station?

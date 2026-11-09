@@ -19,7 +19,7 @@ object DictionaryContentCheck {
         }
         if (lines.isEmpty()) return false
         return when (kind) {
-            DictionaryFile.FULL, DictionaryFile.BACKUP -> lines.all { FREQUENCY_LINE.matches(it) }
+            DictionaryFile.FULL -> lines.all { FREQUENCY_LINE.matches(it) }
             DictionaryFile.NAMES -> lines.none { '<' in it || '{' in it || ' ' in it }
         }
     }

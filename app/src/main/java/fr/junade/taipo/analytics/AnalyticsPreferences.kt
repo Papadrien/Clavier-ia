@@ -27,10 +27,28 @@ class AnalyticsPreferences(context: Context) {
             prefs.edit().putBoolean(KEY_FIRST_OPEN_HANDLED, value).apply()
         }
 
+    /**
+     * Nombre de jours distincts où au moins un événement a été envoyé, et dernier jour compté (jour époque UTC, -1 si aucun).
+     * Reste sur l'appareil : seule la tranche ([UsageBuckets.activeDaysBucket]) part avec les événements.
+     */
+    var activeDays: Int
+        get() = prefs.getInt(KEY_ACTIVE_DAYS, 0)
+        set(value) {
+            prefs.edit().putInt(KEY_ACTIVE_DAYS, value).apply()
+        }
+
+    var lastActiveDay: Long
+        get() = prefs.getLong(KEY_LAST_ACTIVE_DAY, -1L)
+        set(value) {
+            prefs.edit().putLong(KEY_LAST_ACTIVE_DAY, value).apply()
+        }
+
     companion object {
         private const val PREFS_NAME = "analytics_prefs"
         private const val KEY_ENABLED = "analytics_enabled"
         private const val KEY_FIRST_OPEN_HANDLED = "first_open_handled"
+        private const val KEY_ACTIVE_DAYS = "active_days"
+        private const val KEY_LAST_ACTIVE_DAY = "last_active_day"
         const val DEFAULT_ENABLED = true
     }
 }

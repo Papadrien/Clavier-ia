@@ -57,6 +57,22 @@ class NextWordModel(private val maxEntries: Int = DEFAULT_MAX_ENTRIES) {
     fun bigramCount(context: String, next: String): Int = bigrams[context]?.get(next) ?: 0
 
     /**
+     * Combien de fois [next] a suivi les deux mots [context2] puis [context1] (minuscules, ou [SENTENCE_START] pour
+     * [context2]). Lecture seule : sert au contexte du départage des corrections (voir `HabitContext`).
+     */
+    @Synchronized
+    fun trigramCount(context2: String, context1: String, next: String): Int = trigrams["$context2 $context1"]?.get(next) ?: 0
+
+    /**
+     * Copie des mots qui ont suivi les deux mots [context2] puis [context1], avec leur compte : les tournures
+     * habituelles de l'utilisateur à cet endroit. Vide si rien n'a été appris pour ce contexte. Lecture seule : sert à
+     * corriger un mot d'après les habitudes (voir `PhraseHabits`).
+     */
+    @Synchronized
+    fun trigramFollowers(context2: String, context1: String): Map<String, Int> =
+        trigrams["$context2 $context1"]?.let { HashMap(it) } ?: emptyMap()
+
+    /**
      * Apprend la dernière transition de [textBeforeCursor] : le dernier mot (ou emoji) terminé, en
      * fonction des un ou deux éléments qui le précèdent. [truncated] indique que le texte est une
      * fenêtre coupée au début de ce que l'utilisateur a écrit (le premier mot peut être incomplet).
@@ -217,7 +233,9 @@ class NextWordModel(private val maxEntries: Int = DEFAULT_MAX_ENTRIES) {
     companion object {
         const val DEFAULT_MAX_ENTRIES = 40_000
         const val MIN_EMOJI_COUNT = 2
-        private const val TRIGRAM_WEIGHT = 4
+
+        /** Poids d'un triplet par rapport à une paire, pour classer les mots proposés (et le contexte d'une correction). */
+        const val TRIGRAM_WEIGHT = 4
         private const val MAX_WORD_LENGTH = 30
 
         /** Jeton « début de phrase » (point, point d'exclamation ou d'interrogation, retour à la ligne). */
@@ -244,6 +262,27 @@ class NextWordModel(private val maxEntries: Int = DEFAULT_MAX_ENTRIES) {
                 }
             }
             return model
+        }
+
+        /**
+         * Contexte du mot qui suivra [textBeforeWord] : (élément qui précède, élément encore avant ou null), comme celui
+         * que [learn] retient pour le dernier mot d'un texte. Au début d'un texte complet, l'élément qui précède est le
+         * début de phrase ; dans une fenêtre coupée au début ([truncated]), le premier mot est peut-être incomplet et ne
+         * compte pas. Null s'il n'y a pas de contexte sûr (texte coupé, nombre ou code juste avant).
+         */
+        fun contextOf(textBeforeWord: String, truncated: Boolean): Pair<String, String?>? {
+            val tokens = tokenize(textBeforeWord).toMutableList()
+            if (truncated && tokens.isNotEmpty()) tokens.removeAt(0)
+            if (tokens.isEmpty()) return if (truncated) null else SENTENCE_START to null
+            val first = tokens.last()
+            if (first == BARRIER) return null
+            if (first == SENTENCE_START) return first to null
+            val second: String? = when {
+                tokens.size >= 2 -> tokens[tokens.size - 2].takeIf { it != BARRIER }
+                !truncated -> SENTENCE_START
+                else -> null
+            }
+            return first to second
         }
 
         /** Vrai pour un jeton emoji (la première lettre d'un mot n'est jamais un emoji). */

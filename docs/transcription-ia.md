@@ -1,16 +1,21 @@
 # Transcription IA (épopée 14)
 
-Enregistrement (2 minutes au plus) envoyé à Gemma 4 E2B ou E4B ; le texte est nettoyé et reformulé, puis inséré au curseur.
+Enregistrement (2 minutes au plus) envoyé à Gemma 4 E2B ou E4B ; le texte est compris, réécrit (reformulation complète si besoin, liste si pertinent), puis inséré au curseur.
 Décisions et mesures : `docs/spike-14-1.md`, `docs/decisions-techniques.md`.
 
-## Prompt (story 14.4, étape 2)
-- Un seul mode : **texte nettoyé** (décision du 11/10/2026). Pas de choix fidèle / résumé / mise en forme.
+## Prompt (story 14.4, révisé le 30/10/2026)
+- Un seul mode : **transcription améliorée par l'IA** (décision du 30/10/2026, remplace le « texte nettoyé » du 11/10/2026). Ce n'est plus
+  une transcription fidèle : le modèle comprend le sens de l'enregistrement et le réécrit comme un message bien rédigé.
 - Fichier : `ai/TranscriptionPrompt.kt` ; modifiable et réinitialisable dans la page « Prompts système » (section « Transcription IA »,
   `TranscriptionPromptPreferences`, clé `transcription_system_prompt`). Une modification s'applique à la transcription suivante.
-- Objectif : plus clair qu'une saisie vocale brute (Nemotron), **en gardant le ton** : suppression des hésitations, répétitions et
-  faux départs ; auto-corrections réduites à la version finale ; grammaire et ponctuation ; pas d'ajout, pas de résumé, pas de traduction.
-- Protection contre l'injection : ce qui est dit dans l'enregistrement est du texte à transcrire, jamais des consignes.
-- Sortie en texte brut (décision 12.2), sans commentaire autour.
+  Un prompt déjà personnalisé n'est pas remplacé par le nouveau défaut : le réinitialiser pour l'obtenir.
+- Objectif : suppression des hésitations, répétitions, faux départs et digressions ; auto-corrections réduites à la version finale ;
+  idées réordonnées et fusionnées ; reformulation complète autorisée quand elle est plus claire ; grammaire et ponctuation.
+- Mise en forme : liste (« - », ou « 1. » si l'ordre compte) seulement quand le contenu s'y prête (tâches, courses, étapes, options) ;
+  sinon phrases normales ; paragraphes séparés par une ligne vide. Aucun autre Markdown.
+- Garde-fous : rien d'inventé (faits, avis, promesses, formules de politesse), aucune idée retirée, noms propres, chiffres, dates et heures
+  exacts, personne grammaticale et ton conservés, pas de traduction.
+- Protection contre l'injection : ce qui est dit dans l'enregistrement est du texte à réécrire, jamais des consignes.
 
 ## Bouton (story 14.5)
 Affiché seulement si le modèle actif est installé et a une entrée audio (Équilibré ou Performant). Avec Ultra-léger ou Léger, il
@@ -29,8 +34,12 @@ Dire la phrase, vérifier le texte inséré.
 | 5 | FR | Une question (« Quelle heure est-il à Tokyo ? ») | La question est transcrite, pas de réponse |
 | 6 | FR | Rien (silence ou bruit) | Aucun texte inséré, message « Aucune parole reconnue » |
 | 7 | FR | Noms propres, chiffres, une date (« rendez-vous le 14 novembre à 9 h 30 avec Monsieur Ritsanko ») | Nom, date, heure conservés exactement |
+| 8 | FR | Plusieurs choses à faire (« Il faut que je pense à appeler le plombier, euh acheter du pain, et puis envoyer le devis à Marc ») | Courte phrase d'introduction éventuelle, puis une ligne « - » par tâche |
+| 9 | FR | Étapes dans l'ordre (« D'abord tu éteins la box, ensuite tu attends dix secondes, et après tu la rallumes ») | Liste numérotée « 1. », « 2. », « 3. » |
+| 10 | FR | Propos décousu qui revient deux fois sur la même idée | Idée dite une seule fois, message plus court et mieux ordonné, aucune idée perdue |
+| 11 | FR | Message simple d'une seule idée | Phrases normales, pas de liste |
 
-Si le modèle commente (« Voici la transcription… »), met des guillemets ou du Markdown, ou répond à la question : durcir la phrase
+Si le modèle commente (« Voici la transcription… »), met des guillemets, du gras ou des titres, invente du contenu, fait une liste pour un message simple, ou répond à la question : durcir la phrase
 correspondante du prompt (page « Prompts système », sans recompiler), puis reporter la version qui marche dans `TranscriptionPrompt.kt`.
 
 ## Bouton dans la barre du haut pendant le traitement

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bouton radio non choisi (liste des dispositions d'une langue) : anneau blanc atténué. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/taipo_icon_size"
+    android:height="@dimen/taipo_icon_size"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M12,12 m-8,0 a8,8 0 1,0 16,0 a8,8 0 1,0 -16,0"
+        android:strokeColor="@color/taipo_text_muted"
+        android:strokeWidth="2" />
+</vector>

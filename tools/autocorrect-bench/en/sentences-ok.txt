@@ -1,0 +1,130 @@
+# Correct English sentences: autocorrection must not change any of them (measures false corrections).
+# One sentence per line, straight apostrophes. Lines starting with # are ignored.
+I think it's going to rain tomorrow.
+The dog wagged its tail when it saw me.
+It's a beautiful day, and I'm happy to be here.
+Their house is bigger than ours.
+There is a book on the table.
+They're going to the market later.
+I want to go to the beach, but it's too cold.
+She went there yesterday with their friends.
+Is it better than the old one?
+We finished the report, and then we went home.
+If you lose your keys, call me.
+The screw is loose and the door won't close.
+Whose coat is this on the chair?
+Who's coming to the party tonight?
+You should have told me earlier.
+I could have stayed longer if I'd known.
+You're welcome to join us anytime.
+Your idea is better than mine.
+Is your brother coming too?
+I have to go to work early today.
+He gave it to me, too.
+An apple a day keeps the doctor away.
+She is an honest person with an honest face.
+It takes an hour to get there by train.
+He works at a university in a small town.
+She bought a European car and a one-way ticket.
+I saw a unicorn in a dream, once.
+It was an MBA program that lasted two years.
+Their own plans were different from ours.
+The cat licked its paws and went to sleep.
+Its color changes when you heat it.
+It's their fault, not yours.
+Over there, they're waiting for us.
+Put it over there, please.
+I don't know what to say.
+We can't wait to see you again.
+They didn't want to leave so soon.
+That's what she said, isn't it?
+I'm sure you'll love it.
+Let's meet at six o'clock tomorrow.
+He's been working there for ten years.
+She's one of the best players on the team.
+We've seen this movie before.
+You'd better hurry up, or you'll miss the bus.
+I'll call you when I get home.
+They'd already left when we arrived.
+There's no way I'm going to do that.
+Here's the thing about this plan.
+What's the matter with you today?
+Where's the nearest bank?
+It was more than I expected.
+She runs faster than anyone else.
+I would rather walk than take the bus.
+Other than that, everything is fine.
+First we ate dinner, then we watched a movie.
+Back then, things were different.
+If it rains, then we stay inside.
+The more you practice, the better you get.
+Do you want to lose weight or gain muscle?
+They might lose the game if they don't focus.
+He let the dog loose in the garden.
+I know whose idea it was.
+Who's your favorite author?
+This is the man whose car was stolen.
+It would have been nice to see you there.
+We should have left earlier.
+They must have forgotten about the meeting.
+I think you're right about that.
+Thank you for your help with the project.
+The company announced its quarterly results today.
+It's important to drink enough water every day.
+Don't forget to bring your passport.
+She said it's not a problem.
+I can't believe it's already November.
+Every morning I walk to the park and read a book.
+The weather was too hot for a long walk.
+It was too late to call anyone.
+There are too many people here.
+Both of them went to the same school.
+Please send me an email when you arrive.
+I need an umbrella and a raincoat.
+He ate an orange and an egg for breakfast.
+She is an engineer and he is an artist.
+That was an interesting idea.
+I'd like to ask a question about the schedule.
+Take a look at this photo.
+We stayed at a hotel near an old church.
+My mother and my father live in Spain.
+Their parents are coming to visit next week.
+I told them to be careful on the road.
+Nobody knows where they're going.
+Maybe we should try something different.
+Thanks a lot for the ride yesterday.
+At least we tried our best.
+They help each other every day.
+We went to the store as well.
+In fact, I never liked that song.
+It's a little cold in here.
+Just in case, take a jacket with you.
+The results were better than expected.
+Can you send me the file?
+I have never been to Japan, but I'd love to go.
+The meeting starts at nine, so we need to leave soon.
+He was tired, but he kept working.
+It's hard to say when it'll be ready.
+I went to the gym, and then I made dinner.
+She doesn't know whose turn it is.
+Which one of these is yours?
+The kids are playing in their room.
+Is there anything else you need?
+Look at that dog over there.
+I like it here better than there.
+What time are they coming?
+You're the best friend I've ever had.
+We're not sure if it's going to work.
+She teaches at a university in Boston.
+We need a user manual for this device.
+It takes about an hour to get there.
+He is an honest man and a good friend.
+They bought a unit with a European design.
+I would rather walk than drive today.
+There is a metal grate over the drain.
+The cheese grate is in the drawer.
+It's a great day to learn something.
+They went over there yesterday.
+This is better than I expected.
+We all traveled to Rome and they labeled the boxes.
+That colour is nicer than this color.

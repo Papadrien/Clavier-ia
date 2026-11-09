@@ -20,5 +20,6 @@ object PrivacyContent {
         Section(R.string.privacy_section_3_title, R.string.privacy_section_3_body),
         Section(R.string.privacy_section_4_title, R.string.privacy_section_4_body),
         Section(R.string.privacy_section_5_title, R.string.privacy_section_5_body),
+        Section(R.string.privacy_section_6_title, R.string.privacy_section_6_body),
     )
 }

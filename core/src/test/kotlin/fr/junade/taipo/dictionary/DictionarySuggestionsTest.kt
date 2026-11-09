@@ -162,4 +162,76 @@ class DictionarySuggestionsTest {
             assertTrue(dictionary.suggestionSlotsFor(typed).all { it == null }, typed)
         }
     }
+
+    // --- participe passé proposé d'après l'auxiliaire ---
+
+    private val participles = Dictionary.withFrequencies(
+        mapOf(
+            "observe" to 3_000L, "observé" to 1_900L, "observer" to 2_500L, "observation" to 2_000L,
+            "reste" to 150_000L, "resté" to 12_000L, "restera" to 9_000L,
+            "arrive" to 150_000L, "arrivé" to 90_000L, "arrivée" to 20_000L,
+        ),
+    )
+
+    private fun slotTexts(slots: List<WordSuggestion?>) = slots.map { it?.text }
+    private fun slotKinds(slots: List<WordSuggestion?>) = slots.map { it?.kind }
+
+    @Test
+    fun `un participe sur de lui est au centre en gras avec le mot tape a gauche`() {
+        val fix = ParticipleFix("observé", automatic = true)
+        val slots = participles.suggestionSlotsFor("observe", participle = fix)
+        assertEquals(listOf<String?>("observe", "observé", "observer"), slotTexts(slots))
+        assertEquals(
+            listOf(WordSuggestion.Kind.TYPED, WordSuggestion.Kind.AUTOCORRECTION, WordSuggestion.Kind.COMPLETION),
+            slotKinds(slots),
+        )
+    }
+
+    @Test
+    fun `un participe peu sur est propose au centre sans gras`() {
+        val fix = ParticipleFix("resté", automatic = false)
+        val slots = participles.suggestionSlotsFor("reste", participle = fix)
+        assertEquals("resté", slots[1]?.text)
+        assertEquals(WordSuggestion.Kind.COMPLETION, slots[1]?.kind)
+        assertEquals(false, slots[1]?.replacesOnSpace)
+        // Les complétions l'entourent sans le répéter.
+        assertEquals(listOf<String?>("restera", "resté", null), slotTexts(slots))
+    }
+
+    @Test
+    fun `la majuscule du mot tape est reprise sur le participe`() {
+        val slots = participles.suggestionSlotsFor("Observe", participle = ParticipleFix("observé", automatic = true))
+        assertEquals("Observé", slots[1]?.text)
+    }
+
+    @Test
+    fun `un participe accorde n est pas repete sous sa forme masculine`() {
+        val slots = participles.suggestionSlotsFor("arrive", participle = ParticipleFix("arrivée", automatic = true))
+        assertEquals(listOf<String?>("arrive", "arrivée", null), slotTexts(slots))
+    }
+
+    @Test
+    fun `une faute de frappe garde sa correction du dictionnaire malgre le participe`() {
+        val withFix = dictionary.suggestionSlotsFor("bnojour", participle = ParticipleFix("bnojouré", automatic = true))
+        assertEquals(slotTexts(dictionary.suggestionSlotsFor("bnojour")), slotTexts(withFix))
+        assertEquals("bonjour", withFix[1]?.text)
+    }
+
+    @Test
+    fun `sans participe rien ne change`() {
+        assertEquals(
+            slotTexts(participles.suggestionSlotsFor("reste")),
+            slotTexts(participles.suggestionSlotsFor("reste", participle = null)),
+        )
+    }
+
+    @Test
+    fun `un mot deja ecrit apres un auxiliaire propose aussi le participe au centre`() {
+        val auto = participles.placementSlotsFor("observe", participle = ParticipleFix("observé", automatic = true))
+        assertEquals("observé", auto[1]?.text)
+        assertEquals(WordSuggestion.Kind.AUTOCORRECTION, auto[1]?.kind)
+        val soft = participles.placementSlotsFor("reste", participle = ParticipleFix("resté", automatic = false))
+        assertEquals("resté", soft[1]?.text)
+        assertEquals(WordSuggestion.Kind.COMPLETION, soft[1]?.kind)
+    }
 }

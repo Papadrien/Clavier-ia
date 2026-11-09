@@ -9,6 +9,15 @@ object WordText {
     /** Lettres, apostrophe et trait d'union : les caractères qui composent un mot. */
     fun isWordChar(c: Char): Boolean = c.isLetter() || c == '\'' || c == '-'
 
+    /**
+     * Le mot collé juste avant [textBeforeWord] quand celui-ci se termine par UNE espace (« Haus » pour « Das Haus »), sinon une chaîne
+     * vide : ni ponctuation ni deuxième espace entre les deux mots (« Haus, » et « Haus  » ne comptent pas).
+     */
+    fun wordBeforeSingleSpace(textBeforeWord: String): String {
+        if (!textBeforeWord.endsWith(' ')) return ""
+        return trailingWord(textBeforeWord.dropLast(1))
+    }
+
     /** Dernier « mot » avant le curseur : lettres/apostrophes/traits d'union contigus en fin de texte. */
     fun trailingWord(textBeforeCursor: String): String {
         var start = textBeforeCursor.length

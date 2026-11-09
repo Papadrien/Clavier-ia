@@ -204,14 +204,15 @@ object Keyboards {
      * Rangée du bas : le ! et le ? sont accessibles par appui long sur le point, ce qui agrandit
      * l'espace. Story 1.15 : le bouton emoji est à gauche de la barre espace et à droite de la
      * virgule, comme sur Gboard ; il prend 1 unité sur l'espace (4,8 → 3,8) pour que la rangée
-     * reste à 10 unités.
+     * reste à 10 unités. Entrée est une pilule de 1,54 unité : réduite de 30 % le 09/11/2026 (2,2 avant), les 0,66 unité
+     * libérées vont à la barre d'espace (3,4 -> 4,06).
      */
     private fun punctuationRowWith(popup: List<List<Char>>) = listOf(
         Key("comma", ",", KeyAction.TypeChar(','), secondary = true),
         Key("emoji", "☺", KeyAction.Emoji, secondary = true),
-        Key("space", "", KeyAction.Space, 3.8f),
+        Key("space", "", KeyAction.Space, 4.06f),
         Key("period", ".", KeyAction.TypeChar('.'), secondary = true, popup = popup),
-        Key("enter", "⏎", KeyAction.Enter, 1.8f),
+        Key("enter", "⏎", KeyAction.Enter, 1.54f),
     )
 
     private val punctuationRow = punctuationRowWith(periodPopup)
@@ -284,8 +285,9 @@ object Keyboards {
 
     /**
      * Story 1.6 : quand la rangée de chiffres est désactivée, les 10 touches de la rangée du haut
-     * saisissent 1 à 0 (dans l'ordre) par appui long, comme sur Gboard. Story 1.8 : quand la touche
-     * a aussi des accents, le chiffre est le premier choix de la bulle, suivi des accents.
+     * saisissent 1 à 0 (dans l'ordre) par appui long, comme sur Gboard. Le chiffre est toujours le
+     * premier choix d'une bulle, suivi des accents s'il y en a : une touche sans accents affiche une
+     * bulle à une seule cellule (le chiffre), présélectionnée pour que relâcher le saisisse.
      */
     private fun KeyboardLayout.withTopRowLongPressDigits() = copy(
         rows = listOf(
@@ -293,7 +295,8 @@ object Keyboards {
                 val digit = NUMBER_ROW_CHARS[i]
                 key.copy(
                     longPressChar = digit,
-                    popup = if (key.popup.isEmpty()) key.popup else popupGrid(listOf(digit) + popupItems(key.popup)),
+                    popup = popupGrid(listOf(digit) + popupItems(key.popup)),
+                    defaultPopupChar = key.defaultPopupChar ?: digit,
                 )
             },
         ) + rows.drop(1),
@@ -365,11 +368,83 @@ object Keyboards {
         KeyboardLanguage.NL to qwertyBase(accentsNl),
     ).mapValues { (_, base) -> LetterSet(base, { it.withTopRowLongPressDigits() }, { it.withNumberRow() }) }
 
-    /** Disposition des lettres de [language], avec ou sans rangée de chiffres. */
-    fun lettersOf(language: KeyboardLanguage, numberRow: Boolean = false): KeyboardLayout = when (language) {
+    /** Disposition d'origine des lettres de [language] ([LetterArrangement.defaultFor]), avec ou sans rangée de chiffres. */
+    private fun defaultLettersOf(language: KeyboardLanguage, numberRow: Boolean): KeyboardLayout = when (language) {
         KeyboardLanguage.FR -> if (numberRow) lettersWithNumberRow else letters
         KeyboardLanguage.EN -> if (numberRow) lettersEnWithNumberRow else lettersEn
         else -> otherLetterSets.getValue(language).let { if (numberRow) it.numbered else it.plain }
+    }
+
+    /**
+     * Accents de l'appui long pour [language] sur la disposition [arrangement]. L'espagnol sans touche Ñ (hors
+     * [LetterArrangement.QWERTY_N]) saisit le « ñ » par un appui long sur le N.
+     */
+    private fun accentsOf(language: KeyboardLanguage, arrangement: LetterArrangement): Map<Char, String> = when (language) {
+        KeyboardLanguage.FR -> accentsFr
+        KeyboardLanguage.EN -> accentsEn
+        KeyboardLanguage.ES -> if (arrangement == LetterArrangement.QWERTY_N) accentsEs else accentsEs + ('n' to "ñ")
+        KeyboardLanguage.DE -> accentsDe
+        KeyboardLanguage.IT -> accentsIt
+        KeyboardLanguage.PT -> accentsPt
+        KeyboardLanguage.NL -> accentsNl
+    }
+
+    /**
+     * Lettres de [language] sur une disposition choisie dans les paramètres (autre que celle d'origine de la langue) :
+     * mêmes accents, mêmes largeurs de touches (10 unités par rangée ; la rangée à 9 touches est centrée). Le
+     * Colemak garde 10 touches en haut grâce à l'apostrophe, à la place du point-virgule.
+     */
+    private fun lettersBaseFor(language: KeyboardLanguage, arrangement: LetterArrangement): KeyboardLayout {
+        val accents = accentsOf(language, arrangement)
+        fun row(chars: String) = chars.map { letter(it, accents) }
+        val rows = when (arrangement) {
+            LetterArrangement.AZERTY -> listOf(
+                row("azertyuiop"),
+                row("qsdfghjklm"),
+                listOf(shiftKey(1.4f)) + row("wxcvbn") + listOf(apostrophe, backspace),
+            )
+            LetterArrangement.QWERTY -> listOf(
+                row("qwertyuiop"),
+                row("asdfghjkl"),
+                listOf(shiftKey()) + row("zxcvbnm") + listOf(backspaceQwerty),
+            )
+            LetterArrangement.QWERTZ -> listOf(
+                row("qwertzuiop"),
+                row("asdfghjkl"),
+                listOf(shiftKey()) + row("yxcvbnm") + listOf(backspaceQwerty),
+            )
+            LetterArrangement.QWERTY_N -> listOf(
+                row("qwertyuiop"),
+                row("asdfghjklñ"),
+                listOf(shiftKey()) + row("zxcvbnm") + listOf(backspaceQwerty),
+            )
+            LetterArrangement.COLEMAK -> listOf(
+                row("qwfpgjluy") + listOf(apostrophe),
+                row("arstdhneio"),
+                listOf(shiftKey()) + row("zxcvbkm") + listOf(backspaceQwerty),
+            )
+        }
+        val bottom = listOf(toggleLetters) + if (language == KeyboardLanguage.ES) punctuationRowEs else punctuationRow
+        return KeyboardLayout(id = LayoutId.LETTERS, rows = rows + listOf(bottom))
+    }
+
+    /** Dispositions choisies autres que celle d'origine, construites une fois par couple langue × disposition. */
+    private val customLetterSets = java.util.concurrent.ConcurrentHashMap<Pair<KeyboardLanguage, LetterArrangement>, LetterSet>()
+
+    /**
+     * Disposition des lettres de [language], avec ou sans rangée de chiffres, sur la disposition [arrangement] (celle
+     * d'origine de la langue par défaut : les dispositions d'origine ne sont pas reconstruites).
+     */
+    fun lettersOf(
+        language: KeyboardLanguage,
+        numberRow: Boolean = false,
+        arrangement: LetterArrangement = LetterArrangement.defaultFor(language),
+    ): KeyboardLayout {
+        if (arrangement == LetterArrangement.defaultFor(language)) return defaultLettersOf(language, numberRow)
+        val set = customLetterSets.getOrPut(language to arrangement) {
+            LetterSet(lettersBaseFor(language, arrangement), { it.withTopRowLongPressDigits() }, { it.withNumberRow() })
+        }
+        return if (numberRow) set.numbered else set.plain
     }
 
     private fun KeyboardLayout.withNumberRow() = copy(rows = listOf(numberRow) + rows)
@@ -410,17 +485,71 @@ object Keyboards {
         val language: KeyboardLanguage,
         val numberRow: Boolean,
         val fieldType: FieldType,
+        val bottomRowKeys: BottomRowKeys,
+        val arrangement: LetterArrangement,
+        val compactEnter: Boolean,
     )
 
-    /** Dispositions e-mail/URL, construites une fois (layoutOf est appelé à chaque frappe). */
+    /** Dispositions e-mail/URL et celles avec touches du bas masquées, construites une fois (layoutOf est appelé à chaque frappe). */
     private val fieldVariants = java.util.concurrent.ConcurrentHashMap<VariantKey, KeyboardLayout>()
 
     private fun KeyboardLayout.withCommaReplacedBy(replacement: Key) = copy(
         rows = rows.map { row -> row.map { key -> if (key.id == "comma") replacement else key } },
     )
 
-    private fun baseLayoutOf(id: LayoutId, language: KeyboardLanguage, numberRow: Boolean): KeyboardLayout = when (id) {
-        LayoutId.LETTERS -> lettersOf(language, numberRow)
+    /**
+     * Retire de la rangée du bas les touches emoji, virgule et point désactivées dans les paramètres ; la barre d'espace
+     * reprend leur largeur (la rangée reste à 10 unités). La virgule remplacée par « @ » ou « / » dans les champs e-mail et
+     * URL n'est pas concernée : cette touche sert à saisir l'adresse, elle reste toujours affichée. Les touches « < » et
+     * « > » des symboles et les touches des pavés numériques ne sont pas non plus concernées.
+     */
+    private fun KeyboardLayout.withBottomRowKeys(keys: BottomRowKeys): KeyboardLayout = copy(
+        rows = rows.map { row ->
+            val hidden = row.filter { key ->
+                (key.id == "emoji" && !keys.emoji) || (key.id == "comma" && !keys.comma) || (key.id == "period" && !keys.period)
+            }
+            if (hidden.isEmpty() || row.none { it.action == KeyAction.Space }) {
+                row
+            } else {
+                val freedUnits = hidden.fold(0f) { acc, key -> acc + key.weight }
+                row.filterNot { it in hidden }.map { key ->
+                    if (key.action == KeyAction.Space) key.copy(weight = key.weight + freedUnits) else key
+                }
+            }
+        },
+    )
+
+    /**
+     * Clavier multilingue : le globe passe en exposant sur Entrée, qui n'a plus besoin de place à côté de son symbole.
+     * La pilule perd [ENTER_COMPACT_UNITS] unités, reprises par la barre d'espace (la rangée reste à 10 unités ; le point
+     * et les touches à sa gauche gardent leur largeur, le point est donc décalé vers la droite).
+     */
+    private fun KeyboardLayout.withCompactEnter(): KeyboardLayout = copy(
+        rows = rows.map { row ->
+            if (row.none { it.action == KeyAction.Space } || row.none { it.action == KeyAction.Enter }) {
+                row
+            } else {
+                row.map { key ->
+                    when (key.action) {
+                        KeyAction.Enter -> key.copy(weight = key.weight - ENTER_COMPACT_UNITS)
+                        KeyAction.Space -> key.copy(weight = key.weight + ENTER_COMPACT_UNITS)
+                        else -> key
+                    }
+                }
+            }
+        },
+    )
+
+    // 1,7 -> 1,19 unité en multilingue : la même réduction de 30 % que la pilule ordinaire (0,5 unité avant le 09/11/2026).
+    private const val ENTER_COMPACT_UNITS = 0.35f
+
+    private fun baseLayoutOf(
+        id: LayoutId,
+        language: KeyboardLanguage,
+        numberRow: Boolean,
+        arrangement: LetterArrangement,
+    ): KeyboardLayout = when (id) {
+        LayoutId.LETTERS -> lettersOf(language, numberRow, arrangement)
         LayoutId.SYMBOLS, LayoutId.PAD -> symbols
         LayoutId.SYMBOLS_2 -> symbolsMore
     }
@@ -435,12 +564,21 @@ object Keyboards {
      * Story 1.18 : selon [fieldType], un champ numérique ou téléphone affiche un pavé numérique
      * (quel que soit [id]) ; un champ e-mail ou URL remplace la virgule par « @ » ou « / », sur les
      * claviers de lettres et de symboles.
+     *
+     * [bottomRowKeys] : touches emoji, virgule et point à afficher dans la rangée du bas (paramètres du clavier) ;
+     * sans effet sur les pavés numériques.
+     *
+     * [arrangement] : disposition des lettres choisie pour [language] (écran « Langues ») ; par défaut celle d'origine
+     * de la langue. Sans effet sur les pages de symboles et les pavés.
      */
     fun layoutOf(
         id: LayoutId,
         language: KeyboardLanguage = KeyboardLanguage.FR,
         numberRow: Boolean = false,
         fieldType: FieldType = FieldType.TEXT,
+        bottomRowKeys: BottomRowKeys = BottomRowKeys.ALL,
+        arrangement: LetterArrangement = LetterArrangement.defaultFor(language),
+        compactEnter: Boolean = false,
     ): KeyboardLayout {
         val replacement = when (fieldType) {
             FieldType.NUMBER -> return numberPad
@@ -449,10 +587,12 @@ object Keyboards {
             FieldType.URL -> urlSlashKey
             FieldType.TEXT, FieldType.PASSWORD, FieldType.TERMINAL -> null
         }
-        val base = baseLayoutOf(id, language, numberRow)
-        if (replacement == null) return base
-        return fieldVariants.getOrPut(VariantKey(base.id, language, numberRow, fieldType)) {
-            base.withCommaReplacedBy(replacement)
+        val base = baseLayoutOf(id, language, numberRow, arrangement)
+        if (replacement == null && bottomRowKeys.isAll && !compactEnter) return base
+        return fieldVariants.getOrPut(VariantKey(base.id, language, numberRow, fieldType, bottomRowKeys, arrangement, compactEnter)) {
+            val withField = if (replacement == null) base else base.withCommaReplacedBy(replacement)
+            val withKeys = if (bottomRowKeys.isAll) withField else withField.withBottomRowKeys(bottomRowKeys)
+            if (compactEnter) withKeys.withCompactEnter() else withKeys
         }
     }
 

@@ -2,7 +2,6 @@ package fr.junade.taipo.dictionary.download
 
 import android.content.Context
 import androidx.work.CoroutineWorker
-import androidx.work.WorkInfo
 import androidx.work.WorkerParameters
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.KeyboardLanguage
@@ -12,13 +11,14 @@ import fr.junade.taipo.model.download.DownloadFailure
 import fr.junade.taipo.model.download.ModelFileFetcher
 import fr.junade.taipo.model.download.ModelInstaller
 import fr.junade.taipo.model.download.PartialDownload
+import fr.junade.taipo.model.download.stoppedByApp
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 /**
- * Télécharge les fichiers manquants du dictionnaire d'une langue (prénoms, liste de secours, liste complète), l'un après
+ * Télécharge les fichiers manquants du dictionnaire d'une langue (prénoms, liste complète), l'un après
  * l'autre, avec le mécanisme sûr des modèles ([ModelFileFetcher] : HTTPS, `.tmp`, reprise `Range`, relances après une
  * coupure, rename atomique). Pas d'empreinte de référence : les listes changent quand elles sont mises à jour sur le
  * serveur ; [DictionaryContentCheck] écarte seulement un contenu qui n'est pas une liste. Pas de service au premier plan :
@@ -59,7 +59,7 @@ class DictionaryDownloadWorker(context: Context, params: WorkerParameters) : Cor
 
     /** Annulation par l'application : partiels supprimés ; tout autre arrêt vient du système : partiels gardés, « Réessayer ». */
     private fun settleAfterStop(language: KeyboardLanguage) {
-        if (stopReason == WorkInfo.STOP_REASON_CANCELLED_BY_APP) {
+        if (stoppedByApp()) {
             DictionaryFile.entries.forEach {
                 PartialDownload.discard(DictionaryFiles.localFile(applicationContext.filesDir, language, it))
             }
@@ -97,7 +97,7 @@ class DictionaryDownloadWorker(context: Context, params: WorkerParameters) : Cor
                     // Quelques Mo : pas de confirmation en données mobiles.
                     allowMobileData = true,
                     isActive = { scope.isActive },
-                    keepPartialOnStop = { stopReason != WorkInfo.STOP_REASON_CANCELLED_BY_APP },
+                    keepPartialOnStop = { !stoppedByApp() },
                     onTotal = {
                         currentTotal = it
                         report(0L)

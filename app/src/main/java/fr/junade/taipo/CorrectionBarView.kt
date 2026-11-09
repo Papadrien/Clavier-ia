@@ -55,7 +55,6 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     private val iconButtonWidth = dimen(R.dimen.taipo_bar_icon_button_width).toInt()
     private val minGap = dimen(R.dimen.taipo_bar_min_gap).toInt()
     private val fillGap = dimen(R.dimen.taipo_bar_gap).toInt()
-    private val paddingH = dimen(R.dimen.taipo_bar_padding_horizontal).toInt()
     private val paddingV = dimen(R.dimen.taipo_bar_padding_vertical).toInt()
     private val keyInset = dimen(R.dimen.taipo_key_inset).toInt()
 
@@ -90,6 +89,10 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     private val normalActions = AiActionButtons(context, style)
     private val menuActions = AiActionButtons(context, style)
     val voiceButton = ImageButton(context)
+
+    /** Astuce de geste ([showGestureTip]) : pilule posée sur la rangée affichée, entre le premier bouton et Vocal. */
+    private val gestureTip = GestureTipPillView(context)
+    private val hideGestureTipRunnable = Runnable { hideGestureTip() }
 
     private var listener: OnCorrectListener? = null
     private var cancelListener: (() -> Unit)? = null
@@ -158,7 +161,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             row.minGapPx = minGap
             row.fillGapPx = fillGap
             row.reservedEndPx = iconButtonWidth
-            row.setPadding(paddingH, paddingV, paddingH, paddingV)
+            row.setPadding(keyInset, paddingV, keyInset, paddingV)
         }
 
         // Rangée normale : Paramètres, Smart Clipboard, puce de collage, Annuler (puis Vocal, posé par-dessus).
@@ -242,9 +245,14 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             voiceButton,
             LayoutParams(iconButtonWidth, barHeight, Gravity.END or Gravity.TOP).apply {
                 topMargin = paddingV
-                marginEnd = paddingH
+                marginEnd = keyInset
             },
         )
+
+        // Astuce de geste : au-dessus des rangées (elle masque ce qu'elle recouvre), marges posées par onMeasure.
+        gestureTip.visibility = View.GONE
+        gestureTip.setOnClickListener { hideGestureTip() }
+        addView(gestureTip, LayoutParams(LayoutParams.MATCH_PARENT, barHeight, Gravity.TOP).apply { topMargin = paddingV })
 
         // Lot 20 : zone tactile des boutons étendue à 48 dp (36 dp dessinés), sans changer le rendu.
         expandChildTouchTargets(this::touchTargets)
@@ -255,13 +263,22 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     private fun roundParams() = SpaceBetweenRow.LayoutParams(iconButtonWidth, barHeight, RowRole.ROUND)
 
-    /** Boutons que la zone tactile étendue peut viser : ceux des rangées affichées, et Vocal. */
+    /**
+     * Boutons que la zone tactile étendue peut viser : ceux des rangées affichées, et Vocal. Pendant une astuce de geste, la
+     * pilule remplace les boutons qu'elle recouvre.
+     */
     private fun touchTargets(): List<View> {
         val targets = ArrayList<View>()
+        val tipShown = gestureTip.visibility == View.VISIBLE
         for (row in listOf(normalRow, typingRow)) {
             if (row.visibility != View.VISIBLE) continue
-            for (index in 0 until row.childCount) targets.add(row.getChildAt(index))
+            for (index in 0 until row.childCount) {
+                val child = row.getChildAt(index)
+                if (tipShown && row.left + child.right > gestureTip.left) continue
+                targets.add(child)
+            }
         }
+        if (tipShown) targets.add(gestureTip)
         targets.add(voiceButton)
         return targets
     }
@@ -306,18 +323,20 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     override fun onDetachedFromWindow() {
         robotIcon?.cancel()
         modeAnimator?.cancel()
+        hideGestureTip()
         super.onDetachedFromWindow()
     }
 
     /**
      * Story 1.14 : en classe de largeur large (≥ 600 dp), les boutons restent alignés sur la zone centrée des touches (le
-     * fond de la barre garde toute la largeur). Vocal, toujours dernier, se cale sur le bord droit des touches (inset de touche).
+     * fond de la barre garde toute la largeur). Marges gauche et droite identiques : les boutons extrêmes (Paramètres / Robot et Vocal) se calent sur les bords des touches (inset de touche).
      */
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val available = MeasureSpec.getSize(widthMeasureSpec)
         val content = KeyboardWidth.forAvailableWidth(available.toFloat(), resources.displayMetrics.density)
-        val side = paddingH + content.leftPx.toInt()
-        val sideEnd = keyInset + content.leftPx.toInt()
+        // Même marge des deux côtés : le bord gauche (Paramètres / Robot) se cale sur les touches, comme Vocal à droite.
+        val side = keyInset + content.leftPx.toInt()
+        val sideEnd = side
         for (row in listOf(normalRow, typingRow)) {
             if (row.paddingLeft != side || row.paddingRight != sideEnd) row.setPadding(side, paddingV, sideEnd, paddingV)
         }
@@ -325,6 +344,14 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         if (voiceParams.marginEnd != sideEnd) {
             voiceParams.marginEnd = sideEnd
             voiceButton.layoutParams = voiceParams
+        }
+        // L'astuce laisse voir le premier bouton (robot ou Paramètres) et Vocal.
+        val tipSide = side + iconButtonWidth + fillGap
+        val tipParams = gestureTip.layoutParams as LayoutParams
+        if (tipParams.marginStart != tipSide || tipParams.marginEnd != tipSide) {
+            tipParams.marginStart = tipSide
+            tipParams.marginEnd = tipSide
+            gestureTip.layoutParams = tipParams
         }
         val showLabels = labelsWanted && labeledRowFits(available - side - sideEnd)
         for (button in menuActions.views) button.labeled = showLabels
@@ -441,7 +468,46 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     /** Story 2.1/2.4 : début de la frappe, retour aux suggestions de mots (le menu se referme). */
     fun collapseMenu() {
+        removeCallbacks(hideDigitTipRunnable)
         zoneState.onTyping()
+        render()
+    }
+
+    private val hideDigitTipRunnable = Runnable { hideDigitTip() }
+
+    /** Tip « Swipe vers le bas » à la place des suggestions, jusqu'à la prochaine frappe ou [DIGIT_TIP_DURATION_MS]. */
+    fun showDigitTip() {
+        zoneState.showTip()
+        render()
+        removeCallbacks(hideDigitTipRunnable)
+        postDelayed(hideDigitTipRunnable, DIGIT_TIP_DURATION_MS)
+    }
+
+    /**
+     * Astuce de geste ([GestureTips]) dans la barre, pendant [durationMs] ou jusqu'à un toucher sur la pilule ; la frappe ne la
+     * retire pas. Faux si la barre n'est pas affichée (l'astuce sera proposée plus tard).
+     */
+    fun showGestureTip(message: String, durationMs: Long): Boolean {
+        if (!isShown || !isLaidOut || width == 0) return false
+        gestureTip.setMessage(message)
+        val wasVisible = gestureTip.visibility == View.VISIBLE
+        gestureTip.visibility = View.VISIBLE
+        if (!wasVisible) BarReveal.enter(gestureTip, fromEnd = false, full = false)
+        removeCallbacks(hideGestureTipRunnable)
+        postDelayed(hideGestureTipRunnable, durationMs)
+        return true
+    }
+
+    fun hideGestureTip() {
+        removeCallbacks(hideGestureTipRunnable)
+        if (gestureTip.visibility != View.VISIBLE) return
+        BarReveal.cancel(gestureTip)
+        gestureTip.visibility = View.GONE
+    }
+
+    fun hideDigitTip() {
+        removeCallbacks(hideDigitTipRunnable)
+        zoneState.hideTip()
         render()
     }
 
@@ -476,8 +542,8 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
         // Rangée de saisie.
         robotButton.visibility = View.VISIBLE
-        zoneView.render(content.words, content.inline)
-        setRevealed(zoneView, content.words || content.inline, order = 0, full = reveal, row = typingRow)
+        zoneView.render(content.words, content.inline, content.tip)
+        setRevealed(zoneView, content.words || content.inline || content.tip, order = 0, full = reveal, row = typingRow)
         val spring = reveal && content.menuUtilityButtons
         setRevealed(menuButtons.settingsButton, content.menuUtilityButtons, order = 0, full = reveal, row = typingRow, spring = spring)
         setRevealed(
@@ -521,6 +587,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         if (robotActive != menuOpen) {
             robotActive = menuOpen
             robotButton.background = robotBackgrounds.get(menuOpen)
+            robotButton.imageTintList = style.contentTint(if (menuOpen) R.color.accent else R.color.surface_button)
             robotIcon?.setActive(menuOpen, animate = isLaidOut)
         }
         normalButtons.setClipboardActive(zoneState.clipboardPanelOpen, animate = isLaidOut)
@@ -671,6 +738,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         val appearance = BarVisibility.voiceAppearance(voiceState, aiTranscriptionState)
         voiceButton.contentDescription = context.getString(appearance.label)
         voiceButton.background = voiceBackgrounds.getOrPut(appearance.background) { style.roundBackground(appearance.background) }
+        voiceButton.imageTintList = style.contentTint(appearance.background) // lot T6 : blanc sur le rouge ou le violet
         voiceButton.alpha = appearance.alpha
         micIcon.setMode(MicIconMode.of(voiceState), animate = isLaidOut)
         applyAiTranscriptionAppearance() // Transcription IA est grisée pendant une saisie vocale
@@ -746,6 +814,9 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         BarVisibility.aiTranscriptionAppearance(aiTranscriptionState, voiceState).alpha
 
     private companion object {
+        /** Durée d'affichage du tip « Swipe vers le bas » si l'utilisateur ne tape rien ensuite. */
+        const val DIGIT_TIP_DURATION_MS = 5000L
+
         /** La rangée de saisie (ou la rangée normale) arrive juste après le départ de l'autre. */
         const val ROW_ENTER_DELAY_MS = 60L
 

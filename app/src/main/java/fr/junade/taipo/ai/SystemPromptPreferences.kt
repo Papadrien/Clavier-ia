@@ -6,6 +6,9 @@ import android.content.Context
  * Prompt système modifiable depuis la page « Prompts système » (un par usage : correction, mode prompt). Si aucun
  * prompt personnalisé n'est enregistré, [get] renvoie le prompt par défaut [default].
  *
+ * Pass premium : un prompt personnalisé n'est utilisé ([get]) que pass actif. Sans pass, il reste enregistré ([custom], exporté
+ * par la sauvegarde) et revient dès que le pass est pris ; c'est le prompt par défaut qui sert.
+ *
  * Les prompts personnalisés sont conservés dans le fichier de préférences `ai_model_prefs`, sous la clé [key].
  */
 open class SystemPromptPreferences(
@@ -17,8 +20,11 @@ open class SystemPromptPreferences(
 
     private val prefs = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    /** Prompt actuellement actif : personnalisé s'il y en a un, sinon celui par défaut. */
-    fun get(): String = prefs.getString(key, null) ?: default
+    /** Prompt actuellement actif : personnalisé s'il y en a un et que le pass premium est actif, sinon celui par défaut. */
+    fun get(): String = activePrompt(custom(), default, fr.junade.taipo.PremiumPass.isActive)
+
+    /** Prompt personnalisé enregistré, utilisé ou non (null : aucun). */
+    fun custom(): String? = prefs.getString(key, null)
 
     /** `true` si un prompt personnalisé est enregistré. */
     fun isCustom(): Boolean = prefs.getString(key, null) != null
@@ -38,7 +44,10 @@ open class SystemPromptPreferences(
         prefs.edit().remove(key).apply()
     }
 
-    private companion object {
-        const val PREFS_NAME = "ai_model_prefs"
+    companion object {
+        private const val PREFS_NAME = "ai_model_prefs"
+
+        /** Logique pure (testée en JVM) : le prompt personnalisé ne sert qu'avec le pass. */
+        fun activePrompt(custom: String?, default: String, premium: Boolean): String = if (premium && custom != null) custom else default
     }
 }

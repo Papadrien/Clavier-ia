@@ -3,8 +3,10 @@ package fr.junade.taipo
 import android.os.IBinder
 import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import fr.junade.taipo.ai.VoiceField
+import fr.junade.taipo.dictionary.NextLetterModel
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.emoji.EmojiPanelView
 import fr.junade.taipo.emoji.RecentEmojiBarView
@@ -50,6 +52,9 @@ internal interface ImeHostContext {
     val heightScale: Float
 
     fun inputConnection(): InputConnection?
+
+    /** Le champ de saisie courant (types d'images acceptés, collage d'une capture d'écran). */
+    fun editorInfo(): EditorInfo?
     fun isInputViewShown(): Boolean
     fun string(resId: Int): String
     fun hasSelection(): Boolean
@@ -104,10 +109,15 @@ internal interface ImeHostContext {
     fun onKeyPressed(key: Key)
     fun onCursorMoved(steps: Int)
     fun onGlobeSelected()
+    fun onOneHandedToggled()
+    fun onOneHandedSideSwitched()
     fun openAppHome()
 
     // Déduits des membres ci-dessus
     fun showMessage(message: String) = messagePopup.show(message)
+
+    fun showMessageWithAction(message: String, action: String, onAction: () -> Unit) =
+        messagePopup.show(message, action, onAction)
 
     fun barReady(): Boolean = viewComposer.isComposed
 
@@ -174,7 +184,10 @@ internal class EmojiHost(private val ime: ImeHostContext) : EmojiController.Host
 /** Smart Clipboard (puce de collage, panneau, épinglés) : voir [ClipboardController]. */
 internal class ClipboardHost(private val ime: ImeHostContext) : ClipboardController.Host {
     override fun showMessage(message: String) = ime.showMessage(message)
+    override fun showMessageWithAction(message: String, action: String, onAction: () -> Unit) =
+        ime.showMessageWithAction(message, action, onAction)
     override fun inputConnection() = ime.inputConnection()
+    override fun editorInfo() = ime.editorInfo()
     override fun haptic() = ime.haptic()
     override fun playKeySound(sound: KeySound) = ime.playKeySound(sound)
     override fun clearHighlight() = ime.clearHighlight()
@@ -221,6 +234,7 @@ internal class SuggestionHost(private val ime: ImeHostContext) : SuggestionContr
         if (ime.prompt.active) ime.prompt.setSuggestionWords(words) else ime.correctionBar.setWordSuggestions(words)
     }
     override fun voiceWordPicked(): Boolean = ime.voice.wordPickActive
+    override fun showNextLetters(prediction: NextLetterModel.Probabilities?) = ime.keyboardView.setNextLetterPrediction(prediction)
     override fun clearBars() {
         ime.correctionBar.setEmojiSuggestion(null)
         ime.correctionBar.setWordSuggestions(emptyList())
@@ -233,6 +247,16 @@ internal class SuggestionHost(private val ime: ImeHostContext) : SuggestionContr
 internal class MessagePopupHost(private val ime: ImeHostContext) : MessagePopup.Host {
     override fun windowToken(): IBinder? =
         if (ime.viewComposer.isComposed && ime.keyboardView.isAttachedToWindow) ime.keyboardView.windowToken else null
+
+    override fun bannerAnchor(): View? =
+        if (ime.viewComposer.isComposed && ime.correctionBar.isShown) ime.correctionBar else null
+
+    override fun showBarTip(message: String, durationMs: Long): Boolean =
+        ime.viewComposer.isComposed && ime.correctionBar.showGestureTip(message, durationMs)
+
+    override fun hideBarTip() {
+        if (ime.viewComposer.isComposed) ime.correctionBar.hideGestureTip()
+    }
 }
 
 /** Mode prompt (conversation, génération, zone de chat) : voir [PromptModeController]. */
@@ -294,6 +318,7 @@ internal class CorrectionHost(private val ime: ImeHostContext) : CorrectionAiCon
     override fun syncAutoCapitalization() = ime.syncAutoCapitalization()
     override fun clearPendingAutocorrection() = ime.clearPendingAutocorrection()
     override fun recordUndo(undo: UndoHistory.Undo) = ime.recordUndoAction(undo)
+    override fun playAiButtonSound() = ime.playAiButtonSound()
     override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
 }
 
@@ -343,12 +368,14 @@ internal class VoiceHost(private val ime: ImeHostContext) : VoiceController.Host
         }
     }
     override fun recordUndoEdit(inserted: String, original: String) = ime.recordUndoEdit(inserted, original)
+    override fun language(): KeyboardLanguage = ime.keyboardLanguage
     override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
 }
 
 /** Épopée 14 : transcription IA par modèle multimodal, voir [AiTranscriptionController]. */
 internal class AiTranscriptionHost(private val ime: ImeHostContext) : AiTranscriptionController.Host {
     override fun showMessage(message: String) = ime.showMessage(message)
+
     // Saisie vocale en cours, y compris pendant la transcription du texte dicté (le micro et le moteur sont pris).
     override fun voiceRecording(): Boolean =
         ime.isRecording() || (ime.viewComposer.isComposed && ime.correctionBar.voiceState != VoiceBarState.IDLE)
@@ -399,6 +426,17 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
     override fun onKey(key: Key) = ime.onKeyPressed(key)
     override fun onCursorMoved(steps: Int) = ime.onCursorMoved(steps)
     override fun onGlobeSelected() = ime.onGlobeSelected()
+    override fun onOneHandedToggled() = ime.onOneHandedToggled()
+    override fun onOneHandedSideSwitched() = ime.onOneHandedSideSwitched()
+    override fun onDigitLongPressed() {
+        // Le tip remplace les suggestions de la barre du haut : pas dans le mode chat, et plus une fois le glissement adopté.
+        if (ime.prompt.active || ime.keyboardPreferences.hasUsedDigitSwipe) return
+        ime.correctionBar.showDigitTip()
+    }
+    override fun onDigitSwiped() {
+        ime.keyboardPreferences.hasUsedDigitSwipe = true
+        ime.correctionBar.hideDigitTip()
+    }
     override fun onDeleteSwipeUpdate(words: Int) = ime.deleteSwipe.onUpdate(words)
     override fun onDeleteSwipeRelease() = ime.deleteSwipe.onRelease()
     override fun onDeleteSwipeCancel() = ime.deleteSwipe.onCancel()

@@ -27,7 +27,7 @@ class ClipboardSuggestionState(
     private val clock: () -> Long,
     private val maxChars: Int = MAX_CHARS,
     private val expirationMillis: Long = EXPIRATION_MILLIS,
-    private val panelRetentionMillis: Long = ClipboardItems.HISTORY_RETENTION_MILLIS,
+    private val panelRetentionMillis: () -> Long = { ClipboardItems.HISTORY_RETENTION_MILLIS },
 ) {
 
     /** Ce que la puce propose : le texte à coller, et s'il est à masquer à l'écran. */
@@ -89,7 +89,7 @@ class ClipboardSuggestionState(
     fun lastClip(): Suggestion? {
         val current = clip ?: return null
         if (deleted || current.shown.isBlank() || current.shown.length > maxChars) return null
-        if (clock() - current.copiedAtMillis >= panelRetentionMillis) return null
+        if (clock() - current.copiedAtMillis >= panelRetentionMillis()) return null
         return Suggestion(current.shown, ClipboardItems.isSensitive(current.shown, current.sensitive))
     }
 
@@ -101,6 +101,9 @@ class ClipboardSuggestionState(
         if (remainingMillis(current) <= 0) return null
         return Suggestion(current.shown, ClipboardItems.isSensitive(current.shown, current.sensitive))
     }
+
+    /** Moment de la copie proposée par la puce, ou null s'il n'y en a pas (sert à choisir entre le texte et une capture d'écran). */
+    fun suggestionCopiedAtMillis(): Long? = if (suggestion() == null) null else clip?.copiedAtMillis
 
     /** Durée avant l'expiration de la suggestion affichée, ou null s'il n'y en a pas (rien à planifier). */
     fun expiresInMillis(): Long? {

@@ -11,9 +11,11 @@ package fr.junade.taipo.dictionary
  *   proposé après une espace (aucun mot n'est en cours de frappe) ; il s'ajoute au texte, sans rien remplacer.
  * - [Kind.EMAIL] : adresse e-mail déjà tapée qui commence comme ce que l'utilisateur est en train d'écrire ; elle
  *   remplace ce début d'adresse quand on la touche (jamais à l'espace, jamais en gras).
+ * - [Kind.COMPOUND] : allemand, deux noms tapés à la suite (« Haus tür ») que l'on propose de réunir (« Haustür », voir
+ *   `Dictionary.compoundMergeFor`) ; elle remplace les DEUX derniers mots quand on la touche (jamais à l'espace, jamais en gras).
  */
 data class WordSuggestion(val text: String, val kind: Kind) {
-    enum class Kind { TYPED, AUTOCORRECTION, COMPLETION, PREDICTION, EMAIL }
+    enum class Kind { TYPED, AUTOCORRECTION, COMPLETION, PREDICTION, EMAIL, COMPOUND }
 
     /** Vrai si ce mot va remplacer le mot tapé à la prochaine espace (affichage en gras). */
     val replacesOnSpace: Boolean get() = kind == Kind.AUTOCORRECTION

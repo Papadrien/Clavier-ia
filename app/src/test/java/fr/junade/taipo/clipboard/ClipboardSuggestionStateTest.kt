@@ -365,4 +365,14 @@ class ClipboardSuggestionStateTest {
         state.onEdited("4111 1111 1111 1111")
         assertTrue(state.lastClip()!!.sensitive)
     }
+
+    @Test
+    fun `l horodatage de la suggestion sert a la comparer a une capture d ecran`() {
+        assertNull(state.suggestionCopiedAtMillis())
+        val copiedAt = now - 1_000
+        copy("Bonjour", at = copiedAt)
+        assertEquals(copiedAt, state.suggestionCopiedAtMillis())
+        state.onPasted()
+        assertNull(state.suggestionCopiedAtMillis())
+    }
 }

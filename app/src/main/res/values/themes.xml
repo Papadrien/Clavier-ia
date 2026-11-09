@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Open Sans (lot 02) : police par défaut des composants standards. Les vues du clavier la posent
          explicitement (voir TaipoType), car elles ne reçoivent pas ce thème. -->
-    <!-- Thème de la V1 : sombre, quel que soit le thème du système (voir KeyboardTheme). La palette claire
-         est prévue pour la V2. forceDarkAllowed=false : le système n'a pas à réassombrir un thème déjà sombre. -->
+    <!-- Écrans de l'application : toujours sombres, quel que soit le thème du système ou du clavier (KeyboardTheme.wrap force
+         le mode nuit). Seul le clavier a un thème clair (ThemeChoice). forceDarkAllowed=false : le système n'a pas à réassombrir un thème déjà sombre. -->
 
     <!-- Pas de barre d'action framework : chaque écran affiche déjà son propre titre dans la page,
          et la barre d'action se superposait au contenu en mode bord à bord. -->
@@ -11,7 +11,7 @@
         <!-- Lot 16 : fond des écrans = fond du clavier (#0E0E0E). Visible aussi sous les barres système (bord à bord). -->
         <item name="android:windowBackground">@color/keyboard_background</item>
         <item name="android:colorAccent">@color/accent</item>
-        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
         <item name="android:fontFamily">@font/open_sans</item>
         <!-- Lot 17 : contrôles standards aux couleurs de la charte (styles : styles.xml). -->
         <item name="android:textColorPrimary">@color/text_primary</item>
@@ -27,10 +27,11 @@
     </style>
 
     <!-- Splashscreen (logo Junadé) : thème de MainActivity au lancement à froid, remplacé par AppTheme dès que
-         MainActivity appelle installSplashScreen() (postSplashScreenTheme). Fond = fond de l'app (#0E0E0E) pour
-         que la transition vers l'accueil ne montre aucun saut de couleur. -->
+         MainActivity appelle installSplashScreen() (postSplashScreenTheme). Fond = fond de l'app (#0E0E0E, couleur fixe
+         splash_background : le splash est résolu par le système, pas par le thème du clavier) pour que la transition vers
+         l'accueil ne montre aucun saut de couleur. -->
     <style name="Theme.Taipo.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/keyboard_background</item>
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
     </style>
@@ -38,7 +39,7 @@
     <!-- Story 2.6 : fenêtre de modification d'un élément du presse-papiers. -->
     <style name="EditDialogTheme" parent="android:Theme.Material.Dialog.NoActionBar">
         <item name="android:colorAccent">@color/accent</item>
-        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
         <item name="android:fontFamily">@font/open_sans</item>
         <!-- Lot 17 : contrôles standards aux couleurs de la charte (styles : styles.xml). -->
         <item name="android:textColorPrimary">@color/text_primary</item>
@@ -59,7 +60,7 @@
     <!-- Pop-up d'information du clavier (remplace les toasts). -->
     <style name="MessageDialogTheme" parent="android:Theme.Material.Dialog.Alert">
         <item name="android:colorAccent">@color/accent</item>
-        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
         <item name="android:fontFamily">@font/open_sans</item>
         <!-- Lot 17 : contrôles standards aux couleurs de la charte (styles : styles.xml). -->
         <item name="android:textColorPrimary">@color/text_primary</item>

@@ -27,8 +27,18 @@ jobs:
 
       - run: ./gradlew :app:dependencies --configuration debugRuntimeClasspath | grep litertlm
 
+      # Tests JVM : ceux de l'app (testDebugUnitTest) et ceux du module :core (dictionnaire, autocorrection, suggestions),
+      # un module JVM pur qui n'a pas de tâche testDebugUnitTest : sans :core:test, ses tests ne tourneraient jamais en CI.
       - name: Run unit tests
-        run: ./gradlew testDebugUnitTest
+        run: ./gradlew testDebugUnitTest :core:test
+
+      # Lint Android : une erreur (API trop récente sans garde, ressource manquante…) fait échouer la CI.
+      - name: Android lint
+        run: ./gradlew :app:lintDebug
+
+      # ktlint (format) et detekt (analyse statique) : la dette existante est figée dans quality/ ; tout nouvel écart échoue.
+      - name: ktlint et detekt
+        run: ./gradlew qualityCheck
 
       - name: Determine build type
         id: variant

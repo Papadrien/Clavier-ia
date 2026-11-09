@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ligne « Ajouter une langue » de l'écran Langues : plus violet et libellé. Posée par LanguagesActivity. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/taipo_settings_row_min_height"
+    android:paddingStart="@dimen/taipo_settings_card_padding"
+    android:paddingEnd="@dimen/taipo_settings_card_padding"
+    android:paddingTop="@dimen/taipo_settings_gap_md"
+    android:paddingBottom="@dimen/taipo_settings_gap_md"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <ImageView
+        android:layout_width="@dimen/taipo_icon_size"
+        android:layout_height="@dimen/taipo_icon_size"
+        android:src="@drawable/ic_add"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        style="@style/TaipoText.Lead"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/taipo_settings_gap_md"
+        android:text="@string/languages_add"
+        android:textColor="@color/taipo_purple_light"
+        android:textStyle="bold" />
+</LinearLayout>

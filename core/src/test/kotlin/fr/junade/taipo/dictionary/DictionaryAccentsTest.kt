@@ -80,7 +80,7 @@ class DictionaryAccentsTest {
     @Test
     fun `les regles anglaises reconnaissent pluriels et conjugaisons regulieres`() {
         val en = Dictionary.withFrequencies(
-            mapOf("like" to 10L, "city" to 10L, "walk" to 10L),
+            mapOf("like" to 1_000L, "city" to 1_000L, "walk" to 1_000L), // >= minBaseFrequency de ENGLISH
             InflectionRules.ENGLISH,
         )
         assertNull(en.correctionFor("liked"))
@@ -111,9 +111,10 @@ class DictionaryAccentsTest {
     }
 
     @Test
-    fun `une inversion l emporte sur un mot plus frequent a distance egale`() {
-        val d = Dictionary.withFrequencies(mapOf("the" to 10L, "te" to 1_000_000L))
-        assertEquals("the", d.correctionFor("teh"))
+    fun `une inversion l emporte sur un mot plus frequent a distance egale mais pas sur un mot beaucoup plus frequent`() {
+        // Score unique (phase 2) : l'inversion vaut un bonus de e^4 (~55 fois), elle n'est plus un critère absolu.
+        assertEquals("the", Dictionary.withFrequencies(mapOf("the" to 10L, "te" to 400L)).correctionFor("teh"))
+        assertEquals("te", Dictionary.withFrequencies(mapOf("the" to 10L, "te" to 1_000_000L)).correctionFor("teh"))
     }
 
     @Test

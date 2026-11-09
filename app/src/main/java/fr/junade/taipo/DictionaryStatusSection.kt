@@ -14,14 +14,14 @@ import fr.junade.taipo.dictionary.download.DictionaryDownloadTracker
 import fr.junade.taipo.model.download.DownloadFailure
 
 /**
- * Section « Dictionnaires » des paramètres du clavier : une ligne par langue utilisée (langue du clavier + langues du mode
- * multilingue) avec l'état de son dictionnaire (à télécharger, en attente, téléchargement en %, installé, échec) et un
- * bouton Réessayer. Le téléchargement démarre tout seul dès qu'une langue est utilisée ([refresh]).
+ * Section « Dictionnaire » du détail d'une langue : la ligne de la langue avec l'état de son dictionnaire (à télécharger, en
+ * attente, téléchargement en %, installé, échec) et un bouton Réessayer. Le téléchargement démarre tout seul à l'ouverture
+ * ([refresh]).
  */
 internal class DictionaryStatusSection(
     private val activity: Activity,
     private val container: LinearLayout,
-    private val preferences: KeyboardPreferences,
+    private val language: KeyboardLanguage,
 ) {
     private class Row(val language: KeyboardLanguage, val view: View) {
         val status: TextView = view.findViewById(R.id.dictionary_status)
@@ -31,31 +31,20 @@ internal class DictionaryStatusSection(
 
     private var rows: List<Row> = emptyList()
 
-    private val listener = DictionaryDownloadTracker.Listener { language, _ ->
-        activity.runOnUiThread { rows.firstOrNull { it.language == language }?.let(::bind) }
+    private val listener = DictionaryDownloadTracker.Listener { changed, _ ->
+        activity.runOnUiThread { rows.firstOrNull { it.language == changed }?.let(::bind) }
     }
 
-    /** Langues utilisées : celle du clavier (« Automatique » = langue du système) puis celles du mode multilingue. */
-    private fun languagesInUse(): List<KeyboardLanguage> {
-        val locales = activity.resources.configuration.locales
-        val base = KeyboardLanguageChoice.resolve(preferences.keyboardLanguage, (0 until locales.size()).map { locales.get(it).toLanguageTag() })
-        return (listOf(base) + preferences.multilingualLanguages).distinct()
-    }
-
-    /** Reconstruit les lignes selon les langues utilisées et lance le téléchargement de celles qui manquent. */
+    /** Reconstruit la ligne si besoin et lance le téléchargement du dictionnaire s'il manque. */
     fun refresh() {
-        val languages = languagesInUse()
-        if (languages != rows.map { it.language }) {
-            container.removeAllViews()
-            rows = languages.map { language ->
-                val view = LayoutInflater.from(activity).inflate(R.layout.item_dictionary_status, container, false)
-                view.findViewById<TextView>(R.id.dictionary_name).text = language.displayName
-                container.addView(view)
-                Row(language, view)
-            }
+        if (rows.isEmpty()) {
+            val view = LayoutInflater.from(activity).inflate(R.layout.item_dictionary_status, container, false)
+            view.findViewById<TextView>(R.id.dictionary_name).setText(R.string.language_detail_dictionary_title)
+            container.addView(view)
+            rows = listOf(Row(language, view))
             container.applyTaipoFontToTree()
         }
-        languages.forEach { DictionaryDownloadScheduler.ensure(activity, it) }
+        DictionaryDownloadScheduler.ensure(activity, language)
         rows.forEach(::bind)
     }
 

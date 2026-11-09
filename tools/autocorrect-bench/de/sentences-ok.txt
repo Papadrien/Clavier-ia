@@ -1,0 +1,146 @@
+# Korrekte deutsche Sätze: die Autokorrektur darf keinen davon ändern (misst falsche Korrekturen).
+# Ein Satz pro Zeile. Zeilen mit # werden ignoriert. Fallen: das/dass, seid/seit, wir/wie, wurde/würde, ß, Umlaute, Komposita, Apostroph.
+Hallo, wie geht es dir?
+Wie geht's dir heute?
+Das gibt's doch nicht!
+Ich hab's vergessen.
+Wir sind gestern spät nach Hause gekommen.
+Wie viele Leute kommen zur Party?
+Ihr seid herzlich eingeladen.
+Seit drei Jahren wohne ich in Berlin.
+Seid ihr schon fertig?
+Ich glaube, dass er recht hat.
+Das Buch, das ich gelesen habe, war spannend.
+Ich weiß, dass du müde bist.
+Das ist das Haus, das wir kaufen wollen.
+Ich würde gern mit dir ins Kino gehen.
+Er wurde gestern angerufen.
+Sie wurde zur Chefin befördert.
+Ich hätte gern ein Glas Wasser.
+Als Kind hatte ich einen Hund.
+Wenn ich Zeit hätte, würde ich kommen.
+Er konnte nicht schlafen.
+Ich könnte dir morgen helfen.
+Das Wetter ist heute wirklich schön.
+Das habe ich schon gewusst.
+Sie ist schon seit einer Stunde da.
+Die Straße ist wegen Bauarbeiten gesperrt.
+Wir wohnen in der Hauptstraße.
+Es ist heiß draußen.
+Die Kinder spielen im Garten.
+Das Essen ist fertig.
+Ich möchte zum Essen gehen.
+Beim Essen reden wir nicht über Arbeit.
+Wir gehen jetzt essen.
+Er hat mich zum Abendessen eingeladen.
+Ich habe die Haustür geschlossen.
+Der Schlüsselbund liegt auf dem Küchentisch.
+Die Kaffeemaschine muss entkalkt werden.
+Ich brauche einen neuen Gartenschlauch.
+Das Wochenende war viel zu kurz.
+Die Geburtstagsfeier beginnt um acht Uhr.
+Der Bahnhof ist zehn Minuten zu Fuß entfernt.
+Wir haben einen Tisch im Restaurant reserviert.
+Die Kinderärztin hat uns einen Termin gegeben.
+Meine Schwester arbeitet als Krankenschwester.
+Der Zug nach München hat Verspätung.
+Ich habe meinen Regenschirm im Büro vergessen.
+Kannst du mir bitte die Wegbeschreibung schicken?
+Die Waschmaschine ist kaputt.
+Am Montag habe ich einen Zahnarzttermin.
+Die Lebensversicherung läuft im Dezember aus.
+Wir fahren im Sommer nach Österreich.
+Er kommt aus der Schweiz.
+Sie spricht fließend Deutsch und Englisch.
+Das Mädchen liest ein Buch.
+Die Mütter und Väter warten vor der Schule.
+Ich muss noch Brötchen kaufen.
+Wir müssen früh aufstehen.
+Das ist für dich.
+Ich komme gleich zurück.
+Fahr bitte nicht so schnell.
+Es tut mir leid, ich bin zu spät.
+Danke für deine schnelle Antwort.
+Bis morgen, schlaf gut!
+Was machst du am Wochenende?
+Wo hast du den Schlüssel hingelegt?
+Wann kommst du nach Hause?
+Warum bist du so müde?
+Wer hat das Fenster geöffnet?
+Welchen Film möchtest du sehen?
+Ich habe heute Morgen einen Kaffee getrunken.
+Heute Abend gehen wir ins Theater.
+Morgen früh muss ich zum Arzt.
+Zum ersten Mal war ich in Hamburg.
+Das nächste Mal bringe ich Kuchen mit.
+Er hat mir die Wahrheit gesagt.
+Sie hat ihm das Geschenk gegeben.
+Ich habe ihn gestern gesehen.
+Ich habe ihnen alles erklärt.
+Den Film habe ich schon dreimal gesehen.
+Dem Kind geht es wieder besser.
+Denn ohne Arbeit gibt es kein Geld.
+Wenn es regnet, bleiben wir zu Hause.
+Wen hast du eingeladen?
+Ich weiß nicht, ob er kommt.
+Entweder gehen wir ins Kino oder zum Essen.
+Sowohl er als auch seine Frau waren da.
+Weder Anna noch Thomas wussten Bescheid.
+Er ist größer als ich.
+Das war ein großer Fehler.
+Die Maße des Zimmers sind drei mal vier Meter.
+Das Wasser ist kalt.
+Der Fluss ist sehr breit.
+Mein Bruder wohnt in Köln.
+Anna und Thomas kommen morgen zu Besuch.
+Ich habe Lukas gestern getroffen.
+Frau Müller ist nicht im Büro.
+Herr Schmidt hat angerufen.
+Bitte rufen Sie mich zurück.
+Haben Sie noch einen Tisch frei?
+Können Sie mir bitte helfen?
+Ich freue mich auf Ihren Besuch.
+Das Konzert war einfach fantastisch.
+Wir haben den ganzen Tag gearbeitet.
+Er hat sich das Bein gebrochen.
+Die Ärzte haben alles getan.
+Der Lehrer hat die Hausaufgaben kontrolliert.
+Ich lerne seit einem Jahr Gitarre.
+Im Winter fahren wir gern Ski.
+Am liebsten esse ich Nudeln mit Tomatensoße.
+Das Brot ist frisch gebacken.
+Ich trinke meinen Tee ohne Zucker.
+Sie hat einen Apfelkuchen gebacken.
+Wir brauchen noch Milch und Eier.
+Das Telefon klingelt schon wieder.
+Das Handy liegt auf dem Tisch.
+Ich schreibe dir eine Nachricht.
+Hast du meine E-Mail bekommen?
+Die Internetverbindung ist sehr langsam.
+Ich habe das Passwort geändert.
+Er arbeitet im Homeoffice.
+Die Besprechung beginnt um zehn Uhr.
+Wir treffen uns vor dem Kino.
+Kommst du mit zum Schwimmen?
+Ich gehe heute früh schlafen.
+Das Licht ist noch an.
+Mach bitte die Tür zu.
+Es ist schon spät.
+Ich bin sehr müde.
+Heute ist ein schöner Tag.
+Das Auto steht vor der Garage.
+Die Zeitung liegt im Briefkasten.
+Meine Eltern kommen am Sonntag.
+Ich habe Hunger und Durst.
+Das macht nichts.
+Zum Glück ist nichts passiert.
+Ich habe es dir doch gesagt.
+Vielleicht kommt er später.
+Natürlich helfe ich dir.
+Leider habe ich keine Zeit.
+Eigentlich wollte ich zu Hause bleiben.
+Übrigens, die Party fällt aus.
+Außerdem ist es viel zu teuer.
+Schönen Feierabend!
+Gute Besserung!
+Alles Gute zum Geburtstag!

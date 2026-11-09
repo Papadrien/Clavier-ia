@@ -16,13 +16,26 @@ package fr.junade.taipo.dictionary
  * JVM simple.
  */
 class Dictionary private constructor(
-    frequencies: Map<String, Long>,
+    /**
+     * Liste lue (mot en minuscules -> fréquence). Seuls [candidateWords] et [candidateFrequencies] la lisent : tout le reste passe
+     * par [frequencies], sa copie compacte. Aucune référence n'y est gardée, pour qu'elle soit libérée après la construction.
+     */
+    source: Map<String, Long>,
     private val inflections: InflectionRules,
     candidateMinFrequency: Long,
     internal val proximity: KeyProximity = KeyProximity.NONE,
     private val letterPrefilter: Boolean = true,
     properNames: Collection<String> = emptyList(),
+    internal val confidence: CorrectionConfidence = CorrectionConfidence.NONE,
+    private val accentPolicy: AccentPolicy = AccentPolicy.FRENCH,
+    /** Bigrammes livrés (point 1 de docs/autocorrection-roadmap.md) ; leur poids est [CorrectionConfidence.contextWeight]. */
+    internal val ngrams: NgramModel = NgramModel.EMPTY,
 ) {
+
+    // minuscule -> fréquence (nombre d'occurrences dans le corpus source), en table compacte ([CompactWordTable]) : environ
+    // 40 % de la mémoire d'une HashMap pour une liste complète. Déclarée en premier : les index ci-dessous la lisent.
+    private val table: CompactWordTable = CompactWordTable.from(source)
+    internal val frequencies: Map<String, Long> = table
 
     // Prénoms et noms propres courants (forme avec majuscule, « Adrien », « Éric ») : les listes de fréquence sont
     // toutes en minuscules, elles ne savent donc pas qu'un mot prend une majuscule. Clé = minuscules.
@@ -33,11 +46,24 @@ class Dictionary private constructor(
         for ((key, display) in exactNames) {
             val folded = WordForms.foldAccents(key)
             if (folded != key && folded !in exactNames) putIfAbsent(folded, display)
+            // Allemand : « juergen » -> « Jürgen », « uebung » -> « Übung » (transcription ae, oe, ue, ss).
+            if (accentPolicy.transliteration) {
+                val transliterated = WordForms.transliterateGerman(key)
+                if (transliterated != key && transliterated !in exactNames) putIfAbsent(transliterated, display)
+            }
         }
     }
 
     // Fréquence donnée aux prénoms quand ils sont proposés en correction (celle du seuil : jamais devant un vrai mot).
     private val nameFrequency: Long = maxOf(1L, candidateMinFrequency)
+
+    // Noms à proposer en correction faute d'être assez fréquents dans les listes, rangés par longueur (comme les candidats des listes) :
+    // avec une liste de noms allemande de plusieurs dizaines de milliers de mots, parcourir tous les noms à chaque correction coûterait trop cher.
+    private val rareNamesByLength: Array<List<String>> by lazy(LazyThreadSafetyMode.NONE) {
+        val rare = exactNames.keys.filter { (frequencies[it] ?: 0L) < nameFrequency }
+        val maxLength = rare.maxOfOrNull { it.length } ?: 0
+        Array(maxLength + 1) { length -> rare.filter { it.length == length } }
+    }
 
     /**
      * Mots seuls (sans fréquence connue) : tous ont la même fréquence, donc aucun n'est
@@ -56,20 +82,36 @@ class Dictionary private constructor(
         0L,
     )
 
-    // minuscule -> fréquence (nombre d'occurrences dans le corpus source).
-    internal val frequencies: Map<String, Long> = frequencies
-
     // Candidats de correction et de complétion : les mots de fréquence >= candidateMinFrequency. Avec une liste
     // complète (~250 000 mots et plus), les mots rares valident un mot tapé (ils ne sont pas « corrigés ») mais ne
     // sont jamais proposés : la recherche par distance d'édition reste aussi rapide qu'avec 50 000 mots, et les
     // suggestions ne se remplissent pas de fautes du corpus. 0 = tous les mots sont candidats.
     // Copies en tableaux parallèles : parcours des candidats plus rapide que sur la Map.
+    // Lues dans [source] (et non dans la table compacte) : mêmes chaînes, même ordre qu'avant, sans en recréer.
     internal val candidateWords: Array<String> = if (candidateMinFrequency <= 0L) {
-        frequencies.keys.toTypedArray()
+        source.keys.toTypedArray()
     } else {
-        frequencies.entries.asSequence().filter { it.value >= candidateMinFrequency }.map { it.key }.toList().toTypedArray()
+        source.entries.asSequence().filter { it.value >= candidateMinFrequency }.map { it.key }.toList().toTypedArray()
     }
-    internal val candidateFrequencies: LongArray = LongArray(candidateWords.size) { frequencies.getValue(candidateWords[it]) }
+    internal val candidateFrequencies: LongArray = LongArray(candidateWords.size) { source.getValue(candidateWords[it]) }
+
+    // Mots valides mais trop rares pour être candidats (« sédentaire ») : retrouvés seulement par leurs accents (voir
+    // [RareWords]). Null quand tous les mots sont candidats.
+    private val rareWords: RareWords? = RareWords.forCandidates(table, candidateMinFrequency, candidateWords)
+
+    /**
+     * Probabilité de la lettre suivante d'après le début du mot tapé (zones de frappe adaptatives), sur les candidats.
+     * Construit à la première demande (tri de la liste : quelques dizaines de millisecondes) : la première demande se fait
+     * en arrière-plan, avec le préchargement du dictionnaire, jamais sur le thread principal.
+     */
+    val nextLetterModel: NextLetterModel get() = nextLetterLazy.value
+
+    private val nextLetterLazy = lazy(LazyThreadSafetyMode.PUBLICATION) {
+        NextLetterModel.fromCandidates(candidateWords, candidateFrequencies)
+    }
+
+    /** Le modèle de la lettre suivante s'il est déjà construit, sinon null, sans jamais le construire : pour le thread principal. */
+    val nextLetterModelIfBuilt: NextLetterModel? get() = if (nextLetterLazy.isInitialized()) nextLetterLazy.value else null
 
     // Masque des lettres de chaque candidat (voir [letterMask]) : pré-filtre bon marché de la recherche par distance
     // d'édition. 8 octets par candidat (~400 Ko pour 50 000 mots).
@@ -117,6 +159,11 @@ class Dictionary private constructor(
         }
     }
 
+    // Écriture sans ligature -> écriture avec ligature (« coeur » -> « cœur », « oeuvre » -> « œuvre ») : voir
+    // [FrenchCanonicalizer.ligatureRestorations]. Vide pour les langues sans « œ » dans leur liste.
+    private val ligatureForms: Map<String, String> =
+        FrenchCanonicalizer.ligatureRestorations(candidateWords, candidateFrequencies) { frequencies[it] ?: 0L }
+
     // Fréquence attribuée aux mots personnels : strictement supérieure à toutes celles du dictionnaire
     // (l'utilisateur les a ajoutés volontairement, ils priment sur un mot du dictionnaire à distance égale).
     internal val personalFrequency: Long = (candidateFrequencies.maxOrNull() ?: 0L) + 1L
@@ -131,6 +178,16 @@ class Dictionary private constructor(
         }
     }
 
+    // Allemand : mots à umlaut ou ß indexés par leur transcription (« für » -> « fuer », « straße » -> « strasse »), pour un mot tapé
+    // avec « ae / oe / ue » au lieu de l'umlaut. Vide pour les autres langues ([AccentPolicy.transliteration]).
+    private val accentedByTranslit: Map<String, List<String>> = HashMap<String, MutableList<String>>().apply {
+        if (!accentPolicy.transliteration) return@apply
+        for (word in candidateWords) {
+            val transliterated = WordForms.transliterateGerman(word)
+            if (transliterated != word) getOrPut(transliterated) { ArrayList(2) }.add(word)
+        }
+    }
+
     // Formes sans accent présentes dans les listes mais nettement moins fréquentes que leur forme
     // accentuée : ce sont des fautes du corpus (« ca », « etait », « tres », « duree »), pas des mots.
     // Valeur = forme accentuée à proposer. Assez strict pour laisser « a »/« à », « ou »/« où »,
@@ -139,16 +196,25 @@ class Dictionary private constructor(
     // Deux seuils : une paire « e / é » finale (« tue / tué », « essaye / essayé », « rencontres / rencontrés ») garde
     // le seuil strict, car la forme sans accent est un vrai mot (verbe conjugué, pluriel) ; toute autre paire
     // (« ecoute / écoute », « grace / grâce », « eglise / église ») passe au seuil souple : la forme sans accent n'est
-    // alors presque toujours une faute (sauf quelques exceptions, voir [PLAIN_WORDS_KEPT]).
+    // alors presque toujours une faute (sauf quelques exceptions, voir [AccentPolicy.keptPlain]).
     internal val dominatedByAccented: Map<String, String> = HashMap<String, String>().apply {
         for ((folded, accented) in accentedByFolded) {
             val plainFrequency = frequencies[folded] ?: continue
-            if (folded in PLAIN_WORDS_KEPT) continue
+            if (folded in accentPolicy.keptPlain) continue
             val top = accented.maxOf { frequencies.getValue(it) }
             val leaders = accented.filter { frequencies.getValue(it) == top }
             if (leaders.size != 1) continue
-            val dominance = if (isParticipleVariant(folded, leaders[0])) ACCENT_DOMINANCE else SOFT_ACCENT_DOMINANCE
+            val dominance = accentPolicy.dominanceFor(folded, leaders[0])
             if (top >= plainFrequency * dominance) put(folded, leaders[0])
+        }
+        // Allemand : une transcription présente dans les listes (« ueber », « buero ») mais très rare face au mot à umlaut.
+        for ((transliterated, accented) in accentedByTranslit) {
+            val plainFrequency = frequencies[transliterated] ?: continue
+            if (transliterated in accentPolicy.keptPlain || containsKey(transliterated)) continue
+            val top = accented.maxOf { frequencies.getValue(it) }
+            val leaders = accented.filter { frequencies.getValue(it) == top }
+            if (leaders.size != 1) continue
+            if (top >= plainFrequency * accentPolicy.dominanceFor(transliterated, leaders[0])) put(transliterated, leaders[0])
         }
     }
 
@@ -212,15 +278,55 @@ class Dictionary private constructor(
      * - le mot est entièrement en majuscules (probablement un acronyme) ;
      * - aucun candidat n'est assez proche, ou plusieurs candidats sont à égalité de
      *   distance ET de fréquence (ambiguïté : mieux vaut ne rien changer qu'un mauvais choix).
+     *
+     * [trace] (phase 6) : si fourni, reçoit le chemin pris et la marge de la décision (voir [DecisionTrace]). Il ne change
+     * jamais le résultat.
      */
     fun correctionFor(
         word: String,
         maxDistance: Int = 2,
         personalWords: Collection<String> = emptyList(),
         habits: HabitContext? = null,
+        trace: DecisionTrace? = null,
+        previousWord: String? = null,
     ): String? {
-        val correction = correctionWithoutNames(word, maxDistance, personalWords, habits)
-        return properNameForm(word, correction, personalWords) ?: correction
+        val correction = correctionWithoutNames(word, maxDistance, personalWords, habits, trace, previousWord)
+        var result = properNameForm(word, correction, personalWords) ?: correction
+        // Point 4 : « … avec Kubernets » : un mot inconnu à majuscule juste après un autre mot est sans doute un nom propre ; il n'est
+        // remplacé que par un nom connu (« Adrein » -> « Adrien »), jamais par un mot courant.
+        if (result != null && confidence.protectsMidSentenceCapitals && previousWord != null && isCapitalized(word) &&
+            word.lowercase() !in frequencies && result.lowercase() !in exactNames
+        ) {
+            result = null
+        }
+        // Phase 5 : une correction annulée deux fois (voir [HabitContext.isRefused]) n'est plus proposée nulle part, ni à
+        // l'espace ni dans la bande : celle-ci montre toujours ce que l'autocorrection applique.
+        val refused = result != null && habits != null && habits.isRefused(word, result)
+        // Phase 6 : [trace] (null hors debug) retient seulement le chemin pris et le refus, jamais le texte.
+        if (trace != null) {
+            if (refused) trace.refusedByHabits = true
+            if (result != null && trace.path == DecisionTrace.Path.NONE) trace.path = DecisionTrace.Path.DIRECT
+        }
+        return if (refused) null else result
+    }
+
+    /**
+     * Tournure habituelle à mettre à la place de [word], même s'il est valide (voir [PhraseHabits]) : à appeler quand
+     * [correctionFor] n'a rien changé. Null sans habitudes, si [word] est un mot personnel (choix volontaire) ou si les
+     * habitudes ne disent pas clairement autre chose. Le mot habituel doit être connu (liste ou mot personnel). La casse
+     * du mot tapé est reprise.
+     */
+    fun habitPhraseCorrectionFor(
+        word: String,
+        personalWords: Collection<String> = emptyList(),
+        habits: HabitContext? = null,
+    ): String? {
+        if (habits == null || habits.isInert() || word.length < PhraseHabits.MIN_WORD_LENGTH) return null
+        if (personalWords.any { it.equals(word, ignoreCase = true) }) return null
+        val known = { candidate: String -> candidate in frequencies || personalWords.any { it.equals(candidate, ignoreCase = true) } }
+        val candidate = habits.phraseCorrectionFor(word, known) ?: return null
+        val stored = personalWords.firstOrNull { it.equals(candidate, ignoreCase = true) }
+        return stored ?: applyOriginalCasing(word, candidate)
     }
 
     /**
@@ -236,7 +342,12 @@ class Dictionary private constructor(
         if (personalWords.any { it.equals(word, ignoreCase = true) || (correction != null && it.equals(correction, ignoreCase = true)) }) return null
         val target = correction ?: word
         exactNames[target.lowercase()]?.let { return it.takeIf { display -> display != word } }
-        if (correction == null && word == word.lowercase()) foldedNames[word]?.let { return it }
+        if (correction == null && word == word.lowercase()) {
+            val restored = foldedNames[word]
+            // Allemand : la liste contient des noms (« Höhe », « Bär »), dont la forme sans umlaut est parfois un autre mot juste
+            // (« hohe », « bar ») : un mot de la liste n'est jamais remplacé par un nom pour son umlaut seul.
+            if (restored != null && !(accentPolicy.nounsKeepValidWords && word in frequencies)) return restored
+        }
         return null
     }
 
@@ -245,6 +356,8 @@ class Dictionary private constructor(
         maxDistance: Int,
         personalWords: Collection<String>,
         habits: HabitContext?,
+        trace: DecisionTrace?,
+        previousWord: String? = null,
     ): String? {
         if (word.length < MIN_WORD_LENGTH_FOR_CORRECTION) return null
         if (word.any { it.isDigit() }) return digitSlipCorrection(word)
@@ -256,10 +369,14 @@ class Dictionary private constructor(
         val personal = HashMap<String, String>(personalWords.size)
         personalWords.forEach { personal[it.lowercase()] = it }
         if (lower in personal) return null
+        // Point 4 : un mot inconnu que l'utilisateur a déjà gardé deux fois est un mot à lui (nom, argot, sigle) : plus de correction.
+        if (habits != null && lower !in frequencies && habits.isLearnedWord(lower)) return null
         // « l'Taipo », « d'Adrien », « Taipo's » : le clavier voit un seul mot avec apostrophe.
         if (isPersonalWithApostrophe(lower, personal)) return null
 
         if (lower in frequencies) {
+            // « coeur » -> « cœur » : la liste contient les deux écritures, seule celle avec la ligature est juste.
+            ligatureForms[lower]?.let { return applyOriginalCasing(word, it) }
             // Mot présent dans les listes : corrigé seulement si c'est une faute du corpus dont la
             // version accentuée domine nettement (« ca » -> « ça »).
             dominatedByAccented[lower]?.let { return applyOriginalCasing(word, it) }
@@ -267,11 +384,21 @@ class Dictionary private constructor(
             // « j'étais » 276 000) : « tes » / « t'es » restent intacts, les deux formes étant courantes.
             val contraction = contractionsFolded[lower] ?: contractionsWithoutApostrophe[lower] ?: return null
             if (frequencies.getValue(contraction) < frequencies.getValue(lower) * CONTRACTION_DOMINANCE) return null
+            // Point 1 (bigrammes) : le mot précédent dit lequel des deux est attendu (« la lune » reste « lune », pas « la l'une » ;
+            // « fallen ill » reste « ill », pas « I'll »).
+            if (contextPrefers(previousWord, lower, contraction)) return null
             return applyOriginalCasing(word, contraction)
         }
 
+        // Contraction écrite sans apostrophe, absente des listes (« thats » -> « that's », « theyre » -> « they're ») : avant les
+        // flexions, car « thats » se lirait « that » + « s », un pluriel régulier.
+        contractionsWithoutApostrophe[lower]?.let { return applyOriginalCasing(word, it) }
+
         // Pluriel, féminin ou conjugaison régulière d'un mot connu : correct, absent des listes.
         if (isInflectedForm(lower)) return null
+
+        // Mot composé (allemand) : juste s'il se découpe en parties connues et n'est pas une faute de frappe d'un mot fréquent.
+        if (isCompoundForm(lower)) return null
 
         // Élision (« t'inscrire », « l'ordinateur ») ou possessif anglais (« today's ») : seul le mot
         // collé à l'apostrophe est examiné, la partie élidée est conservée telle quelle. Sans cela, la
@@ -288,24 +415,79 @@ class Dictionary private constructor(
         contractionsFolded[lower]?.let { return applyOriginalCasing(word, it) }
 
         // Accent oublié : la forme accentuée (éventuellement fléchie) est la correction évidente.
-        accentRestoration(lower)?.let { return applyOriginalCasing(word, it.word) }
+        accentRestoration(lower)?.let { return applyOriginalCasing(word, ligatureForms[it.word] ?: it.word) }
 
         // Apostrophe d'élision oubliée devant un mot connu (« tinquiete » -> « t'inquiète », « lorsquun » ->
         // « lorsqu'un »), avant la recherche par distance d'édition qui, sinon, retirerait la lettre élidée.
         elisionRestoration(lower)?.let { return applyOriginalCasing(word, it) }
 
         val allowedDistance = minOf(maxDistance, maxDistanceForLength(lower.length))
-
-        var best: String? = null
-        var bestDistance = allowedDistance + 1
-        var bestFrequency = -1L
-        var bestIsSwap = false
-        var bestIsPersonal = false
-        var bestHabit = HabitScore.NONE
-        var bestCost = Int.MAX_VALUE
-        var ambiguous = false
         // Rien d'appris : aucun départage possible, on ne calcule rien (résultat identique à l'absence d'habitudes).
         val activeHabits = habits?.takeUnless { it.isInert() }
+
+        var contest = searchCandidates(lower, allowedDistance, personal, activeHabits, previousWord)
+        // Accent oublié sur un mot rare (« sedentaire » -> « sédentaire ») : seulement si aucun mot proposable n'est à une seule
+        // faute ; il passe alors devant un mot proposable plus éloigné (« dentaire », à deux fautes). Avant toute recherche, il
+        // prenait la place de fautes de frappe de mots courants (banc d'autocorrection).
+        val rare = if (contest.best == null || contest.bestDistance > 1) rareWords?.accentRestoration(lower, ::keepsTypedAccents) else null
+        if (rare != null) return applyOriginalCasing(word, rare)
+        // Mot long sans aucun candidat à distance 2 ou moins : trois erreurs d'édition sont tentées (phase 3), sous réserve
+        // d'une marge forte (voir [CorrectionConfidence]). Pas si l'appelant a volontairement limité la distance.
+        if (contest.best == null && maxDistance >= 2 && confidence.allowsThreeEditsFor(lower.length)) {
+            trace?.threeEditsSearched = true
+            contest = searchCandidates(lower, confidence.longWordDistance, personal, activeHabits, previousWord)
+        }
+
+        // Décision de déclenchement (phase 3) : le meilleur candidat ne s'applique que si sa marge sur le suivant atteint
+        // le seuil de son type de faute. Une égalité stricte (marge nulle) ne corrige jamais.
+        val correction = contest.best ?: return null
+        // Point 4 : un mot court à deux erreurs de tout mot connu est souvent un mot juste inconnu (nom, argot) ; on ne le remplace
+        // que si le mot précédent soutient la correction.
+        if (contest.bestDistance == 2 && lower.length < confidence.twoEditsMinLengthWithoutContext && !contextSupports(previousWord, correction)) return null
+        val kind = confidence.kindOf(lower, correction, contest.bestDistance, contest.bestIsSwap, contest.bestCost)
+        val margin = contest.margin()
+        val accepted = confidence.accepts(kind, margin, contest.bestCost)
+        if (trace != null) {
+            trace.path = DecisionTrace.Path.SEARCH
+            trace.kind = kind
+            trace.margin = margin
+            trace.accepted = accepted
+        }
+        if (!accepted) return null
+        val stored = personal[correction]
+        return if (stored != null && stored != stored.lowercase()) stored else applyOriginalCasing(word, correction)
+    }
+
+    /** Majuscule initiale suivie d'au moins une minuscule (« Paris », pas « PARIS » ni « paris »). */
+    private fun isCapitalized(word: String): Boolean =
+        word.length > 1 && word[0].isUpperCase() && word.drop(1).any { it.isLowerCase() }
+
+    /** Vrai si le modèle de bigrammes attend [candidate] après [previousWord] plus que sans contexte (point 4). */
+    private fun contextSupports(previousWord: String?, candidate: String): Boolean =
+        previousWord != null && confidence.contextWeight > 0.0 && ngrams.contextCount(previousWord) > 0 && ngrams.bonus(previousWord, candidate) > 0.0
+
+    /** Vrai si, après [previousWord], le modèle de bigrammes attend nettement plus [typed] que [replacement] (point 1). */
+    private fun contextPrefers(previousWord: String?, typed: String, replacement: String): Boolean {
+        if (previousWord == null || confidence.contextWeight <= 0.0 || ngrams.contextCount(previousWord) == 0) return false
+        return ngrams.bonus(previousWord, typed) > ngrams.bonus(previousWord, replacement)
+    }
+
+    /**
+     * Cherche dans les listes, les mots personnels et les prénoms les candidats à au plus [allowedDistance] erreurs
+     * d'édition de [lower] et les range dans un [CandidateContest] (le meilleur, le suivant, la marge). Ne décide rien.
+     */
+    private fun searchCandidates(
+        lower: String,
+        allowedDistance: Int,
+        personal: Map<String, String>,
+        activeHabits: HabitContext?,
+        previousWord: String? = null,
+    ): CandidateContest {
+        // Sans géométrie de clavier, le coût de saisie vaut 0 : une erreur y compte alors comme une erreur quelconque (COST x 4).
+        val penalty = confidence.distancePenalty?.let { if (proximity === KeyProximity.NONE) it + NO_PROXIMITY_EDIT_PENALTY else it }
+        val contest = CandidateContest(penalty)
+        // Point 1 (bigrammes) : le mot précédent départage les candidats, s'il est connu du modèle et que la langue lui donne un poids.
+        val context = previousWord?.takeIf { confidence.contextWeight > 0.0 && ngrams.contextCount(it) > 0 }
 
         fun consider(candidate: String, frequency: Long, isPersonal: Boolean = false) {
             // Distance bornée : renvoie allowedDistance + 1 dès que le candidat est trop loin (même
@@ -317,45 +499,14 @@ class Dictionary private constructor(
             if (candidate in dominatedByAccented) return
             val isSwap = distance == 1 && isAdjacentSwap(lower, candidate)
             // Habitudes : seulement pour un candidat qui peut encore passer devant ou à égalité (plus loin, il est battu).
-            val habit = if (activeHabits != null && distance <= bestDistance) activeHabits.score(lower, candidate) else HabitScore.NONE
+            val habit = if (activeHabits != null && distance <= contest.bestDistance) activeHabits.score(lower, candidate) else HabitScore.NONE
             // Coût pondéré par la proximité des touches (0 si elle est désactivée : sans effet).
             val cost = proximity.editCost(lower, candidate)
-            // À distance égale : mot personnel (ajouté volontairement) > habitudes (paire acceptée > contexte >
-            // usage) > faute plausible au clavier (touche voisine, lettre effleurée, inversion : coût pondéré le
-            // plus bas) > inversion de deux lettres > fréquence. Sans la première règle, « nae » donnait « ane »
-            // (inversion) et non « naé ».
-            val better = distance < bestDistance || (
-                distance == bestDistance && (
-                    (isPersonal && !bestIsPersonal) || (
-                        isPersonal == bestIsPersonal && (
-                            habit > bestHabit || (
-                                habit == bestHabit && (
-                                    cost < bestCost || (
-                                        cost == bestCost && (
-                                            (isSwap && !bestIsSwap) || (isSwap == bestIsSwap && frequency > bestFrequency)
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            when {
-                better -> {
-                    bestDistance = distance
-                    bestFrequency = frequency
-                    bestIsSwap = isSwap
-                    bestIsPersonal = isPersonal
-                    bestHabit = habit
-                    bestCost = cost
-                    best = candidate
-                    ambiguous = false
-                }
-                distance == bestDistance && isPersonal == bestIsPersonal && habit == bestHabit && isSwap == bestIsSwap &&
-                    cost == bestCost && frequency == bestFrequency && candidate != best ->
-                    ambiguous = true
-            }
+            // À distance égale, le meilleur score gagne (voir [CandidateScore] : mot personnel, habitudes, plausibilité de la
+            // faute au clavier, inversion, fréquence). L'écart avec le suivant est la marge de confiance.
+            var score = CandidateScore.of(frequency, cost, isSwap, isPersonal, habit)
+            if (context != null) score += confidence.contextWeight * ngrams.bonus(context, candidate)
+            contest.offer(candidate, distance, score, cost, isSwap)
         }
 
         val minLength = maxOf(0, lower.length - allowedDistance)
@@ -380,12 +531,11 @@ class Dictionary private constructor(
         }
         for (candidate in personal.keys) if (candidate !in frequencies) consider(candidate, personalFrequency, isPersonal = true)
         // Prénoms courants : proposés en correction même s'ils sont absents des listes ou trop rares pour y être candidats.
-        for (name in exactNames.keys) if ((frequencies[name] ?: 0L) < nameFrequency) consider(name, nameFrequency)
-
-        val correction = best ?: return null
-        if (bestDistance > allowedDistance || ambiguous) return null
-        val stored = personal[correction]
-        return if (stored != null && stored != stored.lowercase()) stored else applyOriginalCasing(word, correction)
+        val rareNames = rareNamesByLength
+        for (length in minLength..minOf(rareNames.size - 1, lower.length + allowedDistance)) {
+            for (name in rareNames[length]) consider(name, nameFrequency)
+        }
+        return contest
     }
 
     // Suggestions de la bande : voir DictionarySuggestions (audit 2.1, étape 10). Sans état : une instance paresseuse suffit.
@@ -397,14 +547,17 @@ class Dictionary private constructor(
         limit: Int = SUGGESTION_LIMIT,
         personalWords: Collection<String> = emptyList(),
         habits: HabitContext? = null,
-    ): List<String> = suggestions.suggestionsFor(typed, limit, personalWords, habits)
+        previousWord: String? = null,
+    ): List<String> = suggestions.suggestionsFor(typed, limit, personalWords, habits, previousWord)
 
     /** Story 1.17 : contenu des [SUGGESTION_LIMIT] emplacements de mots de la bande (null = vide). */
     fun suggestionSlotsFor(
         typed: String,
         personalWords: Collection<String> = emptyList(),
         habits: HabitContext? = null,
-    ): List<WordSuggestion?> = suggestions.suggestionSlotsFor(typed, personalWords, habits)
+        participle: ParticipleFix? = null,
+        previousWord: String? = null,
+    ): List<WordSuggestion?> = suggestions.suggestionSlotsFor(typed, personalWords, habits, participle, previousWord)
 
     /** Emplacements quand le curseur est posé sur un mot déjà écrit ([typed]) ; voir [DictionarySuggestions]. */
     fun placementSlotsFor(
@@ -412,7 +565,9 @@ class Dictionary private constructor(
         personalWords: Collection<String> = emptyList(),
         previousForm: String? = null,
         habits: HabitContext? = null,
-    ): List<WordSuggestion?> = suggestions.placementSlotsFor(typed, personalWords, previousForm, habits)
+        participle: ParticipleFix? = null,
+        previousWord: String? = null,
+    ): List<WordSuggestion?> = suggestions.placementSlotsFor(typed, personalWords, previousForm, habits, participle, previousWord)
 
     /** Au plus [limit] alternatives pour le mot entier [typed] ; voir [DictionarySuggestions]. */
     fun alternativesFor(
@@ -457,6 +612,13 @@ class Dictionary private constructor(
         personalWords: Collection<String>,
     ): ApostropheResult? {
         val apostrophe = lower.indexOf('\'')
+        // Apostrophe initiale (néerlandais « 's avonds », « 't », anglais « 'em ») : forme voulue, jamais corrigée.
+        if (apostrophe == 0) return ApostropheResult(null)
+        // Apostrophe finale après un mot connu : possessif d'un pluriel (« teachers' », « days' ») ou élision finale italienne (« po' »).
+        if (apostrophe == lower.length - 1 && apostrophe > 1) {
+            val head = lower.substring(0, apostrophe)
+            if (head in frequencies || isInflectedForm(head)) return ApostropheResult(null)
+        }
         if (apostrophe <= 0 || apostrophe >= lower.length - 1) return null
         val head = lower.substring(0, apostrophe)
         val tail = lower.substring(apostrophe + 1)
@@ -477,12 +639,16 @@ class Dictionary private constructor(
      * après une seule lettre élidée, il doit compter au moins 3 lettres (« tai », « lon » sont trop ambigus).
      */
     private fun elisionRestoration(lower: String): String? {
+        if (!confidence.restoresElisions) return null
         for (prefix in ELISION_PREFIXES) {
             if (!lower.startsWith(prefix) || lower.length == prefix.length) continue
             val rest = lower.substring(prefix.length)
-            if (rest.length < (if (prefix.length == 1) 3 else 2) || !canFollowElision(rest)) continue
+            val minRest = if (prefix.length == 1) confidence.singleLetterElisionMinRest else 2
+            if (rest.length < minRest || !canFollowElision(rest)) continue
             val word = elidedWord(rest) ?: continue
             if (!canFollowElision(word)) continue
+            // « c' » ne s'élide que devant « ce » ou « ça » : « c'est », « c'était », « c'en » (« cait » n'est pas « c'ait »).
+            if (confidence.cElisionOnlyBeforeE && prefix == "c" && word.first() !in "eéèêë") continue
             return "$prefix'$word"
         }
         return null
@@ -496,7 +662,9 @@ class Dictionary private constructor(
         }
         if (isInflectedForm(rest)) return rest
         val restored = accentRestoration(rest)?.word ?: return null
-        return if (frequencies.getValue(restored) >= ELIDED_WORD_MIN_FREQUENCY) restored else null
+        // Une forme fléchie rétablie (« olés » pour « olé ») n'a pas de fréquence propre : trop incertaine pour une élision
+        // (getValue la faisait planter : trouvé par le banc d'autocorrection, phase 0).
+        return if ((frequencies[restored] ?: 0L) >= ELIDED_WORD_MIN_FREQUENCY) restored else null
     }
 
     /**
@@ -532,6 +700,33 @@ class Dictionary private constructor(
         if (stored != stored.lowercase()) stored else applyOriginalCasing(typed, stored)
 
     /**
+     * Indices des candidats ([candidateWords]) dans l'ordre alphabétique (ordre de [String.compareTo]) : les mots qui commencent
+     * par un même début y forment une plage contiguë, trouvée par dichotomie ([firstSortedAtLeast]). Avant cet index,
+     * [topCompletions] parcourait tous les candidats à chaque lettre tapée (~0,6 ms sur PC quelle que soit la longueur du début,
+     * 16 à 32 ms mesurés sur Pixel 9 en build debug). Construit à la première demande, ou au préchargement ([warmSuggestionIndex]).
+     */
+    private val sortedCandidates: IntArray by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        candidateWords.indices.sortedWith { a, b -> candidateWords[a].compareTo(candidateWords[b]) }.toIntArray()
+    }
+
+    /** Construit l'index des complétions s'il ne l'est pas encore (préchargement, hors du thread principal). */
+    fun warmSuggestionIndex() {
+        sortedCandidates
+    }
+
+    /** Première position de [sortedCandidates] dont le mot est >= [prefix] (taille de l'index s'il n'y en a pas). */
+    private fun firstSortedAtLeast(prefix: String): Int {
+        val sorted = sortedCandidates
+        var low = 0
+        var high = sorted.size
+        while (low < high) {
+            val middle = (low + high) ushr 1
+            if (candidateWords[sorted[middle]] < prefix) low = middle + 1 else high = middle
+        }
+        return low
+    }
+
+    /**
      * Les [count] mots du dictionnaire qui commencent par [prefix] (minuscules) et sont plus longs
      * que lui : fréquence décroissante, puis longueur croissante, puis ordre alphabétique.
      * Insertion bornée : pas de tri des quelques milliers de mots qui commencent par une lettre.
@@ -549,9 +744,15 @@ class Dictionary private constructor(
             else -> word < otherWord
         }
 
-        for (i in candidateWords.indices) {
+        // Seuls les candidats qui commencent par [prefix] sont parcourus : une plage contiguë de l'index trié (le classement
+        // ne dépend pas de l'ordre de parcours : fréquence, longueur puis ordre alphabétique départagent tout).
+        val sorted = sortedCandidates
+        var at = firstSortedAtLeast(prefix)
+        while (at < sorted.size) {
+            val i = sorted[at++]
             val word = candidateWords[i]
-            if (word.length <= prefix.length || !word.startsWith(prefix)) continue
+            if (!word.startsWith(prefix)) break
+            if (word.length <= prefix.length) continue
             val frequency = candidateFrequencies[i]
             if (size == capacity && !ranksBefore(word, frequency, bestWords[size - 1]!!, bestFrequencies[size - 1])) continue
 
@@ -566,6 +767,66 @@ class Dictionary private constructor(
             if (size < capacity) size++
         }
         return List(size) { bestWords[it]!! }
+    }
+
+    /**
+     * Point 5 de docs/autocorrection-roadmap.md : complétions tolérantes à UNE faute dans le début tapé (« aujoudr » -> « aujourd'hui »,
+     * « ordona » -> « ordinateur »), les plus fréquentes d'abord, au plus [count]. Seuls les mots dont un début est à exactement une
+     * erreur (touche remplacée, oubliée, ajoutée ou inversion) de [prefix] y figurent : ceux qui commencent par [prefix] sont déjà
+     * dans [topCompletions]. Rien pour un début de moins de [FUZZY_MIN_PREFIX] lettres (trop de mots à une erreur près).
+     */
+    internal fun fuzzyCompletions(prefix: String, count: Int): List<String> {
+        val n = prefix.length
+        if (n < FUZZY_MIN_PREFIX || count <= 0) return emptyList()
+        val bestWords = ArrayList<String>(count + 1)
+        val bestFrequencies = ArrayList<Long>(count + 1)
+        // Lignes de la distance d'édition (avec inversion) entre [prefix] et le début du mot, réutilisées d'un mot à l'autre.
+        var before = IntArray(n + 1)
+        var previous = IntArray(n + 1)
+        var current = IntArray(n + 1)
+        // Pré-filtre : à une erreur près, au plus une lettre du début tapé manque au mot (même idée que [searchCandidates]).
+        val typedMask = letterMask(prefix)
+        for (i in candidateWords.indices) {
+            if ((typedMask and candidateMasks[i].inv()).countOneBits() > 1) continue
+            val frequency = candidateFrequencies[i]
+            if (bestWords.size == count && frequency <= bestFrequencies[count - 1]) continue
+            val word = candidateWords[i]
+            if (word.length < n || word.startsWith(prefix)) continue
+            // Début du mot à une erreur de [prefix] : la ligne j = n - 1, n ou n + 1 lettres du mot doit atteindre 1 en colonne n.
+            for (k in 0..n) previous[k] = k
+            var found = false
+            var j = 1
+            val lastRow = minOf(word.length, n + 1)
+            while (j <= lastRow) {
+                current[0] = j
+                var rowMin = j
+                val c = word[j - 1]
+                for (k in 1..n) {
+                    val cost = if (prefix[k - 1] == c) 0 else 1
+                    var value = minOf(previous[k] + 1, current[k - 1] + 1, previous[k - 1] + cost)
+                    if (j > 1 && k > 1 && prefix[k - 1] == word[j - 2] && prefix[k - 2] == c) value = minOf(value, before[k - 2] + 1)
+                    current[k] = value
+                    if (value < rowMin) rowMin = value
+                }
+                if (j >= n - 1 && current[n] <= 1) { found = true; break }
+                if (rowMin > 1) break
+                val recycled = before
+                before = previous
+                previous = current
+                current = recycled
+                j++
+            }
+            if (!found || word in dominatedByAccented) continue
+            var position = bestWords.size
+            while (position > 0 && frequency > bestFrequencies[position - 1]) position--
+            bestWords.add(position, word)
+            bestFrequencies.add(position, frequency)
+            if (bestWords.size > count) {
+                bestWords.removeAt(count)
+                bestFrequencies.removeAt(count)
+            }
+        }
+        return bestWords
     }
 
     /** Forme accentuée trouvée pour une forme tapée. */
@@ -595,7 +856,11 @@ class Dictionary private constructor(
             }
         }
 
-        accentedByFolded[folded]?.forEach { offer(it, frequencies.getValue(it)) }
+        // Les accents déjà tapés sont gardés : « grösser » -> « größer », pas « großer » (plus fréquent, mais sans le « ö » tapé).
+        // Si aucune forme ne les contient tous, toutes restent possibles (accent mal placé).
+        val direct = (accentedByFolded[folded].orEmpty() + accentedByTranslit[lower].orEmpty())
+        val keepingTyped = direct.filter { keepsTypedAccents(lower, it) }
+        (keepingTyped.ifEmpty { direct }).forEach { offer(it, frequencies.getValue(it)) }
         for (rule in inflections.rules) {
             val base = rule.baseOf(folded) ?: continue
             accentedByFolded[base]?.forEach { accentedBase ->
@@ -607,10 +872,101 @@ class Dictionary private constructor(
         return if (tie) null else Restoration(result)
     }
 
+    /** Vrai si [candidate] contient au moins autant de fois chaque lettre accentuée de [typed] (« größer » pour « grösser », pas « großer »). */
+    private fun keepsTypedAccents(typed: String, candidate: String): Boolean {
+        for (c in typed) {
+            if (c in 'a'..'z') continue
+            if (candidate.count { it == c } < typed.count { it == c }) return false
+        }
+        return true
+    }
+
     /** Vrai si [lower] est une forme régulière (voir [InflectionRules]) d'un mot du dictionnaire. */
     private fun isInflectedForm(lower: String): Boolean = inflections.rules.any { rule ->
         // Une base qui est une faute du corpus (« duree ») ne valide pas sa forme fléchie (« durees »).
-        rule.baseOf(lower)?.let { it in frequencies && it !in dominatedByAccented } == true
+        rule.baseOf(lower)?.let {
+            it in frequencies && it !in dominatedByAccented && frequencies.getValue(it) >= inflections.minBaseFrequency &&
+                !isUndoubledConsonant(it, rule)
+        } == true
+    }
+
+    /**
+     * Allemand, proposition seulement (jamais appliquée d'office) : « Haus » + « tür » -> « Haustür ». Vrai composé si les deux mots sont des
+     * noms de la liste de noms (voir [properNameForm]) et si leur réunion, avec une liaison de [CompoundRules.links] au besoin
+     * (« Arbeit » + « zimmer » -> « Arbeitszimmer »), est un mot des listes ou un composé valide. Parmi plusieurs liaisons valides, la plus
+     * fréquente l'emporte. Le composé est un nom : majuscule initiale, le second mot passe en minuscules. Null : rien à proposer.
+     *
+     * Limite : la liste de noms contient aussi des prénoms, « Herr Thomas » peut donc être proposé en « Herrthomas » si les deux sont connus.
+     */
+    fun compoundMergeFor(first: String, second: String): String? {
+        val rules = inflections.compounds ?: return null
+        if (first.length < MIN_MERGE_PART_LENGTH || second.length < MIN_MERGE_PART_LENGTH) return null
+        if (!first.all { it.isLetter() } || !second.all { it.isLetter() }) return null
+        val firstLower = first.lowercase()
+        val secondLower = second.lowercase()
+        if (firstLower !in exactNames || secondLower !in exactNames) return null
+        var best: String? = null
+        var bestFrequency = -1L
+        for (link in rules.links) {
+            val merged = firstLower + link + secondLower
+            val frequency = frequencies[merged] ?: 0L
+            val known = frequency >= nameFrequency && merged !in dominatedByAccented
+            if (!known && !isCompoundForm(merged)) continue
+            if (frequency > bestFrequency) {
+                bestFrequency = frequency
+                best = first.replaceFirstChar { it.uppercaseChar() } + link + secondLower
+            }
+        }
+        return best
+    }
+
+    /**
+     * Vrai si [lower] est un composé valide (voir [CompoundRules]) : au moins deux parties connues, et aucun mot fréquent à une faute de
+     * frappe (« krankenhauss » se découpe en « krankenhaus » + « s », mais reste une faute de « krankenhaus »). Un mot à chiffre ou apostrophe
+     * n'est jamais un composé.
+     */
+    private fun isCompoundForm(lower: String): Boolean {
+        val rules = inflections.compounds ?: return false
+        if (lower.length < 2 * rules.minPartLength || !lower.all { it.isLetter() }) return false
+        // Un mot des listes qui n'en diffère que par les accents, l'umlaut ou ß l'emporte sur le découpage : « grosszügig » est « großzügig »
+        // oublié, pas « gross » + « zügig » ; « gewissermassen » est « gewissermaßen ».
+        if (accentedByFolded[foldAccents(lower)]?.any { it != lower } == true || accentedByTranslit.containsKey(lower)) return false
+        if (!splitsIntoKnownParts(lower, rules)) return false
+        return searchCandidates(lower, 1, emptyMap(), null).best == null
+    }
+
+    /** Découpe [lower] en parties connues d'au moins [CompoundRules.minPartLength] lettres, reliées par une liaison de [CompoundRules.links]. */
+    private fun splitsIntoKnownParts(lower: String, rules: CompoundRules): Boolean {
+        val length = lower.length
+        val minPart = rules.minPartLength
+        // startsHere[i] : le début de [lower] jusqu'à i est découpé et une partie peut commencer en i.
+        val startsHere = BooleanArray(length + 1)
+        startsHere[0] = true
+        for (start in 0 until length) {
+            if (!startsHere[start]) continue
+            for (end in start + minPart..length) {
+                val part = lower.substring(start, end)
+                if ((frequencies[part] ?: 0L) < nameFrequency || part in dominatedByAccented) continue
+                if (end == length) {
+                    if (start > 0) return true
+                    continue
+                }
+                for (link in rules.links) {
+                    val next = end + link.length
+                    if (next <= length - minPart && lower.startsWith(link, end)) startsHere[next] = true
+                }
+            }
+        }
+        return false
+    }
+
+    /** « occur » + « ed » : la forme juste double le r (« occurred », connue) ; « occured » est une faute. Voir [InflectionRules.checksDoubledConsonant]. */
+    private fun isUndoubledConsonant(base: String, rule: InflectionRule): Boolean {
+        if (!inflections.checksDoubledConsonant || rule.baseEnding.isNotEmpty() || (rule.suffix != "ed" && rule.suffix != "ing")) return false
+        if (base.length < 3) return false
+        val last = base.last()
+        if (last in "aeiouwxy" || base[base.length - 2] !in "aeiou" || base[base.length - 3] in "aeiou") return false
+        return (base + last + rule.suffix) in frequencies
     }
 
     /**
@@ -637,6 +993,7 @@ class Dictionary private constructor(
 
     companion object {
         private const val MIN_WORD_LENGTH_FOR_CORRECTION = 2
+
         private const val DIGIT_SLIP_MIN_LENGTH = 4
 
         /** Élisions françaises (partie avant l'apostrophe, minuscules) : « l'ami », « qu'il », « jusqu'à ». */
@@ -666,21 +1023,11 @@ class Dictionary private constructor(
         /** Story 1.17 : nombre d'emplacements de mots de la bande de suggestions. */
         const val SUGGESTION_LIMIT = 3
 
-        /**
-         * Une forme sans accent déjà présente dans les listes est corrigée si sa version accentuée
-         * est au moins 10 fois plus fréquente (« ca » 190 000 contre « ça » 2 700 000). Seuil des paires
-         * « e / é » finales (« tue / tué »), où la forme sans accent est un vrai mot.
-         */
-        private const val ACCENT_DOMINANCE = 10L
+        /** Longueur minimale du début tapé pour proposer des complétions malgré une faute ([fuzzyCompletions]). */
+        private const val FUZZY_MIN_PREFIX = 4
 
-        /**
-         * Seuil des autres paires : la forme accentuée est au moins 2 fois plus fréquente (« ecoute » 38 000 contre
-         * « écoute » 82 000, « grace » contre « grâce »). Les formes sans accent y sont des fautes du corpus.
-         */
-        private const val SOFT_ACCENT_DOMINANCE = 2L
-
-        /** Formes sans accent qui sont de vrais mots (« une tache » n'est pas « une tâche ») : jamais corrigées pour leur accent. */
-        private val PLAIN_WORDS_KEPT = setOf("tache", "taches")
+        /** Pénalité d'une erreur d'édition dans le score unique quand la proximité des touches est inconnue (voir [searchCandidates]). */
+        private const val NO_PROXIMITY_EDIT_PENALTY = 40.0
 
         /** Une contraction écrite sans apostrophe est corrigée si la contraction est au moins 100 fois plus fréquente. */
         private const val CONTRACTION_DOMINANCE = 100L
@@ -703,17 +1050,13 @@ class Dictionary private constructor(
         /** Nombre maximal de formes accentuées proposées en tête de la bande de suggestions. */
         private const val MAX_ACCENT_VARIANTS = 2
 
-        /** Vrai si [accented] ne diffère de [plain] que par un « é » final (ou avant un « s » final) : « tue » / « tué ». */
-        private fun isParticipleVariant(plain: String, accented: String): Boolean {
-            if (plain.length != accented.length) return false
-            val index = if (plain.endsWith("s")) plain.length - 2 else plain.length - 1
-            return index >= 0 && plain[index] == 'e' && accented == plain.substring(0, index) + "é" + plain.substring(index + 1)
-        }
-
         /** Une forme fléchie retrouvée par les règles compte pour 1/4 de la fréquence de son mot de base. */
         private const val INFLECTED_FREQUENCY_DIVISOR = 4L
 
         /** Distance d'édition maximale selon la longueur du mot tapé : 1 pour 4 lettres ou moins. */
+        /** Une partie plus courte qu'un mot (« Bus », « Tür ») reste possible dans une proposition de composé ; moins, non. */
+        private const val MIN_MERGE_PART_LENGTH = 3
+
         private fun maxDistanceForLength(length: Int): Int = if (length <= 4) 1 else Int.MAX_VALUE
 
         /**
@@ -725,6 +1068,8 @@ class Dictionary private constructor(
          * [letterPrefilter] : pré-filtre par les lettres de la recherche par distance d'édition (résultat identique,
          * beaucoup plus rapide) ; désactivable uniquement pour mesurer ou comparer.
          * [properNames] : prénoms et noms propres courants avec leur majuscule (voir [properNameForm]).
+         * [confidence] : décision de déclenchement (phase 3, voir [CorrectionConfidence]) ; par défaut, le comportement
+         * d'avant la phase 3 (seule une égalité stricte bloque la correction).
          */
         fun withFrequencies(
             entries: Map<String, Long>,
@@ -733,17 +1078,20 @@ class Dictionary private constructor(
             proximity: KeyProximity = KeyProximity.NONE,
             letterPrefilter: Boolean = true,
             properNames: Collection<String> = emptyList(),
+            confidence: CorrectionConfidence = CorrectionConfidence.NONE,
+            accentPolicy: AccentPolicy = AccentPolicy.FRENCH,
+            ngrams: NgramModel = NgramModel.EMPTY,
         ): Dictionary {
             // Liste déjà en minuscules (cas des listes de l'application) : pas de copie, ce qui évite de
             // doubler la mémoire avec une liste complète de plusieurs centaines de milliers de mots.
-            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames)
+            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence, accentPolicy, ngrams)
             val merged = HashMap<String, Long>(entries.size)
             entries.forEach { (word, count) ->
                 val key = word.lowercase()
                 val previous = merged[key]
                 if (previous == null || count > previous) merged[key] = count
             }
-            return Dictionary(merged, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames)
+            return Dictionary(merged, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence, accentPolicy, ngrams)
         }
 
         // Relais vers EditDistance et WordForms (audit 2.1, étape 6) : l'API de Dictionary reste celle d'avant.
@@ -762,6 +1110,10 @@ class Dictionary private constructor(
 
         fun parseFrequencyLines(lines: Sequence<String>, minFrequency: Long = 0L): Map<String, Long> =
             WordForms.parseFrequencyLines(lines, minFrequency)
+
+        /** Lecture rapide d'un fichier de fréquences entier (voir [WordForms.parseFrequencyBytes]). */
+        fun parseFrequencyBytes(bytes: ByteArray, minFrequency: Long = 0L, expectedEntries: Int = 0): Map<String, Long> =
+            WordForms.parseFrequencyBytes(bytes, minFrequency, expectedEntries)
 
         fun applyOriginalCasing(original: String, correction: String): String =
             WordForms.applyOriginalCasing(original, correction)

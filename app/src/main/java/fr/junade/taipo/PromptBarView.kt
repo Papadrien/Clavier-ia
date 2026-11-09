@@ -6,7 +6,6 @@ import android.animation.PropertyValuesHolder
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.text.SpannableStringBuilder
@@ -224,7 +223,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         expandChildTouchTargets()
 
         // Bouton rond : envoyer au repos, stop pendant la génération.
-        sendButton.imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
+        sendButton.imageTintList = style.contentTint(SEND_COLOR) // lot T6 : flèche blanche sur le violet (renderSendButton la suit)
         sendButton.scaleType = ImageView.ScaleType.CENTER_INSIDE
         // L'icône se centre sur la face du bouton rond, au-dessus de l'épaisseur d'ombre.
         val shadow = dimen(R.dimen.taipo_key_shadow_height).toInt()
@@ -387,6 +386,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         chatShown = shown
         chatIcon.setShown(shown, animate = !firstCall)
         chatToggleButton.background = if (shown) chatShownBackground else chatHiddenBackground
+        chatToggleButton.imageTintList = style.contentTint(if (shown) ACCENT_COLOR else BUTTON_COLOR)
     }
 
     /** Même alignement que [CorrectionBarView] : sur la zone centrée des touches en classe large. */
@@ -407,6 +407,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         val appearance = BarVisibility.voiceAppearance(voiceState)
         voiceButton.contentDescription = context.getString(appearance.label)
         voiceButton.background = voiceBackgrounds.getOrPut(appearance.background) { style.roundBackground(appearance.background) }
+        voiceButton.imageTintList = style.contentTint(appearance.background) // lot T6 : blanc sur le rouge ou le violet
         voiceButton.alpha = appearance.alpha
         micIcon.setMode(MicIconMode.of(voiceState), animate = isLaidOut)
     }
@@ -443,6 +444,8 @@ class PromptBarView(context: Context) : LinearLayout(context) {
             else -> SendIconMode.SEND
         }
         sendIcon.setMode(iconMode, animate = isLaidOut)
+        // Lot T6 : l'icône suit la face (flèche blanche sur le violet d'envoi, couleur du texte sur le gris du stop).
+        sendButton.imageTintList = style.contentTint(if (stopping || generating) STOP_COLOR else SEND_COLOR)
         if (stopping) {
             sendButton.background = stopBackground
             sendButton.contentDescription = context.getString(R.string.prompt_stopping_description)

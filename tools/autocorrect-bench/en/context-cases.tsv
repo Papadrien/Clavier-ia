@@ -1,0 +1,91 @@
+# category<TAB>typed text<TAB>expected text after autocorrection (word by word, as typed on the keyboard)
+# Cases that fail today are TARGETS; they are listed in baseline.txt.
+its-it's	Its a beautiful day.	It's a beautiful day.
+its-it's	Its going to rain tomorrow.	It's going to rain tomorrow.
+its-it's	Its been a long week.	It's been a long week.
+its-it's	I think its not a good idea.	I think it's not a good idea.
+its-it's	The dog wagged it's own tail.	The dog wagged its own tail.
+its-it's	The company lost it's own way.	The company lost its own way.
+its-it's	Its the best movie ever.	It's the best movie ever.
+its-it's	In it's entirety the plan works.	In its entirety the plan works.
+your-you're	Your welcome to stay.	You're welcome to stay.
+your-you're	Your going to love it.	You're going to love it.
+your-you're	I think your not ready.	I think you're not ready.
+your-you're	Your a great friend.	You're a great friend.
+your-you're	Your so kind to help.	You're so kind to help.
+your-you're	Is that you're own car?	Is that your own car?
+your-you're	You're phone is ringing.	Your phone is ringing.
+their-there	Their is a book on the table.	There is a book on the table.
+their-there	Their are many reasons to go.	There are many reasons to go.
+their-there	Their was nobody home.	There was nobody home.
+their-there	Is there own house big?	Is their own house big?
+their-there	There friends are coming.	Their friends are coming.
+their-there	I think there parents are nice.	I think their parents are nice.
+their-there	They're own plan failed.	Their own plan failed.
+their-there	They're is a problem here.	There is a problem here.
+their-there	There going to be late.	They're going to be late.
+their-there	If their going to leave, tell me.	If they're going to leave, tell me.
+their-there	I went over their yesterday.	I went over there yesterday.
+to-too	It is to late to call.	It is too late to call.
+to-too	There are to many cars.	There are too many cars.
+to-too	That costs to much.	That costs too much.
+to-too	I want too go home.	I want to go home.
+to-too	She needs too be careful.	She needs to be careful.
+to-too	Its to early to tell.	It's too early to tell.
+then-than	She is taller then me.	She is taller than me.
+then-than	I would rather walk then drive.	I would rather walk than drive.
+then-than	It costs more then I thought.	It costs more than I thought.
+then-than	We ate and than we left.	We ate and then we left.
+then-than	Than we went home.	Then we went home.
+then-than	This is better then I expected.	This is better than I expected.
+lose-loose	Dont loose your keys.	Don't lose your keys.
+lose-loose	I will loose weight this year.	I will lose weight this year.
+lose-loose	We might loose the game.	We might lose the game.
+lose-loose	The screw is to lose.	The screw is too loose.
+lose-loose	Let the dog lose in the park.	Let the dog loose in the park.
+whose-who's	Whose coming to dinner?	Who's coming to dinner?
+whose-who's	Whose going to the party?	Who's going to the party?
+whose-who's	Who's coat is this?	Whose coat is this?
+whose-who's	Who's turn is it?	Whose turn is it?
+whose-who's	Who's idea was that?	Whose idea was that?
+modal-of	You should of called me.	You should have called me.
+modal-of	I could of helped you.	I could have helped you.
+modal-of	They would of won.	They would have won.
+modal-of	She must of left already.	She must have left already.
+a-an	I ate a apple.	I ate an apple.
+a-an	She has a idea.	She has an idea.
+a-an	He needs a umbrella.	He needs an umbrella.
+a-an	It was a easy test.	It was an easy test.
+a-an	We saw a elephant.	We saw an elephant.
+a-an	Take a orange with you.	Take an orange with you.
+a-an	Wait a hour please.	Wait an hour please.
+capital-i	i think so.	I think so.
+capital-i	Yesterday i went home.	Yesterday I went home.
+capital-i	i'm tired today.	I'm tired today.
+capital-i	Maybe i'll call you.	Maybe I'll call you.
+capital-i	i've seen this before.	I've seen this before.
+capital-i	Im happy to see you.	I'm happy to see you.
+capital-i	Ive lost my keys.	I've lost my keys.
+glued-words	Thanks alot for everything.	Thanks a lot for everything.
+glued-words	I like it alot.	I like it a lot.
+glued-words	We need atleast two people.	We need at least two people.
+glued-words	They help eachother.	They help each other.
+glued-words	We went there aswell.	We went there as well.
+apostrophe	I dont know.	I don't know.
+apostrophe	We cant wait.	We can't wait.
+apostrophe	Thats what she said.	That's what she said.
+apostrophe	They arent here.	They aren't here.
+apostrophe	It wasnt me.	It wasn't me.
+apostrophe	Lets go home.	Let's go home.
+apostrophe	She didnt call.	She didn't call.
+apostrophe	Youre right.	You're right.
+typo	Teh cat sat on the mat.	The cat sat on the mat.
+typo	I recieve many emails.	I receive many emails.
+typo	This is definately true.	This is definitely true.
+typo	See you tommorow.	See you tomorrow.
+typo	That was a grate movie.	That was a great movie.
+typo	Wich one do you want?	Which one do you want?
+typo	Thier house is nice.	Their house is nice.
+typo	I realy like it.	I really like it.
+typo	Can you beleive it?	Can you believe it?
+typo	It was freind.	It was friend.

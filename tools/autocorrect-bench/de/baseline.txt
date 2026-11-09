@@ -1,0 +1,71 @@
+# Référence du banc d'autocorrection (docs/autocorrection-bench.md). Générée par `main --write-baseline`.
+# À régénérer volontairement quand une phase de la refonte change le comportement, jamais pour masquer une régression.
+[metrics]
+typos.courants.voisine.ok=94.3
+typos.courants.oubli.ok=82.1
+typos.courants.doublon.ok=98.2
+typos.courants.inversion.ok=99.5
+typos.courants.ajout.ok=98.6
+typos.courants.accent.ok=100.0
+typos.courants.apostrophe.ok=100.0
+typos.courants.ss-pour-eszett.ok=99.9
+typos.courants.ae-oe-ue.ok=99.7
+typos.courants.ok=96.92
+typos.courants.missed=0.0
+typos.courants.wrong=3.08
+typos.courants.surMotValide=32.04
+typos.varies.voisine.ok=95.4
+typos.varies.oubli.ok=86.7
+typos.varies.doublon.ok=98.0
+typos.varies.inversion.ok=98.9
+typos.varies.ajout.ok=98.1
+typos.varies.accent.ok=99.7
+typos.varies.apostrophe.ok=100.0
+typos.varies.ss-pour-eszett.ok=99.5
+typos.varies.ae-oe-ue.ok=99.1
+typos.varies.ok=97.27
+typos.varies.missed=0.01
+typos.varies.wrong=2.72
+typos.varies.surMotValide=6.45
+valides.courants.faux=0.0
+valides.courants.restaure=7.76
+valides.varies.faux=0.02
+valides.varies.restaure=3.74
+longues.courants.deux.ok=94.0
+longues.courants.deux.wrong=6.0
+longues.courants.trois.ok=0.0
+longues.courants.trois.wrong=8.67
+longues.varies.deux.ok=90.33
+longues.varies.deux.wrong=9.0
+longues.varies.trois.ok=0.0
+longues.varies.trois.wrong=7.33
+inconnus.courants.faux=97.67
+inconnus.varies.faux=78.0
+composes.rares.faux=11.8
+composes.rares.restaure=0.2
+phrases.justes.changees=0.0
+contexte.umlaut.ok=94.12
+contexte.eszett.ok=92.31
+contexte.translit.ok=100.0
+contexte.nomen.ok=100.0
+contexte.vorname.ok=100.0
+contexte.seid-seit.ok=85.71
+contexte.wir-wie.ok=42.86
+contexte.wurde-würde.ok=66.67
+contexte.das-dass.ok=100.0
+contexte.mal-Mal.ok=100.0
+contexte.tageszeit.ok=100.0
+contexte.tippfehler.ok=93.33
+contexte.total.ok=91.45
+[failing-cases]
+umlaut	Ich mochte ein Glas Wasser.
+eszett	Er ist grosser als ich.
+seid-seit	Seit ihr schon fertig?
+wir-wie	Wie gehen jetzt nach Hause.
+wir-wie	Gestern waren wie im Kino.
+wir-wie	Heute essen wie zu Hause.
+wir-wie	Wie können morgen kommen.
+wurde-würde	Ich wurde das nie tun.
+wurde-würde	Sie wurden gern früher gehen.
+tippfehler	Ich möchte einen Kaffe.
+[changed-sentences]

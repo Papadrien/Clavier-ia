@@ -109,3 +109,107 @@ une majuscule garde sa graphie (« Eric » reste « Eric »). Les prénoms rares
 Règle de la liste : jamais un prénom qui est aussi un mot courant de la langue (fr : pierre, jean, rose, claire, marine, jade,
 noël, clément ; en : will, mark, bill, rose, grace, hope, april, may, june, jack ; es : alba, pilar, ángel, tomás ; it : rosa,
 aurora ; nl : roos, wil, iris...), sinon un mot ordinaire serait mis en majuscule à tort.
+
+== fr.txt : enrichissement du 04/11/2026 (tools/enrich_fr_dictionary.py) ==
+Liste de départ : fr.txt du 10/10/2026 (729 092 lignes). Résultat : 735 098 lignes, 9 155 137 octets.
+Sources de référence consultées pour valider des mots : listes de mots de Gboard et de SwiftKey pour le français (extraites
+par l'auteur). Elles ne servent qu'à décider si un mot existe ; les fréquences ne viennent pas d'elles.
+ - 6 006 mots ajoutés et 8 293 mots de fr.txt vus moins de 5 fois (ignorés au chargement) relevés à 20 (une seule liste) ou 60
+   (les deux listes, ou les 20 000 mots principaux de SwiftKey). Toujours < 100 : valides, jamais proposés en correction.
+ - Non ajoutés : noms propres et sigles (26 799), élisions dont le mot collé est connu (le clavier les traite), pluriels s/x/aux
+   déjà reconnus, mots dont la forme accentuée entre en collision avec un mot chargé (653), fautes de frappe plausibles selon la
+   règle de PruneDictionaryTypos (353).
+ - 1 196 mots de fréquence >= 100 absents des deux listes et anglais (ou débris) passent à 99 : toujours valides, plus proposés.
+   Aucun mot n'est supprimé. Détail : docs/dictionnaire-fr-2026-11-04/.
+Mesures : mots chargés (>= 5) 237 405 -> 251 704 ; candidats (>= 100) 49 941 -> 48 745 ; couverture des mots de référence en
+minuscules 83,3 % -> 98,9 %. Banc d'autocorrection (tools/autocorrect-bench) non exécuté.
+
+=== Listes de secours _50k supprimées — 04/11/2026 ===
+Les listes <code>_50k.txt (fr, en, es, de, it, pt, nl) citées plus haut n'existent plus : elles n'étaient lues que si la liste
+complète ne se chargeait pas faute de mémoire. Le repli relit maintenant <code>.txt en ne gardant que les mots de fréquence >=
+DictionaryLoader.candidateMinFrequency (fr 100, en 149, es 183, de 61, it 102, pt 91, nl 77), soit ~50 000 mots : les mêmes que
+ceux proposés en correction (vérifié par DictionaryAssetsIntegrityTest). Les fichiers _50k déjà téléchargés sont supprimés de
+l'appareil au chargement suivant (DictionaryFiles.deleteObsoleteBackup). Sur le bucket R2, dictionaries/<code>_50k.txt peuvent être
+supprimés une fois les anciennes versions de l'app retirées (elles les téléchargent encore).
+
+== en.txt : nettoyage du 05/11/2026 (tools/clean_en_dictionary.py) ==
+Liste de départ : en.txt du 12/10/2026 (335 385 lignes). Résultat : 133 339 lignes, 1 606 387 octets.
+Sources de référence consultées pour valider des mots : lexiques de mots de Gboard pour l'anglais des États-Unis, du Royaume-Uni,
+du Canada et de l'Australie (extraits par l'auteur). Ils servent seulement à décider si un mot existe, et ne sont pas redistribués ;
+les fréquences restent celles du corpus OpenSubtitles.
+ - 202 050 mots retirés : absents des quatre lexiques ET vus moins de 1 000 fois. Ce sont surtout des fautes de frappe et des
+   fusions de sous-titres (« wouidn », « ofyour », « son-in-iaw »), qui étaient « valides » et donc jamais corrigées. Les formes
+   des quatre variantes régionales sont toutes gardées (colour / color, labelled / labeled).
+ - 74 mots très fréquents que les lexiques ignorent sont gardés (« mm-hmm », « uh-oh », « aah », « señor »...). Fautes courantes
+   que les lexiques acceptent à tort (« wich », « occured », « recieve »...) retirées. Mots soudés corrigés par EnglishConfusions
+   (« alot », « atleast »...) gardés à la fréquence 20 : valides, jamais proposés.
+ - Aucune fréquence modifiée, aucun mot ajouté (option --add testée : +72 000 mots en mémoire pour 0,3 à 0,5 point de moins sur
+   les fautes de frappe, non retenue). Détail des retraits : relancer l'outil (écrit pruned.txt et kept-unlisted.txt).
+Mesures (banc `--lang=en`) : mots chargés 335 385 -> 133 339 ; fautes courantes bien corrigées 92,43 -> 93,22 %, mal corrigées
+3,40 -> 2,92 % ; chargement du dictionnaire 510 -> 306 ms. Seuil de proposition (149) inchangé : 46 860 mots.
+
+es.txt (05/11/2026) : liste OpenSubtitles nettoyée par tools/clean_es_dictionary.py avec des lexiques de clavier (es_ES, es_419, es_MX, es_US) comme
+validateurs seulement : aucun mot ni aucune fréquence n'en est repris. 335 938 -> 147 805 mots ; détail dans docs/dictionnaire-es-2026-11-05/.
+
+== de.txt : nettoyage du 06/11/2026 (tools/clean_de_dictionary.py) ==
+Liste de départ : de.txt du 13/10/2026 (240 489 lignes). Résultat : 117 170 lignes.
+Sources de référence consultées pour valider des mots : lexiques de mots de Gboard pour l'allemand d'Allemagne, d'Autriche et de
+Belgique (extraits par l'auteur). Ils servent seulement à décider si un mot existe, et ne sont pas redistribués ; les fréquences restent
+celles du corpus OpenSubtitles. Aucune fréquence modifiée (sauf mots anglais ramenés à 20), aucun mot ajouté.
+ - 122 108 mots retirés : absents des lexiques ET vus moins de 1 000 fois (fautes de frappe, fusions de sous-titres), sauf 636 composés
+   plausibles gardés à 20 (valides, jamais proposés) ;
+ - 880 formes sans umlaut retirées (fur, konnen, mude : Dictionary les rétablit), 175 en ancienne orthographe (laß, mußt), 74 OCR
+   (lhr, lhre, lhnen), 82 débris (chffffff) ; 14 515 mots anglais passés à la fréquence 20.
+Seuil de proposition de l'allemand : 61 -> 41 (50 158 mots). Détail : docs/dictionnaire-de-2026-11-06/.
+
+=== Allemand : noms communs et prénoms (names/de.txt) — 06/11/2026 (phase 3 du plan d'autocorrection allemande) ===
+names/de.txt contient maintenant, en plus des prénoms, des noms communs allemands avec leur majuscule (Haus, Auto, Zeit, Krankenhaus...) :
+le moteur les traite comme les prénoms (« haus » -> « Haus », « hauss » -> « Haus », « Strasse » -> « Straße »). Pas de réglage ni de majuscule par contexte.
+Construit par tools/build_de_names.py à partir de tools/de-names/vornamen.txt (prénoms d'origine), tools/de-names/nomen-seed.txt (noms de départ,
+écrits à la main, rien copié d'une source) et, plus tard, d'un corpus allemand qui garde la casse (décision D2, au moment de travailler les
+dictionnaires). Les lexiques de clavier de_DE, de_AT et de_BE ne servent qu'à RETIRER des mots (forme en minuscules aussi valide : essen/Essen,
+nom en -e dont « minuscule + n » est un verbe : Frage/fragen) ; aucun mot ni aucune fréquence n'en est repris. 442 entrées (11 retirées).
+Les noms dont la forme en minuscules est un mot courant (Essen, Liebe, Frage, Reise, Recht, Weg, Klasse, Arm...) sont volontairement absents.
+
+
+=== Allemand : extension de la liste de noms (names/de.txt) — 07/11/2026 ===
+names/de.txt passe de 442 à 1 884 entrées (prénoms et noms communs avec leur majuscule, singuliers et pluriels courants : Haus/Häuser, Tag/Tage, Auge/Augen...).
+Sources : noms choisis à la main parmi les mots les plus fréquents de de.txt (rien copié d'une liste tierce) ; chaque forme a été vérifiée présente dans de.txt.
+Ajouts : 1 161 noms dans tools/de-names/nomen-seed.txt, 282 prénoms (allemands et internationaux courants) dans tools/de-names/vornamen.txt ; reconstruit par
+tools/build_de_names.py. Aucun corpus avec casse ni lexique de clavier n'était disponible pour ce lot : les filtres « ambigu » et « verbe » n'ont PAS tourné.
+Écartés à la main : noms dont la forme en minuscules est aussi un verbe, un adjectif, un adverbe ou une particule courants (Essen, Leben, Liebe, Glaube, Stelle,
+Frage, Waren, Krieg, Klasse, Fest, Paar, Wert, Stolz, Morgen, Alter, Folgen, Sorgen, Spiele, Treffen, Weg, Junge, Schlaf...). Les 10 noms que les lexiques avaient retirés
+(Arm, Junge, Klasse, Kosten, Laden, Regen, Rücken, Schmerzen, Stimme, Weg) restent absents, plus Schlaf (« schlaf » est dans sentences-ok.txt).
+
+
+=== Bigrammes français et anglais (bigrams/fr.txt, bigrams/en.txt) — 07/11/2026 ===
+Source : phrases du corpus collaboratif Tatoeba (https://tatoeba.org), exports « per_language » fra_sentences.tsv.bz2 et
+eng_sentences.tsv.bz2 du 07/11/2026, licence CC BY 2.0 FR (attribution requise : mention ajoutée dans l'écran « Licences »).
+Produits par tools/build_ngrams.py : seuls les comptes de paires de mots consécutifs (et le total de chaque mot comme contexte) sont
+conservés, pas les phrases ; mots du dictionnaire de la langue seulement ; paires vues au moins 2 fois ; au plus 400 000 paires
+(fr : 255 111, en : 400 000). Une phrase sur 50 n'est jamais comptée : elle sert au banc (tools/autocorrect-bench/heldout/<code>.txt,
+2 000 phrases Tatoeba par langue, même licence). Voir docs/autocorrection-roadmap.md.
+
+
+=== Italien, portugais, néerlandais : listes réparées et bigrammes (it.txt, pt.txt, nl.txt, bigrams/) — 07/11/2026 ===
+tools/complete_from_tatoeba.py, à partir des mêmes phrases Tatoeba (CC BY 2.0 FR) que les bigrammes :
+- ajoutés : mots à apostrophe vus au moins 50 fois (it : 282, dont c'è, dov'è, l'ho ; nl : zo'n, m'n, z'n) et quelques mots courants
+  absents (it : un ; pt : agente, d'água) ; fréquence = nombre Tatoeba x rapport médian liste / Tatoeba ;
+- rétrogradés à la fréquence 1 (sous le seuil de validité) : formes sans accent que Tatoeba n'emploie presque jamais (moins de 0,5 % de
+  la forme accentuée vue au moins 20 fois) : it 342 (piu, cosi, citta...), pt 1 094 (nao, voce, tambem...), nl 24 (cafe, israel...) ;
+  fautes d'accent italiennes (perchè, finchè, poichè...) ;
+- gardés valides à la fréquence 5 (remplacés par les règles de contexte) : qual'è, qual'era ; concerteza, derrepente, apartir, porisso, denovo.
+Bigrammes it (280 356 paires), pt (201 915), nl (87 976) : tools/build_ngrams.py. Voir docs/autocorrection-roadmap.md.
+
+
+=== Les sept listes alignées sur AOSP et LibreOffice — 08/11/2026 ===
+tools/align_open_lexicons.py (voir docs/autocorrection-roadmap.md et docs/dictionnaires-2026-11-08/) :
+- AJOUTS : mots des listes du clavier AOSP (Android Open Source Project, Apache License 2.0, publiées par HeliBoard :
+  https://codeberg.org/Helium314/aosp-dictionaries ; main_fr, main_en_US, main_en_GB, main_es, main_de__legacy, main_it, main_pt_PT,
+  main_nl) de note f >= 30, absents de la liste ; fréquence calculée par Taipo. Attribution : « Portions © The Android Open Source
+  Project, Apache License 2.0 » (mention dans l'écran « Licences »).
+- RETRAITS : mots inconnus d'AOSP et des dictionnaires Hunspell de LibreOffice (https://github.com/LibreOffice/dictionaries, utilisés
+  seulement pour vérifier, rien n'en est recopié), de fréquence < 1 000, qui sont une faute d'accent, une faute de frappe d'un mot au moins
+  50 fois plus fréquent, ou un mot anglais dans une autre langue. main_pt_BR (licence non vérifiée) sert seulement à vérifier.
+- Retirés / ajoutés : fr 35 643 / 54 454 ; en 12 161 / 16 496 ; es 12 247 / 50 780 ; de 9 754 / 120 540 ; it 32 034 / 66 277 ;
+  pt 26 775 / 58 315 ; nl 27 632 / 54 685. Bigrammes fr, en, it, pt, nl reconstruits sur le nouveau vocabulaire.

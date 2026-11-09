@@ -75,7 +75,7 @@ class SuggestionPolicyTest {
     }
 
     @Test
-    fun `la puce de collage est proposee partout sauf dans les mots de passe`() {
+    fun `la puce de collage est proposee dans tout champ de texte, mots de passe compris`() {
         listOf(
             text,
             text or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS,
@@ -87,8 +87,11 @@ class SuggestionPolicyTest {
             InputType.TYPE_TEXT_VARIATION_PASSWORD,
             InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD,
             InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD,
-        ).forEach { assertFalse(SuggestionPolicy.allowsPasteSuggestion(text or it), "variation $it") }
+        ).forEach { assertTrue(SuggestionPolicy.allowsPasteSuggestion(text or it), "variation $it") }
+        // Code PIN (mot de passe numérique) : oui ; autre champ numérique, téléphone : non.
+        assertTrue(SuggestionPolicy.allowsPasteSuggestion(InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD))
         assertFalse(SuggestionPolicy.allowsPasteSuggestion(InputType.TYPE_CLASS_NUMBER))
+        assertFalse(SuggestionPolicy.allowsPasteSuggestion(InputType.TYPE_CLASS_PHONE))
         assertFalse(SuggestionPolicy.allowsPasteSuggestion(0))
     }
 

@@ -16,7 +16,7 @@ import org.w3c.dom.Element
  * - toute ressource référencée (XML ou Kotlin) existe : une couleur, une dimension, une icône ou un texte renommé
  *   pendant la refonte ferait sinon planter l'application à l'exécution (`Resources.NotFoundException`) ou casser
  *   la compilation ;
- * - la palette de nuit ne déclare aucun nom absent de la palette de jour.
+ * - les palettes de jour (claire) et de nuit (sombre) du clavier déclarent exactement les mêmes noms.
  */
 class RefonteResourcesRegressionTest {
 
@@ -127,7 +127,7 @@ class RefonteResourcesRegressionTest {
     }
 
     @Test
-    fun `la palette de nuit ne declare aucun nom absent de la palette de jour`() {
+    fun `les palettes de jour et de nuit declarent les memes noms`() {
         fun names(file: File): Set<String> {
             val colors = parse(file).getElementsByTagName("color")
             return (0 until colors.length).map { (colors.item(it) as Element).getAttribute("name") }.toSet()
@@ -135,6 +135,7 @@ class RefonteResourcesRegressionTest {
         val day = names(File(res, "values/colors.xml"))
         val night = names(File(res, "values-night/colors.xml"))
         assertTrue((night - day).isEmpty(), "Couleurs de nuit sans couleur de jour : ${night - day}")
+        assertTrue((day - night).isEmpty(), "Couleurs de jour sans couleur de nuit : ${day - night}")
     }
 
     @Test

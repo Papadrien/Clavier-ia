@@ -5,6 +5,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.os.Handler
@@ -14,6 +15,7 @@ import android.view.View
 import android.view.ViewConfiguration
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import fr.junade.taipo.dictionary.NextLetterModel
 import kotlin.math.roundToInt
 
 @SuppressLint("ViewConstructor")
@@ -61,10 +63,15 @@ class KeyboardView(context: Context) : View(context) {
         defaultFocusHighlightEnabled = false
     }
 
+    // Revue de code (performance) : l'IME repose la disposition à chaque touche et à chaque déplacement du curseur
+    // (applyState). Les dispositions sont des instances en cache (Keyboards) : la même instance ne relance ni le calcul des
+    // zones, ni l'arbre d'accessibilité, ni surtout une mise en page complète de la vue.
     var layout: KeyboardLayout = Keyboards.letters
         set(value) {
+            if (field === value) return
             field = value
             slotCache = null
+            zones = computeZones()
             accessibility.invalidateRoot()
             invalidate()
             requestLayout()
@@ -94,6 +101,65 @@ class KeyboardView(context: Context) : View(context) {
             invalidate()
         }
 
+    /**
+     * Mode une main : zone des touches serrée contre un bord (voir [KeyboardWidth]). Les panneaux (emoji, Smart Clipboard)
+     * suivent cette zone via [KeyboardStackLayout] ; la barre du haut garde toute la largeur. La zone libre est inerte, sauf
+     * ses deux boutons (changer de côté, quitter le mode : voir [OneHandedControls]).
+     */
+    var oneHandedMode: OneHandedMode = OneHandedMode.DEFAULT
+        set(value) {
+            if (field == value) return
+            val previous = field
+            field = value
+            if (value.isActive) controlsMode = value
+            onKeyZoneChanged()
+            moveOneHanded(previous)
+        }
+
+    /** Largeur de la zone des touches en mode une main, en % de la largeur normale ([OneHandedWidth]). */
+    var oneHandedWidthPercent: Int = OneHandedWidth.DEFAULT_PERCENT
+        set(value) {
+            val clamped = OneHandedWidth.clamp(value)
+            if (field == clamped) return
+            field = clamped
+            oneHandedTransition.stop()
+            onKeyZoneChanged()
+        }
+
+    /**
+     * Mode une main : la zone des touches et les boutons ronds passent d'un état à l'autre en ressort (voir [OneHandedTransition]).
+     * Pas d'animation si les animations sont coupées dans les réglages système, ni si la vue n'est pas affichée : changement direct.
+     */
+    private fun moveOneHanded(previous: OneHandedMode) {
+        if (width <= 0 || !isShown || !ValueAnimator.areAnimatorsEnabled()) {
+            oneHandedTransition.stop()
+            return
+        }
+        val density = resources.displayMetrics.density
+        val available = width.toFloat()
+        val from = KeyboardWidth.forAvailableWidth(available, density, previous, oneHandedWidthPercent)
+        val to = KeyboardWidth.forAvailableWidth(available, density, oneHandedMode, oneHandedWidthPercent)
+        oneHandedTransition.moveTo(previous, oneHandedMode, from, to, controlsCenterX(previous, from), controlsCenterX(oneHandedMode, to))
+        invalidate()
+    }
+
+    /** Centre horizontal des boutons ronds dans la zone libre d'un mode actif ([zone] : zone des touches de ce mode). */
+    private fun controlsCenterX(mode: OneHandedMode, zone: KeyboardWidth): Float = when (mode) {
+        OneHandedMode.LEFT -> (zone.rightPx + width) / 2f
+        OneHandedMode.RIGHT -> zone.leftPx / 2f
+        OneHandedMode.OFF -> 0f
+    }
+
+    /** La zone des touches a changé : géométrie recalculée, bulle ouverte fermée (elle serait mal placée). */
+    private fun onKeyZoneChanged() {
+        contentCache = null
+        slotCache = null
+        keyPreview.key = null
+        dismissPopup()
+        accessibility.invalidateRoot()
+        invalidate()
+    }
+
     // Story 1.13 : orientation courante, qui détermine les dimensions verticales (KeyboardMetrics).
     private var isLandscape: Boolean =
         context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -112,6 +178,7 @@ class KeyboardView(context: Context) : View(context) {
 
     var isShifted: Boolean = false
         set(value) {
+            if (field == value) return
             field = value
             accessibility.invalidateRoot()
             invalidate()
@@ -120,6 +187,7 @@ class KeyboardView(context: Context) : View(context) {
     /** Verrouillage des majuscules (double appui sur Maj) : une barre est dessinée sous la flèche. */
     var isCapsLock: Boolean = false
         set(value) {
+            if (field == value) return
             field = value
             accessibility.invalidateRoot()
             invalidate()
@@ -142,9 +210,34 @@ class KeyboardView(context: Context) : View(context) {
     // Lot 21 : tampon réutilisé (aucun RectF créé par frame) : l'emprise d'une touche pour les bulles.
     private val boundsScratch = RectF()
 
-    // Icône du globe (bulle d'Entrée) : les autres icônes de touche sont chargées par KeyRenderer.
+    // Icône globe (bulle d'Entrée, changement de langue) : les autres icônes de touche sont chargées par KeyRenderer.
     private val globeIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_key_globe)) { "Icône globe introuvable" }
         .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
+
+    // Icône du mode une main (bulle d'Entrée), teintée comme celle du globe.
+    private val oneHandedIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_key_one_hand)) { "Icône mode une main introuvable" }
+        .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
+
+    // Mode une main : boutons de la zone libre (changer de côté, quitter le mode), voir OneHandedControls.
+    private val oneHandedSwitchIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_one_hand_switch)) { "Icône changement de côté introuvable" }
+        .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
+    private val oneHandedExitIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_one_hand_exit)) { "Icône sortie du mode une main introuvable" }
+        .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
+    private val controlFacePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_functional) }
+    private val controlShadowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_functional_shadow) }
+    private val controlPressedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_pressed) }
+    // Animation du mode une main (zone des touches, boutons ronds) ; controlsMode : dernier côté actif, pour dessiner les boutons qui rétrécissent à la sortie.
+    private val oneHandedTransition = OneHandedTransition()
+    private var controlsMode: OneHandedMode = OneHandedMode.RIGHT
+    private var pressedControl: OneHandedControls.Button? = null
+        set(value) {
+            if (field == value) return
+            val animate = ValueAnimator.areAnimatorsEnabled()
+            field?.let { oneHandedTransition.setPressed(it, false, animate) }
+            value?.let { oneHandedTransition.setPressed(it, true, animate) }
+            field = value
+            invalidate()
+        }
 
     // Appui long : bulle de symboles (grille) affichée au-dessus de la touche : voir KeyPopup (audit 2.1).
     private val keyPopup = KeyPopup(this)
@@ -152,6 +245,16 @@ class KeyboardView(context: Context) : View(context) {
     // Story 1.6 : vrai quand l'appui long a déjà saisi le chiffre de la touche (le relâchement ne
     // doit alors pas saisir aussi la lettre).
     private var longPressCommitted = false
+
+    // Position de l'appui en cours : sert au glissement vers le bas qui saisit le chiffre d'une touche du haut (DigitSwipe).
+    private var downX = 0f
+    private var downY = 0f
+
+    // Instant de l'appui en cours (MotionEvent.eventTime, ms) : un chiffre n'est pas saisi par un glissement trop bref (DigitSwipe).
+    private var downTime = 0L
+
+    // Touche du haut dont le glissement vers le bas peut encore saisir le chiffre (null : chiffre déjà saisi, autre touche, aucune).
+    private var digitSwipeKey: Key? = null
 
     // Story 1.10 : bulle d'agrandissement de la touche pressée (retour visuel de frappe), affichée
     // au-dessus de la touche tant qu'elle est maintenue. Réservée aux touches qui saisissent un
@@ -163,11 +266,38 @@ class KeyboardView(context: Context) : View(context) {
     private fun showsPreview(key: Key?): Boolean = key?.action is KeyAction.TypeChar
 
     /**
-     * Clavier multilingue : l'appui long sur Entrée ouvre une bulle contenant la touche globe (sélection par
-     * glissement vers le haut, comme les accents). L'IME active ce comportement.
+     * L'appui long sur Entrée ouvre toujours une bulle (sélection par glissement vers le haut, comme les accents) avec la
+     * touche du mode une main. Clavier multilingue (activé par l'IME) : le globe s'y ajoute et passe aussi en exposant sur Entrée.
      */
-    var isEnterLongPressEnabled = false
+    var showsGlobeOnEnter = false
+        set(value) {
+            if (field == value) return
+            field = value
+            keyRenderer.showsGlobeOnEnter = value
+            invalidate()
+        }
+
+    /** Nom de la langue active, écrit sur la barre d'espace à la place du trait (null : le trait). Voir [KeyRenderer.spaceLabel]. */
+    var spaceLabel: String? = null
+        set(value) {
+            if (field == value) return
+            field = value
+            keyRenderer.spaceLabel = value
+            invalidate()
+        }
     private var globeListener: Runnable? = null
+    private var oneHandedToggleListener: Runnable? = null
+    private var oneHandedSwitchSideListener: Runnable? = null
+
+    /** Appelé quand le bouton « changer de côté » de la zone libre est relâché (mode une main actif : voir TaipoIme). */
+    fun setOnOneHandedSwitchSideListener(listener: Runnable) {
+        oneHandedSwitchSideListener = listener
+    }
+
+    /** Appelé quand la touche mode une main de la bulle d'Entrée est relâchée (active ou quitte le mode : voir TaipoIme). */
+    fun setOnOneHandedToggleListener(listener: Runnable) {
+        oneHandedToggleListener = listener
+    }
 
     /** Appelé quand la touche globe de la bulle d'Entrée est relâchée (choix de la langue : voir TaipoIme). */
     fun setOnGlobeSelectedListener(listener: Runnable) {
@@ -176,11 +306,12 @@ class KeyboardView(context: Context) : View(context) {
 
     private val longPressRunnable = Runnable {
         val key = pressedKey ?: return@Runnable
+        digitSwipeAnimation.cancel()
         val digit = key.longPressChar
         if (key.action is KeyAction.Enter) {
-            // Bulle à une cellule (globe) : relâcher dessus change de langue, relâcher ailleurs ferme la bulle sans
-            // envoyer de retour à la ligne (le relâchement avec bulle ouverte ne saisit jamais la touche d'origine).
-            showPopup(key, KeyPopup.ENTER_GRID)
+            // Bulle du globe (multilingue) et du mode une main : relâcher sur une cellule l'active, relâcher ailleurs ferme la
+            // bulle sans envoyer de retour à la ligne (le relâchement avec bulle ouverte ne saisit jamais la touche d'origine).
+            showPopup(key, EnterBubbleGrid.grid(multilingual = showsGlobeOnEnter))
         } else if (key.popup.isNotEmpty()) {
             // Story 1.8 : bulle d'accents / symboles, sélection par glissement du doigt.
             showPopup(key)
@@ -208,6 +339,60 @@ class KeyboardView(context: Context) : View(context) {
         keyListener = listener
     }
 
+    /** Chiffre d'une touche du haut saisi par appui long (bulle) ou par glissement vers le bas (rangée de chiffres désactivée). */
+    interface OnDigitHintListener {
+        fun onLongPressDigit()
+        fun onSwipeDigit()
+    }
+
+    private var digitHintListener: OnDigitHintListener? = null
+
+    // --- Zones de frappe adaptatives : les zones de toucher des lettres probables grandissent, les touches dessinées non. ---
+
+    /** Bords des zones de toucher de chaque rangée, en unités de poids depuis son début ; null : zones nominales. */
+    private class TouchZones(val rows: Array<FloatArray?>)
+
+    private var nextLetters: NextLetterModel.Probabilities? = null
+    private var zones: TouchZones? = null
+
+    // Zones figées à l'appui : le glissement et le relâchement de ce toucher se jugent sur les mêmes zones que son appui.
+    private var pressZones: TouchZones? = null
+
+    /** Debug seulement : dessine les bords des zones de toucher adaptatives (réglage des paramètres). */
+    var showTouchZones = false
+        set(value) {
+            if (field == value) return
+            field = value
+            invalidate()
+        }
+
+    /**
+     * Ce qui peut suivre le mot en cours de frappe (null : zones nominales). Appelé après chaque changement du texte, avant
+     * la frappe suivante ; les zones sont calculées ici (quelques sommes sur une rangée), pas au moment du toucher.
+     */
+    fun setNextLetterPrediction(prediction: NextLetterModel.Probabilities?) {
+        if (prediction == null && nextLetters == null) return
+        nextLetters = prediction
+        zones = computeZones()
+        if (showTouchZones) invalidate()
+    }
+
+    private fun computeZones(): TouchZones? {
+        val prediction = nextLetters ?: return null
+        val rows = layout.rows
+        if (rows.none { TouchTargets.hasAdaptiveKey(it) }) return null
+        return TouchZones(
+            Array(rows.size) { i ->
+                // Une rangée sans lettre (bas du clavier, symboles) garde ses zones nominales.
+                rows[i].takeIf { TouchTargets.hasAdaptiveKey(it) }?.let { TouchTargets.rowEdges(it, prediction) }
+            },
+        )
+    }
+
+    fun setOnDigitHintListener(listener: OnDigitHintListener) {
+        digitHintListener = listener
+    }
+
     fun setOnCursorMoveListener(listener: OnCursorMoveListener) {
         cursorMoveListener = listener
     }
@@ -231,7 +416,7 @@ class KeyboardView(context: Context) : View(context) {
     )
     private val sparkPainter = SparkPainter(
         intArrayOf(
-            context.themeColor(R.color.taipo_purple_light),
+            context.themeColor(R.color.accent_on_key), // lot T6 : violet clair en sombre, violet plein en clair
             context.themeColor(R.color.taipo_purple),
             context.themeColor(R.color.key_label),
         ),
@@ -255,9 +440,14 @@ class KeyboardView(context: Context) : View(context) {
         halfLengthPx = { resources.getDimension(R.dimen.taipo_space_bar_length) },
     )
 
+    // Animation « Élastique » du glissement vers le bas qui saisit le chiffre d'une touche du haut : la touche s'étire, la lettre
+    // s'enfonce, le chiffre éclot puis, au relâchement, sort par le haut de la touche et revient en petit (voir DigitSwipeAnimation).
+    private val digitSwipeAnimation = DigitSwipeAnimation(animationsEnabled = { ValueAnimator.areAnimatorsEnabled() })
+
     init {
         keyRenderer.shiftAnimation = shiftAnimation
         keyRenderer.spaceBarAnimation = spaceBarAnimation
+        keyRenderer.digitSwipeAnimation = digitSwipeAnimation
     }
 
     override fun onDetachedFromWindow() {
@@ -265,6 +455,8 @@ class KeyboardView(context: Context) : View(context) {
         backspaceAnimation.cancel()
         shiftAnimation.cancel()
         spaceBarAnimation.cancel()
+        digitSwipeAnimation.cancel()
+        oneHandedTransition.stop()
         shiftSeeded = false
         keyRenderer.backspaceIconAngle = 0f
         repeatHandler.removeCallbacksAndMessages(null)
@@ -288,6 +480,7 @@ class KeyboardView(context: Context) : View(context) {
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        oneHandedTransition.stop()
         slotCache = null
         refreshDimens() // lot 21 : dépliage d'un pliable, multi-fenêtre : les dimensions et la zone des touches sont relues
         // Story 1.14 : largeur modifiée (dépliage d'un pliable, multi-fenêtre) ; une bulle ouverte
@@ -353,6 +546,11 @@ class KeyboardView(context: Context) : View(context) {
     override fun onDraw(canvas: Canvas) {
         // Pas de fond propre : le clavier est transparent et laisse voir le fond commun posé sur la
         // racine de l'IME (KeyboardBackgroundDrawable), partagé avec la barre du haut.
+        // Mode une main : le ressort avance avant que la zone des touches soit lue ; les zones de toucher mises en cache suivent.
+        if (oneHandedTransition.isRunning) {
+            oneHandedTransition.advance(System.nanoTime())
+            slotCache = null
+        }
         val inset = dims.keyInset
         val usableHeight = usableHeightPx()
         val rowHeight = usableHeight / layout.rows.size.toFloat()
@@ -363,27 +561,49 @@ class KeyboardView(context: Context) : View(context) {
         if (backspaceAnimation.isRunning) backspaceAnimation.advance(now)
         if (shiftAnimation.isRunning) shiftAnimation.advance(now)
         if (spaceBarAnimation.isRunning) spaceBarAnimation.advance(now)
+        if (digitSwipeAnimation.isRunning) digitSwipeAnimation.advance(now)
         keyRenderer.backspaceIconAngle = backspaceAnimation.iconAngle
 
         val unit = content.widthPx / layout.referenceUnits
+        // La touche dont le chiffre s'anime s'étire vers le bas : elle est dessinée en dernier, par-dessus la rangée du dessous.
+        var swipingKey: Key? = null
+        var swipingLeft = 0f
+        var swipingTop = 0f
+        var swipingWidth = 0f
         layout.rows.forEachIndexed { rowIndex, row ->
             val top = rowIndex * rowHeight
             var left = content.leftPx + layout.rowStartUnits(row) * unit
 
             row.forEach { key ->
                 val keyWidth = unit * key.weight
-                keyRenderer.draw(
-                    canvas, key, left, top, keyWidth, rowHeight, inset,
-                    dims, layout, isShifted, pressedKey,
-                )
+                if (digitSwipeAnimation.isAnimating(key)) {
+                    swipingKey = key
+                    swipingLeft = left
+                    swipingTop = top
+                    swipingWidth = keyWidth
+                } else {
+                    keyRenderer.draw(
+                        canvas, key, left, top, keyWidth, rowHeight, inset,
+                        dims, layout, isShifted, pressedKey,
+                    )
+                }
                 left += keyWidth
             }
         }
+        swipingKey?.let { key ->
+            keyRenderer.draw(canvas, key, swipingLeft, swipingTop, swipingWidth, rowHeight, inset, dims, layout, isShifted, pressedKey)
+        }
 
         sparkPainter.draw(canvas, shiftAnimation.sparks)
+        drawOneHandedControls(canvas)
+        drawTouchZones(canvas)
         drawPopup(canvas)
         drawPreview(canvas)
-        if (backspaceAnimation.isRunning || shiftAnimation.isRunning || spaceBarAnimation.isRunning) postInvalidateOnAnimation()
+        if (backspaceAnimation.isRunning || shiftAnimation.isRunning || spaceBarAnimation.isRunning || digitSwipeAnimation.isRunning ||
+            oneHandedTransition.isRunning
+        ) {
+            postInvalidateOnAnimation()
+        }
     }
 
     // Multi-touch : en frappe rapide, le doigt suivant se pose avant que le précédent soit levé.
@@ -396,7 +616,7 @@ class KeyboardView(context: Context) : View(context) {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 activePointerId = event.getPointerId(0)
-                pressStart(event.getX(0), event.getY(0))
+                pressStart(event.getX(0), event.getY(0), event.eventTime)
                 return true
             }
 
@@ -404,16 +624,17 @@ class KeyboardView(context: Context) : View(context) {
                 // Le doigt précédent est considéré comme relâché à sa dernière position connue :
                 // sa touche est saisie avant celle du nouveau doigt, sans être perdue.
                 val activeIndex = event.findPointerIndex(activePointerId)
-                if (activeIndex >= 0) releaseTouch(event.getX(activeIndex), event.getY(activeIndex))
+                // Frappe rapide : jamais de chiffre par glissement pour ce doigt (il ne s'est pas levé, le suivant est déjà posé).
+                if (activeIndex >= 0) releaseTouch(event.getX(activeIndex), event.getY(activeIndex), event.eventTime, digitAllowed = false)
                 val index = event.actionIndex
                 activePointerId = event.getPointerId(index)
-                pressStart(event.getX(index), event.getY(index))
+                pressStart(event.getX(index), event.getY(index), event.eventTime)
                 return true
             }
 
             MotionEvent.ACTION_MOVE -> {
                 val index = event.findPointerIndex(activePointerId)
-                if (index >= 0) moveTouch(event.getX(index), event.getY(index))
+                if (index >= 0) moveTouch(event.getX(index), event.getY(index), event.eventTime)
                 return true
             }
 
@@ -422,7 +643,8 @@ class KeyboardView(context: Context) : View(context) {
                 // Le relâchement d'un doigt déjà validé (voir ACTION_POINTER_DOWN) est ignoré.
                 if (event.getPointerId(index) == activePointerId) {
                     activePointerId = MotionEvent.INVALID_POINTER_ID
-                    releaseTouch(event.getX(index), event.getY(index))
+                    releaseTouch(event.getX(index), event.getY(index), event.eventTime)
+                    pressZones = null
                 }
                 return true
             }
@@ -436,12 +658,20 @@ class KeyboardView(context: Context) : View(context) {
         return super.onTouchEvent(event)
     }
 
-    private fun pressStart(x: Float, y: Float) {
+    private fun pressStart(x: Float, y: Float, time: Long) {
         longPressCommitted = false
+        pressedControl = controlAt(x, y)
+        downX = x
+        downY = y
+        downTime = time
+        pressZones = zones
         spaceSwipe.reset()
         backspaceSwipe.reset()
         deleteSwipeWords = 0
         pressedKey = keyAt(x, y)
+        digitSwipeKey = pressedKey?.takeIf { it.longPressChar != null }
+        digitSwipeAnimation.cancel()
+        pressedKey?.takeIf { it.longPressChar != null }?.let { digitSwipeAnimation.onPress(it) }
         keyPreview.key = pressedKey.takeIf { showsPreview(it) }
         if (pressedKey?.action is KeyAction.Space) spaceSwipe.onDown(x)
         if (pressedKey?.action is KeyAction.Backspace) {
@@ -453,7 +683,7 @@ class KeyboardView(context: Context) : View(context) {
         invalidate()
     }
 
-    private fun moveTouch(x: Float, y: Float) {
+    private fun moveTouch(x: Float, y: Float, time: Long) {
         if (keyPopup.isShown) {
             keyPopup.updateSelection(x, y)
             return
@@ -484,9 +714,15 @@ class KeyboardView(context: Context) : View(context) {
                 return
             }
         }
+        trackDigitSwipe(x, y)
+        if (commitDigitSwipe(x, y, time)) return
+        // Le doigt descend depuis une touche du haut : c'est encore elle qui est visée, pas la touche du dessous (DigitSwipe).
+        if (keptByDigitSwipe(x, y)) return
         val current = keyAt(x, y)
         if (current != pressedKey) {
             cancelKeyLongPress()
+            digitSwipeKey = null
+            digitSwipeAnimation.cancel()
             pressedKey = current
             keyPreview.key = current.takeIf { showsPreview(it) }
             startRepeat(current)
@@ -494,9 +730,70 @@ class KeyboardView(context: Context) : View(context) {
         }
     }
 
-    /** Relâchement du doigt actif en (x, y) : saisit la touche, le symbole de la bulle, ou rien. */
-    private fun releaseTouch(x: Float, y: Float) {
+    /**
+     * Suit le glissement vers le bas d'une touche du haut pour l'animation « Élastique » du chiffre : la touche s'étire à mesure
+     * que le doigt approche du seuil. La bulle d'agrandissement de la lettre disparaît dès que le glissement s'engage.
+     */
+    private fun trackDigitSwipe(x: Float, y: Float) {
+        val key = pressedKey ?: return
+        if (!digitSwipeAnimation.isTracking(key)) return
+        val keyHeight = keyBounds(key)?.height() ?: return
+        val slop = ViewConfiguration.get(context).scaledTouchSlop.toFloat()
+        val progress = DigitSwipe.progress(x - downX, y - downY, DigitSwipe.threshold(keyHeight, slop))
+        digitSwipeAnimation.onDrag(progress)
+        if (progress > PREVIEW_HIDE_PROGRESS) keyPreview.key = null
+        invalidate()
+    }
+
+    /**
+     * Glissement vers le bas sur une touche du haut (rangée de chiffres désactivée : seules ces touches ont un
+     * [Key.longPressChar]) : saisit son chiffre dès que le seuil est franchi, le relâchement ne saisit plus la lettre.
+     */
+    private fun commitDigitSwipe(x: Float, y: Float, time: Long): Boolean {
+        val key = pressedKey ?: return false
+        val digit = key.longPressChar ?: return false
+        if (key != digitSwipeKey) return false
+        val keyHeight = keyBounds(key)?.height() ?: return false
+        val slop = ViewConfiguration.get(context).scaledTouchSlop.toFloat()
+        if (!DigitSwipe.isTriggered(x - downX, y - downY, DigitSwipe.threshold(keyHeight, slop), time - downTime)) return false
+        cancelKeyLongPress()
+        longPressCommitted = true
+        digitSwipeKey = null
+        keyPreview.key = null
+        digitSwipeAnimation.onCommit()
+        keyListener?.onKey(Key("longpress_$digit", digit.toString(), KeyAction.TypeChar(digit)))
+        digitHintListener?.onSwipeDigit()
+        invalidate()
+        return true
+    }
+
+    /** Vrai si le doigt descend depuis la touche du haut appuyée, sans avoir saisi son chiffre : elle reste la touche visée. */
+    private fun keptByDigitSwipe(x: Float, y: Float): Boolean {
+        val key = pressedKey ?: return false
+        if (key != digitSwipeKey) return false
+        return DigitSwipe.keepsKey(x - downX, y - downY, ViewConfiguration.get(context).scaledTouchSlop.toFloat())
+    }
+
+    /**
+     * Relâchement du doigt actif en (x, y) à l'instant [time] : saisit la touche, le symbole de la bulle, ou rien.
+     * [digitAllowed] faux : le glissement vers le bas ne peut plus saisir de chiffre à ce relâchement.
+     */
+    private fun releaseTouch(x: Float, y: Float, time: Long, digitAllowed: Boolean = true) {
+        pressedControl?.let { button ->
+            // Bouton de la zone libre : validé seulement si le doigt est relâché encore dessus.
+            pressedControl = null
+            if (controlAt(x, y) == button) {
+                if (button == OneHandedControls.Button.SWITCH_SIDE) oneHandedSwitchSideListener?.run() else oneHandedToggleListener?.run()
+            }
+            invalidate()
+            return
+        }
         spaceBarAnimation.onRelease()
+        // Doigt levé sans nouveau déplacement depuis que le délai minimal est passé : le glissement saisit le chiffre maintenant.
+        val swipeOpen = !keyPopup.isShown && !longPressCommitted
+        val keptKey = swipeOpen && keptByDigitSwipe(x, y)
+        if (swipeOpen && digitAllowed) commitDigitSwipe(x, y, time)
+        digitSwipeAnimation.onRelease()
         stopRepeat()
         cancelKeyLongPress()
         keyPreview.key = null
@@ -504,12 +801,17 @@ class KeyboardView(context: Context) : View(context) {
             // Relâcher sur un symbole le saisit ; relâcher ailleurs ferme la bulle sans rien saisir.
             keyPopup.updateSelection(x, y)
             val symbol = keyPopup.selectedSymbol()
+            val popupKey = keyPopup.key
             dismissPopup()
             pressedKey = null
             if (symbol == KeyPopup.GLOBE_SYMBOL) {
                 globeListener?.run()
+            } else if (symbol == KeyPopup.ONE_HANDED_SYMBOL) {
+                oneHandedToggleListener?.run()
             } else if (symbol != null) {
                 keyListener?.onKey(Key("popup_$symbol", symbol.toString(), KeyAction.TypeChar(symbol)))
+                // Le chiffre de la touche du haut a été choisi dans la bulle : l'IME peut suggérer le glissement vers le bas.
+                if (symbol == popupKey?.longPressChar) digitHintListener?.onLongPressDigit()
             }
             invalidate()
             return
@@ -536,7 +838,8 @@ class KeyboardView(context: Context) : View(context) {
             invalidate()
             return
         }
-        if (key != null && keyAt(x, y) == key) {
+        // Un glissement vers le bas trop court sur une touche du haut saisit sa lettre, même levé sur la rangée du dessous.
+        if (key != null && (keyAt(x, y) == key || keptKey)) {
             deliverKey(key, repeat = false)
         }
         invalidate()
@@ -580,9 +883,11 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     private fun cancelTouch() {
+        pressedControl = null
         if (backspaceSwipe.isActive) deleteSwipeListener?.onDeleteSwipeCancel()
         backspaceAnimation.onSwipeCancel()
         spaceBarAnimation.onRelease()
+        digitSwipeAnimation.onRelease()
         deleteSwipeWords = 0
         stopRepeat()
         cancelKeyLongPress()
@@ -592,6 +897,7 @@ class KeyboardView(context: Context) : View(context) {
         spaceSwipe.reset()
         backspaceSwipe.reset()
         pressedKey = null
+        pressZones = null
         invalidate()
     }
 
@@ -606,7 +912,7 @@ class KeyboardView(context: Context) : View(context) {
     private fun longPressDelayMs(): Long =
         (ViewConfiguration.getLongPressTimeout() * LONG_PRESS_DELAY_RATIO).toLong()
 
-    private fun isEnterLongPress(key: Key): Boolean = isEnterLongPressEnabled && key.action is KeyAction.Enter
+    private fun isEnterLongPress(key: Key): Boolean = key.action is KeyAction.Enter
 
     private fun cancelKeyLongPress() {
         repeatHandler.removeCallbacks(longPressRunnable)
@@ -618,6 +924,87 @@ class KeyboardView(context: Context) : View(context) {
         val bounds = pressedKey?.let { keyBounds(it) } ?: return 0f
         val half = resources.getDimension(R.dimen.taipo_space_bar_length)
         return (bounds.width() / 2f - half - dp(SPACE_BAR_EDGE_MARGIN_DP)).coerceAtLeast(dp(SPACE_BAR_EDGE_MARGIN_DP))
+    }
+
+    private val touchZonePaint by lazy {
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            strokeWidth = dp(TOUCH_ZONE_STROKE_DP)
+            color = TOUCH_ZONE_COLOR
+        }
+    }
+
+    /**
+     * Mode une main : disposition des boutons dans la zone libre du mode actif (ou du dernier côté actif pendant que les boutons
+     * rétrécissent à la sortie), ou null (boutons absents, zone trop étroite ou trop basse). Taille et hauteur sont celles de la zone
+     * finale ; seul le centre horizontal est animé (voir [controlsCenter]).
+     */
+    private fun oneHandedControlsLayout(): OneHandedControls.Layout? {
+        val mode = if (oneHandedMode.isActive) oneHandedMode else controlsMode
+        if (!oneHandedMode.isActive && oneHandedTransition.controlsAppear <= CONTROL_HIDDEN_BELOW) return null
+        val zone = KeyboardWidth.forAvailableWidth(width.toFloat(), resources.displayMetrics.density, mode, oneHandedWidthPercent)
+        val freeLeft = if (mode == OneHandedMode.LEFT) zone.rightPx else 0f
+        val freeRight = if (mode == OneHandedMode.LEFT) width.toFloat() else zone.leftPx
+        return OneHandedControls.layout(
+            freeLeft, freeRight, usableHeightPx(),
+            maxRadius = dp(CONTROL_MAX_RADIUS_DP), margin = dp(CONTROL_MARGIN_DP), minRadius = dp(CONTROL_MIN_RADIUS_DP),
+        )
+    }
+
+    /** Centre horizontal des boutons ronds : celui du ressort pendant un mouvement, sinon celui de la zone libre. */
+    private fun controlsCenter(layout: OneHandedControls.Layout): Float =
+        if (oneHandedTransition.isMoving) oneHandedTransition.controlsCx else layout.cx
+
+    private fun controlAt(x: Float, y: Float): OneHandedControls.Button? {
+        if (!oneHandedMode.isActive) return null
+        if (oneHandedTransition.isMoving && oneHandedTransition.controlsAppear < CONTROL_TOUCHABLE_FROM) return null
+        val layout = oneHandedControlsLayout() ?: return null
+        return OneHandedControls.hit(layout.copy(cx = controlsCenter(layout)), x, y)
+    }
+
+    /** Mode une main : deux pastilles rondes (face + ombre, comme les touches) dans la zone libre, en ressort (apparition, déplacement, appui). */
+    private fun drawOneHandedControls(canvas: Canvas) {
+        val layout = oneHandedControlsLayout() ?: return
+        val moving = oneHandedTransition.isMoving
+        val appear = if (moving) oneHandedTransition.controlsAppear else 1f
+        // La flèche de changement de côté pointe vers la zone libre : à droite en mode gauche, retournée en mode droit.
+        val flipX = if (moving) oneHandedTransition.flipX else if (oneHandedMode == OneHandedMode.LEFT) 1f else -1f
+        val cx = controlsCenter(layout)
+        val shadow = resources.getDimension(R.dimen.taipo_key_shadow_height)
+        OneHandedControls.Button.entries.forEach { button ->
+            val scale = appear * oneHandedTransition.pressScale(button)
+            if (scale <= CONTROL_HIDDEN_BELOW) return@forEach
+            val pressed = pressedControl == button
+            val centerY = layout.centerY(button)
+            val faceY = centerY + if (pressed) shadow else 0f
+            val saved = canvas.save()
+            canvas.scale(scale, scale, cx, centerY)
+            canvas.drawCircle(cx, centerY + shadow, layout.radius, controlShadowPaint)
+            canvas.drawCircle(cx, faceY, layout.radius, if (pressed) controlPressedPaint else controlFacePaint)
+            val icon = if (button == OneHandedControls.Button.SWITCH_SIDE) oneHandedSwitchIcon else oneHandedExitIcon
+            val half = minOf(dims.iconSize, layout.radius * CONTROL_ICON_RATIO) / 2f
+            icon.setBounds((cx - half).roundToInt(), (faceY - half).roundToInt(), (cx + half).roundToInt(), (faceY + half).roundToInt())
+            if (button == OneHandedControls.Button.SWITCH_SIDE) canvas.scale(flipX, 1f, cx, faceY)
+            icon.draw(canvas)
+            canvas.restoreToCount(saved)
+        }
+    }
+
+    /** Debug : un trait à chaque bord de zone de toucher adaptatif (entre deux touches voisines d'une rangée adaptative). */
+    private fun drawTouchZones(canvas: Canvas) {
+        if (!BuildConfig.DEBUG || !showTouchZones) return
+        val rows = (pressZones ?: zones)?.rows ?: return
+        val rowHeight = usableHeightPx() / layout.rows.size.toFloat()
+        val content = keyboardWidth()
+        val unit = content.widthPx / layout.referenceUnits
+        layout.rows.forEachIndexed { rowIndex, row ->
+            val edges = rows.getOrNull(rowIndex) ?: return@forEachIndexed
+            val left = content.leftPx + layout.rowStartUnits(row) * unit
+            for (i in 1 until edges.size - 1) {
+                val x = left + edges[i] * unit
+                canvas.drawLine(x, rowIndex * rowHeight, x, (rowIndex + 1) * rowHeight, touchZonePaint)
+            }
+        }
     }
 
     private fun keyBounds(target: Key): RectF? {
@@ -658,6 +1045,7 @@ class KeyboardView(context: Context) : View(context) {
         iconMaxRatio = KeyRenderer.KEY_ICON_MAX_RATIO,
         shifted = isShifted,
         globeIcon = globeIcon,
+        oneHandedIcon = oneHandedIcon,
     )
 
     /** Story 1.10 : bulle d'agrandissement affichée au-dessus de la touche de caractère pressée. */
@@ -690,11 +1078,15 @@ class KeyboardView(context: Context) : View(context) {
         val rowIndex = (y / rowHeight).toInt().coerceIn(0, rows.lastIndex)
         val row = rows[rowIndex]
         val content = keyboardWidth()
-        // Story 1.14 : en classe large, les marges de part et d'autre de la zone des touches sont inertes.
-        if (content.leftPx > 0f && (x < content.leftPx || x >= content.rightPx)) return null
+        // Story 1.14 : en classe large (et en mode une main), les marges de part et d'autre de la zone des touches sont inertes.
+        if ((content.leftPx > 0f || content.rightPx < width.toFloat()) && (x < content.leftPx || x >= content.rightPx)) return null
         // Rangée plus courte que la référence (centrée) : un appui dans la marge revient à la touche la plus proche.
         val unit = content.widthPx / layout.referenceUnits
-        var acc = content.leftPx + layout.rowStartUnits(row) * unit
+        val rowStart = content.leftPx + layout.rowStartUnits(row) * unit
+        // Zones adaptatives : mêmes règles aux extrémités (au-delà du premier ou du dernier bord, la touche la plus proche).
+        val edges = (pressZones ?: zones)?.rows?.getOrNull(rowIndex)
+        if (edges != null) return row[TouchTargets.indexAt(edges, (x - rowStart) / unit)]
+        var acc = rowStart
         for (key in row) {
             acc += unit * key.weight
             if (x < acc) return key
@@ -741,19 +1133,41 @@ class KeyboardView(context: Context) : View(context) {
         dp(if (isLandscape) metrics().bottomMarginDp else bottomMarginDp.toFloat())
     private fun usableHeightPx(): Float = (height - bottomMarginPx()).coerceAtLeast(0f)
 
-    /** Story 1.14 : zone horizontale des touches (plein écran en Compact, plafonnée et centrée en large). */
+    /** Story 1.14 : zone horizontale des touches (plein écran en Compact, plafonnée et centrée en large, serrée contre un bord en mode une main). */
     private fun keyboardWidth(): KeyboardWidth =
-        contentCache ?: KeyboardWidth.forAvailableWidth(width.toFloat(), resources.displayMetrics.density)
-            .also { contentCache = it }
+        if (oneHandedTransition.isMoving) {
+            oneHandedTransition.zone // mode une main en cours de ressort : la zone bouge à chaque image, rien n'est mis en cache
+        } else {
+            contentCache ?: KeyboardWidth.forAvailableWidth(
+                width.toFloat(), resources.displayMetrics.density, oneHandedMode, oneHandedWidthPercent,
+            ).also { contentCache = it }
+        }
 
     private fun dp(value: Float): Float = value * resources.displayMetrics.density
 
     private companion object {
+        /** Mode une main : rayon maximal, marge et rayon minimal des boutons de la zone libre, et part du diamètre prise par l'icône. */
+        const val CONTROL_MAX_RADIUS_DP = 22f
+        const val CONTROL_MARGIN_DP = 6f
+        const val CONTROL_MIN_RADIUS_DP = 12f
+        const val CONTROL_ICON_RATIO = 1.2f
+
+        /** Sous cette échelle un bouton rond n'est ni dessiné ni touchable (il est encore en train d'apparaître ou de disparaître). */
+        const val CONTROL_HIDDEN_BELOW = 0.01f
+        const val CONTROL_TOUCHABLE_FROM = 0.5f
+
+        /** Avancement du glissement du chiffre à partir duquel la bulle d'agrandissement de la lettre est masquée. */
+        const val PREVIEW_HIDE_PROGRESS = 0.15f
+
         /** Lot 21 : « pas de caractère » (voir [KeyRenderer.shiftedChar]). */
         const val NO_CHAR = KeyRenderer.NO_CHAR
 
         /** Marge entre le bout du trait et le bord de la barre espace quand le trait est au bout de sa course. */
         private const val SPACE_BAR_EDGE_MARGIN_DP = 8f
+
+        // Calque de debug des zones de toucher adaptatives.
+        private const val TOUCH_ZONE_STROKE_DP = 1.5f
+        private const val TOUCH_ZONE_COLOR = 0xCCFF00AA.toInt()
 
         /** Part du délai système d'appui long utilisée pour les touches à pop-up ou à chiffre (−20 %). */
         const val LONG_PRESS_DELAY_RATIO = 0.8f

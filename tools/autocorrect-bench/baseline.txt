@@ -1,0 +1,74 @@
+# Référence du banc d'autocorrection (docs/autocorrection-bench.md). Générée par `main --write-baseline`.
+# À régénérer volontairement quand une phase de la refonte change le comportement, jamais pour masquer une régression.
+[metrics]
+typos.courants.voisine.ok=90.5
+typos.courants.oubli.ok=77.9
+typos.courants.doublon.ok=91.1
+typos.courants.inversion.ok=97.3
+typos.courants.ajout.ok=95.7
+typos.courants.accent.ok=95.0
+typos.courants.apostrophe.ok=100.0
+typos.courants.ok=92.5
+typos.courants.missed=2.97
+typos.courants.wrong=4.53
+typos.courants.surMotValide=19.18
+typos.varies.voisine.ok=92.1
+typos.varies.oubli.ok=75.5
+typos.varies.doublon.ok=92.8
+typos.varies.inversion.ok=97.6
+typos.varies.ajout.ok=96.1
+typos.varies.accent.ok=94.6
+typos.varies.apostrophe.ok=100.0
+typos.varies.ok=92.67
+typos.varies.missed=1.97
+typos.varies.wrong=5.36
+typos.varies.surMotValide=6.3
+valides.courants.faux=0.0
+valides.courants.restaure=0.4
+valides.varies.faux=0.04
+valides.varies.restaure=0.68
+longues.courants.deux.ok=90.0
+longues.courants.deux.wrong=8.33
+longues.courants.trois.ok=69.0
+longues.courants.trois.wrong=12.33
+longues.varies.deux.ok=87.33
+longues.varies.deux.wrong=8.67
+longues.varies.trois.ok=73.0
+longues.varies.trois.wrong=11.0
+inconnus.courants.faux=79.0
+inconnus.varies.faux=66.0
+phrases.justes.changees=0.0
+contexte.a-à.ok=100.0
+contexte.ou-où.ok=85.71
+contexte.la-là.ok=80.0
+contexte.participe.ok=90.0
+contexte.ce-se.ok=100.0
+contexte.on-ont.ok=100.0
+contexte.son-sont.ok=100.0
+contexte.c'est-s'est.ok=100.0
+contexte.leur-leurs.ok=100.0
+contexte.ça-sa.ok=100.0
+contexte.et-est.ok=83.33
+contexte.peu-peut.ok=100.0
+contexte.accents.ok=100.0
+contexte.ligatures.ok=100.0
+contexte.trait-union.ok=100.0
+contexte.noms.ok=100.0
+contexte.fautes-frappe.ok=87.5
+contexte.total.ok=96.48
+heldout.fautes.ok=93.68
+heldout.fautes.wrong=3.2
+heldout.fautes.missed=3.12
+heldout.fautes.sansContexte.ok=90.19
+heldout.fautes.surMotValide=10.78
+completion.frappesEconomisees.ok=42.62
+completion.fautes.ok=88.39
+heldout.justes.faux=0.19
+heldout.justes.restaure=0.13
+[failing-cases]
+ou-où	Un dépôt ou seul moi j'ai accès.
+la-là	Passe par la.
+participe	J'ai fini de travaillé.
+et-est	Marie est Paul sont amis.
+fautes-frappe	Je pese que tu as raison.
+[changed-sentences]

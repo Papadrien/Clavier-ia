@@ -3,16 +3,20 @@ package fr.junade.taipo
 import android.content.Context
 import android.os.SystemClock
 import android.view.inputmethod.InputConnection
-import fr.junade.taipo.dictionary.CorrectionHabits
+import fr.junade.taipo.dictionary.AutocorrectStats
+import fr.junade.taipo.dictionary.Autocorrection
+import fr.junade.taipo.dictionary.ContextualCorrection
 import fr.junade.taipo.dictionary.CorrectionHabitsProvider
 import fr.junade.taipo.dictionary.CorrectionHistory
 import fr.junade.taipo.dictionary.Dictionary
 import fr.junade.taipo.dictionary.DictionaryFiles
+import fr.junade.taipo.dictionary.NextLetterModel
+import fr.junade.taipo.dictionary.NgramModel
+import fr.junade.taipo.dictionary.download.BigramDownloadWorker
 import fr.junade.taipo.dictionary.DictionaryLoader
 import fr.junade.taipo.dictionary.download.DictionaryDownloadScheduler
 import fr.junade.taipo.dictionary.download.DictionaryDownloadState
 import fr.junade.taipo.dictionary.download.DictionaryDownloadTracker
-import fr.junade.taipo.dictionary.FrenchContextCorrector
 import fr.junade.taipo.dictionary.HabitContext
 import fr.junade.taipo.dictionary.HabitSignals
 import fr.junade.taipo.dictionary.WordSuggestion
@@ -53,6 +57,12 @@ class SuggestionController(
     private val scope: CoroutineScope,
     private val host: Host,
 ) {
+
+    /**
+     * Revue de code (performance) : un seul calcul de la bande de mots à la fois (file sur un fil du pool de calcul). Les
+     * calculs dépassés ne tournent plus en parallèle des nouveaux : moins de processeur et de batterie en frappe rapide.
+     */
+    private val suggestionDispatcher = Dispatchers.Default.limitedParallelism(1)
 
     /** Ce que la bande de suggestions demande à l'IME. */
     interface Host {
@@ -95,6 +105,9 @@ class SuggestionController(
 
         /** Un mot touché pendant la dictée attend sa correction : la bande propose ses alternatives malgré l'écoute. */
         fun voiceWordPicked(): Boolean = false
+
+        /** Ce qui peut suivre le mot en cours de frappe (null : aucune prédiction), pour les zones de frappe adaptatives. */
+        fun showNextLetters(prediction: NextLetterModel.Probabilities?) {}
     }
 
     private val appContext = context.applicationContext
@@ -132,6 +145,20 @@ class SuggestionController(
     val correctionHabits by lazy { CorrectionHabitsProvider.repository(appContext) }
     private val habitSignals by lazy { HabitSignals(correctionHabits.habits) }
 
+    /**
+     * Phase 6 : compteurs de décision et de latence de l'autocorrection, pour ajuster les seuils à l'usage (logcat, filtre
+     * `SuggestionController`). Builds debug seulement : null en release, donc aucun coût et aucune trace. Jamais de texte
+     * saisi, seulement des nombres et des types (voir [AutocorrectStats]).
+     */
+    private val autocorrectStats: AutocorrectStats? = if (BuildConfig.DEBUG) AutocorrectStats() else null
+
+    // Écrit le rapport des compteurs dans logcat tous les STATS_LOG_EVERY mots examinés, ou tout de suite si [force].
+    private fun logAutocorrectStats(force: Boolean) {
+        val stats = autocorrectStats ?: return
+        if (!force && stats.wordCount() % STATS_LOG_EVERY != 0L) return
+        stats.report().forEach { AppLog.d(TAG, it) }
+    }
+
     // Réglage « Apprendre de mes habitudes », relu à chaque champ.
     private var habitLearningEnabled = KeyboardPreferences.DEFAULT_HABIT_LEARNING
 
@@ -168,16 +195,10 @@ class SuggestionController(
      * [original] (fin de [textBeforeCursor]) a été remplacé par [corrected].
      */
     fun habitAutocorrectionApplied(textBeforeCursor: String, original: String, corrected: String) {
+        autocorrectStats?.confirmApplied() // phase 6 (debug) : cette correction est celle qu'une annulation défera
         if (!habitsAllowed) return
         habitSignals.autocorrectionApplied(host.language(), textBeforeCursor, original, corrected)
     }
-
-    /** Phase 3 : vrai si l'utilisateur a déjà refusé (annulé) cette correction du mot [typed] au moins deux fois. */
-    private fun refusedByUser(typed: String, corrected: String): Boolean =
-        habitsAllowed && correctionHabits.habits.isRefused(host.language(), typed, corrected)
-
-    // Fois où les habitudes ont changé la correction du dictionnaire depuis le démarrage (compteur de debug, jamais de texte).
-    private var habitTieBreaks = 0
 
     /**
      * Phase 4 : habitudes à consulter pour départager des corrections à distance égale (acceptée, puis contexte, puis
@@ -187,12 +208,14 @@ class SuggestionController(
     private fun habitContextFor(textBeforeCursor: String): HabitContext? {
         if (!habitsAllowed) return null
         val before = textBeforeCursor.dropLast(WordText.trailingWord(textBeforeCursor).length)
-        val previous = HabitContext.previousWordOf(before, truncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND)
-        return HabitContext(correctionHabits.habits, host.language(), nextWords.model, previous)
+        // Un ou deux mots de contexte : les paires et les triplets (tournures habituelles) du modèle du mot suivant.
+        val context = HabitContext.contextOf(before, truncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND)
+        return HabitContext(correctionHabits.habits, host.language(), nextWords.model, context?.first, context?.second)
     }
 
     /** L'utilisateur vient d'annuler une autocorrection. */
     fun habitAutocorrectionUndone(original: String, corrected: String) {
+        autocorrectStats?.recordUndone() // phase 6 (debug)
         if (!habitsAllowed) return
         if (habitSignals.autocorrectionUndone(original, corrected)) onHabitsChanged()
     }
@@ -209,6 +232,33 @@ class SuggestionController(
 
     /** Faux dans les champs sans suggestions (mot de passe, e-mail, URL, nombre...), relu à chaque champ. */
     var suggestionsAllowed = true
+
+    /**
+     * Zones de frappe adaptatives permises dans ce champ (réglage actif, hors champ sensible, e-mail et adresse web),
+     * relu à chaque champ. Faux : aucune prédiction de lettre, le clavier garde ses zones nominales.
+     */
+    var nextLettersAllowed = false
+
+    // Une prédiction non nulle a été transmise au clavier : à retirer quand elle n'est plus permise.
+    private var nextLettersPublished = false
+
+    /**
+     * Transmet au clavier la prédiction de la lettre suivante d'après [textBeforeCursor] : synchrone, avant la frappe
+     * suivante, sur le thread principal. Rien tant que le modèle de la langue n'est pas construit (le préchargement le
+     * construit en arrière-plan, voir [preloadDictionaries]) : la construction ne se fait jamais ici.
+     */
+    private fun updateNextLetters(textBeforeCursor: String) {
+        val model = if (nextLettersAllowed) DictionaryLoader.peek(host.language())?.nextLetterModelIfBuilt else null
+        val prediction = model?.let { NextLetterContext.predict(it, textBeforeCursor) }
+        if (prediction == null && !nextLettersPublished) return
+        nextLettersPublished = prediction != null
+        host.showNextLetters(prediction)
+    }
+
+    // Construit le modèle de la lettre suivante hors du thread principal, si les zones adaptatives sont permises.
+    private fun warmNextLetterModel(language: KeyboardLanguage) {
+        if (nextLettersAllowed) DictionaryLoader.peek(language)?.let { it.nextLetterModel }
+    }
 
     /** Faux dans les champs sans emoji suggérés (adresse web...), relu à chaque champ. */
     var emojiAllowed = true
@@ -230,6 +280,7 @@ class SuggestionController(
     // Lot 1.4 : les mots du dictionnaire sont calculés hors du thread principal, « le dernier gagne » :
     // chaque nouvelle demande annule la précédente, et un résultat périmé n'est jamais affiché.
     private var suggestionJob: Job? = null
+    @Volatile // lu par le calcul en arrière-plan pour abandonner une demande dépassée
     private var suggestionSequence = 0
 
     private data class SuggestionInput(
@@ -299,6 +350,7 @@ class SuggestionController(
      * mot reste proposé après lui (story 1.16) ; à défaut, l'emoji qui suit habituellement ce contexte.
      */
     fun refresh(textBeforeCursor: String) {
+        updateNextLetters(textBeforeCursor)
         if (!host.barReady()) return
         val language = host.language()
         // Le prompt est un champ de texte libre : ni le type du champ de l'application ni sa sélection n'y comptent.
@@ -337,23 +389,45 @@ class SuggestionController(
             }
             val personalWords = host.personalWords()
             val habits = habitContextFor(textBeforeCursor) // lu ici (thread principal), consulté pendant le calcul
+            // Texte avant le curseur jusqu'au mot entier (partie après le curseur comprise), pour lire l'auxiliaire qui le précède.
+            val textUpToWord = textBeforeCursor.dropLast(WordText.trailingWord(textBeforeCursor).length) + typed
+            // Mot précédent : le même que celui que lit l'autocorrection (Autocorrection.correctedText), pour que le gras soit ce qui sera appliqué.
+            val previousWord = NgramModel.previousWordOf(textBeforeCursor.dropLast(WordText.trailingWord(textBeforeCursor).length))
+            val french = language == KeyboardLanguage.FR
+            val truncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND
             currentWordSuggestions = emptyList() // un appui sur un mot périmé est ignoré
             publishEmoji(emoji)
-            suggestionJob = scope.launch(Dispatchers.Default) {
+            suggestionJob = scope.launch(suggestionDispatcher) {
+                // Frappe plus rapide que le calcul : une demande déjà dépassée n'est pas calculée du tout. La recherche du
+                // dictionnaire ne s'interrompt pas en cours de route ; avec un seul calcul à la fois, au plus un calcul périmé
+                // finit pendant qu'on tape, au lieu de plusieurs en parallèle.
+                if (sequence != suggestionSequence) return@launch
+                val suggestionsStarted = if (autocorrectStats != null) System.nanoTime() else 0L
+                val compound = if (language == KeyboardLanguage.DE && !placement && wordAfter.isEmpty()) compoundSuggestion(dictionary, textBeforeCursor, typed) else null
                 val words = traced(Sections.SUGGESTIONS) {
+                    // Correction de contexte du mot (« ils on » -> « ont », « il a observe » -> « observé ») ou participe proposé : la
+                    // même analyse que l'autocorrection, habitudes et refus compris (voir [ContextualCorrection.lastWordFix]).
+                    val participle = if (french || language in CONTEXTUAL_LANGUAGES) {
+                        ContextualCorrection.lastWordFix(textUpToWord, truncated, dictionary::frequencyOf, { habits }, language)
+                    } else {
+                        null
+                    }
                     if (placement) {
                         dictionary.placementSlotsFor(
                             typed,
                             personalWords,
                             previousForm = correctionHistory.originalOf(typed),
                             habits = habits,
+                            participle = participle,
+                            previousWord = previousWord,
                         )
                     } else {
-                        dictionary.suggestionSlotsFor(typed, personalWords = personalWords, habits = habits)
+                        dictionary.suggestionSlotsFor(typed, personalWords = personalWords, habits = habits, participle = participle, previousWord = previousWord)
                     }
                 }
+                autocorrectStats?.recordLatency(AutocorrectStats.Section.SUGGESTIONS, System.nanoTime() - suggestionsStarted)
                 withContext(Dispatchers.Main) {
-                    if (sequence == suggestionSequence && promptActive == host.promptActive()) publishWords(withEmail(plainIfNoAutocorrect(words, promptActive), emailSuggestion))
+                    if (sequence == suggestionSequence && promptActive == host.promptActive()) publishWords(withEmail(withCompound(plainIfNoAutocorrect(words, promptActive), compound), emailSuggestion))
                 }
             }
             return
@@ -401,6 +475,19 @@ class SuggestionController(
         return EmailChoice(emails, exclusive = clearlyAnEmail)
     }
 
+    /**
+     * Allemand : deux noms tapés à la suite (« Haus tür ») proposés réunis (« Haustür »). Le mot en cours de frappe [typed] est le second, le premier
+     * le précède, séparé par une seule espace ; null si rien n'est à proposer. Disparaît dès l'espace qui suit le second mot : à toucher avant.
+     */
+    private fun compoundSuggestion(dictionary: Dictionary, textBeforeCursor: String, typed: String): WordSuggestion? {
+        val first = WordText.wordBeforeSingleSpace(textBeforeCursor.dropLast(typed.length))
+        if (first.isEmpty()) return null
+        return dictionary.compoundMergeFor(first, typed)?.let { WordSuggestion(it, WordSuggestion.Kind.COMPOUND) }
+    }
+
+    /** [words] dont le dernier emplacement est pris par [compound] (s'il y en a un) : les deux premiers mots restent visibles. */
+    private fun withCompound(words: List<WordSuggestion?>, compound: WordSuggestion?): List<WordSuggestion?> = withEmail(words, compound)
+
     /** [words] dont le dernier emplacement est pris par [email] (s'il y en a une) : les deux premiers mots restent visibles. */
     private fun withEmail(words: List<WordSuggestion?>, email: WordSuggestion?): List<WordSuggestion?> {
         if (email == null) return words
@@ -443,13 +530,24 @@ class SuggestionController(
 
     /**
      * Charge le dictionnaire de la langue active en arrière-plan (lot 1.4) : lecture et indexation
-     * (liste française complète, ~50 000 mots pour les autres langues), jamais sur le thread principal.
+     * (liste complète de la langue), jamais sur le thread principal.
      * Appelé à la création du service puis à chaque ouverture de champ : sans effet si la langue est déjà
      * chargée, et un changement de langue dans les paramètres charge la nouvelle langue ici.
      */
     fun preloadDictionaries() {
         val language = host.language()
-        if (DictionaryLoader.peek(language) != null) return
+        // Bigrammes facultatifs (mot précédent, point 1 de docs/autocorrection-roadmap.md) : téléchargés au mieux, une fois par processus.
+        if (DictionaryFiles.isInstalled(appContext.filesDir, language)) BigramDownloadWorker.ensure(appContext, language)
+        if (DictionaryLoader.peek(language) != null) {
+            // Dictionnaire déjà là : seul le modèle de la lettre suivante peut manquer (réglage activé depuis).
+            if (nextLettersAllowed && DictionaryLoader.peek(language)?.nextLetterModelIfBuilt == null) {
+                scope.launch(Dispatchers.Default) {
+                    warmNextLetterModel(language)
+                    withContext(Dispatchers.Main) { onDictionariesLoaded() }
+                }
+            }
+            return
+        }
         // Les dictionnaires ne sont plus dans l'APK : langue pas encore téléchargée (première utilisation, ou mise à jour
         // depuis une version qui les embarquait) = on lance le téléchargement ; le chargement suit à son arrivée.
         if (!DictionaryFiles.isInstalled(appContext.filesDir, language)) {
@@ -458,7 +556,9 @@ class SuggestionController(
         }
         scope.launch(Dispatchers.IO) {
             try {
-                DictionaryLoader.forLanguage(appContext, language)
+                // Index des complétions construit ici, en arrière-plan, plutôt qu'à la première lettre tapée.
+                DictionaryLoader.forLanguage(appContext, language).warmSuggestionIndex()
+                warmNextLetterModel(language)
             } catch (e: CancellationException) {
                 throw e
             } catch (t: Throwable) {
@@ -537,6 +637,7 @@ class SuggestionController(
      * dans ce champ, jamais en mode prompt (le texte du champ n'est alors pas le sien).
      */
     fun finishField() {
+        logAutocorrectStats(force = true) // phase 6 (debug) : bilan à la sortie de chaque champ
         if (!typedInField || !emailsAllowed || host.promptActive()) return
         typedInField = false
         val before = host.inputConnection()?.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString() ?: return
@@ -564,7 +665,8 @@ class SuggestionController(
     /**
      * Autocorrection de la fin de [textBeforeCursor] au moment où un mot se termine : correction du dictionnaire pour
      * le mot qui vient d'être tapé, puis, en français, correction tenant compte des mots voisins (« a » / « à »,
-     * infinitif / participe passé : voir [FrenchContextCorrector]). Renvoie null s'il n'y a rien à changer.
+     * homophones, infinitif / participe passé : voir [ContextualCorrection]), puis tournure habituelle. Tout est calculé
+     * par [Autocorrection], la même chose que lit la bande de suggestions. Renvoie null s'il n'y a rien à changer.
      * [allowRetro] : autorise la révision du mot précédent (désactivée juste après une annulation de l'utilisateur).
      */
     fun autocorrectionFor(textBeforeCursor: String, allowRetro: Boolean): AutocorrectionEdit? {
@@ -573,58 +675,40 @@ class SuggestionController(
         // Une adresse e-mail en cours de frappe n'est jamais corrigée (« gmal », « com »...) : l'utilisateur la tape telle quelle.
         val token = EmailText.trailingToken(textBeforeCursor, truncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND)
         if (token != null && token.indexOf('@') > 0) return null
-        // Phase 3 : une correction annulée deux fois n'est plus appliquée (le mot reste tel que tapé).
-        val dictionaryFix = dictionaryCorrectionFor(word, habitContextFor(textBeforeCursor))?.takeUnless { refusedByUser(word, it) }
-        var result = if (dictionaryFix != null) textBeforeCursor.dropLast(word.length) + dictionaryFix else textBeforeCursor
-        if (host.language() == KeyboardLanguage.FR) {
-            val dictionary = DictionaryLoader.peek(KeyboardLanguage.FR)
-            if (dictionary != null) {
-                val contextual = FrenchContextCorrector.correct(
-                    text = result,
-                    textMayBeTruncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND,
-                    allowRetro = allowRetro,
-                    frequencyOf = dictionary::frequencyOf,
-                )
-                if (contextual != null) result = contextual
-            }
-        }
-        if (result == textBeforeCursor) return null
-        var common = 0
-        val limit = minOf(result.length, textBeforeCursor.length)
-        while (common < limit && result[common] == textBeforeCursor[common]) common++
-        val edit = AutocorrectionEdit(deleteCount = textBeforeCursor.length - common, insert = result.substring(common))
-        // Même règle pour les corrections de contexte (« a » / « à »...) : on regarde le mot réellement changé.
-        val changed = HabitSignals.changedWord(textBeforeCursor, edit.deleteCount, edit.insert)
-        if (changed != null && refusedByUser(changed.first, changed.second)) {
-            AppLog.d(TAG, "Habitudes : correction ignorée, annulée au moins ${CorrectionHabits.REFUSAL_THRESHOLD} fois")
-            return null
-        }
-        return edit
-    }
-
-    /**
-     * Correction du dictionnaire pour [word], ou null s'il n'y en a pas. Story 1.4 : les mots du
-     * dictionnaire personnel ne sont jamais corrigés et servent aussi de candidats de correction.
-     * Phase 4 : [habits] départage les candidats à distance égale (voir [habitContextFor]).
-     */
-    fun dictionaryCorrectionFor(word: String, habits: HabitContext? = null): String? {
-        // Lot 1.4 : jamais d'attente du chargement sur le thread principal. Tant que le dictionnaire de la
-        // langue n'est pas prêt (quelques instants après la création du service), pas d'autocorrection.
+        // Jamais d'attente du chargement sur le thread principal : tant que le dictionnaire n'est pas prêt, pas d'autocorrection.
         val dictionary = DictionaryLoader.peek(host.language()) ?: return null
         val personalWords = host.personalWords()
-        val correction = traced(Sections.AUTOCORRECTION) {
-            dictionary.correctionFor(word, personalWords = personalWords, habits = habits)
+        val corrected = traced(Sections.AUTOCORRECTION) {
+            Autocorrection.correctedText(
+                textBeforeCursor = textBeforeCursor,
+                textMayBeTruncated = textBeforeCursor.length >= TEXT_CONTEXT_LOOKBEHIND,
+                allowRetro = allowRetro,
+                dictionary = dictionary,
+                personalWords = personalWords,
+                // Corrections de contexte : chaque langue du clavier a sa table (FrenchConfusions, EnglishConfusions, SpanishConfusions, GermanConfusions,
+                // ItalianConfusions, PortugueseConfusions, DutchConfusions).
+                contextual = host.language() in CONTEXTUAL_LANGUAGES,
+                habitsFor = { habitContextFor(it) },
+                stats = autocorrectStats,
+                language = host.language(),
+            )
         }
-        if (BuildConfig.DEBUG && habits != null && correction != dictionary.correctionFor(word, personalWords = personalWords)) {
-            habitTieBreaks++
-            AppLog.d(TAG, "Habitudes : le départage a changé la correction ($habitTieBreaks fois depuis le démarrage)")
-        }
-        if (correction == null || correction == word) return null
-        return correction
+        logAutocorrectStats(force = false)
+        if (corrected == textBeforeCursor) return null
+        var common = 0
+        val limit = minOf(corrected.length, textBeforeCursor.length)
+        while (common < limit && corrected[common] == textBeforeCursor[common]) common++
+        return AutocorrectionEdit(deleteCount = textBeforeCursor.length - common, insert = corrected.substring(common))
     }
 
     private companion object {
         private const val TAG = "SuggestionController"
+
+        /** Langues qui ont des règles de contexte (homophones, confusions de mots) : voir [ContextualCorrection]. */
+        private val CONTEXTUAL_LANGUAGES = KeyboardLanguage.entries.toSet()
+
+        /** Phase 6 (debug) : le rapport des compteurs de l'autocorrection est écrit dans logcat tous les 100 mots examinés. */
+        private const val STATS_LOG_EVERY = 100L
 
         /** Durée après une touche pendant laquelle un curseur qui bouge est considéré comme suivant la frappe. */
         private const val TYPING_WINDOW_MS = 1_200L

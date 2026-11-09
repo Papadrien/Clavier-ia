@@ -1,0 +1,33 @@
+# categoria<TAB>texto digitado<TAB>texto esperado depois da autocorreção (palavra por palavra, como no teclado)
+# Os casos que falham hoje são OBJETIVOS; estão listados em baseline.txt.
+e-é	Não e verdade.	Não é verdade.
+e-é	Isso não e possível.	Isso não é possível.
+e-é	Isso e verdade.	Isso é verdade.
+e-é	Tudo e possível.	Tudo é possível.
+e-é	Ela e muito simpática.	Ela é muito simpática.
+esta-está	Você esta bem?	Você está bem?
+esta-está	Ele esta cansado.	Ele está cansado.
+esta-está	Onde esta o meu livro?	Onde está o meu livro?
+esta-está	Tudo esta bem.	Tudo está bem.
+esta-está	Ela esta aqui.	Ela está aqui.
+há	A muito tempo que espero.	Há muito tempo que espero.
+há	Moro aqui a muito tempo.	Moro aqui há muito tempo.
+mais	Quero muito mas do que isso.	Quero muito mais do que isso.
+mais	Nunca mas faço isso.	Nunca mais faço isso.
+mais	Cada vez mas difícil.	Cada vez mais difícil.
+a gente	Agente vai amanhã.	A gente vai amanhã.
+a gente	Hoje agente não pode.	Hoje a gente não pode.
+soldadas	Concerteza vou.	Com certeza vou.
+soldadas	Derrepente parou.	De repente parou.
+soldadas	Apartir de hoje.	A partir de hoje.
+soldadas	Porisso não fui.	Por isso não fui.
+soldadas	Vamos tentar denovo.	Vamos tentar de novo.
+acentos	Voce vem hoje?	Você vem hoje?
+acentos	Eu nao sei.	Eu não sei.
+acentos	Ate amanha.	Até amanhã.
+acentos	Obrigado, tambem.	Obrigado, também.
+acentos	Ele ja chegou.	Ele já chegou.
+erros	Obrigdao por tudo.	Obrigado por tudo.
+erros	Até amanhá.	Até amanhã.
+erros	Estou muito cansdo.	Estou muito cansado.
+erros	Perdi o onibus.	Perdi o ônibus.

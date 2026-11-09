@@ -399,10 +399,24 @@ class KeyboardLayoutTest {
         assertEquals('3', popupItems(letterKey(fr, 'e')).first())
         assertEquals("3éèê", popupItems(letterKey(fr, 'e')).take(4).joinToString(""))
         assertEquals('3', letterKey(fr, 'e').longPressChar)
-        // Sans accents : pas de bulle, l'appui long saisit directement le chiffre (story 1.6).
         assertTrue(letterKey(fr, 'z').popup.isNotEmpty()) // z a des variantes (ž)
-        assertTrue(letterKey(fr, 'r').popup.isEmpty())
+        // Sans accents : la bulle ne contient que le chiffre, présélectionné.
+        assertEquals(listOf(listOf('4')), letterKey(fr, 'r').popup)
+        assertEquals('4', letterKey(fr, 'r').defaultPopupChar)
         assertEquals('4', letterKey(fr, 'r').longPressChar)
+        // Avec accents, le choix par défaut reste l'accent le plus courant.
+        assertEquals('é', letterKey(fr, 'e').defaultPopupChar)
+    }
+
+    @Test
+    fun `sans rangee de chiffres toutes les touches du haut ont une bulle`() {
+        languages.forEach { language ->
+            val topRow = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow = false).rows.first()
+            topRow.forEach { key ->
+                assertTrue(key.popup.isNotEmpty(), "${language} ${key.id} : bulle attendue")
+                assertEquals(key.longPressChar, popupItems(key).first(), "${language} ${key.id}")
+            }
+        }
     }
 
     @Test
@@ -452,8 +466,11 @@ class KeyboardLayoutTest {
             fr.rows.flatten().filter { it.defaultPopupChar != null }.forEach { key ->
                 assertTrue(key.defaultPopupChar in key.popup.flatten(), key.id)
             }
-            // Sans accents : pas de bulle, donc pas de choix par défaut.
-            assertEquals(null, letterKey(fr, 'r').defaultPopupChar)
+            // Sans accents hors rangée du haut : pas de bulle, donc pas de choix par défaut.
+            assertEquals(null, letterKey(fr, 'd').defaultPopupChar)
+            // Rangée du haut sans accents : le chiffre en appui long est le choix par défaut
+            // uniquement quand la rangée de chiffres est désactivée.
+            assertEquals(if (numberRow) null else '4', letterKey(fr, 'r').defaultPopupChar)
         }
         val en = Keyboards.layoutOf(LayoutId.LETTERS, KeyboardLanguage.EN, numberRow = false)
         assertEquals('é', letterKey(en, 'e').defaultPopupChar)
@@ -493,6 +510,16 @@ class KeyboardLayoutTest {
     }
 
     @Test
+    fun `en multilingue Entree perd 0,35 unite reprise par la barre espace`() {
+        val normal = Keyboards.layoutOf(LayoutId.LETTERS).rows.last()
+        val compact = Keyboards.layoutOf(LayoutId.LETTERS, compactEnter = true).rows.last()
+        assertEquals(normal.first { it.id == "enter" }.weight - 0.35f, compact.first { it.id == "enter" }.weight, 0.001f)
+        assertEquals(normal.first { it.id == "space" }.weight + 0.35f, compact.first { it.id == "space" }.weight, 0.001f)
+        assertEquals(10f, compact.sumOf { it.weight.toDouble() }.toFloat(), 0.001f)
+        assertEquals(normal.first { it.id == "period" }.weight, compact.first { it.id == "period" }.weight, 0.001f)
+    }
+
+    @Test
     fun `sur la page 1 des symboles l emoji est entre inferieur et superieur et la barre espace`() {
         val row = Keyboards.symbols.rows.last()
         assertEquals(listOf("toggle", "less", "emoji", "space", "greater", "enter"), row.map { it.id })
@@ -518,5 +545,23 @@ class KeyboardLayoutTest {
         assertTrue(emoji.action !is KeyAction.TypeChar)
         assertTrue(emoji.weight < space.weight)
         assertTrue(emoji.popup.isEmpty())
+    }
+
+    @Test
+    fun `entree est une pilule plus large que haute sur les dispositions de lettres`() {
+        listOf(Keyboards.letters, Keyboards.lettersEn).forEach { layout ->
+            val enter = layout.rows.flatten().single { it.action == KeyAction.Enter }
+            assertTrue(enter.weight >= 1.5f, "Entrée trop étroite pour une pilule dans ${layout.id} : ${enter.weight}")
+        }
+    }
+
+    @Test
+    fun `entree reduite de 30 pour cent au profit de la barre d espace`() {
+        val row = Keyboards.letters.rows.last()
+        assertEquals(2.2f * 0.7f, row.first { it.id == "enter" }.weight, 0.001f)
+        assertEquals(3.4f + 2.2f * 0.3f, row.first { it.id == "space" }.weight, 0.001f)
+        assertEquals(10f, row.sumOf { it.weight.toDouble() }.toFloat(), 0.001f)
+        val compact = Keyboards.layoutOf(LayoutId.LETTERS, compactEnter = true).rows.last()
+        assertEquals(1.7f * 0.7f, compact.first { it.id == "enter" }.weight, 0.001f)
     }
 }

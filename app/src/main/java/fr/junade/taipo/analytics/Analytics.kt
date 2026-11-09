@@ -12,7 +12,7 @@ import fr.junade.taipo.ai.InferenceFailureCause
 /**
  * Mesure d'usage anonyme via le SDK Kotlin d'Aptabase (https://aptabase.com, serveur de l'UE d'après la clé `A-EU-…`).
  * Aucun identifiant d'appareil, aucun texte : seulement des événements du catalogue [AnalyticsEvents] avec des
- * propriétés filtrées par [AnalyticsProps].
+ * propriétés filtrées par [AnalyticsProps], plus deux tranches de profil sur chaque événement ([UsageBuckets]).
  *
  * - Le SDK est initialisé une fois, dans [fr.junade.taipo.TaipoApplication] ([initialize]) : le clavier (service IME), les
  *   écrans et les téléchargements partagent le même processus.
@@ -51,11 +51,49 @@ object Analytics {
     /** Envoie l'événement au SDK ; renvoie false s'il a été ignoré (SDK absent, champ sensible, mesure désactivée). */
     private fun send(context: Context, name: String, props: AnalyticsProps): Boolean {
         if (!initialized || sensitiveFieldActive) return false
-        if (!AnalyticsPreferences(context.applicationContext).isEnabled) return false
-        val values = props.forSdk()
+        val appContext = context.applicationContext
+        val preferences = AnalyticsPreferences(appContext)
+        if (!preferences.isEnabled) return false
+        val values = props.plus(*usageProps(appContext, preferences)).forSdk()
         if (values.isEmpty()) Aptabase.instance.trackEvent(name) else Aptabase.instance.trackEvent(name, values)
         return true
     }
+
+    /**
+     * Tranches ajoutées à chaque événement pour estimer la rétention sans identifiant : ancienneté de l'installation et
+     * nombre de jours d'utilisation (voir [UsageBuckets]). Le compteur de jours reste local ; seule la tranche part.
+     * Appelé uniquement quand la mesure est activée : désactivée, rien n'est compté.
+     */
+    @Synchronized
+    private fun usageProps(context: Context, preferences: AnalyticsPreferences): Array<Pair<String, Any?>> {
+        val now = System.currentTimeMillis()
+        val state = UsageBuckets.recordActiveDay(
+            UsageBuckets.ActiveDaysState(preferences.activeDays, preferences.lastActiveDay),
+            UsageBuckets.epochDay(now),
+        )
+        if (state.lastDay != preferences.lastActiveDay) {
+            preferences.activeDays = state.count
+            preferences.lastActiveDay = state.lastDay
+        }
+        val installTime = installTimeMillis(context)
+        val props = ArrayList<Pair<String, Any?>>(2)
+        if (installTime != null) {
+            props.add(UsageBuckets.PROP_INSTALL_AGE to UsageBuckets.installAgeBucket(now - installTime))
+        }
+        props.add(UsageBuckets.PROP_ACTIVE_DAYS to UsageBuckets.activeDaysBucket(state.count))
+        return props.toTypedArray()
+    }
+
+    /** Date de première installation (conservée par Android lors des mises à jour) ; null si illisible. Lue une fois. */
+    private fun installTimeMillis(context: Context): Long? {
+        cachedInstallTime?.let { return it }
+        val time = runCatching { context.packageManager.getPackageInfo(context.packageName, 0).firstInstallTime }.getOrNull()
+        cachedInstallTime = time
+        return time
+    }
+
+    @Volatile
+    private var cachedInstallTime: Long? = null
 
     /**
      * Première ouverture de l'application : envoie [AnalyticsEvents.FIRST_OPEN] une seule fois par installation (nombre de

@@ -37,7 +37,7 @@ puce de collage et son expiration (2.2, 2.3), panneau, épinglage, modification,
 historique de 12 h (2.5 à 2.9). L'IME lui parle via `ClipboardController.Host`. La logique pure
 (`ClipboardItems`, `ClipboardSuggestionState`…) reste couverte par les tests existants, inchangés.
 Non compilé ni exécuté ici. Smoke test manuel : copier un texte → puce → collage ; ouverture du panneau,
-collage d'une carte ; épingler, modifier, étiqueter, supprimer ; champ mot de passe (pas de puce) ;
+collage d'une carte ; épingler, modifier, étiqueter, supprimer ; champ mot de passe (puce de collage proposée, copie sensible masquée ; panneau grisé) ;
 puce qui disparaît après 10 min ou à la frappe ; copie sensible (aperçu masqué) ; dictée/correction en cours.
 
 ## Découpage de TaipoIme — étape 3 : PromptModeController (lot 2.3, 03/10/2026)
@@ -255,11 +255,11 @@ panneau emoji, pop-up d'information, tous les écrans de réglages, fenêtres de
 Non compilé ni exécuté ici (pas de compilateur dans l'environnement de revue). À lancer à la main :
 `./gradlew testDebugUnitTest` puis, appareil branché, `./gradlew connectedDebugAndroidTest`.
 
-**Tests JVM — `DictionaryAssetsIntegrityTest`** (`@ParameterizedTest`, fr, en, es, de, it, pt, nl : liste complète + `_50k` de secours) : relit chaque liste en
+**Tests JVM — `DictionaryAssetsIntegrityTest`** (`@ParameterizedTest`, fr, en, es, de, it, pt, nl : liste complète ; le seuil du repli mémoire garde ~50 000 mots) : relit chaque liste en
 format strict (`parseFrequencyLines` est tolérant et masquerait une ligne abîmée) : « mot fréquence » partout,
 fréquences > 0, tri décroissant, aucun doublon, minuscules / NFC / lettres + `'` + `-`, lettres isolées
 autorisées seulement (fr : a à y ; en : a i ; etc.), taille plancher 45 000 mots, mots courants présents,
-le chargeur ne perd aucune ligne, `SOURCES.txt` cite chaque fichier ; chaque liste complète dépasse son plancher et contient (à tolérance près) sa liste de secours. Les règles reprennent l'état constaté
+le chargeur ne perd aucune ligne, `SOURCES.txt` cite chaque fichier ; chaque liste complète dépasse son plancher et son seuil de repli mémoire (`DictionaryLoader.candidateMinFrequency`) garde 45 000 à 55 000 mots. Les règles reprennent l'état constaté
 des fichiers (vérifié par script sur les fichiers actuels : 0 anomalie).
 
 **Tests instrumentés (`app/src/androidTest`, JUnit 4)** :
@@ -387,3 +387,25 @@ comme dans le prompt (`applyDictionaryAutocorrection`, `applyPromptAutocorrectio
 Non compilé ni exécuté ici. Smoke test manuel : « a demain », « je vais a Paris », « quelque chose a manger »,
 « j'ai a faire », « il a manger », « il faut mangé », « à côté », « il a mangé » (inchangés), retour arrière après
 chaque correction, même chose dans le prompt.
+
+## Participe passé selon l'auxiliaire : autocorrection et bande de suggestions (29/10/2026)
+
+Analyse unique : `FrenchContextCorrector.participleFor(texte, frequencyOf)` renvoie un `ParticipleFix(form, automatic)` pour
+le dernier mot, d'après l'auxiliaire qui le précède (avoir : « j'ai », « il a », « nous avons »... ; être avec je/tu/il/on/elle).
+L'autocorrection (`fixParticiple`) et la bande de suggestions (`SuggestionController.refresh`) l'utilisent toutes deux.
+
+- **Autocorrection à l'espace** : « il a parle » -> « parlé », « elle est arrive » -> « arrivée », « j'ai observe » -> « observé ».
+  Après une forme de **avoir**, le rapport de fréquences exigé (forme en -é / forme en -e) passe de 1/11 à 1/50
+  (`AVOIR_SHARE_DIVISOR`) : un mot nu en -e juste après « j'ai » est presque toujours un participe. Noms de locutions exclus :
+  « j'ai envie / honte / hâte / peine / classe » (`NOUNS_AFTER_AVOIR`). Après **être**, le seuil reste 1/11 (« il est calme »).
+- **Bande de suggestions** : mot valide après un auxiliaire = le participe est au **centre**.
+  - Correction sûre (`automatic`) : [mot tapé, participe en gras, 1re complétion] (comme une faute du dictionnaire).
+  - Pas assez sûre (après être, forme en -é entre 1/11 et 1/30 de la forme en -e) : [complétion, participe en poids normal,
+    complétion], à toucher pour l'adopter. Après être sous 1/30 (« il est calme ») : rien. Après avoir : toujours proposé.
+  - Une faute du dictionnaire garde sa correction ; le participe n'est pas répété dans les complétions ; la casse du mot
+    tapé est reprise ; même comportement quand le curseur est posé sur un mot déjà écrit (`placementSlotsFor`).
+  - Dans un champ sans autocorrection, le centre s'affiche en poids normal (`plainIfNoAutocorrect`, existant).
+- **Non couvert** : sujets pluriels (« ils sont arrive » -> « arrivés »), accord avec un COD (« la pomme que j'ai mangé »),
+  noms sujets (« le chat a observe »).
+- Tests : `FrenchContextCorrectorTest` (règle avoir/être, `participleFor`), `DictionarySuggestionsTest` (emplacements).
+  366 tests du module core passent hors Gradle (doublure JUnit) ; non compilé sur Android (`SuggestionController`).

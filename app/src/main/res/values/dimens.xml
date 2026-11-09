@@ -46,6 +46,9 @@
     <dimen name="taipo_space_bar_length">22dp</dimen>
     <!-- Demi-longueur ci-dessus ; épaisseur (lot 06 : 6 px fixes avant, soit ~2,3 dp sur Pixel 9). -->
     <dimen name="taipo_space_bar_thickness">3dp</dimen>
+    <!-- Nom de la langue active, écrit sur la barre d'espace à la place du trait ; marge gardée de chaque côté de la touche. -->
+    <dimen name="taipo_space_label_text_size">13dp</dimen>
+    <dimen name="taipo_space_label_margin">10dp</dimen>
 
     <!-- ===== Bulle d'accents (appui long) ===== -->
     <dimen name="taipo_popup_corner_radius">20dp</dimen>
@@ -90,6 +93,10 @@
     <dimen name="taipo_bar_pill_padding_horizontal">8dp</dimen>
     <dimen name="taipo_bar_pill_icon_size">18dp</dimen>
     <dimen name="taipo_bar_pill_icon_gap">4dp</dimen>
+    <!-- Astuce de geste dans la barre (GestureTipPillView) : pilule de 36dp, ampoule (taipo_bar_pill_icon_size) puis texte en
+         taipo_bar_button_text_size ; marges intérieures gauche (côté ampoule) et droite. -->
+    <dimen name="taipo_gesture_tip_padding_start">10dp</dimen>
+    <dimen name="taipo_gesture_tip_padding_end">14dp</dimen>
     <!-- Bouton rond d'envoi / stop et sa roue de chargement. -->
     <dimen name="taipo_bar_round_button_size">36dp</dimen>
     <dimen name="taipo_bar_spinner_size">20dp</dimen>
@@ -130,7 +137,7 @@
     <dimen name="taipo_chat_action_text_size">13sp</dimen>
     <!-- Hauteur de la FACE du bouton. Lot 20 : la vue fait 48 dp (face + taipo_touch_slop de chaque côté, fond inséré), le rendu ne change pas. -->
     <dimen name="taipo_chat_action_min_height">36dp</dimen>
-    <dimen name="taipo_chat_action_padding_horizontal">14dp</dimen>
+    <dimen name="taipo_chat_action_padding_horizontal">16dp</dimen>
     <dimen name="taipo_chat_action_padding_vertical">6dp</dimen>
     <dimen name="taipo_chat_action_margin_top">4dp</dimen>
 
@@ -256,6 +263,26 @@
     <dimen name="taipo_input_text_size">16sp</dimen>
     <!-- Ligne de commutateur ou de bouton radio : hauteur minimale de la zone tactile (lot 18, auparavant 48dp dans chaque ligne). -->
     <dimen name="taipo_settings_row_min_height">48dp</dimen>
+
+    <!-- Page « Thème » (lot T5) : hauteur de l'aperçu d'une carte, taille et marge de la coche de sélection, contour d'une carte
+         au repos et choisie. -->
+    <dimen name="taipo_theme_preview_height">132dp</dimen>
+    <dimen name="taipo_theme_check_size">24dp</dimen>
+    <dimen name="taipo_theme_check_icon_size">16dp</dimen>
+    <dimen name="taipo_theme_check_margin">6dp</dimen>
+    <dimen name="taipo_theme_card_stroke">1dp</dimen>
+    <dimen name="taipo_theme_card_stroke_selected">2dp</dimen>
+    <!-- Section « Couleur » de la page « Thème » : pastille d'une couleur d'accent et anneau de la pastille choisie. -->
+    <dimen name="taipo_accent_swatch_size">48dp</dimen>
+    <dimen name="taipo_accent_swatch_ring">2dp</dimen>
+    <dimen name="taipo_accent_swatch_ring_gap">3dp</dimen>
+    <!-- Pastilles de l'écran « Pass premium » (aperçu des neuf couleurs, sur une ligne) et cadenas d'une pastille réservée. -->
+    <dimen name="taipo_premium_swatch_size">32dp</dimen>
+    <dimen name="taipo_accent_swatch_lock_size">18dp</dimen>
+
+    <!-- Aperçu d'une disposition (détail d'une langue) : un carré par touche, écart entre les carrés. -->
+    <dimen name="taipo_layout_preview_key">8dp</dimen>
+    <dimen name="taipo_layout_preview_gap">2dp</dimen>
     <!-- Commutateur : piste, pastille (la zone tactile reste celle de la ligne, 48dp au minimum) et écart au bord. -->
     <dimen name="taipo_switch_track_width">52dp</dimen>
     <dimen name="taipo_switch_track_height">26dp</dimen>

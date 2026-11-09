@@ -1,0 +1,38 @@
+# categoria<TAB>testo digitato<TAB>testo atteso dopo l'autocorrezione (parola per parola, come sulla tastiera)
+# I casi che falliscono oggi sono OBIETTIVI; sono elencati in baseline.txt.
+e-è	Non e vero.	Non è vero.
+e-è	Questo non e possibile.	Questo non è possibile.
+e-è	Lui e stato gentile.	Lui è stato gentile.
+e-è	La cena e stata buona.	La cena è stata buona.
+e-è	Forse e meglio aspettare.	Forse è meglio aspettare.
+e-è	Purtroppo e vero.	Purtroppo è vero.
+c'è	C'e un problema.	C'è un problema.
+c'è	Ce un problema.	C'è un problema.
+c'è	Qui ce una farmacia?	Qui c'è una farmacia?
+c'è	Non ce nessuno a casa.	Non c'è nessuno a casa.
+c'è	Ce qualcosa che non va.	C'è qualcosa che non va.
+po'	Aspetta un po, arrivo.	Aspetta un po', arrivo.
+po'	Dammi un po di tempo.	Dammi un po' di tempo.
+ho	Io o fatto i compiti.	Io ho fatto i compiti.
+ho	Non o capito niente.	Non ho capito niente.
+ho	Io o fame.	Io ho fame.
+ho	Ne o parlato con lui.	Ne ho parlato con lui.
+ha	Lui a detto di no.	Lui ha detto di no.
+ha	Chi a mangiato la torta?	Chi ha mangiato la torta?
+ha	Non a visto niente.	Non ha visto niente.
+ha	Mi a chiamato ieri.	Mi ha chiamato ieri.
+hanno	Loro anno vinto la partita.	Loro hanno vinto la partita.
+hanno	Non anno capito.	Non hanno capito.
+hanno	Mi anno detto di aspettare.	Mi hanno detto di aspettare.
+qual è	Qual'è il problema?	Qual è il problema?
+dà	Mi da fastidio il rumore.	Mi dà fastidio il rumore.
+sì	Si, certo.	Sì, certo.
+accenti	Perche non vieni?	Perché non vieni?
+accenti	La citta e bella.	La città è bella.
+accenti	Ci vediamo piu tardi.	Ci vediamo più tardi.
+accenti	Pero non ho tempo.	Però non ho tempo.
+accenti	Cosi va bene.	Così va bene.
+errori	Grazei per tutto.	Grazie per tutto.
+errori	Ci vediamo domnai.	Ci vediamo domani.
+errori	Sono molto stancho.	Sono molto stanco.
+errori	Ho perso il trno.	Ho perso il treno.

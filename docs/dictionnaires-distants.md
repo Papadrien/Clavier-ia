@@ -3,16 +3,20 @@
 Non compilé ni exécuté dans l'environnement de développement : à valider au premier build.
 
 ## Principe
-Les listes de mots ne sont plus dans l'APK. Pour chaque langue (fr, en, es, de, it, pt, nl), 3 fichiers sont téléchargés depuis
+Les listes de mots ne sont plus dans l'APK. Pour chaque langue (fr, en, es, de, it, pt, nl), 2 fichiers sont téléchargés depuis
 le bucket R2 (même Worker que les modèles, `https://taipo-worker.junade-models.workers.dev/`) :
-- `dictionnaries/<code>.txt` (liste complète), `dictionnaries/<code>_50k.txt` (secours), `dictionnaries/names/<code>.txt` (prénoms).
-(Orthographe du dossier du bucket : « dictionnaries », constante `DictionaryFiles.REMOTE_DIRECTORY`.)
+- `dictionaries/<code>.txt` (liste complète) et `dictionaries/names/<code>.txt` (prénoms).
+(Les listes `<code>_50k.txt` de secours ont été supprimées le 04/11/2026 : le repli mémoire relit la liste complète avec un seuil de fréquence ; l'app efface les `_50k` déjà téléchargés. Elles peuvent être retirées du bucket une fois les anciennes versions de l'app retirées.)
+(Dossier du bucket : « dictionaries », constante `DictionaryFiles.REMOTE_DIRECTORY` ; il s'appelait « dictionnaries » jusqu'au 07/11/2026.)
+- Facultatif (français, anglais, italien, portugais, néerlandais) : `dictionaries/bigrams/<code>.txt` (paires de mots, voir `docs/autocorrection-roadmap.md`).
+  Une langue est installée sans lui ; `BigramDownloadWorker` le télécharge au mieux (une tentative par processus, aucun message en cas
+  d'échec) et le dictionnaire est relu au champ suivant. À déposer depuis `dictionaries/bigrams/`.
 
-Stockage : `filesDir/dictionaries/` (même arborescence), exclu des sauvegardes. Une langue est « installée » quand les 3 fichiers
+Stockage : `filesDir/dictionaries/` (même arborescence), exclu des sauvegardes. Une langue est « installée » quand les 2 fichiers
 sont présents et non vides (rename atomique : un fichier n'apparaît qu'une fois complet).
 
 ## Quand le téléchargement démarre (`DictionaryDownloadScheduler.ensure`)
-- ouverture des paramètres du clavier, choix d'une langue (liste déroulante) ou d'une case multilingue ;
+- ouverture de l'écran « Langues » (paramètres du clavier), ajout d'une langue, ouverture du détail d'une langue ;
 - clavier : à l'ouverture d'un champ, si la langue active n'est pas installée (langue « Automatique » et mise à jour depuis une version qui
   embarquait les listes comprises) ; à l'arrivée des fichiers, la langue active se charge sans attendre (`SuggestionController`).
 - Après un échec, seul « Réessayer » relance (pas de requête à chaque champ).
@@ -22,8 +26,8 @@ Sans connexion : le travail WorkManager attend (« En attente de connexion… »
 `DictionaryDownloadWorker` réutilise `ModelFileFetcher` (HTTPS, `.tmp`, reprise `Range`, relances), **sans SHA-256** (les listes évoluent
 sur le serveur) : seul `DictionaryContentCheck` vérifie la forme (« mot fréquence ») avant installation. `DictionaryLoader` lit les fichiers ;
 une langue non installée n'est pas mise en cache (dictionnaire vide, autocorrection absente) et se charge dès qu'elle est installée.
-États : `DictionaryDownloadTracker` (Queued / Downloading % / Failed / Installed). Écran : section « Dictionnaires » de
-`KeyboardSettingsActivity` (`DictionaryStatusSection`).
+États : `DictionaryDownloadTracker` (Queued / Downloading % / Failed / Installed). Écran : carte « Dictionnaire » du détail d'une langue
+(`LanguageDetailActivity`, `DictionaryStatusSection`) ; pastille « À télécharger » sur la ligne de la langue (`LanguagesActivity`).
 
 ## Source des fichiers
 `dictionaries/` à la racine du projet (hors app) : ce qu'il faut envoyer sur R2 ; relu par `DictionaryAssetsIntegrityTest` et

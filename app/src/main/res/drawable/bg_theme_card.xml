@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Carte de thème (page « Thème », lot T5) : contour violet quand la carte est choisie (state_selected), filet discret sinon. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/settings_card" />
+            <stroke
+                android:width="@dimen/taipo_theme_card_stroke_selected"
+                android:color="@color/accent" />
+            <corners android:radius="@dimen/taipo_settings_card_corner_radius" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/settings_card" />
+            <stroke
+                android:width="@dimen/taipo_theme_card_stroke"
+                android:color="@color/settings_divider" />
+            <corners android:radius="@dimen/taipo_settings_card_corner_radius" />
+        </shape>
+    </item>
+</selector>

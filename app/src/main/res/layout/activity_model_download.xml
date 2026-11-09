@@ -31,5 +31,37 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
+        <!-- Accélération du modèle (voir AiAcceleration) : GPU au choix, repli automatique sur le processeur en cas d'échec. -->
+        <TextView
+            style="@style/TaipoText.Section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xl"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm"
+            android:text="@string/model_gpu_section" />
+
+        <Switch
+            style="@style/TaipoSwitch"
+            android:id="@+id/switch_gpu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="@string/model_gpu_switch" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/model_gpu_description" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:id="@+id/text_gpu_failed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+            android:visibility="gone"
+            android:text="@string/model_gpu_failed" />
+
     </LinearLayout>
 </ScrollView>

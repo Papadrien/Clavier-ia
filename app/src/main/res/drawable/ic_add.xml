@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Plus de la ligne « Ajouter une langue » : même style que les icônes du lot 09, violet de la charte. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/taipo_icon_size"
+    android:height="@dimen/taipo_icon_size"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M12,5 L12,19 M5,12 L19,12"
+        android:strokeColor="@color/taipo_purple_light"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round" />
+</vector>

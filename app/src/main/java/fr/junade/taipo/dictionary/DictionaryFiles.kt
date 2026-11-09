@@ -4,15 +4,12 @@ import fr.junade.taipo.KeyboardLanguage
 import java.io.File
 
 /**
- * Les 3 fichiers d'une langue. Le même chemin relatif sert sur le serveur (`dictionnaries/<chemin>`) et dans le
+ * Les 2 fichiers d'une langue. Le même chemin relatif sert sur le serveur (`dictionaries/<chemin>`) et dans le
  * stockage de l'app (`filesDir/dictionaries/<chemin>`).
  */
 enum class DictionaryFile {
     /** Prénoms avec leur majuscule : `names/<code>.txt`. */
     NAMES,
-
-    /** Liste de secours d'environ 50 000 mots : `<code>_50k.txt`. */
-    BACKUP,
 
     /** Liste complète de la langue : `<code>.txt`. */
     FULL,
@@ -20,7 +17,6 @@ enum class DictionaryFile {
 
     fun relativePath(language: KeyboardLanguage): String = when (this) {
         FULL -> "${language.tag}.txt"
-        BACKUP -> "${language.tag}_50k.txt"
         NAMES -> "names/${language.tag}.txt"
     }
 }
@@ -37,13 +33,38 @@ object DictionaryFiles {
     /** Même serveur (Worker Cloudflare devant R2) que les modèles : voir `VoiceModelFile` et `AiModel`. */
     const val SERVER_BASE_URL = "https://taipo-worker.junade-models.workers.dev/"
 
-    /** Dossier du bucket R2 (orthographe du bucket : « dictionnaries »). */
-    const val REMOTE_DIRECTORY = "dictionnaries"
+    /** Dossier du bucket R2 (même nom que le dossier local). */
+    const val REMOTE_DIRECTORY = "dictionaries"
 
     fun directory(filesDir: File): File = File(filesDir, DIRECTORY_NAME)
 
     fun localFile(filesDir: File, language: KeyboardLanguage, file: DictionaryFile): File =
         File(directory(filesDir), file.relativePath(language))
+
+    /**
+     * Ancienne liste de secours (`<code>_50k.txt`), plus utilisée : le repli en cas de mémoire insuffisante relit la liste
+     * complète avec un seuil de fréquence (voir `DictionaryLoader`). Supprime le fichier laissé par une version précédente.
+     * @return true si un fichier a été supprimé.
+     */
+    fun deleteObsoleteBackup(filesDir: File, language: KeyboardLanguage): Boolean =
+        File(directory(filesDir), "${language.tag}_50k.txt").let { it.isFile && it.delete() }
+
+    /**
+     * Bigrammes de [language] (point 1 de docs/autocorrection-roadmap.md) : `bigrams/<code>.txt`, FACULTATIFS. Ils ne font pas partie
+     * de [DictionaryFile] : une langue est installée sans eux, et leur absence (pas encore sur le serveur, pas de réseau) laisse
+     * l'autocorrection telle qu'avant. Seules les langues de [BIGRAM_LANGUAGES] en ont.
+     */
+    fun bigramFile(filesDir: File, language: KeyboardLanguage): File = File(directory(filesDir), "bigrams/${language.tag}.txt")
+
+    fun bigramRemoteUrl(language: KeyboardLanguage): String = "$SERVER_BASE_URL$REMOTE_DIRECTORY/bigrams/${language.tag}.txt"
+
+    /** Langues dont les bigrammes existent et dont l'autocorrection s'en sert (`CorrectionConfidence.contextWeight`). */
+    val BIGRAM_LANGUAGES: Set<KeyboardLanguage> =
+        setOf(KeyboardLanguage.FR, KeyboardLanguage.EN, KeyboardLanguage.IT, KeyboardLanguage.PT, KeyboardLanguage.NL)
+
+    /** Vrai si [language] a des bigrammes et qu'ils ne sont pas encore là. */
+    fun bigramsMissing(filesDir: File, language: KeyboardLanguage): Boolean =
+        language in BIGRAM_LANGUAGES && bigramFile(filesDir, language).let { !it.isFile || it.length() == 0L }
 
     fun remoteUrl(language: KeyboardLanguage, file: DictionaryFile): String =
         "$SERVER_BASE_URL$REMOTE_DIRECTORY/${file.relativePath(language)}"
@@ -56,14 +77,13 @@ object DictionaryFiles {
 
     /**
      * Taille indicative (octets), pour la progression globale seulement : jamais utilisée pour valider un fichier.
-     * Relevée sur les fichiers du 16/10/2026.
+     * Relevée sur les fichiers du 16/10/2026 (fr : 04/11/2026, après enrichissement).
      */
     fun approxBytes(language: KeyboardLanguage, file: DictionaryFile): Long = when (file) {
         DictionaryFile.NAMES -> 1_200L
-        DictionaryFile.BACKUP -> 650_000L
         DictionaryFile.FULL -> when (language) {
-            KeyboardLanguage.FR -> 9_070_000L
-            KeyboardLanguage.EN -> 3_900_000L
+            KeyboardLanguage.FR -> 9_155_000L
+            KeyboardLanguage.EN -> 1_606_000L
             KeyboardLanguage.ES -> 4_110_000L
             KeyboardLanguage.DE -> 3_240_000L
             KeyboardLanguage.IT -> 2_910_000L

@@ -6,9 +6,12 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import kotlin.math.abs
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 /**
  * Lot 21 : dimensions de la charte lues **une fois** (construction, changement de configuration ou de taille), puis
@@ -22,6 +25,8 @@ internal class DrawDimens(context: Context) {
     val keyShadowHeight = context.dimen(R.dimen.taipo_key_shadow_height)
     val keyShadowPressedHeight = context.dimen(R.dimen.taipo_key_shadow_pressed_height)
     val spaceBarLength = context.dimen(R.dimen.taipo_space_bar_length)
+    val spaceLabelTextSize = context.dimen(R.dimen.taipo_space_label_text_size)
+    val spaceLabelMargin = context.dimen(R.dimen.taipo_space_label_margin)
     val iconSize = context.dimen(R.dimen.taipo_icon_size)
     val keyTextSize = context.dimen(R.dimen.taipo_key_text_size)
     val keyTextSizeLarge = context.dimen(R.dimen.taipo_key_text_size_large)
@@ -65,7 +70,19 @@ internal class KeyRenderer(private val context: Context) {
     var spaceBarAnimation: SpaceBarAnimation? = null
     private val spaceBarBlobPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val spaceBarBlobPath = Path()
-    private val spaceBarTint = context.themeColor(R.color.taipo_purple_light)
+    private val spaceBarTint = context.themeColor(R.color.accent_on_key) // lot T6 : violet clair en sombre, violet plein en clair
+
+    /**
+     * Nom de la langue active (« Français »), écrit sur la barre d'espace à la place du trait ; null : le trait. Pendant le
+     * glissement qui déplace le curseur, le mot suit l'animation « Amibe » : il se décale, s'étire et vire au violet comme le trait.
+     */
+    var spaceLabel: String? = null
+    private val spaceLabelColor = context.themeColor(R.color.key_hint)
+    private val spaceLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = spaceLabelColor
+        textAlign = Paint.Align.CENTER
+        useTaipoFont(context)
+    }
 
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = context.themeColor(R.color.text_primary)
@@ -81,6 +98,14 @@ internal class KeyRenderer(private val context: Context) {
 
     private val keyRect = RectF()
 
+    // Animation « Élastique » du chiffre (glissement vers le bas sur une touche du haut) : voir DigitSwipeAnimation.
+    var digitSwipeAnimation: DigitSwipeAnimation? = null
+    private val digitPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = context.themeColor(R.color.accent_on_key) // lot T6
+        textAlign = Paint.Align.CENTER
+        useTaipoFont(context)
+    }
+
     // Icône Maj dessinée au Canvas (flèche creuse, pleine ou verrouillée, animation « Bond ») : l'état vient de la vue.
     var shiftAnimation: ShiftAnimation? = null
     private val shiftPainter = ShiftIconPainter(context.themeColor(R.color.key_label))
@@ -89,14 +114,21 @@ internal class KeyRenderer(private val context: Context) {
     var backspaceIconAngle = 0f
 
     // Lot 21 : un caractère à dessiner sans passer par String.
+    private val pillRect = RectF()
     private val charBuffer = CharArray(1)
     private var lastKeyTextSize = -1f
 
     // Icônes des touches (lot 09) : VectorDrawable de la charte, teintés une fois, redimensionnés au dessin (aucune
     // allocation dans onDraw). Remplacent les glyphes de police (Maj, Effacer) et les tracés Canvas (Entrée, Emoji).
     private val backspaceIcon = loadKeyIcon(R.drawable.ic_key_backspace)
-    private val enterIcon = loadKeyIcon(R.drawable.ic_key_enter)
+    // Lot T6 : Entrée est violette dans les deux thèmes, son icône est donc blanche (text_on_accent), pas la couleur des libellés.
+    private val enterIcon = loadKeyIcon(R.drawable.ic_key_enter, R.color.text_on_accent)
     private val emojiIcon = loadKeyIcon(R.drawable.ic_key_emoji)
+    // Petit globe en exposant sur la pilule Entrée violette : blanc, légèrement atténué comme l'indice des chiffres (lot T6).
+    private val globeIcon = loadKeyIcon(R.drawable.ic_key_globe, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
+
+    /** Clavier multilingue actif : la pilule Entrée affiche un petit globe en exposant (appui long = langue). */
+    var showsGlobeOnEnter = false
 
     // État de la vue pour le dessin en cours, fixé au début de chaque [draw] (aucune allocation).
     private var dims: DrawDimens = DrawDimens(context)
@@ -133,6 +165,38 @@ internal class KeyRenderer(private val context: Context) {
         spaceBarBlobPath.lineTo(leftX, cy + leftR)
         spaceBarBlobPath.close()
         canvas.drawPath(spaceBarBlobPath, spaceBarBlobPaint)
+    }
+
+    /**
+     * Nom de la langue sur la barre d'espace (voir [spaceLabel]). Au repos, centré, réduit s'il dépasse la touche. Pendant le
+     * glissement, il reprend les deux bouts du trait animé : décalé vers leur milieu, étiré (en largeur) quand le trait s'étire,
+     * teinté comme lui, sans sortir de la touche. Sans allocation.
+     */
+    private fun drawSpaceLabel(canvas: Canvas, label: String, cx: Float, cy: Float) {
+        val paint = spaceLabelPaint
+        paint.textSize = dims.spaceLabelTextSize
+        val room = keyRect.width() - 2f * dims.spaceLabelMargin
+        val textWidth = paint.measureText(label)
+        val fit = if (textWidth > room && textWidth > 0f) room / textWidth else 1f
+        var shift = 0f
+        var scaleX = 1f
+        paint.color = spaceLabelColor
+        val blob = spaceBarAnimation
+        if (blob != null && blob.isRunning) {
+            val half = dims.spaceBarLength
+            val rightX = half + blob.rightOffset
+            val leftX = -half + blob.leftOffset
+            val stretch = SpaceBarPose.stretch(rightX - leftX, 2f * half)
+            scaleX = (1f + stretch * LABEL_STRETCH).coerceIn(LABEL_MIN_SCALE, LABEL_MAX_SCALE)
+            paint.color = SpaceBarPose.blend(spaceLabelColor, spaceBarTint, SpaceBarPose.tint(stretch))
+            val maxShift = ((room - textWidth * fit * scaleX) / 2f).coerceAtLeast(0f)
+            shift = ((rightX + leftX) / 2f).coerceIn(-maxShift, maxShift)
+        }
+        val save = canvas.save()
+        canvas.translate(cx + shift, cy)
+        canvas.scale(fit * scaleX, fit)
+        canvas.drawText(label, 0f, -(paint.ascent() + paint.descent()) / 2f, paint)
+        canvas.restoreToCount(save)
     }
 
     /** Lot 21 : la majuscule à dessiner à la place du libellé (Maj actif sur une lettre), ou [NO_CHAR]. Sans allocation. */
@@ -175,7 +239,17 @@ internal class KeyRenderer(private val context: Context) {
         this.layout = layout
         this.isShifted = isShifted
         this.pressedKey = pressedKey
+        val swipe = digitSwipeAnimation?.takeIf { it.isAnimating(key) }
+        if (swipe == null) {
+            drawKey(canvas, key, left, top, keyWidth, rowHeight, inset)
+            return
+        }
+        // Touche étirée vers le bas sous le doigt : l'échelle se fait depuis le haut de la touche.
+        val p = swipe.letterProgress
+        canvas.save()
+        canvas.scale(DigitSwipePose.faceScaleX(p), DigitSwipePose.faceScaleY(p), left + keyWidth / 2f, top + inset)
         drawKey(canvas, key, left, top, keyWidth, rowHeight, inset)
+        canvas.restore()
     }
 
     private fun drawKey(canvas: Canvas, key: Key, left: Float, top: Float, keyWidth: Float, rowHeight: Float, inset: Float) {
@@ -205,8 +279,8 @@ internal class KeyRenderer(private val context: Context) {
         val shownShadow = if (key == pressedKey) minOf(dims.keyShadowPressedHeight, restShadow) else restShadow
         keyRect.top += restShadow - shownShadow
         if (style == KeyStyle.ACCENT) {
-            // Lot 07 : Entrée est une touche ronde (la zone tactile reste le rectangle de la touche).
-            drawRoundKey(canvas, shownShadow, shadow, face)
+            // Entrée est une pilule : toute la largeur de la touche, extrémités en demi-cercles.
+            drawPillKey(canvas, shownShadow, shadow, face)
         } else {
             canvas.drawRoundRect(keyRect, radius, radius, shadow)
             keyRect.bottom -= shownShadow
@@ -218,7 +292,10 @@ internal class KeyRenderer(private val context: Context) {
                 val cx = keyRect.centerX()
                 val cy = keyRect.centerY()
                 val blob = spaceBarAnimation
-                if (blob != null && blob.isRunning) {
+                val label = spaceLabel
+                if (label != null) {
+                    drawSpaceLabel(canvas, label, cx, cy)
+                } else if (blob != null && blob.isRunning) {
                     drawSpaceBarBlob(canvas, blob, cx, cy)
                 } else {
                     canvas.drawLine(
@@ -229,7 +306,7 @@ internal class KeyRenderer(private val context: Context) {
 
             KeyAction.Emoji -> drawKeyIcon(canvas, emojiIcon)
 
-            KeyAction.Enter -> drawKeyIcon(canvas, enterIcon)
+            KeyAction.Enter -> drawEnterContent(canvas)
 
             KeyAction.Shift -> drawShiftIcon(canvas)
 
@@ -244,6 +321,12 @@ internal class KeyRenderer(private val context: Context) {
      * tampon de caractère, sans créer de String.
      */
     private fun drawKeyLabel(canvas: Canvas, key: Key) {
+        digitSwipeAnimation?.let { swipe ->
+            if (swipe.isAnimating(key)) {
+                drawSwipingLabel(canvas, key, swipe)
+                return
+            }
+        }
         val upper = shiftedChar(key, layout, isShifted)
         val label = if (upper == NO_CHAR) displayLabel(key, layout, isShifted) else ""
         if (upper != NO_CHAR || label.isNotEmpty()) {
@@ -259,22 +342,50 @@ internal class KeyRenderer(private val context: Context) {
     }
 
     /**
-     * Touche ronde (Entrée) : cercle de la face, de diamètre la plus petite dimension de la face, centré dans la touche,
-     * sur un cercle d'ombre décalé vers le bas. Laisse [keyRect] réduit à la face, pour centrer le contenu.
+     * Touche pilule (Entrée) : face en capsule sur toute la largeur de la touche (rayon = la moitié de la hauteur de la
+     * face, ou de la largeur si la touche est plus haute que large), sur une capsule d'ombre décalée vers le bas. Laisse
+     * [keyRect] réduit à la face, pour centrer le contenu.
      */
-    private fun drawRoundKey(canvas: Canvas, shownShadow: Float, shadow: Paint, face: Paint) {
+    private fun drawPillKey(canvas: Canvas, shownShadow: Float, shadow: Paint, face: Paint) {
         val faceHeight = keyRect.height() - shownShadow
         val radius = minOf(keyRect.width(), faceHeight) / 2f
-        val cx = keyRect.centerX()
-        val faceCy = keyRect.top + faceHeight / 2f
-        canvas.drawCircle(cx, faceCy + shownShadow, radius, shadow)
-        canvas.drawCircle(cx, faceCy, radius, face)
+        pillRect.set(keyRect.left, keyRect.top, keyRect.right, keyRect.top + faceHeight)
+        pillRect.offset(0f, shownShadow)
+        canvas.drawRoundRect(pillRect, radius, radius, shadow)
+        pillRect.offset(0f, -shownShadow)
+        canvas.drawRoundRect(pillRect, radius, radius, face)
         keyRect.bottom -= shownShadow
     }
 
-    private fun loadKeyIcon(@DrawableRes id: Int): Drawable {
+    /**
+     * Contenu de la pilule Entrée : le symbole d'entrée, centré ; en mode multilingue, un petit globe en exposant, en haut
+     * à droite comme l'indice des chiffres, replié vers l'intérieur pour rester dans la courbe de la pilule.
+     */
+    private fun drawEnterContent(canvas: Canvas) {
+        drawKeyIcon(canvas, enterIcon)
+        if (!showsGlobeOnEnter) return
+        val size = dims.hintTextSize * GLOBE_HINT_SCALE
+        val half = size / 2f
+        val radius = minOf(keyRect.width(), keyRect.height()) / 2f
+        val cy = keyRect.top + dims.hintMarginTop + half
+        // Coin haut-droit de l'icône (cx + half, cy - half) à l'intérieur du cercle de l'extrémité droite de la pilule.
+        val reach = radius * GLOBE_EDGE_RATIO
+        val dy = (cy - half) - (keyRect.top + radius)
+        val dx = if (reach > abs(dy)) sqrt(reach * reach - dy * dy) else 0f
+        val cx = keyRect.right - radius + dx - half
+        placeIcon(globeIcon, cx, cy, half)
+        globeIcon.draw(canvas)
+    }
+
+    private fun placeIcon(icon: Drawable, cx: Float, cy: Float, half: Float) {
+        icon.setBounds(
+            (cx - half).roundToInt(), (cy - half).roundToInt(), (cx + half).roundToInt(), (cy + half).roundToInt(),
+        )
+    }
+
+    private fun loadKeyIcon(@DrawableRes id: Int, @ColorRes tint: Int = R.color.key_label): Drawable {
         val icon = checkNotNull(ContextCompat.getDrawable(context, id)) { "Icône de touche introuvable" }
-        return icon.mutate().apply { setTint(context.themeColor(R.color.key_label)) }
+        return icon.mutate().apply { setTint(context.themeColor(tint)) }
     }
 
     /** Lot 09 : icône centrée sur la face de la touche, à [R.dimen.taipo_icon_size] (réduite sur les touches basses). */
@@ -301,6 +412,73 @@ internal class KeyRenderer(private val context: Context) {
         val animation = shiftAnimation ?: return
         val size = minOf(dims.iconSize, keyRect.height() * KEY_ICON_MAX_RATIO)
         shiftPainter.draw(canvas, animation, keyRect.centerX(), keyRect.centerY(), size)
+    }
+
+    /**
+     * Libellé d'une touche du haut pendant l'animation « Élastique » : la lettre s'enfonce en rétrécissant, le chiffre éclot
+     * depuis l'indice jusqu'au centre, puis, au relâchement, sort par le haut de la touche (rogné sur la face) pendant que
+     * l'indice revient tout petit à sa place. Sans allocation.
+     */
+    private fun drawSwipingLabel(canvas: Canvas, key: Key, swipe: DigitSwipeAnimation) {
+        val digit = key.longPressChar ?: return
+        autoSizeTextPaint(key)
+        if (hintPaint.textSize != dims.hintTextSize) hintPaint.textSize = dims.hintTextSize
+        val height = keyRect.height()
+        val centerX = keyRect.centerX()
+        val centerY = keyRect.centerY()
+        val hintX = keyRect.right - dims.hintMarginEnd
+        val hintCenterY = keyRect.top + dims.hintMarginTop - hintPaint.ascent() + (hintPaint.ascent() + hintPaint.descent()) / 2f
+
+        // Lettre : descend, rétrécit, s'efface ; revient avec un petit rebond au relâchement.
+        val p = swipe.letterProgress
+        val letterAlpha = DigitSwipePose.letterAlpha(p)
+        if (letterAlpha > 0f) {
+            val upper = shiftedChar(key, layout, isShifted)
+            val baseAlpha = textPaint.alpha
+            val baseline = centerY - (textPaint.ascent() + textPaint.descent()) / 2f
+            val scale = DigitSwipePose.letterScale(p)
+            canvas.save()
+            canvas.translate(0f, p * height * DigitSwipePose.LETTER_SHIFT_RATIO)
+            canvas.scale(scale, scale, centerX, centerY)
+            textPaint.alpha = (baseAlpha * letterAlpha).toInt()
+            if (upper != NO_CHAR) {
+                drawChar(canvas, upper, centerX, baseline, textPaint)
+            } else {
+                canvas.drawText(displayLabel(key, layout, isShifted), centerX, baseline, textPaint)
+            }
+            textPaint.alpha = baseAlpha
+            canvas.restore()
+        }
+
+        // Chiffre : éclot de l'indice vers le centre, fait un « pop » à la validation, puis sort par le haut au relâchement.
+        val exit = swipe.digitExit
+        val digitAlpha = DigitSwipePose.digitAlpha(swipe.digitBloom, exit)
+        if (digitAlpha > 0f) {
+            val bloom = swipe.digitBloom.coerceIn(0f, DigitSwipePose.MAX_BLOOM)
+            digitPaint.textSize =
+                (dims.hintTextSize + (textPaint.textSize - dims.hintTextSize) * bloom) * (1f + DigitSwipePose.POP_SCALE * swipe.digitPop)
+            digitPaint.alpha = (255f * digitAlpha).toInt()
+            val x = hintX + (centerX - hintX) * bloom
+            val y = hintCenterY + (centerY - hintCenterY) * bloom - exit * height * DigitSwipePose.EXIT_RISE_RATIO
+            val clipped = exit > 0f
+            if (clipped) {
+                canvas.save()
+                canvas.clipRect(keyRect)
+            }
+            drawChar(canvas, digit, x, y - (digitPaint.ascent() + digitPaint.descent()) / 2f, digitPaint)
+            if (clipped) canvas.restore()
+        }
+
+        // Indice : disparaît quand le chiffre éclot ; revient tout petit une fois le chiffre sorti.
+        val hintScale = swipe.hintScale
+        if (hintScale > 0f) {
+            val baseAlpha = hintPaint.alpha
+            hintPaint.textSize = dims.hintTextSize * hintScale.coerceAtMost(DigitSwipePose.MAX_HINT_SCALE)
+            hintPaint.alpha = (baseAlpha * DigitSwipePose.hintAlpha(hintScale)).toInt()
+            drawChar(canvas, digit, hintX, hintCenterY - (hintPaint.ascent() + hintPaint.descent()) / 2f, hintPaint)
+            hintPaint.alpha = baseAlpha
+            hintPaint.textSize = dims.hintTextSize
+        }
     }
 
     /** Petit indice du chiffre accessible par appui long, en haut à droite de la touche. */
@@ -359,10 +537,25 @@ internal class KeyRenderer(private val context: Context) {
         private const val SYMBOL_PAGE_TEXT_RATIO = 0.75f
         private const val TOGGLE_123_TEXT_RATIO = 0.7f
 
+        /**
+         * Nom de la langue sur l'espace pendant le glissement : part de l'allongement du trait reprise en largeur par le mot
+         * (le trait est court, le mot bien plus long : l'étirer autant le rendrait illisible), bornée.
+         */
+        private const val LABEL_STRETCH = 0.3f
+        private const val LABEL_MIN_SCALE = 0.85f
+        private const val LABEL_MAX_SCALE = 1.3f
+
         // Garde-fou : l'ombre ne dépasse jamais cette part de la hauteur de la touche (rangées basses en paysage).
         private const val MAX_SHADOW_RATIO = 0.15f
 
         /** Icônes des touches : jamais plus de cette part de la hauteur de la face (rangées basses en paysage). */
         const val KEY_ICON_MAX_RATIO = 0.62f
+
+        /** Pilule Entrée en mode multilingue : taille du globe par rapport à la taille de l'indice des chiffres, et marge au bord courbe. */
+        private const val GLOBE_HINT_SCALE = 1.3f
+        private const val GLOBE_EDGE_RATIO = 0.88f
+
+        /** Opacité (sur 255) du petit globe blanc de la pilule Entrée : l'indice des chiffres est à 70 % dans la charte. */
+        private const val GLOBE_ALPHA = 179
     }
 }

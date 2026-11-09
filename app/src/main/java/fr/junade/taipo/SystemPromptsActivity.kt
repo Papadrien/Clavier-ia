@@ -23,13 +23,14 @@ import fr.junade.taipo.ai.TranscriptionPromptPreferences
  */
 class SystemPromptsActivity : Activity() {
 
-    // Thème de la V1 : toujours sombre (voir KeyboardTheme).
+    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Pass premium : la page n'est ouverte qu'avec le pass (la ligne de l'accueil est verrouillée sinon, voir MainActivity).
         setContentView(R.layout.activity_system_prompts)
         val container = findViewById<LinearLayout>(R.id.container_system_prompts)
 
@@ -86,10 +87,11 @@ class SystemPromptsActivity : Activity() {
                 if (preferences.isCustom()) R.string.system_prompt_status_custom else R.string.system_prompt_status_default,
             )
         }
+        val save = section.findViewById<Button>(R.id.button_save_system_prompt)
         edit.setText(preferences.get())
         refreshStatus()
 
-        section.findViewById<Button>(R.id.button_save_system_prompt).setOnClickListener {
+        save.setOnClickListener {
             preferences.save(edit.text.toString())
             edit.setText(preferences.get()) // champ vide ou identique au défaut : on revoit le défaut
             refreshStatus()

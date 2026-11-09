@@ -4,7 +4,6 @@ import android.app.PendingIntent
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import fr.junade.taipo.VoiceModelDownloadActivity
@@ -92,7 +91,7 @@ class VoiceModelDownloadWorker(
      * (« Réessayer ») et les partiels sont conservés pour la reprise.
      */
     private fun settleAfterStop() {
-        if (stopReason == WorkInfo.STOP_REASON_CANCELLED_BY_APP) {
+        if (stoppedByApp()) {
             VoiceModelFile.all().forEach { PartialDownload.discard(VoiceModelFileResolver.localFileFor(applicationContext, it)) }
             DownloadTracker.updateVoice(DownloadState.Idle)
         } else {
@@ -140,7 +139,7 @@ class VoiceModelDownloadWorker(
                     acceptContentLength = { true },
                     allowMobileData = allowMobileData,
                     isActive = { scope.isActive },
-                    keepPartialOnStop = { stopReason != WorkInfo.STOP_REASON_CANCELLED_BY_APP },
+                    keepPartialOnStop = { !stoppedByApp() },
                     onTotal = {
                         currentTotal = it
                         report(0L)

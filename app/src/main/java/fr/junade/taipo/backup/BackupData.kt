@@ -20,10 +20,18 @@ data class BackupPin(val text: String, val label: String?, val pinnedAtMillis: L
 
 data class BackupKeyboardSettings(
     val numberRow: Boolean? = null,
+    val numberRowPasswordOnly: Boolean? = null,
+    val showEmojiKey: Boolean? = null,
+    val showCommaKey: Boolean? = null,
+    val showPeriodKey: Boolean? = null,
     val hapticIntensity: String? = null,
     val keyboardHeight: String? = null,
     val recentEmojis: List<String>? = null,
     val habitLearning: Boolean? = null,
+    /** Thème du clavier : clé de stockage de [fr.junade.taipo.ThemeChoice] (`system`, `light`, `dark`, `dynamic`). */
+    val themeChoice: String? = null,
+    /** Couleur d'accent du clavier : clé de stockage de [fr.junade.taipo.AccentPalette] (`violet`, `indigo`…). */
+    val accentPalette: String? = null,
 )
 
 /**

@@ -23,11 +23,90 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putBoolean(KEY_NUMBER_ROW, value).apply()
         }
 
+    /**
+     * Rangée de chiffres seulement dans les champs mot de passe (pour saisir un mot de passe avec ses chiffres sous la main, sans
+     * encombrer le clavier ailleurs). Sans effet quand [isNumberRowEnabled] est actif : la rangée est alors toujours affichée.
+     */
+    var isNumberRowInPasswordFieldsOnly: Boolean
+        get() = prefs.getBoolean(KEY_NUMBER_ROW_PASSWORD_ONLY, DEFAULT_NUMBER_ROW_PASSWORD_ONLY)
+        set(value) {
+            prefs.edit().putBoolean(KEY_NUMBER_ROW_PASSWORD_ONLY, value).apply()
+        }
+
+    /** Touche emoji dans la rangée du bas. Affichée par défaut ; masquée, la barre d'espace reprend sa largeur. */
+    var isEmojiKeyShown: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_EMOJI_KEY, DEFAULT_SHOW_BOTTOM_KEY)
+        set(value) {
+            prefs.edit().putBoolean(KEY_SHOW_EMOJI_KEY, value).apply()
+        }
+
+    /** Touche virgule dans la rangée du bas (la touche « @ » ou « / » des champs e-mail et URL reste toujours affichée). */
+    var isCommaKeyShown: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_COMMA_KEY, DEFAULT_SHOW_BOTTOM_KEY)
+        set(value) {
+            prefs.edit().putBoolean(KEY_SHOW_COMMA_KEY, value).apply()
+        }
+
+    /** Touche point dans la rangée du bas. Masquée, les symboles de son appui long ne sont plus accessibles depuis cette touche. */
+    var isPeriodKeyShown: Boolean
+        get() = prefs.getBoolean(KEY_SHOW_PERIOD_KEY, DEFAULT_SHOW_BOTTOM_KEY)
+        set(value) {
+            prefs.edit().putBoolean(KEY_SHOW_PERIOD_KEY, value).apply()
+        }
+
+    /** Les trois réglages ci-dessus réunis, relus à chaque ouverture de champ. */
+    val bottomRowKeys: BottomRowKeys
+        get() = BottomRowKeys(emoji = isEmojiKeyShown, comma = isCommaKeyShown, period = isPeriodKeyShown)
+
+    /**
+     * Smart Clipboard : propose de coller la capture d'écran récente (moins de 10 minutes) dans les champs qui acceptent les
+     * images. Désactivé par défaut : il demande la permission d'images, accordée depuis l'écran des paramètres. Sans cette
+     * permission le réglage reste sans effet, même activé (elle peut être retirée dans les réglages Android).
+     */
+    var isScreenshotSuggestionEnabled: Boolean
+        get() = prefs.getBoolean(KEY_SCREENSHOT_SUGGESTION, DEFAULT_SCREENSHOT_SUGGESTION)
+        set(value) {
+            prefs.edit().putBoolean(KEY_SCREENSHOT_SUGGESTION, value).apply()
+        }
+
+    /**
+     * Vrai dès que l'utilisateur a saisi un chiffre par glissement vers le bas sur une touche du haut : le tip « Swipe vers le
+     * bas » (affiché après un chiffre saisi par appui long) ne s'affiche plus.
+     */
+    var hasUsedDigitSwipe: Boolean
+        get() = prefs.getBoolean(KEY_DIGIT_SWIPE_USED, false)
+        set(value) {
+            prefs.edit().putBoolean(KEY_DIGIT_SWIPE_USED, value).apply()
+        }
+
     /** Retour haptique au toucher des touches (story 1.11). Moyen par défaut. */
     var hapticIntensity: HapticIntensity
         get() = HapticIntensity.fromStorageKey(prefs.getString(KEY_HAPTIC_INTENSITY, null))
         set(value) {
             prefs.edit().putString(KEY_HAPTIC_INTENSITY, value.storageKey).apply()
+        }
+
+    /**
+     * Thème du clavier (clair, sombre, automatique). Système, automatique par défaut (voir [ThemeChoice.DEFAULT]). Écrire le
+     * réglage met aussi à jour [KeyboardTheme.choice], lu par toutes les vues du clavier.
+     */
+    var themeChoice: ThemeChoice
+        get() = ThemeChoice.fromStorageKey(prefs.getString(KEY_THEME_CHOICE, null))
+        set(value) {
+            prefs.edit().putString(KEY_THEME_CHOICE, value.storageKey).apply()
+            KeyboardTheme.choice = value
+        }
+
+    /**
+     * Couleur d'accent du clavier (section « Couleur » de la page « Thème »). Violet par défaut. C'est le choix enregistré : la
+     * palette appliquée ([KeyboardTheme.palette]) retombe sur le violet si celle-ci est réservée au pass premium et qu'il n'est pas
+     * actif ([AccentPalette.effective]). Écrire le réglage met aussi à jour [KeyboardTheme.palette].
+     */
+    var accentPalette: AccentPalette
+        get() = AccentPalette.fromStorageKey(prefs.getString(KEY_ACCENT_PALETTE, null))
+        set(value) {
+            prefs.edit().putString(KEY_ACCENT_PALETTE, value.storageKey).apply()
+            KeyboardTheme.palette = AccentPalette.effective(value, PremiumPass.isActive)
         }
 
     /** Son du clavier (tic doux à chaque frappe, plus aigu pour la barre d'espace). Activé par défaut. */
@@ -87,6 +166,28 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putString(KEY_KEYBOARD_HEIGHT, value.storageKey).apply()
         }
 
+    /** Mode une main (touches serrées à gauche ou à droite). Désactivé par défaut. Relu à chaque ouverture de champ. */
+    var oneHandedMode: OneHandedMode
+        get() = OneHandedMode.fromStorageKey(prefs.getString(KEY_ONE_HANDED_MODE, null))
+        set(value) {
+            prefs.edit().apply {
+                putString(KEY_ONE_HANDED_MODE, value.storageKey)
+                // Le dernier côté choisi est retenu même après avoir quitté le mode (voir [lastOneHandedSide]).
+                if (value.isActive) putString(KEY_ONE_HANDED_SIDE, value.storageKey)
+            }.apply()
+        }
+
+    /** Dernier côté choisi du mode une main ([OneHandedMode.LEFT] ou [OneHandedMode.RIGHT]) : celui qu'on retrouve en réactivant le mode. Droite par défaut. */
+    val lastOneHandedSide: OneHandedMode
+        get() = OneHandedMode.fromStorageKey(prefs.getString(KEY_ONE_HANDED_SIDE, null)).takeIf { it.isActive } ?: OneHandedMode.RIGHT
+
+    /** Largeur de la zone des touches en mode une main, en % de la largeur normale ([OneHandedWidth]). 80 % par défaut. */
+    var oneHandedWidthPercent: Int
+        get() = OneHandedWidth.clamp(prefs.getInt(KEY_ONE_HANDED_WIDTH, OneHandedWidth.DEFAULT_PERCENT))
+        set(value) {
+            prefs.edit().putInt(KEY_ONE_HANDED_WIDTH, OneHandedWidth.clamp(value)).apply()
+        }
+
     /** Marge sous les touches en portrait, en dp ([KeyboardBottomMargin]). 60 dp par défaut. Relue à chaque ouverture de champ. */
     var bottomMarginDp: Int
         get() = KeyboardBottomMargin.clamp(prefs.getInt(KEY_BOTTOM_MARGIN, KeyboardBottomMargin.DEFAULT_DP))
@@ -134,6 +235,30 @@ class KeyboardPreferences(context: Context) {
         }
 
     /**
+     * Réglage des langues vu comme une seule liste (écran « Langues ») : langue choisie, langues cochées et mode multilingue,
+     * lus et écrits ensemble pour rester cohérents (voir [LanguageList]).
+     */
+    var languageSetup: LanguageSetup
+        get() = LanguageSetup(keyboardLanguage, multilingualSelection, isMultilingualEnabled)
+        set(value) {
+            keyboardLanguage = value.chosen
+            multilingualSelection = value.selection
+            isMultilingualEnabled = value.multilingualEnabled
+        }
+
+    /** Disposition des lettres choisie pour [language] ; sans choix, celle d'origine de la langue ([LetterArrangement.defaultFor]). */
+    fun letterArrangementOf(language: KeyboardLanguage): LetterArrangement =
+        LetterArrangement.fromTag(prefs.getString(KEY_ARRANGEMENT_PREFIX + language.tag, null)) ?: LetterArrangement.defaultFor(language)
+
+    /** Enregistre la disposition de [language] ; la disposition d'origine efface le choix. Relue à l'ouverture du prochain champ. */
+    fun setLetterArrangement(language: KeyboardLanguage, arrangement: LetterArrangement) {
+        prefs.edit().apply {
+            if (arrangement == LetterArrangement.defaultFor(language)) remove(KEY_ARRANGEMENT_PREFIX + language.tag)
+            else putString(KEY_ARRANGEMENT_PREFIX + language.tag, arrangement.tag)
+        }.apply()
+    }
+
+    /**
      * Emojis récemment utilisés (story 1.15), du plus récent au plus ancien. Stockés localement,
      * comme les autres réglages : juste la liste des derniers emojis choisis, rien n'est analysé.
      */
@@ -156,10 +281,42 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putBoolean(KEY_HABIT_LEARNING, value).apply()
         }
 
+    /**
+     * Zones de frappe adaptatives : la zone de toucher des lettres les plus probables d'après le mot en cours grandit un
+     * peu, sans changer les touches dessinées. Par défaut actif dans le build debug (validation sur appareil, voir
+     * docs/zones-de-frappe-simulation.md), désactivé en release tant qu'il n'est pas validé.
+     */
+    var isAdaptiveTouchEnabled: Boolean
+        get() = prefs.getBoolean(KEY_ADAPTIVE_TOUCH, DEFAULT_ADAPTIVE_TOUCH)
+        set(value) {
+            prefs.edit().putBoolean(KEY_ADAPTIVE_TOUCH, value).apply()
+        }
+
+    /** Debug seulement : dessine les bords des zones de frappe adaptatives sur le clavier. */
+    var showTouchZones: Boolean
+        get() = BuildConfig.DEBUG && prefs.getBoolean(KEY_SHOW_TOUCH_ZONES, false)
+        set(value) {
+            prefs.edit().putBoolean(KEY_SHOW_TOUCH_ZONES, value).apply()
+        }
+
     companion object {
         private const val PREFS_NAME = "keyboard_prefs"
+        private const val KEY_THEME_CHOICE = "theme_choice"
+        private const val KEY_ACCENT_PALETTE = "accent_palette"
+        private const val KEY_ADAPTIVE_TOUCH = "adaptive_touch_enabled"
+        private const val KEY_SHOW_TOUCH_ZONES = "show_touch_zones"
         private const val KEY_NUMBER_ROW = "number_row_enabled"
         const val DEFAULT_NUMBER_ROW = false
+        private const val KEY_NUMBER_ROW_PASSWORD_ONLY = "number_row_password_only"
+        const val DEFAULT_NUMBER_ROW_PASSWORD_ONLY = false
+        val DEFAULT_ADAPTIVE_TOUCH: Boolean = BuildConfig.DEBUG
+        private const val KEY_SHOW_EMOJI_KEY = "show_emoji_key"
+        private const val KEY_SHOW_COMMA_KEY = "show_comma_key"
+        private const val KEY_SHOW_PERIOD_KEY = "show_period_key"
+        const val DEFAULT_SHOW_BOTTOM_KEY = true
+        private const val KEY_SCREENSHOT_SUGGESTION = "screenshot_suggestion_enabled"
+        const val DEFAULT_SCREENSHOT_SUGGESTION = false
+        private const val KEY_DIGIT_SWIPE_USED = "digit_swipe_used"
         private const val KEY_KEY_SOUND = "key_sound_enabled"
         const val DEFAULT_KEY_SOUND = true
         private const val KEY_SOUND_VOLUME = "key_sound_volume_percent"
@@ -169,10 +326,14 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_HAPTIC_INTENSITY = "haptic_intensity"
         private const val KEY_KEYBOARD_HEIGHT = "keyboard_height"
         private const val KEY_BOTTOM_MARGIN = "bottom_margin_dp"
+        private const val KEY_ONE_HANDED_MODE = "one_handed_mode"
+        private const val KEY_ONE_HANDED_SIDE = "one_handed_side"
+        private const val KEY_ONE_HANDED_WIDTH = "one_handed_width_percent"
         private const val KEY_LANGUAGE = "keyboard_language"
         private const val KEY_MULTILINGUAL = "multilingual_enabled"
         private const val KEY_MULTILINGUAL_LANGUAGES = "multilingual_languages"
         private const val KEY_MULTILINGUAL_ACTIVE = "multilingual_active_language"
+        private const val KEY_ARRANGEMENT_PREFIX = "letter_arrangement_"
         private const val KEY_RECENT_EMOJIS = "recent_emojis"
         private const val KEY_HABIT_LEARNING = "habit_learning_enabled"
         const val DEFAULT_HABIT_LEARNING = true

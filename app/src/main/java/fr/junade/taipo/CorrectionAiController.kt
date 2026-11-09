@@ -21,6 +21,7 @@ import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.ai.CorrectionCancelledException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,6 +50,9 @@ class CorrectionAiController(
 
         /** Retour haptique d'une action IA (premier appui). */
         fun hapticAi(cue: AiHapticCue)
+
+        /** Son du bouton IA (réglage « Sons de la barre ») : joué au lancement par la barre, et à la fin de la correction. */
+        fun playAiButtonSound()
 
         fun inputConnection(): InputConnection?
 
@@ -363,9 +367,12 @@ class CorrectionAiController(
             try {
                 work()
                 host.hapticAi(AiHapticCue.PROCESSING_DONE) // fin du traitement, comme la transcription IA (pas si annulée ou en échec)
+                host.playAiButtonSound() // même son qu'au lancement
                 Analytics.aiAction(context, AnalyticsEvents.AiType.CORRECT, modelId, startedAt)
             } catch (e: CorrectionCancelledException) {
                 AppLog.i(TAG, "correction annulée par l'utilisateur")
+            } catch (e: CancellationException) {
+                throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (t: Throwable) {
                 if (cancelRequested) {
                     // L'arrêt natif a fait échouer l'inférence en cours : c'est la suite attendue de l'annulation.
