@@ -196,8 +196,9 @@ Lecture des résultats :
   candidats et est libéré ensuite. Sur le serveur (JVM) : dictionnaire français 19,5 Mo au lieu de 28,9 Mo, construction
   inchangée, correction environ 8 % plus lente (0,66 ms au lieu de 0,60), bande de suggestions environ 25 % plus lente
   (26 µs au lieu de 21).
-- Tout ce qui sert à la frappe reste très en dessous d'une image (16 ms). À vérifier : la lettre suivante (77 ms à la
-  première demande) doit être construite pendant le préchargement, jamais à la première touche.
+- Tout ce qui sert à la frappe reste très en dessous d'une image (16 ms). La lettre suivante (77 ms à la première demande)
+  est construite en arrière-plan au préchargement (`SuggestionController.warmNextLetterModel`) ; la frappe ne lit que
+  `nextLetterModelIfBuilt` et ne la construit jamais.
 
 **À refaire sur le Pixel 9** avec cette version : la ligne « Dictionnaire complet » (mémoire attendue autour de 14 Mo) et
 l'étape « bigrammes » (attendue autour de 200 ms), ainsi que les durées de correction et de suggestions.
