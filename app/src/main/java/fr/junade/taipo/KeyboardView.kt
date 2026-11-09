@@ -250,6 +250,12 @@ class KeyboardView(context: Context) : View(context) {
     private var downX = 0f
     private var downY = 0f
 
+    // Instant de l'appui en cours (MotionEvent.eventTime, ms) : un chiffre n'est pas saisi par un glissement trop bref (DigitSwipe).
+    private var downTime = 0L
+
+    // Touche du haut dont le glissement vers le bas peut encore saisir le chiffre (null : chiffre déjà saisi, autre touche, aucune).
+    private var digitSwipeKey: Key? = null
+
     // Story 1.10 : bulle d'agrandissement de la touche pressée (retour visuel de frappe), affichée
     // au-dessus de la touche tant qu'elle est maintenue. Réservée aux touches qui saisissent un
     // caractère (lettres/chiffres/symboles) : les touches de fonction (espace, maj, retour arrière,
@@ -610,7 +616,7 @@ class KeyboardView(context: Context) : View(context) {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 activePointerId = event.getPointerId(0)
-                pressStart(event.getX(0), event.getY(0))
+                pressStart(event.getX(0), event.getY(0), event.eventTime)
                 return true
             }
 
@@ -618,16 +624,17 @@ class KeyboardView(context: Context) : View(context) {
                 // Le doigt précédent est considéré comme relâché à sa dernière position connue :
                 // sa touche est saisie avant celle du nouveau doigt, sans être perdue.
                 val activeIndex = event.findPointerIndex(activePointerId)
-                if (activeIndex >= 0) releaseTouch(event.getX(activeIndex), event.getY(activeIndex))
+                // Frappe rapide : jamais de chiffre par glissement pour ce doigt (il ne s'est pas levé, le suivant est déjà posé).
+                if (activeIndex >= 0) releaseTouch(event.getX(activeIndex), event.getY(activeIndex), event.eventTime, digitAllowed = false)
                 val index = event.actionIndex
                 activePointerId = event.getPointerId(index)
-                pressStart(event.getX(index), event.getY(index))
+                pressStart(event.getX(index), event.getY(index), event.eventTime)
                 return true
             }
 
             MotionEvent.ACTION_MOVE -> {
                 val index = event.findPointerIndex(activePointerId)
-                if (index >= 0) moveTouch(event.getX(index), event.getY(index))
+                if (index >= 0) moveTouch(event.getX(index), event.getY(index), event.eventTime)
                 return true
             }
 
@@ -636,7 +643,7 @@ class KeyboardView(context: Context) : View(context) {
                 // Le relâchement d'un doigt déjà validé (voir ACTION_POINTER_DOWN) est ignoré.
                 if (event.getPointerId(index) == activePointerId) {
                     activePointerId = MotionEvent.INVALID_POINTER_ID
-                    releaseTouch(event.getX(index), event.getY(index))
+                    releaseTouch(event.getX(index), event.getY(index), event.eventTime)
                     pressZones = null
                 }
                 return true
@@ -651,16 +658,18 @@ class KeyboardView(context: Context) : View(context) {
         return super.onTouchEvent(event)
     }
 
-    private fun pressStart(x: Float, y: Float) {
+    private fun pressStart(x: Float, y: Float, time: Long) {
         longPressCommitted = false
         pressedControl = controlAt(x, y)
         downX = x
         downY = y
+        downTime = time
         pressZones = zones
         spaceSwipe.reset()
         backspaceSwipe.reset()
         deleteSwipeWords = 0
         pressedKey = keyAt(x, y)
+        digitSwipeKey = pressedKey?.takeIf { it.longPressChar != null }
         digitSwipeAnimation.cancel()
         pressedKey?.takeIf { it.longPressChar != null }?.let { digitSwipeAnimation.onPress(it) }
         keyPreview.key = pressedKey.takeIf { showsPreview(it) }
@@ -674,7 +683,7 @@ class KeyboardView(context: Context) : View(context) {
         invalidate()
     }
 
-    private fun moveTouch(x: Float, y: Float) {
+    private fun moveTouch(x: Float, y: Float, time: Long) {
         if (keyPopup.isShown) {
             keyPopup.updateSelection(x, y)
             return
@@ -706,10 +715,13 @@ class KeyboardView(context: Context) : View(context) {
             }
         }
         trackDigitSwipe(x, y)
-        if (commitDigitSwipe(x, y)) return
+        if (commitDigitSwipe(x, y, time)) return
+        // Le doigt descend depuis une touche du haut : c'est encore elle qui est visée, pas la touche du dessous (DigitSwipe).
+        if (keptByDigitSwipe(x, y)) return
         val current = keyAt(x, y)
         if (current != pressedKey) {
             cancelKeyLongPress()
+            digitSwipeKey = null
             digitSwipeAnimation.cancel()
             pressedKey = current
             keyPreview.key = current.takeIf { showsPreview(it) }
@@ -737,14 +749,16 @@ class KeyboardView(context: Context) : View(context) {
      * Glissement vers le bas sur une touche du haut (rangée de chiffres désactivée : seules ces touches ont un
      * [Key.longPressChar]) : saisit son chiffre dès que le seuil est franchi, le relâchement ne saisit plus la lettre.
      */
-    private fun commitDigitSwipe(x: Float, y: Float): Boolean {
+    private fun commitDigitSwipe(x: Float, y: Float, time: Long): Boolean {
         val key = pressedKey ?: return false
         val digit = key.longPressChar ?: return false
+        if (key != digitSwipeKey) return false
         val keyHeight = keyBounds(key)?.height() ?: return false
         val slop = ViewConfiguration.get(context).scaledTouchSlop.toFloat()
-        if (!DigitSwipe.isTriggered(x - downX, y - downY, DigitSwipe.threshold(keyHeight, slop))) return false
+        if (!DigitSwipe.isTriggered(x - downX, y - downY, DigitSwipe.threshold(keyHeight, slop), time - downTime)) return false
         cancelKeyLongPress()
         longPressCommitted = true
+        digitSwipeKey = null
         keyPreview.key = null
         digitSwipeAnimation.onCommit()
         keyListener?.onKey(Key("longpress_$digit", digit.toString(), KeyAction.TypeChar(digit)))
@@ -753,8 +767,18 @@ class KeyboardView(context: Context) : View(context) {
         return true
     }
 
-    /** Relâchement du doigt actif en (x, y) : saisit la touche, le symbole de la bulle, ou rien. */
-    private fun releaseTouch(x: Float, y: Float) {
+    /** Vrai si le doigt descend depuis la touche du haut appuyée, sans avoir saisi son chiffre : elle reste la touche visée. */
+    private fun keptByDigitSwipe(x: Float, y: Float): Boolean {
+        val key = pressedKey ?: return false
+        if (key != digitSwipeKey) return false
+        return DigitSwipe.keepsKey(x - downX, y - downY, ViewConfiguration.get(context).scaledTouchSlop.toFloat())
+    }
+
+    /**
+     * Relâchement du doigt actif en (x, y) à l'instant [time] : saisit la touche, le symbole de la bulle, ou rien.
+     * [digitAllowed] faux : le glissement vers le bas ne peut plus saisir de chiffre à ce relâchement.
+     */
+    private fun releaseTouch(x: Float, y: Float, time: Long, digitAllowed: Boolean = true) {
         pressedControl?.let { button ->
             // Bouton de la zone libre : validé seulement si le doigt est relâché encore dessus.
             pressedControl = null
@@ -765,6 +789,10 @@ class KeyboardView(context: Context) : View(context) {
             return
         }
         spaceBarAnimation.onRelease()
+        // Doigt levé sans nouveau déplacement depuis que le délai minimal est passé : le glissement saisit le chiffre maintenant.
+        val swipeOpen = !keyPopup.isShown && !longPressCommitted
+        val keptKey = swipeOpen && keptByDigitSwipe(x, y)
+        if (swipeOpen && digitAllowed) commitDigitSwipe(x, y, time)
         digitSwipeAnimation.onRelease()
         stopRepeat()
         cancelKeyLongPress()
@@ -810,7 +838,8 @@ class KeyboardView(context: Context) : View(context) {
             invalidate()
             return
         }
-        if (key != null && keyAt(x, y) == key) {
+        // Un glissement vers le bas trop court sur une touche du haut saisit sa lettre, même levé sur la rangée du dessous.
+        if (key != null && (keyAt(x, y) == key || keptKey)) {
             deliverKey(key, repeat = false)
         }
         invalidate()

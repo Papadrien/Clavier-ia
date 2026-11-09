@@ -189,18 +189,18 @@
         <error line="224" column="161" source="standard:function-literal" />
         <error line="224" column="161" source="standard:max-line-length" />
         <error line="229" column="5" source="standard:spacing-between-declarations-with-comments" />
-        <error line="596" column="45" source="standard:condition-wrapping" />
-        <error line="596" column="73" source="standard:condition-wrapping" />
-        <error line="596" column="104" source="standard:condition-wrapping" />
-        <error line="920" column="23" source="standard:argument-list-wrapping" />
-        <error line="920" column="34" source="standard:argument-list-wrapping" />
-        <error line="921" column="52" source="standard:argument-list-wrapping" />
-        <error line="921" column="84" source="standard:argument-list-wrapping" />
-        <error line="942" column="105" source="standard:multiline-if-else" />
-        <error line="942" column="113" source="standard:multiline-if-else" />
-        <error line="1113" column="34" source="standard:argument-list-wrapping" />
-        <error line="1113" column="68" source="standard:argument-list-wrapping" />
-        <error line="1113" column="83" source="standard:argument-list-wrapping" />
+        <error line="602" column="45" source="standard:condition-wrapping" />
+        <error line="602" column="73" source="standard:condition-wrapping" />
+        <error line="602" column="104" source="standard:condition-wrapping" />
+        <error line="949" column="23" source="standard:argument-list-wrapping" />
+        <error line="949" column="34" source="standard:argument-list-wrapping" />
+        <error line="950" column="52" source="standard:argument-list-wrapping" />
+        <error line="950" column="84" source="standard:argument-list-wrapping" />
+        <error line="971" column="105" source="standard:multiline-if-else" />
+        <error line="971" column="113" source="standard:multiline-if-else" />
+        <error line="1142" column="34" source="standard:argument-list-wrapping" />
+        <error line="1142" column="68" source="standard:argument-list-wrapping" />
+        <error line="1142" column="83" source="standard:argument-list-wrapping" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/MainActivity.kt">
         <error line="102" column="17" source="standard:argument-list-wrapping" />
