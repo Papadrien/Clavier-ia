@@ -86,11 +86,7 @@ class TaipoIme : InputMethodService() {
         override fun protectedWordsIn(text: String): List<String> = this@TaipoIme.protectedWordsIn(text)
 
         override fun haptic() = this@TaipoIme.hapticFeedback.perform(this@TaipoIme.hapticIntensity)
-        override fun applyFloatingKeyboard() {
-            this@TaipoIme.floatingWindow.apply()
-            this@TaipoIme.keyboardView.bottomMarginDp =
-                if (this@TaipoIme.floatingWindow.isFloating) 0 else this@TaipoIme.keyboardPreferences.bottomMarginDp
-        }
+        override fun applyFloatingKeyboard(via: String) = this@TaipoIme.floatingWindow.apply(animate = true, via = via)
         override fun playBarButtonSound() {
             if (this@TaipoIme.barSoundEnabled) this@TaipoIme.keySounds.play(KeySound.BAR_BUTTON)
         }
@@ -142,7 +138,7 @@ class TaipoIme : InputMethodService() {
         override fun onGlobeSelected() = this@TaipoIme.languages.onGlobeSelected()
         override fun onOneHandedToggled() = this@TaipoIme.oneHanded.toggle()
         override fun onOneHandedSideSwitched() = this@TaipoIme.oneHanded.switchSide()
-        override fun onFloatingToggled() = this@TaipoIme.oneHanded.toggleFloating()
+        override fun onFloatingToggled() = this@TaipoIme.oneHanded.toggleFloating(OneHandedSwitcher.VIA_BUBBLE)
         override fun openAppHome() = this@TaipoIme.openAppHome()
     }
 
@@ -245,7 +241,7 @@ class TaipoIme : InputMethodService() {
     private val languages by lazy { ImeLanguages(this, imeContext, controller, gestureTips) }
     private val oneHanded by lazy { OneHandedSwitcher(imeContext) }
     private val floatingWindow by lazy {
-        FloatingKeyboardWindow(this, { window?.window }, viewComposer, { keyboardPreferences }) { oneHanded.toggleFloating() }
+        FloatingKeyboardWindow(this, { window?.window }, viewComposer, { keyboardPreferences }) { oneHanded.toggleFloating(OneHandedSwitcher.VIA_HANDLE) }
     }
     private val memory by lazy { ImeMemoryManager(serviceScope, { voice }, { llmHost }, { isInputViewShown }) }
 
@@ -468,9 +464,8 @@ class TaipoIme : InputMethodService() {
         refreshKeySound()
         keyboardHeight = keyboardPreferences.keyboardHeight
         keyboardView.heightScale = keyboardHeight.scale
-        floatingWindow.apply()
-        // Clavier flottant : pas de marge sous les touches, la poignée de déplacement en tient lieu.
-        keyboardView.bottomMarginDp = if (floatingWindow.isFloating) 0 else keyboardPreferences.bottomMarginDp
+        keyboardView.bottomMarginDp = keyboardPreferences.bottomMarginDp
+        floatingWindow.apply() // en flottant, remet la marge du bas à zéro (la poignée en tient lieu)
         oneHanded.apply()
         keyboardView.showTouchZones = keyboardPreferences.showTouchZones
         emojiController.hidePanel(resync = false)
@@ -595,6 +590,7 @@ class TaipoIme : InputMethodService() {
     override fun onWindowShown() {
         super.onWindowShown()
         memory.onWindowShown()
+        floatingWindow.onWindowShown()
     }
 
     /** Android manque de mémoire : les gros moteurs sont libérés selon [MemoryRelease.shouldRelease]. */

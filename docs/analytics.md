@@ -53,6 +53,7 @@ de l'appareil** (la doc du SDK le cite ; l'ancien client maison ne l'envoyait pa
 | `clipboard_used` | `action` (`paste`, `pin`) | `ClipboardController` |
 | `undo_used` | aucune | `UndoController` |
 | `keyboard_language` | `lang`, `layout` (disposition choisie pour la langue : `azerty`, `qwerty`, `qwertz`, `qwerty_n`, `colemak`), `auto` | `TaipoIme.startInputView`, une fois par changement de langue |
+| `keyboard_mode` | `mode` (`floating`, `docked`), `via` (`bubble` : bulle d'Entrée, `handle` : poignée glissée en bas ou TalkBack, `one_handed` : passage en mode une main) | `FloatingKeyboardWindow.apply`, à chaque détachement ou recollage depuis le clavier |
 | `setting_changed` | `key`, `value` (`true` / `false` ou mot-clé) | `KeyboardSettingsActivity`, `LanguagesActivity` (`language_added`), `LanguageDetailActivity` (`language_removed`, `letter_arrangement` = `<langue>_<disposition>`), `ThemeActivity` (`theme_choice` = `system` / `light` / `dark` / `dynamic` ; `accent_palette` = `violet` / `indigo` / `blue` / `lagoon` / `emerald` / `amber` / `raspberry` / `magenta` / `graphite`) |
 | `first_open` | aucune | `MainActivity.onCreate` via `Analytics.firstOpen`, une fois par installation |
 | `premium_paywall_shown` | `source` (`home`, `about`, `theme`, `prompts`, `clipboard_pin`) | `PremiumActivity.onCreate` |

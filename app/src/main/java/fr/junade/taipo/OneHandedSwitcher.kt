@@ -28,7 +28,7 @@ internal class OneHandedSwitcher(private val ime: ImeHostContext) {
             preferences.isFloatingKeyboard = false
             preferences.oneHandedMode = preferences.lastOneHandedSide
             ime.haptic()
-            ime.applyFloatingKeyboard()
+            ime.applyFloatingKeyboard(VIA_ONE_HANDED)
             apply()
             return
         }
@@ -41,12 +41,12 @@ internal class OneHandedSwitcher(private val ime: ImeHostContext) {
      * Touche clavier flottant de la bulle d'Entrée, ou poignée glissée tout en bas : détache le clavier (le mode une main est
      * alors quitté) ou le recolle en bas.
      */
-    fun toggleFloating() {
+    fun toggleFloating(via: String) {
         val floating = !preferences.isFloatingKeyboard
         preferences.isFloatingKeyboard = floating
         if (floating) preferences.oneHandedMode = OneHandedMode.OFF
         ime.haptic()
-        ime.applyFloatingKeyboard()
+        ime.applyFloatingKeyboard(via)
         apply()
     }
 
@@ -60,5 +60,12 @@ internal class OneHandedSwitcher(private val ime: ImeHostContext) {
         preferences.oneHandedMode = other
         ime.haptic()
         apply()
+    }
+
+    companion object {
+        /** Origine d'un changement de mode, pour la mesure d'usage (`keyboard_mode`). */
+        const val VIA_BUBBLE = "bubble"
+        const val VIA_HANDLE = "handle"
+        const val VIA_ONE_HANDED = "one_handed"
     }
 }

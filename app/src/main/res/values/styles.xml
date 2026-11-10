@@ -125,6 +125,12 @@
         <item name="android:textSize">@dimen/taipo_settings_text_lead</item>
     </style>
 
+    <!-- Fenêtre du clavier flottant : pas de montée depuis le bas (la carte apparaît sur place), fondu à la fermeture. -->
+    <style name="FloatingKeyboardWindowAnimation">
+        <item name="android:windowEnterAnimation">@null</item>
+        <item name="android:windowExitAnimation">@anim/floating_keyboard_exit</item>
+    </style>
+
     <!-- Paramètres du clavier (v3) : carte de réglages et trait de séparation entre deux groupes d'une même carte. -->
     <style name="TaipoSettingsCard">
         <item name="android:layout_width">match_parent</item>

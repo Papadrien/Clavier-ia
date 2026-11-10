@@ -65,8 +65,8 @@ internal interface ImeHostContext {
     // Actions partagées
     fun haptic()
 
-    /** Relit le réglage du clavier flottant et l'applique (fenêtre, carte, marge du bas). */
-    fun applyFloatingKeyboard()
+    /** Relit le réglage du clavier flottant et l'applique (fenêtre, carte, marge du bas), avec envol ou atterrissage. */
+    fun applyFloatingKeyboard(via: String)
     fun hapticCursorMove()
 
     /** Son « interrupteur » d'un bouton de la barre du haut (Paramètres, Smart Clipboard, Annuler), si le son des touches est activé. */

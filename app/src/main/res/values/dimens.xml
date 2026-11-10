@@ -272,6 +272,8 @@
     <dimen name="taipo_floating_handle_bar_height">4dp</dimen>
     <!-- Glisser la poignée de cette distance sous le bas de l'écran recolle le clavier. -->
     <dimen name="taipo_floating_dock_overshoot">48dp</dimen>
+    <!-- Zone d'ancrage « Relâcher pour ancrer », au bas de l'écran (au-dessus de la barre de navigation). -->
+    <dimen name="taipo_floating_dock_zone_height">72dp</dimen>
     <!-- Sélecteur segmenté des paramètres du clavier (v3) : piste, segments et marge intérieure. -->
     <dimen name="taipo_segmented_group_corner_radius">10dp</dimen>
     <dimen name="taipo_segmented_group_padding">3dp</dimen>

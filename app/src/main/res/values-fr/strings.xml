@@ -712,4 +712,10 @@
     <string name="home_debug_reset_tips">Réinitialiser les astuces</string>
     <string name="home_debug_reset_tips_done">Les astuces s\'afficheront de nouveau</string>
     <string name="floating_handle_description">Poignée : faire glisser pour déplacer le clavier</string>
+    <string name="floating_dock_zone">Relâcher pour ancrer</string>
+    <string name="floating_a11y_move_up">Monter le clavier</string>
+    <string name="floating_a11y_move_down">Descendre le clavier</string>
+    <string name="floating_a11y_dock">Recoller le clavier en bas</string>
+    <string name="floating_a11y_floating">Clavier flottant</string>
+    <string name="floating_a11y_docked">Clavier ancré en bas</string>
 </resources>

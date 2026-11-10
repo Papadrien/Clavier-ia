@@ -693,4 +693,10 @@
     <string name="home_debug_reset_tips">Reset tips</string>
     <string name="home_debug_reset_tips_done">Tips will show again</string>
     <string name="floating_handle_description">Handle: drag to move the keyboard</string>
+    <string name="floating_dock_zone">Release to dock</string>
+    <string name="floating_a11y_move_up">Move keyboard up</string>
+    <string name="floating_a11y_move_down">Move keyboard down</string>
+    <string name="floating_a11y_dock">Dock keyboard at the bottom</string>
+    <string name="floating_a11y_floating">Floating keyboard</string>
+    <string name="floating_a11y_docked">Keyboard docked at the bottom</string>
 </resources>
