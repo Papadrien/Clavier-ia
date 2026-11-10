@@ -73,5 +73,14 @@ class GestureTips(context: Context) {
         const val BACKSPACES_FOR_TIP = 5
         const val CURSOR_MOVES_FOR_TIP = 3
         private const val PREFS_NAME = "gesture_tips"
+
+        /**
+         * Debug : toutes les astuces redeviennent « jamais montrées » (astuces de gestes et tip « Swipe vers le bas » des
+         * chiffres). Les compteurs en mémoire du clavier ouvert ne sont pas remis à zéro.
+         */
+        fun resetAll(context: Context) {
+            context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit().clear().apply()
+            KeyboardPreferences(context).hasUsedDigitSwipe = false
+        }
     }
 }

@@ -676,4 +676,6 @@
     <string name="diagnostic_done">Done.</string>
     <string name="diagnostic_copied">Results copied.</string>
     <string name="home_debug_diagnostic">Memory diagnostic</string>
+    <string name="home_debug_reset_tips">Reset tips</string>
+    <string name="home_debug_reset_tips_done">Tips will show again</string>
 </resources>

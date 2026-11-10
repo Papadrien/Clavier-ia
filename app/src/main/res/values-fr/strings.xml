@@ -695,4 +695,6 @@
     <string name="diagnostic_done">Terminé.</string>
     <string name="diagnostic_copied">Résultats copiés.</string>
     <string name="home_debug_diagnostic">Diagnostic mémoire</string>
+    <string name="home_debug_reset_tips">Réinitialiser les astuces</string>
+    <string name="home_debug_reset_tips_done">Les astuces s\'afficheront de nouveau</string>
 </resources>
