@@ -188,6 +188,37 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putInt(KEY_ONE_HANDED_WIDTH, OneHandedWidth.clamp(value)).apply()
         }
 
+    /**
+     * Clavier flottant (étape 1 : en test, activable par le bouton debug de l'accueil). Toujours faux en release.
+     * Relu à chaque ouverture de champ.
+     */
+    var isFloatingKeyboard: Boolean
+        get() = BuildConfig.DEBUG && prefs.getBoolean(KEY_FLOATING, false)
+        set(value) {
+            prefs.edit().putBoolean(KEY_FLOATING, value).apply()
+        }
+
+    /** Largeur du clavier flottant, en % de la largeur de l'écran ([FloatingWidth]) : indépendante de celle du mode une main. */
+    var floatingWidthPercent: Int
+        get() = FloatingWidth.clamp(prefs.getInt(KEY_FLOATING_WIDTH, FloatingWidth.DEFAULT_PERCENT))
+        set(value) {
+            prefs.edit().putInt(KEY_FLOATING_WIDTH, FloatingWidth.clamp(value)).apply()
+        }
+
+    /** Position du clavier flottant, retenue séparément en portrait et en paysage. */
+    fun floatingPosition(landscape: Boolean): FloatingPosition {
+        val suffix = if (landscape) SUFFIX_LANDSCAPE else SUFFIX_PORTRAIT
+        return FloatingPosition.of(
+            prefs.getFloat(KEY_FLOATING_X + suffix, FloatingPosition.DEFAULT.x),
+            prefs.getFloat(KEY_FLOATING_Y + suffix, FloatingPosition.DEFAULT.y),
+        )
+    }
+
+    fun setFloatingPosition(landscape: Boolean, position: FloatingPosition) {
+        val suffix = if (landscape) SUFFIX_LANDSCAPE else SUFFIX_PORTRAIT
+        prefs.edit().putFloat(KEY_FLOATING_X + suffix, position.x).putFloat(KEY_FLOATING_Y + suffix, position.y).apply()
+    }
+
     /** Marge sous les touches en portrait, en dp ([KeyboardBottomMargin]). 60 dp par défaut. Relue à chaque ouverture de champ. */
     var bottomMarginDp: Int
         get() = KeyboardBottomMargin.clamp(prefs.getInt(KEY_BOTTOM_MARGIN, KeyboardBottomMargin.DEFAULT_DP))
@@ -302,6 +333,12 @@ class KeyboardPreferences(context: Context) {
     companion object {
         private const val PREFS_NAME = "keyboard_prefs"
         private const val KEY_THEME_CHOICE = "theme_choice"
+        private const val KEY_FLOATING = "floating_keyboard"
+        private const val KEY_FLOATING_WIDTH = "floating_keyboard_width"
+        private const val KEY_FLOATING_X = "floating_keyboard_x"
+        private const val KEY_FLOATING_Y = "floating_keyboard_y"
+        private const val SUFFIX_PORTRAIT = "_portrait"
+        private const val SUFFIX_LANDSCAPE = "_landscape"
         private const val KEY_ACCENT_PALETTE = "accent_palette"
         private const val KEY_ADAPTIVE_TOUCH = "adaptive_touch_enabled"
         private const val KEY_SHOW_TOUCH_ZONES = "show_touch_zones"

@@ -181,6 +181,11 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.button_debug_diagnostic).setOnClickListener {
             startActivity(Intent(this, MemoryDiagnosticActivity::class.java))
         }
+        findViewById<View>(R.id.button_debug_floating).setOnClickListener {
+            val preferences = KeyboardPreferences(this)
+            preferences.isFloatingKeyboard = !preferences.isFloatingKeyboard
+            renderPremium()
+        }
         findViewById<View>(R.id.button_debug_reset_tips).setOnClickListener {
             GestureTips.resetAll(this)
             Toast.makeText(this, R.string.home_debug_reset_tips_done, Toast.LENGTH_SHORT).show()
@@ -217,6 +222,11 @@ class MainActivity : Activity() {
                 PremiumPass.DebugOverride.INACTIVE -> getString(R.string.home_debug_premium_inactive)
             }
             findViewById<TextView>(R.id.button_debug_premium).text = getString(R.string.home_debug_premium, state)
+            val floating = KeyboardPreferences(this).isFloatingKeyboard
+            findViewById<TextView>(R.id.button_debug_floating).text = getString(
+                R.string.home_debug_floating,
+                getString(if (floating) R.string.home_debug_floating_on else R.string.home_debug_floating_off),
+            )
         }
     }
 

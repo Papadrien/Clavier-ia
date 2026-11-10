@@ -86,6 +86,11 @@ class TaipoIme : InputMethodService() {
         override fun protectedWordsIn(text: String): List<String> = this@TaipoIme.protectedWordsIn(text)
 
         override fun haptic() = this@TaipoIme.hapticFeedback.perform(this@TaipoIme.hapticIntensity)
+        override fun applyFloatingKeyboard() {
+            this@TaipoIme.floatingWindow.apply()
+            this@TaipoIme.keyboardView.bottomMarginDp =
+                if (this@TaipoIme.floatingWindow.isFloating) 0 else this@TaipoIme.keyboardPreferences.bottomMarginDp
+        }
         override fun playBarButtonSound() {
             if (this@TaipoIme.barSoundEnabled) this@TaipoIme.keySounds.play(KeySound.BAR_BUTTON)
         }
@@ -238,6 +243,9 @@ class TaipoIme : InputMethodService() {
     private val fieldEditor by lazy { FieldEditor(imeContext) { keyCode -> sendDownUpKeyEvents(keyCode) } }
     private val languages by lazy { ImeLanguages(this, imeContext, controller, gestureTips) }
     private val oneHanded by lazy { OneHandedSwitcher(imeContext) }
+    private val floatingWindow by lazy {
+        FloatingKeyboardWindow(this, { window?.window }, viewComposer) { keyboardPreferences }
+    }
     private val memory by lazy { ImeMemoryManager(serviceScope, { voice }, { llmHost }, { isInputViewShown }) }
 
     // Story 1.11 : niveau de retour haptique, relu de la même façon.
@@ -409,6 +417,17 @@ class TaipoIme : InputMethodService() {
      */
     override fun onEvaluateFullscreenMode(): Boolean = false
 
+    // Clavier flottant : la fenêtre est remise à la bonne hauteur après chaque réévaluation du mode plein écran.
+    override fun updateFullscreenMode() {
+        super.updateFullscreenMode()
+        floatingWindow.applyWindowLayout()
+    }
+
+    override fun onComputeInsets(outInsets: Insets) {
+        super.onComputeInsets(outInsets)
+        floatingWindow.computeInsets(outInsets)
+    }
+
     /** Thème avec lequel les vues du clavier ont été créées pour la dernière fois (voir [recomposeIfThemeChanged]). */
     private var composedThemeLook: KeyboardTheme.Look? = null
 
@@ -448,7 +467,9 @@ class TaipoIme : InputMethodService() {
         refreshKeySound()
         keyboardHeight = keyboardPreferences.keyboardHeight
         keyboardView.heightScale = keyboardHeight.scale
-        keyboardView.bottomMarginDp = keyboardPreferences.bottomMarginDp
+        floatingWindow.apply()
+        // Clavier flottant : pas de marge sous les touches, la poignée de déplacement en tient lieu.
+        keyboardView.bottomMarginDp = if (floatingWindow.isFloating) 0 else keyboardPreferences.bottomMarginDp
         oneHanded.apply()
         keyboardView.showTouchZones = keyboardPreferences.showTouchZones
         emojiController.hidePanel(resync = false)

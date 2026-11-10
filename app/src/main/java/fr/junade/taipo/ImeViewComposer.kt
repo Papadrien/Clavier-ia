@@ -118,6 +118,9 @@ class ImeViewComposer(
 
     /** Pile clavier + panneaux (emoji, Smart Clipboard) : les panneaux y suivent la largeur du mode une main. */
     lateinit var keyboardStack: KeyboardStackLayout
+
+    /** Racine de la vue : porte tout le clavier, ancré en bas ou flottant (voir [FloatingKeyboardFrame]). */
+    lateinit var floatingFrame: FloatingKeyboardFrame
         private set
 
     lateinit var correctionBar: CorrectionBarView
@@ -325,9 +328,17 @@ class ImeViewComposer(
         // Le plafond de la zone de chat (moitié de la hauteur du clavier) se mesure sur la pile
         // clavier + panneaux, dernier enfant de la racine.
         prompt.chatZone.heightReference = root.getChildAt(root.childCount - 1)
+        // Clavier flottant : la carte (tout le clavier) est portée par une racine qui la place ; la poignée de déplacement,
+        // masquée quand le clavier est ancré, vient sous les touches.
+        val frame = FloatingKeyboardFrame(context, root)
+        root.addView(
+            frame.handle,
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
+        )
+        floatingFrame = frame
         isComposed = true
         prompt.applyViews() // la vue est recréée (rotation...) alors que le mode prompt peut être actif
         host.onViewsCreated()
-        return root
+        return frame
     }
 }

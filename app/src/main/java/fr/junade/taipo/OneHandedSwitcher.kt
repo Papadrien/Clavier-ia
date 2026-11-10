@@ -5,9 +5,12 @@ internal class OneHandedSwitcher(private val ime: ImeHostContext) {
 
     private val preferences: KeyboardPreferences get() = ime.keyboardPreferences
 
-    /** La zone des touches et celle des panneaux suivent le réglage ; la barre du haut garde toute la largeur. */
+    /**
+     * La zone des touches et celle des panneaux suivent le réglage ; la barre du haut garde toute la largeur. Clavier flottant
+     * actif : pas de mode une main (les deux s'excluent), le réglage est gardé pour le retour au clavier ancré.
+     */
     fun apply() {
-        val mode = preferences.oneHandedMode
+        val mode = if (preferences.isFloatingKeyboard) OneHandedMode.OFF else preferences.oneHandedMode
         val percent = preferences.oneHandedWidthPercent
         ime.keyboardView.oneHandedWidthPercent = percent
         ime.keyboardView.oneHandedMode = mode
@@ -17,6 +20,15 @@ internal class OneHandedSwitcher(private val ime: ImeHostContext) {
 
     /** Touche mode une main de la bulle d'appui long sur Entrée : quitte le mode s'il est actif, sinon l'active du dernier côté choisi. */
     fun toggle() {
+        if (preferences.isFloatingKeyboard) {
+            // Passer en mode une main quitte le clavier flottant.
+            preferences.isFloatingKeyboard = false
+            preferences.oneHandedMode = preferences.lastOneHandedSide
+            ime.haptic()
+            ime.applyFloatingKeyboard()
+            apply()
+            return
+        }
         preferences.oneHandedMode = if (preferences.oneHandedMode.isActive) OneHandedMode.OFF else preferences.lastOneHandedSide
         ime.haptic()
         apply()

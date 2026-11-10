@@ -705,4 +705,8 @@
     <string name="home_debug_diagnostic">Diagnostic mémoire</string>
     <string name="home_debug_reset_tips">Réinitialiser les astuces</string>
     <string name="home_debug_reset_tips_done">Les astuces s\'afficheront de nouveau</string>
+    <string name="floating_handle_description">Poignée : faire glisser pour déplacer le clavier</string>
+    <string name="home_debug_floating">Clavier flottant (test) : %1$s</string>
+    <string name="home_debug_floating_on">activé</string>
+    <string name="home_debug_floating_off">désactivé</string>
 </resources>

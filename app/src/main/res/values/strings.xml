@@ -686,4 +686,8 @@
     <string name="home_debug_diagnostic">Memory diagnostic</string>
     <string name="home_debug_reset_tips">Reset tips</string>
     <string name="home_debug_reset_tips_done">Tips will show again</string>
+    <string name="floating_handle_description">Handle: drag to move the keyboard</string>
+    <string name="home_debug_floating">Floating keyboard (test): %1$s</string>
+    <string name="home_debug_floating_on">on</string>
+    <string name="home_debug_floating_off">off</string>
 </resources>
