@@ -470,6 +470,13 @@ class TaipoIme : InputMethodService() {
         keyboardView.heightScale = keyboardHeight.scale
         keyboardView.bottomMarginDp = keyboardPreferences.bottomMarginDp
         floatingWindow.apply() // en flottant, remet la marge du bas à zéro (la poignée en tient lieu)
+        viewComposer.applyBackdrop(
+            fr.junade.taipo.backdrop.KeyboardBackdrop.effective(keyboardPreferences.keyboardBackdrop, PremiumPass.isActive),
+            keyboardPreferences.backdropSeed,
+            keyboardPreferences.isBackdropAnimated,
+            themeColor(R.color.accent),
+            KeyboardTheme.mode == KeyboardTheme.Mode.DARK,
+        )
         oneHanded.apply()
         keyboardView.showTouchZones = keyboardPreferences.showTouchZones
         emojiController.hidePanel(resync = false)

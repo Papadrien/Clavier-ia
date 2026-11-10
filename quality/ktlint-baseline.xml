@@ -133,7 +133,7 @@
         <error line="583" column="30" source="standard:argument-list-wrapping" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/ImeViewComposer.kt">
-        <error line="183" column="53" source="standard:function-literal" />
+        <error line="206" column="53" source="standard:function-literal" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/KeyAction.kt">
         <error line="16" column="1" source="standard:final-newline" />
@@ -156,16 +156,16 @@
     <file name="app/src/main/java/fr/junade/taipo/KeyRenderer.kt">
         <error line="124" column="5" source="standard:spacing-between-declarations-with-comments" />
         <error line="127" column="5" source="standard:spacing-between-declarations-with-comments" />
-        <error line="306" column="51" source="standard:argument-list-wrapping" />
-        <error line="306" column="55" source="standard:argument-list-wrapping" />
-        <error line="306" column="81" source="standard:argument-list-wrapping" />
-        <error line="306" column="85" source="standard:argument-list-wrapping" />
-        <error line="387" column="39" source="standard:argument-list-wrapping" />
-        <error line="387" column="65" source="standard:argument-list-wrapping" />
-        <error line="387" column="91" source="standard:argument-list-wrapping" />
-        <error line="402" column="39" source="standard:argument-list-wrapping" />
-        <error line="402" column="65" source="standard:argument-list-wrapping" />
-        <error line="402" column="91" source="standard:argument-list-wrapping" />
+        <error line="323" column="51" source="standard:argument-list-wrapping" />
+        <error line="323" column="55" source="standard:argument-list-wrapping" />
+        <error line="323" column="81" source="standard:argument-list-wrapping" />
+        <error line="323" column="85" source="standard:argument-list-wrapping" />
+        <error line="404" column="39" source="standard:argument-list-wrapping" />
+        <error line="404" column="65" source="standard:argument-list-wrapping" />
+        <error line="404" column="91" source="standard:argument-list-wrapping" />
+        <error line="419" column="39" source="standard:argument-list-wrapping" />
+        <error line="419" column="65" source="standard:argument-list-wrapping" />
+        <error line="419" column="91" source="standard:argument-list-wrapping" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/KeyboardController.kt">
         <error line="99" column="59" source="standard:condition-wrapping" />
@@ -174,8 +174,8 @@
         <error line="86" column="5" source="standard:spacing-between-declarations-with-comments" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/KeyboardPreferences.kt">
-        <error line="298" column="72" source="standard:multiline-if-else" />
-        <error line="299" column="18" source="standard:multiline-if-else" />
+        <error line="325" column="72" source="standard:multiline-if-else" />
+        <error line="326" column="18" source="standard:multiline-if-else" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/KeyboardView.kt">
         <error line="3" column="1" source="standard:import-ordering" />
@@ -188,18 +188,18 @@
         <error line="235" column="161" source="standard:function-literal" />
         <error line="235" column="161" source="standard:max-line-length" />
         <error line="240" column="5" source="standard:spacing-between-declarations-with-comments" />
-        <error line="619" column="45" source="standard:condition-wrapping" />
-        <error line="619" column="73" source="standard:condition-wrapping" />
-        <error line="619" column="104" source="standard:condition-wrapping" />
-        <error line="972" column="23" source="standard:argument-list-wrapping" />
-        <error line="972" column="34" source="standard:argument-list-wrapping" />
-        <error line="973" column="52" source="standard:argument-list-wrapping" />
-        <error line="973" column="84" source="standard:argument-list-wrapping" />
-        <error line="994" column="105" source="standard:multiline-if-else" />
-        <error line="994" column="113" source="standard:multiline-if-else" />
-        <error line="1164" column="34" source="standard:argument-list-wrapping" />
-        <error line="1164" column="68" source="standard:argument-list-wrapping" />
-        <error line="1164" column="83" source="standard:argument-list-wrapping" />
+        <error line="631" column="45" source="standard:condition-wrapping" />
+        <error line="631" column="73" source="standard:condition-wrapping" />
+        <error line="631" column="104" source="standard:condition-wrapping" />
+        <error line="985" column="23" source="standard:argument-list-wrapping" />
+        <error line="985" column="34" source="standard:argument-list-wrapping" />
+        <error line="986" column="52" source="standard:argument-list-wrapping" />
+        <error line="986" column="84" source="standard:argument-list-wrapping" />
+        <error line="1007" column="105" source="standard:multiline-if-else" />
+        <error line="1007" column="113" source="standard:multiline-if-else" />
+        <error line="1177" column="34" source="standard:argument-list-wrapping" />
+        <error line="1177" column="68" source="standard:argument-list-wrapping" />
+        <error line="1177" column="83" source="standard:argument-list-wrapping" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/MainActivity.kt">
         <error line="103" column="17" source="standard:argument-list-wrapping" />
@@ -325,24 +325,24 @@
         <error line="3" column="1" source="standard:import-ordering" />
         <error line="49" column="5" source="standard:spacing-between-declarations-with-comments" />
         <error line="360" column="1" source="standard:no-consecutive-blank-lines" />
-        <error line="499" column="88" source="standard:condition-wrapping" />
-        <error line="500" column="32" source="standard:condition-wrapping" />
-        <error line="644" column="53" source="standard:condition-wrapping" />
-        <error line="644" column="81" source="standard:condition-wrapping" />
-        <error line="645" column="31" source="standard:condition-wrapping" />
-        <error line="645" column="47" source="standard:condition-wrapping" />
-        <error line="645" column="72" source="standard:condition-wrapping" />
-        <error line="701" column="64" source="standard:condition-wrapping" />
-        <error line="702" column="66" source="standard:condition-wrapping" />
-        <error line="747" column="71" source="standard:condition-wrapping" />
-        <error line="747" column="97" source="standard:condition-wrapping" />
-        <error line="751" column="16" source="standard:multiline-if-else" />
-        <error line="1128" column="1" source="standard:no-consecutive-blank-lines" />
+        <error line="506" column="88" source="standard:condition-wrapping" />
+        <error line="507" column="32" source="standard:condition-wrapping" />
+        <error line="651" column="53" source="standard:condition-wrapping" />
+        <error line="651" column="81" source="standard:condition-wrapping" />
+        <error line="652" column="31" source="standard:condition-wrapping" />
+        <error line="652" column="47" source="standard:condition-wrapping" />
+        <error line="652" column="72" source="standard:condition-wrapping" />
+        <error line="708" column="64" source="standard:condition-wrapping" />
+        <error line="709" column="66" source="standard:condition-wrapping" />
+        <error line="754" column="71" source="standard:condition-wrapping" />
+        <error line="754" column="97" source="standard:condition-wrapping" />
+        <error line="758" column="16" source="standard:multiline-if-else" />
+        <error line="1135" column="1" source="standard:no-consecutive-blank-lines" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/ThemeActivity.kt">
-        <error line="219" column="50" source="standard:statement-wrapping" />
-        <error line="219" column="88" source="standard:statement-wrapping" />
-        <error line="219" column="115" source="standard:statement-wrapping" />
+        <error line="371" column="50" source="standard:statement-wrapping" />
+        <error line="371" column="88" source="standard:statement-wrapping" />
+        <error line="371" column="115" source="standard:statement-wrapping" />
     </file>
     <file name="app/src/main/java/fr/junade/taipo/ThemePreviewView.kt">
         <error line="116" column="62" source="standard:statement-wrapping" />

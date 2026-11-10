@@ -120,6 +120,33 @@ class KeyboardPreferences(context: Context) {
             TaipoType.keyboardFont = KeyboardFont.effective(value, PremiumPass.isActive)
         }
 
+    /** Fond du clavier (page « Thème ») : uni par défaut ; les motifs demandent le pass premium ([KeyboardBackdrop.effective]). */
+    var keyboardBackdrop: fr.junade.taipo.backdrop.KeyboardBackdrop
+        get() = fr.junade.taipo.backdrop.KeyboardBackdrop.fromStorageKey(prefs.getString(KEY_BACKDROP, null))
+        set(value) {
+            prefs.edit().putString(KEY_BACKDROP, value.storageKey).apply()
+        }
+
+    /** Le motif s'anime pendant la frappe. Activé par défaut. */
+    var isBackdropAnimated: Boolean
+        get() = prefs.getBoolean(KEY_BACKDROP_ANIMATED, true)
+        set(value) {
+            prefs.edit().putBoolean(KEY_BACKDROP_ANIMATED, value).apply()
+        }
+
+    /**
+     * Tirage de la disposition du motif (positions, tailles, orientations des formes). Tiré au hasard à la première lecture puis
+     * gardé : chaque clavier a son motif. [newBackdropSeed] en tire un nouveau (« Changer la disposition du motif »).
+     */
+    val backdropSeed: Long
+        get() = prefs.getLong(KEY_BACKDROP_SEED, 0L).takeIf { it != 0L } ?: newBackdropSeed()
+
+    fun newBackdropSeed(): Long {
+        val seed = java.util.Random().nextLong().takeIf { it != 0L } ?: 1L
+        prefs.edit().putLong(KEY_BACKDROP_SEED, seed).apply()
+        return seed
+    }
+
     /** Son du clavier (tic doux à chaque frappe, plus aigu pour la barre d'espace). Activé par défaut. */
     var isKeySoundEnabled: Boolean
         get() = prefs.getBoolean(KEY_KEY_SOUND, DEFAULT_KEY_SOUND)
@@ -346,6 +373,9 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_THEME_CHOICE = "theme_choice"
         private const val KEY_FLOATING = "floating_keyboard"
         private const val KEY_KEYBOARD_FONT = "keyboard_font"
+        private const val KEY_BACKDROP = "keyboard_backdrop"
+        private const val KEY_BACKDROP_ANIMATED = "keyboard_backdrop_animated"
+        private const val KEY_BACKDROP_SEED = "keyboard_backdrop_seed"
         private const val KEY_FLOATING_WIDTH = "floating_keyboard_width"
         private const val KEY_FLOATING_X = "floating_keyboard_x"
         private const val KEY_FLOATING_Y = "floating_keyboard_y"

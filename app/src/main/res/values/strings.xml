@@ -603,6 +603,17 @@
     <string name="theme_choice_system_description">System, automatic</string>
     <string name="theme_choice_dynamic">Dynamic color</string>
     <string name="theme_section_color">Color</string>
+    <string name="theme_section_backdrop">Keyboard background</string>
+    <string name="theme_backdrop_animated">Animate the background while typing</string>
+    <string name="theme_backdrop_animated_description">The pattern drifts with each key, then stops. Turned off, it stays still.</string>
+    <string name="theme_backdrop_reseed">Shuffle the pattern</string>
+    <string name="backdrop_plain">Plain</string>
+    <string name="backdrop_ribbons">Ribbons</string>
+    <string name="backdrop_bubbles">Bubbles</string>
+    <string name="backdrop_crystal">Crystal</string>
+    <string name="backdrop_waves">Waves</string>
+    <string name="theme_backdrop_free">Free</string>
+    <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Keyboard font</string>
     <string name="theme_font_description">Keys, suggestions and top bar. The app\'s screens keep their font.</string>
     <string name="theme_font_sample">Hi! See you at 7 pm?</string>

@@ -280,6 +280,18 @@ class KeyboardView(context: Context) : View(context) {
      * L'appui long sur Entrée ouvre toujours une bulle (sélection par glissement vers le haut, comme les accents) avec la
      * touche du mode une main. Clavier multilingue (activé par l'IME) : le globe s'y ajoute et passe aussi en exposant sur Entrée.
      */
+    /** Doigt posé en (x, y) (coordonnées de cette vue) : le fond animé du clavier réagit (voir KeyboardBackgroundDrawable). */
+    var touchDownListener: ((Float, Float) -> Unit)? = null
+
+    /** Fond à motif : touches translucides (voir [KeyRenderer.translucentKeys]). */
+    var translucentKeys: Boolean
+        get() = keyRenderer.translucentKeys
+        set(value) {
+            if (keyRenderer.translucentKeys == value) return
+            keyRenderer.translucentKeys = value
+            invalidate()
+        }
+
     var showsGlobeOnEnter = false
         set(value) {
             if (field == value) return
@@ -676,6 +688,7 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     private fun pressStart(x: Float, y: Float, time: Long) {
+        touchDownListener?.invoke(x, y)
         longPressCommitted = false
         pressedControl = controlAt(x, y)
         downX = x

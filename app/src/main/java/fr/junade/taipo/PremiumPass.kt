@@ -74,6 +74,7 @@ object PremiumPass {
         val preferences = KeyboardPreferences(context)
         KeyboardTheme.palette = AccentPalette.effective(preferences.accentPalette, isActive)
         TaipoType.keyboardFont = KeyboardFont.effective(preferences.keyboardFont, isActive)
+        // Le fond du clavier est relu à chaque ouverture de champ (KeyboardBackdrop.effective), rien à poser ici.
     }
 
     /** État effectif : le forçage du debug l'emporte, dans un build debug seulement. Logique pure, testée en JVM. */

@@ -263,6 +263,10 @@
     <dimen name="taipo_input_text_size">16sp</dimen>
     <!-- Ligne de commutateur ou de bouton radio : hauteur minimale de la zone tactile (lot 18, auparavant 48dp dans chaque ligne). -->
     <dimen name="taipo_settings_row_min_height">48dp</dimen>
+    <!-- Vignettes des fonds du clavier (page Thème). -->
+    <dimen name="taipo_backdrop_preview_height">96dp</dimen>
+    <dimen name="taipo_backdrop_preview_key_radius">3dp</dimen>
+
     <!-- Clavier flottant : coins et ombre de la carte, marge minimale avec les bords de l'écran, poignée de déplacement. -->
     <dimen name="taipo_floating_corner_radius">16dp</dimen>
     <dimen name="taipo_floating_elevation">8dp</dimen>

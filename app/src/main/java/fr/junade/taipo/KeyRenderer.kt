@@ -132,6 +132,23 @@ internal class KeyRenderer(private val context: Context) {
     private val oneHandedHintIcon = loadKeyIcon(R.drawable.ic_key_one_hand, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
 
     /** Clavier multilingue actif : la pilule Entrée affiche un petit globe en exposant (appui long = langue). */
+    /**
+     * Fond du clavier à motif (page « Thème ») : les touches (sauf Entrée) deviennent translucides pour laisser voir le motif.
+     * Les lettres gardent leur couleur, donc leur contraste.
+     */
+    var translucentKeys = false
+        set(value) {
+            if (field == value) return
+            field = value
+            val face = if (value) TRANSLUCENT_FACE_ALPHA else OPAQUE
+            val shadow = if (value) TRANSLUCENT_SHADOW_ALPHA else OPAQUE
+            normalPaint.alpha = face
+            secondaryPaint.alpha = face
+            activePaint.alpha = face
+            normalShadowPaint.alpha = shadow
+            secondaryShadowPaint.alpha = shadow
+        }
+
     var showsGlobeOnEnter = false
 
     // État de la vue pour le dessin en cours, fixé au début de chaque [draw] (aucune allocation).
@@ -535,6 +552,11 @@ internal class KeyRenderer(private val context: Context) {
     }
 
     companion object {
+        /** Touches translucides sur un fond à motif : face à 62 %, ombre à 43 % (maquettes du 10/11/2026). */
+        const val TRANSLUCENT_FACE_ALPHA = 158
+        const val TRANSLUCENT_SHADOW_ALPHA = 110
+        private const val OPAQUE = 255
+
         /** Lot 21 : « pas de caractère » (voir [shiftedChar]). */
         const val NO_CHAR = '\u0000'
 

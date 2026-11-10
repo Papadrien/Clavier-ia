@@ -622,6 +622,17 @@
     <string name="theme_choice_system_description">Système, automatique</string>
     <string name="theme_choice_dynamic">Couleur dynamique</string>
     <string name="theme_section_color">Couleur</string>
+    <string name="theme_section_backdrop">Fond du clavier</string>
+    <string name="theme_backdrop_animated">Animer le fond pendant la frappe</string>
+    <string name="theme_backdrop_animated_description">Le motif dérive à chaque touche, puis s\'arrête. Désactivé, il reste fixe.</string>
+    <string name="theme_backdrop_reseed">Changer la disposition du motif</string>
+    <string name="backdrop_plain">Uni</string>
+    <string name="backdrop_ribbons">Rubans</string>
+    <string name="backdrop_bubbles">Bulles</string>
+    <string name="backdrop_crystal">Cristal</string>
+    <string name="backdrop_waves">Ondes</string>
+    <string name="theme_backdrop_free">Gratuit</string>
+    <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Police du clavier</string>
     <string name="theme_font_description">Touches, suggestions et barre du haut. Les écrans de l\'application gardent leur police.</string>
     <string name="theme_font_sample">Bonjour ! On se voit à 19 h ?</string>
