@@ -15,6 +15,7 @@ import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -179,6 +180,10 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.debug_section).visibility = if (BuildConfig.DEBUG) View.VISIBLE else View.GONE
         findViewById<View>(R.id.button_debug_diagnostic).setOnClickListener {
             startActivity(Intent(this, MemoryDiagnosticActivity::class.java))
+        }
+        findViewById<View>(R.id.button_debug_reset_tips).setOnClickListener {
+            GestureTips.resetAll(this)
+            Toast.makeText(this, R.string.home_debug_reset_tips_done, Toast.LENGTH_SHORT).show()
         }
         findViewById<View>(R.id.button_debug_premium).setOnClickListener {
             val states = PremiumPass.DebugOverride.entries

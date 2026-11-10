@@ -55,7 +55,7 @@ dans l'environnement de développement) : aucune mesure n'a été prise, les gai
 - Aucun `Bitmap`, aucune image : seules les icônes du lanceur (PNG, imposées par Android) ; icônes du clavier en `VectorDrawable`.
 - Aucun `Paint`, `Path` ni `Drawable` créé dans `onDraw` / `draw` : `KeyboardView`, `EmojiGridView`, `EmojiTabsView`,
   `PillKeyDrawable`, `RoundKeyDrawable` et `KeyboardBackgroundDrawable` préparent tout à la construction (`RectF` réutilisés).
-- Polices Open Sans : 3 fichiers (≈ 130 Ko chacun), chargés une fois par processus (`TaipoType`), jamais dans `onDraw`.
+- Polices Open Sans : 3 fichiers (≈ 130 Ko chacun), chargés une fois par processus (`TaipoType`), jamais dans `onDraw`. Polices du clavier au choix (pass premium) : 23 fichiers, ≈ 3,2 Mo en tout ; seule la police choisie est chargée, une fois.
 - Fonds des barres : `PromptBarView` et `SuggestionStripView` créent leurs fonds une fois ; `renderZone` ne les change que
   quand l'état change.
 - Release : R8 et `shrinkResources` actifs ; profil de démarrage prévu (voir plus haut).

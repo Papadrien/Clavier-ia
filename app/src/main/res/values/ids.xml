@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Actions TalkBack de la poignée du clavier flottant. -->
+    <item name="floating_action_move_up" type="id" />
+    <item name="floating_action_move_down" type="id" />
+    <item name="floating_action_dock" type="id" />
+</resources>

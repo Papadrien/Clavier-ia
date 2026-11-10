@@ -1,5 +1,6 @@
 package fr.junade.taipo
 
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
 import android.os.Build
@@ -7,6 +8,9 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.CompoundButton
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
@@ -15,6 +19,9 @@ import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.backdrop.BackdropPreviewView
+import fr.junade.taipo.backdrop.KeyboardBackdrop
+import kotlin.math.abs
 
 /**
  * Page « Thème » (paramètres, lots T5 et T7) : cartes d'aperçu, Système (automatique), Clair, Sombre et, dès Android 12,
@@ -25,6 +32,10 @@ import fr.junade.taipo.analytics.Analytics
  * ([KeyboardPreferences.accentPalette]) et les aperçus des cartes la reprennent. Couleurs réservées au pass premium ([PremiumPass]),
  * marquées d'un cadenas : sans pass, en toucher une la montre sur les aperçus sans la poser sur le clavier ([onLockedPalette]) et
  * propose le pass ; au retour avec le pass, elle est appliquée.
+ *
+ * Section « Police du clavier » : une ligne par police ([KeyboardFont]), écrite dans cette police. Open Sans est gratuite, les
+ * autres sont réservées au pass, avec le même principe que les couleurs (essayée sans pass, appliquée au retour avec le pass).
+ * Seul le clavier change de police : les écrans de l'application gardent Open Sans.
  */
 class ThemeActivity : Activity() {
 
@@ -32,12 +43,24 @@ class ThemeActivity : Activity() {
 
     private class Swatch(val palette: AccentPalette, val view: View, val disc: AccentSwatchView)
 
+    private class FontRow(val font: KeyboardFont, val view: View, val mark: ImageView)
+
+    private class BackdropCard(val backdrop: KeyboardBackdrop, val view: View, val preview: BackdropPreviewView, val mark: ImageView)
+
     private lateinit var preferences: KeyboardPreferences
     private val cards = ArrayList<Card>()
     private val swatches = ArrayList<Swatch>()
 
     /** Couleur réservée touchée sans pass : montrée sur les aperçus, appliquée au retour si le pass a été pris. */
     private var previewPalette: AccentPalette? = null
+    private val fontRows = mutableListOf<FontRow>()
+    private val backdropCards = mutableListOf<BackdropCard>()
+
+    /** Motif touché sans pass : montré comme choisi, avec le bouton du pass, sans être posé sur le clavier. */
+    private var previewBackdrop: KeyboardBackdrop? = null
+
+    /** Police réservée touchée sans pass : montrée comme choisie, avec le bouton du pass, sans être posée sur le clavier. */
+    private var previewFont: KeyboardFont? = null
 
     // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
     override fun attachBaseContext(newBase: Context) {
@@ -82,12 +105,22 @@ class ThemeActivity : Activity() {
         ViewCompat.setAccessibilityHeading(findViewById(R.id.theme_color_heading), true)
         buildPalettes(findViewById(R.id.theme_palettes))
         findViewById<View>(android.R.id.content).applyTaipoFontToTree()
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.theme_backdrop_heading), true)
+        setUpBackdrops()
+        // Après applyTaipoFontToTree : chaque ligne garde sa propre police.
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.theme_font_heading), true)
+        buildFonts(findViewById(R.id.theme_fonts))
+        findViewById<View>(R.id.button_font_unlock).setOnClickListener {
+            startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_THEME))
+        }
         applySystemBarInsets()
         render(preferences.themeChoice)
         findViewById<View>(R.id.button_theme_unlock).setOnClickListener {
             startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_THEME))
         }
         renderPalettes(preferences.accentPalette)
+        renderFonts(preferences.keyboardFont)
+        renderBackdrops()
     }
 
     // Retour de l'écran du pass (ou pass forcé en debug) : la couleur essayée est appliquée, les cadenas disparaissent.
@@ -100,6 +133,233 @@ class ThemeActivity : Activity() {
             Analytics.setting(this, "accent_palette", tried.storageKey)
         }
         renderPalettes(preferences.accentPalette)
+        val triedFont = previewFont
+        if (triedFont != null && triedFont.isAvailable(PremiumPass.isActive)) {
+            previewFont = null
+            preferences.keyboardFont = triedFont
+            Analytics.setting(this, "keyboard_font", triedFont.storageKey)
+        }
+        renderFonts(preferences.keyboardFont)
+        val triedBackdrop = previewBackdrop
+        if (triedBackdrop != null && triedBackdrop.isAvailable(PremiumPass.isActive)) {
+            previewBackdrop = null
+            preferences.keyboardBackdrop = triedBackdrop
+            Analytics.setting(this, "keyboard_backdrop", triedBackdrop.storageKey)
+        }
+        renderBackdrops()
+    }
+
+    /**
+     * Section « Fond du clavier » : une vignette par fond ([KeyboardBackdrop]), par rangées de deux, dessinée dans le thème et la
+     * couleur choisis ; les motifs avancent avec le défilement de la page pour montrer qu'ils sont animés. Uni est gratuit, les
+     * motifs demandent le pass (même principe que les couleurs). Interrupteur « Animer le fond pendant la frappe », et nouveau
+     * tirage de la disposition du motif.
+     */
+    private fun setUpBackdrops() {
+        val container = findViewById<LinearLayout>(R.id.theme_backdrops)
+        val gap = resources.getDimensionPixelSize(R.dimen.taipo_settings_gap_sm)
+        KeyboardBackdrop.entries.chunked(BACKDROPS_PER_ROW).forEachIndexed { rowIndex, backdrops ->
+            val row = LinearLayout(this)
+            row.orientation = LinearLayout.HORIZONTAL
+            row.isBaselineAligned = false
+            repeat(BACKDROPS_PER_ROW) { index ->
+                val backdrop = backdrops.getOrNull(index)
+                val item = if (backdrop == null) View(this) else backdropCard(backdrop, gap)
+                val params = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                if (index > 0) params.marginStart = gap
+                row.addView(item, params)
+            }
+            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            if (rowIndex > 0) params.topMargin = gap
+            container.addView(row, params)
+        }
+        findViewById<CompoundButton>(R.id.switch_backdrop_animated).apply {
+            isChecked = preferences.isBackdropAnimated
+            setOnCheckedChangeListener { _, checked ->
+                preferences.isBackdropAnimated = checked
+                Analytics.setting(this@ThemeActivity, "keyboard_backdrop_animated", checked)
+            }
+        }
+        findViewById<View>(R.id.button_backdrop_reseed).setOnClickListener {
+            preferences.newBackdropSeed()
+            renderBackdrops()
+        }
+        findViewById<View>(R.id.button_backdrop_unlock).setOnClickListener {
+            startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_THEME))
+        }
+        // Défilement de la page : les motifs avancent avec lui, pour montrer qu'ils sont animés.
+        findViewById<View>(R.id.theme_scroll).setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+            val delta = abs(scrollY - oldScrollY).toFloat()
+            if (delta > 0f && ValueAnimator.areAnimatorsEnabled()) backdropCards.forEach { it.preview.advance(delta) }
+        }
+    }
+
+    /** Vignette d'un fond : aperçu (coche ou cadenas en haut à droite) et nom en dessous ; la carte entière est l'élément tactile. */
+    private fun backdropCard(backdrop: KeyboardBackdrop, gap: Int): View {
+        val previewHeight = resources.getDimensionPixelSize(R.dimen.taipo_backdrop_preview_height)
+        val checkSize = resources.getDimensionPixelSize(R.dimen.taipo_theme_check_size)
+        val checkMargin = resources.getDimensionPixelSize(R.dimen.taipo_theme_check_margin)
+        val preview = BackdropPreviewView(this).apply { this.backdrop = backdrop }
+        val mark = ImageView(this).apply { importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO }
+        val markParams = FrameLayout.LayoutParams(checkSize, checkSize, Gravity.TOP or Gravity.END)
+        markParams.setMargins(checkMargin, checkMargin, checkMargin, checkMargin)
+        val frame = FrameLayout(this).apply {
+            clipToOutline = true
+            setBackgroundResource(R.drawable.bg_settings_card)
+            addView(preview, FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, previewHeight))
+            addView(mark, markParams)
+        }
+        val label = TextView(this, null, 0, R.style.TaipoText_Body).apply {
+            text = getString(backdrop.labelRes)
+            gravity = Gravity.CENTER
+            useTaipoFont()
+        }
+        val labelParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        labelParams.topMargin = gap
+        return LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(gap, gap, gap, gap)
+            setBackgroundResource(R.drawable.bg_theme_card)
+            isClickable = true
+            isFocusable = true
+            addView(frame)
+            addView(label, labelParams)
+            setOnClickListener { selectBackdrop(backdrop) }
+            backdropCards += BackdropCard(backdrop, this, preview, mark)
+        }
+    }
+
+    private fun selectBackdrop(backdrop: KeyboardBackdrop) {
+        if (!backdrop.isAvailable(PremiumPass.isActive)) {
+            previewBackdrop = backdrop
+            renderBackdrops()
+            return
+        }
+        previewBackdrop = null
+        if (backdrop != preferences.keyboardBackdrop) {
+            preferences.keyboardBackdrop = backdrop
+            Analytics.setting(this, "keyboard_backdrop", backdrop.storageKey)
+        }
+        renderBackdrops()
+    }
+
+    /**
+     * Vignettes dans le thème du clavier (clair ou sombre) et la couleur affichée (choisie ou essayée), coche du fond choisi,
+     * cadenas des motifs réservés, état radio lu par TalkBack. Les réglages du motif n'apparaissent qu'avec un motif.
+     */
+    private fun renderBackdrops() {
+        if (backdropCards.isEmpty()) return
+        val premium = PremiumPass.isActive
+        val mode = KeyboardTheme.mode
+        val palette = previewPalette ?: AccentPalette.effective(preferences.accentPalette, premium)
+        val base = KeyboardTheme.colorIn(this, mode, R.color.keyboard_background)
+        val accent = palette.recolor(KeyboardTheme.colorIn(this, mode, R.color.accent))
+        val key = KeyboardTheme.colorIn(this, mode, R.color.key_normal)
+        val seed = preferences.backdropSeed
+        val shown = previewBackdrop ?: KeyboardBackdrop.effective(preferences.keyboardBackdrop, premium)
+        for (card in backdropCards) {
+            card.preview.seed = seed
+            card.preview.setColors(base, accent, mode == KeyboardTheme.Mode.DARK, key)
+            val isSelected = card.backdrop == shown
+            val locked = !card.backdrop.isAvailable(premium)
+            card.view.isSelected = isSelected
+            when {
+                isSelected -> card.mark.setImageResource(R.drawable.bg_theme_check)
+                locked -> card.mark.setImageResource(R.drawable.ic_lock)
+                else -> card.mark.setImageDrawable(null)
+            }
+            val name = getString(card.backdrop.labelRes)
+            card.view.contentDescription = if (locked) getString(R.string.premium_locked_item, name) else name
+            ViewCompat.setAccessibilityDelegate(card.view, radioDelegate(isSelected))
+        }
+        val patternSettings = if (shown.isPattern) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.switch_backdrop_animated).visibility = patternSettings
+        findViewById<View>(R.id.text_backdrop_animated_description).visibility = patternSettings
+        findViewById<View>(R.id.button_backdrop_reseed).visibility = patternSettings
+        findViewById<View>(R.id.button_backdrop_unlock).visibility = if (previewBackdrop != null) View.VISIBLE else View.GONE
+    }
+
+    /**
+     * Section « Police du clavier » : une ligne par police ([KeyboardFont]), son nom et une phrase d'exemple écrits dans cette
+     * police, la coche de la police choisie ou le cadenas des polices réservées au pass premium.
+     */
+    private fun buildFonts(container: LinearLayout) {
+        val padding = resources.getDimensionPixelSize(R.dimen.taipo_settings_card_padding)
+        val gap = resources.getDimensionPixelSize(R.dimen.taipo_settings_gap_xs)
+        val markSize = resources.getDimensionPixelSize(R.dimen.taipo_icon_size)
+        KeyboardFont.entries.forEachIndexed { index, font ->
+            if (index > 0) {
+                val thickness = resources.getDimensionPixelSize(R.dimen.taipo_settings_divider_thickness)
+                val dividerParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, thickness)
+                dividerParams.marginStart = padding
+                container.addView(View(this).apply { setBackgroundColor(getColor(R.color.settings_divider)) }, dividerParams)
+            }
+            val name = TextView(this, null, 0, R.style.TaipoText_Lead).apply {
+                text = fontName(font)
+                typeface = TaipoType.typeface(this@ThemeActivity, font, TaipoType.Weight.BOLD)
+            }
+            val sample = TextView(this, null, 0, R.style.TaipoText_Caption).apply {
+                setText(R.string.theme_font_sample)
+                typeface = TaipoType.typeface(this@ThemeActivity, font, TaipoType.Weight.REGULAR)
+            }
+            val texts = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                addView(name)
+                val sampleParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                sampleParams.topMargin = gap
+                addView(sample, sampleParams)
+            }
+            val mark = ImageView(this).apply { importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO }
+            val row = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                minimumHeight = resources.getDimensionPixelSize(R.dimen.taipo_settings_row_min_height)
+                setPadding(padding, padding, padding, padding)
+                isClickable = true
+                isFocusable = true
+                setBackgroundResource(R.drawable.bg_popup_item)
+                addView(texts, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
+                addView(mark, LinearLayout.LayoutParams(markSize, markSize).apply { marginStart = padding })
+                setOnClickListener { selectFont(font) }
+            }
+            container.addView(row, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+            fontRows += FontRow(font, row, mark)
+        }
+    }
+
+    private fun fontName(font: KeyboardFont): String = font.displayName ?: getString(checkNotNull(font.labelRes))
+
+    private fun selectFont(font: KeyboardFont) {
+        if (!font.isAvailable(PremiumPass.isActive)) {
+            previewFont = font
+            renderFonts(preferences.keyboardFont)
+            return
+        }
+        previewFont = null
+        if (font != preferences.keyboardFont) {
+            preferences.keyboardFont = font
+            Analytics.setting(this, "keyboard_font", font.storageKey)
+        }
+        renderFonts(font)
+    }
+
+    /** Coche de la police choisie (ou essayée), cadenas des polices réservées, état radio lu par TalkBack. */
+    private fun renderFonts(selected: KeyboardFont) {
+        val premium = PremiumPass.isActive
+        val shown = previewFont ?: KeyboardFont.effective(selected, premium)
+        for (row in fontRows) {
+            val isSelected = row.font == shown
+            val locked = !row.font.isAvailable(premium)
+            when {
+                isSelected -> row.mark.setImageResource(R.drawable.bg_theme_check)
+                locked -> row.mark.setImageResource(R.drawable.ic_lock)
+                else -> row.mark.setImageDrawable(null)
+            }
+            val name = fontName(row.font)
+            row.view.contentDescription = if (locked) getString(R.string.premium_locked_item, name) else name
+            ViewCompat.setAccessibilityDelegate(row.view, radioDelegate(isSelected))
+        }
+        findViewById<View>(R.id.button_font_unlock).visibility = if (previewFont != null) View.VISIBLE else View.GONE
     }
 
     /** Pastilles des couleurs d'accent, par rangées de [SWATCHES_PER_ROW] de même largeur (la dernière complétée par des vides). */
@@ -181,6 +441,7 @@ class ThemeActivity : Activity() {
             ViewCompat.setAccessibilityDelegate(swatch.view, radioDelegate(isSelected))
         }
         for (card in cards) card.preview.accent = shown
+        renderBackdrops()
         findViewById<View>(R.id.button_theme_unlock).visibility = if (previewPalette != null) View.VISIBLE else View.GONE
     }
 
@@ -189,6 +450,7 @@ class ThemeActivity : Activity() {
         preferences.themeChoice = choice
         Analytics.setting(this, "theme_choice", choice.storageKey)
         render(choice)
+        renderBackdrops()
     }
 
     /** Pose la carte choisie (contour, coche) et l'état lu par TalkBack : un choix unique parmi les cartes, comme des boutons radio. */
@@ -227,6 +489,7 @@ class ThemeActivity : Activity() {
     private companion object {
         const val CARDS_PER_ROW = 3
         const val SWATCHES_PER_ROW = 5
+        const val BACKDROPS_PER_ROW = 2
     }
 }
 

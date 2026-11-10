@@ -571,6 +571,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/taipo_settings_gap_md"
             android:text="@string/home_debug_diagnostic" />
+
+        <Button
+            style="@style/TaipoButton.Secondary"
+            android:id="@+id/button_debug_reset_tips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md"
+            android:text="@string/home_debug_reset_tips" />
     </LinearLayout>
 
 </LinearLayout>
