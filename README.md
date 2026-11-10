@@ -5,7 +5,8 @@ des actions d'**IA entièrement locale** : correction du texte, génération par
 donnée envoyée. Les modèles tournent sur l'appareil. La permission `INTERNET` ne sert qu'au **téléchargement du fichier
 d'un modèle** (écran « Modèle IA », voir `docs/telechargement-modeles.md`), des dictionnaires et des modèles vocaux, et à la
 **mesure d'usage anonyme** (Aptabase, désactivable dans « Mes données », jamais de texte saisi ni dans un champ de mot de passe :
-voir `docs/analytics.md`). Le texte tapé ne quitte jamais l'appareil. Ce document décrit ce qui
+voir `docs/analytics.md`). La bibliothèque Google Play Billing (pass premium) envoie aussi ses propres journaux techniques à
+Google (`firebaselogging.googleapis.com`, voir `docs/analytics.md`). Le texte tapé ne quitte jamais l'appareil. Ce document décrit ce qui
 est réellement présent dans le code ; le backlog produit est tenu à part.
 
 - Lettres AZERTY (avec touche Maj, une seule lettre en majuscule)

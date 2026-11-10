@@ -114,3 +114,18 @@ un utilisateur très actif pèse plus qu'un utilisateur occasionnel.
 5. (first_open) Désinstaller le debug, le réinstaller, l'ouvrir : un événement `first_open` dans le tableau de bord debug ; le
    fermer et le rouvrir : aucun second événement.
 6. Mode avion, faire des actions, rétablir le réseau, faire une action : les événements en attente partent.
+
+## Journaux de Google Play Billing
+
+En plus d'Aptabase, la bibliothèque **Google Play Billing** (`com.android.billingclient:billing-ktx`, pass premium) envoie ses
+propres journaux techniques à Google, sur `firebaselogging.googleapis.com` (vu dans logcat le 10/11/2026 :
+`TRuntime.CctTransportBackend`, réponse 200). Ils passent par `com.google.android.datatransport` (`transport-runtime`,
+`transport-backend-cct`), dépendances de la bibliothèque, et ne sont pas réglés par Taipo :
+
+- Taipo ne leur donne aucun texte saisi ni aucune donnée de l'application : seule la bibliothèque décide de leur contenu
+  (connexion au service de facturation, appels d'achat).
+- Le réglage « Partager les données d'utilisation » ne les coupe pas : Google n'offre pas d'option pour les désactiver.
+- Retirer `transport-backend-cct` des dépendances les supprimerait peut-être, mais n'a pas été essayé : la facturation pourrait
+  ne plus fonctionner. À tester sur appareil avant de le faire.
+
+À déclarer dans la fiche « Sécurité des données » du Play Store comme données collectées par un SDK tiers.
