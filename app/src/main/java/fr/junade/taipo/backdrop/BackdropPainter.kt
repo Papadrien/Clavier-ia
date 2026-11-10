@@ -125,7 +125,7 @@ internal class RibbonsPainter : BackdropPainter() {
     }
 
     override fun draw(canvas: Canvas, w: Float, h: Float, colors: BackdropColors, motion: BackdropMotion) {
-        val p = motion.phase
+        val p = motion.phase * RIBBON_SPEED
         val cx = w * cxFraction + sin(p * 0.21f) * w * 0.12f
         val cy = h * cyFraction + cos(p * 0.17f) * h * 0.08f
         val second = BackdropColors.secondTone(colors.accent, secondHue)
@@ -178,6 +178,9 @@ internal class RibbonsPainter : BackdropPainter() {
 
     private companion object {
         const val RIBBONS = 6
+
+        /** Vitesse de l'animation (défilement des réglages et frappe) : réduite de 80 % (revue du 10/11/2026, trop rapide). */
+        const val RIBBON_SPEED = 0.2f
     }
 }
 
@@ -390,7 +393,7 @@ internal class WavesPainter : BackdropPainter() {
                 white = white,
                 tone = random.nextFloat(),
                 alpha = if (white) 0.55f else 0.3f + random.nextFloat() * 0.35f,
-                width = if (white) 1f else 1.2f + random.nextFloat() * 1.6f,
+                width = WAVE_LINE_SCALE * (if (white) 1f else 1.2f + random.nextFloat() * 1.6f),
             )
         }
     }
@@ -421,6 +424,9 @@ internal class WavesPainter : BackdropPainter() {
     }
 
     private companion object {
+        /** Épaisseur des lignes triplée (revue du 10/11/2026 : trop fines). */
+        const val WAVE_LINE_SCALE = 3f
+
         const val LINES = 11
         const val STEP = 6f
     }
