@@ -3,6 +3,7 @@ package fr.junade.taipo.backup
 import android.content.Context
 import fr.junade.taipo.AccentPalette
 import fr.junade.taipo.HapticIntensity
+import fr.junade.taipo.KeyShape
 import fr.junade.taipo.KeyboardHeight
 import fr.junade.taipo.KeyboardPreferences
 import fr.junade.taipo.ThemeChoice

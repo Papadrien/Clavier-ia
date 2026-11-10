@@ -67,8 +67,8 @@ object PremiumPass {
     }
 
     /**
-     * Le clavier suit le nouvel état : la couleur et la forme choisies s'appliquent (ou retombent sur le violet et Arrondi). Ses vues sont recréées à la prochaine
-     * ouverture d'un champ, la palette et la forme faisant partie de [KeyboardTheme.Look].
+     * Le clavier suit le nouvel état : la couleur et la forme choisies s'appliquent (ou retombent sur le violet et Arrondi).
+     * Ses vues sont recréées à la prochaine ouverture d'un champ, la palette et la forme faisant partie de [KeyboardTheme.Look].
      */
     private fun applyToKeyboard(context: Context) {
         val preferences = KeyboardPreferences(context)
