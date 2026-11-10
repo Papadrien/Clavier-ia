@@ -127,6 +127,10 @@ internal class KeyRenderer(private val context: Context) {
     // Petit globe en exposant sur la pilule Entrée violette : blanc, légèrement atténué comme l'indice des chiffres (lot T6).
     private val globeIcon = loadKeyIcon(R.drawable.ic_key_globe, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
 
+    // Sans clavier multilingue, l'appui long sur Entrée n'ouvre que le mode une main : son icône (celle de la bulle) prend
+    // la place du globe, pour signaler qu'il y a quelque chose derrière l'appui long.
+    private val oneHandedHintIcon = loadKeyIcon(R.drawable.ic_key_one_hand, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
+
     /** Clavier multilingue actif : la pilule Entrée affiche un petit globe en exposant (appui long = langue). */
     var showsGlobeOnEnter = false
 
@@ -358,12 +362,13 @@ internal class KeyRenderer(private val context: Context) {
     }
 
     /**
-     * Contenu de la pilule Entrée : le symbole d'entrée, centré ; en mode multilingue, un petit globe en exposant, en haut
-     * à droite comme l'indice des chiffres, replié vers l'intérieur pour rester dans la courbe de la pilule.
+     * Contenu de la pilule Entrée : le symbole d'entrée, centré, et en exposant, en haut à droite comme l'indice des chiffres
+     * (replié vers l'intérieur pour rester dans la courbe de la pilule), ce qu'ouvre l'appui long : un petit globe en mode
+     * multilingue, sinon l'icône du mode une main.
      */
     private fun drawEnterContent(canvas: Canvas) {
         drawKeyIcon(canvas, enterIcon)
-        if (!showsGlobeOnEnter) return
+        val hintIcon = if (showsGlobeOnEnter) globeIcon else oneHandedHintIcon
         val size = dims.hintTextSize * GLOBE_HINT_SCALE
         val half = size / 2f
         val radius = minOf(keyRect.width(), keyRect.height()) / 2f
@@ -373,8 +378,8 @@ internal class KeyRenderer(private val context: Context) {
         val dy = (cy - half) - (keyRect.top + radius)
         val dx = if (reach > abs(dy)) sqrt(reach * reach - dy * dy) else 0f
         val cx = keyRect.right - radius + dx - half
-        placeIcon(globeIcon, cx, cy, half)
-        globeIcon.draw(canvas)
+        placeIcon(hintIcon, cx, cy, half)
+        hintIcon.draw(canvas)
     }
 
     private fun placeIcon(icon: Drawable, cx: Float, cy: Float, half: Float) {
