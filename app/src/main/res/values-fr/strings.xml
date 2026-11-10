@@ -100,6 +100,16 @@
 
     <string name="button_keyboard_settings">Paramètres du clavier</string>
     <string name="keyboard_settings_title">Paramètres du clavier</string>
+    <string name="keyboard_settings_layout_title">Disposition des touches</string>
+    <string name="keyboard_settings_size_title">Taille et position</string>
+    <string name="keyboard_settings_sounds_title">Sons et vibrations</string>
+    <string name="keyboard_settings_smart_title">Saisie intelligente</string>
+    <string name="keyboard_settings_haptic_off_short">Non</string>
+    <string name="keyboard_settings_height_compact_short">80 %</string>
+    <string name="keyboard_settings_height_small_short">90 %</string>
+    <string name="keyboard_settings_height_normal_short">100 %</string>
+    <string name="keyboard_settings_height_large_short">110 %</string>
+    <string name="keyboard_settings_height_extra_large_short">120 %</string>
     <string name="keyboard_settings_number_row">Rangée de chiffres</string>
     <string name="keyboard_settings_number_row_passwords">Rangée de chiffres uniquement dans les champs mot de passe</string>
     <string name="keyboard_settings_bottom_row_title">Touches de la rangée du bas</string>

@@ -19,10 +19,10 @@ import fr.junade.taipo.clipboard.ScreenshotFinder
 import fr.junade.taipo.dictionary.CorrectionHabitsProvider
 
 /**
- * Écran « Paramètres du clavier ». Contient l'activation de la rangée de
- * chiffres (story 1.5) et le niveau de retour haptique (story 1.11) et la
- * hauteur du clavier (story 1.12), ainsi que l'option « Apprendre de mes habitudes » et l'effacement des
- * habitudes de correction. Les langues (liste, disposition, dictionnaire) ont leur propre écran : [LanguagesActivity].
+ * Écran « Paramètres du clavier » (v3 : réglages rangés en cartes). Dans l'ordre : Langues (ligne vers [LanguagesActivity]),
+ * Disposition des touches (rangée de chiffres, touches du bas), Taille et position (hauteur, marge du bas, mode une main),
+ * Sons et vibrations, Saisie intelligente (apprentissage des habitudes, captures d'écran), puis le lien Confidentialité.
+ * En debug seulement : Précision de frappe.
  */
 class KeyboardSettingsActivity : Activity() {
 
@@ -109,6 +109,7 @@ class KeyboardSettingsActivity : Activity() {
             isChecked = preferences.isKeySoundEnabled
             setOnCheckedChangeListener { _, checked ->
                 preferences.isKeySoundEnabled = checked
+                updateVolumeVisibility(preferences)
                 Analytics.setting(this@KeyboardSettingsActivity, "key_sound", checked)
             }
         }
@@ -117,10 +118,12 @@ class KeyboardSettingsActivity : Activity() {
             isChecked = preferences.isBarSoundEnabled
             setOnCheckedChangeListener { _, checked ->
                 preferences.isBarSoundEnabled = checked
+                updateVolumeVisibility(preferences)
                 Analytics.setting(this@KeyboardSettingsActivity, "bar_sound", checked)
             }
         }
         setUpSoundVolume(preferences)
+        updateVolumeVisibility(preferences)
         setUpBottomMargin(preferences)
         setUpOneHanded(preferences)
 
@@ -201,6 +204,12 @@ class KeyboardSettingsActivity : Activity() {
                 Analytics.setting(this@KeyboardSettingsActivity, "sound_volume", bar.progress)
             }
         })
+    }
+
+    /** Le curseur du volume n'a d'objet que si le son des touches ou celui de la barre est activé : masqué sinon. */
+    private fun updateVolumeVisibility(preferences: KeyboardPreferences) {
+        val anySound = preferences.isKeySoundEnabled || preferences.isBarSoundEnabled
+        findViewById<View>(R.id.group_sound_volume).visibility = if (anySound) View.VISIBLE else View.GONE
     }
 
     /** Curseur « Marge inférieure » (0 à 100 dp) : écrit au fil du déplacement, relu par le clavier à l'ouverture du prochain champ. */

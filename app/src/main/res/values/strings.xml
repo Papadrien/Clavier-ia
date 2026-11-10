@@ -100,6 +100,16 @@
 
     <string name="button_keyboard_settings">Keyboard settings</string>
     <string name="keyboard_settings_title">Keyboard settings</string>
+    <string name="keyboard_settings_layout_title">Key layout</string>
+    <string name="keyboard_settings_size_title">Size and position</string>
+    <string name="keyboard_settings_sounds_title">Sound and vibration</string>
+    <string name="keyboard_settings_smart_title">Smart typing</string>
+    <string name="keyboard_settings_haptic_off_short">Off</string>
+    <string name="keyboard_settings_height_compact_short">80%</string>
+    <string name="keyboard_settings_height_small_short">90%</string>
+    <string name="keyboard_settings_height_normal_short">100%</string>
+    <string name="keyboard_settings_height_large_short">110%</string>
+    <string name="keyboard_settings_height_extra_large_short">120%</string>
     <string name="keyboard_settings_number_row">Number row</string>
     <string name="keyboard_settings_number_row_passwords">Number row in password fields only</string>
     <string name="keyboard_settings_bottom_row_title">Bottom row keys</string>

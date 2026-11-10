@@ -263,6 +263,11 @@
     <dimen name="taipo_input_text_size">16sp</dimen>
     <!-- Ligne de commutateur ou de bouton radio : hauteur minimale de la zone tactile (lot 18, auparavant 48dp dans chaque ligne). -->
     <dimen name="taipo_settings_row_min_height">48dp</dimen>
+    <!-- Sélecteur segmenté des paramètres du clavier (v3) : piste, segments et marge intérieure. -->
+    <dimen name="taipo_segmented_group_corner_radius">10dp</dimen>
+    <dimen name="taipo_segmented_group_padding">3dp</dimen>
+    <dimen name="taipo_segment_corner_radius">8dp</dimen>
+    <dimen name="taipo_segment_min_height">42dp</dimen>
 
     <!-- Page « Thème » (lot T5) : hauteur de l'aperçu d'une carte, taille et marge de la coche de sélection, contour d'une carte
          au repos et choisie. -->
