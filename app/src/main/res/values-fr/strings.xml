@@ -116,7 +116,6 @@
     <string name="keyboard_settings_show_emoji_key">Afficher la touche emoji</string>
     <string name="keyboard_settings_show_comma_key">Afficher la touche virgule</string>
     <string name="keyboard_settings_show_period_key">Afficher la touche point</string>
-    <string name="keyboard_settings_screenshots_title">Captures d\'écran</string>
     <string name="keyboard_settings_screenshots_switch">Proposer les captures d\'écran récentes</string>
     <string name="keyboard_settings_screenshots_description">Propose de coller votre dernière capture d\'écran. Demande l\'accès à vos photos ; rien n\'est envoyé.</string>
     <string name="keyboard_settings_screenshots_denied">L\'accès aux photos a été refusé. Autorisez-le dans les réglages Android pour utiliser cette option.</string>
@@ -145,7 +144,6 @@
     <string name="keyboard_settings_height_normal">Normale (100 %)</string>
     <string name="keyboard_settings_height_large">Grande (110 %)</string>
     <string name="keyboard_settings_height_extra_large">Très grande (120 %)</string>
-    <string name="keyboard_settings_habits_title">Apprentissage</string>
     <string name="keyboard_settings_habits_switch">Apprendre de mes habitudes</string>
     <string name="keyboard_settings_habits_description">Le clavier retient vos corrections annulées et vos adresses e-mail, chiffrées, sur cet appareil seulement.</string>
     <string name="keyboard_settings_habits_clear">Effacer mes habitudes de correction</string>
