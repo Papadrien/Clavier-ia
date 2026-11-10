@@ -171,26 +171,35 @@
                 style="@style/TaipoText.Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_one_handed_title" />
+                android:text="@string/keyboard_settings_mode_title" />
 
+            <!-- Mode du clavier : normal, une main (à gauche, à droite) ou flottant ; un seul à la fois. -->
             <RadioGroup
-                android:id="@+id/radio_group_one_handed"
+                android:id="@+id/radio_group_keyboard_mode"
                 style="@style/TaipoSegmentedGroup">
 
                 <RadioButton
-                    android:id="@+id/radio_one_handed_off"
+                    android:id="@+id/radio_mode_normal"
                     style="@style/TaipoSegment"
-                    android:text="@string/keyboard_settings_one_handed_off" />
+                    android:text="@string/keyboard_settings_mode_normal" />
 
                 <RadioButton
-                    android:id="@+id/radio_one_handed_left"
+                    android:id="@+id/radio_mode_left"
                     style="@style/TaipoSegment"
-                    android:text="@string/keyboard_settings_one_handed_left" />
+                    android:contentDescription="@string/keyboard_settings_mode_left_description"
+                    android:text="@string/keyboard_settings_mode_left" />
 
                 <RadioButton
-                    android:id="@+id/radio_one_handed_right"
+                    android:id="@+id/radio_mode_right"
                     style="@style/TaipoSegment"
-                    android:text="@string/keyboard_settings_one_handed_right" />
+                    android:contentDescription="@string/keyboard_settings_mode_right_description"
+                    android:text="@string/keyboard_settings_mode_right" />
+
+                <RadioButton
+                    android:id="@+id/radio_mode_floating"
+                    style="@style/TaipoSegment"
+                    android:contentDescription="@string/keyboard_settings_mode_floating_description"
+                    android:text="@string/keyboard_settings_mode_floating" />
             </RadioGroup>
 
             <TextView
@@ -207,6 +216,21 @@
                 android:layout_marginTop="@dimen/taipo_settings_gap_xs"
                 android:minHeight="@dimen/taipo_settings_row_min_height"
                 android:contentDescription="@string/keyboard_settings_one_handed_width" />
+
+            <TextView
+                style="@style/TaipoText.Label"
+                android:id="@+id/text_floating_width"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_sm" />
+
+            <SeekBar
+                android:id="@+id/seek_floating_width"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+                android:minHeight="@dimen/taipo_settings_row_min_height"
+                android:contentDescription="@string/keyboard_settings_floating_width" />
 
             <TextView
                 style="@style/TaipoText.Caption"

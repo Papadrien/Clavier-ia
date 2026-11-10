@@ -128,13 +128,19 @@
     <string name="keyboard_settings_key_sound">Son du clavier</string>
     <string name="keyboard_settings_bottom_margin">Marge inférieure</string>
     <string name="keyboard_settings_bottom_margin_value">Marge inférieure : %1$d dp</string>
-    <string name="keyboard_settings_one_handed_title">Mode une main</string>
-    <string name="keyboard_settings_one_handed_off">Désactivé</string>
-    <string name="keyboard_settings_one_handed_left">À gauche</string>
-    <string name="keyboard_settings_one_handed_right">À droite</string>
     <string name="keyboard_settings_one_handed_width">Largeur du clavier en mode une main</string>
-    <string name="keyboard_settings_one_handed_width_value">Largeur : %1$d %%</string>
-    <string name="keyboard_settings_one_handed_hint">Raccourci : appui long sur la touche Entrée.</string>
+    <string name="keyboard_settings_one_handed_width_value">Largeur en mode une main : %1$d %%</string>
+    <string name="keyboard_settings_one_handed_hint">Raccourci : appui long sur la touche Entrée. En flottant, glissez la poignée tout en bas pour recoller le clavier.</string>
+    <string name="keyboard_settings_mode_title">Mode du clavier</string>
+    <string name="keyboard_settings_mode_normal">Normal</string>
+    <string name="keyboard_settings_mode_left">Gauche</string>
+    <string name="keyboard_settings_mode_right">Droite</string>
+    <string name="keyboard_settings_mode_floating">Flottant</string>
+    <string name="keyboard_settings_mode_left_description">Une main, à gauche</string>
+    <string name="keyboard_settings_mode_right_description">Une main, à droite</string>
+    <string name="keyboard_settings_mode_floating_description">Clavier flottant</string>
+    <string name="keyboard_settings_floating_width">Largeur du clavier flottant</string>
+    <string name="keyboard_settings_floating_width_value">Largeur en mode flottant : %1$d %%</string>
     <string name="keyboard_settings_sound_volume">Volume des sons</string>
     <string name="keyboard_settings_sound_volume_value">Volume des sons : %1$d %%</string>
     <string name="keyboard_settings_bar_sound">Sons de la barre supérieure</string>
@@ -706,7 +712,4 @@
     <string name="home_debug_reset_tips">Réinitialiser les astuces</string>
     <string name="home_debug_reset_tips_done">Les astuces s\'afficheront de nouveau</string>
     <string name="floating_handle_description">Poignée : faire glisser pour déplacer le clavier</string>
-    <string name="home_debug_floating">Clavier flottant (test) : %1$s</string>
-    <string name="home_debug_floating_on">activé</string>
-    <string name="home_debug_floating_off">désactivé</string>
 </resources>

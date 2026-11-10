@@ -20,7 +20,8 @@ import fr.junade.taipo.dictionary.CorrectionHabitsProvider
 
 /**
  * Écran « Paramètres du clavier » (v3 : réglages rangés en cartes). Dans l'ordre : Langues (ligne vers [LanguagesActivity]),
- * Disposition des touches (rangée de chiffres, touches du bas), Taille et position (hauteur, marge du bas, mode une main),
+ * Disposition des touches (rangée de chiffres, touches du bas), Taille et position (hauteur, marge du bas, mode du clavier :
+ * normal, une main ou flottant, et leurs largeurs),
  * Sons et vibrations, Saisie intelligente (apprentissage des habitudes, captures d'écran), puis le lien Confidentialité.
  * En debug seulement : Précision de frappe.
  */
@@ -237,41 +238,79 @@ class KeyboardSettingsActivity : Activity() {
         })
     }
 
-    /** Mode une main : côté (désactivé, gauche, droite) et largeur de la zone des touches, relus à la prochaine ouverture d'un champ. */
+    /**
+     * Mode du clavier : normal, une main (à gauche, à droite) ou flottant, un seul à la fois ; puis les deux largeurs,
+     * indépendantes (mode une main, clavier flottant), toujours affichées. Relus à la prochaine ouverture d'un champ.
+     */
     private fun setUpOneHanded(preferences: KeyboardPreferences) {
-        val group = findViewById<RadioGroup>(R.id.radio_group_one_handed)
-        val ids = mapOf(
-            OneHandedMode.OFF to R.id.radio_one_handed_off,
-            OneHandedMode.LEFT to R.id.radio_one_handed_left,
-            OneHandedMode.RIGHT to R.id.radio_one_handed_right,
-        )
-        group.check(ids.getValue(preferences.oneHandedMode))
+        val group = findViewById<RadioGroup>(R.id.radio_group_keyboard_mode)
+        val current = when {
+            preferences.isFloatingKeyboard -> R.id.radio_mode_floating
+            preferences.oneHandedMode == OneHandedMode.LEFT -> R.id.radio_mode_left
+            preferences.oneHandedMode == OneHandedMode.RIGHT -> R.id.radio_mode_right
+            else -> R.id.radio_mode_normal
+        }
+        group.check(current)
         group.setOnCheckedChangeListener { _, checkedId ->
-            val selected = ids.entries.firstOrNull { it.value == checkedId }?.key ?: return@setOnCheckedChangeListener
-            preferences.oneHandedMode = selected
-            Analytics.setting(this, "one_handed_mode", selected.storageKey)
+            val (floating, oneHanded, key) = when (checkedId) {
+                R.id.radio_mode_left -> Triple(false, OneHandedMode.LEFT, "left")
+                R.id.radio_mode_right -> Triple(false, OneHandedMode.RIGHT, "right")
+                R.id.radio_mode_floating -> Triple(true, OneHandedMode.OFF, "floating")
+                R.id.radio_mode_normal -> Triple(false, OneHandedMode.OFF, "normal")
+                else -> return@setOnCheckedChangeListener
+            }
+            preferences.isFloatingKeyboard = floating
+            preferences.oneHandedMode = oneHanded
+            Analytics.setting(this, "keyboard_mode", key)
         }
 
-        val seekBar = findViewById<SeekBar>(R.id.seek_one_handed_width)
-        val label = findViewById<TextView>(R.id.text_one_handed_width)
+        setUpWidthSlider(
+            seekBar = findViewById(R.id.seek_one_handed_width),
+            label = findViewById(R.id.text_one_handed_width),
+            valueText = R.string.keyboard_settings_one_handed_width_value,
+            range = OneHandedWidth.MIN_PERCENT..OneHandedWidth.MAX_PERCENT,
+            initial = preferences.oneHandedWidthPercent,
+            analyticsKey = "one_handed_width",
+        ) { preferences.oneHandedWidthPercent = it }
+        setUpWidthSlider(
+            seekBar = findViewById(R.id.seek_floating_width),
+            label = findViewById(R.id.text_floating_width),
+            valueText = R.string.keyboard_settings_floating_width_value,
+            range = FloatingWidth.MIN_PERCENT..FloatingWidth.MAX_PERCENT,
+            initial = preferences.floatingWidthPercent,
+            analyticsKey = "floating_width",
+        ) { preferences.floatingWidthPercent = it }
+    }
+
+    /** Curseur de largeur en % ([range]) : écrit au fil du déplacement, mesuré au relâchement. */
+    @Suppress("LongParameterList")
+    private fun setUpWidthSlider(
+        seekBar: SeekBar,
+        label: TextView,
+        valueText: Int,
+        range: IntRange,
+        initial: Int,
+        analyticsKey: String,
+        save: (Int) -> Unit,
+    ) {
         fun showValue(percent: Int) {
-            label.text = getString(R.string.keyboard_settings_one_handed_width_value, percent)
+            label.text = getString(valueText, percent)
             seekBar.contentDescription = label.text
         }
-        seekBar.max = OneHandedWidth.MAX_PERCENT - OneHandedWidth.MIN_PERCENT
-        seekBar.progress = preferences.oneHandedWidthPercent - OneHandedWidth.MIN_PERCENT
-        showValue(preferences.oneHandedWidthPercent)
+        seekBar.max = range.last - range.first
+        seekBar.progress = initial - range.first
+        showValue(initial)
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(bar: SeekBar, progress: Int, fromUser: Boolean) {
-                val percent = progress + OneHandedWidth.MIN_PERCENT
+                val percent = progress + range.first
                 showValue(percent)
-                if (fromUser) preferences.oneHandedWidthPercent = percent
+                if (fromUser) save(percent)
             }
 
             override fun onStartTrackingTouch(bar: SeekBar) = Unit
 
             override fun onStopTrackingTouch(bar: SeekBar) {
-                Analytics.setting(this@KeyboardSettingsActivity, "one_handed_width", bar.progress + OneHandedWidth.MIN_PERCENT)
+                Analytics.setting(this@KeyboardSettingsActivity, analyticsKey, bar.progress + range.first)
             }
         })
     }

@@ -1,6 +1,8 @@
 package fr.junade.taipo
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class FloatingPlacementTest {
@@ -35,5 +37,15 @@ class FloatingPlacementTest {
         assertEquals(FloatingPosition.of(0f, 1f), FloatingPlacement.dragged(start, -5000f, 5000f, 800, 1000, area))
         // Retour d'un bord dans le même geste : la position est recalculée depuis le début du geste.
         assertEquals(start, FloatingPlacement.dragged(start, 0f, 0f, 800, 1000, area))
+    }
+
+    @Test
+    fun `glisser la carte nettement sous le bas de l'ecran la recolle, pas un simple appui contre le bord`() {
+        val bottom = FloatingPosition.of(0.5f, 1f) // carte déjà en bas : son bord inférieur est sur area.bottom
+        assertTrue(FloatingPlacement.shouldDock(bottom, 61f, 800, 1000, area, overshootPx = 60f))
+        assertFalse(FloatingPlacement.shouldDock(bottom, 59f, 800, 1000, area, overshootPx = 60f))
+        // Depuis le milieu : il faut d'abord parcourir l'espace libre (500 px), puis le dépassement.
+        assertFalse(FloatingPlacement.shouldDock(FloatingPosition.of(0.5f, 0.5f), 520f, 800, 1000, area, overshootPx = 60f))
+        assertTrue(FloatingPlacement.shouldDock(FloatingPosition.of(0.5f, 0.5f), 600f, 800, 1000, area, overshootPx = 60f))
     }
 }

@@ -22,6 +22,7 @@ internal class FloatingKeyboardWindow(
     private val window: () -> Window?,
     private val composer: ImeViewComposer,
     private val preferences: () -> KeyboardPreferences,
+    private val onDockRequested: () -> Unit,
 ) {
     private val cardBounds = Rect()
 
@@ -35,6 +36,7 @@ internal class FloatingKeyboardWindow(
         frame.widthPercent = prefs.floatingWidthPercent
         frame.position = prefs.floatingPosition(landscape)
         frame.onPositionChanged = { position -> preferences().setFloatingPosition(landscape, position) }
+        frame.onDockRequested = onDockRequested
         frame.floating = prefs.isFloatingKeyboard
         applyWindowLayout()
     }

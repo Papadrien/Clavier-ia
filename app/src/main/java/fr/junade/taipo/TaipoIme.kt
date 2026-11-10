@@ -142,6 +142,7 @@ class TaipoIme : InputMethodService() {
         override fun onGlobeSelected() = this@TaipoIme.languages.onGlobeSelected()
         override fun onOneHandedToggled() = this@TaipoIme.oneHanded.toggle()
         override fun onOneHandedSideSwitched() = this@TaipoIme.oneHanded.switchSide()
+        override fun onFloatingToggled() = this@TaipoIme.oneHanded.toggleFloating()
         override fun openAppHome() = this@TaipoIme.openAppHome()
     }
 
@@ -244,7 +245,7 @@ class TaipoIme : InputMethodService() {
     private val languages by lazy { ImeLanguages(this, imeContext, controller, gestureTips) }
     private val oneHanded by lazy { OneHandedSwitcher(imeContext) }
     private val floatingWindow by lazy {
-        FloatingKeyboardWindow(this, { window?.window }, viewComposer) { keyboardPreferences }
+        FloatingKeyboardWindow(this, { window?.window }, viewComposer, { keyboardPreferences }) { oneHanded.toggleFloating() }
     }
     private val memory by lazy { ImeMemoryManager(serviceScope, { voice }, { llmHost }, { isInputViewShown }) }
 

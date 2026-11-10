@@ -43,6 +43,9 @@ class ImeViewComposer(
         /** Bouton « changer de côté » de la zone libre relâché : le mode une main passe à l'autre bord. */
         fun onOneHandedSideSwitched()
 
+        /** Touche clavier flottant de la bulle d'Entrée relâchée : détache le clavier ou le recolle en bas. */
+        fun onFloatingToggled()
+
         /** Chiffre d'une touche du haut saisi par appui long : le tip « Swipe vers le bas » peut s'afficher. */
         fun onDigitLongPressed()
 
@@ -153,6 +156,7 @@ class ImeViewComposer(
         keyboardView.setOnCursorMoveListener { steps -> host.onCursorMoved(steps) }
         keyboardView.setOnGlobeSelectedListener { host.onGlobeSelected() }
         keyboardView.setOnOneHandedToggleListener { host.onOneHandedToggled() }
+        keyboardView.setOnFloatingToggleListener { host.onFloatingToggled() }
         keyboardView.setOnOneHandedSwitchSideListener { host.onOneHandedSideSwitched() }
         keyboardView.setOnDigitHintListener(object : KeyboardView.OnDigitHintListener {
             override fun onLongPressDigit() = host.onDigitLongPressed()

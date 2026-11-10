@@ -60,4 +60,13 @@ object FloatingPlacement {
         val y = if (freeY == 0) start.y else (origin.top + dy - area.top) / freeY
         return FloatingPosition.of(x, y)
     }
+
+    /**
+     * Vrai si le glissement de [dy] pixels depuis [start] pousse la carte au-delà du bas de [area] d'au moins [overshootPx] :
+     * au lever du doigt, le clavier se recolle en bas de l'écran.
+     */
+    fun shouldDock(start: FloatingPosition, dy: Float, cardWidth: Int, cardHeight: Int, area: FloatingArea, overshootPx: Float): Boolean {
+        val wantedBottom = place(start, cardWidth, cardHeight, area).top + dy + cardHeight
+        return wantedBottom > area.bottom + overshootPx
+    }
 }

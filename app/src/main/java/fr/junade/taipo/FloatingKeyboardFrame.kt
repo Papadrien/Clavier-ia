@@ -22,7 +22,8 @@ import androidx.core.view.WindowInsetsCompat
  *   barres système. Coins arrondis et ombre. Seule la carte reçoit les touchers (`TaipoIme.onComputeInsets`).
  *
  * La poignée ([handle], sous les touches, visible en flottant seulement) déplace la carte ; la nouvelle position est confiée à
- * [onPositionChanged] au lever du doigt.
+ * [onPositionChanged] au lever du doigt. Glissée nettement sous le bas de l'écran, la carte s'estompe et, au lever du doigt,
+ * [onDockRequested] recolle le clavier.
  */
 class FloatingKeyboardFrame(context: Context, private val card: View) : FrameLayout(context) {
 
@@ -57,13 +58,26 @@ class FloatingKeyboardFrame(context: Context, private val card: View) : FrameLay
     /** Fin d'un déplacement par la poignée : la position à retenir. */
     var onPositionChanged: ((FloatingPosition) -> Unit)? = null
 
+    /** La poignée a été lâchée après avoir poussé la carte sous le bas de l'écran : le clavier se recolle. */
+    var onDockRequested: (() -> Unit)? = null
+
     private val cornerRadiusPx = resources.getDimension(R.dimen.taipo_floating_corner_radius)
     private val elevationPx = resources.getDimension(R.dimen.taipo_floating_elevation)
     private val screenMarginPx = resources.getDimensionPixelSize(R.dimen.taipo_floating_screen_margin)
+    private val dockOvershootPx = resources.getDimension(R.dimen.taipo_floating_dock_overshoot)
 
     /** Barres système et encoche (px), relues à chaque changement : la carte reste en dehors. */
     private val systemInsets = Rect()
     private var dragStart: FloatingPosition? = null
+
+    /** Vrai pendant un glissement qui recollera le clavier au lever du doigt : la carte s'estompe pour le signaler. */
+    private var dockArmed = false
+        set(value) {
+            if (field == value) return
+            field = value
+            card.alpha = if (value) DOCK_ARMED_ALPHA else 1f
+            if (value) performHapticFeedback(android.view.HapticFeedbackConstants.CLOCK_TICK)
+        }
 
     init {
         clipChildren = false
@@ -127,13 +141,23 @@ class FloatingKeyboardFrame(context: Context, private val card: View) : FrameLay
 
     private fun onHandleDrag(dx: Float, dy: Float) {
         val start = dragStart ?: position.also { dragStart = it }
-        position = FloatingPlacement.dragged(start, dx, dy, card.width, card.height, area(width, height))
+        val area = area(width, height)
+        position = FloatingPlacement.dragged(start, dx, dy, card.width, card.height, area)
+        dockArmed = FloatingPlacement.shouldDock(start, dy, card.width, card.height, area, dockOvershootPx)
     }
 
-    private fun onHandleRelease() {
-        if (dragStart == null) return
+    private fun onHandleRelease(cancelled: Boolean) {
+        val start = dragStart ?: return
         dragStart = null
-        onPositionChanged?.invoke(position)
+        val dock = dockArmed && !cancelled
+        dockArmed = false
+        if (dock) {
+            // Le clavier reviendra en flottant là où il était avant ce geste.
+            position = start
+            onDockRequested?.invoke()
+        } else {
+            onPositionChanged?.invoke(position)
+        }
     }
 
     /** Petite barre horizontale centrée, sous les touches : on la fait glisser pour déplacer le clavier. */
@@ -172,7 +196,8 @@ class FloatingKeyboardFrame(context: Context, private val card: View) : FrameLay
                     parent?.requestDisallowInterceptTouchEvent(true)
                 }
                 MotionEvent.ACTION_MOVE -> onHandleDrag(event.rawX - downX, event.rawY - downY)
-                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> onHandleRelease()
+                MotionEvent.ACTION_UP -> onHandleRelease(cancelled = false)
+                MotionEvent.ACTION_CANCEL -> onHandleRelease(cancelled = true)
             }
             return true
         }
@@ -180,5 +205,6 @@ class FloatingKeyboardFrame(context: Context, private val card: View) : FrameLay
 
     private companion object {
         const val PERCENT = 100
+        const val DOCK_ARMED_ALPHA = 0.6f
     }
 }

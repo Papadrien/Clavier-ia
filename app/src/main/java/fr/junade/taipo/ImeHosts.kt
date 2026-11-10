@@ -114,6 +114,9 @@ internal interface ImeHostContext {
     fun onGlobeSelected()
     fun onOneHandedToggled()
     fun onOneHandedSideSwitched()
+
+    /** Touche clavier flottant de la bulle d'Entrée : détache le clavier ou le recolle en bas. */
+    fun onFloatingToggled()
     fun openAppHome()
 
     // Déduits des membres ci-dessus
@@ -431,6 +434,7 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
     override fun onGlobeSelected() = ime.onGlobeSelected()
     override fun onOneHandedToggled() = ime.onOneHandedToggled()
     override fun onOneHandedSideSwitched() = ime.onOneHandedSideSwitched()
+    override fun onFloatingToggled() = ime.onFloatingToggled()
     override fun onDigitLongPressed() {
         // Le tip remplace les suggestions de la barre du haut : pas dans le mode chat, et plus une fois le glissement adopté.
         if (ime.prompt.active || ime.keyboardPreferences.hasUsedDigitSwipe) return

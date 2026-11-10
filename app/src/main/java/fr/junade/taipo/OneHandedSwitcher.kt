@@ -1,6 +1,9 @@
 package fr.junade.taipo
 
-/** Mode une main (sortie de [TaipoIme], revue de code) : application du réglage, bascule et changement de côté. */
+/**
+ * Mode une main (sortie de [TaipoIme], revue de code) : application du réglage, bascule et changement de côté. Gère aussi la
+ * bascule du clavier flottant, qui exclut le mode une main (un seul « mode du clavier » à la fois : normal, une main, flottant).
+ */
 internal class OneHandedSwitcher(private val ime: ImeHostContext) {
 
     private val preferences: KeyboardPreferences get() = ime.keyboardPreferences
@@ -31,6 +34,19 @@ internal class OneHandedSwitcher(private val ime: ImeHostContext) {
         }
         preferences.oneHandedMode = if (preferences.oneHandedMode.isActive) OneHandedMode.OFF else preferences.lastOneHandedSide
         ime.haptic()
+        apply()
+    }
+
+    /**
+     * Touche clavier flottant de la bulle d'Entrée, ou poignée glissée tout en bas : détache le clavier (le mode une main est
+     * alors quitté) ou le recolle en bas.
+     */
+    fun toggleFloating() {
+        val floating = !preferences.isFloatingKeyboard
+        preferences.isFloatingKeyboard = floating
+        if (floating) preferences.oneHandedMode = OneHandedMode.OFF
+        ime.haptic()
+        ime.applyFloatingKeyboard()
         apply()
     }
 

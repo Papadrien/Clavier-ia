@@ -189,11 +189,11 @@ class KeyboardPreferences(context: Context) {
         }
 
     /**
-     * Clavier flottant (étape 1 : en test, activable par le bouton debug de l'accueil). Toujours faux en release.
-     * Relu à chaque ouverture de champ.
+     * Clavier flottant : détaché du bas de l'écran, déplaçable. Exclut le mode une main. Désactivé par défaut. Relu à chaque
+     * ouverture de champ.
      */
     var isFloatingKeyboard: Boolean
-        get() = BuildConfig.DEBUG && prefs.getBoolean(KEY_FLOATING, false)
+        get() = prefs.getBoolean(KEY_FLOATING, false)
         set(value) {
             prefs.edit().putBoolean(KEY_FLOATING, value).apply()
         }

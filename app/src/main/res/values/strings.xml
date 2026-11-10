@@ -128,13 +128,19 @@
     <string name="keyboard_settings_key_sound">Keyboard sound</string>
     <string name="keyboard_settings_bottom_margin">Bottom margin</string>
     <string name="keyboard_settings_bottom_margin_value">Bottom margin: %1$d dp</string>
-    <string name="keyboard_settings_one_handed_title">One-handed mode</string>
-    <string name="keyboard_settings_one_handed_off">Off</string>
-    <string name="keyboard_settings_one_handed_left">Left</string>
-    <string name="keyboard_settings_one_handed_right">Right</string>
     <string name="keyboard_settings_one_handed_width">One-handed keyboard width</string>
-    <string name="keyboard_settings_one_handed_width_value">Width: %1$d%%</string>
-    <string name="keyboard_settings_one_handed_hint">Shortcut: long press the Enter key.</string>
+    <string name="keyboard_settings_one_handed_width_value">One-handed width: %1$d%%</string>
+    <string name="keyboard_settings_one_handed_hint">Shortcut: long press the Enter key. When floating, drag the handle all the way down to dock the keyboard.</string>
+    <string name="keyboard_settings_mode_title">Keyboard mode</string>
+    <string name="keyboard_settings_mode_normal">Normal</string>
+    <string name="keyboard_settings_mode_left">Left</string>
+    <string name="keyboard_settings_mode_right">Right</string>
+    <string name="keyboard_settings_mode_floating">Floating</string>
+    <string name="keyboard_settings_mode_left_description">One-handed, left</string>
+    <string name="keyboard_settings_mode_right_description">One-handed, right</string>
+    <string name="keyboard_settings_mode_floating_description">Floating keyboard</string>
+    <string name="keyboard_settings_floating_width">Floating keyboard width</string>
+    <string name="keyboard_settings_floating_width_value">Floating width: %1$d%%</string>
     <string name="keyboard_settings_sound_volume">Sound volume</string>
     <string name="keyboard_settings_sound_volume_value">Sound volume: %1$d%%</string>
     <string name="keyboard_settings_bar_sound">Top bar sounds</string>
@@ -687,7 +693,4 @@
     <string name="home_debug_reset_tips">Reset tips</string>
     <string name="home_debug_reset_tips_done">Tips will show again</string>
     <string name="floating_handle_description">Handle: drag to move the keyboard</string>
-    <string name="home_debug_floating">Floating keyboard (test): %1$s</string>
-    <string name="home_debug_floating_on">on</string>
-    <string name="home_debug_floating_off">off</string>
 </resources>
