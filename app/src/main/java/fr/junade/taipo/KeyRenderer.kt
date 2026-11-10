@@ -98,6 +98,18 @@ internal class KeyRenderer(private val context: Context) {
 
     private val keyRect = RectF()
 
+    // Forme des touches (page « Apparence ») : lue à la création, les vues sont recréées quand elle change (KeyboardTheme.Look).
+    private val shape = KeyboardTheme.shape
+    private val facePath = Path()
+    private val plateauRect = RectF()
+    private val plateauInset = context.dimen(R.dimen.taipo_key_plateau_inset)
+    private val plateauPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_plateau) }
+    private val outlinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        color = context.themeColor(R.color.key_outline)
+        strokeWidth = context.dimen(R.dimen.taipo_key_outline_width)
+    }
+
     // Animation « Élastique » du chiffre (glissement vers le bas sur une touche du haut) : voir DigitSwipeAnimation.
     var digitSwipeAnimation: DigitSwipeAnimation? = null
     private val digitPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -114,7 +126,6 @@ internal class KeyRenderer(private val context: Context) {
     var backspaceIconAngle = 0f
 
     // Lot 21 : un caractère à dessiner sans passer par String.
-    private val pillRect = RectF()
     private val charBuffer = CharArray(1)
     private var lastKeyTextSize = -1f
 
@@ -257,7 +268,7 @@ internal class KeyRenderer(private val context: Context) {
 
         val style = keyStyle(key)
         // Face : la couleur de la charte ; Maj verrouillée / clavier de symboles affiché = état actif (touche à bascule).
-        // L'état pressé ne change pas la couleur : il enfonce la touche (voir ci-dessous).
+        // L'état pressé enfonce la touche ; sans ombre (formes Plat, Contour, Sans fond), il change la couleur (voir drawFace).
         val face = when {
             key.action is KeyAction.Shift && isShifted -> activePaint
             key.action is KeyAction.ToggleLayout && layout.id.isSymbols -> activePaint
@@ -270,22 +281,7 @@ internal class KeyRenderer(private val context: Context) {
             KeyStyle.SECONDARY -> secondaryShadowPaint
             KeyStyle.NORMAL -> normalShadowPaint
         }
-        // Ombre = la touche entière ; la face la recouvre en laissant voir l'épaisseur en bas. Au repos, l'ombre
-        // visible fait [taipo_key_shadow_height]. Pressée, la touche s'enfonce : l'ombre visible se réduit à
-        // [taipo_key_shadow_pressed_height] et la face descend de la différence (sa taille ne change pas).
-        // L'emprise de référence (zones tactiles, dimensions) ne change pas ; le contenu suit la face.
-        val radius = dims.keyCornerRadius
-        val restShadow = minOf(dims.keyShadowHeight, keyRect.height() * MAX_SHADOW_RATIO)
-        val shownShadow = if (key == pressedKey) minOf(dims.keyShadowPressedHeight, restShadow) else restShadow
-        keyRect.top += restShadow - shownShadow
-        if (style == KeyStyle.ACCENT) {
-            // Entrée est une pilule : toute la largeur de la touche, extrémités en demi-cercles.
-            drawPillKey(canvas, shownShadow, shadow, face)
-        } else {
-            canvas.drawRoundRect(keyRect, radius, radius, shadow)
-            keyRect.bottom -= shownShadow
-            canvas.drawRoundRect(keyRect, radius, radius, face)
-        }
+        drawFace(canvas, key, style, face, shadow)
 
         when (key.action) {
             KeyAction.Space -> {
@@ -342,19 +338,80 @@ internal class KeyRenderer(private val context: Context) {
     }
 
     /**
-     * Touche pilule (Entrée) : face en capsule sur toute la largeur de la touche (rayon = la moitié de la hauteur de la
-     * face, ou de la largeur si la touche est plus haute que large), sur une capsule d'ombre décalée vers le bas. Laisse
-     * [keyRect] réduit à la face, pour centrer le contenu.
+     * Face et ombre de la touche, selon la forme choisie ([shape], voir [KeyShape]). Ombre = la face décalée vers le bas ; au
+     * repos, l'ombre visible fait [taipo_key_shadow_height] (multipliée par [KeyShape.shadowFactor]). Pressée, la touche s'enfonce :
+     * l'ombre visible se réduit à [taipo_key_shadow_pressed_height] et la face descend de la différence (sa taille ne change pas).
+     * Sans ombre (Plat, Contour, Sans fond), l'appui se voit à la couleur de la face. L'emprise de référence (zones tactiles,
+     * dimensions) ne change pas. Laisse [keyRect] réduit à la face, pour centrer le contenu. Sans allocation.
      */
-    private fun drawPillKey(canvas: Canvas, shownShadow: Float, shadow: Paint, face: Paint) {
-        val faceHeight = keyRect.height() - shownShadow
-        val radius = minOf(keyRect.width(), faceHeight) / 2f
-        pillRect.set(keyRect.left, keyRect.top, keyRect.right, keyRect.top + faceHeight)
-        pillRect.offset(0f, shownShadow)
-        canvas.drawRoundRect(pillRect, radius, radius, shadow)
-        pillRect.offset(0f, -shownShadow)
-        canvas.drawRoundRect(pillRect, radius, radius, face)
+    private fun drawFace(canvas: Canvas, key: Key, style: KeyStyle, face: Paint, shadow: Paint) {
+        val accent = style == KeyStyle.ACCENT
+        val pressed = key == pressedKey
+        val toggled = face === activePaint
+        val maxShadow = keyRect.height() * (if (shape.hasPlateau) MAX_MECHANICAL_SHADOW_RATIO else MAX_SHADOW_RATIO)
+        val restShadow = minOf(dims.keyShadowHeight * shape.shadowFactor, maxShadow)
+        val shownShadow = if (pressed) minOf(dims.keyShadowPressedHeight * shape.shadowFactor, restShadow) else restShadow
+        keyRect.top += restShadow - shownShadow
         keyRect.bottom -= shownShadow
+        // Face dessinée : le cercle de Rond est centré dans la touche, les autres formes en occupent toute la place.
+        val width = keyRect.width()
+        val height = keyRect.height()
+        val faceWidth = shape.faceWidth(accent, width, height)
+        val faceHeight = shape.faceHeight(accent, width, height)
+        keyRect.inset((width - faceWidth) / 2f, (height - faceHeight) / 2f)
+        val corner = shape.cornerSize(accent, faceWidth, faceHeight, dims.keyCornerRadius)
+        when (shape.body(accent)) {
+            KeyShape.FaceBody.FILLED -> {
+                if (shownShadow > 0f) {
+                    keyRect.offset(0f, shownShadow)
+                    drawShape(canvas, corner, shadow)
+                    keyRect.offset(0f, -shownShadow)
+                }
+                drawShape(canvas, corner, if (pressed && shape.pressTintsFace && !accent) activePaint else face)
+                if (shape.hasPlateau) drawPlateau(canvas, corner)
+            }
+            // Touche creuse : un trait ; pleine sous le doigt et quand elle est active (Maj, symboles).
+            KeyShape.FaceBody.OUTLINED -> {
+                if (pressed || toggled) drawShape(canvas, corner, if (toggled) activePaint else face)
+                val half = outlinePaint.strokeWidth / 2f
+                keyRect.inset(half, half)
+                drawShape(canvas, maxOf(corner - half, 0f), outlinePaint)
+                keyRect.inset(-half, -half)
+            }
+            // Sans fond : rien au repos, la face sous le doigt et quand la touche est active.
+            KeyShape.FaceBody.BARE -> if (pressed || toggled) drawShape(canvas, corner, if (toggled) activePaint else face)
+        }
+    }
+
+    /** Silhouette de la forme dans [keyRect] : rectangle arrondi de rayon [corner], ou coins coupés de [corner] (Biseau). */
+    private fun drawShape(canvas: Canvas, corner: Float, paint: Paint) {
+        if (shape.outline() == KeyShape.Outline.ROUNDED_RECT) {
+            canvas.drawRoundRect(keyRect, corner, corner, paint)
+            return
+        }
+        val r = keyRect
+        facePath.rewind()
+        facePath.moveTo(r.left + corner, r.top)
+        facePath.lineTo(r.right - corner, r.top)
+        facePath.lineTo(r.right, r.top + corner)
+        facePath.lineTo(r.right, r.bottom - corner)
+        facePath.lineTo(r.right - corner, r.bottom)
+        facePath.lineTo(r.left + corner, r.bottom)
+        facePath.lineTo(r.left, r.bottom - corner)
+        facePath.lineTo(r.left, r.top + corner)
+        facePath.close()
+        canvas.drawPath(facePath, paint)
+    }
+
+    /**
+     * Mécanique : plateau éclairé sur le haut de la face (keycap). Le contenu remonte au centre du plateau ([keyRect] réduit d'autant).
+     */
+    private fun drawPlateau(canvas: Canvas, corner: Float) {
+        val inset = minOf(plateauInset, keyRect.width() / 4f, keyRect.height() / 4f)
+        plateauRect.set(keyRect.left + inset, keyRect.top + inset * PLATEAU_TOP_RATIO, keyRect.right - inset, keyRect.bottom - inset * 2f)
+        val radius = maxOf(corner - inset / 2f, 0f)
+        canvas.drawRoundRect(plateauRect, radius, radius, plateauPaint)
+        keyRect.bottom -= inset
     }
 
     /**
@@ -547,6 +604,12 @@ internal class KeyRenderer(private val context: Context) {
 
         // Garde-fou : l'ombre ne dépasse jamais cette part de la hauteur de la touche (rangées basses en paysage).
         private const val MAX_SHADOW_RATIO = 0.15f
+
+        /** Mécanique : le flanc, plus épais, peut aller jusqu'à 22 % de la hauteur de la touche. */
+        private const val MAX_MECHANICAL_SHADOW_RATIO = 0.22f
+
+        /** Mécanique : marge du plateau en haut, en part de sa marge sur les côtés. */
+        private const val PLATEAU_TOP_RATIO = 0.6f
 
         /** Icônes des touches : jamais plus de cette part de la hauteur de la face (rangées basses en paysage). */
         const val KEY_ICON_MAX_RATIO = 0.62f

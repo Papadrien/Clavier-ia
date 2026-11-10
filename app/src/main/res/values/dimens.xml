@@ -28,6 +28,9 @@
          Valeurs de départ à ajuster sur screenshot. -->
     <dimen name="taipo_key_shadow_height">2dp</dimen>
     <dimen name="taipo_key_shadow_pressed_height">1dp</dimen>
+    <!-- Forme des touches (KeyShape) : trait de « Contour », marge du plateau éclairé de « Mécanique ». -->
+    <dimen name="taipo_key_outline_width">1.5dp</dimen>
+    <dimen name="taipo_key_plateau_inset">3dp</dimen>
 
     <!-- Texte des touches. -->
     <dimen name="taipo_key_text_size">22sp</dimen>
@@ -270,6 +273,7 @@
     <dimen name="taipo_theme_check_size">24dp</dimen>
     <dimen name="taipo_theme_check_icon_size">16dp</dimen>
     <dimen name="taipo_theme_check_margin">6dp</dimen>
+    <dimen name="taipo_theme_lock_padding">4dp</dimen>
     <dimen name="taipo_theme_card_stroke">1dp</dimen>
     <dimen name="taipo_theme_card_stroke_selected">2dp</dimen>
     <!-- Section « Couleur » de la page « Thème » : pastille d'une couleur d'accent et anneau de la pastille choisie. -->

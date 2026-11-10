@@ -617,6 +617,16 @@
     <string name="accent_raspberry">Framboise</string>
     <string name="accent_magenta">Magenta</string>
     <string name="accent_graphite">Graphite</string>
+    <string name="theme_section_shape">Forme des touches</string>
+    <string name="key_shape_rounded">Arrondi</string>
+    <string name="key_shape_pill">Pilule</string>
+    <string name="key_shape_square">Carré</string>
+    <string name="key_shape_flat">Plat</string>
+    <string name="key_shape_round">Rond</string>
+    <string name="key_shape_bevel">Biseau</string>
+    <string name="key_shape_mechanical">Mécanique</string>
+    <string name="key_shape_outline">Contour</string>
+    <string name="key_shape_bare">Sans fond</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Apparence</string>
     <string name="languages_title">Langues</string>

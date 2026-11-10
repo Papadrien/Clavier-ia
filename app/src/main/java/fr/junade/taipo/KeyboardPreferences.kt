@@ -109,6 +109,18 @@ class KeyboardPreferences(context: Context) {
             KeyboardTheme.palette = AccentPalette.effective(value, PremiumPass.isActive)
         }
 
+    /**
+     * Forme des touches du clavier (section « Forme des touches » de la page « Apparence »). Arrondi par défaut. C'est le choix
+     * enregistré : la forme appliquée ([KeyboardTheme.shape]) retombe sur Arrondi si celle-ci est réservée au pass premium et qu'il
+     * n'est pas actif ([KeyShape.effective]). Écrire le réglage met aussi à jour [KeyboardTheme.shape].
+     */
+    var keyShape: KeyShape
+        get() = KeyShape.fromStorageKey(prefs.getString(KEY_KEY_SHAPE, null))
+        set(value) {
+            prefs.edit().putString(KEY_KEY_SHAPE, value.storageKey).apply()
+            KeyboardTheme.shape = KeyShape.effective(value, PremiumPass.isActive)
+        }
+
     /** Son du clavier (tic doux à chaque frappe, plus aigu pour la barre d'espace). Activé par défaut. */
     var isKeySoundEnabled: Boolean
         get() = prefs.getBoolean(KEY_KEY_SOUND, DEFAULT_KEY_SOUND)
@@ -303,6 +315,7 @@ class KeyboardPreferences(context: Context) {
         private const val PREFS_NAME = "keyboard_prefs"
         private const val KEY_THEME_CHOICE = "theme_choice"
         private const val KEY_ACCENT_PALETTE = "accent_palette"
+        private const val KEY_KEY_SHAPE = "key_shape"
         private const val KEY_ADAPTIVE_TOUCH = "adaptive_touch_enabled"
         private const val KEY_SHOW_TOUCH_ZONES = "show_touch_zones"
         private const val KEY_NUMBER_ROW = "number_row_enabled"

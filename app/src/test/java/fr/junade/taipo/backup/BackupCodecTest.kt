@@ -27,6 +27,7 @@ class BackupCodecTest {
             habitLearning = false,
             themeChoice = "dynamic",
             accentPalette = "lagoon",
+            keyShape = "mechanical",
         ),
         ai = BackupAiSettings(
             activeModelId = "equilibre",

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fond du cadenas d'une carte réservée au pass premium (page « Apparence », section « Forme des touches ») : disque sombre
+     translucide sous l'icône ic_lock, posé sur l'aperçu comme la coche de la carte choisie. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@color/theme_lock_scrim" />
+</shape>

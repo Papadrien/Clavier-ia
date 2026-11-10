@@ -55,6 +55,12 @@
     <color name="key_hint">@color/taipo_text_muted</color>
     <!-- Barre centrale de la touche espace (lot 06). -->
     <color name="key_space_bar">@color/taipo_space_bar</color>
+    <!-- Forme des touches (KeyShape). key_outline : trait des touches « Contour », 3:1 au moins sur le fond (AccessibilityContrastTest).
+         key_plateau : voile clair du plateau des touches « Mécanique », posé sur la face. -->
+    <color name="key_outline">@color/taipo_space_bar</color>
+    <color name="key_plateau">#14FFFFFF</color>
+    <!-- Disque sous le cadenas des cartes réservées au pass (page « Apparence »). -->
+    <color name="theme_lock_scrim">#99000000</color>
 
     <!-- Barre du haut, prompt, bande de suggestions, zone de chat. -->
     <color name="surface_button">@color/taipo_key_secondary</color>

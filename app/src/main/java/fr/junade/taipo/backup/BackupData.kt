@@ -32,6 +32,8 @@ data class BackupKeyboardSettings(
     val themeChoice: String? = null,
     /** Couleur d'accent du clavier : clé de stockage de [fr.junade.taipo.AccentPalette] (`violet`, `indigo`…). */
     val accentPalette: String? = null,
+    /** Forme des touches : clé de stockage de [fr.junade.taipo.KeyShape] (`rounded`, `pill`…). */
+    val keyShape: String? = null,
 )
 
 /**

@@ -196,6 +196,9 @@ class KeyboardView(context: Context) : View(context) {
     // Dessin des touches (faces, ombres, icônes, libellés) : voir KeyRenderer (audit 2.1).
     private val keyRenderer = KeyRenderer(context)
 
+    // Forme des touches : les bulles (agrandissement, accents) reprennent son rayon. Lue à la création, comme les couleurs.
+    private val bubbleRadiusScale = KeyboardTheme.shape.radiusScale
+
     private var dims = DrawDimens(context)
 
     private fun refreshDimens() {
@@ -1038,7 +1041,7 @@ class KeyboardView(context: Context) : View(context) {
 
     private fun drawPopup(canvas: Canvas) = keyPopup.draw(
         canvas,
-        cornerRadius = dims.popupCornerRadius,
+        cornerRadius = dims.popupCornerRadius * bubbleRadiusScale,
         textSize = dims.popupTextSize,
         selectionInset = dims.popupSelectionInset,
         iconSize = dims.iconSize,
@@ -1063,7 +1066,7 @@ class KeyboardView(context: Context) : View(context) {
             headroom = headroomPx(),
             content = keyboardWidth(),
             maxWidth = dims.previewMaxWidth,
-            cornerRadius = dims.keyCornerRadius,
+            cornerRadius = dims.keyCornerRadius * bubbleRadiusScale,
             gap = dims.previewGap,
             textSize = dims.previewTextSize,
         )
