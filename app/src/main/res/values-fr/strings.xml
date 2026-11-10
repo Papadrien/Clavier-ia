@@ -622,6 +622,11 @@
     <string name="theme_choice_system_description">Système, automatique</string>
     <string name="theme_choice_dynamic">Couleur dynamique</string>
     <string name="theme_section_color">Couleur</string>
+    <string name="theme_section_font">Police du clavier</string>
+    <string name="theme_font_description">Touches, suggestions et barre du haut. Les écrans de l\'application gardent leur police.</string>
+    <string name="theme_font_sample">Bonjour ! On se voit à 19 h ?</string>
+    <string name="keyboard_font_system">Police du téléphone</string>
+    <string name="licenses_usage_keyboard_font">Police du clavier, au choix dans la page Thème (pass premium).</string>
     <string name="accent_violet">Violet Taipo</string>
     <string name="accent_indigo">Indigo</string>
     <string name="accent_blue">Bleu vif</string>

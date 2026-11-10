@@ -56,5 +56,40 @@
             android:layout_marginTop="@dimen/taipo_settings_gap_md"
             android:text="@string/premium_unlock"
             android:visibility="gone" />
+
+        <TextView
+            style="@style/TaipoText.Section"
+            android:id="@+id/theme_font_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_xs"
+            android:text="@string/theme_section_font" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_md"
+            android:text="@string/theme_font_description" />
+
+        <!-- Une ligne par police (ThemeActivity.buildFonts), chacune écrite dans sa police. -->
+        <LinearLayout
+            android:id="@+id/theme_fonts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_settings_card"
+            android:clipToOutline="true" />
+
+        <!-- Police réservée touchée sans pass : son exemple reste affiché, ce bouton ouvre l'écran du pass. -->
+        <Button
+            style="@style/TaipoButton.Primary"
+            android:id="@+id/button_font_unlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md"
+            android:text="@string/premium_unlock"
+            android:visibility="gone" />
     </LinearLayout>
 </ScrollView>

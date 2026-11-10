@@ -603,6 +603,11 @@
     <string name="theme_choice_system_description">System, automatic</string>
     <string name="theme_choice_dynamic">Dynamic color</string>
     <string name="theme_section_color">Color</string>
+    <string name="theme_section_font">Keyboard font</string>
+    <string name="theme_font_description">Keys, suggestions and top bar. The app\'s screens keep their font.</string>
+    <string name="theme_font_sample">Hi! See you at 7 pm?</string>
+    <string name="keyboard_font_system">Phone font</string>
+    <string name="licenses_usage_keyboard_font">Keyboard font, chosen on the Theme page (premium pass).</string>
     <string name="accent_violet">Taipo violet</string>
     <string name="accent_indigo">Indigo</string>
     <string name="accent_blue">Bright blue</string>

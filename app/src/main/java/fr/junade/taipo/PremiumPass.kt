@@ -67,11 +67,13 @@ object PremiumPass {
     }
 
     /**
-     * Le clavier suit le nouvel état : la couleur choisie s'applique (ou retombe sur le violet). Ses vues sont recréées à la prochaine
-     * ouverture d'un champ, la palette faisant partie de [KeyboardTheme.Look].
+     * Le clavier suit le nouvel état : la couleur et la police choisies s'appliquent (ou retombent sur le violet et Open Sans).
+     * Ses vues sont recréées à la prochaine ouverture d'un champ (palette et police sont comparées à celles de leur création).
      */
     private fun applyToKeyboard(context: Context) {
-        KeyboardTheme.palette = AccentPalette.effective(KeyboardPreferences(context).accentPalette, isActive)
+        val preferences = KeyboardPreferences(context)
+        KeyboardTheme.palette = AccentPalette.effective(preferences.accentPalette, isActive)
+        TaipoType.keyboardFont = KeyboardFont.effective(preferences.keyboardFont, isActive)
     }
 
     /** État effectif : le forçage du debug l'emporte, dans un build debug seulement. Logique pure, testée en JVM. */

@@ -428,8 +428,12 @@ class TaipoIme : InputMethodService() {
     /** Thème avec lequel les vues du clavier ont été créées pour la dernière fois (voir [recomposeIfThemeChanged]). */
     private var composedThemeLook: KeyboardTheme.Look? = null
 
+    /** Police avec laquelle les vues du clavier ont été créées (elles la lisent à leur création, comme les couleurs). */
+    private var composedFont: KeyboardFont? = null
+
     override fun onCreateInputView(): View {
         composedThemeLook = KeyboardTheme.look
+        composedFont = TaipoType.keyboardFont
         return viewComposer.compose()
     }
 
@@ -438,7 +442,7 @@ class TaipoIme : InputMethodService() {
      * masqué), on les recrée comme à une rotation. Sans changement, rien n'est refait.
      */
     private fun recomposeIfThemeChanged() {
-        if (!viewComposer.isComposed || composedThemeLook == KeyboardTheme.look) return
+        if (!viewComposer.isComposed || (composedThemeLook == KeyboardTheme.look && composedFont == TaipoType.keyboardFont)) return
         messagePopup.dismiss()
         setInputView(onCreateInputView())
     }

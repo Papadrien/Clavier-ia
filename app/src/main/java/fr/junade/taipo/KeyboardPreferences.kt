@@ -109,6 +109,17 @@ class KeyboardPreferences(context: Context) {
             KeyboardTheme.palette = AccentPalette.effective(value, PremiumPass.isActive)
         }
 
+    /**
+     * Police du clavier (page « Thème »), Open Sans par défaut. Les autres polices sont réservées au pass premium : sans lui, le
+     * clavier reprend Open Sans ([KeyboardFont.effective]) mais le choix est gardé pour le retour du pass.
+     */
+    var keyboardFont: KeyboardFont
+        get() = KeyboardFont.fromStorageKey(prefs.getString(KEY_KEYBOARD_FONT, null))
+        set(value) {
+            prefs.edit().putString(KEY_KEYBOARD_FONT, value.storageKey).apply()
+            TaipoType.keyboardFont = KeyboardFont.effective(value, PremiumPass.isActive)
+        }
+
     /** Son du clavier (tic doux à chaque frappe, plus aigu pour la barre d'espace). Activé par défaut. */
     var isKeySoundEnabled: Boolean
         get() = prefs.getBoolean(KEY_KEY_SOUND, DEFAULT_KEY_SOUND)
@@ -334,6 +345,7 @@ class KeyboardPreferences(context: Context) {
         private const val PREFS_NAME = "keyboard_prefs"
         private const val KEY_THEME_CHOICE = "theme_choice"
         private const val KEY_FLOATING = "floating_keyboard"
+        private const val KEY_KEYBOARD_FONT = "keyboard_font"
         private const val KEY_FLOATING_WIDTH = "floating_keyboard_width"
         private const val KEY_FLOATING_X = "floating_keyboard_x"
         private const val KEY_FLOATING_Y = "floating_keyboard_y"
