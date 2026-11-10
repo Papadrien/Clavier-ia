@@ -9,9 +9,11 @@ import kotlin.math.abs
  * Revue du 09/11/2026 (chiffres saisis sans le vouloir) : en frappe rapide, le doigt arrive souvent sur une touche du haut
  * en descendant déjà vers la touche suivante, et glisse un peu en se levant. Le geste est donc plus exigeant :
  * - plus long : [THRESHOLD_RATIO] de la hauteur de la touche (au lieu de 40 %) ;
- * - nettement vertical : au moins [VERTICAL_RATIO] fois plus vers le bas que de côté (un doigt qui part vers la touche
- *   suivante va souvent en diagonale) ;
- * - pas trop bref : au moins [MIN_DURATION_MS] entre l'appui et le chiffre (un appui de frappe dure moins longtemps) ;
+ * - plutôt vertical : au moins [VERTICAL_RATIO] fois plus vers le bas que de côté (un doigt qui part vers la touche
+ *   suivante va souvent en diagonale). Revue du 10/11/2026 : 2 était trop strict (un pouce ne descend pas droit), le
+ *   geste accepte désormais jusqu'à environ 39° de la verticale, au lieu de 27° ;
+ * - pas trop bref : au moins [MIN_DURATION_MS] entre l'appui et le chiffre (un appui de frappe dure moins longtemps). Revue du
+ *   10/11/2026 : 120 ms ignorait les glissements rapides voulus, le délai est ramené à 60 ms ;
  * - tant que le doigt descend ([keepsKey]), la touche du haut reste visée : un geste trop court saisit sa lettre, même si le
  *   doigt s'est levé sur la rangée du dessous.
  *
@@ -22,10 +24,10 @@ object DigitSwipe {
     const val THRESHOLD_RATIO = 0.6f
 
     /** Le déplacement vers le bas doit valoir au moins autant de fois le déplacement de côté. */
-    const val VERTICAL_RATIO = 2f
+    const val VERTICAL_RATIO = 1.25f
 
     /** Durée minimale (ms) entre l'appui et la saisie du chiffre. */
-    const val MIN_DURATION_MS = 120L
+    const val MIN_DURATION_MS = 60L
 
     /** Distance minimale (px) : jamais en dessous, pour ne pas confondre le geste avec un simple tremblement du doigt. */
     fun threshold(keyHeightPx: Float, touchSlopPx: Float): Float = maxOf(keyHeightPx * THRESHOLD_RATIO, touchSlopPx * 2f)

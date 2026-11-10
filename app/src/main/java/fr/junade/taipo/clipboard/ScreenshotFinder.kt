@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ContentUris
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -45,7 +46,9 @@ class ScreenshotFinder(context: Context) {
             @Suppress("DEPRECATION")
             MediaStore.Images.Media.DATA
         }
-        val selection = "${MediaStore.Images.Media.DATE_ADDED} >= ? AND " +
+        // Capture encore en cours d'écriture (IS_PENDING, Android 10+) ou fichier vide : pas encore proposée.
+        val ready = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) " AND ${MediaStore.MediaColumns.IS_PENDING} = 0" else ""
+        val selection = "${MediaStore.Images.Media.DATE_ADDED} >= ? AND ${MediaStore.MediaColumns.SIZE} > 0$ready AND " +
             "(${MediaStore.Images.Media.DISPLAY_NAME} LIKE ? OR $pathColumn LIKE ?)"
         val args = arrayOf((sinceMillis / MILLIS_PER_SECOND).toString(), "Screenshot%", "%Screenshot%")
         return try {
@@ -66,24 +69,72 @@ class ScreenshotFinder(context: Context) {
         }
     }
 
+    /** Capture prête à être confiée au champ : son URI (FileProvider) et son type réel, lu dans le fichier. */
+    data class SharedImage(val uri: Uri, val mimeType: String)
+
     /**
      * Copie la capture dans le cache de l'application et renvoie l'URI (FileProvider) à confier à l'application cible, ou null
      * en cas d'échec. À appeler hors du thread principal.
+     *
+     * Correctif « capture corrompue » : la copie est vérifiée avant d'être confiée à l'application cible.
+     * - Chaque collage a son propre fichier, écrit sous un nom temporaire puis renommé : une application qui lit encore une
+     *   copie précédente ne la voit jamais réécrite sous ses yeux.
+     * - La copie doit faire au moins la taille annoncée par MediaStore et se décoder comme une image.
+     * - Le type annoncé est celui du fichier (en-tête décodé), pas celui de MediaStore, parfois faux (JPEG annoncé PNG…) : une
+     *   application qui se fie au type annoncé croyait recevoir un fichier corrompu.
      */
-    fun copyForSharing(shot: ScreenshotSuggestionState.Shot): Uri? {
+    fun copyForSharing(shot: ScreenshotSuggestionState.Shot): SharedImage? {
+        val dir = File(appContext.cacheDir, CACHE_DIR)
+        val stamp = System.currentTimeMillis()
+        val temp = File(dir, "screenshot-${shot.id}-$stamp.tmp")
         return try {
-            val dir = File(appContext.cacheDir, CACHE_DIR).apply { mkdirs() }
+            dir.mkdirs()
             purgeOld(dir)
-            val extension = if (shot.mimeType == "image/jpeg") "jpg" else shot.mimeType.substringAfter('/').ifBlank { "png" }
-            val target = File(dir, "screenshot-${shot.id}.$extension")
             val source = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, shot.id)
+            val expectedBytes = sizeOf(source)
             val input = appContext.contentResolver.openInputStream(source) ?: return null
-            input.use { stream -> target.outputStream().use { out -> stream.copyTo(out) } }
-            FileProvider.getUriForFile(appContext, authority(appContext), target)
+            val copiedBytes = input.use { stream ->
+                temp.outputStream().use { out -> stream.copyTo(out).also { out.fd.sync() } }
+            }
+            if (copiedBytes <= 0L || (expectedBytes > 0L && copiedBytes < expectedBytes)) {
+                AppLog.w(TAG, "Copie de la capture incomplète ($copiedBytes octets sur $expectedBytes)")
+                temp.delete()
+                return null
+            }
+            val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            BitmapFactory.decodeFile(temp.path, bounds)
+            if (bounds.outWidth <= 0 || bounds.outHeight <= 0) {
+                AppLog.w(TAG, "La copie de la capture ne se décode pas (type annoncé ${shot.mimeType}, $copiedBytes octets)")
+                temp.delete()
+                return null
+            }
+            val mimeType = bounds.outMimeType?.takeIf { it.startsWith("image/") } ?: shot.mimeType
+            val target = File(dir, "screenshot-${shot.id}-$stamp.${extensionFor(mimeType)}")
+            if (!temp.renameTo(target)) {
+                temp.delete()
+                return null
+            }
+            AppLog.d(
+                TAG,
+                "capture copiée : $copiedBytes octets, ${bounds.outWidth}x${bounds.outHeight}, " +
+                    "type MediaStore=${shot.mimeType} réel=$mimeType",
+            )
+            SharedImage(FileProvider.getUriForFile(appContext, authority(appContext), target), mimeType)
         } catch (e: Exception) {
             AppLog.w(TAG, "Copie de la capture d'écran impossible", e)
+            temp.delete()
             null
         }
+    }
+
+    /** Taille (octets) annoncée par MediaStore pour [uri], ou -1 si inconnue. */
+    private fun sizeOf(uri: Uri): Long = try {
+        appContext.contentResolver.query(uri, arrayOf(MediaStore.MediaColumns.SIZE), null, null, null)?.use { cursor ->
+            if (cursor.moveToFirst() && !cursor.isNull(0)) cursor.getLong(0) else -1L
+        } ?: -1L
+    } catch (e: RuntimeException) {
+        AppLog.w(TAG, "Taille de la capture inconnue", e)
+        -1L
     }
 
     private fun purgeOld(dir: File) {
@@ -113,6 +164,13 @@ class ScreenshotFinder(context: Context) {
             ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
 
         fun authority(context: Context): String = context.packageName + ".fileprovider"
+
+        /** Extension du fichier copié selon son type : le FileProvider en déduit le type qu'il annonce. */
+        fun extensionFor(mimeType: String): String = when (val subtype = mimeType.substringAfter('/').lowercase()) {
+            "jpeg", "pjpeg" -> "jpg"
+            "" -> "png"
+            else -> subtype
+        }
 
         /** URI observé pour détecter une nouvelle capture. */
         val observedUri: Uri get() = MediaStore.Images.Media.EXTERNAL_CONTENT_URI

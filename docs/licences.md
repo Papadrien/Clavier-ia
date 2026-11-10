@@ -5,7 +5,7 @@ Accessible depuis l'accueil, section « À propos ». `LicensesActivity` affiche
 1. **Modèles IA** : cartes Gemma 3 (Gemma Terms of Use) et Gemma 4 (Apache 2.0, texte complet dépliable) écrites dans
    `activity_licenses.xml` (story 8.11) ; puis **Nemotron** (modèle vocal).
 2. **Dictionnaires** : FrequencyWords / OpenSubtitles 2018, CC BY-SA 4.0, avec les modifications apportées.
-3. **Bibliothèques et police** : LiteRT-LM, sherpa-onnx, ONNX Runtime, SQLCipher, AndroidX, Kotlin/coroutines, Aptabase, Open Sans.
+3. **Bibliothèques et police** : LiteRT-LM, sherpa-onnx, ONNX Runtime, SQLCipher, AndroidX, Kotlin/coroutines, Aptabase, Open Sans et les polices du clavier au choix (Inter, Atkinson Hyperlegible Next, Lexend, Nunito, Manrope, IBM Plex Sans, Literata, OpenDyslexic).
 
 Les mentions de 1 et 3 (hors Gemma) sont déclarées dans `licenses/LicenseNotice.kt` (`LicenseNotices.all`), une carte chacune,
 textes dans `strings.xml` (clés `licenses_*`, EN + FR). **Ajouter une dépendance** = ajouter une entrée dans cette liste
@@ -20,6 +20,7 @@ textes dans `strings.xml` (clés `licenses_*`, EN + FR). **Ajouter une dépendan
 | SQLCipher Community Edition | licence BSD-style de Zetetic ; **exige attribution et reproduction de la licence dans l'interface de l'app** (écran « à propos » accepté) | zetetic.net/sqlcipher/license |
 | Aptabase SDK Kotlin | MIT | dépôt GitHub |
 | Open Sans | SIL OFL 1.1 | `licenses/OpenSans-OFL.txt` (copie dans `assets/licenses/open-sans-ofl.txt`) |
+| Polices du clavier (Inter, Atkinson Hyperlegible Next, Lexend, Nunito, Manrope, IBM Plex Sans, Literata, OpenDyslexic) | SIL OFL 1.1, fichiers d'origine non modifiés (Google Fonts ; dépôt OpenDyslexic) | `licenses/<police>-OFL.txt` (copies dans `assets/licenses/<police>-ofl.txt`) |
 
 ## À faire / à vérifier avant la soumission
 - **Texte complet OpenMDW-1.1** : la licence demande de conserver une copie du texte dans la distribution. Je n'ai pas pu le

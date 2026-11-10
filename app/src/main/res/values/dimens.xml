@@ -266,6 +266,26 @@
     <dimen name="taipo_input_text_size">16sp</dimen>
     <!-- Ligne de commutateur ou de bouton radio : hauteur minimale de la zone tactile (lot 18, auparavant 48dp dans chaque ligne). -->
     <dimen name="taipo_settings_row_min_height">48dp</dimen>
+    <!-- Vignettes des fonds du clavier (page Thème). -->
+    <dimen name="taipo_backdrop_preview_height">96dp</dimen>
+    <dimen name="taipo_backdrop_preview_key_radius">3dp</dimen>
+
+    <!-- Clavier flottant : coins et ombre de la carte, marge minimale avec les bords de l'écran, poignée de déplacement. -->
+    <dimen name="taipo_floating_corner_radius">16dp</dimen>
+    <dimen name="taipo_floating_elevation">8dp</dimen>
+    <dimen name="taipo_floating_screen_margin">4dp</dimen>
+    <dimen name="taipo_floating_handle_height">22dp</dimen>
+    <dimen name="taipo_floating_handle_bar_width">40dp</dimen>
+    <dimen name="taipo_floating_handle_bar_height">4dp</dimen>
+    <!-- Glisser la poignée de cette distance sous le bas de l'écran recolle le clavier. -->
+    <dimen name="taipo_floating_dock_overshoot">48dp</dimen>
+    <!-- Zone d'ancrage « Relâcher pour ancrer », au bas de l'écran (au-dessus de la barre de navigation). -->
+    <dimen name="taipo_floating_dock_zone_height">72dp</dimen>
+    <!-- Sélecteur segmenté des paramètres du clavier (v3) : piste, segments et marge intérieure. -->
+    <dimen name="taipo_segmented_group_corner_radius">10dp</dimen>
+    <dimen name="taipo_segmented_group_padding">3dp</dimen>
+    <dimen name="taipo_segment_corner_radius">8dp</dimen>
+    <dimen name="taipo_segment_min_height">42dp</dimen>
 
     <!-- Page « Thème » (lot T5) : hauteur de l'aperçu d'une carte, taille et marge de la coche de sélection, contour d'une carte
          au repos et choisie. -->

@@ -612,19 +612,26 @@ class ClipboardController(
      * `commitContent` (autorisation de lecture temporaire). Un refus du champ ou un échec de copie est expliqué par un message.
      */
     private fun pasteScreenshot(shot: ScreenshotSuggestionState.Shot) {
+        // Collage déjà en cours (double appui) : on le laisse finir. L'annuler ne stoppait pas la copie, qui pouvait encore
+        // écrire pendant qu'un second collage préparait la sienne.
+        if (screenshotPasteJob?.isActive == true) return
         host.haptic()
         host.playKeySound(KeySound.KEY) // même tic que le collage d'une carte du Smart Clipboard
         host.clearHighlight()
-        screenshotPasteJob?.cancel()
         screenshotPasteJob = scope.launch {
-            val uri = withContext(Dispatchers.IO) { screenshotFinder.copyForSharing(shot) }
+            val shared = withContext(Dispatchers.IO) { screenshotFinder.copyForSharing(shot) }
             val ic = host.inputConnection()
             val info = host.editorInfo()
-            if (uri == null || ic == null || info == null) {
+            if (shared == null || ic == null || info == null) {
                 host.showMessage(context.getString(R.string.clipboard_screenshot_error))
                 return@launch
             }
-            val content = InputContentInfoCompat(uri, ClipDescription(SCREENSHOT_LABEL, arrayOf(shot.mimeType)), null)
+            if (!ImageAcceptance.accepts(fieldImageMimeTypes, shared.mimeType)) {
+                host.showMessage(context.getString(R.string.clipboard_screenshot_refused))
+                return@launch
+            }
+            val description = ClipDescription(SCREENSHOT_LABEL, arrayOf(shared.mimeType))
+            val content = InputContentInfoCompat(shared.uri, description, null)
             val accepted = InputConnectionCompat.commitContent(ic, info, content, InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION, null)
             if (!accepted) {
                 host.showMessage(context.getString(R.string.clipboard_screenshot_refused))

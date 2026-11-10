@@ -138,7 +138,28 @@ internal class KeyRenderer(private val context: Context) {
     // Petit globe en exposant sur la pilule Entrée violette : blanc, légèrement atténué comme l'indice des chiffres (lot T6).
     private val globeIcon = loadKeyIcon(R.drawable.ic_key_globe, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
 
+    // Sans clavier multilingue, l'appui long sur Entrée n'ouvre que le mode une main : son icône (celle de la bulle) prend
+    // la place du globe, pour signaler qu'il y a quelque chose derrière l'appui long.
+    private val oneHandedHintIcon = loadKeyIcon(R.drawable.ic_key_one_hand, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
+
     /** Clavier multilingue actif : la pilule Entrée affiche un petit globe en exposant (appui long = langue). */
+    /**
+     * Fond du clavier à motif (page « Thème ») : les touches (sauf Entrée) deviennent translucides pour laisser voir le motif.
+     * Les lettres gardent leur couleur, donc leur contraste.
+     */
+    var translucentKeys = false
+        set(value) {
+            if (field == value) return
+            field = value
+            val face = if (value) TRANSLUCENT_FACE_ALPHA else OPAQUE
+            val shadow = if (value) TRANSLUCENT_SHADOW_ALPHA else OPAQUE
+            normalPaint.alpha = face
+            secondaryPaint.alpha = face
+            activePaint.alpha = face
+            normalShadowPaint.alpha = shadow
+            secondaryShadowPaint.alpha = shadow
+        }
+
     var showsGlobeOnEnter = false
 
     // État de la vue pour le dessin en cours, fixé au début de chaque [draw] (aucune allocation).
@@ -415,12 +436,13 @@ internal class KeyRenderer(private val context: Context) {
     }
 
     /**
-     * Contenu de la pilule Entrée : le symbole d'entrée, centré ; en mode multilingue, un petit globe en exposant, en haut
-     * à droite comme l'indice des chiffres, replié vers l'intérieur pour rester dans la courbe de la pilule.
+     * Contenu de la pilule Entrée : le symbole d'entrée, centré, et en exposant, en haut à droite comme l'indice des chiffres
+     * (replié vers l'intérieur pour rester dans la courbe de la pilule), ce qu'ouvre l'appui long : un petit globe en mode
+     * multilingue, sinon l'icône du mode une main.
      */
     private fun drawEnterContent(canvas: Canvas) {
         drawKeyIcon(canvas, enterIcon)
-        if (!showsGlobeOnEnter) return
+        val hintIcon = if (showsGlobeOnEnter) globeIcon else oneHandedHintIcon
         val size = dims.hintTextSize * GLOBE_HINT_SCALE
         val half = size / 2f
         val radius = minOf(keyRect.width(), keyRect.height()) / 2f
@@ -430,8 +452,8 @@ internal class KeyRenderer(private val context: Context) {
         val dy = (cy - half) - (keyRect.top + radius)
         val dx = if (reach > abs(dy)) sqrt(reach * reach - dy * dy) else 0f
         val cx = keyRect.right - radius + dx - half
-        placeIcon(globeIcon, cx, cy, half)
-        globeIcon.draw(canvas)
+        placeIcon(hintIcon, cx, cy, half)
+        hintIcon.draw(canvas)
     }
 
     private fun placeIcon(icon: Drawable, cx: Float, cy: Float, half: Float) {
@@ -587,6 +609,14 @@ internal class KeyRenderer(private val context: Context) {
     }
 
     companion object {
+        /**
+         * Touches translucides sur un fond à motif : face à 73 %, ombre à 60 %. Revue du 10/11/2026 : transparence réduite de 30 %
+         * (maquettes : face à 62 %, ombre à 43 %, soit 38 % et 57 % de transparence, ramenées à 27 % et 40 %).
+         */
+        const val TRANSLUCENT_FACE_ALPHA = 187
+        const val TRANSLUCENT_SHADOW_ALPHA = 153
+        private const val OPAQUE = 255
+
         /** Lot 21 : « pas de caractère » (voir [shiftedChar]). */
         const val NO_CHAR = '\u0000'
 

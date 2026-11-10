@@ -21,6 +21,9 @@ object AnalyticsEvents {
     const val CLIPBOARD_USED = "clipboard_used"
     const val UNDO_USED = "undo_used"
     const val KEYBOARD_LANGUAGE = "keyboard_language"
+
+    /** Clavier détaché ou recollé depuis le clavier : `mode` (`floating`, `docked`), `via` (`bubble`, `handle`, `one_handed`). */
+    const val KEYBOARD_MODE = "keyboard_mode"
     const val SETTING_CHANGED = "setting_changed"
     const val FIRST_OPEN = "first_open"
 

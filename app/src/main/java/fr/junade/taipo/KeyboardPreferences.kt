@@ -121,6 +121,44 @@ class KeyboardPreferences(context: Context) {
             KeyboardTheme.shape = KeyShape.effective(value, PremiumPass.isActive)
         }
 
+    /**
+     * Police du clavier (page « Thème »), Open Sans par défaut. Les autres polices sont réservées au pass premium : sans lui, le
+     * clavier reprend Open Sans ([KeyboardFont.effective]) mais le choix est gardé pour le retour du pass.
+     */
+    var keyboardFont: KeyboardFont
+        get() = KeyboardFont.fromStorageKey(prefs.getString(KEY_KEYBOARD_FONT, null))
+        set(value) {
+            prefs.edit().putString(KEY_KEYBOARD_FONT, value.storageKey).apply()
+            TaipoType.keyboardFont = KeyboardFont.effective(value, PremiumPass.isActive)
+        }
+
+    /** Fond du clavier (page « Thème ») : uni par défaut ; les motifs demandent le pass premium ([KeyboardBackdrop.effective]). */
+    var keyboardBackdrop: fr.junade.taipo.backdrop.KeyboardBackdrop
+        get() = fr.junade.taipo.backdrop.KeyboardBackdrop.fromStorageKey(prefs.getString(KEY_BACKDROP, null))
+        set(value) {
+            prefs.edit().putString(KEY_BACKDROP, value.storageKey).apply()
+        }
+
+    /** Le motif s'anime pendant la frappe. Activé par défaut. */
+    var isBackdropAnimated: Boolean
+        get() = prefs.getBoolean(KEY_BACKDROP_ANIMATED, true)
+        set(value) {
+            prefs.edit().putBoolean(KEY_BACKDROP_ANIMATED, value).apply()
+        }
+
+    /**
+     * Tirage de la disposition du motif (positions, tailles, orientations des formes). Tiré au hasard à la première lecture puis
+     * gardé : chaque clavier a son motif. [newBackdropSeed] en tire un nouveau (« Changer la disposition du motif »).
+     */
+    val backdropSeed: Long
+        get() = prefs.getLong(KEY_BACKDROP_SEED, 0L).takeIf { it != 0L } ?: newBackdropSeed()
+
+    fun newBackdropSeed(): Long {
+        val seed = java.util.Random().nextLong().takeIf { it != 0L } ?: 1L
+        prefs.edit().putLong(KEY_BACKDROP_SEED, seed).apply()
+        return seed
+    }
+
     /** Son du clavier (tic doux à chaque frappe, plus aigu pour la barre d'espace). Activé par défaut. */
     var isKeySoundEnabled: Boolean
         get() = prefs.getBoolean(KEY_KEY_SOUND, DEFAULT_KEY_SOUND)
@@ -199,6 +237,37 @@ class KeyboardPreferences(context: Context) {
         set(value) {
             prefs.edit().putInt(KEY_ONE_HANDED_WIDTH, OneHandedWidth.clamp(value)).apply()
         }
+
+    /**
+     * Clavier flottant : détaché du bas de l'écran, déplaçable. Exclut le mode une main. Désactivé par défaut. Relu à chaque
+     * ouverture de champ.
+     */
+    var isFloatingKeyboard: Boolean
+        get() = prefs.getBoolean(KEY_FLOATING, false)
+        set(value) {
+            prefs.edit().putBoolean(KEY_FLOATING, value).apply()
+        }
+
+    /** Largeur du clavier flottant, en % de la largeur de l'écran ([FloatingWidth]) : indépendante de celle du mode une main. */
+    var floatingWidthPercent: Int
+        get() = FloatingWidth.clamp(prefs.getInt(KEY_FLOATING_WIDTH, FloatingWidth.DEFAULT_PERCENT))
+        set(value) {
+            prefs.edit().putInt(KEY_FLOATING_WIDTH, FloatingWidth.clamp(value)).apply()
+        }
+
+    /** Position du clavier flottant, retenue séparément en portrait et en paysage. */
+    fun floatingPosition(landscape: Boolean): FloatingPosition {
+        val suffix = if (landscape) SUFFIX_LANDSCAPE else SUFFIX_PORTRAIT
+        return FloatingPosition.of(
+            prefs.getFloat(KEY_FLOATING_X + suffix, FloatingPosition.DEFAULT.x),
+            prefs.getFloat(KEY_FLOATING_Y + suffix, FloatingPosition.DEFAULT.y),
+        )
+    }
+
+    fun setFloatingPosition(landscape: Boolean, position: FloatingPosition) {
+        val suffix = if (landscape) SUFFIX_LANDSCAPE else SUFFIX_PORTRAIT
+        prefs.edit().putFloat(KEY_FLOATING_X + suffix, position.x).putFloat(KEY_FLOATING_Y + suffix, position.y).apply()
+    }
 
     /** Marge sous les touches en portrait, en dp ([KeyboardBottomMargin]). 60 dp par défaut. Relue à chaque ouverture de champ. */
     var bottomMarginDp: Int
@@ -314,6 +383,16 @@ class KeyboardPreferences(context: Context) {
     companion object {
         private const val PREFS_NAME = "keyboard_prefs"
         private const val KEY_THEME_CHOICE = "theme_choice"
+        private const val KEY_FLOATING = "floating_keyboard"
+        private const val KEY_KEYBOARD_FONT = "keyboard_font"
+        private const val KEY_BACKDROP = "keyboard_backdrop"
+        private const val KEY_BACKDROP_ANIMATED = "keyboard_backdrop_animated"
+        private const val KEY_BACKDROP_SEED = "keyboard_backdrop_seed"
+        private const val KEY_FLOATING_WIDTH = "floating_keyboard_width"
+        private const val KEY_FLOATING_X = "floating_keyboard_x"
+        private const val KEY_FLOATING_Y = "floating_keyboard_y"
+        private const val SUFFIX_PORTRAIT = "_portrait"
+        private const val SUFFIX_LANDSCAPE = "_landscape"
         private const val KEY_ACCENT_PALETTE = "accent_palette"
         private const val KEY_KEY_SHAPE = "key_shape"
         private const val KEY_ADAPTIVE_TOUCH = "adaptive_touch_enabled"

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Piste d'un sélecteur segmenté (paramètres du clavier, v3) : un ton plus foncé que la carte. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/settings_divider" />
+    <corners android:radius="@dimen/taipo_segmented_group_corner_radius" />
+</shape>

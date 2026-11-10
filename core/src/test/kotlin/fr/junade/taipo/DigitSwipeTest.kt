@@ -18,13 +18,14 @@ class DigitSwipeTest {
     fun `un glissement assez long, vertical et pas trop bref saisit le chiffre`() {
         assertTrue(DigitSwipe.isTriggered(dx = 5f, dy = 60f, thresholdPx = 60f, elapsedMs = slow))
         assertTrue(DigitSwipe.isTriggered(dx = -30f, dy = 70f, thresholdPx = 60f, elapsedMs = 300L))
+        assertTrue(DigitSwipe.isTriggered(dx = 40f, dy = 70f, thresholdPx = 60f, elapsedMs = slow), "un peu oblique (pouce)")
     }
 
     @Test
     fun `trop court, vers le haut, en diagonale ou trop rapide, rien`() {
         assertFalse(DigitSwipe.isTriggered(dx = 0f, dy = 59f, thresholdPx = 60f, elapsedMs = slow), "trop court")
         assertFalse(DigitSwipe.isTriggered(dx = 0f, dy = -80f, thresholdPx = 60f, elapsedMs = slow), "vers le haut")
-        assertFalse(DigitSwipe.isTriggered(dx = 40f, dy = 70f, thresholdPx = 60f, elapsedMs = slow), "diagonale vers la touche suivante")
+        assertFalse(DigitSwipe.isTriggered(dx = 60f, dy = 70f, thresholdPx = 60f, elapsedMs = slow), "diagonale vers la touche suivante")
         assertFalse(DigitSwipe.isTriggered(dx = 0f, dy = 80f, thresholdPx = 60f, elapsedMs = slow - 1), "doigt qui glisse en frappe rapide")
     }
 

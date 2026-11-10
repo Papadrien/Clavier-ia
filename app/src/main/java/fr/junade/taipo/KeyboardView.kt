@@ -221,6 +221,17 @@ class KeyboardView(context: Context) : View(context) {
     private val oneHandedIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_key_one_hand)) { "Icône mode une main introuvable" }
         .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
 
+    // Icône du clavier flottant (bulle d'Entrée), teintée comme celle du globe.
+    private val floatingIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_key_floating)) { "Icône clavier flottant introuvable" }
+        .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
+
+    /** Icônes de la bulle d'Entrée, par symbole fictif ([EnterBubbleGrid]). */
+    private val bubbleIcons = mapOf(
+        KeyPopup.GLOBE_SYMBOL to globeIcon,
+        KeyPopup.ONE_HANDED_SYMBOL to oneHandedIcon,
+        KeyPopup.FLOATING_SYMBOL to floatingIcon,
+    )
+
     // Mode une main : boutons de la zone libre (changer de côté, quitter le mode), voir OneHandedControls.
     private val oneHandedSwitchIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_one_hand_switch)) { "Icône changement de côté introuvable" }
         .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
@@ -272,6 +283,18 @@ class KeyboardView(context: Context) : View(context) {
      * L'appui long sur Entrée ouvre toujours une bulle (sélection par glissement vers le haut, comme les accents) avec la
      * touche du mode une main. Clavier multilingue (activé par l'IME) : le globe s'y ajoute et passe aussi en exposant sur Entrée.
      */
+    /** Doigt posé en (x, y) (coordonnées de cette vue) : le fond animé du clavier réagit (voir KeyboardBackgroundDrawable). */
+    var touchDownListener: ((Float, Float) -> Unit)? = null
+
+    /** Fond à motif : touches translucides (voir [KeyRenderer.translucentKeys]). */
+    var translucentKeys: Boolean
+        get() = keyRenderer.translucentKeys
+        set(value) {
+            if (keyRenderer.translucentKeys == value) return
+            keyRenderer.translucentKeys = value
+            invalidate()
+        }
+
     var showsGlobeOnEnter = false
         set(value) {
             if (field == value) return
@@ -290,6 +313,12 @@ class KeyboardView(context: Context) : View(context) {
         }
     private var globeListener: Runnable? = null
     private var oneHandedToggleListener: Runnable? = null
+    private var floatingToggleListener: Runnable? = null
+
+    /** Appelé quand la touche clavier flottant de la bulle d'Entrée est relâchée (détache ou recolle le clavier : voir TaipoIme). */
+    fun setOnFloatingToggleListener(listener: Runnable) {
+        floatingToggleListener = listener
+    }
     private var oneHandedSwitchSideListener: Runnable? = null
 
     /** Appelé quand le bouton « changer de côté » de la zone libre est relâché (mode une main actif : voir TaipoIme). */
@@ -662,6 +691,7 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     private fun pressStart(x: Float, y: Float, time: Long) {
+        touchDownListener?.invoke(x, y)
         longPressCommitted = false
         pressedControl = controlAt(x, y)
         downX = x
@@ -777,6 +807,20 @@ class KeyboardView(context: Context) : View(context) {
         return DigitSwipe.keepsKey(x - downX, y - downY, ViewConfiguration.get(context).scaledTouchSlop.toFloat())
     }
 
+    /** Symbole choisi dans une bulle d'appui long : une icône de la bulle d'Entrée (globe, une main, flottant) ou un caractère. */
+    private fun onBubbleSymbol(symbol: Char, popupKey: Key?) {
+        when (symbol) {
+            KeyPopup.GLOBE_SYMBOL -> globeListener?.run()
+            KeyPopup.ONE_HANDED_SYMBOL -> oneHandedToggleListener?.run()
+            KeyPopup.FLOATING_SYMBOL -> floatingToggleListener?.run()
+            else -> {
+                keyListener?.onKey(Key("popup_$symbol", symbol.toString(), KeyAction.TypeChar(symbol)))
+                // Le chiffre de la touche du haut a été choisi dans la bulle : l'IME peut suggérer le glissement vers le bas.
+                if (symbol == popupKey?.longPressChar) digitHintListener?.onLongPressDigit()
+            }
+        }
+    }
+
     /**
      * Relâchement du doigt actif en (x, y) à l'instant [time] : saisit la touche, le symbole de la bulle, ou rien.
      * [digitAllowed] faux : le glissement vers le bas ne peut plus saisir de chiffre à ce relâchement.
@@ -807,15 +851,7 @@ class KeyboardView(context: Context) : View(context) {
             val popupKey = keyPopup.key
             dismissPopup()
             pressedKey = null
-            if (symbol == KeyPopup.GLOBE_SYMBOL) {
-                globeListener?.run()
-            } else if (symbol == KeyPopup.ONE_HANDED_SYMBOL) {
-                oneHandedToggleListener?.run()
-            } else if (symbol != null) {
-                keyListener?.onKey(Key("popup_$symbol", symbol.toString(), KeyAction.TypeChar(symbol)))
-                // Le chiffre de la touche du haut a été choisi dans la bulle : l'IME peut suggérer le glissement vers le bas.
-                if (symbol == popupKey?.longPressChar) digitHintListener?.onLongPressDigit()
-            }
+            if (symbol != null) onBubbleSymbol(symbol, popupKey)
             invalidate()
             return
         }
@@ -1047,8 +1083,7 @@ class KeyboardView(context: Context) : View(context) {
         iconSize = dims.iconSize,
         iconMaxRatio = KeyRenderer.KEY_ICON_MAX_RATIO,
         shifted = isShifted,
-        globeIcon = globeIcon,
-        oneHandedIcon = oneHandedIcon,
+        icons = bubbleIcons,
     )
 
     /** Story 1.10 : bulle d'agrandissement affichée au-dessus de la touche de caractère pressée. */

@@ -86,6 +86,7 @@ class TaipoIme : InputMethodService() {
         override fun protectedWordsIn(text: String): List<String> = this@TaipoIme.protectedWordsIn(text)
 
         override fun haptic() = this@TaipoIme.hapticFeedback.perform(this@TaipoIme.hapticIntensity)
+        override fun applyFloatingKeyboard(via: String) = this@TaipoIme.floatingWindow.apply(animate = true, via = via)
         override fun playBarButtonSound() {
             if (this@TaipoIme.barSoundEnabled) this@TaipoIme.keySounds.play(KeySound.BAR_BUTTON)
         }
@@ -137,6 +138,7 @@ class TaipoIme : InputMethodService() {
         override fun onGlobeSelected() = this@TaipoIme.languages.onGlobeSelected()
         override fun onOneHandedToggled() = this@TaipoIme.oneHanded.toggle()
         override fun onOneHandedSideSwitched() = this@TaipoIme.oneHanded.switchSide()
+        override fun onFloatingToggled() = this@TaipoIme.oneHanded.toggleFloating(OneHandedSwitcher.VIA_BUBBLE)
         override fun openAppHome() = this@TaipoIme.openAppHome()
     }
 
@@ -238,6 +240,9 @@ class TaipoIme : InputMethodService() {
     private val fieldEditor by lazy { FieldEditor(imeContext) { keyCode -> sendDownUpKeyEvents(keyCode) } }
     private val languages by lazy { ImeLanguages(this, imeContext, controller, gestureTips) }
     private val oneHanded by lazy { OneHandedSwitcher(imeContext) }
+    private val floatingWindow by lazy {
+        FloatingKeyboardWindow(this, { window?.window }, viewComposer, { keyboardPreferences }) { oneHanded.toggleFloating(OneHandedSwitcher.VIA_HANDLE) }
+    }
     private val memory by lazy { ImeMemoryManager(serviceScope, { voice }, { llmHost }, { isInputViewShown }) }
 
     // Story 1.11 : niveau de retour haptique, relu de la même façon.
@@ -409,11 +414,26 @@ class TaipoIme : InputMethodService() {
      */
     override fun onEvaluateFullscreenMode(): Boolean = false
 
+    // Clavier flottant : la fenêtre est remise à la bonne hauteur après chaque réévaluation du mode plein écran.
+    override fun updateFullscreenMode() {
+        super.updateFullscreenMode()
+        floatingWindow.applyWindowLayout()
+    }
+
+    override fun onComputeInsets(outInsets: Insets) {
+        super.onComputeInsets(outInsets)
+        floatingWindow.computeInsets(outInsets)
+    }
+
     /** Thème avec lequel les vues du clavier ont été créées pour la dernière fois (voir [recomposeIfThemeChanged]). */
     private var composedThemeLook: KeyboardTheme.Look? = null
 
+    /** Police avec laquelle les vues du clavier ont été créées (elles la lisent à leur création, comme les couleurs). */
+    private var composedFont: KeyboardFont? = null
+
     override fun onCreateInputView(): View {
         composedThemeLook = KeyboardTheme.look
+        composedFont = TaipoType.keyboardFont
         return viewComposer.compose()
     }
 
@@ -422,7 +442,7 @@ class TaipoIme : InputMethodService() {
      * masqué), on les recrée comme à une rotation. Sans changement, rien n'est refait.
      */
     private fun recomposeIfThemeChanged() {
-        if (!viewComposer.isComposed || composedThemeLook == KeyboardTheme.look) return
+        if (!viewComposer.isComposed || (composedThemeLook == KeyboardTheme.look && composedFont == TaipoType.keyboardFont)) return
         messagePopup.dismiss()
         setInputView(onCreateInputView())
     }
@@ -449,6 +469,14 @@ class TaipoIme : InputMethodService() {
         keyboardHeight = keyboardPreferences.keyboardHeight
         keyboardView.heightScale = keyboardHeight.scale
         keyboardView.bottomMarginDp = keyboardPreferences.bottomMarginDp
+        floatingWindow.apply() // en flottant, remet la marge du bas à zéro (la poignée en tient lieu)
+        viewComposer.applyBackdrop(
+            fr.junade.taipo.backdrop.KeyboardBackdrop.effective(keyboardPreferences.keyboardBackdrop, PremiumPass.isActive),
+            keyboardPreferences.backdropSeed,
+            keyboardPreferences.isBackdropAnimated,
+            themeColor(R.color.accent),
+            KeyboardTheme.mode == KeyboardTheme.Mode.DARK,
+        )
         oneHanded.apply()
         keyboardView.showTouchZones = keyboardPreferences.showTouchZones
         emojiController.hidePanel(resync = false)
@@ -573,6 +601,7 @@ class TaipoIme : InputMethodService() {
     override fun onWindowShown() {
         super.onWindowShown()
         memory.onWindowShown()
+        floatingWindow.onWindowShown()
     }
 
     /** Android manque de mémoire : les gros moteurs sont libérés selon [MemoryRelease.shouldRelease]. */
