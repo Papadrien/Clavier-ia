@@ -377,7 +377,9 @@ class Dictionary private constructor(
         // minuscule -> forme enregistrée par l'utilisateur
         val personal = HashMap<String, String>(personalWords.size)
         personalWords.forEach { personal[it.lowercase()] = it }
-        if (lower in personal) return null
+        // Mot personnel tapé en minuscules alors qu'il a été enregistré avec une majuscule (« brice » pour « Brice », « iphone »
+        // pour « iPhone ») : la forme enregistrée s'applique, comme pour un prénom de la liste (« adrien » -> « Adrien »).
+        personal[lower]?.let { stored -> return stored.takeIf { word == lower && it != lower } }
         // Point 4 : un mot inconnu que l'utilisateur a déjà gardé deux fois est un mot à lui (nom, argot, sigle) : plus de correction.
         if (habits != null && lower !in frequencies && habits.isLearnedWord(lower)) return null
         // « l'Taipo », « d'Adrien », « Taipo's » : le clavier voit un seul mot avec apostrophe.
