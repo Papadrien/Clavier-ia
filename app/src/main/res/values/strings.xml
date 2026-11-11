@@ -242,6 +242,10 @@
     <string name="a11y_key_caps_lock">Caps lock</string>
     <string name="a11y_key_backspace">Delete</string>
     <string name="a11y_key_enter">Enter</string>
+    <string name="a11y_key_enter_search">Search</string>
+    <string name="a11y_key_enter_send">Send</string>
+    <string name="a11y_key_enter_next">Next</string>
+    <string name="a11y_key_enter_done">Done</string>
     <string name="a11y_key_space">Space</string>
     <string name="a11y_key_emoji">Emoji</string>
     <string name="a11y_key_to_symbols">Numbers and symbols</string>

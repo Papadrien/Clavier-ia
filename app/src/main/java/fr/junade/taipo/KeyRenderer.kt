@@ -134,6 +134,12 @@ internal class KeyRenderer(private val context: Context) {
     private val backspaceIcon = loadKeyIcon(R.drawable.ic_key_backspace)
     // Lot T6 : Entrée est violette dans les deux thèmes, son icône est donc blanche (text_on_accent), pas la couleur des libellés.
     private val enterIcon = loadKeyIcon(R.drawable.ic_key_enter, R.color.text_on_accent)
+
+    // Audit UX-10 : icône de l'action du champ (Rechercher, Envoyer, Suivant, OK), chargées une fois comme les autres.
+    private val searchIcon = loadKeyIcon(R.drawable.ic_key_search, R.color.text_on_accent)
+    private val sendIcon = loadKeyIcon(R.drawable.ic_key_send, R.color.text_on_accent)
+    private val nextIcon = loadKeyIcon(R.drawable.ic_key_next, R.color.text_on_accent)
+    private val doneIcon = loadKeyIcon(R.drawable.ic_key_done, R.color.text_on_accent)
     private val emojiIcon = loadKeyIcon(R.drawable.ic_key_emoji)
     // Petit globe en exposant sur la pilule Entrée violette : blanc, légèrement atténué comme l'indice des chiffres (lot T6).
     private val globeIcon = loadKeyIcon(R.drawable.ic_key_globe, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
@@ -161,6 +167,9 @@ internal class KeyRenderer(private val context: Context) {
         }
 
     var showsGlobeOnEnter = false
+
+    /** Action du champ courant, dessinée sur la touche Entrée (audit UX-10). */
+    var enterActionIcon = EnterAction.Icon.ENTER
 
     // État de la vue pour le dessin en cours, fixé au début de chaque [draw] (aucune allocation).
     private var dims: DrawDimens = DrawDimens(context)
@@ -441,7 +450,16 @@ internal class KeyRenderer(private val context: Context) {
      * multilingue, sinon l'icône du mode une main.
      */
     private fun drawEnterContent(canvas: Canvas) {
-        drawKeyIcon(canvas, enterIcon)
+        drawKeyIcon(
+            canvas,
+            when (enterActionIcon) {
+                EnterAction.Icon.ENTER -> enterIcon
+                EnterAction.Icon.SEARCH -> searchIcon
+                EnterAction.Icon.SEND -> sendIcon
+                EnterAction.Icon.NEXT -> nextIcon
+                EnterAction.Icon.DONE -> doneIcon
+            },
+        )
         val hintIcon = if (showsGlobeOnEnter) globeIcon else oneHandedHintIcon
         val size = dims.hintTextSize * GLOBE_HINT_SCALE
         val half = size / 2f

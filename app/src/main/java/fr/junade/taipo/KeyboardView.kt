@@ -303,6 +303,16 @@ class KeyboardView(context: Context) : View(context) {
             invalidate()
         }
 
+    /** Action du champ sur la touche Entrée : icône dessinée et nom lu par TalkBack (audit UX-10). */
+    var enterActionIcon = EnterAction.Icon.ENTER
+        set(value) {
+            if (field == value) return
+            field = value
+            keyRenderer.enterActionIcon = value
+            accessibility.invalidateRoot()
+            invalidate()
+        }
+
     /** Nom de la langue active, écrit sur la barre d'espace à la place du trait (null : le trait). Voir [KeyRenderer.spaceLabel]. */
     var spaceLabel: String? = null
         set(value) {

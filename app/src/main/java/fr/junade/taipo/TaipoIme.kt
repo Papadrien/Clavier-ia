@@ -941,6 +941,10 @@ class TaipoIme : InputMethodService() {
         val wordAfter = WordText.leadingWord(textAfter)
         val typed = typedBefore + wordAfter
         if (typed.isEmpty()) return
+        if (!confirmBefore(ic, typedBefore)) { // audit BUG-05 : cache périmé, les suggestions sont recalculées
+            syncAutoCapitalization()
+            return
+        }
         // Une espace suit déjà le mot : elle est remplacée par celle qu'on ajoute, jamais doublée.
         val spaceAfter = textAfter.getOrNull(wordAfter.length) == ' '
         // Une virgule suit le mot : aucune espace n'est ajoutée (« mot, » et non « mot , »).
@@ -1049,6 +1053,10 @@ class TaipoIme : InputMethodService() {
     /** Dernier "mot" avant le curseur : lettres/apostrophes/traits d'union contigus en fin de texte. */
     private fun trailingWord(textBeforeCursor: String): String = WordText.trailingWord(textBeforeCursor)
 
+    /** Vrai si [expected] précède vraiment le curseur (lecture sans cache, voir [CachingInputConnection.confirmBefore]). */
+    private fun confirmBefore(ic: InputConnection, expected: String): Boolean =
+        (ic as? CachingInputConnection)?.confirmBefore(expected) ?: true
+
     /**
      * Story 1.18 : pas d'autocorrection dans les champs e-mail, URL, mot de passe et numériques, ni
      * quand l'application demande de ne rien suggérer (même règle que les suggestions de mots).
@@ -1059,6 +1067,7 @@ class TaipoIme : InputMethodService() {
         val ic = currentInputConnection ?: return null
         val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
         val edit = suggestions.autocorrectionFor(before, autocorrections.allowContextualRetro(before)) ?: return null
+        if (!confirmBefore(ic, before.takeLast(edit.deleteCount))) return null // audit BUG-05 : le cache ne reflétait pas le champ
 
         ic.beginBatchEdit()
         ic.deleteSurroundingText(edit.deleteCount, 0)
@@ -1083,6 +1092,7 @@ class TaipoIme : InputMethodService() {
         val expected = pending.corrected + pending.boundary
         val before = ic.getTextBeforeCursor(expected.length, 0)?.toString() ?: return false
         if (before != expected) return false // le texte ou le curseur a changé entre-temps
+        if (!confirmBefore(ic, expected)) return false // audit BUG-05
 
         ic.beginBatchEdit()
         ic.deleteSurroundingText(expected.length, 0)

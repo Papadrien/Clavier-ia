@@ -67,6 +67,17 @@ class SuggestionPolicyTest {
     }
 
     @Test
+    fun `NO_SUGGESTIONS sur une ligne coupe l'apprentissage, pas les suggestions`() {
+        val oneLine = text or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+        assertTrue(SuggestionPolicy.allowsSuggestions(oneLine))
+        assertFalse(SuggestionPolicy.allowsLearning(oneLine))
+        // Note multiligne (Google Keep) : l'apprentissage reste actif.
+        assertTrue(SuggestionPolicy.allowsLearning(oneLine or InputType.TYPE_TEXT_FLAG_MULTI_LINE))
+        // Les adresses e-mail restent proposées (identifiant de connexion).
+        assertTrue(SuggestionPolicy.allowsEmailSuggestions(oneLine))
+    }
+
+    @Test
     fun `champs non textuels et absence de type sont exclus`() {
         assertFalse(SuggestionPolicy.allowsSuggestions(InputType.TYPE_CLASS_NUMBER))
         assertFalse(SuggestionPolicy.allowsSuggestions(InputType.TYPE_CLASS_PHONE))
