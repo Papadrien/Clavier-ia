@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import fr.junade.taipo.AppLog
+import fr.junade.taipo.storage.StoredDataFailure
 import fr.junade.taipo.PremiumPass
 
 /**
@@ -75,6 +76,9 @@ object ClipboardProvider {
         return try {
             openAndVerify(appContext, provider)
         } catch (e: Exception) {
+            // Audit BUG-02 : effacer seulement si la base ne pourra jamais être relue. Une erreur passagère (Keystore
+            // indisponible, disque plein, base verrouillée) remonte : la base reste intacte, nouvel essai à la prochaine ouverture.
+            if (!StoredDataFailure.isUnrecoverable(e)) throw e
             AppLog.e(TAG, "Base illisible : réinitialisation des éléments épinglés et de l'historique", e)
             appContext.deleteDatabase(ClipboardDatabase.NAME)
             provider.reset()

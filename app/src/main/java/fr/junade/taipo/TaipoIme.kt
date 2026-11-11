@@ -727,9 +727,7 @@ class TaipoIme : InputMethodService() {
         // Suppression juste après une autocorrection : on annule la correction au lieu d'effacer un caractère.
         if (key.action == KeyAction.Backspace && undoLastAutocorrection()) {
             onUserTyped()
-            syncAutoCapitalization()
-            layoutApplier.apply()
-            updateCorrectionBarVisibility()
+            afterFieldEdit()
             return
         }
         autocorrections.pending = null
@@ -737,9 +735,7 @@ class TaipoIme : InputMethodService() {
         // Suppression avec une sélection : on efface la sélection, pas le caractère avant son début.
         if (key.action == KeyAction.Backspace && fieldEditor.deleteSelectedText()) {
             onUserTyped()
-            syncAutoCapitalization()
-            layoutApplier.apply()
-            updateCorrectionBarVisibility()
+            afterFieldEdit()
             return
         }
 
@@ -979,9 +975,7 @@ class TaipoIme : InputMethodService() {
             null
         }
         learnFromTyping() // le mot choisi (complété ou corrigé) est celui qui compte pour la prédiction
-        syncAutoCapitalization()
-        layoutApplier.apply()
-        updateCorrectionBarVisibility()
+        afterFieldEdit()
     }
 
     /**
@@ -1002,9 +996,7 @@ class TaipoIme : InputMethodService() {
         ic.endBatchEdit()
         recordUndoEdit(inserted = insertedEmail, original = typed)
         learnFromTyping() // l'adresse choisie compte comme une adresse tapée
-        syncAutoCapitalization()
-        layoutApplier.apply()
-        updateCorrectionBarVisibility()
+        afterFieldEdit()
     }
 
     /**
@@ -1027,9 +1019,7 @@ class TaipoIme : InputMethodService() {
         ic.endBatchEdit()
         recordUndoEdit(inserted = "$compound ", original = original)
         learnFromTyping() // le composé choisi compte comme un mot tapé
-        syncAutoCapitalization()
-        layoutApplier.apply()
-        updateCorrectionBarVisibility()
+        afterFieldEdit()
     }
 
     /** Touche sur un mot prédit : il s'ajoute au curseur (après l'espace déjà tapée), suivi d'une espace. */
@@ -1041,6 +1031,11 @@ class TaipoIme : InputMethodService() {
         ic.commitText("$word ", 1)
         recordUndoEdit(inserted = "$word ", original = "")
         learnFromTyping()
+        afterFieldEdit()
+    }
+
+    /** Après une modification du champ par le clavier : majuscule, suggestions, disposition et barre resynchronisées. */
+    private fun afterFieldEdit() {
         syncAutoCapitalization()
         layoutApplier.apply()
         updateCorrectionBarVisibility()

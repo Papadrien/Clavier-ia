@@ -1,184 +1,60 @@
 package fr.junade.taipo.suggestion
 
 import android.content.Context
-import fr.junade.taipo.AppLog
-import fr.junade.taipo.dictionary.DatabasePassphraseProvider
-import java.io.File
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.CancellationException
+import fr.junade.taipo.storage.EncryptedFileStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.SupervisorJob
 
 /**
  * Point d'accès unique au modèle de prédiction du mot suivant ([NextWordModel]) et à sa sauvegarde.
  *
- * Ce que le clavier apprend des habitudes d'écriture reste sur l'appareil, dans un fichier chiffré
- * en AES-256-GCM ([NextWordCrypto] : clé dérivée par HKDF, format versionné, ancien format relu puis
- * migré). Le secret vient de l'Android Keystore (même mécanisme que le dictionnaire personnel
- * et l'historique du presse-papiers, avec une clé propre) ; le fichier et la clé sont exclus des
- * sauvegardes. Si le fichier est illisible (clé perdue, corruption), il est supprimé et le modèle
- * repart de zéro : ce ne sont que des statistiques de frappe.
- *
- * Le chargement se fait hors du thread principal dès la construction : les mots appris pendant ce
- * temps sont conservés (le contenu du disque est fusionné dans le modèle). Les écritures sont
- * regroupées : le fichier est réécrit [SAVE_DELAY_MS] après la dernière modification, ou tout de suite
- * avec [flush] (en arrière-plan) ou [flushBlocking] (terminé au retour, pour l'arrêt du service : un
- * `launch` asynchrone pourrait ne pas aboutir si le processus est tué juste après).
+ * Ce que le clavier apprend des habitudes d'écriture reste sur l'appareil, dans un fichier chiffré (voir [EncryptedFileStore] :
+ * AES-256-GCM, secret dans l'Android Keystore avec une clé propre, fichier et clé exclus des sauvegardes). Un fichier
+ * définitivement illisible est effacé et le modèle repart de zéro ; une erreur passagère le laisse intact (audit BUG-02).
  */
 class NextWordRepository(
     context: Context,
-    private val scope: CoroutineScope,
+    scope: CoroutineScope,
 ) {
-
-    private val appContext = context.applicationContext
-    private val file = File(appContext.filesDir, FILE_NAME)
-    private val keyProvider = DatabasePassphraseProvider(appContext, KEY_PREFS_NAME, KEY_ALIAS)
 
     /** Modèle courant, utilisable tout de suite (vide tant que le chargement n'est pas terminé). */
     val model = NextWordModel()
 
-    private val lock = Any()
-
-    // Sérialise les écritures du fichier (sauvegarde d'arrière-plan et flushBlocking) : le snapshot est
-    // pris sous ce verrou, donc l'écriture qui passe en dernier porte toujours l'état le plus récent.
-    // Ordre des verrous : writeLock puis lock, jamais l'inverse.
-    private val writeLock = Any()
-    private var saveJob: Job? = null
-    private var dirty = false
-
-    // Levé quand le chargement initial est terminé (réussi ou non). Tant qu'il ne l'est pas, on
-    // n'écrit pas : un modèle encore vide écraserait le fichier avant que son contenu soit fusionné.
-    private val loaded = CountDownLatch(1)
-
-    init {
-        scope.launch(Dispatchers.IO) { load() }
-    }
+    // Le modèle protège lui-même ses accès concurrents (frappe sur le fil principal, sauvegarde sur IO).
+    private val store = EncryptedFileStore(
+        context = context,
+        scope = scope,
+        fileName = FILE_NAME,
+        keyPrefsName = KEY_PREFS_NAME,
+        keyAlias = KEY_ALIAS,
+        tag = TAG,
+        serialize = { model.serialize() },
+        merge = { text -> model.mergeFrom(NextWordModel.parse(text)) },
+        clearModel = { model.clear() },
+    )
 
     /** À appeler après chaque apprentissage : planifie une sauvegarde groupée. */
-    fun markDirty() {
-        synchronized(lock) {
-            dirty = true
-            if (saveJob?.isActive == true) return
-            saveJob = scope.launch(Dispatchers.IO) {
-                try {
-                    delay(SAVE_DELAY_MS)
-                    save()
-                } catch (e: CancellationException) {
-                    throw e
-                }
-            }
-        }
-    }
+    fun markDirty() = store.markDirty()
 
-    /** Écrit tout de suite les modifications en attente (fin de saisie, arrêt du clavier). */
-    fun flush() {
-        val pending = synchronized(lock) {
-            saveJob?.cancel()
-            saveJob = null
-            dirty
-        }
-        if (pending) scope.launch(Dispatchers.IO) { save() }
-    }
+    /** Écrit tout de suite les modifications en attente, en arrière-plan (fin de saisie). */
+    fun flush() = store.flush()
 
-    /**
-     * Comme [flush], mais l'écriture est terminée quand la fonction rend la main (fichier de quelques
-     * Ko : écriture directe). Pour `onDestroy` du service, où un `launch` risquerait d'être perdu.
-     * Si une sauvegarde d'arrière-plan est déjà en cours d'écriture, on attend sa fin.
-     */
-    fun flushBlocking() {
-        synchronized(lock) {
-            saveJob?.cancel()
-            saveJob = null
-        }
-        save()
-    }
+    /** Écrit tout de suite, de façon synchrone (arrêt du service). */
+    fun flushBlocking() = store.flushBlocking()
 
-    /** Efface tout ce qui a été appris, en mémoire et sur le disque. */
-    fun clear() {
-        synchronized(lock) {
-            saveJob?.cancel()
-            saveJob = null
-            dirty = false
-        }
-        model.clear()
-        scope.launch(Dispatchers.IO) { runCatching { file.delete() } }
-    }
-
-    private fun load() {
-        var rewriteAsCurrentFormat = false
-        try {
-            if (!file.exists()) return
-            try {
-                val decrypted = withSecret { NextWordCrypto.decrypt(it, file.readBytes()) }
-                model.mergeFrom(NextWordModel.parse(String(decrypted.plain, Charsets.UTF_8)))
-                if (decrypted.legacyFormat) {
-                    // Lot 3.4 (S1) : fichier au format historique (clé SHA-256). Même clé Keystore, donc rien
-                    // n'est perdu : on le réécrit tout de suite au format actuel (HKDF), sans attendre un apprentissage.
-                    synchronized(lock) { dirty = true }
-                    rewriteAsCurrentFormat = true
-                }
-            } catch (e: Exception) {
-                AppLog.e(TAG, "Modèle de prédiction illisible : réinitialisation", e)
-                runCatching { file.delete() }
-                runCatching { keyProvider.reset() }
-            }
-        } finally {
-            loaded.countDown()
-        }
-        if (rewriteAsCurrentFormat) flush()
-    }
-
-    private fun save() {
-        // Chargement pas fini (quelques ms en pratique) : on attend un peu, sinon on renonce et les
-        // modifications restent en attente (dirty) pour la prochaine sauvegarde.
-        if (!loaded.await(LOAD_WAIT_MS, TimeUnit.MILLISECONDS)) {
-            AppLog.w(TAG, "Chargement du modèle de prédiction pas terminé : sauvegarde reportée")
-            return
-        }
-        synchronized(writeLock) {
-            val snapshot = synchronized(lock) {
-                if (!dirty) return
-                dirty = false
-                model.serialize()
-            }
-            try {
-                // Fichier temporaire puis renommage : jamais de fichier à moitié écrit.
-                writeAtomically(file, withSecret { NextWordCrypto.encrypt(it, snapshot.toByteArray(Charsets.UTF_8)) })
-            } catch (e: Exception) {
-                synchronized(lock) { dirty = true }
-                AppLog.e(TAG, "Échec de la sauvegarde du modèle de prédiction", e)
-            }
-        }
-    }
-
-    /** Donne le secret du Keystore à [block] et l'efface ensuite (le fournisseur rend toujours une copie). */
-    private inline fun <T> withSecret(block: (ByteArray) -> T): T {
-        val secret = keyProvider.getOrCreate()
-        try {
-            return block(secret)
-        } finally {
-            secret.fill(0)
-        }
-    }
+    /** Efface tout ce qui a été appris (mémoire et fichier). */
+    fun clear() = store.clear()
 
     companion object {
         private const val TAG = "NextWordRepository"
         const val FILE_NAME = "next_word_model.enc"
         const val KEY_PREFS_NAME = "next_word_key"
         const val KEY_ALIAS = "taipo_next_word_key"
-        private const val SAVE_DELAY_MS = 20_000L
-        private const val LOAD_WAIT_MS = 2_000L
     }
 }
 
-/**
- * Instance unique (par processus) du [NextWordRepository], comme pour le dictionnaire personnel : le
- * clavier et, plus tard, un écran de réglages partagent le même modèle.
- */
+/** Instance unique (par processus) du [NextWordRepository], partagée par le clavier et l'écran des paramètres. */
 object NextWordProvider {
 
     @Volatile
@@ -188,8 +64,8 @@ object NextWordProvider {
         instance ?: synchronized(this) {
             instance ?: NextWordRepository(
                 context.applicationContext,
-                // Portée liée au processus : le dépôt vit aussi longtemps que l'IME.
-                CoroutineScope(kotlinx.coroutines.SupervisorJob() + Dispatchers.Default),
+                // Portée liée au processus : le dépôt vit aussi longtemps que l'application.
+                CoroutineScope(SupervisorJob() + Dispatchers.Default),
             ).also { instance = it }
         }
 }

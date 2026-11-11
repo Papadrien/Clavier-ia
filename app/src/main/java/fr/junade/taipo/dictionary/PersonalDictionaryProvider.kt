@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.Dispatchers
 import fr.junade.taipo.AppLog
+import fr.junade.taipo.storage.StoredDataFailure
 
 /**
  * Instance unique (par processus) du [PersonalDictionaryRepository]. L'écran
@@ -32,8 +33,8 @@ object PersonalDictionaryProvider {
     )
 
     /**
-     * Ouvre la base chiffrée. Si elle est illisible (clé Keystore perdue ou
-     * invalidée, fichier corrompu), elle est supprimée puis recréée vide :
+     * Ouvre la base chiffrée. Si elle est définitivement illisible (clé Keystore
+     * perdue ou invalidée, fichier corrompu), elle est supprimée puis recréée vide :
      * le dictionnaire personnel n'est qu'une liste de mots que l'utilisateur
      * peut ressaisir, alors qu'une base inutilisable bloquerait durablement
      * la fonction.
@@ -43,6 +44,9 @@ object PersonalDictionaryProvider {
         return try {
             openAndVerify(appContext, passphraseProvider)
         } catch (e: Exception) {
+            // Audit BUG-02 : effacer seulement si la base ne pourra jamais être relue. Une erreur passagère (Keystore
+            // indisponible, disque plein, base verrouillée) remonte : la base reste intacte, nouvel essai à la prochaine ouverture.
+            if (!StoredDataFailure.isUnrecoverable(e)) throw e
             AppLog.e(TAG, "Base illisible : réinitialisation du dictionnaire personnel", e)
             appContext.deleteDatabase(PersonalDictionaryDatabase.NAME)
             passphraseProvider.reset()

@@ -63,6 +63,7 @@ object ModelFileResolver {
                     digest.update(buffer, 0, read)
                     output.write(buffer, 0, read)
                 }
+                output.fd.sync() // audit BUG-03 : copie sur le disque avant le renommage
             }
         }
 
