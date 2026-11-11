@@ -101,3 +101,15 @@ s'appuyant sur `ImeHostContext` comme les contrôleurs existants :
 
 Restent dans `TaipoIme` : le cycle de vie du service, la frappe dans le champ (touches, autocorrection, mots suggérés) et le
 câblage des contrôleurs. Prochaine étape possible : la frappe dans le champ (`onKeyPressed`, `onWordSuggestionTapped`).
+
+## Tests Robolectric (audit TEST-01, 11/11/2026)
+
+- Les classes qui manipulent le framework Android (contrôleurs du clavier, `InputConnection`, `EditorInfo`, presse-papiers) se testent
+  sur la JVM avec **Robolectric** (`app/src/test`, annotation `@RunWith(RobolectricTestRunner::class)`, JUnit 4, lancé par le moteur
+  Vintage à côté des tests JUnit 5). Ils tournent avec `./gradlew testDebugUnitTest`, donc aussi en CI, sans émulateur.
+- Réglages : `app/src/test/resources/robolectric.properties` (SDK simulé 36, application Android nue). Outillage commun :
+  `testing/RobolectricFakes.kt` (`fake` pour les interfaces d'hôte, `TestField` pour un vrai champ `EditText`).
+- Hors de portée de Robolectric : code natif (LiteRT-LM, sherpa-onnx, SQLCipher) et Keystore : tests instrumentés (`app/src/androidTest`).
+- Premier lancement : Robolectric télécharge une image d'Android (environ 150 Mo, dans `~/.m2`, mise en cache par la CI). Si Maven
+  Central est inaccessible, la propriété Gradle `taipo.robolectricRepo` (par exemple dans `~/.gradle/gradle.properties`) donne un
+  autre dépôt. Les tests passent sur JDK 17 et 21 (`--add-exports` / `--add-opens` dans `app/build.gradle.kts`).

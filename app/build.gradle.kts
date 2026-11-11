@@ -113,6 +113,11 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    // Robolectric lit les ressources et les assets fusionnés de l'app (textes, dimensions, listes de démarrage).
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 kotlin {
@@ -206,6 +211,10 @@ dependencies {
     // org.json réel pour les tests JVM du format de sauvegarde (story 10.3) : celui de android.jar y est « non simulé ».
     testImplementation("org.json:json:20240303")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
+    // Audit TEST-01 : Robolectric (framework Android sur la JVM) ; ses tests JUnit 4 passent par le moteur Vintage.
+    testImplementation(libs.robolectric)
+    testImplementation("junit:junit:4.13.2")
+    testRuntimeOnly(libs.junit.vintage.engine)
 
     // Tests instrumentés (src/androidTest, lot 3.3) : `./gradlew connectedDebugAndroidTest` sur appareil.
     // JUnit 5 n'est pas pris en charge côté appareil : ces tests sont en JUnit 4. Versions à confirmer
@@ -217,4 +226,9 @@ dependencies {
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+    // Robolectric télécharge l'image d'Android depuis Maven Central. Propriété facultative (par exemple dans
+    // ~/.gradle/gradle.properties) pour un autre dépôt, si Maven Central est inaccessible ou limité.
+    providers.gradleProperty("taipo.robolectricRepo").orNull?.let { systemProperty("robolectric.dependency.repo.url", it) }
+    // Robolectric touche aux descripteurs de fichiers internes du JDK (mémoire partagée de l'application simulée).
+    jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED", "--add-opens=java.base/java.io=ALL-UNNAMED")
 }

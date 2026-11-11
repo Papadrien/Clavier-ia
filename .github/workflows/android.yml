@@ -30,6 +30,13 @@ jobs:
 
       - run: ./gradlew :app:dependencies --configuration debugRuntimeClasspath | grep litertlm
 
+      # Robolectric (tests JVM du framework Android) télécharge une image d'Android d'environ 150 Mo dans ~/.m2 : mise en cache.
+      - name: Cache Robolectric
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: ~/.m2/repository/org/robolectric
+          key: robolectric-${{ hashFiles('gradle/libs.versions.toml', 'app/src/test/resources/robolectric.properties') }}
+
       # Tests JVM : ceux de l'app (testDebugUnitTest) et ceux du module :core (dictionnaire, autocorrection, suggestions),
       # un module JVM pur qui n'a pas de tâche testDebugUnitTest : sans :core:test, ses tests ne tourneraient jamais en CI.
       - name: Run unit tests
