@@ -15,5 +15,6 @@ class TaipoApplication : Application() {
         KeyboardTheme.choice = keyboard.themeChoice
         PremiumPass.load(this) // pass premium (dernier état connu de Google Play) ; pose aussi la couleur d'accent et la forme des touches du clavier
         Analytics.initialize(this)
+        registerActivityLifecycleCallbacks(ScreenThemeTracker) // écrans recréés après un changement de thème
     }
 }

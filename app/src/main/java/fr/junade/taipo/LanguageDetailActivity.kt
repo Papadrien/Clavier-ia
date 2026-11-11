@@ -32,7 +32,7 @@ class LanguageDetailActivity : Activity() {
     /** Ligne de chaque disposition, pour mettre à jour la ligne choisie sans tout reconstruire. */
     private val optionRows = LinkedHashMap<LetterArrangement, View>()
 
-    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
+    // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }

@@ -146,7 +146,7 @@ class ModelDownloadActivity : ModelScreenActivity() {
         if (badgeLabel != null) {
             views.badge.setText(badgeLabel)
             views.badge.setBackgroundResource(R.drawable.bg_status_badge_ready)
-            views.badge.setTextColor(getColor(R.color.text_primary))
+            views.badge.setTextColor(getColor(R.color.text_on_accent)) // blanc sur le violet, aussi en thème clair
         }
 
         views.progress.visibility = View.GONE

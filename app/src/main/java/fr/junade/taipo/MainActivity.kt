@@ -62,7 +62,7 @@ class MainActivity : Activity() {
         value.float
     }
 
-    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
+    // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }
@@ -401,7 +401,7 @@ class MainActivity : Activity() {
         val ready = status == ModelStatus.READY
         badge.text = label
         badge.setBackgroundResource(if (ready) R.drawable.bg_status_badge_ready else R.drawable.bg_status_badge_attention)
-        badge.setTextColor(getColor(if (ready) R.color.text_primary else R.color.settings_warning_text))
+        badge.setTextColor(getColor(if (ready) R.color.text_on_accent else R.color.settings_warning_text)) // blanc sur le violet
         badge.visibility = View.VISIBLE
     }
 

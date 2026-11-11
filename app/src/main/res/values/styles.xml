@@ -25,6 +25,8 @@
     <!-- Principal : violet #8C00FF sur ombre #6800AB. -->
     <style name="TaipoButton.Primary">
         <item name="android:background">@drawable/bg_button_primary</item>
+        <!-- Blanc sur le violet, aussi en thème clair (où le texte ordinaire devient sombre). -->
+        <item name="android:textColor">@color/button_text_on_accent</item>
     </style>
 
     <!-- Secondaire : gris #2B2B2B sur ombre #191919. -->

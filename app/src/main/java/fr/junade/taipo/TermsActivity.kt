@@ -14,7 +14,7 @@ import fr.junade.taipo.model.ModelLicense
 /** Écran « Conditions d'utilisation » (accueil > À propos), construit à partir de [TermsContent]. */
 class TermsActivity : Activity() {
 
-    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
+    // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }

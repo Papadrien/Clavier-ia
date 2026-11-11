@@ -12,7 +12,7 @@ import androidx.core.view.ViewCompat
 /** Écran « Confidentialité » (accueil > À propos, en dernier) : texte seul construit à partir de [PrivacyContent], sans bascule. */
 class PrivacyActivity : Activity() {
 
-    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
+    // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }

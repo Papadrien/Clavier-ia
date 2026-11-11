@@ -87,7 +87,7 @@ class VoiceModelDownloadActivity : ModelScreenActivity() {
         if (present) {
             views.badge.setText(R.string.model_download_badge_installed)
             views.badge.setBackgroundResource(R.drawable.bg_status_badge_ready)
-            views.badge.setTextColor(getColor(R.color.text_primary))
+            views.badge.setTextColor(getColor(R.color.text_on_accent)) // blanc sur le violet, aussi en thème clair
         }
 
         views.progress.visibility = View.GONE

@@ -72,7 +72,7 @@ class ThemeActivity : Activity() {
     /** Police réservée touchée sans pass : montrée comme choisie, avec le bouton du pass, sans être posée sur le clavier. */
     private var previewFont: KeyboardFont? = null
 
-    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
+    // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }
@@ -534,8 +534,14 @@ class ThemeActivity : Activity() {
 
     private fun select(choice: ThemeChoice) {
         if (choice == preferences.themeChoice) return
+        val before = KeyboardTheme.screenLook()
         preferences.themeChoice = choice
         Analytics.setting(this, "theme_choice", choice.storageKey)
+        // Les écrans suivent ce choix : celui-ci se recrée tout de suite dans le nouveau thème (sa position est gardée).
+        if (KeyboardTheme.needsRecreate(before)) {
+            recreate()
+            return
+        }
         render(choice)
         renderBackdrops()
     }
