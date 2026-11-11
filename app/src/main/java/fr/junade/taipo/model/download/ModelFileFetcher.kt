@@ -263,7 +263,8 @@ object ModelFileFetcher {
             }
             else -> {
                 AppLog.w(TAG, "Réponse inattendue : HTTP ${response.code}")
-                return Plan.Stop(Outcome.Failed(DownloadFailure.SERVER))
+                // Audit REL-02 : serveur saturé ou en panne passagère : nouvelle tentative avec le délai habituel.
+                return Plan.Stop(Outcome.Failed(DownloadFailure.SERVER, retryable = DownloadPolicy.isRetryableHttpStatus(response.code)))
             }
         }
         // Le serveur doit annoncer une taille cohérente avec le fichier attendu.

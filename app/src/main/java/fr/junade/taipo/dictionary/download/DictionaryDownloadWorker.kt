@@ -5,6 +5,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.KeyboardLanguage
+import fr.junade.taipo.dictionary.DictionaryChecksums
 import fr.junade.taipo.dictionary.DictionaryFile
 import fr.junade.taipo.dictionary.DictionaryFiles
 import fr.junade.taipo.model.download.DownloadFailure
@@ -92,7 +93,7 @@ class DictionaryDownloadWorker(context: Context, params: WorkerParameters) : Cor
                     context = applicationContext,
                     url = DictionaryFiles.remoteUrl(language, file),
                     destination = destination,
-                    expectedSha256 = null,
+                    expectedSha256 = DictionaryChecksums.of(language, file), // audit SEC-03
                     acceptContentLength = { it in 1..MAX_FILE_BYTES },
                     // Quelques Mo : pas de confirmation en données mobiles.
                     allowMobileData = true,

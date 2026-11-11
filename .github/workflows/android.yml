@@ -5,6 +5,7 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,16 +15,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6
         with:
           distribution: temurin
           java-version: '17'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
+        with:
+          validate-wrappers: true # audit CI-03 : le gradle-wrapper.jar versionné est comparé aux empreintes officielles
 
       - run: ./gradlew :app:dependencies --configuration debugRuntimeClasspath | grep litertlm
 
@@ -59,27 +62,73 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           KEY_PROPERTIES: ${{ secrets.ANDROID_KEY_PROPERTIES }}
         run: |
-          if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "$KEYSTORE_BASE64" | base64 --decode > app/keystore.jks
-            echo "$KEY_PROPERTIES" > key.properties
-            echo "✅ Signing release (secrets)"
-          else
-            keytool -genkey -v -keystore app/keystore.jks -alias taipo-debug -keyalg RSA -keysize 2048 -validity 10000 -storepass taipo-debug-pwd -keypass taipo-debug-pwd -dname "CN=Taipo Debug, OU=Dev, O=Taipo, L=Paris, C=FR" 2>/dev/null
-            printf 'storePassword=taipo-debug-pwd\nkeyPassword=taipo-debug-pwd\nkeyAlias=taipo-debug\nstoreFile=keystore.jks\n' > key.properties
-            echo "✅ Signing debug stable (sans secrets)"
+          # Audit CI-01 : sans les secrets, échec franc. Une clé générée à la volée changerait à chaque exécution : les APK
+          # ne se mettraient plus à jour l'un sur l'autre, et un AAB signé ainsi serait refusé par Play.
+          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$KEY_PROPERTIES" ]; then
+            echo "::error::Secrets ANDROID_KEYSTORE_BASE64 et ANDROID_KEY_PROPERTIES absents : build release impossible (voir docs/release.md)."
+            exit 1
           fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > app/keystore.jks
+          echo "$KEY_PROPERTIES" > key.properties
+          echo "✅ Signing release (secrets)"
 
       - name: Build APK (${{ steps.variant.outputs.variant }})
         run: |
           if [ "${{ steps.variant.outputs.variant }}" = "release" ]; then
-            ./gradlew assembleRelease
+            # Audit CI-02 : l'AAB est ce que Play accepte ; l'APK reste pour les essais.
+            ./gradlew assembleRelease bundleRelease
           else
             ./gradlew assembleDebug
           fi
 
       - name: Upload APK
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: apk-${{ steps.variant.outputs.variant }}
           path: app/build/outputs/apk/*/*.apk
           if-no-files-found: error
+
+      # Audit CI-02 : bundle et fichier de correspondance R8 (pour lire les traces de plantage de Play), release seulement.
+      - name: Upload AAB et mapping
+        if: steps.variant.outputs.variant == 'release'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: aab-release
+          path: |
+            app/build/outputs/bundle/release/*.aab
+            app/build/outputs/mapping/release/mapping.txt
+          if-no-files-found: error
+
+  # Audit CI-04 : tests instrumentés (Room + SQLCipher + Keystore réels) sur émulateur, sur main et à la demande : ils sont
+  # longs et ne doivent pas ralentir chaque pull request.
+  instrumented-tests:
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
+
+      - name: Activer KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Tests instrumentés
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: ./gradlew connectedDebugAndroidTest
