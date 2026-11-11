@@ -3,6 +3,7 @@ package fr.junade.taipo.backup
 import android.content.Context
 import fr.junade.taipo.AccentPalette
 import fr.junade.taipo.HapticIntensity
+import fr.junade.taipo.KeyShape
 import fr.junade.taipo.KeyboardHeight
 import fr.junade.taipo.KeyboardPreferences
 import fr.junade.taipo.ThemeChoice
@@ -66,6 +67,7 @@ object BackupService {
                 habitLearning = keyboard.isHabitLearningEnabled,
                 themeChoice = keyboard.themeChoice.storageKey,
                 accentPalette = keyboard.accentPalette.storageKey,
+                keyShape = keyboard.keyShape.storageKey,
             ),
             ai = BackupAiSettings(
                 activeModelId = ModelPreferences(appContext).activeModel()?.id,
@@ -139,6 +141,10 @@ object BackupService {
         settings.accentPalette?.let { key ->
             // Écrire le réglage met aussi à jour KeyboardTheme.palette (le violet si la couleur est réservée au pass premium).
             AccentPalette.entries.firstOrNull { it.storageKey == key }?.let { keyboard.accentPalette = it }
+        }
+        settings.keyShape?.let { key ->
+            // Écrire le réglage met aussi à jour KeyboardTheme.shape (Arrondi si la forme est réservée au pass premium).
+            KeyShape.entries.firstOrNull { it.storageKey == key }?.let { keyboard.keyShape = it }
         }
     }
 

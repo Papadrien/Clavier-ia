@@ -17,6 +17,9 @@ package fr.junade.taipo
  *
  * Contrastes (AccentPaletteTest) : blanc sur [primary] au moins 4,5:1, [primary] sur une touche secondaire claire au moins 3:1,
  * [onDarkKey] sur [darkKey] au moins 4,4:1 (le niveau du violet de la charte).
+ *
+ * Revue du 10/11/2026 : les touches sombres du bleu vif (effacer, Maj, emoji…) paraissaient grises, un gris bleuté passant pour
+ * neutre à l'œil ; leur teinte est plus marquée (écart de canaux 41 au lieu de 18), à luminance égale.
  */
 enum class AccentPalette(
     val storageKey: String,
@@ -28,7 +31,7 @@ enum class AccentPalette(
 ) {
     VIOLET("violet", 0xFF8C00FF.toInt(), 0xFF6800AB.toInt(), 0xFFC58BFF.toInt(), 0xFF43384C.toInt(), 0xFF27212D.toInt()),
     INDIGO("indigo", 0xFF4F46E5.toInt(), 0xFF3730A3.toInt(), 0xFFA5B4FC.toInt(), 0xFF3C3B4A.toInt(), 0xFF22222B.toInt()),
-    BLUE("blue", 0xFF0A66E8.toInt(), 0xFF06429A.toInt(), 0xFF8DB8FF.toInt(), 0xFF39414B.toInt(), 0xFF21252C.toInt()),
+    BLUE("blue", 0xFF0A66E8.toInt(), 0xFF06429A.toInt(), 0xFF8DB8FF.toInt(), 0xFF33425C.toInt(), 0xFF1D2638.toInt()),
     LAGOON("lagoon", 0xFF00796D.toInt(), 0xFF004F47.toInt(), 0xFF5FD4C6.toInt(), 0xFF384C4A.toInt(), 0xFF212C2B.toInt()),
     EMERALD("emerald", 0xFF15803D.toInt(), 0xFF0D5428.toInt(), 0xFF6EE7A0.toInt(), 0xFF3B4940.toInt(), 0xFF222A25.toInt()),
     AMBER("amber", 0xFFC2410C.toInt(), 0xFF842B06.toInt(), 0xFFFFA070.toInt(), 0xFF4B3F3A.toInt(), 0xFF2B2421.toInt()),

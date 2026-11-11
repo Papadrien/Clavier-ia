@@ -628,6 +628,16 @@
     <string name="accent_raspberry">Raspberry</string>
     <string name="accent_magenta">Magenta</string>
     <string name="accent_graphite">Graphite</string>
+    <string name="theme_section_shape">Key shape</string>
+    <string name="key_shape_rounded">Rounded</string>
+    <string name="key_shape_pill">Pill</string>
+    <string name="key_shape_square">Square</string>
+    <string name="key_shape_flat">Flat</string>
+    <string name="key_shape_round">Round</string>
+    <string name="key_shape_bevel">Bevel</string>
+    <string name="key_shape_mechanical">Mechanical</string>
+    <string name="key_shape_outline">Outline</string>
+    <string name="key_shape_bare">Bare</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Appearance</string>
     <string name="languages_title">Languages</string>

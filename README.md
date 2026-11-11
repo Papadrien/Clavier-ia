@@ -5,7 +5,8 @@ des actions d'**IA entièrement locale** : correction du texte, génération par
 donnée envoyée. Les modèles tournent sur l'appareil. La permission `INTERNET` ne sert qu'au **téléchargement du fichier
 d'un modèle** (écran « Modèle IA », voir `docs/telechargement-modeles.md`), des dictionnaires et des modèles vocaux, et à la
 **mesure d'usage anonyme** (Aptabase, désactivable dans « Mes données », jamais de texte saisi ni dans un champ de mot de passe :
-voir `docs/analytics.md`). Le texte tapé ne quitte jamais l'appareil. Ce document décrit ce qui
+voir `docs/analytics.md`). La bibliothèque Google Play Billing (pass premium) envoie aussi ses propres journaux techniques à
+Google (`firebaselogging.googleapis.com`, voir `docs/analytics.md`). Le texte tapé ne quitte jamais l'appareil. Ce document décrit ce qui
 est réellement présent dans le code ; le backlog produit est tenu à part.
 
 - Lettres AZERTY (avec touche Maj, une seule lettre en majuscule)
@@ -14,6 +15,7 @@ est réellement présent dans le code ; le backlog produit est tenu à part.
 - **Dictionnaire personnel** (écran « Dictionnaire personnel ») : mots ajoutés à la main, jamais corrigés par l'autocorrection locale et utilisés comme candidats de correction ; stocké dans une base **Room chiffrée par SQLCipher**
 - **Appui long sur une lettre** : bulle d'accents et caractères spéciaux (é è ê ë, à â æ, ç, ô œ, ù û ü, ñ, ß…), sélection en glissant le doigt puis en le relevant sur le caractère voulu ; le choix présélectionné (ex. é pour E) est centré juste au-dessus de la lettre appuyée (décalé seulement si la lettre est trop près d'un bord de l'écran) ; les lettres du haut proposent leur chiffre en premier quand la rangée de chiffres est désactivée ; les caractères passent en majuscule avec Maj
 - **Barre espace** : glisser le doigt dessus déplace le curseur (un caractère par pas), sans saisir d'espace, avec le trait central qui s'étire comme une amibe (deux ressorts, l'avant colle au doigt, l'arrière traîne)
+- **Forme des touches** (page « Apparence », section « Forme des touches », `KeyShape`) : 9 formes, Arrondi (forme d'origine, par défaut), Pilule, Carré et Plat (sans ombre) gratuites ; Rond (cercle, touches larges en pilule), Biseau (coins coupés), Mécanique (flanc épais et plateau éclairé), Contour (trait seul) et Sans fond (face visible seulement sous le doigt) réservées au pass premium, essayables sur les aperçus comme les couleurs. Seul le dessin change : disposition et zones tactiles restent les mêmes ; Entrée reste pleine dans toutes les formes, les bulles d'agrandissement et d'accents reprennent le rayon de la forme. Sauvegardée avec les autres réglages
 - **Hauteur du clavier** réglable (Paramètres du clavier) : 5 niveaux de 80 % à 120 % de la hauteur de référence (100 % par défaut), appliqués à la hauteur des touches ; la marge basse (zone système) n'est pas modifiée
 - **Mode paysage** : clavier plus bas (rangées et marge basse raccourcies, réglage de hauteur plafonné à 100 % pour laisser de la place à l'application), sans mode plein écran : le champ de saisie reste visible ; les bulles ouvertes sont fermées à la rotation
 - **Tablette / pliable (responsive)** : sous 600 dp de large (téléphone, pliable replié) le clavier occupe toute la largeur ; à partir de 600 dp (tablette, pliable déplié, multi-fenêtre) les touches profitent de la largeur, plafonnée à 720 dp, et la zone des touches est centrée (marges inertes, barre d'actions alignée). La largeur est celle de la fenêtre du clavier : elle suit le dépliage et la rotation

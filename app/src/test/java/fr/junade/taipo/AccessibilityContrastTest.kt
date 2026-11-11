@@ -157,6 +157,7 @@ class AccessibilityContrastTest {
             assertText("input_stroke_focused", "taipo_background", GRAPHIC_MIN)
             assertText("control_unchecked", "taipo_background", GRAPHIC_MIN) // bouton radio / commutateur non coché
             assertText("switch_thumb", "switch_track_off", GRAPHIC_MIN) // pastille sur piste éteinte
+            assertText("key_outline", "keyboard_background", GRAPHIC_MIN) // trait des touches « Contour » (KeyShape.OUTLINE)
         }
     }
 

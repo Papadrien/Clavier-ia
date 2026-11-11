@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Page « Thème » (lot T5) : cartes d'aperçu (Système, Clair, Sombre, et Couleur dynamique dès Android 12) posées par ThemeActivity, par rangées de trois, sans texte d'explication.
-     Section « Couleur » : pastilles des couleurs d'accent (AccentPalette), posées par ThemeActivity par rangées de cinq ; prévue pour le pass premium. -->
+     Section « Couleur » : pastilles des couleurs d'accent (AccentPalette), posées par ThemeActivity par rangées de cinq ; prévue pour le pass premium.
+     Section « Forme des touches » : cartes des formes de touches (KeyShape), par rangées de trois. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/theme_scroll"
     android:layout_width="match_parent"
@@ -52,6 +53,32 @@
         <Button
             style="@style/TaipoButton.Primary"
             android:id="@+id/button_theme_unlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md"
+            android:text="@string/premium_unlock"
+            android:visibility="gone" />
+
+        <!-- Section « Forme des touches » : une carte par forme (KeyShape), posées par ThemeActivity par rangées de trois. Les formes
+             réservées au pass portent un cadenas ; touchée sans pass, une forme est montrée sur les aperçus et ce bouton ouvre le pass. -->
+        <TextView
+            style="@style/TaipoText.Section"
+            android:id="@+id/theme_shape_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm"
+            android:text="@string/theme_section_shape" />
+
+        <LinearLayout
+            android:id="@+id/theme_shapes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <Button
+            style="@style/TaipoButton.Primary"
+            android:id="@+id/button_shape_unlock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/taipo_settings_gap_md"

@@ -36,12 +36,18 @@ import kotlin.math.abs
  * Section « Police du clavier » : une ligne par police ([KeyboardFont]), écrite dans cette police. Open Sans est gratuite, les
  * autres sont réservées au pass, avec le même principe que les couleurs (essayée sans pass, appliquée au retour avec le pass).
  * Seul le clavier change de police : les écrans de l'application gardent Open Sans.
+ *
+ * Section « Forme des touches » : une carte par forme ([KeyShape]), par rangées de trois comme les thèmes ; un appui la choisit
+ * ([KeyboardPreferences.keyShape]) et les aperçus des thèmes la reprennent. Les formes réservées au pass portent un cadenas et se
+ * comportent comme les couleurs réservées : essayées sur les aperçus, bouton du pass, appliquées au retour avec le pass.
  */
 class ThemeActivity : Activity() {
 
     private class Card(val choice: ThemeChoice, val view: View, val check: View, val preview: ThemePreviewView)
 
     private class Swatch(val palette: AccentPalette, val view: View, val disc: AccentSwatchView)
+
+    private class ShapeCard(val shape: KeyShape, val view: View, val check: View, val lock: View, val preview: ThemePreviewView)
 
     private class FontRow(val font: KeyboardFont, val view: View, val mark: ImageView)
 
@@ -50,6 +56,10 @@ class ThemeActivity : Activity() {
     private lateinit var preferences: KeyboardPreferences
     private val cards = ArrayList<Card>()
     private val swatches = ArrayList<Swatch>()
+    private val shapeCards = ArrayList<ShapeCard>()
+
+    /** Forme réservée touchée sans pass : montrée sur les aperçus, appliquée au retour si le pass a été pris. */
+    private var previewShape: KeyShape? = null
 
     /** Couleur réservée touchée sans pass : montrée sur les aperçus, appliquée au retour si le pass a été pris. */
     private var previewPalette: AccentPalette? = null
@@ -104,6 +114,11 @@ class ThemeActivity : Activity() {
         }
         ViewCompat.setAccessibilityHeading(findViewById(R.id.theme_color_heading), true)
         buildPalettes(findViewById(R.id.theme_palettes))
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.theme_shape_heading), true)
+        buildShapes(findViewById(R.id.theme_shapes), inflater, gap)
+        findViewById<View>(R.id.button_shape_unlock).setOnClickListener {
+            startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_THEME))
+        }
         findViewById<View>(android.R.id.content).applyTaipoFontToTree()
         ViewCompat.setAccessibilityHeading(findViewById(R.id.theme_backdrop_heading), true)
         setUpBackdrops()
@@ -119,6 +134,7 @@ class ThemeActivity : Activity() {
             startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_THEME))
         }
         renderPalettes(preferences.accentPalette)
+        renderShapes(preferences.keyShape)
         renderFonts(preferences.keyboardFont)
         renderBackdrops()
     }
@@ -133,6 +149,13 @@ class ThemeActivity : Activity() {
             Analytics.setting(this, "accent_palette", tried.storageKey)
         }
         renderPalettes(preferences.accentPalette)
+        val triedShape = previewShape
+        if (triedShape != null && triedShape.isAvailable(PremiumPass.isActive)) {
+            previewShape = null
+            preferences.keyShape = triedShape
+            Analytics.setting(this, "key_shape", triedShape.storageKey)
+        }
+        renderShapes(preferences.keyShape)
         val triedFont = previewFont
         if (triedFont != null && triedFont.isAvailable(PremiumPass.isActive)) {
             previewFont = null
@@ -147,6 +170,66 @@ class ThemeActivity : Activity() {
             Analytics.setting(this, "keyboard_backdrop", triedBackdrop.storageKey)
         }
         renderBackdrops()
+    }
+
+    /** Cartes des formes de touches, par rangées de [CARDS_PER_ROW] de même largeur (la dernière complétée par des vides). */
+    private fun buildShapes(container: LinearLayout, inflater: LayoutInflater, gap: Int) {
+        KeyShape.entries.chunked(CARDS_PER_ROW).forEachIndexed { rowIndex, shapes ->
+            val row = LinearLayout(this)
+            row.orientation = LinearLayout.HORIZONTAL
+            row.isBaselineAligned = false
+            repeat(CARDS_PER_ROW) { index ->
+                val shape = shapes.getOrNull(index)
+                val view = if (shape != null) {
+                    inflater.inflate(R.layout.item_theme_card, row, false).also { card ->
+                        val preview = card.findViewById<ThemePreviewView>(R.id.theme_preview)
+                        preview.shape = shape
+                        card.findViewById<TextView>(R.id.theme_label).setText(shape.labelRes())
+                        card.setOnClickListener { selectShape(shape) }
+                        shapeCards += ShapeCard(shape, card, card.findViewById(R.id.theme_check), card.findViewById(R.id.theme_lock), preview)
+                    }
+                } else {
+                    View(this).apply { layoutParams = LinearLayout.LayoutParams(0, 0, 1f) }
+                }
+                (view.layoutParams as LinearLayout.LayoutParams).apply { if (index > 0) marginStart = gap }
+                row.addView(view)
+            }
+            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            if (rowIndex > 0) params.topMargin = gap
+            container.addView(row, params)
+        }
+    }
+
+    private fun selectShape(shape: KeyShape) {
+        if (!shape.isAvailable(PremiumPass.isActive)) {
+            previewShape = shape // réservée, sans pass : essayée sur les aperçus, avec le bouton qui ouvre l'écran du pass
+            renderShapes(preferences.keyShape)
+            return
+        }
+        previewShape = null
+        if (shape != preferences.keyShape) {
+            preferences.keyShape = shape
+            Analytics.setting(this, "key_shape", shape.storageKey)
+        }
+        renderShapes(shape)
+    }
+
+    /** Carte de forme choisie (contour, coche, état radio lu par TalkBack), cadenas des formes réservées, aperçus des thèmes dans cette forme. */
+    private fun renderShapes(selected: KeyShape) {
+        val premium = PremiumPass.isActive
+        val shown = previewShape ?: KeyShape.effective(selected, premium)
+        for (card in shapeCards) {
+            val isSelected = card.shape == shown
+            val locked = !card.shape.isAvailable(premium)
+            card.view.isSelected = isSelected
+            card.check.visibility = if (isSelected) View.VISIBLE else View.GONE
+            card.lock.visibility = if (locked) View.VISIBLE else View.GONE
+            val name = getString(card.shape.labelRes())
+            card.view.contentDescription = if (locked) getString(R.string.premium_locked_item, name) else name
+            ViewCompat.setAccessibilityDelegate(card.view, radioDelegate(isSelected))
+        }
+        for (card in cards) card.preview.shape = shown
+        findViewById<View>(R.id.button_shape_unlock).visibility = if (previewShape != null) View.VISIBLE else View.GONE
     }
 
     /**
@@ -441,6 +524,7 @@ class ThemeActivity : Activity() {
             ViewCompat.setAccessibilityDelegate(swatch.view, radioDelegate(isSelected))
         }
         for (card in cards) card.preview.accent = shown
+        for (card in shapeCards) card.preview.accent = shown
         renderBackdrops()
         findViewById<View>(R.id.button_theme_unlock).visibility = if (previewPalette != null) View.VISIBLE else View.GONE
     }
@@ -455,6 +539,7 @@ class ThemeActivity : Activity() {
 
     /** Pose la carte choisie (contour, coche) et l'état lu par TalkBack : un choix unique parmi les cartes, comme des boutons radio. */
     private fun render(selected: ThemeChoice) {
+        for (card in shapeCards) card.preview.choice = selected
         for (card in cards) {
             val isSelected = card.choice == selected
             card.view.isSelected = isSelected
@@ -505,6 +590,20 @@ internal fun AccentPalette.labelRes(): Int = when (this) {
     AccentPalette.RASPBERRY -> R.string.accent_raspberry
     AccentPalette.MAGENTA -> R.string.accent_magenta
     AccentPalette.GRAPHITE -> R.string.accent_graphite
+}
+
+/** Nom de la forme des touches (carte de la page « Apparence »). */
+@StringRes
+internal fun KeyShape.labelRes(): Int = when (this) {
+    KeyShape.ROUNDED -> R.string.key_shape_rounded
+    KeyShape.PILL -> R.string.key_shape_pill
+    KeyShape.SQUARE -> R.string.key_shape_square
+    KeyShape.FLAT -> R.string.key_shape_flat
+    KeyShape.ROUND -> R.string.key_shape_round
+    KeyShape.BEVEL -> R.string.key_shape_bevel
+    KeyShape.MECHANICAL -> R.string.key_shape_mechanical
+    KeyShape.OUTLINE -> R.string.key_shape_outline
+    KeyShape.BARE -> R.string.key_shape_bare
 }
 
 /** Libellé du thème, pour le sous-titre de la ligne « Thème » de l'accueil. */

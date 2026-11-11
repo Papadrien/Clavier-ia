@@ -39,6 +39,31 @@ class BackdropColors(val base: Int, val accent: Int, val dark: Boolean) {
             hsv[0] = (hsv[0] + degrees + 360f) % 360f
             return Color.HSVToColor(hsv)
         }
+
+        /**
+         * Second ton d'accent : [color] dont la teinte est tournée de [degrees], écart élargi là où l'œil distingue mal les
+         * teintes voisines ([widenedShift]). Revue du 10/11/2026 : sur le bleu vif, le second ton (±28°) restait du bleu.
+         */
+        fun secondTone(color: Int, degrees: Float): Int {
+            val hsv = FloatArray(3)
+            Color.colorToHSV(color, hsv)
+            return hueShift(color, widenedShift(hsv[0], degrees))
+        }
+
+        /** Bande des bleus (teinte HSV) où deux teintes proches se confondent à l'œil. */
+        const val BLUE_BAND_START = 190f
+        const val BLUE_BAND_END = 255f
+
+        /** Facteur appliqué au décalage de teinte dans la bande des bleus. */
+        const val BLUE_BAND_WIDENING = 2.2f
+
+        /**
+         * Décalage de teinte à appliquer à une couleur de teinte [hue] pour un second ton voulu à [degrees] : multiplié par
+         * [BLUE_BAND_WIDENING] dans la bande des bleus (215° + 28° y reste bleu, 215° + 62° devient violet), inchangé ailleurs.
+         * Logique pure, testée en JVM (`BackdropColorsTest`).
+         */
+        fun widenedShift(hue: Float, degrees: Float): Float =
+            if (hue in BLUE_BAND_START..BLUE_BAND_END) degrees * BLUE_BAND_WIDENING else degrees
     }
 }
 
@@ -100,10 +125,10 @@ internal class RibbonsPainter : BackdropPainter() {
     }
 
     override fun draw(canvas: Canvas, w: Float, h: Float, colors: BackdropColors, motion: BackdropMotion) {
-        val p = motion.phase
+        val p = motion.phase * RIBBON_SPEED
         val cx = w * cxFraction + sin(p * 0.21f) * w * 0.12f
         val cy = h * cyFraction + cos(p * 0.17f) * h * 0.08f
-        val second = BackdropColors.hueShift(colors.accent, secondHue)
+        val second = BackdropColors.secondTone(colors.accent, secondHue)
         halo.shader = RadialGradient(
             cx,
             cy - h * 0.4f,
@@ -153,6 +178,9 @@ internal class RibbonsPainter : BackdropPainter() {
 
     private companion object {
         const val RIBBONS = 6
+
+        /** Vitesse de l'animation (défilement des réglages et frappe) : réduite de 80 % (revue du 10/11/2026, trop rapide). */
+        const val RIBBON_SPEED = 0.2f
     }
 }
 
@@ -208,8 +236,8 @@ internal class BubblesPainter : BackdropPainter() {
             intArrayOf(
                 BackdropColors.mix(colors.glow, Color.WHITE, 0.6f),
                 BackdropColors.withAlpha(colors.accent, 0.9f),
-                BackdropColors.withAlpha(BackdropColors.hueShift(colors.accent, 40f), 0.85f),
-                BackdropColors.withAlpha(BackdropColors.hueShift(colors.accent, -40f), 0.7f),
+                BackdropColors.withAlpha(BackdropColors.secondTone(colors.accent, 40f), 0.85f),
+                BackdropColors.withAlpha(BackdropColors.secondTone(colors.accent, -40f), 0.7f),
             ),
             floatArrayOf(0f, 0.45f, 0.8f, 1f),
             Shader.TileMode.CLAMP,
@@ -365,7 +393,7 @@ internal class WavesPainter : BackdropPainter() {
                 white = white,
                 tone = random.nextFloat(),
                 alpha = if (white) 0.55f else 0.3f + random.nextFloat() * 0.35f,
-                width = if (white) 1f else 1.2f + random.nextFloat() * 1.6f,
+                width = WAVE_LINE_SCALE * (if (white) 1f else 1.2f + random.nextFloat() * 1.6f),
             )
         }
     }
@@ -396,6 +424,9 @@ internal class WavesPainter : BackdropPainter() {
     }
 
     private companion object {
+        /** Épaisseur des lignes triplée (revue du 10/11/2026 : trop fines). */
+        const val WAVE_LINE_SCALE = 3f
+
         const val LINES = 11
         const val STEP = 6f
     }

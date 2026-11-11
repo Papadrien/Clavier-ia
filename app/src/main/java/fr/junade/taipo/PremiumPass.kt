@@ -67,12 +67,14 @@ object PremiumPass {
     }
 
     /**
-     * Le clavier suit le nouvel état : la couleur et la police choisies s'appliquent (ou retombent sur le violet et Open Sans).
-     * Ses vues sont recréées à la prochaine ouverture d'un champ (palette et police sont comparées à celles de leur création).
+     * Le clavier suit le nouvel état : la couleur, la forme et la police choisies s'appliquent (ou retombent sur le violet, Arrondi
+     * et Open Sans). Ses vues sont recréées à la prochaine ouverture d'un champ (palette, forme et police sont comparées à celles
+     * de leur création).
      */
     private fun applyToKeyboard(context: Context) {
         val preferences = KeyboardPreferences(context)
         KeyboardTheme.palette = AccentPalette.effective(preferences.accentPalette, isActive)
+        KeyboardTheme.shape = KeyShape.effective(preferences.keyShape, isActive)
         TaipoType.keyboardFont = KeyboardFont.effective(preferences.keyboardFont, isActive)
         // Le fond du clavier est relu à chaque ouverture de champ (KeyboardBackdrop.effective), rien à poser ici.
     }

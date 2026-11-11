@@ -45,6 +45,13 @@ object KeyboardTheme {
     @Volatile
     var palette: AccentPalette = AccentPalette.DEFAULT
 
+    /**
+     * Forme des touches choisie (section « Forme des touches » de la page « Apparence »), déjà ramenée à Arrondi si elle n'est
+     * pas utilisable ([KeyShape.effective]). Posée comme [palette] : au démarrage du processus et à chaque changement du réglage.
+     */
+    @Volatile
+    var shape: KeyShape = KeyShape.DEFAULT
+
     /** Palette du clavier en ce moment : le réglage, ou le thème de l'appareil en mode automatique. */
     val mode: Mode get() = choice.resolve(isSystemNight())
 
@@ -54,11 +61,17 @@ object KeyboardTheme {
     /**
      * Apparence effective du clavier : palette claire ou sombre ([mode]), couleurs du fond d'écran ou non ([dynamic]) et couleur
      * d'accent ([accent] ; toujours le violet en couleur dynamique, dont l'accent vient du fond d'écran).
-     * [TaipoIme] la compare à celle de la création des vues pour savoir s'il faut les recréer.
+     * et forme des touches ([shape]). [TaipoIme] la compare à celle de la création des vues pour savoir s'il faut les recréer.
      */
-    data class Look(val mode: Mode, val dynamic: Boolean, val accent: AccentPalette = AccentPalette.DEFAULT)
+    data class Look(
+        val mode: Mode,
+        val dynamic: Boolean,
+        val accent: AccentPalette = AccentPalette.DEFAULT,
+        val shape: KeyShape = KeyShape.DEFAULT,
+    )
 
-    val look: Look get() = dynamic.let { isDynamic -> Look(mode, isDynamic, if (isDynamic) AccentPalette.DEFAULT else palette) }
+    val look: Look
+        get() = dynamic.let { isDynamic -> Look(mode, isDynamic, if (isDynamic) AccentPalette.DEFAULT else palette, shape) }
 
     /** Ressources de l'apparence effective, gardées tant qu'elle ne change pas (et jusqu'au prochain changement de configuration). */
     @Volatile

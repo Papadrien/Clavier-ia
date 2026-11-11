@@ -110,6 +110,18 @@ class KeyboardPreferences(context: Context) {
         }
 
     /**
+     * Forme des touches du clavier (section « Forme des touches » de la page « Apparence »). Arrondi par défaut. C'est le choix
+     * enregistré : la forme appliquée ([KeyboardTheme.shape]) retombe sur Arrondi si celle-ci est réservée au pass premium et qu'il
+     * n'est pas actif ([KeyShape.effective]). Écrire le réglage met aussi à jour [KeyboardTheme.shape].
+     */
+    var keyShape: KeyShape
+        get() = KeyShape.fromStorageKey(prefs.getString(KEY_KEY_SHAPE, null))
+        set(value) {
+            prefs.edit().putString(KEY_KEY_SHAPE, value.storageKey).apply()
+            KeyboardTheme.shape = KeyShape.effective(value, PremiumPass.isActive)
+        }
+
+    /**
      * Police du clavier (page « Thème »), Open Sans par défaut. Les autres polices sont réservées au pass premium : sans lui, le
      * clavier reprend Open Sans ([KeyboardFont.effective]) mais le choix est gardé pour le retour du pass.
      */
@@ -382,6 +394,7 @@ class KeyboardPreferences(context: Context) {
         private const val SUFFIX_PORTRAIT = "_portrait"
         private const val SUFFIX_LANDSCAPE = "_landscape"
         private const val KEY_ACCENT_PALETTE = "accent_palette"
+        private const val KEY_KEY_SHAPE = "key_shape"
         private const val KEY_ADAPTIVE_TOUCH = "adaptive_touch_enabled"
         private const val KEY_SHOW_TOUCH_ZONES = "show_touch_zones"
         private const val KEY_NUMBER_ROW = "number_row_enabled"

@@ -40,6 +40,7 @@ object BackupCodec {
             data.keyboard.habitLearning?.let { put("habitLearning", it) }
             data.keyboard.themeChoice?.let { put("themeChoice", it) }
             data.keyboard.accentPalette?.let { put("accentPalette", it) }
+            data.keyboard.keyShape?.let { put("keyShape", it) }
         }
         val ai = JSONObject().apply {
             data.ai.activeModelId?.let { put("activeModel", it) }
@@ -96,6 +97,7 @@ object BackupCodec {
                 habitLearning = keyboard.boolean("habitLearning"),
                 themeChoice = keyboard.string("themeChoice"),
                 accentPalette = keyboard.string("accentPalette"),
+                keyShape = keyboard.string("keyShape"),
             ),
             ai = BackupAiSettings(
                 activeModelId = ai.string("activeModel"),

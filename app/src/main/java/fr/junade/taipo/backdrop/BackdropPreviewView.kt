@@ -79,6 +79,8 @@ class BackdropPreviewView(context: Context) : View(context) {
         const val KEYS_PER_ROW = 7
         const val GAP_RATIO = 0.025f
         const val OPAQUE = 255
-        const val TRANSLUCENT = 158
+
+        /** Même transparence que les touches du vrai clavier sur un fond à motif. */
+        const val TRANSLUCENT = fr.junade.taipo.KeyRenderer.TRANSLUCENT_FACE_ALPHA
     }
 }
