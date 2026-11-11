@@ -233,6 +233,55 @@
 
     <!-- Pass premium : carte d'offre, montrée une fois les 3 étapes faites, tant que le pass n'est pas actif et qu'elle n'a pas
          été masquée (MainActivity.renderPremium). Le pass reste accessible par la ligne « Pass premium » de « À propos ». -->
+    <!-- Audit PRIV-01 : accord explicite pour la mesure d'usage, tant que l'utilisateur n'a pas répondu. -->
+    <LinearLayout
+        android:id="@+id/analytics_consent_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_settings_card"
+        android:padding="@dimen/taipo_settings_card_padding"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_xl"
+        android:visibility="gone">
+
+        <TextView
+            style="@style/TaipoText.Section"
+            android:id="@+id/analytics_consent_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/home_analytics_consent_title" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/home_analytics_consent_text" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md">
+
+            <Button
+                style="@style/TaipoButton.Secondary"
+                android:id="@+id/button_analytics_refuse"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/taipo_settings_gap_sm"
+                android:text="@string/home_analytics_consent_refuse" />
+
+            <Button
+                style="@style/TaipoButton.Primary"
+                android:id="@+id/button_analytics_accept"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/home_analytics_consent_accept" />
+        </LinearLayout>
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/premium_card"
         android:layout_width="match_parent"

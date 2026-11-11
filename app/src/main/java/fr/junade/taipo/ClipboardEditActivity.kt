@@ -212,7 +212,8 @@ class ClipboardEditActivity : Activity() {
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                toast(getString(R.string.clipboard_edit_error, e.message ?: e.javaClass.simpleName))
+                AppLog.e(TAG, "Échec de la modification", e) // détail technique : journal de debug seulement (audit PRIV-03)
+                toast(getString(R.string.clipboard_edit_error))
                 updateSaveState()
                 return@launch
             }
@@ -234,6 +235,7 @@ class ClipboardEditActivity : Activity() {
 
 
     companion object {
+        private const val TAG = "ClipboardEditActivity"
         /** Identifiant de l'élément épinglé à modifier ; absent pour la dernière copie. */
         const val EXTRA_PINNED_ID = "pinned_id"
 

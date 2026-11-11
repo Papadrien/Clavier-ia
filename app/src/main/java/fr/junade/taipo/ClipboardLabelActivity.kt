@@ -181,7 +181,8 @@ class ClipboardLabelActivity : Activity() {
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                toast(getString(R.string.clipboard_label_error, e.message ?: e.javaClass.simpleName))
+                AppLog.e(TAG, "Échec de l'enregistrement de l'étiquette", e) // détail technique : journal de debug seulement (audit PRIV-03)
+                toast(getString(R.string.clipboard_label_error))
                 updateSaveState()
                 return@launch
             }
@@ -203,6 +204,7 @@ class ClipboardLabelActivity : Activity() {
 
 
     companion object {
+        private const val TAG = "ClipboardLabelActivity"
         /** Identifiant de l'élément épinglé dont on saisit l'étiquette. */
         const val EXTRA_PINNED_ID = "pinned_id"
         private const val NO_ID = -1L

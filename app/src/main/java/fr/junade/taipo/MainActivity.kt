@@ -72,7 +72,7 @@ class MainActivity : Activity() {
         findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
         // Mesure du nombre de nouveaux utilisateurs : événement envoyé une seule fois par installation.
-        Analytics.firstOpen(this)
+        Analytics.firstOpen(this) // sans effet tant que l'utilisateur n'a pas accepté la mesure d'usage (audit PRIV-01)
 
         step1 = stepViews(1, R.id.step1_card, R.id.step1_badge, R.id.step1_title, R.id.step1_hint, R.id.button_enable)
         step2 = stepViews(2, R.id.step2_card, R.id.step2_badge, R.id.step2_title, R.id.step2_hint, R.id.button_select)
@@ -229,9 +229,31 @@ class MainActivity : Activity() {
             isChecked = analyticsPreferences.isEnabled
             setOnCheckedChangeListener { _, checked ->
                 analyticsPreferences.isEnabled = checked
-                if (checked) Analytics.setting(this@MainActivity, "analytics", true)
+                renderAnalyticsConsent()
+                if (checked) onAnalyticsAccepted()
             }
         }
+        findViewById<View>(R.id.button_analytics_accept).setOnClickListener {
+            analyticsPreferences.isEnabled = true
+            findViewById<CompoundButton>(R.id.switch_analytics).isChecked = true // l'écouteur fait le reste
+            renderAnalyticsConsent()
+        }
+        findViewById<View>(R.id.button_analytics_refuse).setOnClickListener {
+            analyticsPreferences.isEnabled = false
+            renderAnalyticsConsent()
+        }
+        renderAnalyticsConsent()
+    }
+
+    /** Audit PRIV-01 : la carte d'accord reste en tête de l'accueil tant que l'utilisateur n'a pas choisi. */
+    private fun renderAnalyticsConsent() {
+        findViewById<View>(R.id.analytics_consent_card).visibility =
+            if (AnalyticsPreferences(this).consentAnswered) View.GONE else View.VISIBLE
+    }
+
+    private fun onAnalyticsAccepted() {
+        Analytics.firstOpen(this) // n'est envoyé qu'une fois, et seulement après l'accord
+        Analytics.setting(this, "analytics", true)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

@@ -15,8 +15,11 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.clipboard.ClipboardProvider
 import fr.junade.taipo.clipboard.ScreenshotFinder
 import fr.junade.taipo.dictionary.CorrectionHabitsProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * Écran « Paramètres du clavier » (v3 : réglages rangés en cartes). Dans l'ordre : Langues (ligne vers [LanguagesActivity]),
@@ -90,6 +93,7 @@ class KeyboardSettingsActivity : Activity() {
             }
         }
 
+        setUpClipboardHistory(preferences)
         setUpScreenshotSuggestions(preferences)
 
         val radioGroup = findViewById<RadioGroup>(R.id.radio_group_haptic)
@@ -335,6 +339,20 @@ class KeyboardSettingsActivity : Activity() {
      * « Proposer les captures d'écran récentes » : l'activer demande la permission d'images (un clavier ne peut pas la demander
      * lui-même). Le réglage n'est enregistré qu'une fois la permission accordée ; il reste coché seulement tant qu'elle l'est.
      */
+    /** Audit SEC-01 : historique du presse-papiers ; le désactiver efface tout de suite l'historique existant. */
+    private fun setUpClipboardHistory(preferences: KeyboardPreferences) {
+        val switch = findViewById<CompoundButton>(R.id.switch_clipboard_history)
+        switch.isChecked = preferences.isClipboardHistoryEnabled
+        switch.setOnCheckedChangeListener { _, checked ->
+            preferences.isClipboardHistoryEnabled = checked
+            Analytics.setting(this, "clipboard_history", checked)
+            if (!checked) {
+                val history = ClipboardProvider.historyRepository(this)
+                ProcessScope.launch(Dispatchers.IO) { runCatching { history.clearAll() } }
+            }
+        }
+    }
+
     private fun setUpScreenshotSuggestions(preferences: KeyboardPreferences) {
         val switch = findViewById<CompoundButton>(R.id.switch_screenshot_suggestions)
         screenshotSwitch = switch

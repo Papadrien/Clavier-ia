@@ -57,6 +57,18 @@ abstract class ClipHistoryDao {
     @Query("DELETE FROM clip_history WHERE id = :id")
     abstract suspend fun deleteById(id: Long): Int
 
+    /** Audit SEC-01 : une copie devenue sensible n'est pas gardée dans l'historique. */
+    @Query("DELETE FROM clip_history WHERE text = :text")
+    abstract suspend fun deleteWithText(text: String): Int
+
+    /** Audit SEC-01 : purge des copies sensibles enregistrées par les versions précédentes. */
+    @Query("DELETE FROM clip_history WHERE sensitive = 1")
+    abstract suspend fun deleteSensitive(): Int
+
+    /** Historique désactivé dans les réglages : tout est effacé. */
+    @Query("DELETE FROM clip_history")
+    abstract suspend fun deleteAll(): Int
+
     /**
      * Enregistre une copie. Purge d'abord les lignes expirées ; une copie déjà expirée n'est pas
      * enregistrée. Un texte déjà présent n'est pas dupliqué : sa ligne remonte en tête si

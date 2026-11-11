@@ -63,6 +63,17 @@ class KeyboardPreferences(context: Context) {
      * images. Désactivé par défaut : il demande la permission d'images, accordée depuis l'écran des paramètres. Sans cette
      * permission le réglage reste sans effet, même activé (elle peut être retirée dans les réglages Android).
      */
+    /**
+     * Audit SEC-01 : historique du presse-papiers (copies récentes gardées dans la base chiffrée, 12 h ou 7 jours avec le pass).
+     * Activé par défaut ; désactivé, plus rien n'est enregistré et l'historique existant est effacé (écran des paramètres).
+     * Les copies sensibles ne sont jamais enregistrées, quel que soit ce réglage.
+     */
+    var isClipboardHistoryEnabled: Boolean
+        get() = prefs.getBoolean(KEY_CLIPBOARD_HISTORY, DEFAULT_CLIPBOARD_HISTORY)
+        set(value) {
+            prefs.edit().putBoolean(KEY_CLIPBOARD_HISTORY, value).apply()
+        }
+
     var isScreenshotSuggestionEnabled: Boolean
         get() = prefs.getBoolean(KEY_SCREENSHOT_SUGGESTION, DEFAULT_SCREENSHOT_SUGGESTION)
         set(value) {
@@ -406,6 +417,8 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_SHOW_COMMA_KEY = "show_comma_key"
         private const val KEY_SHOW_PERIOD_KEY = "show_period_key"
         const val DEFAULT_SHOW_BOTTOM_KEY = true
+        private const val KEY_CLIPBOARD_HISTORY = "clipboard_history_enabled"
+        const val DEFAULT_CLIPBOARD_HISTORY = true
         private const val KEY_SCREENSHOT_SUGGESTION = "screenshot_suggestion_enabled"
         const val DEFAULT_SCREENSHOT_SUGGESTION = false
         private const val KEY_DIGIT_SWIPE_USED = "digit_swipe_used"

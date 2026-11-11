@@ -64,7 +64,7 @@
     <string name="voice_button_recording">Listening…</string>
     <string name="voice_button_transcribing">Transcribing…</string>
     <string name="voice_permission_denied">Microphone permission required: tap Dictate again after granting it.</string>
-    <string name="voice_error">Transcription failed: %1$s</string>
+    <string name="voice_error">Voice input failed. Please try again.</string>
     <string name="voice_mic_unavailable">Microphone unavailable: it may be in use by another app. Try again in a moment.</string>
     <string name="voice_mic_lost">The microphone stopped responding: dictation interrupted.</string>
     <string name="voice_backlog_overflow">Transcription can\'t keep up with your speech: dictation interrupted, the text already transcribed is kept.</string>
@@ -116,6 +116,8 @@
     <string name="keyboard_settings_show_emoji_key">Show the emoji key</string>
     <string name="keyboard_settings_show_comma_key">Show the comma key</string>
     <string name="keyboard_settings_show_period_key">Show the period key</string>
+    <string name="keyboard_settings_clipboard_history_switch">Clipboard history</string>
+    <string name="keyboard_settings_clipboard_history_description">Keeps your recent copies so you can paste them again (12 hours, 7 days with the Premium pass). Passwords and card numbers are never kept. Turning it off deletes the history.</string>
     <string name="keyboard_settings_screenshots_switch">Suggest recent screenshots</string>
     <string name="keyboard_settings_screenshots_description">Offers to paste your latest screenshot. Asks for access to your photos; nothing is sent.</string>
     <string name="keyboard_settings_screenshots_denied">Access to photos was denied. Allow it in the Android settings to use this option.</string>
@@ -208,7 +210,7 @@
     <string name="clipboard_pin_too_long">Too long to pin (10,000 characters max)</string>
     <string name="clipboard_pin_sensitive">Sensitive content: can\'t be pinned</string>
     <string name="clipboard_pin_empty">Nothing to pin</string>
-    <string name="clipboard_pin_error">Pinning failed: %1$s</string>
+    <string name="clipboard_pin_error">Pinning failed. Please try again.</string>
     <string name="clipboard_menu_edit">Edit</string>
     <string name="clipboard_delete_confirm_message">Delete this item?</string>
     <string name="clipboard_delete_confirm_cancel">Cancel</string>
@@ -222,7 +224,7 @@
     <string name="clipboard_edit_save">Save</string>
     <string name="clipboard_edit_done">Item edited</string>
     <string name="clipboard_edit_not_found">Item not found</string>
-    <string name="clipboard_edit_error">Edit failed: %1$s</string>
+    <string name="clipboard_edit_error">Editing failed. Please try again.</string>
     <string name="clipboard_menu_label_add">Add a label</string>
     <string name="clipboard_menu_label_edit">Edit label</string>
     <string name="clipboard_menu_label_delete">Delete label</string>
@@ -233,9 +235,9 @@
     <string name="clipboard_label_input_description">Label</string>
     <string name="clipboard_label_counter">%1$d / %2$d</string>
     <string name="clipboard_label_done">Label saved</string>
-    <string name="clipboard_label_error">Saving the label failed: %1$s</string>
-    <string name="clipboard_label_delete_error">Deleting the label failed: %1$s</string>
-    <string name="clipboard_delete_error">Deletion failed: %1$s</string>
+    <string name="clipboard_label_error">Saving the label failed. Please try again.</string>
+    <string name="clipboard_label_delete_error">Deleting the label failed. Please try again.</string>
+    <string name="clipboard_delete_error">Deletion failed. Please try again.</string>
 
     <string name="a11y_keyboard_description">Taipo keyboard</string>
     <string name="a11y_key_shift">Shift</string>
@@ -477,11 +479,11 @@
     <string name="privacy_section_1_title">1. On-device processing</string>
     <string name="privacy_section_1_body">Correction, text generation, voice input and AI dictation run on your device using locally installed models. The text you type, copy or dictate and the audio of your recordings are not sent to any server. The audio of an AI dictation stays in memory while it is processed: it is never saved to a file.</string>
     <string name="privacy_section_2_title">2. Internet connections</string>
-    <string name="privacy_section_2_body">Taipo connects to the Internet to download AI model files, at your request: from a Junadé server for the Gemma 3 models and the voice input models, and from Hugging Face for the Gemma 4 models. It also downloads, from the same Junadé server, the dictionary of each keyboard language you use (a few MB, automatically as soon as a language is selected). These servers receive the usual technical information of a connection (IP address, requested file), never your text or your recordings. Unless you turn it off in the keyboard settings, Taipo also sends anonymous usage analytics to Aptabase, a European service (see section 3). From time to time, Taipo may also offer to let you leave a review: this window is displayed by Google Play, which receives your rating and comment; Taipo does not receive them.</string>
+    <string name="privacy_section_2_body">Taipo connects to the Internet to download AI model files, at your request: from a Junadé server for the Gemma 3 models and the voice input models, and from Hugging Face for the Gemma 4 models. It also downloads, from the same Junadé server, the dictionary of each keyboard language you use (a few MB, automatically as soon as a language is selected). These servers receive the usual technical information of a connection (IP address, requested file), never your text or your recordings. Only if you agree (Taipo asks on the home screen; My data > Share usage data), Taipo also sends anonymous usage analytics to Aptabase, a European service (see section 3). The Google Play Billing library, used for the Premium pass, sends its own technical logs to Google; they never contain your text. From time to time, Taipo may also offer to let you leave a review: this window is displayed by Google Play, which receives your rating and comment; Taipo does not receive them.</string>
     <string name="privacy_section_3_title">3. No personal data collection</string>
-    <string name="privacy_section_3_body">Taipo has no account and no ads. It measures its usage anonymously with Aptabase: events such as “an AI correction succeeded”, “a model was downloaded” or “a setting changed”, along with the app version, the Android version, the device model and its language, plus two coarse ranges: how long the app has been installed and on how many days it was used (for example “8 to 30 days”), never exact values. Never your text, what you copy or dictate, or any identifier of the device or the person, and nothing from password fields. As with any Internet connection, Aptabase\'s servers technically receive the IP address of the request; Taipo itself never sees it or stores it (see Aptabase\'s privacy policy for how it is handled). You can turn it off at any time in Keyboard settings > Usage data. Taipo itself collects no personal data about you.</string>
+    <string name="privacy_section_3_body">Taipo has no account and no ads. It measures its usage anonymously with Aptabase: events such as “an AI correction succeeded”, “a model was downloaded” or “a setting changed”, along with the app version, the Android version, the device model and its language, plus two coarse ranges: how long the app has been installed and on how many days it was used (for example “8 to 30 days”), never exact values. Never your text, what you copy or dictate, or any identifier of the device or the person, and nothing from password fields. As with any Internet connection, Aptabase\'s servers technically receive the IP address of the request; Taipo itself never sees it or stores it (see Aptabase\'s privacy policy for how it is handled). It is off until you agree, and you can change your choice at any time in My data > Share usage data. Taipo itself collects no personal data about you.</string>
     <string name="privacy_section_4_title">4. Password fields</string>
-    <string name="privacy_section_4_body">In a password or secret code field, AI actions (Correct, Generate, Dictate, AI dictation) and the clipboard are disabled: the field\'s content is not read and the microphone is not opened.</string>
+    <string name="privacy_section_4_body">In a password or secret code field, AI actions (Correct, Generate, Dictate, AI dictation) and the Smart Clipboard panel are disabled: the field\'s content is not read and the microphone is not opened. The paste chip remains, so you can paste a password copied from a password manager; it stays masked (••••). Copies flagged as sensitive (passwords) and card numbers are never kept in the clipboard history.</string>
     <string name="privacy_section_5_title">5. What is stored on the device</string>
     <string name="privacy_section_5_body">Your personal dictionary, clipboard items and settings stay on your device, in encrypted databases. Uninstalling the app deletes this data. You can also export it to an unencrypted file (My data > Backup and restore): this file only leaves the device if you move it yourself. If you turn on screenshot suggestions (Keyboard settings), Taipo asks for access to your photos: it only checks that a recent screenshot exists, and reads the image itself, on your device, when you tap the suggestion. A temporary copy is kept in the app cache for at most one hour and is never sent anywhere.</string>
     <string name="privacy_section_6_title">6. Learning and typing accuracy</string>
@@ -682,6 +684,10 @@
     <string name="premium_status_nothing_to_restore">No purchase of the pass found on this Google account.</string>
     <string name="premium_unlock">Unlock with the premium pass</string>
     <string name="premium_locked_item">%1$s, premium pass only</string>
+    <string name="home_analytics_consent_title">Help improve Taipo?</string>
+    <string name="home_analytics_consent_text">Taipo can send anonymous usage data to Aptabase, a European service: which features are used and whether they work, never your text, what you copy or dictate, nor any identifier. You can change your mind at any time in the “My data” section.</string>
+    <string name="home_analytics_consent_refuse">No thanks</string>
+    <string name="home_analytics_consent_accept">Share</string>
     <string name="home_premium_card_title">Premium pass</string>
     <string name="home_premium_card_text">Nine keyboard colors, your own AI instructions and a clipboard that keeps your copies for 7 days.</string>
     <string name="home_premium_card_button">Discover</string>

@@ -64,7 +64,7 @@
     <string name="voice_button_recording">Écoute…</string>
     <string name="voice_button_transcribing">Transcription…</string>
     <string name="voice_permission_denied">Permission micro requise : appuyez à nouveau sur Dicter après l\'avoir accordée.</string>
-    <string name="voice_error">Échec de la transcription : %1$s</string>
+    <string name="voice_error">La saisie vocale a échoué. Réessayez.</string>
     <string name="voice_mic_unavailable">Micro indisponible : il est peut-être utilisé par une autre application. Réessayez dans un instant.</string>
     <string name="voice_mic_lost">Le micro ne répond plus : dictée interrompue.</string>
     <string name="voice_backlog_overflow">La transcription ne suit plus le rythme de la parole : dictée interrompue, le texte déjà transcrit est conservé.</string>
@@ -116,6 +116,8 @@
     <string name="keyboard_settings_show_emoji_key">Afficher la touche emoji</string>
     <string name="keyboard_settings_show_comma_key">Afficher la touche virgule</string>
     <string name="keyboard_settings_show_period_key">Afficher la touche point</string>
+    <string name="keyboard_settings_clipboard_history_switch">Historique du presse-papiers</string>
+    <string name="keyboard_settings_clipboard_history_description">Garde vos copies récentes pour les recoller (12 heures, 7 jours avec le pass premium). Les mots de passe et numéros de carte ne sont jamais gardés. Le désactiver efface l\'historique.</string>
     <string name="keyboard_settings_screenshots_switch">Proposer les captures d\'écran récentes</string>
     <string name="keyboard_settings_screenshots_description">Propose de coller votre dernière capture d\'écran. Demande l\'accès à vos photos ; rien n\'est envoyé.</string>
     <string name="keyboard_settings_screenshots_denied">L\'accès aux photos a été refusé. Autorisez-le dans les réglages Android pour utiliser cette option.</string>
@@ -208,7 +210,7 @@
     <string name="clipboard_pin_too_long">Trop long pour être épinglé (10 000 caractères max)</string>
     <string name="clipboard_pin_sensitive">Contenu sensible : impossible à épingler</string>
     <string name="clipboard_pin_empty">Rien à épingler</string>
-    <string name="clipboard_pin_error">Échec de l\'épinglage : %1$s</string>
+    <string name="clipboard_pin_error">L\'épinglage a échoué. Réessayez.</string>
     <string name="clipboard_menu_edit">Modifier</string>
     <string name="clipboard_delete_confirm_message">Supprimer cet élément ?</string>
     <string name="clipboard_delete_confirm_cancel">Annuler</string>
@@ -222,7 +224,7 @@
     <string name="clipboard_edit_save">Enregistrer</string>
     <string name="clipboard_edit_done">Élément modifié</string>
     <string name="clipboard_edit_not_found">Élément introuvable</string>
-    <string name="clipboard_edit_error">Échec de la modification : %1$s</string>
+    <string name="clipboard_edit_error">La modification a échoué. Réessayez.</string>
     <string name="clipboard_menu_label_add">Ajouter une étiquette</string>
     <string name="clipboard_menu_label_edit">Modifier l\'étiquette</string>
     <string name="clipboard_menu_label_delete">Supprimer l\'étiquette</string>
@@ -233,9 +235,9 @@
     <string name="clipboard_label_input_description">Étiquette</string>
     <string name="clipboard_label_counter">%1$d / %2$d</string>
     <string name="clipboard_label_done">Étiquette enregistrée</string>
-    <string name="clipboard_label_error">Échec de l\'enregistrement de l\'étiquette : %1$s</string>
-    <string name="clipboard_label_delete_error">Échec de la suppression de l\'étiquette : %1$s</string>
-    <string name="clipboard_delete_error">Échec de la suppression : %1$s</string>
+    <string name="clipboard_label_error">L\'étiquette n\'a pas pu être enregistrée. Réessayez.</string>
+    <string name="clipboard_label_delete_error">L\'étiquette n\'a pas pu être supprimée. Réessayez.</string>
+    <string name="clipboard_delete_error">La suppression a échoué. Réessayez.</string>
 
     <!-- ===== Accessibilité (lot 20) : noms parlés par TalkBack des touches dessinées au Canvas, états et actions ===== -->
     <string name="a11y_keyboard_description">Clavier Taipo</string>
@@ -490,13 +492,13 @@
     <string name="privacy_section_1_title">1. Traitement sur votre appareil</string>
     <string name="privacy_section_1_body">La correction, la génération de texte, la saisie vocale et la dictée IA sont exécutées sur votre appareil par des modèles installés localement. Le texte que vous saisissez, copiez ou dictez et l\'audio de vos enregistrements ne sont envoyés à aucun serveur. L\'audio d\'une dictée IA reste en mémoire le temps du traitement : il n\'est jamais enregistré dans un fichier.</string>
     <string name="privacy_section_2_title">2. Connexions Internet</string>
-    <string name="privacy_section_2_body">Taipo se connecte à Internet pour télécharger les fichiers des modèles IA, à votre demande : depuis un serveur de Junadé pour les modèles Gemma 3 et les modèles de saisie vocale, et depuis Hugging Face pour les modèles Gemma 4. Il télécharge aussi, depuis ce même serveur de Junadé, le dictionnaire de chaque langue du clavier que vous utilisez (quelques Mo, automatiquement dès qu\'une langue est choisie). Ces serveurs reçoivent les informations techniques habituelles d\'une connexion (adresse IP, fichier demandé), jamais votre texte ni vos enregistrements. Taipo envoie aussi, sauf si vous le désactivez dans les paramètres du clavier, une mesure d\'usage anonyme à Aptabase, un service européen (voir la section 3). De temps en temps, Taipo peut aussi vous proposer de laisser un avis : cette fenêtre est affichée par Google Play, qui reçoit votre note et votre commentaire ; Taipo ne les reçoit pas.</string>
+    <string name="privacy_section_2_body">Taipo se connecte à Internet pour télécharger les fichiers des modèles IA, à votre demande : depuis un serveur de Junadé pour les modèles Gemma 3 et les modèles de saisie vocale, et depuis Hugging Face pour les modèles Gemma 4. Il télécharge aussi, depuis ce même serveur de Junadé, le dictionnaire de chaque langue du clavier que vous utilisez (quelques Mo, automatiquement dès qu\'une langue est choisie). Ces serveurs reçoivent les informations techniques habituelles d\'une connexion (adresse IP, fichier demandé), jamais votre texte ni vos enregistrements. Seulement si vous l\'acceptez (Taipo vous le demande sur l\'accueil ; Mes données > Partager les données d\'utilisation), Taipo envoie aussi une mesure d\'usage anonyme à Aptabase, un service européen (voir la section 3). La bibliothèque Google Play Billing, qui sert au pass premium, envoie ses propres journaux techniques à Google ; ils ne contiennent jamais votre texte. De temps en temps, Taipo peut aussi vous proposer de laisser un avis : cette fenêtre est affichée par Google Play, qui reçoit votre note et votre commentaire ; Taipo ne les reçoit pas.</string>
     <string name="privacy_section_3_title">3. Aucune collecte de données personnelles</string>
-    <string name="privacy_section_3_body">Taipo n\'a pas de compte et pas de publicité. Il mesure son usage de façon anonyme avec Aptabase : des événements comme « une correction IA a réussi », « un modèle a été téléchargé » ou « un réglage a changé », avec la version de l\'application, la version d\'Android, le modèle de l\'appareil et sa langue, plus deux tranches approximatives : depuis combien de temps l\'application est installée et sur combien de jours elle a été utilisée (par exemple « 8 à 30 jours »), jamais des valeurs exactes. Jamais votre texte, ce que vous copiez ou dictez, ni un identifiant de l\'appareil ou de la personne, et rien depuis les champs de mot de passe. Vous pouvez la désactiver à tout moment dans Paramètres du clavier > Données d\'utilisation. Comme pour toute connexion Internet, les serveurs d\'Aptabase reçoivent techniquement l\'adresse IP de la requête ; Taipo ne la voit ni ne la conserve jamais (voir la politique de confidentialité d\'Aptabase pour son traitement). Taipo lui-même ne collecte aucune donnée personnelle vous concernant.</string>
+    <string name="privacy_section_3_body">Taipo n\'a pas de compte et pas de publicité. Il mesure son usage de façon anonyme avec Aptabase : des événements comme « une correction IA a réussi », « un modèle a été téléchargé » ou « un réglage a changé », avec la version de l\'application, la version d\'Android, le modèle de l\'appareil et sa langue, plus deux tranches approximatives : depuis combien de temps l\'application est installée et sur combien de jours elle a été utilisée (par exemple « 8 à 30 jours »), jamais des valeurs exactes. Jamais votre texte, ce que vous copiez ou dictez, ni un identifiant de l\'appareil ou de la personne, et rien depuis les champs de mot de passe. Elle est désactivée tant que vous ne l\'avez pas acceptée, et vous pouvez changer d\'avis à tout moment dans Mes données > Partager les données d\'utilisation. Comme pour toute connexion Internet, les serveurs d\'Aptabase reçoivent techniquement l\'adresse IP de la requête ; Taipo ne la voit ni ne la conserve jamais (voir la politique de confidentialité d\'Aptabase pour son traitement). Taipo lui-même ne collecte aucune donnée personnelle vous concernant.</string>
     <string name="privacy_section_4_title">4. Champs de mot de passe</string>
-    <string name="privacy_section_4_body">Dans un champ de mot de passe ou de code secret, les actions IA (Corriger, Générer, Dicter, Dictée IA) et le presse-papiers sont désactivés : le contenu du champ n\'est pas lu et le micro n\'est pas ouvert.</string>
+    <string name="privacy_section_4_body">Dans un champ de mot de passe ou de code secret, les actions IA (Corriger, Générer, Dicter, Dictée IA) et le panneau Smart Clipboard sont désactivés : le contenu du champ n\'est pas lu et le micro n\'est pas ouvert. La puce de collage reste, pour coller un mot de passe copié depuis un gestionnaire ; il reste masqué (••••). Les copies signalées sensibles (mots de passe) et les numéros de carte ne sont jamais gardés dans l\'historique du presse-papiers.</string>
     <string name="privacy_section_5_title">5. Ce qui est conservé sur l\'appareil</string>
-    <string name="privacy_section_5_body">Votre dictionnaire personnel, les éléments du presse-papiers et vos réglages restent sur votre appareil, dans des bases chiffrées. Les désinstaller supprime ces données. Vous pouvez aussi les exporter dans un fichier non chiffré (Mes données > Sauvegarde et restauration) : ce fichier ne quitte l\'appareil que si vous le déplacez vous-même. Si vous activez la proposition des captures d\'écran (Paramètres du clavier), Taipo demande l\'accès à vos photos : il vérifie seulement qu\'une capture récente existe, et lit l\'image elle-même, sur votre appareil, quand vous touchez la suggestion. Une copie temporaire reste dans le cache de l\'application une heure au plus et n\'est jamais envoyée.</string>
+    <string name="privacy_section_5_body">Votre dictionnaire personnel, les éléments du presse-papiers et vos réglages restent sur votre appareil, dans des bases chiffrées. Désinstaller l\'application supprime ces données. Vous pouvez aussi les exporter dans un fichier non chiffré (Mes données > Sauvegarde et restauration) : ce fichier ne quitte l\'appareil que si vous le déplacez vous-même. Si vous activez la proposition des captures d\'écran (Paramètres du clavier), Taipo demande l\'accès à vos photos : il vérifie seulement qu\'une capture récente existe, et lit l\'image elle-même, sur votre appareil, quand vous touchez la suggestion. Une copie temporaire reste dans le cache de l\'application une heure au plus et n\'est jamais envoyée.</string>
     <string name="privacy_section_6_title">6. Apprentissage et précision de frappe</string>
     <string name="privacy_section_6_body">Le clavier compte, sur cet appareil, les corrections que vous annulez ou laissez en place, les mots que vous validez et les adresses e-mail que vous tapez, pour s\'adapter à vous et vous proposer vos adresses dès que vous en commencez une. Seuls des compteurs de mots et de corrections, et vos adresses e-mail, sont conservés, chiffrés, jamais de phrases. Rien n\'est compté dans les champs sensibles ni en navigation privée ; les adresses e-mail sont aussi retenues dans les champs d\'adresse, jamais dans les mots de passe. La zone de toucher des lettres les plus probables d\'après le mot en cours grandit un peu : un appui légèrement décentré tombe quand même sur la bonne touche. Les touches gardent leur aspect et leur taille. Calculé sur l\'appareil à partir du mot que vous tapez, rien n\'est conservé ni envoyé. Inactif dans les champs de mot de passe, d\'adresse e-mail et d\'adresse web.</string>
     <string name="button_terms">Conditions d\'utilisation</string>
@@ -701,6 +703,10 @@
     <string name="premium_status_nothing_to_restore">Aucun achat du pass trouvé sur ce compte Google.</string>
     <string name="premium_unlock">Débloquer avec le pass premium</string>
     <string name="premium_locked_item">%1$s, réservé au pass premium</string>
+    <string name="home_analytics_consent_title">Aider à améliorer Taipo ?</string>
+    <string name="home_analytics_consent_text">Taipo peut envoyer une mesure d\'usage anonyme à Aptabase, un service européen : quelles fonctions servent et si elles marchent, jamais votre texte, ce que vous copiez ou dictez, ni aucun identifiant. Vous pouvez changer d\'avis à tout moment dans la section « Mes données ».</string>
+    <string name="home_analytics_consent_refuse">Non merci</string>
+    <string name="home_analytics_consent_accept">Partager</string>
     <string name="home_premium_card_title">Pass premium</string>
     <string name="home_premium_card_text">Neuf couleurs pour le clavier, vos propres consignes pour l\'IA et un presse-papiers qui garde vos copies 7 jours.</string>
     <string name="home_premium_card_button">Découvrir</string>

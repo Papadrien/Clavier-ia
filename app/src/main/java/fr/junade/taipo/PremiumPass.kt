@@ -87,7 +87,8 @@ object PremiumPass {
 
     private fun prefs(context: Context) = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    private const val PREFS_NAME = "premium_prefs"
+    /** Exclu des sauvegardes (audit SEC-04) : l'état d'achat vient de Google Play, relu par [fr.junade.taipo.premium.PremiumBilling.refresh]. */
+    const val PREFS_NAME = "premium_prefs"
     private const val KEY_PURCHASED = "purchased"
     private const val KEY_DEBUG_OVERRIDE = "debug_override"
 }

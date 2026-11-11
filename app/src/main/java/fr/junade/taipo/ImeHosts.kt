@@ -189,6 +189,7 @@ internal class EmojiHost(private val ime: ImeHostContext) : EmojiController.Host
 
 /** Smart Clipboard (puce de collage, panneau, épinglés) : voir [ClipboardController]. */
 internal class ClipboardHost(private val ime: ImeHostContext) : ClipboardController.Host {
+    override fun sensitiveFieldActive(): Boolean = ime.sensitiveField
     override fun showMessage(message: String) = ime.showMessage(message)
     override fun showMessageWithAction(message: String, action: String, onAction: () -> Unit) =
         ime.showMessageWithAction(message, action, onAction)
