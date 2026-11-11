@@ -112,4 +112,6 @@ câblage des contrôleurs. Prochaine étape possible : la frappe dans le champ (
 - Hors de portée de Robolectric : code natif (LiteRT-LM, sherpa-onnx, SQLCipher) et Keystore : tests instrumentés (`app/src/androidTest`).
 - Premier lancement : Robolectric télécharge une image d'Android (environ 150 Mo, dans `~/.m2`, mise en cache par la CI). Si Maven
   Central est inaccessible, la propriété Gradle `taipo.robolectricRepo` (par exemple dans `~/.gradle/gradle.properties`) donne un
-  autre dépôt. Les tests passent sur JDK 17 et 21 (`--add-exports` / `--add-opens` dans `app/build.gradle.kts`).
+  autre dépôt. Les tests Robolectric demandent un JDK 21 :
+  Robolectric 4.17 exige Java 21 pour l'API 36 (sous JDK 17, ils échouent à l'initialisation), d'où `java-version: '21'` dans
+  `.github/workflows/android.yml` ; le code reste compilé pour Java 17. `--add-exports` / `--add-opens` : `app/build.gradle.kts`.
