@@ -4,6 +4,9 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
+import android.database.ContentObserver
+import android.os.Handler
+import android.os.Looper
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
@@ -94,6 +97,7 @@ class MainActivity : Activity() {
         }
 
         findViewById<View>(R.id.button_enable).setOnClickListener {
+            watchKeyboardEnabled()
             startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS))
         }
         // Sélecteur de méthode de saisie d'Android : il ne liste que les claviers activés (étape 1 faite).
@@ -102,7 +106,7 @@ class MainActivity : Activity() {
         }
         bindRow(R.id.button_keyboard_settings, R.string.button_keyboard_settings, R.string.home_row_keyboard_settings_subtitle, KeyboardSettingsActivity::class.java)
         bindRow(R.id.button_theme, R.string.button_theme, R.string.home_row_theme_subtitle, ThemeActivity::class.java)
-        bindRow(R.id.button_home_languages, R.string.languages_title, R.string.languages_title, LanguagesActivity::class.java)
+        bindRow(R.id.button_home_languages, R.string.languages_title, R.string.home_row_languages_subtitle, LanguagesActivity::class.java)
         bindRow(R.id.button_personal_dictionary, R.string.button_personal_dictionary, R.string.home_row_personal_dictionary_subtitle, PersonalDictionaryActivity::class.java)
         bindRow(R.id.button_model_download, R.string.button_model_download, R.string.home_row_model_download_subtitle, ModelDownloadActivity::class.java)
         bindRow(R.id.button_model_settings, R.string.button_model_settings, R.string.home_row_model_settings_subtitle, ModelSettingsActivity::class.java)
@@ -157,8 +161,36 @@ class MainActivity : Activity() {
     }
 
     override fun onDestroy() {
+        stopWatchingKeyboardEnabled()
         billing.close()
         super.onDestroy()
+    }
+
+    // Audit UX-02 : l'utilisateur active Taipo dans les réglages système ; dès que c'est fait, on le ramène ici et on ouvre le
+    // sélecteur de clavier (étape 2), au lieu de le laisser chercher le chemin du retour.
+    private var enabledObserver: ContentObserver? = null
+    private var pickerOnReturn = false
+
+    private fun watchKeyboardEnabled() {
+        if (enabledObserver != null) return
+        val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(selfChange: Boolean) {
+                if (!readOnboardingState().enabled) return
+                stopWatchingKeyboardEnabled()
+                pickerOnReturn = true
+                startActivity(
+                    Intent(this@MainActivity, MainActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                )
+            }
+        }
+        contentResolver.registerContentObserver(Settings.Secure.getUriFor(Settings.Secure.ENABLED_INPUT_METHODS), false, observer)
+        enabledObserver = observer
+    }
+
+    private fun stopWatchingKeyboardEnabled() {
+        enabledObserver?.let { contentResolver.unregisterContentObserver(it) }
+        enabledObserver = null
     }
 
     /** Pass premium : carte d'offre, ligne de « À propos » et, en build debug, bouton de forçage tout en bas. */
@@ -258,6 +290,10 @@ class MainActivity : Activity() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && pickerOnReturn) {
+            pickerOnReturn = false
+            if (!readOnboardingState().selected) getSystemService(InputMethodManager::class.java)?.showInputMethodPicker()
+        }
         if (hasFocus) {
             renderOnboarding(readOnboardingState())
             renderPremium() // la carte du pass n'apparaît qu'une fois Taipo choisi (sélecteur qui vient de se fermer)

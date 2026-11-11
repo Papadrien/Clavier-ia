@@ -60,8 +60,12 @@ class ClipboardEditActivity : Activity() {
     private var original = ""
     private var loaded = false
 
+    // Audit BUG-10 : activité recréée (thème, police) : le champ a déjà retrouvé le texte en cours, on ne le remplace pas.
+    private var restored = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        restored = savedInstanceState != null
         repository = ClipboardProvider.repository(this)
         historyRepository = ClipboardProvider.historyRepository(this)
         pinnedId = intent.getLongExtra(EXTRA_PINNED_ID, NO_ID)
@@ -83,7 +87,8 @@ class ClipboardEditActivity : Activity() {
             }
         } else if (pinnedId == NO_ID) {
             // Lue une seule fois puis effacée : le texte ne reste pas dans un champ statique.
-            val text = ClipboardEditBridge.lastClipText
+            // Recréée, l'activité ne retrouve plus le texte dans le pont (déjà consommé) : il est dans l'état sauvegardé.
+            val text = ClipboardEditBridge.lastClipText ?: savedInstanceState?.getString(STATE_ORIGINAL)
             ClipboardEditBridge.lastClipText = null
             if (text == null) {
                 finish() // processus recréé : plus rien à modifier
@@ -105,6 +110,11 @@ class ClipboardEditActivity : Activity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(STATE_ORIGINAL, original)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         scope.cancel()
@@ -113,8 +123,10 @@ class ClipboardEditActivity : Activity() {
     private fun show(text: String) {
         original = text
         loaded = true
-        input.setText(text)
-        input.setSelection(text.length)
+        if (!restored) {
+            input.setText(text)
+            input.setSelection(text.length)
+        }
         input.requestFocus()
         updateSaveState()
     }
@@ -142,6 +154,7 @@ class ClipboardEditActivity : Activity() {
         root.addView(title, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
 
         input = EditText(this)
+        input.id = R.id.clipboard_edit_input
         input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
         input.gravity = Gravity.TOP or Gravity.START
         input.minLines = 4
@@ -242,6 +255,7 @@ class ClipboardEditActivity : Activity() {
         /** Story 2.9 : identifiant de la ligne d'historique à modifier ; absent pour la dernière copie et les épinglés. */
         const val EXTRA_HISTORY_ID = "history_id"
         private const val NO_ID = -1L
+        private const val STATE_ORIGINAL = "original"
         private const val LOAD_TIMEOUT_MS = 3_000L
     }
 }

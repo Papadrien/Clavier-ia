@@ -672,6 +672,7 @@
     <string name="key_shape_mechanical">Mécanique</string>
     <string name="key_shape_outline">Contour</string>
     <string name="key_shape_bare">Sans fond</string>
+    <string name="home_row_languages_subtitle">Langues et dispositions du clavier</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Apparence</string>
     <string name="languages_title">Langues</string>

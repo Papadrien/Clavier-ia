@@ -653,6 +653,7 @@
     <string name="key_shape_mechanical">Mechanical</string>
     <string name="key_shape_outline">Outline</string>
     <string name="key_shape_bare">Bare</string>
+    <string name="home_row_languages_subtitle">Keyboard languages and layouts</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Appearance</string>
     <string name="languages_title">Languages</string>

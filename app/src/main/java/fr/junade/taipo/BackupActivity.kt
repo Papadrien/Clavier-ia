@@ -20,6 +20,7 @@ import java.util.Locale
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -88,13 +89,15 @@ class BackupActivity : ComponentActivity() {
         setBusy(true)
         scope.launch {
             try {
-                val data = withContext(Dispatchers.IO) {
-                    val collected = BackupService.collect(this@BackupActivity)
+                // Audit BUG-09 : le travail tourne dans la portée du processus ; une rotation pendant l'export ne l'interrompt pas.
+                val appContext = applicationContext
+                val data = ProcessScope.async(Dispatchers.IO) {
+                    val collected = BackupService.collect(appContext)
                     val bytes = BackupCodec.encode(collected).toByteArray(Charsets.UTF_8)
-                    val output = contentResolver.openOutputStream(uri, "wt") ?: error("Flux de sortie indisponible")
+                    val output = appContext.contentResolver.openOutputStream(uri, "wt") ?: error("Flux de sortie indisponible")
                     output.use { it.write(bytes) }
                     collected
-                }
+                }.await()
                 AlertDialog.Builder(this@BackupActivity)
                     .setTitle(R.string.backup_export_done_title)
                     .setMessage(
@@ -159,7 +162,10 @@ class BackupActivity : ComponentActivity() {
         setBusy(true)
         scope.launch {
             try {
-                val report = withContext(Dispatchers.IO) { BackupService.restore(this@BackupActivity, data) }
+                // Audit BUG-09 : la restauration va à son terme même si l'écran est recréé (rotation, thème) ; seul le compte rendu
+                // est perdu dans ce cas.
+                val appContext = applicationContext
+                val report = ProcessScope.async(Dispatchers.IO) { BackupService.restore(appContext, data) }.await()
                 AlertDialog.Builder(this@BackupActivity)
                     .setTitle(R.string.backup_restore_done_title)
                     .setMessage(restoreSummary(report))

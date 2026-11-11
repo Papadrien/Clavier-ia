@@ -55,8 +55,12 @@ class ClipboardLabelActivity : Activity() {
     private var original = ""
     private var loaded = false
 
+    // Audit BUG-10 : activité recréée (thème, police) : le champ a déjà retrouvé le texte en cours, on ne le remplace pas.
+    private var restored = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        restored = savedInstanceState != null
         pinnedId = intent.getLongExtra(EXTRA_PINNED_ID, NO_ID)
         if (pinnedId == NO_ID) {
             finish()
@@ -79,6 +83,11 @@ class ClipboardLabelActivity : Activity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(STATE_ORIGINAL, original)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         scope.cancel()
@@ -88,8 +97,10 @@ class ClipboardLabelActivity : Activity() {
         original = label.orEmpty()
         loaded = true
         title.text = getString(if (label == null) R.string.clipboard_label_title_add else R.string.clipboard_label_title_edit)
-        input.setText(original)
-        input.setSelection(original.length)
+        if (!restored) {
+            input.setText(original)
+            input.setSelection(original.length)
+        }
         input.requestFocus()
         updateSaveState()
     }
@@ -111,6 +122,7 @@ class ClipboardLabelActivity : Activity() {
         root.addView(title, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
 
         input = EditText(this)
+        input.id = R.id.clipboard_label_input
         input.inputType = InputType.TYPE_CLASS_TEXT
         input.setSingleLine(true)
         input.imeOptions = EditorInfo.IME_ACTION_DONE
@@ -208,6 +220,7 @@ class ClipboardLabelActivity : Activity() {
         /** Identifiant de l'élément épinglé dont on saisit l'étiquette. */
         const val EXTRA_PINNED_ID = "pinned_id"
         private const val NO_ID = -1L
+        private const val STATE_ORIGINAL = "original"
         private const val LOAD_TIMEOUT_MS = 3_000L
     }
 }

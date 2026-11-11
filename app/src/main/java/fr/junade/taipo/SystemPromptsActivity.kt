@@ -79,7 +79,10 @@ class SystemPromptsActivity : Activity() {
         // Identifiant propre à chaque section : sans lui, les deux champs partageraient le même état à la rotation.
         val edit = section.findViewById<EditText>(R.id.edit_system_prompt).also { it.id = editId }
         val status = section.findViewById<TextView>(R.id.text_system_prompt_status)
-        section.findViewById<TextView>(R.id.text_system_prompt_title).setText(title)
+        section.findViewById<TextView>(R.id.text_system_prompt_title).apply {
+            setText(title)
+            labelFor = editId // audit A11Y-03 : TalkBack nomme le champ par le titre de sa section
+        }
         section.findViewById<TextView>(R.id.text_system_prompt_description).setText(description)
 
         fun refreshStatus() {
