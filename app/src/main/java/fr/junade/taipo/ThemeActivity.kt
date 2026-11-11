@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -98,7 +99,7 @@ class ThemeActivity : Activity() {
                     inflater.inflate(R.layout.item_theme_card, row, false).also { card ->
                         val preview = card.findViewById<ThemePreviewView>(R.id.theme_preview)
                         preview.choice = choice
-                        card.findViewById<TextView>(R.id.theme_label).setText(shortLabel(choice))
+                        card.findViewById<TextView>(R.id.theme_label).setCardLabel(getString(shortLabel(choice)))
                         card.setOnClickListener { select(choice) }
                         cards += Card(choice, card, card.findViewById(R.id.theme_check), preview)
                     }
@@ -184,7 +185,7 @@ class ThemeActivity : Activity() {
                     inflater.inflate(R.layout.item_theme_card, row, false).also { card ->
                         val preview = card.findViewById<ThemePreviewView>(R.id.theme_preview)
                         preview.shape = shape
-                        card.findViewById<TextView>(R.id.theme_label).setText(shape.labelRes())
+                        card.findViewById<TextView>(R.id.theme_label).setCardLabel(getString(shape.labelRes()))
                         card.setOnClickListener { selectShape(shape) }
                         shapeCards += ShapeCard(shape, card, card.findViewById(R.id.theme_check), card.findViewById(R.id.theme_lock), preview)
                     }
@@ -623,3 +624,20 @@ internal fun ThemeChoice.labelRes(): Int = when (this) {
     ThemeChoice.DARK -> R.string.theme_choice_dark
     ThemeChoice.DYNAMIC -> R.string.theme_choice_dynamic
 }
+
+/**
+ * Libellé d'une carte (thème, forme des touches) : la carte est étroite. Un libellé d'un seul mot (« Dynamique »,
+ * « Abgeschrägt ») reste sur une ligne, en rétrécissant au besoin, au lieu d'être coupé au milieu du mot ; un libellé de
+ * plusieurs mots passe à la ligne entre les mots, comme avant.
+ */
+private fun TextView.setCardLabel(label: String) {
+    text = label
+    if (label.trim().contains(' ')) return
+    maxLines = 1
+    val min = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, CARD_LABEL_MIN_SP, resources.displayMetrics).toInt()
+    val max = textSize.toInt().coerceAtLeast(min + 1)
+    setAutoSizeTextTypeUniformWithConfiguration(min, max, 1, TypedValue.COMPLEX_UNIT_PX)
+}
+
+/** Taille minimale d'un libellé de carte rétréci. */
+private const val CARD_LABEL_MIN_SP = 10f

@@ -317,4 +317,6 @@
     <dimen name="taipo_spinner_arrow_margin">12dp</dimen>
     <dimen name="taipo_spinner_item_min_height">48dp</dimen>
     <dimen name="taipo_spinner_item_padding_horizontal">16dp</dimen>
+    <!-- Taille minimale du texte d'un segment (taille automatique, voir TaipoSegment). -->
+    <dimen name="taipo_segment_min_text_size">10sp</dimen>
 </resources>

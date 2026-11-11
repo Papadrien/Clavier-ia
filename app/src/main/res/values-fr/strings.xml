@@ -635,7 +635,7 @@
     <string name="theme_choice_light">Clair</string>
     <string name="theme_choice_dark">Sombre</string>
     <string name="theme_choice_system_description">Système, automatique</string>
-    <string name="theme_choice_dynamic">Couleur dynamique</string>
+    <string name="theme_choice_dynamic">Dynamique</string>
     <string name="theme_section_color">Couleur</string>
     <string name="theme_section_backdrop">Fond du clavier</string>
     <string name="theme_backdrop_animated">Animer le fond pendant la frappe</string>
