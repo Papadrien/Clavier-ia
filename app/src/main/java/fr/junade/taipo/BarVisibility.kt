@@ -35,8 +35,6 @@ internal data class BarContentVisibility(
     val robot: Boolean,
     val words: Boolean,
     val inline: Boolean,
-    /** Tip (voir [SuggestionZoneState.showTip]) : à la place de la bande de mots, rangée de saisie, menu fermé. */
-    val tip: Boolean,
     /** Puce de collage : rangée normale, à côté du bouton Smart Clipboard. */
     val pasteChip: Boolean,
     /** Paramètres, Smart Clipboard et Annuler de la rangée de saisie : seulement menu ouvert. */
@@ -111,14 +109,12 @@ internal object BarVisibility {
     fun content(zoneState: SuggestionZoneState, mode: BarMode): BarContentVisibility {
         val typing = mode == BarMode.TYPING
         val menuOpen = typing && zoneState.menuOpen
-        val tip = typing && !menuOpen && !zoneState.inlineAvailable && zoneState.tipRequested
         return BarContentVisibility(
             normalRow = !typing,
             typingRow = typing,
             robot = typing,
-            words = typing && !menuOpen && !zoneState.inlineAvailable && !tip,
+            words = typing && !menuOpen && !zoneState.inlineAvailable,
             inline = typing && !menuOpen && zoneState.inlineAvailable,
-            tip = tip,
             pasteChip = !typing && zoneState.pasteAvailable,
             menuUtilityButtons = menuOpen,
         )

@@ -601,8 +601,8 @@
     <string name="dictionary_failed_no_space">Not enough space on the device for this dictionary.</string>
     <string name="dictionary_failed_system_stop">Android interrupted the download. Tap Retry.</string>
     <string name="dictionary_failed_other">The download failed. Try again.</string>
-    <!-- Tip affiché à la place des suggestions après un chiffre saisi par appui long (rangée de chiffres désactivée) -->
-    <string name="digit_swipe_tip">Swipe down</string>
+    <!-- Astuce (pilule de la barre, comme les astuces de gestes) après un chiffre saisi par appui long (rangée de chiffres désactivée) -->
+    <string name="digit_swipe_tip">Faster: swipe down on the key</string>
     <string name="keyboard_settings_touch_title">Typing accuracy</string>
     <string name="keyboard_settings_touch_switch">Adaptive key areas</string>
     <string name="keyboard_settings_touch_description">The most likely letters become a little easier to hit. Computed on the device, nothing is kept.</string>

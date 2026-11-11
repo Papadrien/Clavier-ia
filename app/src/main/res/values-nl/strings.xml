@@ -578,7 +578,7 @@
     <string name="dictionary_failed_no_space">Niet genoeg ruimte op het apparaat voor dit woordenboek.</string>
     <string name="dictionary_failed_system_stop">Android heeft de download onderbroken. Tik op Opnieuw proberen.</string>
     <string name="dictionary_failed_other">De download is mislukt. Probeer het opnieuw.</string>
-    <string name="digit_swipe_tip">Veeg omlaag</string>
+    <string name="digit_swipe_tip">Sneller: veeg omlaag over de toets</string>
     <string name="keyboard_settings_touch_title">Typnauwkeurigheid</string>
     <string name="keyboard_settings_touch_switch">Adaptieve toetsgebieden</string>
     <string name="keyboard_settings_touch_description">De waarschijnlijkste letters worden iets makkelijker te raken. Berekend op het apparaat, er wordt niets bewaard.</string>

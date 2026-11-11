@@ -582,7 +582,7 @@
     <string name="dictionary_failed_no_space">Spazio insufficiente sul dispositivo per questo dizionario.</string>
     <string name="dictionary_failed_system_stop">Android ha interrotto il download. Tocca Riprova.</string>
     <string name="dictionary_failed_other">Il download non è riuscito. Riprova.</string>
-    <string name="digit_swipe_tip">Scorri verso il basso</string>
+    <string name="digit_swipe_tip">Più veloce: scorri verso il basso sul tasto</string>
     <string name="keyboard_settings_touch_title">Precisione di battitura</string>
     <string name="keyboard_settings_touch_switch">Aree dei tasti adattive</string>
     <string name="keyboard_settings_touch_description">Le lettere più probabili diventano un po\' più facili da toccare. Calcolato sul dispositivo, non viene conservato nulla.</string>

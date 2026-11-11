@@ -582,7 +582,7 @@
     <string name="dictionary_failed_no_space">No hay espacio suficiente en el dispositivo para este diccionario.</string>
     <string name="dictionary_failed_system_stop">Android ha interrumpido la descarga. Toca Reintentar.</string>
     <string name="dictionary_failed_other">La descarga ha fallado. Inténtalo de nuevo.</string>
-    <string name="digit_swipe_tip">Desliza hacia abajo</string>
+    <string name="digit_swipe_tip">Más rápido: desliza hacia abajo en la tecla</string>
     <string name="keyboard_settings_touch_title">Precisión al escribir</string>
     <string name="keyboard_settings_touch_switch">Zonas de tecla adaptativas</string>
     <string name="keyboard_settings_touch_description">Las letras más probables son un poco más fáciles de pulsar. Se calcula en el dispositivo y no se guarda nada.</string>

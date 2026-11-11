@@ -621,7 +621,7 @@
     <string name="dictionary_failed_system_stop">Android a interrompu le téléchargement. Appuyez sur Réessayer.</string>
     <string name="dictionary_failed_other">Le téléchargement a échoué. Réessayez.</string>
     <!-- Tip affiché à la place des suggestions après un chiffre saisi par appui long (rangée de chiffres désactivée) -->
-    <string name="digit_swipe_tip">Swipe vers le bas</string>
+    <string name="digit_swipe_tip">Plus rapide : glisser vers le bas sur la touche</string>
     <string name="keyboard_settings_touch_title">Précision de frappe</string>
     <string name="keyboard_settings_touch_switch">Zones de frappe adaptatives</string>
     <string name="keyboard_settings_touch_description">Les lettres les plus probables deviennent un peu plus faciles à toucher. Calculé sur l\'appareil, rien n\'est conservé.</string>

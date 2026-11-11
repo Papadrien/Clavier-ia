@@ -468,19 +468,20 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     /** Story 2.1/2.4 : début de la frappe, retour aux suggestions de mots (le menu se referme). */
     fun collapseMenu() {
-        removeCallbacks(hideDigitTipRunnable)
+        hideDigitTip() // l'astuce des chiffres se ferme à la frappe suivante (les autres astuces restent)
         zoneState.onTyping()
         render()
     }
 
-    private val hideDigitTipRunnable = Runnable { hideDigitTip() }
+    /** Vrai tant que la pilule montre l'astuce des chiffres ([showDigitTip]). */
+    private var digitTipShown = false
 
-    /** Tip « Swipe vers le bas » à la place des suggestions, jusqu'à la prochaine frappe ou [DIGIT_TIP_DURATION_MS]. */
+    /**
+     * Astuce « glisser vers le bas » après un chiffre saisi par appui long : même pilule que les astuces de gestes
+     * ([showGestureTip]), jusqu'à la prochaine frappe, au glissement ([hideDigitTip]) ou après [DIGIT_TIP_DURATION_MS].
+     */
     fun showDigitTip() {
-        zoneState.showTip()
-        render()
-        removeCallbacks(hideDigitTipRunnable)
-        postDelayed(hideDigitTipRunnable, DIGIT_TIP_DURATION_MS)
+        digitTipShown = showGestureTip(context.getString(R.string.digit_swipe_tip), DIGIT_TIP_DURATION_MS)
     }
 
     /**
@@ -489,6 +490,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
      */
     fun showGestureTip(message: String, durationMs: Long): Boolean {
         if (!isShown || !isLaidOut || width == 0) return false
+        digitTipShown = false
         gestureTip.setMessage(message)
         val wasVisible = gestureTip.visibility == View.VISIBLE
         gestureTip.visibility = View.VISIBLE
@@ -499,6 +501,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     }
 
     fun hideGestureTip() {
+        digitTipShown = false
         removeCallbacks(hideGestureTipRunnable)
         if (gestureTip.visibility != View.VISIBLE) return
         BarReveal.cancel(gestureTip)
@@ -506,9 +509,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     }
 
     fun hideDigitTip() {
-        removeCallbacks(hideDigitTipRunnable)
-        zoneState.hideTip()
-        render()
+        if (digitTipShown) hideGestureTip()
     }
 
     /**
@@ -542,8 +543,8 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
         // Rangée de saisie.
         robotButton.visibility = View.VISIBLE
-        zoneView.render(content.words, content.inline, content.tip)
-        setRevealed(zoneView, content.words || content.inline || content.tip, order = 0, full = reveal, row = typingRow)
+        zoneView.render(content.words, content.inline)
+        setRevealed(zoneView, content.words || content.inline, order = 0, full = reveal, row = typingRow)
         val spring = reveal && content.menuUtilityButtons
         setRevealed(menuButtons.settingsButton, content.menuUtilityButtons, order = 0, full = reveal, row = typingRow, spring = spring)
         setRevealed(

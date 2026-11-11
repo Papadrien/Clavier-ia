@@ -578,7 +578,7 @@
     <string name="dictionary_failed_no_space">Nicht genug Speicherplatz auf dem Gerät für dieses Wörterbuch.</string>
     <string name="dictionary_failed_system_stop">Android hat den Download unterbrochen. Tippen Sie auf „Erneut versuchen“.</string>
     <string name="dictionary_failed_other">Der Download ist fehlgeschlagen. Bitte erneut versuchen.</string>
-    <string name="digit_swipe_tip">Nach unten wischen</string>
+    <string name="digit_swipe_tip">Schneller: auf der Taste nach unten wischen</string>
     <string name="keyboard_settings_touch_title">Tippgenauigkeit</string>
     <string name="keyboard_settings_touch_switch">Adaptive Tastenbereiche</string>
     <string name="keyboard_settings_touch_description">Die wahrscheinlichsten Buchstaben werden etwas leichter getroffen. Auf dem Gerät berechnet, nichts wird gespeichert.</string>
