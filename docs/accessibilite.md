@@ -84,3 +84,10 @@ suggestions, panneau emoji. Zones tactiles : viser le bord haut / bas des bouton
 
 La palette claire (`values/colors.xml`) et la palette sombre (`values-night/colors.xml`) passent les mêmes vérifications de contraste
 (`AccessibilityContrastTest`). Le texte sur fond violet utilise `text_on_accent`. Détails : `docs/theme-clavier.md`.
+
+## Audit du 11/11/2026
+- **Touche Entrée** : son icône et son nom parlé suivent l'action du champ (Rechercher, Envoyer, Suivant, OK).
+- **Bandeau de message du clavier** : titre de volet et région vivante (annoncé par TalkBack), durée allongée quand TalkBack est actif
+  et selon le réglage « Délai pour agir » (`MessagePopup`).
+- **Prompts système** : chaque champ est nommé par le titre de sa section (`labelFor`).
+- Non traité (à mesurer sur appareil d'abord) : touches à 36 dp en paysage, onglets emoji à ~25 dp, `Toast` des écrans de réglages.

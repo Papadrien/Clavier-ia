@@ -16,7 +16,10 @@ déclaré dans `settings.gradle.kts` et limité à son groupe). Le SDK est initi
   événement.
 - **Champs de mot de passe** : `Analytics.sensitiveFieldActive` (tenu par `TaipoIme`) coupe tout événement tant qu'un champ
   sensible est affiché.
-- **Désactivable** : Paramètres du clavier > Données d'utilisation (« Partager les données d'utilisation »). Activée par défaut. Désactivée, `Analytics.track` ne rappelle plus le SDK.
+- **Accord explicite** (audit PRIV-01, 11/11/2026) : désactivée tant que l'utilisateur n'a pas répondu à la carte « Aider à améliorer
+  Taipo ? » de l'accueil (`AnalyticsPreferences.consentAnswered`). Modifiable ensuite dans Mes données > « Partager les données
+  d'utilisation ». Désactivée, `Analytics.track` ne rappelle plus le SDK. Les utilisateurs existants qui n'avaient jamais touché
+  l'interrupteur voient la carte et sont considérés comme non consentants jusqu'à leur réponse.
 - **Jamais bloquant** : d'après la doc du SDK, les envois se font sur un pool de fils d'arrière-plan, jamais sur le fil principal.
 - **Types** : le SDK n'accepte que des `String` et des `Int` ; `AnalyticsProps.forSdk()` convertit les booléens en `"true"` / `"false"`
   (mots-clés) et les `Long` en `Int`.
@@ -69,7 +72,7 @@ Le mode chat est la génération par prompt : il compte sous `type = generate`.
 Aptabase n'a pas d'identifiant d'appareil : le nombre d'événements `first_open` du tableau de bord EST le nombre de nouvelles
 installations ouvertes (filtrer par période, version de l'app, langue ou pays du tableau de bord pour le détail).
 
-- Envoyé à la première ouverture de l'application (écran d'accueil), une seule fois : le réglage `first_open_handled`
+- Envoyé à la première ouverture de l'application (écran d'accueil) **après l'accord**, ou au moment de l'accord, une seule fois : le réglage `first_open_handled`
   (`AnalyticsPreferences`) est mémorisé après l'envoi. Règles pures dans `FirstOpenPolicy` (`:core`, testées).
 - **Mise à jour** : si l'écart entre la date d'installation et la dernière mise à jour dépasse 60 s, l'application est
   considérée comme déjà installée avant l'événement : rien n'est envoyé (sinon tous les utilisateurs existants seraient comptés

@@ -43,8 +43,9 @@ les versions (`ktlint-cli` 1.5.0, `detekt-cli` 1.23.8, dans `gradle/quality.grad
 
 - [x] `./gradlew ktlintBaseline detektBaseline`, committer `quality/` (08/11/2026, revue de code : `.editorconfig` ajouté, il
   manquait ; ktlint 1 112 écarts figés au lieu de 10 519 sans lui (règles class-signature et function-signature désactivées : elles contredisent la convention du projet), detekt 326 ; `qualityCheck` lancé par la CI).
-- [ ] `./gradlew qualityCheck` vert.
-- [ ] Étape CI.
+- [x] `./gradlew qualityCheck` vert (11/11/2026, après `ktlintFormat` sur tout le projet : 1 106 écarts ktlint figés → 9 ;
+  detekt 326 → 277).
+- [x] Étape CI (`qualityCheck` dans `.github/workflows/android.yml`).
 
 ## Découpage des gros fichiers (audit 2.1), par étapes
 Audit du 14/10/2026 : `TaipoIme` (~1 840 lignes), `Dictionary`, `KeyboardView`, `CorrectionAiController`, `SuggestionController`,

@@ -9,7 +9,8 @@ Les intitulés exacts des formulaires peuvent avoir changé : à vérifier dans 
 - **Description (EN, à coller)** : *The user taps "Download" to fetch an on-device AI model file (from about 0.3 GB up to
   3.6 GB) or the voice-input model files. The download runs as a foreground service with a visible notification showing
   progress and a Cancel button, so it is not interrupted when the screen turns off or the user leaves the app. It stops
-  as soon as the download ends or is cancelled. Nothing is downloaded without a user action.*
+  as soon as the download ends or is cancelled. Nothing is downloaded without a user action.* (Les dictionnaires, quelques Mo, se téléchargent automatiquement sans service au
+  premier plan : ils ne relèvent pas de cette déclaration, mais doivent figurer dans la section « Sécurité des données ».)
 - **Vidéo de démonstration** : filmer (1) l'écran « Modèle IA », appui sur Télécharger ; (2) la notification avec la
   progression et le bouton Annuler ; (3) l'écran éteint puis rallumé, téléchargement toujours en cours ; (4) la fin du
   téléchargement et la disparition de la notification.

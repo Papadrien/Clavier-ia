@@ -23,8 +23,9 @@ sont présents et non vides (rename atomique : un fichier n'apparaît qu'une foi
 Sans connexion : le travail WorkManager attend (« En attente de connexion… »). Données mobiles : pas de confirmation (quelques Mo).
 
 ## Technique
-`DictionaryDownloadWorker` réutilise `ModelFileFetcher` (HTTPS, `.tmp`, reprise `Range`, relances), **sans SHA-256** (les listes évoluent
-sur le serveur) : seul `DictionaryContentCheck` vérifie la forme (« mot fréquence ») avant installation. `DictionaryLoader` lit les fichiers ;
+`DictionaryDownloadWorker` réutilise `ModelFileFetcher` (HTTPS, `.tmp`, reprise `Range`, relances). **Empreinte SHA-256 vérifiée**
+(audit SEC-03, 11/11/2026) : `DictionaryChecksums` fige celle de chaque liste et des bigrammes ; `DictionaryChecksumsTest` la relie aux
+fichiers de `dictionaries/`. `DictionaryContentCheck` vérifie en plus la forme (« mot fréquence »). `DictionaryLoader` lit les fichiers ;
 une langue non installée n'est pas mise en cache (dictionnaire vide, autocorrection absente) et se charge dès qu'elle est installée.
 États : `DictionaryDownloadTracker` (Queued / Downloading % / Failed / Installed). Écran : carte « Dictionnaire » du détail d'une langue
 (`LanguageDetailActivity`, `DictionaryStatusSection`) ; pastille « À télécharger » sur la ligne de la langue (`LanguagesActivity`).
@@ -39,3 +40,16 @@ une langue non installée n'est pas mise en cache (dictionnaire vide, autocorrec
 - [ ] `./gradlew testDebugUnitTest assembleRelease` ; taille de l'APK avant/après.
 - [ ] Installation fraîche en Wi-Fi : choisir une langue, voir 0 → 100 %, puis correction active sans relancer.
 - [ ] Mode avion : « En attente de connexion… » puis reprise au retour du réseau ; URL erronée : échec + Réessayer.
+
+## Changer une liste sur le serveur (depuis l'audit du 11/11/2026)
+Les versions publiées refusent un fichier dont l'empreinte a changé. Pour publier une nouvelle liste :
+1. modifier `dictionaries/` et mettre à jour `DictionaryChecksums` (le test donne les nouvelles valeurs) ;
+2. envoyer **tout le dossier** dans un nouveau dossier du bucket (par exemple `dictionaries-2026-12-01/`, mêmes chemins) ;
+3. changer `DictionaryFiles.REMOTE_DIRECTORY`, publier la version ;
+4. garder l'ancien dossier tant que des versions anciennes sont en circulation.
+
+## Liste de démarrage embarquée (audit UX-01)
+Français et anglais : les 40 000 premiers mots de la liste complète sont dans l'APK (`assets/dictionaries/starter/`, ~220 Ko
+compressés chacun). Ils servent tant que la liste complète manque (installation hors connexion) ; elle les remplace à son arrivée.
+Régénérer : `head -40000 dictionaries/<code>.txt > app/src/main/assets/dictionaries/starter/<code>.txt` (`StarterDictionaryTest`
+le vérifie). Les autres langues restent sans dictionnaire jusqu'au téléchargement.

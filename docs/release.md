@@ -12,8 +12,9 @@ Les mêmes que AnimalTimer : `ANDROID_KEYSTORE_BASE64` (keystore encodé en base
 (contenu de `key.properties` : `storePassword`, `keyPassword`, `keyAlias`, `storeFile=keystore.jks`).
 
 L'étape « Setup Android signing » de `.github/workflows/android.yml` (variante release uniquement) écrit
-`app/keystore.jks` et `key.properties` à la racine ; `app/build.gradle.kts` les lit. Sans secrets, l'étape génère un
-keystore de secours (`taipo-debug`) : l'APK est alors signé avec une clé jetable, à ne jamais diffuser.
+`app/keystore.jks` et `key.properties` à la racine ; `app/build.gradle.kts` les lit. Sans secrets, le job release
+**échoue** (audit CI-01) : plus de clé jetable générée à la volée. La CI produit l'APK, l'AAB et `mapping.txt` (artefacts
+`apk-release` et `aab-release`).
 Les variables `TAIPO_KEYSTORE_*` restent acceptées en repli pour un build local.
 
 ## Checklist de validation d'un build release (à faire avant toute diffusion)
