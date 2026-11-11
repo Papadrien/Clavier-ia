@@ -168,6 +168,11 @@ class Dictionary private constructor(
     // (l'utilisateur les a ajoutés volontairement, ils priment sur un mot du dictionnaire à distance égale).
     internal val personalFrequency: Long = (candidateFrequencies.maxOrNull() ?: 0L) + 1L
 
+    // Fréquence au-delà de laquelle un mot de la liste est courant : un mot personnel qui n'en diffère que par ses accents ne le
+    // remplace pas (« Côme » ne remplace pas l'anglais « come »). En dessous, la forme sans accent est un mot rare ou un nom écrit
+    // sans ses accents (« nae », « chloe ») : le mot personnel s'applique (voir [correctionWithoutNames]).
+    private val commonWordFrequency: Long = (personalFrequency - 1L) / PERSONAL_ACCENT_COMMON_SHARE
+
     // Mots accentués indexés par leur forme sans accent (« annee » -> [« année »]) : oublier un
     // accent est la faute la plus courante en français. Seuls les mots qui contiennent un accent
     // sont indexés (~12 000 sur 50 000).
@@ -379,6 +384,9 @@ class Dictionary private constructor(
         if (isPersonalWithApostrophe(lower, personal)) return null
 
         if (lower in frequencies) {
+            // Accent oublié sur un mot personnel dont la forme sans accent est un mot rare de la liste (« nae », mot écossais de la
+            // liste anglaise, pour « Naé ») : le mot ajouté volontairement par l'utilisateur l'emporte.
+            if (frequencies.getValue(lower) < commonWordFrequency) personalAccentRestoration(word, lower, personal)?.let { return it }
             // « coeur » -> « cœur » : la liste contient les deux écritures, seule celle avec la ligature est juste.
             ligatureForms[lower]?.let { return applyOriginalCasing(word, it) }
             // Mot présent dans les listes : corrigé seulement si c'est une faute du corpus dont la
@@ -1002,6 +1010,9 @@ class Dictionary private constructor(
 
     companion object {
         private const val MIN_WORD_LENGTH_FOR_CORRECTION = 2
+
+        /** Part de la fréquence du mot le plus courant au-delà de laquelle un mot est courant (voir [commonWordFrequency]). */
+        private const val PERSONAL_ACCENT_COMMON_SHARE = 1_000L
 
         private const val DIGIT_SLIP_MIN_LENGTH = 4
 

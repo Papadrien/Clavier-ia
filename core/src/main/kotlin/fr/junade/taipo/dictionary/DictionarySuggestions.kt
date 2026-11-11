@@ -200,7 +200,7 @@ internal class DictionarySuggestions(private val d: Dictionary) {
         for (personal in personalWords) {
             val key = personal.lowercase()
             if (key == lower) continue
-            if (key.startsWith(lower) || (lower.length >= 3 && EditDistance.damerauLevenshteinBounded(lower, key, 1) <= 1)) {
+            if (startsWithIgnoringAccents(key, lower) || (lower.length >= 3 && EditDistance.damerauLevenshteinBounded(lower, key, 1) <= 1)) {
                 add(d.personalDisplay(typed, personal), key, d.personalFrequency)
             }
         }
@@ -235,6 +235,10 @@ internal class DictionarySuggestions(private val d: Dictionary) {
         return scored.sortedByDescending { it.second }.take(limit).map { it.first }
     }
 
+    /** Vrai si [key] commence par [prefix], accents compris ou non (« naé » commence par « nae » ; « nae » aussi par « naé »). */
+    private fun startsWithIgnoringAccents(key: String, prefix: String): Boolean =
+        key.startsWith(prefix) || (key.length >= prefix.length && WordForms.foldAccents(key).startsWith(WordForms.foldAccents(prefix)))
+
     private fun isSuggestible(typed: String): Boolean = when {
         typed.none { it.isLetter() } -> false
         typed.any { it.isDigit() } -> false
@@ -263,10 +267,11 @@ internal class DictionarySuggestions(private val d: Dictionary) {
             if (result.size < limit && seen.add(key)) result += display
         }
 
-        // Mots personnels : alphabétique (l'ordre de la liste), avant les mots du dictionnaire.
+        // Mots personnels : alphabétique (l'ordre de la liste), avant les mots du dictionnaire. Accents facultatifs : « Nae »
+        // propose toujours « Naé », comme « Na ».
         for (personal in personalWords) {
             val key = personal.lowercase()
-            if (key.startsWith(lower)) offer(d.personalDisplay(typed, personal), key)
+            if (startsWithIgnoringAccents(key, lower)) offer(d.personalDisplay(typed, personal), key)
         }
         // Après une élision (« l'Ta »), les mots personnels sont proposés avec leur élision (« l'Taipo »).
         val apostrophe = typed.lastIndexOf('\'')
@@ -277,7 +282,7 @@ internal class DictionarySuggestions(private val d: Dictionary) {
             val stemLower = stem.lowercase()
             for (personal in personalWords) {
                 val key = personal.lowercase()
-                if (key.length > stemLower.length && key.startsWith(stemLower)) {
+                if (key.length > stemLower.length && startsWithIgnoringAccents(key, stemLower)) {
                     offer(elision + d.personalDisplay(stem, personal), elision.lowercase() + key)
                 }
             }
