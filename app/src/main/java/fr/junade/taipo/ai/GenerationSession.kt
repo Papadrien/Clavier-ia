@@ -6,12 +6,11 @@ import com.google.ai.edge.litertlm.Conversation
 import com.google.ai.edge.litertlm.ConversationConfig
 import com.google.ai.edge.litertlm.Engine
 import fr.junade.taipo.AppLog
+import fr.junade.taipo.ProcessScope
 import fr.junade.taipo.model.AiModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -65,9 +64,6 @@ class GenerationSession(
 
     @Volatile private var stopRequested = false
     @Volatile private var generationJob: Job? = null
-
-    /** Portée des arrêts natifs : ils ne doivent bloquer ni le thread principal ni la coroutine d'envoi. */
-    private val stopScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     init {
         // La correction ou la fermeture du moteur ferment la conversation : on l'oublie ici.
@@ -226,7 +222,8 @@ class GenerationSession(
      * [NATIVE_STOP_TIMEOUT_MS], le flux est coupé de force pour ne pas garder le verrou d'inférence.
      */
     private fun requestNativeStop(target: Conversation, job: Job) {
-        stopScope.launch {
+        // Portée du processus : l'arrêt natif ne doit bloquer ni le fil principal ni la coroutine d'envoi (audit QUAL-03).
+        ProcessScope.launch {
             stopNative(target)
             delay(NATIVE_STOP_TIMEOUT_MS)
             if (job.isActive) {

@@ -144,9 +144,4 @@ class CorrectionEngine(
         /** Pause entre la fin d'une inférence arrêtée et la fermeture de sa conversation native. */
         private const val NATIVE_GRACE_MS = 500L
     }
-
-    /** Libère le moteur partagé s'il y en a un de chargé. À appeler quand l'IME est détruit. */
-    fun close() {
-        host.close()
-    }
 }

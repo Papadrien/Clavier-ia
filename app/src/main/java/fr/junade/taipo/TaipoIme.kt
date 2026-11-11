@@ -206,7 +206,8 @@ class TaipoIme : InputMethodService() {
     private val mainHandler = Handler(Looper.getMainLooper())
 
     // Moteur LiteRT-LM unique, partagé par la correction et (épopée 5) la génération par prompt.
-    private val llmHost by lazy { LlmEngineHost(applicationContext) }
+    private val llmHostLazy = lazy { LlmEngineHost(applicationContext) }
+    private val llmHost by llmHostLazy
     private val correctionEngine by lazy { CorrectionEngine(applicationContext, llmHost) }
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
     private val keyboardPreferences by lazy { KeyboardPreferences(applicationContext) }
@@ -675,18 +676,27 @@ class TaipoIme : InputMethodService() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        // Audit BUG-04 : les tâches en cours (correction, génération) sont arrêtées avant de libérer leurs moteurs.
+        if (llmHostLazy.isInitialized()) {
+            correctionEngine.cancel()
+            prompt.stopGeneration()
+        }
+        serviceJob.cancel()
         // Écriture terminée avant de rendre la main (lot 2.6 de la revue) : pas de launch asynchrone ici.
         nextWords.flushBlocking()
         suggestions.correctionHabits.flushBlocking()
         suggestions.release()
         messagePopup.dismiss()
         aiTranscription.release()
-        llmHost.close()
+        // Le moteur est fermé hors du fil principal, une fois l'inférence en cours terminée (verrou d'inférence).
+        if (llmHostLazy.isInitialized()) {
+            val host = llmHost
+            ProcessScope.launch { host.closeLocked() }
+        }
         voice.release()
         clipboard.release()
         keySounds.release()
-        serviceJob.cancel()
+        super.onDestroy()
     }
 
     /** Relit les réglages du son du clavier et des sons de la barre supérieure ; prépare les sons (une seule fois) si l'un est activé. */

@@ -42,6 +42,11 @@ class ClipboardReader(context: Context, private val onChanged: () -> Unit) {
     }
 
     /** Le texte actuellement copié, ou null (presse-papiers vide, contenu qui n'est pas du texte, lecture refusée). */
+    // Audit PERF-02 : dernière copie lue. La description (légère) suffit à savoir si la copie a changé ; le contenu, qui peut
+    // peser jusqu'à 1 Mo et transite par un appel au système, n'est relu que pour une nouvelle copie.
+    private var lastTimestamp = 0L
+    private var lastSnapshot: Snapshot? = null
+
     fun read(): Snapshot? {
         val cm = manager ?: return null
         return try {
@@ -51,10 +56,15 @@ class ClipboardReader(context: Context, private val onChanged: () -> Unit) {
             ) {
                 return null
             }
+            val timestamp = description.timestamp
+            lastSnapshot?.let { if (timestamp > 0 && timestamp == lastTimestamp) return it }
             val clip = cm.primaryClip ?: return null
             if (clip.itemCount == 0) return null
             val text = clip.getItemAt(0).text?.toString() ?: return null
-            Snapshot(text, clip.description.timestamp, isSensitive(clip.description))
+            Snapshot(text, clip.description.timestamp, isSensitive(clip.description)).also {
+                lastTimestamp = timestamp
+                lastSnapshot = it
+            }
         } catch (e: RuntimeException) {
             // SecurityException (lecture refusée par le système) ou échec de transfert d'un très gros
             // contenu : pas de suggestion, sans faire planter le clavier.
