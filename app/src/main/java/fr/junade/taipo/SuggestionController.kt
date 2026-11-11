@@ -538,7 +538,7 @@ class SuggestionController(
         val language = host.language()
         // Bigrammes facultatifs (mot précédent, point 1 de docs/autocorrection-roadmap.md) : téléchargés au mieux, une fois par processus.
         if (DictionaryFiles.isInstalled(appContext.filesDir, language)) BigramDownloadWorker.ensure(appContext, language)
-        if (DictionaryLoader.peek(language) != null) {
+        if (DictionaryLoader.isFullyLoaded(language)) {
             // Dictionnaire déjà là : seul le modèle de la lettre suivante peut manquer (réglage activé depuis).
             if (nextLettersAllowed && DictionaryLoader.peek(language)?.nextLetterModelIfBuilt == null) {
                 scope.launch(Dispatchers.Default) {
@@ -552,6 +552,12 @@ class SuggestionController(
         // depuis une version qui les embarquait) = on lance le téléchargement ; le chargement suit à son arrivée.
         if (!DictionaryFiles.isInstalled(appContext.filesDir, language)) {
             DictionaryDownloadScheduler.ensure(appContext, language)
+            // Audit UX-01 : en attendant, liste de démarrage embarquée (français, anglais), chargée en arrière-plan.
+            if (DictionaryLoader.peek(language) == null && language in DictionaryLoader.STARTER_LANGUAGES) {
+                scope.launch(Dispatchers.IO) {
+                    if (DictionaryLoader.loadStarter(appContext, language)) withContext(Dispatchers.Main) { onDictionariesLoaded() }
+                }
+            }
             return
         }
         scope.launch(Dispatchers.IO) {

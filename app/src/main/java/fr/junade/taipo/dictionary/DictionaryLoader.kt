@@ -60,8 +60,49 @@ object DictionaryLoader {
 
     private val cache = ConcurrentHashMap<KeyboardLanguage, Dictionary>()
 
+    /**
+     * Audit UX-01 : liste de démarrage embarquée (les 40 000 mots les plus fréquents, `assets/dictionaries/starter/`), pour le
+     * français et l'anglais. Elle sert tant que la liste complète n'est pas téléchargée (installation hors connexion) : le
+     * clavier corrige et propose dès la première frappe. Jamais mise dans [cache], pour que la liste complète la remplace.
+     */
+    private val starters = ConcurrentHashMap<KeyboardLanguage, Dictionary>()
+
+    /** Langues qui ont une liste de démarrage embarquée. */
+    val STARTER_LANGUAGES: Set<KeyboardLanguage> = setOf(KeyboardLanguage.FR, KeyboardLanguage.EN)
+
+    /** Chemin de la liste de démarrage dans les assets. */
+    fun starterAssetPath(language: KeyboardLanguage): String = "dictionaries/starter/${language.tag}.txt"
+
     /** Dictionnaire déjà chargé pour [language], ou null. Ne bloque jamais et ne charge rien. */
-    fun peek(language: KeyboardLanguage): Dictionary? = cache[language]
+    fun peek(language: KeyboardLanguage): Dictionary? = cache[language] ?: starters[language]
+
+    /** La liste complète est chargée (pas seulement la liste de démarrage). */
+    fun isFullyLoaded(language: KeyboardLanguage): Boolean = cache.containsKey(language)
+
+    /**
+     * Charge la liste de démarrage de [language] si la liste complète manque (hors du thread principal). Renvoie vrai si un
+     * dictionnaire (de démarrage) est désormais disponible.
+     */
+    fun loadStarter(context: Context, language: KeyboardLanguage): Boolean {
+        if (cache.containsKey(language) || starters.containsKey(language)) return true
+        if (language !in STARTER_LANGUAGES) return false
+        val dictionary = try {
+            val bytes = context.assets.open(starterAssetPath(language)).use { it.readBytes() }
+            Dictionary.withFrequencies(
+                Dictionary.parseFrequencyBytes(bytes, MIN_FREQUENCY, expectedEntries = STARTER_ENTRIES),
+                inflectionsFor(language),
+                candidateMinFrequency(language),
+                proximityOf(context, language),
+                confidence = confidenceOf(language),
+                accentPolicy = accentPolicyOf(language),
+            )
+        } catch (e: java.io.IOException) {
+            AppLog.w(TAG, "liste de démarrage $language illisible", e)
+            return false
+        }
+        starters.putIfAbsent(language, dictionary)
+        return true
+    }
 
     /**
      * Oublie le dictionnaire chargé de [language] : il est relu au prochain préchargement (ouverture d'un champ). Appelé
@@ -78,10 +119,13 @@ object DictionaryLoader {
             cache[language]?.let { return it }
             // Fichiers pas (encore) téléchargés : on tape sans autocorrection ni suggestions (dictionnaire vide), sans le
             // mettre en cache.
-            if (!DictionaryFiles.isInstalled(context.filesDir, language)) return emptyDictionary(context, language)
+            if (!DictionaryFiles.isInstalled(context.filesDir, language)) {
+                return if (loadStarter(context, language)) starters.getValue(language) else emptyDictionary(context, language)
+            }
             DictionaryFiles.deleteObsoleteBackup(context.filesDir, language)
             val dictionary = traced(Sections.DICTIONARY_LOAD) { loadWithReducedFallback(context, language) }
             cache[language] = dictionary
+            starters.remove(language) // la liste complète remplace la liste de démarrage
             return dictionary
         }
     }
@@ -260,4 +304,5 @@ object DictionaryLoader {
 
     /** Estimation de la taille de la table : environ 35 octets de fichier par mot gardé (liste française, seuil 5). */
     private const val BYTES_PER_KEPT_ENTRY = 35L
+    private const val STARTER_ENTRIES = 40_000
 }
