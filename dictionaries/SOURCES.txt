@@ -213,3 +213,29 @@ tools/align_open_lexicons.py (voir docs/autocorrection-roadmap.md et docs/dictio
   50 fois plus fréquent, ou un mot anglais dans une autre langue. main_pt_BR (licence non vérifiée) sert seulement à vérifier.
 - Retirés / ajoutés : fr 35 643 / 54 454 ; en 12 161 / 16 496 ; es 12 247 / 50 780 ; de 9 754 / 120 540 ; it 32 034 / 66 277 ;
   pt 26 775 / 58 315 ; nl 27 632 / 54 685. Bigrammes fr, en, it, pt, nl reconstruits sur le nouveau vocabulaire.
+
+
+=== Huit langues ajoutées : pl, ro, cs, hu, sv, da, nb, fi — 11/11/2026 ===
+Polonais, roumain, tchèque, hongrois, suédois, danois, norvégien (bokmål, code nb) et finnois, avec la même chaîne que les autres langues :
+1. Listes complètes FrequencyWords (hermitdave/FrequencyWords, contenu 2018, OpenSubtitles2018, CC-BY-SA 4.0), <code>_full.txt
+   (norvégien : no_full.txt), nettoyées par tools/fetch_dictionaries.py (alphabet de chaque langue, mots d'une lettre gardés : pl a i o u w z ;
+   ro a e i o ; cs a i k o s u v z ; hu a s ; sv i å ö ; da et nb i å ø ; fi aucun). Roumain : s et t à cédille (ş ţ, anciens encodages)
+   réécrits avec la virgule souscrite (ș ț). Hongrois : õ et û (Latin-1) réécrits ő et ű.
+2. Alignement tools/align_open_lexicons.py sur les listes AOSP « legacy » (main_pl, main_ro, main_cs, main_hu, main_sv, main_da, main_nb ;
+   Apache License 2.0, publiées par HeliBoard) et les dictionnaires Hunspell de LibreOffice (pl_PL, ro_RO, cs_CZ, hu_HU, da_DK, nb_NO ;
+   suédois : paquet hunspell-sv, même projet), utilisés seulement pour vérifier. Note AOSP minimale d'un ajout portée à 100 (au lieu de 30)
+   pour pl, ro, sv, da, nb : leurs listes AOSP ont des notes très tassées (l'essentiel entre 40 et 100) et la liste roumaine contient toutes
+   les formes fléchies ; à 30, le roumain aurait reçu 520 000 mots. Retirés / ajoutés : pl 37 412 / 524 ; ro 57 813 / 939 ; cs 37 790 /
+   33 281 ; hu 32 415 / 2 411 ; sv 12 103 / 587 ; da 8 749 / 535 ; nb 6 347 / 863. Finnois : non aligné (pas de dictionnaire Hunspell
+   finnois chez LibreOffice, qui utilise Voikko ; sans cette seconde vérification, les règles de retrait supprimeraient des formes fléchies
+   justes).
+3. Bigrammes : tools/build_ngrams.py sur les phrases Tatoeba (CC BY 2.0 FR) de chaque langue (pol, ron, ces, hun, swe, dan, nob, fin) ;
+   une phrase sur 50 mise de côté pour le banc (tools/autocorrect-bench/heldout/<code>.txt).
+4. Prénoms (names/<code>.txt) : listes écrites à la main (70 à 80 prénoms courants par langue), sans les prénoms qui sont aussi des mots
+   courants (cs roman, dana ; nb hans, per, live ; sv klara, saga, lisa ; da line, signe ; fi anna, onni, otto, mika, matti, helmi ;
+   pl maja).
+Tailles : pl 420 143 mots, ro 269 745, cs 470 994, hu 653 344, sv 179 164, da 142 099, nb 112 485, fi 497 156.
+Seuils de proposition (DictionaryLoader.candidateMinFrequency, fréquence du 50 000e mot) : pl 219, ro 149, cs 194, hu 213, sv 41, da 28,
+nb 18, fi 134. Politique des accents (AccentPolicy) : polonais et tchèque 40, hongrois 50, langues nordiques 50, roumain 4 (avec les formes
+sans accent qui sont aussi des mots courants : sa, ca, cat, tine, peste, fata).
+

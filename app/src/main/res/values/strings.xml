@@ -415,10 +415,10 @@
     <string name="licenses_fulltext_unreadable">The license text couldn\'t be loaded. Use the link above to read it online.</string>
     <string name="licenses_usage_nemotron">Voice dictation model (French and English), downloaded on demand and run on your device.</string>
     <string name="licenses_notice_nemotron">Licensed under the OpenMDW License Agreement, version 1.1. Taipo uses an ONNX (int8) export of this model, run with sherpa-onnx.</string>
-    <string name="licenses_usage_frequencywords">Word lists for autocorrection and suggestions in the seven keyboard languages: French, English, Spanish, German, Italian, Portuguese and Dutch.</string>
-    <string name="licenses_usage_aosp_dictionaries">Reference word lists used to check and complete the keyboard word lists in the seven languages.</string>
+    <string name="licenses_usage_frequencywords">Word lists for autocorrection and suggestions in the fifteen keyboard languages: French, English, Spanish, German, Italian, Portuguese, Dutch, Polish, Romanian, Czech, Hungarian, Swedish, Danish, Norwegian and Finnish.</string>
+    <string name="licenses_usage_aosp_dictionaries">Reference word lists used to check and complete the keyboard word lists (every language except Finnish).</string>
     <string name="licenses_notice_aosp_dictionaries">Words from the Android Open Source Project keyboard word lists (as published by HeliBoard) were added to the Taipo word lists, with a frequency computed by Taipo, and used to remove words they do not contain. Licensed under the Apache License 2.0.</string>
-    <string name="licenses_usage_tatoeba">Word pairs (which word usually follows another) that help autocorrection pick the right word in French, English, Italian, Portuguese and Dutch, and words added to the Italian, Portuguese and Dutch lists.</string>
+    <string name="licenses_usage_tatoeba">Word pairs (which word usually follows another) that help autocorrection pick the right word in every keyboard language except Spanish and German, and words added to the Italian, Portuguese and Dutch lists.</string>
     <string name="licenses_notice_tatoeba">Word pair counts computed by Taipo from sentences of the Tatoeba collaborative corpus (tatoeba.org), licensed under CC BY 2.0 FR. Only word counts and counts of pairs of consecutive words are kept, not the sentences.</string>
     <string name="licenses_notice_frequencywords">Word lists adapted from FrequencyWords by Hermit Dave (2018 content, built from the OpenSubtitles 2018 corpus), licensed under CC BY-SA 4.0. Changes made by Taipo: words converted to lowercase and normalized; fragments, abbreviations, entries with digits or characters from other alphabets removed; rare words and likely typos removed; a few entries added by hand. The lists as adapted are shared under the same license, CC BY-SA 4.0.</string>
     <string name="licenses_usage_litertlm">Engine that runs the Gemma models on your device.</string>
@@ -673,9 +673,12 @@
     <string name="language_detail_footer">The layout chosen here applies when %1$s is the active language. The Remove button only appears while another language remains.</string>
     <string name="language_layout_note_azerty">France, Belgium</string>
     <string name="language_layout_note_qwerty">International</string>
-    <string name="language_layout_note_qwertz">Germany, Switzerland, Austria</string>
+    <string name="language_layout_note_qwertz">Germany, Austria, Switzerland, Czechia, Hungary</string>
     <string name="language_layout_note_qwerty_n">Usual for Spanish</string>
     <string name="language_layout_note_colemak">Ergonomic</string>
+    <string name="language_layout_note_qwerty_sv">Sweden, Finland</string>
+    <string name="language_layout_note_qwerty_da">Denmark</string>
+    <string name="language_layout_note_qwerty_no">Norway</string>
     <!-- Premium pack -->
     <string name="premium_title">Premium pack</string>
     <string name="premium_price_fallback">€2.99</string>

@@ -1,0 +1,636 @@
+# Phrases Tatoeba (CC BY 2.0 FR) jamais comptées dans dictionaries/bigrams/sv.txt : voir tools/build_ngrams.py.
+Han blev en berömd sångare.
+Jag är från Tokyo, Japan.
+Han sov över hos sin moster.
+De skilde sig förra året.
+Jag vet inte om jag har tid att göra det.
+Jag gillar varken den ena eller den andra kakan.
+Färglösa gröna idéer sover rasande.
+Hon har gått och lagt sig.
+Jag har inga pengar på mig.
+Jag är upptagen med maten för tillfället.
+Och slutligen, tolv poäng till Estland!
+Vill du ha lite mer sås?
+Hennes far avled i förra veckan.
+Sömnbrist är inte bra för kroppen.
+Jag har inte så mycket pengar med mig.
+Hennes hår är långt och vackert.
+Vilken av de två är tyngst?
+Vad jag vill ha nu är en varm kopp kaffe.
+Hotellet drivs av hans farbror.
+Vem röstade du på i valet?
+Min åsikt skiljer sig från din.
+Vi lär oss om antikens Rom och Grekland.
+Han sade att han låg sjuk, vilket inte var sant.
+Den här kameran är billig.
+Mor stannade i bilen medan far handlade.
+Han var van att flyga ensam och hade i sin fantasi flugit rutten många gånger.
+Fastän vi väntade till tio dök Bill aldrig upp.
+Sjön hade frusit till, så vi gick över isen.
+Vet du hur många människor som dör av svält i världen per år?
+Mitt språk är inte med i listan!
+En otrevlig känsla är aldrig bra.
+Nuförtiden verkar alla vara lyckliga.
+Allt i denna värld är blott en dröm.
+Jag har levt här under en lång tid.
+Taro, vill du vara så snäll och hjälpa mig?
+Det är bara två veckor till jul.
+Han dömde Brown till hängning.
+Jag frågade honom vad han hette.
+Han satt där för att röka en pipa.
+Var har du köpt de där skorna?
+Ty mörkret har passerat, och legenden gror ännu.
+Jag skulle gärna resa världen runt.
+Skulle jag kunna få mer potatismos.
+Han är ett huvud längre än mig.
+Var det något mer ni skulle få sagt?
+Å min sida, hoppas jag att det inte ska regna.
+Jag märkte det inte förrän i går.
+Denna fågel lever varken i Japan eller i Kina.
+Jag är trött eftersom jag var tvungen att plugga inför ett prov igår natt.
+Hur lång tid tar det till stationen?
+Offret låg med ansiktet ned i mattan.
+Han kom i går för att träffa oss.
+Hon var förkyld och nös ideligen.
+Vi hade stora svårigheter att hitta busshållplatsen.
+Stereon dunkade på högsta volym.
+Det är dags att inse att det är omöjligt. Vi kommer aldrig att klara det.
+Jag undrar vem som namngav detta skepp.
+Jorden är mindre än solen.
+Hon fick en futtig summa i ersättning för skadan.
+Han är rik, men desto viktigare: han är väluppfostrad.
+Har Jane lämnat Japan för gott?
+Jag trodde Tom vad en fullständig idiot.
+Stig på bussen en och en.
+Jag fick ett brev som underrättade mig om hans ankomst.
+Hur ser du om någon är en löpare?
+Hon petar sig i näsan.
+Vi män har vant oss att vänta på kvinnorna.
+Skulle jag kunna få ett glas öl, tack?
+Han klär sig alltid i svart.
+Jag har bara femtio meter rep.
+Jag går till biblioteket två till tre gånger per vecka.
+De hade inga skägg, inget hår och inga ögonbryn.
+Jag är faktiskt väldigt upptagen.
+Jag har inget att skriva med.
+Min far har slutat röka på grund av sin hälsa.
+Det finns ett piano i rummet.
+Hur många skyskrapor finns det egentligen i Shanghai?
+Hur går det i skolan?
+Tom tog knäcken på sig.
+Det känns som att jag är på bättringsvägen.
+De är alla kannibaler här, utom jag, jag blir bara uppäten.
+Jag såg Tom i kväll.
+Hon valde en hatt som matchade hennes klänning.
+Hon köpte en bok i affären.
+Alla studenterna i klassen gillar herr Smith.
+Jag förstod inte hans skämt.
+Mary ser ovänlig ut, men egentligen har hon ett gott hjärta.
+Jag har fortfarande inte hittat det jag letar efter.
+Jag vill bara ha roligt.
+Varför frågar du inte din lärare om råd?
+Hur svårt kan det vara?
+Jag hoppas att vi hittar Tom.
+Jag vet att du är upptagen.
+Det har blivit märkbart kallare.
+Alice sover i mitt rum.
+Varför behöver du de här pengarna?
+Jag trodde att ni två var lika gamla.
+Jag kan inte titta på Tom.
+Vi är tacksamma för din vänlighet.
+Jag förstår inte riktigt vad du menar.
+Jag förtjänar inte det här.
+Jag kommer att vara på mitt kontor.
+Min fru ville adoptera ett barn.
+Tror du på mig nu?
+Jag trodde att vi var bästa vänner.
+Jag flyttade inte på någonting.
+Jag trodde att jag hörde dig.
+Jag har byggt ett hus med utsikt över berget.
+Vill du dansa med mig?
+Låt mig tänka en minut.
+Hon är ofta borta från skolan.
+Tom håller på att kvävas.
+Hon är tillräckligt gammal för att resa själv.
+Inte undra på att presentatören lät konstig, hon var sjuk.
+Var kommer det där ärret ifrån?
+Det här är inte en mening.
+Jag kan inte göra det där heller.
+Jag trodde ni tyckte om mig.
+Han glömmer aldrig att betala en räkning.
+Från honom får man alltid bara undvikande svar.
+Denna fråga är ytterst aktuell.
+Det var en obeskrivlig situation.
+Fortsätt rakt fram och sväng sedan till höger.
+Apropå lägenheter, vet du om dina föräldrar har hittat något nytt boende än?
+Det här arbetssättet passar mig inte.
+Var kan han hålla hus?
+Det här är ett mycket märkligt brev.
+Hur kom ni in hit?
+Just nu har vi ett specialerbjudande för studenter.
+Jag skulle vilja träffa Tom nu.
+Tom är inte redo att ta emot främmande än.
+Det är en sannolik utkomst.
+Det är bara att bita ihop.
+Jag tycker inte om honom, för han är slug som en räv.
+Han sprang för att komma i tid.
+Min skrivare skriver bara ut i svartvitt.
+Varför är du så trött?
+Jag flyttade till en ny lägenhet.
+Tycker du om klassisk musik?
+Jag vill att du kommer tillbaka till Boston.
+Vill du gifta dig eller skaffa barn först?
+Kärnvapen är ett hot mot hela mänskligheten.
+Nu ska jag passa på att koppla av en stund.
+Varför följer du efter mig?
+Tom sade att han ville vara här.
+Han har en mycket avog hållning till unionen.
+Han är utom fara nu.
+Det är ett för svårt problem för mig att lösa.
+Markku utnämndes till professor i teologi.
+Vilket avsnitt är du på?
+Ta på dig en klänning då.
+Det fanns ingen kvar utom mig.
+Hur gammal är din son?
+Den här dörren går inte att låsa.
+Jag köpte henne en vacker klänning.
+Jag visade dem hur man gör det.
+Jag har nu blivit döden, världarnas förintare.
+Min engelska är inte bra.
+Markku är en ganska vanlig typ.
+Jag läser en bok medan jag äter.
+Detta är den högsta byggnad jag någonsin sett.
+Jag tillbringade tre månader på sjukhus när jag var tretton år gammal.
+Det är inte ett vapen.
+Om jag var rik, skulle jag åka utomlands.
+Du har förtjänat det väl.
+Han såg dig på festen i går.
+Han kan tala med de döda.
+Vem har hand om ärenden nu?
+Är det inte morgon snart?
+Den nya lagen banade väg för liknande lagar i framtiden.
+Din tid är slut nu.
+Det kom fram att de hade haft en affär.
+Han drog det kortaste strået.
+Hämtar du hem en film som vi kan se i kväll?
+Jag tror att han heter Tom.
+Jag tycker att Tom är riktigt sjyst.
+När jag gick i lågstadiet, drömde jag om att bli pilot.
+Proletärer i alla länder, förenen eder!
+Det är bra att du är dig själv. Vem skulle du annars vara?
+Ja, jag förstår. Tack så mycket.
+Finns det ett apotek i närheten?
+Jag har inga pengar på mig för tillfället.
+Jag kunde inte lägga band på mig.
+Jag minns inte exakt vad jag ska göra.
+Det kan komma att göra ont.
+Varför berättar ni inte för oss?
+Den är inte till er.
+God jul och gott nytt år!
+Jag har ingen aning om vad Tom pratar om.
+Berätta din plan för mig.
+Varför vill du ha den?
+Jag har ingen anledning att leva.
+Det är svårt att lära gamla hundar sitta.
+I byn gick man man ur huse.
+Många tycker att finska är ett särskilt svårt språk.
+Jag förstår inte hur hon orkar gå an hela tiden.
+Här ligger en hund begraven.
+Jag förstår nästan allt som de säger.
+Hon är inte bara vänlig utan även generös.
+Hon har ett hett temperament.
+Har du något att tillägga?
+Vad skrev du i går?
+Får jag prata med Tom?
+Har du ramat in fotografierna vi framkallade?
+Vi visste alla om den.
+Det finns inte en tillstymmelse till hopp.
+Jag är inte alltför trött.
+Vad ska du göra i kväll?
+Härifrån är det inte långt till järnvägsstationen.
+Min mamma var väldigt överraskad.
+Tom sa att han inte äter kött.
+Det var några barn i rummet.
+Vänligen klicka på ”logga in” i det övre högra hörnet.
+Jag vill inte bli vuxen.
+I havet finns en ö.
+Gör inget som du senare ångrar.
+Var köpte du den där boken?
+Hur pass etablerat är halloween i Australien?
+Elefanten har en lång snabel.
+Han har aldrig hållit ett löfte.
+Han driver alltid med mig.
+Det var en utmaning för mig.
+Man ska inte ge upp halvvägs.
+Jag känner mig helt förstörd.
+Skulle du kunna delta lite mer i planeringen?
+Jag vill inte veta av dig.
+Hon höll ett mycket träffande tal.
+Det var kärlek vid första ögonkastet.
+Ni är alla väldigt lugna.
+Tom sträckte sig mot ordboken på hyllan.
+De två männen tog i hand.
+Tom bad om en stor summa pengar.
+I länder som Norge och Finland är det mycket snö om vintrarna.
+De påstod att hon dödade den kvinnan.
+Det var bara Tom som blev kvar.
+Jag vill spela tennis med dig någon gång.
+Vill ni att jag ska berätta en historia för er?
+Tom är inte en schyst kille.
+Jag tänker inte ha på mig det där.
+Tom har inte några vänner att leka med.
+Det som var är inte längre viktigt.
+Det här är den vackraste solnedgång jag någonsin sett.
+Tofu kan användas som ersättning för kött.
+Tom vet att vi är här.
+Jag har aldrig behövt det.
+Jag är glad att ni är tidiga.
+Det är skönt att få lata sig ibland.
+Vi har inte fått ihop tillräckligt med pengar.
+Fick du några pengar över?
+Hur tog du dig in?
+Jag kan tala om för dig att det var min med.
+Hur många länder finns det i Afrika?
+Mitt rum är alltid städat.
+Duvor har samma partner hela livet ut.
+Jag googlar nästan varje dag.
+Var snäll och säg svaret på frågan.
+Det betydde mycket för mig.
+Jag kan ta itu med det.
+Kan du reparera det här?
+Hur gjorde Tom det här?
+Hur ska jag förklara det?
+Kan du göra det eller inte?
+Varför tycker du om det?
+Vi ska presentera idén för kommittén.
+Ge mig en dollar för boken.
+Kan du växla en femtiolapp?
+Du borde följa skolans regler.
+Han kan inte fatta ett beslut.
+Biskopen förbarmade sig över de förtvivlade immigranterna.
+Jag vill ha en papegoja.
+Vi ska göra oss av med den.
+Kan vi gå och ta en promenad?
+Det har varit en hemsk dag.
+Han har en vit hund.
+Jag har hittat ett jobb.
+Jag hoppas att du tycker om den här.
+Hur kunde de veta om det?
+Hur skulle Tom veta det?
+Jag har varit med om en olyckshändelse.
+Jag har gömt den någonstans.
+De serverar inte det här.
+Tom borde inte vara härnere.
+Jag gjorde mig illa idag.
+Jag kan inte komma underfund med de här siffrorna.
+Jag vill ha mera mjölk.
+Jag höll på att bli sömnig.
+Det här är en guldgruva.
+Nu ska vi se vad som händer.
+Du kan inte klandra henne för vad hon gjorde.
+Ingången till tunnelbanan ligger vid hörnet.
+Jag går ut ett slag.
+Varje del av ön har utforskats.
+Han kom fram tidigare än vanligt.
+Jag kommer att klara det. Sanna mina ord.
+Han var snäll nog att köra mig till sjukhuset.
+Kan du i korthet återge vad som sades under mötet?
+Han såg på kapplöpningen med sin kikare.
+Kom tillbaks om ett dygn.
+Tom höll med om allt som Mary sa.
+Vi vill ha hälsosammare mat.
+Tom satt över tre år i fängelset.
+Jag älskar den här bilen.
+Jag har aldrig problem med att somna.
+De kunde inte hjälpa oss.
+Som jag sa, jag var upptagen.
+Hur långt är det till Boston?
+Tom kan ännu vara vid liv.
+Ingen visste vart han hade tagit vägen.
+Tom skickade Mary en inbjudan.
+Läkarna säger att det var ett mirakel att Tom överlevde natten.
+Jag kommer att få tillbaka den.
+Du kommer att avslöja mig.
+Jag har fått lite idéer.
+Jag hörde någon skrika nyss.
+Vi måste jobba på det.
+Vi kommer inte att sälja den.
+Jag kommer inte från en rik familj.
+Föräldrar är ansvariga för sina barns säkerhet.
+Tokyo är större än envar annan japansk stad.
+Jag vill inte se honom nu.
+Jag kommer tillbaka om tio minuter.
+Tom ser fortfarande förvånad ut.
+Vi vill inte överbelasta Tom.
+Jag skulle inte göra det.
+Han låtsades vara sjuk, så att han kunde vara frånvarande från skolan.
+Jag vill bara ha fred.
+Jag kommer att skära ned på kött.
+Mari sa att hon bara är ihop med en man som kan spela något instrument.
+Tom åker om några dagar.
+Tom kanske kan hjälpa oss.
+Tom kunde inte sova för han hade väldigt ont i huvudet.
+Jag får känslan av att ingen här berättar sanningen för oss.
+Jag var hela förra året i Boston.
+De kommer att bygga ut sin butik.
+Poliserna sitter i bilen och avlyssnar.
+Du behöver inte gömma någonting för mig.
+Tröjan Tom hade på sig idag hade hans mamma gjort.
+Tom vill vara med på festen.
+Nu har jag glömt vad du heter.
+"Känner du igen den här mannen?" "Nä, det kan jag inte säga att jag gör."
+Jag tycker om att sjunga och spela gitarr.
+När han hade nattat alla barnen, sjönk han ihop i soffan.
+Ditt namn är nu borttaget från listan.
+Hänger ni med på vad jag menar?
+Var det svårt att hitta?
+Jag har inte så värst mycket tid.
+Får jag sitta bredvid dig?
+Det är fortfarande så mycket som jag måste lära mig.
+Han bedrog sina vänner för pengar.
+Vem tillhör de här pennorna?
+Tänker du verkligen göra det?
+Jag vet att Tom gillar jazz.
+Tom har haft ett tufft liv.
+Jag kommer att vänta i bilen.
+Vad var ditt första intryck av London?
+Tom satte Marys blombukett i en vas.
+Sami verkade lite mer mogen.
+Tom kunde skriva sitt namn när han var tre år gammal.
+Lev i nuet, lev för alltid!
+Toms syster lär Maria ryska.
+Sami hade inte ett jobb alls.
+Tom var som alltid klädd i svart.
+Ah, att få vara ung igen.
+Jag gillar inte Maria, inte heller vill jag gilla henne.
+Mary ville veta alla detaljer.
+Ett glas kallt vatten, tack!
+Vad sa Tom att han förväntade sig skulle hända?
+Du behöver bara vara lite kreativ.
+Jag bryr mig inte om vilka kläder du har på dig.
+Tycker du att jag skulle kunna ta Tom?
+Jag vill göra det där så ofta jag kan.
+Jag har bara druckit två glas vin.
+Jag har lyssnat på klassisk musik hela dagen.
+En abbot är föreståndare för ett munkkloster.
+Hon längtar alltid till helgen, för då får hon sova ut.
+Jag vet inte om jag pallar trycket.
+Jag hade inte ens hunnit tänka klart.
+Jag förstod aldrig riktigt vad hon menade.
+Vad kommer resan att kosta?
+Jag har precis bytt profilbild.
+Kan du röra dina ben?
+Minns du då Tom och Mary kom hit för första gången?
+Tokyo är en av de största städerna.
+De mörka kullarna svarade med ett retande eko.
+Jag har en chef som är mycket yngre än mig.
+Förra september var hon i Paris.
+Kan man rättfärdiga användandet av våld?
+Jag lyssnar alltid på Tom.
+De försöker förstöra vårt språk.
+Jag önskar dig god bättring!
+Jag kan äta glas, det skadar inte mig
+Nu är det jag som kör.
+Thomas är lång och mager.
+Hela staden var täckt med gult damm.
+Till min skam måste jag tillstå att jag ljög.
+Han kom hem sent på natten.
+Hur många böcker äger ni?
+"Jag ljög inte med vilje", ljög Tom.
+Han överlät verksamheten till sin son.
+Mannen i kassan packade kundens livsmedel i en påse.
+Utan er är jag ingenting.
+Han kommer alltid för sent till lektionerna.
+Jag har inget att göra.
+Han bad mig hålla det hemligt.
+Han är en hänsynslös människa.
+Hon var tvungen att erkänna.
+Varför tar du inte av dig rocken?
+Tom kan inte mena allvar.
+Dagarna blir hela tiden längre.
+Jag kan inte bestämma mig för var jag ska äta lunch.
+Han är van vid att sitta.
+Du har en massa vänner.
+Jag bor i en liten by.
+Hans inflytande i kommittén blev allt mindre.
+Han är starkare än du.
+Mitt flyg anlände klockan tjugoett.
+Jag var lycklig för hennes skull.
+Jag är en gammal man.
+Tom satt i sin bil och drack vin.
+Den är den bästa vi har.
+Han talade i dunkla ordalag.
+Får jag ansluta mig till er?
+Ni bör åka i tid till flygplatsen.
+Vad köpte ni för något?
+Tom fångade en stor fisk.
+Den grymme mannen pryglade hunden med en piska.
+Vad kommer Tom att säga?
+Jag har aldrig läst boken.
+Tom har haft sönder något igen.
+Varför är de inte bekymrade?
+Om du inte jobbar, så borde du inte äta.
+Jag köpte fem meter tyg i affären.
+Jag träffade er son igår och han hälsade vänligt på mig.
+Helt och hållet omringad av våra trupper så övergav sig fienden till slut.
+Min syster ska till Tokyo nästa år.
+Jag ett par glasögon och få det andra paret på köpet!
+Jag glömde att ringa honom i dag.
+Mina föräldrar är extremt snåla.
+Tom kommer praktiskt taget aldrig för sent.
+Mitt band spelar i kväll.
+Vi vet att det inte är sant.
+Hon kom till Berlin som lärare.
+De producerar mer än vi.
+Mary är en vidrig människa.
+Även om vi hade velat hade vi inte kunnat.
+Sätt er inte i soffan.
+Man kan inte äta soppa med en gaffel.
+Bli inte lurade, mina kära vänner.
+Du är i trygghet här med mig.
+Jag tycker att han duger.
+Han är en god man.
+Hon sa till mig att hon ville gå.
+Kan du förtydliga vad du menar.
+Jag är inte en infödd talare.
+Lägg båda händerna på ratten.
+Vad tror ni att ni håller på med?
+Elva och trettio från perrong nummer ett.
+Det gör ont i foten.
+Skulle det här vara kärlek?
+Jag stiger upp halv sex på morgonen.
+Min fasters barn är min kusin.
+Jag åker tillbaka till Japan i morgon.
+De gav mig ett erbjudande jag inte kunde avslå.
+Jag drar. Vi ses i morgon.
+Han beklagar sig hela tiden över det ena och det andra.
+Hans hot gör mig inte alls rädd.
+Snabbt är motsatsen till långsamt.
+Jag hade mycket att göra på morgonen.
+Pojken var så trött att han inte orkade ta ett enda steg till.
+Jag har hört ett oroväckande rykte.
+Den här korsningen är farlig.
+Du har en stor mage.
+Doktorn har gett mig en spruta.
+Jag har inte ett öre på fickan.
+De problemen blir snart lösta.
+De problemen är snart lösta.
+Jag har hört den sången sjungen på franska.
+Tom hotade med att tända eld på Marys hus.
+Nycklarna ligger på min skrivbord.
+Tom skulle vilja bo på landet.
+De flesta av poliserna förlorade jobbet.
+Lärarna undervisar igen. Strejken är över.
+Tom fick tårar i ögonen när han hackade lök.
+Vi känner inte våra grannar.
+Tom har varit fattig hela sitt liv.
+Jag tänker inte vara tyst.
+De två ministrarna har haft täta kontakter under året.
+De har träffat en överenskommelse om att slå ihop företagen.
+Det går hyfsat fort att ta cykeln hem.
+Barnen fann julklapparna gömda under sängen.
+Jag är farligast på natten.
+Tom vet inte vad han vill.
+Vi gav dem pengar och kläder.
+Tom kommer inte att ha på sig en slips.
+Det är ingen ko på isen.
+Min skruvdragare gör sällsamma läten.
+Jag antar att han kommer.
+Jag är rätt säker på att det är Toms hus.
+Tala högre så att alla kan höra.
+Det var en jämn ökning i folkmängden.
+Hon behandlade honom som om han vore gjord av luft.
+Å nej! Å nej! Det kan inte vara sant!
+Är du medlem i partiet?
+Jag är i byggnaden nu.
+Jag är inte den typen som hyser agg.
+Vart skulle ni vilja åka?
+Till skillnad från dig förstår han vad jag menar.
+Min brorsa pratar för mycket.
+Tom frågade Mary om hon var upptagen.
+Tom kommer aldrig att låta dig köra.
+Hon slutade inte att prata med honom.
+Örnen hade en bruten vinge.
+Jag gillar att kamma mitt hår.
+Han är en bra vän.
+Den nya byggnaden är enorm.
+Du är den mest fantastiska människan i mitt liv.
+Jag heter Ricardo, och du?
+Han är bara ett troll.
+Ord och handlingar är inte samma sak.
+Den är inte tillräckligt vattnad.
+Jag önskar att jag inte hade sett det.
+Det är ett mycket vanligt uttryck.
+Jag känner många människor som inte äter kött.
+Du behövde inte köpa boken.
+Min katt sover med mig.
+Tycker du att jag är ytlig?
+Jag undrar varför Tom är naken.
+Jag skulle aldrig ljuga för honom.
+Tom är trött på sitt jobb.
+Jag hade inget gemensamt med dem.
+Varför kan inte Tom och jag äta tillsammans?
+Tom är skyldig mig en massa pengar.
+"Är du säker på det?" "Jag är säker på att jag inte är säker."
+Är du vän med honom?
+Var är jag? Vad hände?
+Sami var trött på Layla.
+Dörren kommer att vara öppen.
+Jag vet att Tom är taxichaufför.
+Sami tycker om Laylas kakor.
+Det regnar ofta i juni.
+Tom har bara ett alternativ kvar.
+Har du någonsin kysst en pojke?
+Det här är ett bra hus.
+Hur mycket kostar det per månad?
+Strecken på väggen har vårt barn gjort.
+Ta med dig din verktygslåda.
+Det drar upp till storm.
+Har jag fått någon post?
+Halsen är mellan huvudet och bålen.
+Att simma mot strömmen kräver mod.
+Kom hit och hjälp mig.
+Hur många bokstäver har alfabetet?
+Vi har ingen aning om var han är.
+Gör er redo! Avfärd om fem minuter!
+Tom har aldrig missat en arbetsdag.
+Rom är berömt för sin antika arkitektur.
+Bollen träffade henne i ögat.
+Det här trädet är högt.
+Jag gör det gärna, men bara mot betalning.
+Kan någon tala om för mig vad jag har här att göra?
+Visste du att män kan få bröstcancer?
+Han behöver inte känna skuld längre.
+Varför gör vi inte det här någon annan gång?
+Vill du arbeta med honom?
+Tom försökte förklara det för mig.
+Vi fortsatte att kämpa emot.
+Det har inte regnat mycket det här året.
+Det var inte förrän Tom lämnade mig som jag insåg hur mycket jag älskade honom.
+Vem håller på att vinna?
+"Vem lär dig engelska?" "Det gör fröken Yamada."
+Jag vågar inte prata med henne.
+Varför är ni så besatta av honom?
+Hon försökte tala franska med oss.
+Han lyckades ta sig över floden.
+Tom sprang tillbaka till sitt rum.
+Jag sov tolv timmar i går.
+Vi hade inte pluggat inför matteprovet.
+Du råkar inte ha den?
+Håll den här dörren låst.
+Du väger inte mer än jag.
+Jag är skyldig dig en öl.
+Jag skrev ett kärleksbrev i går kväll.
+De är dina vänner, inte mina.
+Jag ville be om ursäkt.
+Jag är van vid det här.
+Jag är säker på att Tom inte kommer att vinna.
+Hörde du nyheterna på radion?
+Vad gjorde du med min handväska?
+Hon har lagt ut sitt hus till försäljning.
+Hans oväntade framträdande överraskade publiken.
+Tom är inte den person han en gång var.
+Stefan och demonen ville förslava mänskligheten.
+Vad är din käraste ägodel?
+Jag vet att Tom kan göra det utan hjälp.
+Vissa musiker dricker på scenen.
+Hundar har ett mycket bra luktsinne.
+Hur kommer det sig att du alltid är så energisk?
+Detta kommer att förbättra prestandan.
+Tom har sedan bett om ursäkt.
+Han vet hur man mjölkar en ko.
+Han väger mycket mer än förut.
+Låt mig säga det ärligt.
+Låt oss gå tillbaka till jobbet.
+Det är inte lämpligt att bära en röd minikjol på en begravning.
+Jag kommer inte att dra in Tom i detta.
+Kan du tänka dig någon som skulle ha velat döda Tom?
+De kunde köpa allt som de behövde.
+Lamporna i rummet lyste upp till morgonen.
+Han är en snabbtänkt man.
+Den som vill ha en påfågel måste acceptera Indiens svårigheter.
+Du hade aldrig en chans, Tom.
+Du har nästintill lärt dig det.
+Vill ni ha de här?
+Ber du mig sitta bakom ratten?
+Hissen var ur funktion, så vi måste ta trapporna.
+Tom dog i en slumpartad olycka.
+Ingen av dem är närvarande.
+Hade du med dig någon?
+Tom brukade tala om Mary hela tiden.
+Tom kör en uråldrig Saab 96.
+Jag har ännu en syster.
+Den teorin är alldeles uppåt väggarna.
+Har du någonsin sett en björn i bergen?
+Jag borde ha erbjudit mig att hjälpa Tom.
+De där skorna är mycket dyra.
+Han har den dåliga vanan att dricka för mycket vin.
+Ena minuten snöar det, nästa så regnar det.
+Jag hoppas att du tycker om det här.
+Du är ju vit som ett lakan!
+Jag antar att hon inte minns mig.
+Jag hämtar en hink vatten.
+Kommunismens symbol är hammaren och skäran.
+Tom fick inte upp dörren.
+Får jag föreslå en annan lösning?
+Det är min farfars böcker.

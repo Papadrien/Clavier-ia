@@ -401,10 +401,10 @@
     <string name="licenses_fulltext_unreadable">Der Lizenztext konnte nicht geladen werden. Lesen Sie ihn online über den Link oben.</string>
     <string name="licenses_usage_nemotron">Sprachmodell für das Diktat (Französisch und Englisch), bei Bedarf heruntergeladen und auf Ihrem Gerät ausgeführt.</string>
     <string name="licenses_notice_nemotron">Lizenziert unter dem OpenMDW License Agreement, Version 1.1. Taipo verwendet einen ONNX-Export (int8) dieses Modells, ausgeführt mit sherpa-onnx.</string>
-    <string name="licenses_usage_frequencywords">Wortlisten für Autokorrektur und Vorschläge in den sieben Tastatursprachen: Französisch, Englisch, Spanisch, Deutsch, Italienisch, Portugiesisch und Niederländisch.</string>
-    <string name="licenses_usage_aosp_dictionaries">Referenz-Wortlisten, mit denen die Wortlisten der Tastatur in den sieben Sprachen geprüft und ergänzt werden.</string>
+    <string name="licenses_usage_frequencywords">Wortlisten für Autokorrektur und Vorschläge in den fünfzehn Tastatursprachen: Französisch, Englisch, Spanisch, Deutsch, Italienisch, Portugiesisch, Niederländisch, Polnisch, Rumänisch, Tschechisch, Ungarisch, Schwedisch, Dänisch, Norwegisch und Finnisch.</string>
+    <string name="licenses_usage_aosp_dictionaries">Referenz-Wortlisten, mit denen die Wortlisten der Tastatur geprüft und ergänzt werden (alle Sprachen außer Finnisch).</string>
     <string name="licenses_notice_aosp_dictionaries">Wörter aus den Wortlisten der Tastatur des Android Open Source Project (wie von HeliBoard veröffentlicht) wurden den Wortlisten von Taipo hinzugefügt, mit einer von Taipo berechneten Häufigkeit, und dazu verwendet, Wörter zu entfernen, die sie nicht enthalten. Lizenziert unter der Apache License 2.0.</string>
-    <string name="licenses_usage_tatoeba">Wortpaare (welches Wort meist auf ein anderes folgt), die der Autokorrektur helfen, auf Französisch, Englisch, Italienisch, Portugiesisch und Niederländisch das richtige Wort zu wählen, sowie Wörter, die den italienischen, portugiesischen und niederländischen Listen hinzugefügt wurden.</string>
+    <string name="licenses_usage_tatoeba">Wortpaare (welches Wort gewöhnlich auf ein anderes folgt), mit denen die Autokorrektur in allen Tastatursprachen außer Spanisch und Deutsch das richtige Wort wählt, sowie Wörter, die den italienischen, portugiesischen und niederländischen Listen hinzugefügt wurden.</string>
     <string name="licenses_notice_tatoeba">Von Taipo berechnete Wortpaarzählungen aus Sätzen des kollaborativen Korpus Tatoeba (tatoeba.org), lizenziert unter CC BY 2.0 FR. Es werden nur Wortzählungen und Zählungen aufeinanderfolgender Wortpaare behalten, nicht die Sätze.</string>
     <string name="licenses_notice_frequencywords">Wortlisten angepasst aus FrequencyWords von Hermit Dave (Inhalt von 2018, erstellt aus dem Korpus OpenSubtitles 2018), lizenziert unter CC BY-SA 4.0. Änderungen durch Taipo: Wörter in Kleinbuchstaben umgewandelt und normalisiert; Fragmente, Abkürzungen, Einträge mit Ziffern oder Zeichen anderer Alphabete entfernt; seltene Wörter und wahrscheinliche Tippfehler entfernt; einige Einträge von Hand hinzugefügt. Die angepassten Listen werden unter derselben Lizenz, CC BY-SA 4.0, weitergegeben.</string>
     <string name="licenses_usage_litertlm">Engine, die die Gemma-Modelle auf Ihrem Gerät ausführt.</string>
@@ -645,9 +645,12 @@
     <string name="language_detail_footer">Das hier gewählte Layout gilt, wenn %1$s die aktive Sprache ist. Die Schaltfläche „Entfernen“ erscheint nur, solange eine andere Sprache übrig bleibt.</string>
     <string name="language_layout_note_azerty">Frankreich, Belgien</string>
     <string name="language_layout_note_qwerty">International</string>
-    <string name="language_layout_note_qwertz">Deutschland, Schweiz, Österreich</string>
+    <string name="language_layout_note_qwertz">Deutschland, Österreich, Schweiz, Tschechien, Ungarn</string>
     <string name="language_layout_note_qwerty_n">Üblich für Spanisch</string>
     <string name="language_layout_note_colemak">Ergonomisch</string>
+    <string name="language_layout_note_qwerty_sv">Schweden, Finnland</string>
+    <string name="language_layout_note_qwerty_da">Dänemark</string>
+    <string name="language_layout_note_qwerty_no">Norwegen</string>
     <string name="premium_title">Premium-Paket</string>
     <string name="premium_price_fallback">2,99 €</string>
     <string name="premium_tagline">Einmalig, für immer. Alles bleibt auf Ihrem Telefon.</string>

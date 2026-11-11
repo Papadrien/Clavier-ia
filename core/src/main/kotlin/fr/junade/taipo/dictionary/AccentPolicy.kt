@@ -110,6 +110,34 @@ class AccentPolicy(
             strictPair = { _, _ -> true },
         )
 
+        /**
+         * Langues ajoutées le 11/11/2026 : un seul seuil, choisi d'après les paires courantes de chaque liste (rapport forme accentuée /
+         * forme sans accent). La forme sans accent d'une paire de deux mots justes reste intacte, l'oubli évident est rétabli :
+         * - polonais 40 : « juz » -> « już » (54), « sie » -> « się » (59) ; « ze » / « że » (7) intacts ;
+         * - tchèque 40 : « mam » -> « mám » (287) ; « ze » / « že » (19), « byt » / « být » (35) intacts ;
+         * - hongrois 50 : « mar » -> « már » (771) ; « meg » / « még » (1) intact ;
+         * - suédois, danois, norvégien, finnois 50 (å, ä, ö, æ, ø ont leur touche, comme les umlauts allemands) : « ar » -> « är »,
+         *   « pa » -> « på », « etta » -> « että » ; « sa » / « så », « nar » / « når », « ala » / « älä » intacts.
+         */
+        fun uniform(dominance: Long, keptPlain: Set<String> = emptySet()) = AccentPolicy(
+            softDominance = dominance,
+            strictDominance = dominance,
+            keptPlain = keptPlain,
+            strictPair = { _, _ -> true },
+        )
+
+        val POLISH = uniform(40L)
+        val CZECH = uniform(40L)
+        val HUNGARIAN = uniform(50L)
+        val NORDIC = uniform(50L)
+
+        /**
+         * Roumain : on tape souvent sans diacritiques (les sous-titres de la liste aussi : « si » pour « și », 4 contre 1). Seuil de 4,
+         * sauf les formes sans accent qui sont aussi des mots courants : « sa » (son, sa), « ca » (comme), « cat » (étage), « tine » (toi),
+         * « peste » (au-dessus), « fata » (la fille) ; l'accent y reste proposé dans la bande.
+         */
+        val ROMANIAN = uniform(4L, setOf("sa", "ca", "cat", "tine", "peste", "fata"))
+
         /** Espagnol : un seul seuil de 10, et les mots justes dont l'accent change le sens à plus de 10 contre 1. */
         val SPANISH = AccentPolicy(
             softDominance = 10L,

@@ -423,10 +423,10 @@
     <string name="licenses_fulltext_unreadable">Le texte de la licence n\'a pas pu être chargé. Utilisez le lien ci-dessus pour le lire en ligne.</string>
     <string name="licenses_usage_nemotron">Modèle de dictée vocale (français et anglais), téléchargé à la demande et utilisé sur votre appareil.</string>
     <string name="licenses_notice_nemotron">Distribué sous l\'OpenMDW License Agreement, version 1.1. Taipo utilise un export ONNX (int8) de ce modèle, exécuté avec sherpa-onnx.</string>
-    <string name="licenses_usage_frequencywords">Listes de mots pour l\'autocorrection et les suggestions dans les sept langues du clavier : français, anglais, espagnol, allemand, italien, portugais et néerlandais.</string>
-    <string name="licenses_usage_aosp_dictionaries">Listes de mots de référence qui ont servi à vérifier et à compléter les listes du clavier dans les sept langues.</string>
+    <string name="licenses_usage_frequencywords">Listes de mots pour l\'autocorrection et les suggestions dans les quinze langues du clavier : français, anglais, espagnol, allemand, italien, portugais, néerlandais, polonais, roumain, tchèque, hongrois, suédois, danois, norvégien et finnois.</string>
+    <string name="licenses_usage_aosp_dictionaries">Listes de mots de référence qui ont servi à vérifier et à compléter les listes du clavier (toutes les langues sauf le finnois).</string>
     <string name="licenses_notice_aosp_dictionaries">Des mots des listes du clavier de l\'Android Open Source Project (publiées par HeliBoard) ont été ajoutés aux listes de Taipo, avec une fréquence calculée par Taipo, et ont servi à retirer des mots qu\'elles ne contiennent pas. Sous licence Apache 2.0.</string>
-    <string name="licenses_usage_tatoeba">Paires de mots (quel mot suit habituellement un autre) qui aident l\'autocorrection à choisir le bon mot en français, anglais, italien, portugais et néerlandais, et mots ajoutés aux listes italienne, portugaise et néerlandaise.</string>
+    <string name="licenses_usage_tatoeba">Paires de mots (quel mot suit habituellement un autre) qui aident l\'autocorrection à choisir le bon mot dans toutes les langues du clavier sauf l\'espagnol et l\'allemand, et mots ajoutés aux listes italienne, portugaise et néerlandaise.</string>
     <string name="licenses_notice_tatoeba">Comptes de paires de mots calculés par Taipo à partir des phrases du corpus collaboratif Tatoeba (tatoeba.org), sous licence CC BY 2.0 FR. Seuls des comptes de mots et de paires de mots consécutifs sont conservés, pas les phrases.</string>
     <string name="licenses_notice_frequencywords">Listes de mots adaptées de FrequencyWords de Hermit Dave (contenu 2018, issu du corpus OpenSubtitles 2018), sous licence CC BY-SA 4.0. Modifications apportées par Taipo : mots passés en minuscules et normalisés ; fragments, abréviations, entrées contenant des chiffres ou des caractères d\'autres alphabets retirés ; mots rares et fautes de frappe probables retirés ; quelques entrées ajoutées à la main. Les listes ainsi adaptées sont partagées sous la même licence, CC BY-SA 4.0.</string>
     <string name="licenses_usage_litertlm">Moteur qui exécute les modèles Gemma sur votre appareil.</string>
@@ -692,9 +692,12 @@
     <string name="language_detail_footer">La disposition choisie ici s\'applique quand %1$s est la langue active. Le bouton Retirer n\'apparaît que s\'il reste une autre langue.</string>
     <string name="language_layout_note_azerty">France, Belgique</string>
     <string name="language_layout_note_qwerty">International</string>
-    <string name="language_layout_note_qwertz">Allemagne, Suisse, Autriche</string>
+    <string name="language_layout_note_qwertz">Allemagne, Autriche, Suisse, Tchéquie, Hongrie</string>
     <string name="language_layout_note_qwerty_n">Habituelle en espagnol</string>
     <string name="language_layout_note_colemak">Ergonomique</string>
+    <string name="language_layout_note_qwerty_sv">Suède, Finlande</string>
+    <string name="language_layout_note_qwerty_da">Danemark</string>
+    <string name="language_layout_note_qwerty_no">Norvège</string>
     <!-- Pack premium -->
     <string name="premium_title">Pack premium</string>
     <string name="premium_price_fallback">2,99 €</string>

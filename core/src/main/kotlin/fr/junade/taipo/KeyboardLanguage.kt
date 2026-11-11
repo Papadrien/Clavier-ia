@@ -16,12 +16,24 @@ enum class KeyboardLanguage(val tag: String, val displayName: String) {
     IT("it", "Italiano"),
     PT("pt", "Português"),
     NL("nl", "Nederlands"),
+
+    // Langues ajoutées le 11/11/2026 (alphabet latin) : listes FrequencyWords alignées sur AOSP et LibreOffice, voir dictionaries/SOURCES.txt.
+    PL("pl", "Polski"),
+    RO("ro", "Română"),
+    CS("cs", "Čeština"),
+    HU("hu", "Magyar"),
+    SV("sv", "Svenska"),
+    DA("da", "Dansk"),
+    NB("nb", "Norsk bokmål"),
+    FI("fi", "Suomi"),
     ;
 
     companion object {
         /** La langue de code [tag] (« fr », « pt-BR »... : seule la partie avant le tiret compte, casse ignorée), ou null. */
         fun fromTag(tag: String?): KeyboardLanguage? {
             val code = tag?.substringBefore('-')?.substringBefore('_')?.lowercase() ?: return null
+            // Norvégien : « no » (code générique) et « nn » (nynorsk) prennent le bokmål, seule variante du clavier.
+            if (code == "no" || code == "nn") return NB
             return entries.firstOrNull { it.tag == code }
         }
     }

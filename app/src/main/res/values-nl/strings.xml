@@ -401,10 +401,10 @@
     <string name="licenses_fulltext_unreadable">De licentietekst kon niet worden geladen. Gebruik de link hierboven om hem online te lezen.</string>
     <string name="licenses_usage_nemotron">Model voor spraakdictee (Frans en Engels), op verzoek gedownload en uitgevoerd op je apparaat.</string>
     <string name="licenses_notice_nemotron">Gelicentieerd onder de OpenMDW License Agreement, versie 1.1. Taipo gebruikt een ONNX-export (int8) van dit model, uitgevoerd met sherpa-onnx.</string>
-    <string name="licenses_usage_frequencywords">Woordenlijsten voor autocorrectie en suggesties in de zeven toetsenbordtalen: Frans, Engels, Spaans, Duits, Italiaans, Portugees en Nederlands.</string>
-    <string name="licenses_usage_aosp_dictionaries">Referentiewoordenlijsten waarmee de woordenlijsten van het toetsenbord in de zeven talen worden gecontroleerd en aangevuld.</string>
+    <string name="licenses_usage_frequencywords">Woordenlijsten voor autocorrectie en suggesties in de vijftien toetsenbordtalen: Frans, Engels, Spaans, Duits, Italiaans, Portugees, Nederlands, Pools, Roemeens, Tsjechisch, Hongaars, Zweeds, Deens, Noors en Fins.</string>
+    <string name="licenses_usage_aosp_dictionaries">Referentiewoordenlijsten waarmee de woordenlijsten van het toetsenbord worden gecontroleerd en aangevuld (alle talen behalve het Fins).</string>
     <string name="licenses_notice_aosp_dictionaries">Woorden uit de woordenlijsten van het toetsenbord van het Android Open Source Project (zoals gepubliceerd door HeliBoard) zijn aan de woordenlijsten van Taipo toegevoegd, met een door Taipo berekende frequentie, en gebruikt om woorden te verwijderen die er niet in staan. Gelicentieerd onder de Apache License 2.0.</string>
-    <string name="licenses_usage_tatoeba">Woordparen (welk woord meestal op een ander volgt) die de autocorrectie helpen het juiste woord te kiezen in het Frans, Engels, Italiaans, Portugees en Nederlands, en woorden die aan de Italiaanse, Portugese en Nederlandse lijsten zijn toegevoegd.</string>
+    <string name="licenses_usage_tatoeba">Woordparen (welk woord gewoonlijk op een ander volgt) die autocorrectie helpen het juiste woord te kiezen in alle toetsenbordtalen behalve Spaans en Duits, en woorden die aan de Italiaanse, Portugese en Nederlandse lijsten zijn toegevoegd.</string>
     <string name="licenses_notice_tatoeba">Tellingen van woordparen die Taipo heeft berekend uit zinnen van het collaboratieve corpus Tatoeba (tatoeba.org), gelicentieerd onder CC BY 2.0 FR. Alleen tellingen van woorden en van paren opeenvolgende woorden worden bewaard, niet de zinnen.</string>
     <string name="licenses_notice_frequencywords">Woordenlijsten aangepast uit FrequencyWords van Hermit Dave (inhoud van 2018, gemaakt uit het corpus OpenSubtitles 2018), gelicentieerd onder CC BY-SA 4.0. Wijzigingen door Taipo: woorden omgezet naar kleine letters en genormaliseerd; fragmenten, afkortingen en items met cijfers of tekens uit andere alfabetten verwijderd; zeldzame woorden en waarschijnlijke typefouten verwijderd; enkele items met de hand toegevoegd. De aangepaste lijsten worden gedeeld onder dezelfde licentie, CC BY-SA 4.0.</string>
     <string name="licenses_usage_litertlm">Engine die de Gemma-modellen op je apparaat uitvoert.</string>
@@ -645,9 +645,12 @@
     <string name="language_detail_footer">De hier gekozen indeling geldt wanneer %1$s de actieve taal is. De knop Verwijderen verschijnt alleen zolang er een andere taal overblijft.</string>
     <string name="language_layout_note_azerty">Frankrijk, België</string>
     <string name="language_layout_note_qwerty">Internationaal</string>
-    <string name="language_layout_note_qwertz">Duitsland, Zwitserland, Oostenrijk</string>
+    <string name="language_layout_note_qwertz">Duitsland, Oostenrijk, Zwitserland, Tsjechië, Hongarije</string>
     <string name="language_layout_note_qwerty_n">Gebruikelijk voor het Spaans</string>
     <string name="language_layout_note_colemak">Ergonomisch</string>
+    <string name="language_layout_note_qwerty_sv">Zweden, Finland</string>
+    <string name="language_layout_note_qwerty_da">Denemarken</string>
+    <string name="language_layout_note_qwerty_no">Noorwegen</string>
     <string name="premium_title">Premiumpakket</string>
     <string name="premium_price_fallback">€ 2,99</string>
     <string name="premium_tagline">Eenmalig, voor altijd. Alles blijft op je telefoon.</string>

@@ -18,9 +18,10 @@ class TranslationsTest {
     private val res: File = listOf(File("src/main/res"), File("app/src/main/res")).firstOrNull { it.isDirectory }
         ?: fail("Dossier res introuvable")
 
-    private val languages = listOf("fr", "de", "es", "it", "pt", "nl")
+    private val languages = listOf("fr", "de", "es", "it", "pt", "nl", "pl", "ro", "cs", "hu", "sv", "da", "nb", "fi")
 
-    private val placeholder = Regex("""%(?:\d+\$)?[-#+ 0,(]*\d*(?:\.\d+)?[a-zA-Z%]""")
+    // Conversions de java.util.Formatter seulement : « 100% local » (texte, pas un format) n'est pas pris pour un marqueur « % l ».
+    private val placeholder = Regex("""%(?:\d+\$)?[-#+ 0,(]*\d*(?:\.\d+)?[bBhHsScCdoxXeEfgGaAtTn%]""")
 
     /** Textes traduisibles : nom → texte (les quantités d'un pluriel sont réunies). */
     private fun strings(folder: String): Map<String, String> {

@@ -53,6 +53,15 @@ object DictionaryLoader {
         KeyboardLanguage.IT -> 102L
         KeyboardLanguage.PT -> 91L
         KeyboardLanguage.NL -> 77L
+        // 11/11/2026 : listes FrequencyWords alignées sur AOSP et LibreOffice (finnois : FrequencyWords seule), 50 000e mot.
+        KeyboardLanguage.PL -> 219L
+        KeyboardLanguage.RO -> 149L
+        KeyboardLanguage.CS -> 194L
+        KeyboardLanguage.HU -> 213L
+        KeyboardLanguage.SV -> 41L
+        KeyboardLanguage.DA -> 28L
+        KeyboardLanguage.NB -> 18L
+        KeyboardLanguage.FI -> 134L
     }
 
     /** Fichier et seuils de fréquence d'une liste. */
@@ -261,6 +270,9 @@ object DictionaryLoader {
         KeyboardLanguage.IT -> CorrectionConfidence.ITALIAN
         KeyboardLanguage.PT -> CorrectionConfidence.PORTUGUESE
         KeyboardLanguage.NL -> CorrectionConfidence.DUTCH
+        KeyboardLanguage.PL, KeyboardLanguage.RO, KeyboardLanguage.CS, KeyboardLanguage.HU,
+        KeyboardLanguage.SV, KeyboardLanguage.DA, KeyboardLanguage.NB, KeyboardLanguage.FI,
+        -> CorrectionConfidence.LATIN
     }
 
     /** Seuil des oublis d'accent de chaque langue (voir [AccentPolicy]) : l'accent distingue souvent deux mots justes (esta / está, e / è). */
@@ -271,6 +283,11 @@ object DictionaryLoader {
             KeyboardLanguage.IT -> AccentPolicy.ITALIAN
             KeyboardLanguage.PT -> AccentPolicy.PORTUGUESE
             KeyboardLanguage.NL -> AccentPolicy.DUTCH
+            KeyboardLanguage.PL -> AccentPolicy.POLISH
+            KeyboardLanguage.RO -> AccentPolicy.ROMANIAN
+            KeyboardLanguage.CS -> AccentPolicy.CZECH
+            KeyboardLanguage.HU -> AccentPolicy.HUNGARIAN
+            KeyboardLanguage.SV, KeyboardLanguage.DA, KeyboardLanguage.NB, KeyboardLanguage.FI -> AccentPolicy.NORDIC
             KeyboardLanguage.FR, KeyboardLanguage.EN -> AccentPolicy.FRENCH
         }
 
@@ -293,6 +310,10 @@ object DictionaryLoader {
         // Néerlandais : « foto's » et mots composés (voir InflectionRules.DUTCH) ; italien : les formes fléchies sont dans la liste.
         KeyboardLanguage.NL -> InflectionRules.DUTCH
         KeyboardLanguage.IT -> InflectionRules.NONE
+        // Langues ajoutées le 11/11/2026 : langues à déclinaisons, les formes fléchies courantes sont dans la liste.
+        KeyboardLanguage.PL, KeyboardLanguage.RO, KeyboardLanguage.CS, KeyboardLanguage.HU,
+        KeyboardLanguage.SV, KeyboardLanguage.DA, KeyboardLanguage.NB, KeyboardLanguage.FI,
+        -> InflectionRules.NONE
     }
 
     /**

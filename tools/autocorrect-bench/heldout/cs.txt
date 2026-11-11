@@ -1,0 +1,909 @@
+# Phrases Tatoeba (CC BY 2.0 FR) jamais comptées dans dictionaries/bigrams/cs.txt : voir tools/build_ngrams.py.
+Jakým jazykem se mluví v Brazílii?
+Koupil jsem si jednu tašku.
+Tom je velmi trpělivý muž.
+Měď a stříbro jsou obojí kovy.
+Říká, že kdyby byl pták, přiletěl by ke mně.
+Sekretářce byla na cestě z banky ukradena obálka se sto tisíci jeny.
+Včera se mi zdál sen.
+Můžeme to doručit dnes večer.
+Mladí se na věci dívají jinak.
+Řekl jsem dětem, aby byly potichu, ale pořád dělaly rámus.
+Má oči vzadu na hlavě.
+Chodím do postele ve dvacet tři hodin.
+O pacienta se staraly dvě sestry.
+Dnes je teplo, takže si můžeš zaplavat v moři.
+On je přesně ten muž, kterého hledám.
+Brána je zavřená po celý rok.
+Přestoupil jsem na nádraží v Tokyu.
+Příště jdeš odhazovat sníh ty!
+Osamělý člověk je sám, jelikož se bojí ostatních.
+Jak často bych měl krmit svého psa?
+Ranní slunce vstoupilo do okna.
+V tomto článku se dovíte, jak překládat nepřeložitelné.
+Jeho odpověď je vše možné, jen ne uspokojivá.
+Nemusíš odcházet, tedy pokud nechceš.
+Možná, že četl ten dopis.
+Obávám se, že oni si příliš dobře nerozumí.
+Je to nebezpečné, když si děti hrají na ulici.
+Podíval jsem se na všechny své filmy.
+Stručně jsem informoval svého vedoucího o novém projektu.
+Je mi líto, že jsem vás nechal tak dlouho čekat.
+Tom vytáhl Marii z hořícího auta.
+Brambor byl tak horký, že jsem si spálila pusu.
+Nevyprávěj mu to nebo začne plakat.
+V osmnácti jsem chtěl změnit celý svět.
+Ta polívka, co jsem měla, byla tak horká, že jsem ji nemohla jíst.
+To by mě zajímalo, proč tolik mluví o svém otci.
+Udělal jsem to, když jsem byl opilý.
+Zeptala se mi, jestli je se mnou vše v pořádku.
+Je mi jedno, co lidi říkají.
+Je to fakt, že utekl z domova.
+Jsi spokojený se svou prací?
+Kdo má strach se vrátit domů, může jít ke mně na zahradu na oběd.
+Můj otec odjel do Číny.
+Všimla sis, že opustil dům?
+Někdy poznáš: Esperanto je nepřekonatelné.
+Po poradě s lékařem přestal kouřit.
+Neříkejte mi, že se nikomu z vás nechce jít spát?
+Pokoj pana Johnsona byl velký.
+Musím se připravovat na zkoušku.
+Teplý vítr způsobil, že už brzy roztál led.
+Nechci se naučit váš jazyk.
+Šla za světlem, které viděla v dálce.
+Zdravíčko, kamaráde. Jak se daří?
+Vláda byla přinucena změnit svou zahraniční politiku.
+Nenechal bych se tím obtěžovat.
+Tím bych si příliš jistý nebyl.
+Myslím, že tohle bychom dělat neměli.
+Jablko nepadá daleko od stromu.
+Rybář se zachránil díky plovoucímu prknu.
+Což takhle projít se po pláži?
+Tom řekl Mary, že nikdy nebyl na nudistické pláži.
+Tom, a jedině on, to může udělat.
+Nejsem šťastný s tím, jak vypadám.
+Svatba se konala minulý týden.
+Omlouvám se, že jsem přijel pozdě.
+Tomáš je příliš mladý, aby řídil auto.
+Budu vám každou noc volat.
+Před několika lety jsem žil v Tokiu, ale teď žiju v Kjótu.
+Je lehké si najít přátele, ale je těžké se jich zbavit.
+Podle předpovědí cena kanadské pšenice klesne.
+Mám už toho dítěte dost.
+Vy se teď postavíte do kouta a budete se stydět!
+Věříš v lásku na první pohled?
+Vdává se teď na podzim.
+Řekněte jí, že mám hlad.
+Tato těžká práce mě velmi unavila.
+Mohl bys klidně čekat do úterý.
+Děti, které tráví více času venku, mají nižší riziko krátkozrakosti.
+Protože jsi nastydlý, nesmíš jít ven.
+Ve skutečnosti není smutný, jen to předstírá.
+Žila v Anglii, když začala válka.
+Můžeš si vybrat, kteroukoliv knihu chceš.
+Potřebuju novou propisku. Nějakou koupím.
+Jak dlouho potřebuje veterinář na vyšetření koně?
+Za jakým účelem to potřebujete?
+Mám tolik věcí, které nepotřebuju.
+Tom nikdy Mary nebral vážně.
+Ten zpěvák byl středem pozornosti.
+Mé boty jsou příliš malé.
+Víš toho o mně přespříliš.
+To nebyla žádná nešťastná náhoda; dům někdo podpálil.
+Byv napsán příliš rychle, dopis obsahoval mnoho chyb.
+Její bratr je ještě vyšší.
+Zdráhám se s ní nakousnout tohle téma.
+Jsi s nimi stále ve styku?
+Kdybys mi jen byl řekl pravdu.
+Benzín už není levné palivo.
+Automobily s naftovým pohonem jsou populární v Evropě.
+Myslím, že se jim líbíš.
+Chtěl jsi mi povědět o svobodě?
+Pozorně poslouchala, když jsem jí chválil syna.
+Vypadáš, že ti je horko.
+Ta cizinka nemá italské jméno.
+Když jsi rodičem, je důležité být svým dětem dobrým příkladem.
+Tento pokoj je dostatečně velký.
+Málem jsi do mě narazil.
+Můj otec neřídí, protože se bojí, že by utrpěl nehodu.
+Své jméno jsi psát nemusela.
+Tom by tu měl zůstat.
+Studenti by se měli více učit.
+Nerozumím vždy všemu, co říkáš.
+Jeho nepřítomnost byla z důvodu nemoci.
+Abys to udělal, musíš riskovat.
+Měla jsem takový strach, že by mě nikdo nevyzval k tanci.
+Kdo jsi, že se mnou mluvíš tímto způsobem?
+Jak se dostanu na policejní stanici?
+Tomu říkáš hudba? Pro mě to není nic víc než hluk.
+„I babička byla jednou mladá, Tome.“– „Babička? Ne, ta byla vždycky stará!“
+Mám stejný názor jako ty.
+Můj přítel miluje starou keramiku.
+Takovým trikem mě nemůžete dostat.
+Tohle je dům, ve kterém žili, když byli děti.
+To je ta, co to nabídla.
+Už jsem řekl Tomovi všechno, co vím.
+Musím udělat hromadu práce do konce týdne.
+Chtěl bych kávu s mlékem.
+Musí se to vidět, abys uvěřil.
+Tom už mi to řekl.
+Musím připustit, že to byla moje chyba.
+Byl jsem unavený, ale nemohl jsem spát.
+Žádný z mých rodičů už nežije.
+Nechci o tom teď mluvit.
+Nečekal jsem, že se Tom zamiluje do Marie.
+Pan Smith ještě nedorazil ačkoli to slíbil.
+Přišel se na mě podívat.
+Vím, že moje matka byla učitelem zavolána do školy.
+Mladý chemik se rozhodl založit lékárnu.
+Tom by ti pomohl, kdybys ho o to požádal.
+Musíme se rozhodnout, kdy se přestěhujeme.
+Mnoho mladých Římanů odcházelo do Řecka.
+Jdeme se s Tomem projít.
+Vítr ve svém hněvu teď pěje divou píseň.
+Tom mi povídá, že odcházíš.
+Tenhle klobouk je ti moc velký.
+Darovanému koni na zuby nekoukej.
+Tleskejte, přátelé, komedie je u konce.
+Psi mají pány; kočky mají sluhy.
+Jak se zdá, mohu jít, je to tak?
+Hele, podívejte se na to.
+Přísaháš, že mi říkáš pravdu?
+Ona hledá práci, kde bude moci uplatnit svou znalost cizích jazyků.
+Vůbec nehodlám platit deset dolarů.
+Nelíbí se mi, jak to zní.
+Ona se na něj moc zlobí.
+Myslel jsem, že jsi na mě naštvaný.
+Řekl, že objedná večeři sám.
+Víš, že to mohu udělat.
+Hledám nějakou knihu pro děti.
+Jak jste dospěly k tak zajímavému závěru?
+Mluvil jsi někdy s Tomem?
+V Brazílii se mluví portugalsky.
+Šla nahoru do své ložnice.
+Tyto knihy usnadní vaši práci.
+Nemohu vysvětlit, co se stalo.
+Londýn, hlavní město Velké Británie, leží na Temži.
+Za ten včerejšek se moc omlouvám.
+Jak se jmenuje ten chlapec?
+Co je tohle za knížku?
+Otec vždy říkal: "Čas jsou peníze!"
+To je starý německý zvyk.
+Jeho otce už jsi viděl.
+Poprosila ho o peníze, aby si mohla koupit nové šaty.
+Tom řekl Marii, že ho bolí hlava, i když ho vlastně vůbec nebolela.
+V jeho životě jsou dvě ženy.
+Musel jsem počkat na Toma do konce.
+Fred a George se střídali v řízení.
+Co třeba zítra v devět večer?
+Jídlo bez vína je jako den bez slunce.
+Tomáš tu ráno nikdy není.
+Otec je ještě v posteli.
+Požadavky na žáky se neustále zvyšují.
+Nemá to žádné logické vysvětlení.
+Odemkne tento klíč tuto zásuvku?
+Věnoval jsem tomu spoustu úsilí.
+Ryby, a dokonce i velryby a tuleni jedí plankton.
+Tom pracuje v továrně na těstoviny.
+Také já jsem byl mladý.
+Nevěděl jsem, že taky přijdeš.
+Linux není operační systém, ale pouze jádro.
+To je hudba pro moje uši.
+Domácí úkol mi sežral pes.
+Už nás je sedm miliard.
+Nelíbí se mi toto místo.
+Tom je náš rodinný lékař.
+Tom se neholil celý týden.
+V budoucnu vše bude jinak.
+Tomovi je jedno, kdo vyhraje.
+Tom věděl, že Mary nemluví francouzsky.
+Tady se už necítím bezpečně.
+Nejsem dost odvážný, abych to zkusil udělat.
+Můj malý bratr chodí na základní školu.
+Dal bych si kuřecí polévku.
+Sami by Laylu mohl snadno přemoci.
+Jak mi můžeš navrhovat takovou věc?
+Do pondělka nám dej vědět, jak ses rozhodla.
+Jsi o něco starší, nežli Tom.
+Chceš, aby to Tom udělal sám?
+Tom byl vyhozen, protože nedokázal dělat práci, pro kterou byl najat.
+Tom začal realizovat svůj plán.
+Je to pro tebe příliš drahé?
+Neporodila jsem syna pro válku.
+Tom řekl, že Mary není zaneprázdněná.
+Kde chceš být za deset let?
+Proč jsi nezavolal o pomoc?
+Určitě doufám, že přijdete znova.
+Tom si všiml, že jsou otevřené dveře.
+Řekni mu, až budeš připraven.
+Tom mi poradil, abych tam šel.
+Tom Mary přesvědčil, aby řekla pravdu.
+Kreativní osobnost se na tohle může vykašlat.
+V kolik jsi šel včera spát?
+Pár vrabců si staví hnízdo na balkóně mého domu.
+Myslel jsem, že tě tady najdu.
+Tom šel touto dobou nejspíš spát.
+Ani jeden přístup není ideální.
+Nebylo by to vůči tobě fér.
+Netušíš, kam Tom mohl dát ten foťák?
+Dan chtěl, abys věděl, že k tobě nechová nenávist.
+Tom si strčil ten lístek do kapsy.
+Tom si myslel, že učitel mu dal na jeden den příliš domácích úkolů.
+V ledničce je ještě nějaké pivo.
+Mary řekla, že si na nic nevzpomíná.
+Tom nosí klobouk skoro každý den.
+Kdy budeme mít za prezidenta ženu?
+Bylo mi řečeno, že bych měl být pozornější.
+Jsme ohledně toho velmi nervózní.
+Proto jsem se stala novinářkou.
+Pravdou je, že o tom nic nevím.
+Tom pro mě kdysi dělal.
+Tom přijel o třicet minut pozdě.
+Máme toho na povídání hodně.
+Všechno co udělal byl úspěch!
+S Tomem nás asi nenecháte mluvit, že?
+Tomův pes potřeboval jít ven.
+Tom vypadá zdravěji než dřív.
+Tom dal Mary něco studeného k pití.
+V Kanazawě občas bývá sněhová bouře.
+Tom dal pokyn ke klidu.
+Malé děvčátko objalo svého plyšového medvídka.
+Když už je řeč o cizích jazycích, mluvíš francouzsky?
+Toto je jedna z mnoha věcí, které musíme udělat, než půjdeme domů.
+Byl to básník a spisovatel.
+Tom a Mary si koupili ručně zhotovenou rohož.
+Vůbec mě nenapadlo, že ležela nemocná v nemocnici.
+Myslím, že Tom i Mary jsou chytří.
+Můj otec zemřel před třemi lety, tedy v roce 1977.
+Naštval jsem se když to Tom řekl.
+Měl jsem malou nehodu na cestě do práce.
+Řekni mi, koho jsi viděl.
+I malé dítě by to pochopilo.
+Běžel jsi tak rychle, jak to šlo.
+Řekli mi, že to dělat nemůžu.
+Nikdy jsem nebyl zrovna dobrý v matematice.
+Tom se spřátelil s Mary.
+Byli jste si toho vědomi?
+Myslím, že Tom měl hlad.
+"Tato auta jsou tvoje?" "Ano, jsou moje."
+Jsme o tři roky mladší, než Mary.
+Nerozumím tomu, co mám dělat.
+Viděl jsem tě s Tomem.
+Dovolte mi, abych vám pomohl.
+Býval bych šel do kina, kdybych měl čas.
+Takhle vím, že miluješ Toma.
+Doufal jsem, že vás najdu.
+Tom není tak bohatý, jak si jeho přátelé myslí.
+I když vyrostla v Japonsku, stále hovoří plynule anglicky.
+Potřebuji si s někým promluvit.
+Tom se procházel nahý po pláži.
+Říká se, že Tom je posedlý ďáblem.
+Včera se v rybníce utopila dívka.
+Když jsem šla po ulici, zahlédla jsem svoji přítelkyni.
+Šance, že se Tom polepší, je minimální.
+Chtěl bych, abys šel se mnou.
+Tom pozdravil Mary ve francouzštině.
+Mluvím s tebou jako s přítelem.
+Jsem ráda, že slyším tvůj hlas.
+Co bych měl zatím dělat?
+Nebudeš věřit tomu, co jsem právě našel.
+Poděkoval jsem mu za milý dárek.
+Vůbec jsem tu ženu neznal.
+Jsem rád, že jsme to dostali z cesty.
+Všichni se dívají na Toma.
+Musím to říct Tomovi a ostatním.
+Tom se právě vrátil domů.
+Byl jsi poslední dobou v Austrálii?
+Lidé pochází ze stejného Zdroje a přece se nenávidí.
+Každý vnímá barvu jinak. Čemu já říkám žlutá, by jiní nazvali oranžovou.
+Člověk je postaven na vrchol potravinového řetězce.
+Je to rychle se rozrůstající město.
+Podvyživená zvířata byla chovateli odebrána.
+Mary říká, že Toma požádá, aby to udělal.
+Kolik let jsou Tom a Mary manželé?
+Jedna chyba může být tou poslední.
+Tom si málokdy sladí kávu.
+Kdo z vás chce vyzkoušet seskoky s padákem?
+Hraní na anglický roh není snadné.
+Řekl jsem jim, že je mi fuk, co si o mě lidé myslí.
+Tom v tom může pokračovat, když bude chtít.
+Buď přátelský, kdykoliv to jde. Vždycky je to možné.
+Tom je příliš mladý na to, aby měl vnoučata.
+Tento olivovník je velmi starý.
+Tom má rok před důchodem.
+Byl jsem do své práce tak zabrán, že jsem zapomněl na naši návštěvu.
+Ještě neoznámil svůj další krok.
+Už se svými dcerami nemluví.
+Můžeme si o tom promluvit v soukromí?
+Tom a Mary ještě nejsou připraveni odjet domů.
+Jestli nebudeš pečlivý, budeš vyloučen.
+Nějakou chvíli mi trvalo než jsem našel to, co jsem hledal.
+Vypadám mnohem mladší, než jsem.
+Kde je můj psací stůl?
+Ať tě to ani nenapadne.
+Rozhodla se svoje auto neprodat.
+Musím s vámi ihned mluvit.
+Tento příběh je založen na skutečné události.
+Řekl jsem Tomovi, že by měl být dochvilný.
+Nedokázal jsem si představit nic horšího.
+Je přesně tam, kde chce být.
+Myslím, že z toho testu nedostanu dobrou známku.
+Už jsi odpověděl na ten dopis?
+Tom měl pocit, že dluží Mary vysvětlení.
+Nad klávesnicí bys neměl jíst, zaneseš ji prachem.
+Co kdybychom se zeptali Toma?
+Člověk je odsouzen k záhubě.
+Tom si před spaním čte.
+Tom je ženatý, a dokonce má i syna.
+Vyprávěj mi prosím o tvé cestě do Austrálie.
+Musím si půjčit tvůj deštník.
+Každý malý kluk potřebuje svého hrdinu.
+Tom to někdy dělá, když je šťastný.
+Včera v noci se mi o vás zdálo.
+Neví, co dělal včera večer.
+Proč se ti nelíbí děvčata?
+Nepřekvapí mě, když se to stane.
+Tom má svoji vlastní firmu.
+Proč se ženy chovají tak, jak se chovají?
+Tomovi se podařilo překonat své finanční problémy.
+Tom si stěžoval, že nejde topení.
+Tom byl jejich přístupem pobouřen.
+Nemyslím si, že bude těžké najít Toma.
+Vím, že nám můžete pomoci.
+Jaké je největší letiště na světě?
+Kolik stojí tato jízdenka na vlak?
+Tom a Mary jsou opravdu šťastní.
+Tom se obvykle probouzí kolem poledne.
+Nehoda se stala kvůli Tomově neopatrnosti.
+Tom nudil hosty dlouhým proslovem.
+Chtěl bych si promluvit se stavbyvedoucím.
+V průměru domácí kočky žijí patnáct let.
+Tomova dcera i jeho syn šli na universitu.
+Věřím, že s podporou Toma to dokážeme.
+To mi řekl jeden z kamarádů Toma.
+V kolik se chcete pro mě stavit?
+Nemusíme se na to dívat.
+Vyndal jste prádlo z pračky?
+Přemluvil dceru, aby s ním šla na večírek.
+Tom se vrátil do starých kolejí.
+Čaj je jeden z nejoblíbenějších teplých nápojů na světě.
+Hodně by se toho stále ještě mohlo změnit.
+Nevím jistě, jestli jsem zamkl dveře.
+Mary je bez práce, že?
+Lituji, že jsem Toma a Mary pozval na svoji svatbu.
+Vaříte vodu, abyste v ní zabili všechny baktérie.
+Ona mě uhodila, ne on.
+Tom řekl, že nepomůže nikomu.
+Ukázalo se, že Tom je velmi nespolehlivý člověk.
+Tomovo vysvětlení nebylo moc dobré.
+To není ten důvod, proč to chce Tom udělat.
+Tom věděl o každém detailu jejich plánu.
+Nechám Toma tu otázku zodpovědět.
+Banky jsou na pokraji bankrotu.
+Nemůžeš řídit, protože jsi pil.
+Nemyslím si, že to seženeš.
+Ta kamna nejsou na uvaření jídla dost horká.
+Nesmíte chodit ven bez roušky.
+Tom je velmi hubený, že?
+Jaké znáš dobré české filmy?
+Některé profese již v budoucnu nebudou zapotřebí.
+John se zajímá o golf.
+Včera jsem se poprvé svezl na koni.
+Zůstal bych a povídal si, ale musím jít.
+Ten muž odešel ještě než jsem stačil získat jeho jméno.
+Můžeš mi říkat Tom, jestli chceš.
+Tom si přál, aby měl co dělat.
+Myslím, že Tom dnes večer doma nebude.
+Řekl jí, že se s ní může sejít v pondělí.
+Dáš si ještě jedno pivo?
+Počasí je zde velmi proměnlivé.
+O této možnosti jsem ještě neuvažoval.
+Tom nemůže číst bez brýlí.
+Raději by měli říct pravdu.
+Matka od sebe oddělila peroucí se děti.
+Nerad předstírám, že mě to zajímá.
+V mém městě je naštěstí malá zločinnost.
+Byl to muž prostřední postavy.
+Vidím, jak by to bylo matoucí.
+Mrzí mě, že jsem se narodil.
+Tom řekl Mary, že nemá v plánu to udělat.
+Tom si musí o tom problému zjistit víc.
+Máme na tu věc opačné názory.
+Nají se, jakmile dorazí domů.
+Byla dítě, ale nebála se.
+Máme na to celý den.
+Zvykl jsem si na tuhle práci.
+Tom je právě teď v práci.
+Mám tyhle knihy moc rád.
+Tom se musí vrátit k práci.
+Cítím, že mám velké štěstí.
+Nejsou žádné problémy; jsou pouze řešení.
+Proč máš v peněžence fotku Toma?
+Zajímalo by mě, jak zítra bude.
+Je mi líto, že vidím Toma odcházet.
+Nemohl jsem si vzpomenout, jak se vrátit zpátky do hotelu.
+Mnozí lidé ani nevědí, že tu nemoc mají.
+Domácí úkol musí být hotov do zítřka.
+Otevřel jsem dveře a vytáhl Toma z auta ven.
+Nevěnoval jsem žádnou pozornost tomu, co Tom dělá.
+Když bude něco naléhavého, můžeš mě kontaktovat.
+Kolik měsíců to asi bude trvat?
+Viděl jsem na cestě žábu.
+Musel jsem Toma nechat tu zprávu přepsat.
+Až odsud odejdu, pokusím se nic neshodit.
+Tom nazval svého šéfa idiotem.
+Policie říká, že na vražedné zbrani byly nalezeny Tomovy otisky prstů.
+Tom je zarytý nepřítel kouření.
+Tenkrát jsem nevěděl, že Tom bude moje poslední naděje.
+Tom má moc rád míchaná vajíčka.
+Tom ukradl koně svému sousedovi.
+Zákony jsou od toho, aby se porušovaly.
+Nakonec podlehla pokušení a snědla celý ten dort.
+Čeho ještě je Tom schopen?
+Líbí se ti ten nápad?
+Určitě přijedeme mezi dvanáctou a jednou.
+Mohli bychom se zeptat Toma.
+To je ten kluk, který mě provedl městem.
+Kolik letadel pojme letadlová loď?
+Nechtěl jsem, aby to Tom věděl.
+Vím, že byl Tom zklamaný.
+Už jsem vytvořil tisíce frází.
+Řekli mi, že to udělají sami.
+Nemám důvod si to pamatovat.
+Jsem šťastný už jen v tvé blízkosti.
+Jeden z těchto autobusů jede do Bostonu.
+Tom čekal, že Mary bude na jeho párty.
+Dokázal Tom chytit ten míč?
+Jak už je to dlouho, co jste se sem přistěhovali?
+Býval bych ti to řekl, kdybych to byl věděl.
+Pojďme to od teď dělat spolu.
+Nemohu uvěřit, že je tak slavná.
+Chceš to vědět, nebo ne?
+Žiji z podpory v nezaměstnanosti.
+Jak jsi věděl, že to nedělám?
+Je na vás, jak to použijete.
+Zeptal by ses Toma, proč to dělá?
+Jdu tam, kam jdeš také ty.
+Tom vysadil Mary u supermarketu.
+Myslí si, že ví všechno.
+Zajímalo by mě, jestli tu Tom byl.
+Předpokládám, že jsem byl pozván.
+Můj otec je těžký kuřák.
+Co se vám líbí nejvíc na létě?
+Pozor, ten muž je ozbrojen.
+Kdybych si byl všiml, býval bych ti řekl.
+Neudělali jste nic, abyste to změnili.
+Jakým jazykem se mluví v Makedonii?
+Myslím, že začínám ztrácet sluch.
+Je mi jedno, kolik vážíte.
+Kdy myslíte, že Tom přijede?
+Tom je moje noční můra.
+Tom byl tím zodpovědným člověkem.
+Tom ještě není schopen řídit.
+Ani nevím, jestli jsou stále naživu.
+Snad teď nejdeš ven. Je už skoro jedenáct.
+Tomovi se to moc nelíbilo.
+Myslím, že Tom a Mary žijou v Bostonu.
+Haiti je nejchudší zemí v Karibiku.
+To nebyl Tom. Byl to někdo jiný.
+Nebyl jsem moc spokojen s dnešním výkonem.
+To je dárek od mé švagrové.
+Už to hledat nemusíš. Našel jsem to.
+Zastaví někdo obchodování s lidmi?
+Otec mi koupil hodinky, které se mi moc nelíbí.
+Tom se nechá snadno ovlivnit.
+Kdybys bývala byla trpělivější, mohla jsi to udělat.
+Tohle je to místo, o kterém jsem Tomovi říkal.
+Toto je košile mého otce.
+Mary je doopravdy agresivní, že?
+Tom se chystá navštívit svého bratra ve vězení.
+Spal jsi s otevřeným oknem?
+V létě navštěvuje Maďarsko hodně turistů.
+Kolik z těchto jazyků dokážete rozpoznat?
+Tom někdy říká hezké věci.
+Cožpak nemáš nic na práci?
+To já ten obraz ukradl.
+Nevěděl jsem, že to Tom nebude jíst.
+Vidíme, že se to děje.
+Tom neumí plavat a Mary také ne.
+Jakou barvu mají Tomovy ponožky?
+Zdá se, že Tomovi důvěřuje čím dál méně lidí.
+Moje lžíce je příliš velká!
+Ten hluk mě rušil při čtení.
+Tom se zamkl ve svém pokoji a zavřel všechna okna.
+Nikoho tam nevidím, kromě Toma.
+Měl jsi mi o tom říct dříve.
+Bez Tomova souhlasu bych to byl neudělal.
+Raději se omlouvám, než žádám o svolení.
+Mám známého, který hraje na harmoniku.
+Myslím, že ho můžeme chytit.
+Jak se řekne tato věta ve vašem jazyce?
+Nepřišlo mi to vůbec legrační.
+Raději byste s tím měli Tomovi pomoct.
+Není pro mě nic důležitějšího, nežli ty.
+Tom si myslel, že Mary bude doma.
+To, co Tom říká, je možná pravda.
+Tuto neděli jsem ve službě.
+Nedělalo mi problém najít dům Toma.
+Svět se netočí jen kolem tebe.
+Světlo se šíří rychleji než zvuk.
+Je to pro mě opravdu důležité.
+Snědl jsem tolik zeleniny, jako ty.
+Uklidit tenhle binec bude trvat celou věčnost.
+Pro Toma to není důležité.
+Tom jim nemohl jít na svatbu.
+Budhismus je mírumilovné náboženství. Staňte se budhisty.
+Tom často zapomene zhasnout když vychází z místnosti.
+Zdá se, že mě Tom poznal.
+Musíme posunout naši poradu na později.
+Tři děti si hrály v parku.
+Auto se srazilo s kamiónem.
+Což takhle jít do kina?
+Prostě si Toma brát nechci.
+Mami, nevzal jsem si léky.
+Někdy si zaplaveme v jezeře.
+Ukážu ti svoje nové auto.
+Dala jsem si do kafe smetanu.
+Můj přítel je posedlý počítači.
+Dnes není ani horko, ani zima.
+Můj otec pracuje v bance.
+Mám v plánu vynechat oběd.
+Už jsi to někdy zkusil?
+Jejich jména byla vymazána ze seznamu.
+Přines mi prosím dnešní noviny.
+Tato květina je žlutá, ale všechny ostatní jsou modré.
+Udělal jsem to nejlepší, co jsem mohl.
+Jeho koncert byl velmi dobrý.
+Koupil jsem si červené sportovní auto.
+Slyšela jsem zaklepání na dveře.
+Když četla ten dopis, plakala.
+Byl jsem unavený, a tak jsem šel domů.
+Jste na mě velice laskaví.
+Celý týden jsem se nevysral.
+Tomovi bude špatně, jestli to sní.
+Už jsem ten dokument přečetl.
+Nejspíš trpí bolestí, kterou způsobují ledvinové kameny.
+Slyšel jsem, že hledá práci.
+Doufám, že už Toma neuvidím.
+Naše máma každý den stele všechny naše postele.
+Budoucnost Německa je v dobrých rukou.
+Má raději pivo než víno.
+Výsledky voleb mě nepřekvapily. Dalo se to čekat.
+Když jsem Toma našel, mohl jsem si všimnout, že plakal.
+Tom utratí většinu svého platu za jídlo.
+Máš právo dělat si to, co chceš.
+Nechci, abys šel do vězení.
+Řekl jsem, nechte Toma být.
+Všichni mí příbuzní žijí v tomhle městě.
+Zeptal jsem se Toma, kam chce jít.
+Už jsem si sundala boty.
+Já vím, že Tom byl nespravedlivý.
+Vraťte se do svých pokojů.
+Odešel domů, aniž by nám něco řekl.
+Je to pro nás výzva.
+Teď ti to dát nemůžu.
+Nikdo neví, co se v budoucnu stane.
+S kým jsi šel na pláž?
+Pokuta má být zaplacena v hotovosti.
+Zeptej se ho, kdy odlítá další letadlo!
+Budu se cítit lépe, až se osprchuji.
+Nevím, jak se to řekne španělsky.
+Tom uznal, že jsem dobrý pracovník.
+Napsal jsem na papír své jméno.
+Sledoval jsem to s Tomem.
+Každým rokem se znečištění zhoršuje.
+Tom je v obývacím pokoji a povídá si s mojí sestrou.
+Kdy byl ten hrad postavený?
+Teď je to pro Toma ta nevyšší priorita.
+Dal jsem si v kavárně šálek kávy.
+Tom se nám dobýval do domu.
+Včera jsem potkal vaši sestru. Je to velmi hezká dáma.
+Tom se zneviditelnil. Nikdo si nebyl vědom jeho přítomnosti.
+Připomíná mi to moje mládí.
+Hlad a nemoc jdou ruku v ruce.
+Věděl Tom, kdo je ta žena?
+Tom většinu svých spolužáků nezná.
+Včera jsem šel spát v deset hodin.
+Lituji, že jsem to řekl.
+Tom si nezaslouží, abyste s ním takto jednali.
+Tomovi byly vyzrazeny jisté věci.
+Jestli si myslíš, že je to tak snadné, tak si to udělej sám.
+Tom je hodně hubený, měl by víc jíst.
+Ruská melodramata a romantické filmy jsou excelentní.
+Matka mi dovolila odjet do ciziny.
+Děsím se pomyslet, s čím Tom přijde.
+Časem si na to zvykneš.
+Podívejte se, co to s Tomem udělalo.
+Je opravdu tak hezký, jako Tom?
+Přiznal se, že poklad ukradl.
+Musím si nechat opravit kolo.
+Tom neví, kdo je jeho matka.
+Ukázal jsem mu svoji ložnici.
+Ve vzduchu je cítit podzim.
+Tom nás požádal udělat nemožné.
+Tom nedostal odpověď, jakou očekával.
+Tom se k nám vždycky může vrátit.
+Nemohu říci, že souhlasím se vším, ale obecně máte pravdu.
+Je na cestě do nemocnice.
+Tom byl jediný, kdo si dal kávu s mlékem.
+V našem jazyce používáme dvojitý zápor.
+Tohle jsou nástroje, které potřebujete ke střihání ovce.
+Tom toužil po setkání s nimi.
+Každé ráno jím kysané zelí.
+Nechte Toma dělat jeho práci.
+Její starý kocour je stále naživu.
+Tom se sehnul, aby pohladil svého psa.
+Proč myslíš, že to Tom rád udělá?
+Musel jsem to vrátit Tomovi.
+První skupina se učí ráno, druhá skupina se učí večer.
+Nejsem si jistá, jestli to chci vidět.
+Nezapomeň, že Tom ví o všem.
+Tom bude muset jít s pravdou ven.
+Pátral v místnosti po ztraceném klíči.
+Je těžké uvěřit, že by se to mohlo vůbec stát.
+Všechny odpadky dejte do tohohle sudu.
+Jestli jsi něco zapomněl, pošleme ti to.
+A tohle Tom pořád dělá.
+Ve vězení jsem hodně četl.
+V té věci jsem se s Tomem neshodl.
+Co jsi za člověka, Tome?
+Svoji svobodu musíme bránit za každou cenu.
+Dá se tam dostat pěšky?
+Včera mu nebylo dobře, a proto nepřišel do školy.
+Nechystal jsem se to dělat.
+Vdej se a založ rodinu.
+Když je Tom nablízku, jsem klidná.
+Jdi se podívat, kdo tu je.
+Vždycky jsem si říkal, jaké by to bylo mít sourozence.
+Esperanto zní tak trochu jako italština.
+Tom mi řekl, že je frustrovaný.
+Je to proti vašim zásadám.
+Mohl bys za sebou zavřít dveře?
+Nechtěl jsem od tebe být odloučený.
+Dva krajíce chleba vyskočily z toustovače.
+Kolik jezer je v Kanadě?
+Neboj se, ve tvém věku je to zcela normální.
+To se stává i mně.
+Je škoda, když někdo zemře.
+Tom za ně udělal špinavou práci.
+Tom byl zatčen za kladení odporu při zatýkání.
+V těch šatech jí to sluší.
+Tom se nám postaral o jídlo.
+Má na problém velmi radikální pohled.
+Tom to nemohl opravit, protože neměl vhodné nářadí.
+Ne vždycky si čistím po jídle zuby.
+Tomovi bylo uloženo domácí vězení.
+Špatné návyky se snadno získávají.
+Musím říct Tomovi, že mě to mrzí.
+Zdá se, že na nás Tom zapomněl.
+Mým úkolem je starat se o tohle dítě.
+Tom byl zatčen za těžké ublížení na zdraví.
+Dokážeš se bavit o něčem jiném, než o Tomovi?
+Tom zaměstnal Vladimíra ve své firmě.
+Tom platil hotově, Vladimír kreditní kartou.
+Tom a Vladimír jsou obchodními partnery.
+Řeknu, že jsem byl s tebou.
+Koupil jsem s Tomem dvě nové lednice do naší firmy.
+Všichni jsme se stali vojáky.
+Je to horší, než jsem si myslel.
+Tom s nimi měl jiné plány.
+Nejsi jenom moje žena. Jsi moje nejlepší kamarádka.
+Otevřel jsem okna v patře.
+Pamatuješ, jak nám Tom vyhrožoval?
+Tento den se zapíše do historie.
+Tom to nemůže dostat všechno. Bylo by to nespravedlivé.
+Tohle dělej vždy pouze s Tomem.
+Co mohu udělat jinak, abych dostal od života to, co chci?
+Nikdy jsem nebyl moc dobrý plavec.
+Věděl jsem, že Tom bude čekat.
+Dá se tomu říkat posedlost Tomem.
+Tom trval na tom, abychom odjeli.
+Vidíš tu silnici na mapě?
+Rád bych věděl, jestli si Tom vzpomíná.
+Mějte odvahu používat vlastní rozum!
+Po příjezdu do Francie zbohatla.
+Tom už se týden nemyl.
+Viděl jsem to Toma udělat.
+Vozil jsem Toma do školy, když pršelo.
+Chlapec říkal, že pecka z avokáda odstraňuje revmatické bolesti.
+Tom se nedokázal smířit se ztrátou svého zaměstnání a vzal si život.
+Bude soud k Tomovi shovívavý?
+Nemám, co bych vám o Tomovi řekl.
+Postupem času její krása uvadla a její charakter se ještě více pokřivil.
+I malý dar by pomohl.
+Bydlíme přes ulici naproti škole.
+Takový důležitý úkol bych Tomovi nesvěřil.
+Mojí prací je mytí nádobí.
+Museli jste Toma špatně pochopit.
+Někdo to na Toma narafičil.
+Podívejte se, jak je Tom hubený.
+Tom možná ví, co se stalo.
+Tom byl nejrychlejší ze všech.
+Tom má na svém těle několik jizev.
+Kolik knih jsi přečetl ve škole?
+Seděli jsme v kruhu okolo ohně.
+Náš zástupce měl námitky proti novému návrhu daní.
+Jeli jsme dolů po rovné a široké silnici.
+Tyto dárky, prosím, zabal společně.
+Uznal, že je to pravda.
+Kapitán stál za kormidlem a řídil loď.
+Pil jsem naprosto bezuzdně a ztratil jsem vědomí. Nemám ponětí, co jsem dělal.
+Dům vypadal dobře. Krom toho cena byla dobrá.
+Tom připustil, že to nebude snadné.
+Docela dost mi to pomohlo.
+Omamné látky jsou velice nebezpečné.
+Tom se nechtěl vrátit do Austrálie.
+Jsou teprv tři hodiny a už je tma.
+Musím přeložit tyhle věty z italštiny do latiny.
+Tom se za ty roky vůbec nezměnil.
+Nachytal chlapce při krádeži hodinek.
+Tahle vláda je naprostá katastrofa.
+Někteří lidé mají zimu rádi, zatímco jiní ji nesnáší.
+Hudba hraje v nekonečné smyčce.
+Chtěl jsem na něj udělat dojem.
+Chceš-li být respektován, respektuj především sám sebe.
+Bylo to dál, než jsme čekali.
+Tom vám to už nebude opakovat.
+Polotovary jsou částečně zpracované výrobky.
+Žije z podpory v nezaměstnanosti.
+Proč jsi pozval Toma na oběd?
+Tomovi už to bylo vráceno.
+Vlakem se tam dostanete rychleji.
+Jaký Tom byl, když byl adolescent?
+Nikdo nám neřekl, že přijede Tom.
+Tom řekl, že s tím nemůže nic dělat.
+Každopádně bychom měli Toma navštívit.
+Strávil jsem ve vlaku dvanáct hodin.
+To jídlo bylo pro Toma, ne pro tebe.
+My muži jsme zvyklí čekat na ženy.
+Matematika byla pro Toma nejméně oblíbeným předmětem ve škole.
+Jestli nechceš zůstat sám, mohu ti dělat společnost.
+Přehodila si ručník přes rameno a vyšla z místnosti.
+Jaký je váš oblíbený hudebník?
+Pád z římsy mu rozdrtil nohu.
+Už jsem zjistil, jaký Tom je.
+Únosci Toma unesli a drželi ho v opuštěné budově v Park Street.
+Tyto koncerty komorní hudby si předplatím.
+Snažil se dokázat, že jaderné zbraně jsou hrozbou pro mír.
+Tom tápal ve tmě kolem sebe po svých brýlích.
+Tento prodejní automat byl včera večer zničen chuligány.
+Tato místnost není světlá. Je tmavá.
+Nejlepší je na to vůbec nemyslet.
+Ty peníze stejně nebudou stačit.
+Tom teď je od nás hodně daleko.
+Tom mi poslal zprávu s dotazem, jestli jsem v práci.
+Tohle se mi nestává moc často.
+Jsem zvědav, jak Tom zareaguje, až to uvidí.
+Všichni máme dva životy. Ten druhý začíná ve chvíli, kdy poznáme, že máme jenom jeden.
+Chci všem představit svou omluvu.
+V naší zemi jsou velké povodně.
+Kvůli nehodě nemohl Karel dorazit.
+Tom je vůči mně nepřátelský.
+Udělal jsem ti něco k jídlu.
+Lékař Tomovi řekl, že je zcela v pořádku.
+Čím dál více obyčejných lidí má problém vyjít s penězi.
+Jeho náhlý odchod všechny překvapil.
+Nechci, aby byl Tom mým obchodním partnerem.
+Jde o to, že Tom nic takového neslíbil.
+Jsem rád, že jsem muž.
+Tom by vás do toho neměl nutit.
+Tom musí prokázat svoji nevinu.
+Tom by takové věci neměl dělat.
+Tom mi řekl, že to musím udělat jinak.
+Dnes ráno jsem neposlouchal rádio.
+Můj mladší bratr už je vyšší než já.
+Není to blízko. Je to odtud daleko.
+Nedovolte, aby vás připravili o to, co vám právem patří.
+Někteří živočichové jsou býložravci, zatímco jiní jsou masožravci nebo všežravci.
+Jsou lidé, kteří tráví Vánoce sami.
+Budu tu pro Toma vždycky, až do své smrti.
+Jak se do toho zapojil Tom?
+Tom je jediný, komu se to podařilo.
+Dva mladí muži byli v posledních dvou týdnech zabiti žraloky tygřími.
+Není to tak špatné, jak to vypadá.
+Řekla, že rozvod byl pro ni jediným řešením.
+Pocházím z Vietnamu. Jsem Vietnamec, a mluvím vietnamsky.
+Pocházím z Jižní Koreje. Jsem Korejka, a mluvím korejsky.
+Jsem rád, že jste tady.
+Přestože mi ujel autobus, na schůzi jsem dorazil včas.
+Prádlo, které jsem pověsil, viselo na šňůře tři dny.
+Přítel je ten, kdo vás má rád, i když o vás všechno ví.
+Máte štěstí, že máte tak krásnou rodinu.
+Mám několik přátel, a někteří z nich jsou velmi bohatí.
+Co dalšího se včera událo?
+Aktualizoval jsem software na nejnovější verzi.
+Tom se mě zeptal, jak to šlo.
+Chtěli vědět, kde je Tom.
+Byla to Tomova polévka, ne tvoje. Neměl jsi ji jíst.
+Budeš si na to muset zvyknout.
+Toma tam najdete jen stěží.
+Ticho mezi námi je ohlušující.
+Mají tyto děti nějaké rodiče?
+O Tomově minulosti toho vím hodně.
+Kdo ti to sakra řekl?
+Tom mohl přijít o všechno.
+Tom je vzdělanější, než jeho kolegové.
+Vazba skutečného přátelství trvá dlouho.
+Tom zametl podlahu a vynesl odpadky.
+Tom byl rád, že tam může být s námi.
+Opravdu si myslíte, že je Tom tak hloupý, aby něco takového udělal?
+Děkuji, velmi jste mi pomohli.
+Tom by touto dobou už měl být v práci.
+Většina studentů z její třídy u zkoušky neuspěla.
+Nic lepšího jsem si nemohl přát.
+Tom byl na tu zkoušku naprosto nepřipravený. Výsledkem bylo, že neuspěl.
+Tom konečně našel, co hledal.
+Nejsou to její biologičtí rodiče.
+Kolik času potřebujete na překlad této knihy?
+V noci se déšť změnil ve sníh.
+Je to frekventovaná ulice v centru města.
+Chtěla bych vysadit tento lék.
+Růst rostlin závisí na světle, vodě a živinách.
+Tom byl zachráněn smečkou vlků.
+Tom nechtěl uznat svou chybu.
+Tom je náš nový člen.
+Tom vždy kupuje to, co je nejlevnější.
+Na Toma to mělo okamžitý vliv.
+Manželství Mary a Toma zůstalo bezdětné.
+Tom už na nás čekal.
+Seznámím vás s potřebnými lidmi.
+V této restauraci kuchařka vaří velmi dobře.
+Tom chtěl lépe placenou práci.
+Řekněte mi, kdy to uděláte.
+Tom udělal, co měl, a odešel.
+Zatím na to nikdo nereagoval.
+Řekni Tomovi, co tě trápí. Možná ti dokáže pomoct.
+Tom bude o Vánocích doma se svou rodinou.
+Přišel bys, kdyby tě byli pozvali?
+Na Tomovi bylo něco divného.
+Tom se tam vydal sám.
+Takže měli pár stovek liber, které hodlali použít ke koupi domu, jakmile tam dorazí.
+Jak ses měl o víkendu?
+Jak jsi říkal, že se jmenuješ?
+Lepší být nenáviděn za to, jaký člověk je, než milován pro něco, čím není.
+Ten chlapec, co vesluje v tom člunu, je můj přítel.
+Island dříve náležel k Dánsku.
+Tento stroj zde vyrábí proud.
+Je jedno, zda přijde nebo ne.
+Neumím si to úplně vysvětlit.
+Zítra budu studovat v knihovně.
+Bydlím poblíž moře, takže se často dostanu na pláž.
+Bylo ji slyšet, jak volá o pomoc.
+Je tu někde blízko telefon?
+Chápeš, jak moc tě miluje?
+Dejte si pozor. Je ozbrojen.
+Můžeš pozvat kohokoli, koho chceš.
+Co bys chtěla dělat v budoucnu?
+Jak dlouho už jsi v Japonsku?
+Šel do školy, i když se necítil nejlépe.
+Každý den využíváme mnoho věcí, které Edison vynalezl.
+Tato nová auta jsou na prodej.
+V sobotu se vídá se svou přítelkyní.
+Tvoje intrika je jako dům založený na písku.
+Můžeš jet mým novým autem.
+Chtěl bych pokoj s klimatizací.
+Seženu něco k pití pro vás oba.
+Jeden z nás dvou bude vybrán.
+Jaké je nejvzdálenější místo, které jste dosud navštívili?
+Nebudu s ní ztrácet čas.
+Co když mi Tom nepomůže? Co pak?
+Tom si v supermarketu zapomněl peněženku.
+Tom byl okraden v supermarketu.
+Tom jen předstíral, že se mu to líbí.
+Proč jsi k nim vůbec chodil?
+Proč s tím Toma obtěžuješ?
+Tom často chodí do práce pěšky.
+Tom si zvykl na samotu.
+Tomovi upadlo na zem vejce.
+Tom riskoval svůj život, aby zachránil děti před ohněm.
+Počkejme, s čím přijde Tom.
+Nejsi o nic lepší než já.
+Řekni Tomovi, ať s tím přestane.
+Tom si vybral ten jednodušší úkol.
+Tom se přiznal, že je homosexuál.
+Sem už dneska málokdo jezdí.
+Tom je příliš líný na to, aby pravidelně cvičil.
+Hádej, koho jsem tam potkal. Toma.
+Máš pravdu. Tom všechno zničil, včetně našeho vztahu.
+Až se tam dostanete, už to bude vyprodáno.
+Co je vaším hlavním cílem v životě?

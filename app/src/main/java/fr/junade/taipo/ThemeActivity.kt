@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.text.Layout
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -539,6 +540,9 @@ class ThemeActivity : Activity() {
                                 setText(palette.labelRes())
                                 gravity = Gravity.CENTER
                                 maxLines = 2
+                                // Colonne étroite : un nom d'un seul long mot (finnois, polonais…) passe à la ligne à une syllabe, avec
+                                // un trait d'union, au lieu d'être coupé n'importe où.
+                                hyphenationFrequency = Layout.HYPHENATION_FREQUENCY_NORMAL
                             },
                             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
                                 .apply { topMargin = gap },

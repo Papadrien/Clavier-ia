@@ -401,10 +401,10 @@
     <string name="licenses_fulltext_unreadable">Impossibile caricare il testo della licenza. Usa il link qui sopra per leggerlo online.</string>
     <string name="licenses_usage_nemotron">Modello di dettatura vocale (francese e inglese), scaricato su richiesta ed eseguito sul tuo dispositivo.</string>
     <string name="licenses_notice_nemotron">Concesso in licenza secondo l\'OpenMDW License Agreement, versione 1.1. Taipo usa un\'esportazione ONNX (int8) di questo modello, eseguita con sherpa-onnx.</string>
-    <string name="licenses_usage_frequencywords">Elenchi di parole per la correzione automatica e i suggerimenti nelle sette lingue della tastiera: francese, inglese, spagnolo, tedesco, italiano, portoghese e olandese.</string>
-    <string name="licenses_usage_aosp_dictionaries">Elenchi di parole di riferimento usati per verificare e completare gli elenchi della tastiera nelle sette lingue.</string>
+    <string name="licenses_usage_frequencywords">Elenchi di parole per la correzione automatica e i suggerimenti nelle quindici lingue della tastiera: francese, inglese, spagnolo, tedesco, italiano, portoghese, olandese, polacco, rumeno, ceco, ungherese, svedese, danese, norvegese e finlandese.</string>
+    <string name="licenses_usage_aosp_dictionaries">Elenchi di parole di riferimento usati per verificare e completare gli elenchi della tastiera (tutte le lingue tranne il finlandese).</string>
     <string name="licenses_notice_aosp_dictionaries">Parole degli elenchi della tastiera dell\'Android Open Source Project (come pubblicati da HeliBoard) sono state aggiunte agli elenchi di Taipo, con una frequenza calcolata da Taipo, e usate per rimuovere le parole che non contengono. Concesso in licenza secondo la licenza Apache 2.0.</string>
-    <string name="licenses_usage_tatoeba">Coppie di parole (quale parola segue di solito un\'altra) che aiutano la correzione automatica a scegliere la parola giusta in francese, inglese, italiano, portoghese e olandese, e parole aggiunte agli elenchi italiano, portoghese e olandese.</string>
+    <string name="licenses_usage_tatoeba">Coppie di parole (quale parola segue di solito un\'altra) che aiutano la correzione automatica a scegliere la parola giusta in tutte le lingue della tastiera tranne lo spagnolo e il tedesco, e parole aggiunte agli elenchi italiano, portoghese e olandese.</string>
     <string name="licenses_notice_tatoeba">Conteggi di coppie di parole calcolati da Taipo dalle frasi del corpus collaborativo Tatoeba (tatoeba.org), con licenza CC BY 2.0 FR. Vengono conservati solo i conteggi delle parole e delle coppie di parole consecutive, non le frasi.</string>
     <string name="licenses_notice_frequencywords">Elenchi di parole adattati da FrequencyWords di Hermit Dave (contenuto del 2018, ricavato dal corpus OpenSubtitles 2018), con licenza CC BY-SA 4.0. Modifiche apportate da Taipo: parole convertite in minuscolo e normalizzate; frammenti, abbreviazioni e voci con cifre o caratteri di altri alfabeti rimossi; parole rare e probabili refusi rimossi; alcune voci aggiunte a mano. Gli elenchi così adattati sono condivisi con la stessa licenza, CC BY-SA 4.0.</string>
     <string name="licenses_usage_litertlm">Motore che esegue i modelli Gemma sul tuo dispositivo.</string>
@@ -649,9 +649,12 @@
     <string name="language_detail_footer">Il layout scelto qui si applica quando %1$s è la lingua attiva. Il pulsante Rimuovi compare solo finché resta un\'altra lingua.</string>
     <string name="language_layout_note_azerty">Francia, Belgio</string>
     <string name="language_layout_note_qwerty">Internazionale</string>
-    <string name="language_layout_note_qwertz">Germania, Svizzera, Austria</string>
+    <string name="language_layout_note_qwertz">Germania, Austria, Svizzera, Cechia, Ungheria</string>
     <string name="language_layout_note_qwerty_n">Usuale per lo spagnolo</string>
     <string name="language_layout_note_colemak">Ergonomico</string>
+    <string name="language_layout_note_qwerty_sv">Svezia, Finlandia</string>
+    <string name="language_layout_note_qwerty_da">Danimarca</string>
+    <string name="language_layout_note_qwerty_no">Norvegia</string>
     <string name="premium_title">Pacchetto premium</string>
     <string name="premium_price_fallback">2,99 €</string>
     <string name="premium_tagline">Una volta sola, per sempre. Tutto resta sul tuo telefono.</string>

@@ -18,7 +18,8 @@ class KeyboardKeyWidthTest {
     @Test
     fun `toutes les lettres pesent une unite et la reference est de 10 unites`() {
         allLetterLayouts.forEach { (name, layout) ->
-            assertEquals(10f, layout.referenceUnits, 0.001f, name)
+            val language = KeyboardLanguage.entries.first { name.startsWith("$it ") }
+            assertEquals(LetterArrangement.defaultFor(language).keysPerRow.toFloat(), layout.referenceUnits, 0.001f, name)
             layout.rows.flatten().filter(::isLetterKey).forEach { key ->
                 assertEquals(1f, key.weight, "$name : poids de ${key.id}")
             }

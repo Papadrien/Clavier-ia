@@ -57,7 +57,7 @@ class KeyboardLanguageChoiceTest {
     @Test
     fun `en automatique la premiere langue geree de la liste est retenue`() {
         assertEquals(KeyboardLanguage.FR, KeyboardLanguageChoice.resolve(null, listOf("ja-JP", "fr-FR", "en-US")))
-        assertEquals(KeyboardLanguage.EN, KeyboardLanguageChoice.resolve(null, listOf("pl-PL", "en-GB")))
+        assertEquals(KeyboardLanguage.EN, KeyboardLanguageChoice.resolve(null, listOf("el-GR", "en-GB")))
     }
 
     @Test

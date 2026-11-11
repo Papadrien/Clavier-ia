@@ -108,6 +108,9 @@ class LanguageDetailActivity : Activity() {
         LetterArrangement.QWERTZ -> R.string.language_layout_note_qwertz
         LetterArrangement.QWERTY_N -> R.string.language_layout_note_qwerty_n
         LetterArrangement.COLEMAK -> R.string.language_layout_note_colemak
+        LetterArrangement.QWERTY_SV -> R.string.language_layout_note_qwerty_sv
+        LetterArrangement.QWERTY_DA -> R.string.language_layout_note_qwerty_da
+        LetterArrangement.QWERTY_NO -> R.string.language_layout_note_qwerty_no
     }
 
     /** Aperçu de la disposition : une rangée de petits carrés par rangée de lettres (rangées centrées). */
