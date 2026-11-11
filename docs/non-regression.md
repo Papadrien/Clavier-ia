@@ -203,3 +203,19 @@ Tests JVM : `SuggestionPolicyTest`, `MessagingFieldPolicyTest`. À valider sur P
 3. Aucun emoji proposé, aucune prédiction après une espace, même après plusieurs recherches.
 4. Champ de mot de passe et champ e-mail : toujours aucune suggestion.
 5. Texte libre (Notes, messagerie) : rien ne change (autocorrection en gras au centre, emoji, prédictions).
+
+## Recette sur OnePlus 6T : trois correctifs (11/11/2026)
+
+Recette manuelle passée sur un OnePlus 6T (Android 15) : points 1 à 6, 8 (sauf l'erreur provoquée) et 9 (sauf le changement de modèle). Les 30 tests instrumentés passent sur cet appareil. Écarts corrigés :
+
+- **« il a mangé a demain »** : « a » restait tel quel (seul, « a demain » devenait bien « à demain »). Nouvelle règle de `FrenchConfusions` : après un participe, « a » devant un jour (`DAYS_AFTER_A` : demain, après-demain, lundi… dimanche) devient « à ». Pas « bientôt » ni « plus » (« le projet lancé a bientôt dix ans », « le prix fixé a plus que doublé »). Tests JVM : `FrenchConfusionsTest`.
+- **Bulle du point relâchée sans bouger** : rien n'était saisi (la bulle n'a pas de choix présélectionné et ne contient pas « . »). Relâcher sur la touche d'une bulle sans choix par défaut saisit désormais la touche elle-même (`KeyPopup.isOnHomeWithoutDefault`, `KeyboardView`), seulement pour une touche qui tape un caractère (Entrée n'est pas concernée). L'annulation (`ACTION_CANCEL`) ne saisit toujours rien. Test instrumenté : `unAppuiLongSurLePointRelacheSansBougerSaisitLePoint`.
+- **« Ajouter le texte » collait la réponse** au mot ou à l'emoji qui précède (« 🍇La mer… »). `InsertSpacing.around` ajoute une espace devant (et derrière) quand le texte voisin la demande, jamais après une ouverture ni devant une ponctuation (`FieldEditor.insertGeneratedText`). Tests JVM : `InsertSpacingTest`.
+
+Non retenus : les récents d'emoji mis à jour à la réouverture du panneau (voulu) ; Android revenu au clavier AOSP après un `am force-stop` de Taipo (comportement du système sur arrêt forcé du clavier actif).
+
+À valider sur Pixel 9 (rien d'exécuté sur appareil après ces correctifs) :
+1. Taper « il a mangé a demain », « c'est reporté a lundi » : « à » ; « le projet lancé a bientôt dix ans » inchangé.
+2. Appui long sur le point, relâcher sans bouger : « . » saisi ; glisser sur un symbole : ce symbole ; glisser hors de la bulle : rien.
+3. Générer un texte après un mot ou un emoji, « Ajouter le texte » : une espace sépare ; en début de champ ou après une espace : aucune espace en plus.
+4. Épingler une copie dans le Smart Clipboard : le bandeau « Élément épinglé » doit être opaque. Sur le OnePlus, une capture l'a montré mélangé aux icônes de la barre, sans doute pendant son apparition en fondu ; à confirmer, rien n'a été changé.

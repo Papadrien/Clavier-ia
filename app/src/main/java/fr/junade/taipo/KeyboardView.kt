@@ -845,13 +845,16 @@ class KeyboardView(context: Context) : View(context) {
         cancelKeyLongPress()
         keyPreview.key = null
         if (keyPopup.isShown) {
-            // Relâcher sur un symbole le saisit ; relâcher ailleurs ferme la bulle sans rien saisir.
+            // Relâcher sur un symbole le saisit ; relâcher sur la touche d'une bulle sans choix présélectionné (le point)
+            // saisit la touche elle-même ; relâcher ailleurs ferme la bulle sans rien saisir.
             keyPopup.updateSelection(x, y)
             val symbol = keyPopup.selectedSymbol()
             val popupKey = keyPopup.key
+            val typesOwnChar = symbol == null && popupKey?.action is KeyAction.TypeChar && keyPopup.isOnHomeWithoutDefault(x, y)
             dismissPopup()
             pressedKey = null
             if (symbol != null) onBubbleSymbol(symbol, popupKey)
+            if (typesOwnChar && popupKey != null) deliverKey(popupKey, repeat = false)
             invalidate()
             return
         }

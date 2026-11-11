@@ -363,7 +363,12 @@ internal object FrenchConfusions {
         "facile", "difficile", "simple", "impossible", "prêt", "prête", "prêts", "lent", "long", "dur", "bon", "beau",
     )
 
-    private val NOUNS_BEFORE_A_INFINITIVE = arrayOf("travail", "temps", "courses", "devoirs", "linge", "vaisselle", "ménage", "boulot", "trucs", "truc")
+    /** Jours qu'un participe suivi de « à » annonce (« reporté à demain »). */
+    private val DAYS_AFTER_A = arrayOf(
+        "demain", "après-demain", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche",
+    )
+
+    private val NOUNS_BEFORE_A_INFINITIVE =arrayOf("travail", "temps", "courses", "devoirs", "linge", "vaisselle", "ménage", "boulot", "trucs", "truc")
 
     private val BE_FORMS_FOR_LA = arrayOf("suis", "es", "est", "sommes", "êtes", "sont", "était", "étais", "sera", "serai")
 
@@ -453,6 +458,9 @@ internal object FrenchConfusions {
         ConfusionRule("d'ou", "d'où", "d'ou > d'où", always = true),
         // a / à
         ConfusionRule("a", "à", "a > à devant midi", next = oneOf("midi", "minuit")),
+        // « mangé a demain », « reporté a lundi » : après un participe, « a » + jour ne peut pas être le verbe avoir. Pas
+        // « bientôt » ni « plus » (« le projet lancé a bientôt dix ans », « le prix fixé a plus que doublé »).
+        ConfusionRule("a", "à", "a > à après un participe, devant un jour", previous = participleLike, next = oneOf(*DAYS_AFTER_A)),
         ConfusionRule("a", "à", "a > à après un adjectif", previous = oneOf(*ADJECTIVES_BEFORE_A_INFINITIVE), next = infinitiveLike),
         ConfusionRule("a", "à", "a > à après rien", previous = oneOf("rien"), next = oneOf(*PRONOUNS_AFTER_VERB)),
         ConfusionRule(
