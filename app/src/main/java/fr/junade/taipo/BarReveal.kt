@@ -8,11 +8,7 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import android.view.animation.PathInterpolator
 import java.util.WeakHashMap
-import kotlin.math.cos
-import kotlin.math.exp
 import kotlin.math.roundToInt
-import kotlin.math.sin
-import kotlin.math.sqrt
 
 /**
  * Animation de « dévoilement » de la barre du haut : un bouton ou une zone qui apparaît s'ouvre comme un rideau à
@@ -38,15 +34,18 @@ internal object BarReveal {
     /** Distance de glissement au départ, en dp. */
     const val SLIDE_DP = 18f
 
-    /** Entrée en ressort (actions IA après un appui sur le robot) : durée, décalage entre deux boutons, départ. */
-    const val SPRING_DURATION_MS = 620L
-    const val SPRING_STAGGER_MS = 45L
+    /**
+     * Entrée en ressort (actions IA après un appui sur le robot) : distance et taille de départ. La durée, le décalage entre deux
+     * boutons et le ressort lui-même viennent du style d'animation ([MotionStyle.current] : [springDurationMs], [springProgress]).
+     */
     const val SPRING_SLIDE_DP = 44f
     const val SPRING_START_SCALE = 0.55f
 
-    /** Ressort sous-amorti : ratio d'amortissement (≈ 16 % de dépassement) et pulsation propre (rad/s). */
-    private const val SPRING_DAMPING = 0.5f
-    private const val SPRING_OMEGA = 20f
+    /** Durée de l'entrée en ressort et des glissements, selon le style d'animation (620 ms en Ressort). */
+    val springDurationMs: Long get() = MotionStyle.current.revealDurationMs
+
+    /** Écrasement / étirement des boutons qui apparaissent (Gelée) : modéré, ce sont de petites vues côte à côte. */
+    private const val JELLY_STRENGTH = 0.7f
 
     /** Part de la durée sur laquelle l'opacité monte de 0 à son niveau de repos. */
     private const val SPRING_FADE_FRACTION = 0.3f
@@ -87,8 +86,9 @@ internal object BarReveal {
         val slidePx = SLIDE_DP * view.resources.displayMetrics.density
         view.alpha = 0f
         val animator = ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = if (full) DURATION_MS else QUIET_DURATION_MS
-            startDelay = startDelay(order, full)
+            val scale = MotionStyle.current.curtainScale
+            duration = ((if (full) DURATION_MS else QUIET_DURATION_MS) * scale).toLong()
+            startDelay = (startDelay(order, full) * scale).toLong()
             interpolator = easing
             addUpdateListener { update ->
                 val progress = update.animatedValue as Float
@@ -119,20 +119,16 @@ internal object BarReveal {
 
     /**
      * Avancement d'un ressort amorti (masse 1, partant de 0 au repos vers 1) à la [fraction] (0 à 1) de la durée
-     * [SPRING_DURATION_MS] : dépasse 1 d'environ 16 % puis oscille jusqu'à se poser. Réponse analytique d'un ressort
-     * sous-amorti, donc sans état et testable en JVM.
+     * [MotionStyle.revealDurationMs] de [style] : en Ressort, dépasse 1 d'environ 16 % puis oscille jusqu'à se poser ; en Vif,
+     * s'approche de 1 sans le dépasser. Réponse analytique ([MotionStyle.response]), donc sans état et testable en JVM.
      */
-    fun springProgress(fraction: Float): Float {
-        val x = fraction.coerceIn(0f, 1f)
-        val t = x * (SPRING_DURATION_MS / 1000f)
-        val damped = SPRING_DAMPING * SPRING_OMEGA
-        val omegaD = SPRING_OMEGA * sqrt(1f - SPRING_DAMPING * SPRING_DAMPING)
-        val envelope = exp(-damped * t)
-        return 1f - envelope * (cos(omegaD * t) + damped / omegaD * sin(omegaD * t))
+    fun springProgress(fraction: Float, style: MotionStyle = MotionStyle.current): Float {
+        val t = fraction.coerceIn(0f, 1f) * (style.revealDurationMs / 1000f)
+        return style.response(t, style.revealZeta)
     }
 
     /** Délai de départ de la vue de rang [order] pour l'entrée en ressort (0 = la plus proche du bouton touché). */
-    fun springStartDelay(order: Int): Long = order * SPRING_STAGGER_MS
+    fun springStartDelay(order: Int): Long = order * MotionStyle.current.revealStaggerMs
 
     /**
      * Apparition « ressort » de [view] (actions IA après un appui sur le robot) : elle jaillit du côté du bouton touché
@@ -155,18 +151,20 @@ internal object BarReveal {
         view.translationX = direction * offsetPx
         view.scaleX = SPRING_START_SCALE
         view.scaleY = SPRING_START_SCALE
+        val style = MotionStyle.current
         val animator = ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = SPRING_DURATION_MS
+            duration = style.revealDurationMs
             startDelay = springStartDelay(order)
             interpolator = LinearInterpolator()
             addUpdateListener { update ->
                 val fraction = update.animatedValue as Float
-                val progress = springProgress(fraction)
+                val progress = springProgress(fraction, style)
                 view.alpha = (restingAlpha?.invoke() ?: baseAlpha) * (fraction / SPRING_FADE_FRACTION).coerceIn(0f, 1f)
                 view.translationX = direction * offsetPx * (1f - progress)
                 val scale = SPRING_START_SCALE + (1f - SPRING_START_SCALE) * progress
-                view.scaleX = scale
-                view.scaleY = scale
+                // Gelée : le bouton s'élargit et s'aplatit quand il dépasse sa taille, s'étire avant de l'atteindre.
+                view.scaleX = scale * style.stretchX(progress, JELLY_STRENGTH)
+                view.scaleY = scale * style.stretchY(progress, JELLY_STRENGTH)
             }
             addListener(
                 object : AnimatorListenerAdapter() {
@@ -185,7 +183,8 @@ internal object BarReveal {
     }
 
     /** Décalage horizontal restant (px) d'un glissement en ressort parti de [fromPx] à la [fraction] (0 à 1) de la durée. */
-    fun glideOffset(fromPx: Float, fraction: Float): Float = fromPx * (1f - springProgress(fraction))
+    fun glideOffset(fromPx: Float, fraction: Float, style: MotionStyle = MotionStyle.current): Float =
+        fromPx * (1f - springProgress(fraction, style))
 
     /** [view] joue une animation d'apparition (ressort ou rideau) : elle ne glisse pas en plus, son décalage est déjà animé. */
     fun isEntering(view: View): Boolean = running.containsKey(view) && !gliding.containsKey(view)
@@ -199,10 +198,11 @@ internal object BarReveal {
         cancel(view)
         if (!ValueAnimator.areAnimatorsEnabled() || fromPx == 0f) return
         view.translationX = fromPx
+        val style = MotionStyle.current
         val animator = ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = SPRING_DURATION_MS
+            duration = style.revealDurationMs
             interpolator = LinearInterpolator()
-            addUpdateListener { update -> view.translationX = glideOffset(fromPx, update.animatedValue as Float) }
+            addUpdateListener { update -> view.translationX = glideOffset(fromPx, update.animatedValue as Float, style) }
             addListener(
                 object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {

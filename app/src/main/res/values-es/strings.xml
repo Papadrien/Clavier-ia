@@ -630,6 +630,11 @@
     <string name="key_shape_mechanical">Mecánica</string>
     <string name="key_shape_outline">Contorno</string>
     <string name="key_shape_bare">Sin forma</string>
+    <string name="theme_section_motion">Animaciones</string>
+    <string name="theme_motion_caption">Burbujas de las teclas, botones de la barra, barras del chat e iconos animados.</string>
+    <string name="motion_style_spring">Muelle</string>
+    <string name="motion_style_snappy">Ágil</string>
+    <string name="motion_style_jelly">Gelatina</string>
     <string name="home_row_languages_subtitle">Idiomas y disposiciones del teclado</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Apariencia</string>

@@ -9,6 +9,7 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -49,6 +50,7 @@ class ThemeActivity : Activity() {
     private class Swatch(val palette: AccentPalette, val view: View, val disc: AccentSwatchView)
 
     private class ShapeCard(val shape: KeyShape, val view: View, val check: View, val lock: View, val preview: ThemePreviewView)
+    private class MotionCard(val style: MotionStyle, val view: View, val check: View, val lock: View)
 
     private class FontRow(val font: KeyboardFont, val view: View, val mark: ImageView)
 
@@ -58,6 +60,10 @@ class ThemeActivity : Activity() {
     private val cards = ArrayList<Card>()
     private val swatches = ArrayList<Swatch>()
     private val shapeCards = ArrayList<ShapeCard>()
+    private val motionCards = ArrayList<MotionCard>()
+
+    /** Style réservé touché sans pack : mis en avant, avec le bouton qui ouvre l'écran du pack ; appliqué au retour si le pack est actif. */
+    private var previewMotion: MotionStyle? = null
 
     /** Forme réservée touchée sans pass : montrée sur les aperçus, appliquée au retour si le pass a été pris. */
     private var previewShape: KeyShape? = null
@@ -117,27 +123,24 @@ class ThemeActivity : Activity() {
         buildPalettes(findViewById(R.id.theme_palettes))
         ViewCompat.setAccessibilityHeading(findViewById(R.id.theme_shape_heading), true)
         buildShapes(findViewById(R.id.theme_shapes), inflater, gap)
-        findViewById<View>(R.id.button_shape_unlock).setOnClickListener {
-            startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_THEME))
-        }
+        setUpMotions(inflater, gap)
         findViewById<View>(android.R.id.content).applyTaipoFontToTree()
         ViewCompat.setAccessibilityHeading(findViewById(R.id.theme_backdrop_heading), true)
         setUpBackdrops()
         // Après applyTaipoFontToTree : chaque ligne garde sa propre police.
         ViewCompat.setAccessibilityHeading(findViewById(R.id.theme_font_heading), true)
         buildFonts(findViewById(R.id.theme_fonts))
-        findViewById<View>(R.id.button_font_unlock).setOnClickListener {
-            startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_THEME))
+        // Boutons « Débloquer avec le pack premium » des sections : tous ouvrent l'écran du pack.
+        for (id in listOf(R.id.button_theme_unlock, R.id.button_shape_unlock, R.id.button_font_unlock, R.id.button_motion_unlock)) {
+            findViewById<View>(id).setOnClickListener { startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_THEME)) }
         }
         applySystemBarInsets()
         render(preferences.themeChoice)
-        findViewById<View>(R.id.button_theme_unlock).setOnClickListener {
-            startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_THEME))
-        }
         renderPalettes(preferences.accentPalette)
         renderShapes(preferences.keyShape)
         renderFonts(preferences.keyboardFont)
         renderBackdrops()
+        renderMotions(preferences.motionStyle)
     }
 
     // Retour de l'écran du pass (ou pass forcé en debug) : la couleur essayée est appliquée, les cadenas disparaissent.
@@ -171,6 +174,69 @@ class ThemeActivity : Activity() {
             Analytics.setting(this, "keyboard_backdrop", triedBackdrop.storageKey)
         }
         renderBackdrops()
+        val triedMotion = previewMotion
+        if (triedMotion != null && triedMotion.isAvailable(PremiumPass.isActive)) {
+            previewMotion = null
+            preferences.motionStyle = triedMotion
+            Analytics.setting(this, "motion_style", triedMotion.storageKey)
+        }
+        renderMotions(preferences.motionStyle)
+    }
+
+    /**
+     * Cartes des styles d'animation ([MotionStyle]) sur une rangée : chacune montre son style en boucle ([MotionPreviewView], à la
+     * place de l'aperçu de thème de la carte).
+     */
+    /** Section « Animations » : titre lu comme tel par TalkBack, cartes des styles. */
+    private fun setUpMotions(inflater: LayoutInflater, gap: Int) {
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.theme_motion_heading), true)
+        buildMotions(findViewById(R.id.theme_motions), inflater, gap)
+    }
+
+    private fun buildMotions(container: LinearLayout, inflater: LayoutInflater, gap: Int) {
+        MotionStyle.entries.forEachIndexed { index, style ->
+            val card = inflater.inflate(R.layout.item_theme_card, container, false)
+            val themePreview = card.findViewById<View>(R.id.theme_preview)
+            val frame = themePreview.parent as ViewGroup
+            frame.removeView(themePreview)
+            frame.addView(MotionPreviewView(KeyboardTheme.themed(this), style), 0, themePreview.layoutParams)
+            card.findViewById<TextView>(R.id.theme_label).setCardLabel(getString(style.labelRes()))
+            card.setOnClickListener { selectMotion(style) }
+            (card.layoutParams as LinearLayout.LayoutParams).apply { if (index > 0) marginStart = gap }
+            container.addView(card)
+            motionCards += MotionCard(style, card, card.findViewById(R.id.theme_check), card.findViewById(R.id.theme_lock))
+        }
+    }
+
+    private fun selectMotion(style: MotionStyle) {
+        if (!style.isAvailable(PremiumPass.isActive)) {
+            previewMotion = style // réservé, sans pack : mis en avant, avec le bouton qui ouvre l'écran du pack
+            renderMotions(preferences.motionStyle)
+            return
+        }
+        previewMotion = null
+        if (style != preferences.motionStyle) {
+            preferences.motionStyle = style
+            Analytics.setting(this, "motion_style", style.storageKey)
+        }
+        renderMotions(style)
+    }
+
+    /** Carte du style choisi (contour, coche, état radio lu par TalkBack), cadenas du style réservé, bouton du pack. */
+    private fun renderMotions(selected: MotionStyle) {
+        val premium = PremiumPass.isActive
+        val shown = previewMotion ?: MotionStyle.effective(selected, premium)
+        for (card in motionCards) {
+            val isSelected = card.style == shown
+            val locked = !card.style.isAvailable(premium)
+            card.view.isSelected = isSelected
+            card.check.visibility = if (isSelected) View.VISIBLE else View.GONE
+            card.lock.visibility = if (locked) View.VISIBLE else View.GONE
+            val name = getString(card.style.labelRes())
+            card.view.contentDescription = if (locked) getString(R.string.premium_locked_item, name) else name
+            ViewCompat.setAccessibilityDelegate(card.view, radioDelegate(isSelected))
+        }
+        findViewById<View>(R.id.button_motion_unlock).visibility = if (previewMotion != null) View.VISIBLE else View.GONE
     }
 
     /** Cartes des formes de touches, par rangées de [CARDS_PER_ROW] de même largeur (la dernière complétée par des vides). */
@@ -600,6 +666,14 @@ internal fun AccentPalette.labelRes(): Int = when (this) {
     AccentPalette.RASPBERRY -> R.string.accent_raspberry
     AccentPalette.MAGENTA -> R.string.accent_magenta
     AccentPalette.GRAPHITE -> R.string.accent_graphite
+}
+
+/** Nom du style d'animation (carte de la page « Apparence »). */
+@StringRes
+internal fun MotionStyle.labelRes(): Int = when (this) {
+    MotionStyle.SPRING -> R.string.motion_style_spring
+    MotionStyle.SNAPPY -> R.string.motion_style_snappy
+    MotionStyle.JELLY -> R.string.motion_style_jelly
 }
 
 /** Nom de la forme des touches (carte de la page « Apparence »). */

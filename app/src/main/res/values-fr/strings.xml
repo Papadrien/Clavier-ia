@@ -672,6 +672,12 @@
     <string name="key_shape_mechanical">Mécanique</string>
     <string name="key_shape_outline">Contour</string>
     <string name="key_shape_bare">Sans fond</string>
+    <!-- Section « Animations » de la page Apparence (MotionStyle) -->
+    <string name="theme_section_motion">Animations</string>
+    <string name="theme_motion_caption">Bulles des touches, boutons de la barre, barres du mode chat et icônes animées.</string>
+    <string name="motion_style_spring">Ressort</string>
+    <string name="motion_style_snappy">Vif</string>
+    <string name="motion_style_jelly">Gelée</string>
     <string name="home_row_languages_subtitle">Langues et dispositions du clavier</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Apparence</string>

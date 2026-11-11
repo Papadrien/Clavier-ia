@@ -653,6 +653,12 @@
     <string name="key_shape_mechanical">Mechanical</string>
     <string name="key_shape_outline">Outline</string>
     <string name="key_shape_bare">Bare</string>
+    <!-- Section « Animations » de la page Apparence (MotionStyle) -->
+    <string name="theme_section_motion">Animations</string>
+    <string name="theme_motion_caption">Key bubbles, bar buttons, chat bars and animated icons.</string>
+    <string name="motion_style_spring">Spring</string>
+    <string name="motion_style_snappy">Snappy</string>
+    <string name="motion_style_jelly">Jelly</string>
     <string name="home_row_languages_subtitle">Keyboard languages and layouts</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Appearance</string>

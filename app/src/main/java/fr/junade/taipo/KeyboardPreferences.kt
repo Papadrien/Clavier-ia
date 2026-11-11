@@ -133,6 +133,18 @@ class KeyboardPreferences(context: Context) {
         }
 
     /**
+     * Style des animations (section « Animations » de la page « Apparence »), Ressort par défaut. Gelée est réservée au pack
+     * premium : sans lui, le clavier reprend Ressort ([MotionStyle.effective]) mais le choix est gardé pour le retour du pack.
+     * Écrire le réglage met aussi à jour [MotionStyle.current].
+     */
+    var motionStyle: MotionStyle
+        get() = MotionStyle.fromStorageKey(prefs.getString(KEY_MOTION_STYLE, null))
+        set(value) {
+            prefs.edit().putString(KEY_MOTION_STYLE, value.storageKey).apply()
+            MotionStyle.current = MotionStyle.effective(value, PremiumPass.isActive)
+        }
+
+    /**
      * Police du clavier (page « Thème »), Open Sans par défaut. Les autres polices sont réservées au pass premium : sans lui, le
      * clavier reprend Open Sans ([KeyboardFont.effective]) mais le choix est gardé pour le retour du pass.
      */
@@ -409,6 +421,7 @@ class KeyboardPreferences(context: Context) {
         private const val SUFFIX_LANDSCAPE = "_landscape"
         private const val KEY_ACCENT_PALETTE = "accent_palette"
         private const val KEY_KEY_SHAPE = "key_shape"
+        private const val KEY_MOTION_STYLE = "motion_style"
         private const val KEY_ADAPTIVE_TOUCH = "adaptive_touch_enabled"
         private const val KEY_SHOW_TOUCH_ZONES = "show_touch_zones"
         private const val KEY_NUMBER_ROW = "number_row_enabled"

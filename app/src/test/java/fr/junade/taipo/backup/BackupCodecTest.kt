@@ -28,6 +28,7 @@ class BackupCodecTest {
             themeChoice = "dynamic",
             accentPalette = "lagoon",
             keyShape = "mechanical",
+            motionStyle = "jelly",
             keyboardFont = "lexend",
             backdrop = "waves",
             backdropAnimated = false,

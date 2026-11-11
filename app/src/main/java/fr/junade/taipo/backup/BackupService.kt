@@ -9,6 +9,7 @@ import fr.junade.taipo.KeyboardHeight
 import fr.junade.taipo.KeyboardLanguage
 import fr.junade.taipo.KeyboardPreferences
 import fr.junade.taipo.LetterArrangement
+import fr.junade.taipo.MotionStyle
 import fr.junade.taipo.OneHandedMode
 import fr.junade.taipo.ThemeChoice
 import fr.junade.taipo.ai.CorrectionPromptPreferences
@@ -73,6 +74,7 @@ object BackupService {
                 themeChoice = keyboard.themeChoice.storageKey,
                 accentPalette = keyboard.accentPalette.storageKey,
                 keyShape = keyboard.keyShape.storageKey,
+                motionStyle = keyboard.motionStyle.storageKey,
                 keyboardFont = keyboard.keyboardFont.storageKey,
                 backdrop = keyboard.keyboardBackdrop.storageKey,
                 backdropAnimated = keyboard.isBackdropAnimated,
@@ -175,6 +177,7 @@ object BackupService {
         settings.themeChoice?.let { key -> ThemeChoice.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.themeChoice = it }
         settings.accentPalette?.let { key -> AccentPalette.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.accentPalette = it }
         settings.keyShape?.let { key -> KeyShape.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.keyShape = it }
+        settings.motionStyle?.let { key -> MotionStyle.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.motionStyle = it }
         settings.keyboardFont?.let { key -> KeyboardFont.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.keyboardFont = it }
         settings.backdrop?.let { key -> KeyboardBackdrop.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.keyboardBackdrop = it }
         settings.backdropAnimated?.let { keyboard.isBackdropAnimated = it }

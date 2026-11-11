@@ -626,6 +626,11 @@
     <string name="key_shape_mechanical">Mechanisch</string>
     <string name="key_shape_outline">Kontur</string>
     <string name="key_shape_bare">Ohne</string>
+    <string name="theme_section_motion">Animationen</string>
+    <string name="theme_motion_caption">Tastenblasen, Leistenschaltflächen, Chat-Leisten und animierte Symbole.</string>
+    <string name="motion_style_spring">Feder</string>
+    <string name="motion_style_snappy">Flink</string>
+    <string name="motion_style_jelly">Gelee</string>
     <string name="home_row_languages_subtitle">Tastatursprachen und Layouts</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Erscheinungsbild</string>

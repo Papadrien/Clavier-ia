@@ -225,7 +225,11 @@ internal class KeyPopup(private val view: View) {
         if (key == null) return
         val openScale = advanceOpening()
         canvas.save()
-        canvas.scale(openScale, openScale, pivotX, pivotY)
+        // Gelée ([MotionStyle.JELLY]) : la bulle s'étire en sortant de la touche, s'aplatit en dépassant sa taille.
+        val style = MotionStyle.current
+        val scaleX = (openScale * style.stretchX(openScale)).coerceAtMost(openMaxScale)
+        val scaleY = (openScale * style.stretchY(openScale)).coerceAtMost(openMaxScale)
+        canvas.scale(scaleX, scaleY, pivotX, pivotY)
         val alpha = (255 * PopupOpenPose.alpha(openScale)).roundToInt()
         if (alpha < 255) canvas.saveLayerAlpha(popupRect, alpha)
         canvas.drawRoundRect(popupRect, cornerRadius, cornerRadius, popupPaint)

@@ -29,7 +29,7 @@ import fr.junade.taipo.dictionary.WordSuggestion
  * affiché si le modèle de correction doit être rechargé. Le bouton Vocal est posé par-dessus les deux rangées : il ne bouge
  * jamais, mais compte comme dernier élément de leur répartition.
  *
- * Animations : un seul ressort ([BarReveal.springProgress]). Normale vers saisie : la rangée normale monte et sort par le haut
+ * Animations : un seul ressort ([BarReveal.springProgress], réglé par le style d'animation [MotionStyle]). Normale vers saisie : la rangée normale monte et sort par le haut
  * de la barre, la rangée de saisie monte depuis le bas à sa suite et le robot entre par la gauche ; le sens inverse fait le
  * chemin contraire. Un bouton qui change de place glisse en ressort ([SpaceBetweenRow]).
  */
@@ -685,7 +685,11 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         val enterFromY = if (toTyping) barHeightPx else -barHeightPx
         val leaveToY = if (toTyping) -barHeightPx else barHeightPx
         val robotTravel = (typingRow.paddingLeft + iconButtonWidth).toFloat()
-        val total = BarReveal.SPRING_DURATION_MS + ROW_ENTER_DELAY_MS
+        // Style d'animation lu une fois : un changement de réglage pendant la transition ne la déforme pas.
+        val style = MotionStyle.current
+        val springMs = style.revealDurationMs
+        val enterDelayMs = (ROW_ENTER_DELAY_MS * style.curtainScale).toLong()
+        val total = springMs + enterDelayMs
         // Pendant la transition, les rangées ne dépassent ni en haut (barre d'emojis récents) ni en bas (clavier) : elles
         // disparaissent sous le bord de la barre. La racine du clavier ne coupe pas ses enfants (clipChildren = false, pour la
         // bulle d'accents), et le rognage des rangées par la barre n'a lieu qu'à ce prix : on rogne donc la barre elle-même.
@@ -695,17 +699,17 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             interpolator = LinearInterpolator()
             addUpdateListener { update ->
                 val elapsed = (update.animatedValue as Float) * total
-                val leave = (elapsed / BarReveal.SPRING_DURATION_MS).coerceIn(0f, 1f)
-                val enter = ((elapsed - ROW_ENTER_DELAY_MS) / BarReveal.SPRING_DURATION_MS).coerceIn(0f, 1f)
-                enterRow.translationY = BarReveal.glideOffset(enterFromY, enter)
+                val leave = (elapsed / springMs).coerceIn(0f, 1f)
+                val enter = ((elapsed - enterDelayMs) / springMs).coerceIn(0f, 1f)
+                enterRow.translationY = BarReveal.glideOffset(enterFromY, enter, style)
                 enterRow.alpha = (enter / ROW_FADE_IN).coerceIn(0f, 1f)
-                leaveRow.translationY = leaveToY * BarReveal.springProgress(leave)
+                leaveRow.translationY = leaveToY * BarReveal.springProgress(leave, style)
                 leaveRow.alpha = 1f - (leave / ROW_FADE_OUT).coerceIn(0f, 1f)
                 // Le robot entre par la gauche de l'écran (ou y retourne) pendant que sa rangée monte (ou descend).
                 robotButton.translationX = if (toTyping) {
-                    BarReveal.glideOffset(-robotTravel, enter)
+                    BarReveal.glideOffset(-robotTravel, enter, style)
                 } else {
-                    -robotTravel * BarReveal.springProgress(leave)
+                    -robotTravel * BarReveal.springProgress(leave, style)
                 }
             }
             addListener(
