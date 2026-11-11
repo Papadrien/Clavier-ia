@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.ViewCompat
@@ -113,7 +112,7 @@ class BackupActivity : ComponentActivity() {
                 throw e
             } catch (e: Exception) {
                 AppLog.e(TAG, "export de la sauvegarde en échec", e)
-                Toast.makeText(this@BackupActivity, R.string.backup_export_failed, Toast.LENGTH_LONG).show()
+                showScreenMessage(R.string.backup_export_failed)
             } finally {
                 setBusy(false)
             }
@@ -131,12 +130,12 @@ class BackupActivity : ComponentActivity() {
                 throw e
             } catch (e: BackupCodec.InvalidBackupException) {
                 val message = if (e.reason == BackupCodec.Reason.TOO_NEW) R.string.backup_error_too_new else R.string.backup_error_not_a_backup
-                Toast.makeText(this@BackupActivity, message, Toast.LENGTH_LONG).show()
+                showScreenMessage(message)
             } catch (e: FileTooLargeException) {
-                Toast.makeText(this@BackupActivity, R.string.backup_error_too_large, Toast.LENGTH_LONG).show()
+                showScreenMessage(R.string.backup_error_too_large)
             } catch (e: Exception) {
                 AppLog.e(TAG, "lecture de la sauvegarde en échec", e)
-                Toast.makeText(this@BackupActivity, R.string.backup_error_read, Toast.LENGTH_LONG).show()
+                showScreenMessage(R.string.backup_error_read)
             } finally {
                 setBusy(false)
             }
@@ -175,7 +174,7 @@ class BackupActivity : ComponentActivity() {
                 throw e
             } catch (e: Exception) {
                 AppLog.e(TAG, "restauration de la sauvegarde en échec", e)
-                Toast.makeText(this@BackupActivity, R.string.backup_restore_failed, Toast.LENGTH_LONG).show()
+                showScreenMessage(R.string.backup_restore_failed)
             } finally {
                 setBusy(false)
             }

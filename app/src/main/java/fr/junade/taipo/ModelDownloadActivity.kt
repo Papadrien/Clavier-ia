@@ -10,7 +10,6 @@ import android.view.View
 import android.widget.CompoundButton
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import fr.junade.taipo.ai.AiAcceleration
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.model.ActiveModelAfterDeletion
@@ -346,7 +345,7 @@ class ModelDownloadActivity : ModelScreenActivity() {
                 } else {
                     getString(R.string.model_delete_done, Formatter.formatFileSize(appContext, freed))
                 }
-                Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+                showScreenMessage(text)
             }
         }, "taipo-model-delete").start()
     }

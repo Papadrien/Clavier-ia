@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -148,11 +147,7 @@ class ModelSettingsActivity : ComponentActivity() {
                 buttonForgetFile.isEnabled = true
                 refreshInfo()
                 if (freed > 0) {
-                    Toast.makeText(
-                        this,
-                        getString(R.string.model_settings_space_freed, Formatter.formatFileSize(appContext, freed)),
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    showScreenMessage(getString(R.string.model_settings_space_freed, Formatter.formatFileSize(appContext, freed)))
                 }
             }
         }, "taipo-model-forget").start()
@@ -178,7 +173,7 @@ class ModelSettingsActivity : ComponentActivity() {
                 if (model == displayedModel) {
                     refreshInfo()
                 }
-                Toast.makeText(this, getString(R.string.model_settings_file_saved, model.displayName(this)), Toast.LENGTH_SHORT).show()
+                showScreenMessage(getString(R.string.model_settings_file_saved, model.displayName(this)))
                 startChecksum(model, uri, fileSize)
             }
         }, "taipo-model-replace").start()

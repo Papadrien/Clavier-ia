@@ -9,7 +9,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.StringRes
 import fr.junade.taipo.ai.CorrectionPromptPreferences
 import fr.junade.taipo.ai.GenerationPromptPreferences
@@ -98,18 +97,18 @@ class SystemPromptsActivity : Activity() {
             preferences.save(edit.text.toString())
             edit.setText(preferences.get()) // champ vide ou identique au défaut : on revoit le défaut
             refreshStatus()
-            Toast.makeText(this, R.string.system_prompt_saved, Toast.LENGTH_SHORT).show()
+            showScreenMessage(R.string.system_prompt_saved)
         }
         // Consulter le défaut sans perdre le prompt personnalisé : il est seulement affiché, pas enregistré.
         section.findViewById<Button>(R.id.button_show_default_system_prompt).setOnClickListener {
             edit.setText(preferences.default)
-            Toast.makeText(this, R.string.system_prompt_default_shown, Toast.LENGTH_SHORT).show()
+            showScreenMessage(R.string.system_prompt_default_shown)
         }
         section.findViewById<Button>(R.id.button_reset_system_prompt).setOnClickListener {
             preferences.reset()
             edit.setText(preferences.get())
             refreshStatus()
-            Toast.makeText(this, R.string.system_prompt_reset_done, Toast.LENGTH_SHORT).show()
+            showScreenMessage(R.string.system_prompt_reset_done)
         }
     }
 }

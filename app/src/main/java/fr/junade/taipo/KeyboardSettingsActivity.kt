@@ -12,7 +12,6 @@ import android.widget.CompoundButton
 import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.Toast
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.clipboard.ClipboardProvider
 import fr.junade.taipo.clipboard.ScreenshotFinder
@@ -383,7 +382,7 @@ class KeyboardSettingsActivity : Activity() {
             } else {
                 R.string.keyboard_settings_screenshots_denied
             }
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            showScreenMessage(message)
         }
     }
 
@@ -397,7 +396,7 @@ class KeyboardSettingsActivity : Activity() {
             .setMessage(R.string.keyboard_settings_habits_clear_message)
             .setPositiveButton(R.string.keyboard_settings_habits_clear_confirm) { _, _ ->
                 CorrectionHabitsProvider.repository(this).clear()
-                Toast.makeText(this, R.string.keyboard_settings_habits_cleared, Toast.LENGTH_SHORT).show()
+                showScreenMessage(R.string.keyboard_settings_habits_cleared)
             }
             .setNegativeButton(R.string.keyboard_settings_habits_clear_cancel, null)
             .show()

@@ -15,7 +15,6 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
-import android.widget.Toast
 import fr.junade.taipo.clipboard.ClipHistoryRepository
 import fr.junade.taipo.clipboard.ClipboardEditBridge
 import fr.junade.taipo.clipboard.ClipboardItems
@@ -79,8 +78,7 @@ class ClipboardEditActivity : Activity() {
                     historyRepository.history.first { list -> list.any { it.id == historyId } }
                 }?.firstOrNull { it.id == historyId }
                 if (entry == null) {
-                    toast(getString(R.string.clipboard_edit_not_found))
-                    finish()
+                    finishWithMessage(getString(R.string.clipboard_edit_not_found))
                 } else {
                     show(entry.text)
                 }
@@ -101,8 +99,7 @@ class ClipboardEditActivity : Activity() {
                     repository.pinned.first { list -> list.any { it.id == pinnedId } }
                 }?.firstOrNull { it.id == pinnedId }
                 if (clip == null) {
-                    toast(getString(R.string.clipboard_edit_not_found))
-                    finish()
+                    finishWithMessage(getString(R.string.clipboard_edit_not_found))
                 } else {
                     show(clip.text)
                 }
@@ -226,8 +223,7 @@ class ClipboardEditActivity : Activity() {
         }
         if (pinnedId == NO_ID && historyId == NO_ID) {
             ClipboardEditBridge.onLastClipEdited?.invoke(text)
-            toast(getString(R.string.clipboard_edit_done))
-            finish()
+            finishWithMessage(getString(R.string.clipboard_edit_done))
             return
         }
         saveButton.isEnabled = false
@@ -244,19 +240,17 @@ class ClipboardEditActivity : Activity() {
             }
             when (result) {
                 ClipboardItems.EditResult.SAVED -> {
-                    toast(getString(R.string.clipboard_edit_done))
-                    finish()
+                    finishWithMessage(getString(R.string.clipboard_edit_done))
                 }
                 ClipboardItems.EditResult.NOT_FOUND -> {
-                    toast(getString(R.string.clipboard_edit_not_found))
-                    finish()
+                    finishWithMessage(getString(R.string.clipboard_edit_not_found))
                 }
                 ClipboardItems.EditResult.EMPTY, ClipboardItems.EditResult.TOO_LONG -> updateSaveState()
             }
         }
     }
 
-    private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun toast(message: String) = showScreenMessage(message)
 
     companion object {
         private const val TAG = "ClipboardEditActivity"

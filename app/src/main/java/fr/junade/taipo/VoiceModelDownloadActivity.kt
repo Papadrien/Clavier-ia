@@ -7,7 +7,6 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.Toast
 import fr.junade.taipo.ai.VoiceEngine
 import fr.junade.taipo.model.VoiceModelFile
 import fr.junade.taipo.model.VoiceModelFileResolver
@@ -227,7 +226,7 @@ class VoiceModelDownloadActivity : ModelScreenActivity() {
                 } else {
                     getString(R.string.model_delete_done, Formatter.formatFileSize(appContext, freed))
                 }
-                Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+                showScreenMessage(text)
             }
         }, "taipo-voice-model-delete").start()
     }

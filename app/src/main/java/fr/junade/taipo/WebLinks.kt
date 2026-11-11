@@ -1,5 +1,6 @@
 package fr.junade.taipo
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -11,6 +12,12 @@ fun Context.openWebLink(url: String) {
     try {
         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     } catch (_: ActivityNotFoundException) {
-        Toast.makeText(this, R.string.licenses_no_browser, Toast.LENGTH_LONG).show()
+        // Audit A11Y-05 : message dans la page quand l'appel vient d'un écran ; Toast seulement sans écran.
+        val activity = this as? Activity
+        if (activity != null) {
+            activity.showScreenMessage(R.string.licenses_no_browser)
+        } else {
+            Toast.makeText(this, R.string.licenses_no_browser, Toast.LENGTH_LONG).show()
+        }
     }
 }

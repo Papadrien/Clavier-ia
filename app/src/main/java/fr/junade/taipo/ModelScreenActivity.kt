@@ -11,7 +11,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import fr.junade.taipo.model.download.DownloadDecision
@@ -101,15 +100,13 @@ abstract class ModelScreenActivity : ComponentActivity() {
             DownloadDecision.ConfirmMobileData -> confirmMobile()
             DownloadDecision.NoConnection -> toast(R.string.model_download_toast_no_connection)
             DownloadDecision.NotAvailable -> toast(R.string.model_download_toast_not_available)
-            is DownloadDecision.InsufficientSpace -> Toast.makeText(
-                this,
+            is DownloadDecision.InsufficientSpace -> showScreenMessage(
                 getString(
                     R.string.model_download_toast_no_space,
                     Formatter.formatFileSize(this, decision.requiredBytes),
                     Formatter.formatFileSize(this, decision.freeBytes),
                 ),
-                Toast.LENGTH_LONG,
-            ).show()
+            )
         }
     }
 
@@ -143,7 +140,7 @@ abstract class ModelScreenActivity : ComponentActivity() {
         getSharedPreferences(UI_PREFS, MODE_PRIVATE).edit().putBoolean(KEY_NOTIFICATION_ASKED, true).apply()
     }
 
-    internal fun toast(resId: Int) = Toast.makeText(this, resId, Toast.LENGTH_LONG).show()
+    internal fun toast(resId: Int) = showScreenMessage(resId)
 
     private companion object {
         private const val UI_PREFS = "model_download_ui"

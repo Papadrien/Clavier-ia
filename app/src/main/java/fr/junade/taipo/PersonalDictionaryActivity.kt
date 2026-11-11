@@ -9,7 +9,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import fr.junade.taipo.dictionary.PersonalDictionary
 import fr.junade.taipo.dictionary.PersonalDictionaryProvider
 import fr.junade.taipo.dictionary.PersonalDictionaryRepository
@@ -184,7 +183,7 @@ class PersonalDictionaryActivity : Activity() {
         return row
     }
 
-    private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun toast(message: String) = showScreenMessage(message)
 
     private companion object {
         const val REQUEST_SYSTEM_DICTIONARY = 1

@@ -16,7 +16,6 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
-import android.widget.Toast
 import fr.junade.taipo.clipboard.ClipboardItems
 import fr.junade.taipo.clipboard.ClipboardProvider
 import fr.junade.taipo.clipboard.PinnedClipRepository
@@ -75,8 +74,7 @@ class ClipboardLabelActivity : Activity() {
                 repository.pinned.first { list -> list.any { it.id == pinnedId } }
             }?.firstOrNull { it.id == pinnedId }
             if (clip == null) {
-                toast(getString(R.string.clipboard_edit_not_found))
-                finish()
+                finishWithMessage(getString(R.string.clipboard_edit_not_found))
             } else {
                 show(clip.label)
             }
@@ -212,19 +210,17 @@ class ClipboardLabelActivity : Activity() {
             }
             when (result) {
                 ClipboardItems.LabelResult.SAVED -> {
-                    toast(getString(R.string.clipboard_label_done))
-                    finish()
+                    finishWithMessage(getString(R.string.clipboard_label_done))
                 }
                 ClipboardItems.LabelResult.NOT_FOUND -> {
-                    toast(getString(R.string.clipboard_edit_not_found))
-                    finish()
+                    finishWithMessage(getString(R.string.clipboard_edit_not_found))
                 }
                 ClipboardItems.LabelResult.EMPTY, ClipboardItems.LabelResult.TOO_LONG -> updateSaveState()
             }
         }
     }
 
-    private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun toast(message: String) = showScreenMessage(message)
 
     companion object {
         private const val TAG = "ClipboardLabelActivity"
