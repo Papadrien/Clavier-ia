@@ -41,6 +41,23 @@ object BackupCodec {
             data.keyboard.themeChoice?.let { put("themeChoice", it) }
             data.keyboard.accentPalette?.let { put("accentPalette", it) }
             data.keyboard.keyShape?.let { put("keyShape", it) }
+            data.keyboard.keyboardFont?.let { put("keyboardFont", it) }
+            data.keyboard.backdrop?.let { put("backdrop", it) }
+            data.keyboard.backdropAnimated?.let { put("backdropAnimated", it) }
+            data.keyboard.keySound?.let { put("keySound", it) }
+            data.keyboard.barSound?.let { put("barSound", it) }
+            data.keyboard.keySoundVolume?.let { put("keySoundVolume", it) }
+            data.keyboard.bottomMarginDp?.let { put("bottomMarginDp", it) }
+            data.keyboard.adaptiveTouch?.let { put("adaptiveTouch", it) }
+            data.keyboard.clipboardHistory?.let { put("clipboardHistory", it) }
+            data.keyboard.oneHandedMode?.let { put("oneHandedMode", it) }
+            data.keyboard.oneHandedWidth?.let { put("oneHandedWidth", it) }
+            data.keyboard.floating?.let { put("floating", it) }
+            data.keyboard.floatingWidth?.let { put("floatingWidth", it) }
+            data.keyboard.keyboardLanguage?.let { put("keyboardLanguage", it) }
+            data.keyboard.multilingual?.let { put("multilingual", it) }
+            data.keyboard.multilingualLanguages?.let { put("multilingualLanguages", JSONArray(it)) }
+            data.keyboard.letterArrangements?.let { put("letterArrangements", JSONObject(it)) }
         }
         val ai = JSONObject().apply {
             data.ai.activeModelId?.let { put("activeModel", it) }
@@ -98,6 +115,23 @@ object BackupCodec {
                 themeChoice = keyboard.string("themeChoice"),
                 accentPalette = keyboard.string("accentPalette"),
                 keyShape = keyboard.string("keyShape"),
+                keyboardFont = keyboard.string("keyboardFont"),
+                backdrop = keyboard.string("backdrop"),
+                backdropAnimated = keyboard.boolean("backdropAnimated"),
+                keySound = keyboard.boolean("keySound"),
+                barSound = keyboard.boolean("barSound"),
+                keySoundVolume = keyboard.int("keySoundVolume"),
+                bottomMarginDp = keyboard.int("bottomMarginDp"),
+                adaptiveTouch = keyboard.boolean("adaptiveTouch"),
+                clipboardHistory = keyboard.boolean("clipboardHistory"),
+                oneHandedMode = keyboard.string("oneHandedMode"),
+                oneHandedWidth = keyboard.int("oneHandedWidth"),
+                floating = keyboard.boolean("floating"),
+                floatingWidth = keyboard.int("floatingWidth"),
+                keyboardLanguage = keyboard.string("keyboardLanguage"),
+                multilingual = keyboard.boolean("multilingual"),
+                multilingualLanguages = keyboard?.optJSONArray("multilingualLanguages")?.let(::strings),
+                letterArrangements = keyboard?.optJSONObject("letterArrangements")?.let(::prompts),
             ),
             ai = BackupAiSettings(
                 activeModelId = ai.string("activeModel"),
@@ -120,6 +154,7 @@ object BackupCodec {
         }
     }
 
+    /** Objet de chaînes (prompts, dispositions) : les valeurs qui ne sont pas des chaînes sont ignorées. */
     private fun prompts(obj: JSONObject?): Map<String, String> {
         if (obj == null) return emptyMap()
         val out = LinkedHashMap<String, String>()
@@ -130,4 +165,7 @@ object BackupCodec {
     private fun JSONObject?.string(key: String): String? = this?.opt(key) as? String
 
     private fun JSONObject?.boolean(key: String): Boolean? = this?.opt(key) as? Boolean
+
+    /** Entier seulement s'il est écrit comme tel (pas de conversion d'une chaîne ou d'un décimal). */
+    private fun JSONObject?.int(key: String): Int? = (this?.opt(key) as? Int)
 }

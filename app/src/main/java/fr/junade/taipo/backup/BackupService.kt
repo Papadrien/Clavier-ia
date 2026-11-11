@@ -4,9 +4,14 @@ import android.content.Context
 import fr.junade.taipo.AccentPalette
 import fr.junade.taipo.HapticIntensity
 import fr.junade.taipo.KeyShape
+import fr.junade.taipo.KeyboardFont
 import fr.junade.taipo.KeyboardHeight
+import fr.junade.taipo.KeyboardLanguage
+import fr.junade.taipo.LetterArrangement
+import fr.junade.taipo.OneHandedMode
 import fr.junade.taipo.KeyboardPreferences
 import fr.junade.taipo.ThemeChoice
+import fr.junade.taipo.backdrop.KeyboardBackdrop
 import fr.junade.taipo.ai.CorrectionPromptPreferences
 import fr.junade.taipo.ai.GenerationPromptPreferences
 import fr.junade.taipo.ai.SystemPromptPreferences
@@ -68,6 +73,25 @@ object BackupService {
                 themeChoice = keyboard.themeChoice.storageKey,
                 accentPalette = keyboard.accentPalette.storageKey,
                 keyShape = keyboard.keyShape.storageKey,
+                keyboardFont = keyboard.keyboardFont.storageKey,
+                backdrop = keyboard.keyboardBackdrop.storageKey,
+                backdropAnimated = keyboard.isBackdropAnimated,
+                keySound = keyboard.isKeySoundEnabled,
+                barSound = keyboard.isBarSoundEnabled,
+                keySoundVolume = keyboard.keySoundVolumePercent,
+                bottomMarginDp = keyboard.bottomMarginDp,
+                adaptiveTouch = keyboard.isAdaptiveTouchEnabled,
+                clipboardHistory = keyboard.isClipboardHistoryEnabled,
+                oneHandedMode = keyboard.oneHandedMode.storageKey,
+                oneHandedWidth = keyboard.oneHandedWidthPercent,
+                floating = keyboard.isFloatingKeyboard,
+                floatingWidth = keyboard.floatingWidthPercent,
+                keyboardLanguage = keyboard.keyboardLanguage?.tag.orEmpty(),
+                multilingual = keyboard.isMultilingualEnabled,
+                multilingualLanguages = keyboard.multilingualSelection.map { it.tag },
+                letterArrangements = KeyboardLanguage.entries
+                    .filter { keyboard.letterArrangementOf(it) != LetterArrangement.defaultFor(it) }
+                    .associate { it.tag to keyboard.letterArrangementOf(it).tag },
             ),
             ai = BackupAiSettings(
                 activeModelId = ModelPreferences(appContext).activeModel()?.id,
@@ -132,7 +156,8 @@ object BackupService {
         settings.keyboardHeight?.let { key ->
             KeyboardHeight.entries.firstOrNull { it.storageKey == key }?.let { keyboard.keyboardHeight = it }
         }
-        settings.recentEmojis?.let { keyboard.recentEmojis = it.take(RecentEmojis.MAX_SIZE) }
+        // Audit UX-06 : seuls des emojis courts sont repris (un fichier modifié à la main ne peut pas injecter de long texte).
+        settings.recentEmojis?.let { list -> keyboard.recentEmojis = list.filter { it.isNotBlank() && it.length <= MAX_EMOJI_CHARS }.take(RecentEmojis.MAX_SIZE) }
         settings.habitLearning?.let { keyboard.isHabitLearningEnabled = it }
         settings.themeChoice?.let { key ->
             // Écrire le réglage met aussi à jour KeyboardTheme.choice. « dynamic » sur un appareil d'avant Android 12 se comporte comme « system ».
@@ -146,12 +171,40 @@ object BackupService {
             // Écrire le réglage met aussi à jour KeyboardTheme.shape (Arrondi si la forme est réservée au pass premium).
             KeyShape.entries.firstOrNull { it.storageKey == key }?.let { keyboard.keyShape = it }
         }
+        settings.keyboardFont?.let { key -> KeyboardFont.entries.firstOrNull { it.storageKey == key }?.let { keyboard.keyboardFont = it } }
+        settings.backdrop?.let { key -> KeyboardBackdrop.entries.firstOrNull { it.storageKey == key }?.let { keyboard.keyboardBackdrop = it } }
+        settings.backdropAnimated?.let { keyboard.isBackdropAnimated = it }
+        settings.keySound?.let { keyboard.isKeySoundEnabled = it }
+        settings.barSound?.let { keyboard.isBarSoundEnabled = it }
+        settings.keySoundVolume?.let { keyboard.keySoundVolumePercent = it } // bornés par les réglages eux-mêmes
+        settings.bottomMarginDp?.let { keyboard.bottomMarginDp = it }
+        settings.adaptiveTouch?.let { keyboard.isAdaptiveTouchEnabled = it }
+        settings.clipboardHistory?.let { keyboard.isClipboardHistoryEnabled = it }
+        settings.oneHandedMode?.let { key -> OneHandedMode.entries.firstOrNull { it.storageKey == key }?.let { keyboard.oneHandedMode = it } }
+        settings.oneHandedWidth?.let { keyboard.oneHandedWidthPercent = it }
+        settings.floating?.let { keyboard.isFloatingKeyboard = it }
+        settings.floatingWidth?.let { keyboard.floatingWidthPercent = it }
+        restoreLanguages(keyboard, settings)
     }
 
     /**
      * Applique les prompts personnalisés et le modèle choisi. Le modèle n'est repris que s'il est installé sur cet appareil :
      * sinon le choix actuel est gardé (renvoie vrai). Sur un appareil neuf, le modèle se choisit après son téléchargement.
      */
+    /** Langue choisie (vide = automatique), clavier multilingue et dispositions : codes inconnus ignorés. */
+    private fun restoreLanguages(keyboard: KeyboardPreferences, settings: BackupKeyboardSettings) {
+        settings.keyboardLanguage?.let { tag ->
+            if (tag.isEmpty()) keyboard.keyboardLanguage = null else KeyboardLanguage.fromTag(tag)?.let { keyboard.keyboardLanguage = it }
+        }
+        settings.multilingualLanguages?.let { tags -> keyboard.multilingualSelection = tags.mapNotNull(KeyboardLanguage::fromTag).distinct() }
+        settings.multilingual?.let { keyboard.isMultilingualEnabled = it }
+        settings.letterArrangements?.forEach { (languageTag, arrangementTag) ->
+            val language = KeyboardLanguage.fromTag(languageTag) ?: return@forEach
+            val arrangement = LetterArrangement.fromTag(arrangementTag) ?: return@forEach
+            keyboard.setLetterArrangement(language, arrangement)
+        }
+    }
+
     private fun restoreAi(context: Context, settings: BackupAiSettings): Boolean {
         val prompts = promptPreferences(context)
         settings.prompts.forEach { (usage, prompt) ->
@@ -173,4 +226,7 @@ object BackupService {
 
     /** Plafond d'un prompt lu dans un fichier : un prompt de travail fait quelques milliers de caractères. */
     private const val MAX_PROMPT_CHARS = 20_000
+
+    /** Un emoji (séquences ZWJ et drapeaux compris) tient largement dans 16 caractères UTF-16. */
+    private const val MAX_EMOJI_CHARS = 16
 }

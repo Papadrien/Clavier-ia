@@ -63,6 +63,10 @@
     <string name="voice_button_loading">Chargement…</string>
     <string name="voice_button_recording">Écoute…</string>
     <string name="voice_button_transcribing">Transcription…</string>
+    <string name="voice_permission_settings_title">Micro désactivé</string>
+    <string name="voice_permission_settings_message">La saisie vocale a besoin du micro. Android ne le demande plus : autorisez-le dans les réglages de Taipo (Autorisations > Micro).</string>
+    <string name="voice_permission_settings_open">Ouvrir les réglages</string>
+    <string name="voice_permission_settings_cancel">Plus tard</string>
     <string name="voice_permission_denied">Permission micro requise : appuyez à nouveau sur Dicter après l\'avoir accordée.</string>
     <string name="voice_error">La saisie vocale a échoué. Réessayez.</string>
     <string name="voice_mic_unavailable">Micro indisponible : il est peut-être utilisé par une autre application. Réessayez dans un instant.</string>
@@ -120,6 +124,7 @@
     <string name="keyboard_settings_clipboard_history_description">Garde vos copies récentes pour les recoller (12 heures, 7 jours avec le pass premium). Les mots de passe et numéros de carte ne sont jamais gardés. Le désactiver efface l\'historique.</string>
     <string name="keyboard_settings_screenshots_switch">Proposer les captures d\'écran récentes</string>
     <string name="keyboard_settings_screenshots_description">Propose de coller votre dernière capture d\'écran. Demande l\'accès à vos photos ; rien n\'est envoyé.</string>
+    <string name="keyboard_settings_screenshots_partial">Seules quelques photos sont autorisées : les nouvelles captures ne seraient pas visibles. Choisissez « Tout autoriser » dans les réglages Android pour utiliser cette option.</string>
     <string name="keyboard_settings_screenshots_denied">L\'accès aux photos a été refusé. Autorisez-le dans les réglages Android pour utiliser cette option.</string>
     <string name="keyboard_settings_language_title">Langue du clavier</string>
     <string name="keyboard_settings_haptic_title">Vibrations</string>
@@ -377,6 +382,10 @@
     <string name="model_download_mobile_message">Vous n\'êtes pas en Wi-Fi. Le modèle %1$s pèse environ %2$s : le téléchargement consommera une grande partie de votre forfait.</string>
     <string name="model_download_mobile_confirm">Télécharger</string>
     <string name="model_download_mobile_cancel">Annuler</string>
+    <string name="model_download_done_title">%1$s : prêt</string>
+    <string name="model_download_done_text">Le modèle est installé et prêt à servir.</string>
+    <string name="model_download_failed_title">%1$s : échec du téléchargement</string>
+    <string name="model_download_failed_text">Touchez pour réessayer.</string>
     <string name="model_download_channel_name">Téléchargement des modèles</string>
     <string name="model_download_notification_title">Téléchargement du modèle %1$s</string>
     <string name="model_download_cancel">Annuler</string>

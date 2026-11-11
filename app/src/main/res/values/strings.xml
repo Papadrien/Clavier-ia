@@ -63,6 +63,10 @@
     <string name="voice_button_loading">Loading…</string>
     <string name="voice_button_recording">Listening…</string>
     <string name="voice_button_transcribing">Transcribing…</string>
+    <string name="voice_permission_settings_title">Microphone access is off</string>
+    <string name="voice_permission_settings_message">Voice input needs the microphone. Android no longer asks for it: allow it in Taipo\'s settings (Permissions > Microphone).</string>
+    <string name="voice_permission_settings_open">Open settings</string>
+    <string name="voice_permission_settings_cancel">Not now</string>
     <string name="voice_permission_denied">Microphone permission required: tap Dictate again after granting it.</string>
     <string name="voice_error">Voice input failed. Please try again.</string>
     <string name="voice_mic_unavailable">Microphone unavailable: it may be in use by another app. Try again in a moment.</string>
@@ -120,6 +124,7 @@
     <string name="keyboard_settings_clipboard_history_description">Keeps your recent copies so you can paste them again (12 hours, 7 days with the Premium pass). Passwords and card numbers are never kept. Turning it off deletes the history.</string>
     <string name="keyboard_settings_screenshots_switch">Suggest recent screenshots</string>
     <string name="keyboard_settings_screenshots_description">Offers to paste your latest screenshot. Asks for access to your photos; nothing is sent.</string>
+    <string name="keyboard_settings_screenshots_partial">Only some photos are allowed: new screenshots would not be visible. Choose “Allow all” in the Android settings to use this option.</string>
     <string name="keyboard_settings_screenshots_denied">Access to photos was denied. Allow it in the Android settings to use this option.</string>
     <string name="keyboard_settings_language_title">Keyboard language</string>
     <string name="keyboard_settings_haptic_title">Vibration</string>
@@ -370,6 +375,10 @@
     <string name="model_download_mobile_message">You\'re not on Wi-Fi. The %1$s model is about %2$s: downloading it will use a large part of your data plan.</string>
     <string name="model_download_mobile_confirm">Download</string>
     <string name="model_download_mobile_cancel">Cancel</string>
+    <string name="model_download_done_title">%1$s: ready</string>
+    <string name="model_download_done_text">The model is installed and ready to use.</string>
+    <string name="model_download_failed_title">%1$s: download failed</string>
+    <string name="model_download_failed_text">Tap to try again.</string>
     <string name="model_download_channel_name">Model downloads</string>
     <string name="model_download_notification_title">Downloading the %1$s model</string>
     <string name="model_download_cancel">Cancel</string>

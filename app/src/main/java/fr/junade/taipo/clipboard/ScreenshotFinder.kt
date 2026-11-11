@@ -137,6 +137,11 @@ class ScreenshotFinder(context: Context) {
         -1L
     }
 
+    /** Supprime les copies partagées de plus d'une heure (audit UX-04 : aussi à la fermeture du clavier). Hors du fil principal. */
+    fun purgeShared() {
+        runCatching { purgeOld(File(appContext.cacheDir, CACHE_DIR)) }
+    }
+
     private fun purgeOld(dir: File) {
         val limit = System.currentTimeMillis() - CACHE_MAX_AGE_MILLIS
         dir.listFiles()?.forEach { if (it.lastModified() < limit) it.delete() }
@@ -162,6 +167,23 @@ class ScreenshotFinder(context: Context) {
 
         fun hasPermission(context: Context): Boolean =
             ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+
+        /** Permissions à demander : sur Android 14+, avec l'accès partiel, pour que le choix de l'utilisateur soit reconnu. */
+        val requestedPermissions: Array<String>
+            get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+            } else {
+                arrayOf(permission)
+            }
+
+        /**
+         * Audit UX-04 : l'utilisateur n'a autorisé que quelques photos (Android 14+). Les captures prises ensuite ne seront pas
+         * visibles : la fonction ne marche qu'avec « Tout autoriser ».
+         */
+        fun hasOnlyPartialAccess(context: Context): Boolean =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && !hasPermission(context) &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) ==
+                PackageManager.PERMISSION_GRANTED
 
         fun authority(context: Context): String = context.packageName + ".fileprovider"
 

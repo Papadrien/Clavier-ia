@@ -213,6 +213,7 @@ class ClipboardController(
         inputActive = false
         mainHandler.removeCallbacks(pasteExpiryRunnable)
         stopScreenshotWatch()
+        scope.launch(Dispatchers.IO) { screenshotFinder.purgeShared() } // audit UX-04 : copies de plus d'une heure
     }
 
     /** Le même bouton de la barre ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme. */

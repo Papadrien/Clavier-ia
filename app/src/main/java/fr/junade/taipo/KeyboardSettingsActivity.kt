@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
@@ -360,7 +359,7 @@ class KeyboardSettingsActivity : Activity() {
         switch.setOnCheckedChangeListener { _, checked ->
             if (settingScreenshotSwitch) return@setOnCheckedChangeListener
             if (checked && !ScreenshotFinder.hasPermission(this)) {
-                requestPermissions(arrayOf(ScreenshotFinder.permission), REQUEST_SCREENSHOT_PERMISSION)
+                requestPermissions(ScreenshotFinder.requestedPermissions, REQUEST_SCREENSHOT_PERMISSION)
             } else {
                 preferences.isScreenshotSuggestionEnabled = checked
                 Analytics.setting(this, "screenshot_suggestions", checked)
@@ -371,14 +370,20 @@ class KeyboardSettingsActivity : Activity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode != REQUEST_SCREENSHOT_PERMISSION) return
-        val granted = grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
+        val granted = ScreenshotFinder.hasPermission(this)
         KeyboardPreferences(this).isScreenshotSuggestionEnabled = granted
         Analytics.setting(this, "screenshot_suggestions", granted)
         if (!granted) {
             settingScreenshotSwitch = true
             screenshotSwitch?.isChecked = false
             settingScreenshotSwitch = false
-            Toast.makeText(this, R.string.keyboard_settings_screenshots_denied, Toast.LENGTH_LONG).show()
+            // Audit UX-04 : « Sélectionner des photos » ne suffit pas, les nouvelles captures ne seraient pas visibles.
+            val message = if (ScreenshotFinder.hasOnlyPartialAccess(this)) {
+                R.string.keyboard_settings_screenshots_partial
+            } else {
+                R.string.keyboard_settings_screenshots_denied
+            }
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
         }
     }
 

@@ -8,6 +8,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.BuildConfig
+import fr.junade.taipo.ModelDownloadActivity
 import fr.junade.taipo.R
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.analytics.Analytics
@@ -80,6 +81,7 @@ class ModelDownloadWorker(
                 if (model.sha256 == null) AppLog.i(TAG, "SHA-256 de ${model.id} : ${outcome.sha256} (${outcome.sizeBytes} octets)")
                 DownloadTracker.update(model, DownloadState.Idle)
                 Analytics.track(appContext, AnalyticsEvents.MODEL_DOWNLOAD_DONE, "model" to model.id)
+                notifyFinished(success = true)
                 Result.success()
             }
             is ModelFileFetcher.Outcome.Cancelled -> {
@@ -94,6 +96,7 @@ class ModelDownloadWorker(
                     "model" to model.id,
                     "reason" to outcome.reason.name.lowercase(),
                 )
+                notifyFinished(success = false)
                 Result.failure()
             }
         }
@@ -156,6 +159,16 @@ class ModelDownloadWorker(
 
     private fun foregroundInfo(percent: Int?): ForegroundInfo =
         DownloadNotification.foregroundInfo(applicationContext, NOTIFICATION_ID, title(), percent, cancelIntent())
+
+    private fun notifyFinished(success: Boolean) {
+        DownloadNotification.notifyFinished(
+            applicationContext,
+            NOTIFICATION_ID,
+            success,
+            model?.displayName(applicationContext).orEmpty(),
+            ModelDownloadActivity::class.java,
+        )
+    }
 
     private fun notifyProgress(percent: Int) {
         DownloadNotification.notifyProgress(applicationContext, NOTIFICATION_ID, title(), percent, cancelIntent())

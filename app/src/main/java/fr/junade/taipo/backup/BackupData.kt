@@ -34,6 +34,26 @@ data class BackupKeyboardSettings(
     val accentPalette: String? = null,
     /** Forme des touches : clé de stockage de [fr.junade.taipo.KeyShape] (`rounded`, `pill`…). */
     val keyShape: String? = null,
+    // Audit UX-06 : réglages ajoutés (facultatifs : un fichier plus ancien ne les a pas, ils restent alors inchangés).
+    val keyboardFont: String? = null,
+    val backdrop: String? = null,
+    val backdropAnimated: Boolean? = null,
+    val keySound: Boolean? = null,
+    val barSound: Boolean? = null,
+    val keySoundVolume: Int? = null,
+    val bottomMarginDp: Int? = null,
+    val adaptiveTouch: Boolean? = null,
+    val clipboardHistory: Boolean? = null,
+    val oneHandedMode: String? = null,
+    val oneHandedWidth: Int? = null,
+    val floating: Boolean? = null,
+    val floatingWidth: Int? = null,
+    /** Code de la langue choisie ; chaîne vide = automatique (langue du système). */
+    val keyboardLanguage: String? = null,
+    val multilingual: Boolean? = null,
+    val multilingualLanguages: List<String>? = null,
+    /** Dispositions de lettres choisies (code de langue → disposition), seulement celles qui diffèrent de l'origine. */
+    val letterArrangements: Map<String, String>? = null,
 )
 
 /**
