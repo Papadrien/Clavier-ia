@@ -413,8 +413,8 @@ class KeyboardLayoutTest {
         languages.forEach { language ->
             val topRow = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow = false).rows.first()
             topRow.forEach { key ->
-                assertTrue(key.popup.isNotEmpty(), "${language} ${key.id} : bulle attendue")
-                assertEquals(key.longPressChar, popupItems(key).first(), "${language} ${key.id}")
+                assertTrue(key.popup.isNotEmpty(), "$language ${key.id} : bulle attendue")
+                assertEquals(key.longPressChar, popupItems(key).first(), "$language ${key.id}")
             }
         }
     }

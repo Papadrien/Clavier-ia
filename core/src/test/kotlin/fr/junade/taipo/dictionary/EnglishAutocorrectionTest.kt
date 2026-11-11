@@ -22,7 +22,11 @@ class EnglishAutocorrectionTest {
     )
 
     private val dictionary = Dictionary.withFrequencies(
-        frequencies, InflectionRules.ENGLISH, 100L, KeyProximity.NONE, confidence = CorrectionConfidence.ENGLISH,
+        frequencies,
+        InflectionRules.ENGLISH,
+        100L,
+        KeyProximity.NONE,
+        confidence = CorrectionConfidence.ENGLISH,
     )
 
     private fun fix(word: String): String? = dictionary.correctionFor(word, personalWords = emptyList(), habits = null)

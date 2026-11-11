@@ -6,7 +6,6 @@ import java.text.Normalizer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.ValueSource
@@ -142,7 +141,10 @@ class DictionaryAssetsIntegrityTest {
     }
 
     @ParameterizedTest(name = "{0}.txt : lettres isolées autorisées uniquement")
-    @CsvSource(delimiter = '|', quoteCharacter = '"', value = [
+    @CsvSource(
+        delimiter = '|',
+        quoteCharacter = '"',
+        value = [
             "fr|a,à,y", "en|a,i", "es|a,e,o,u,y", "de|a,i,o", "it|a,e,i,o,u,è", "pt|a,e,o,é,à", "nl|e,u",
         ],
     )

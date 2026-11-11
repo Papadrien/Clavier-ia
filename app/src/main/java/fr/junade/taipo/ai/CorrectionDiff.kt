@@ -29,9 +29,12 @@ object CorrectionDiff {
         while (prefix < a.size && prefix < b.size && a[prefix].text == b[prefix].text) prefix++
         var suffix = 0
         while (
-            suffix < a.size - prefix && suffix < b.size - prefix &&
+            suffix < a.size - prefix &&
+            suffix < b.size - prefix &&
             a[a.size - 1 - suffix].text == b[b.size - 1 - suffix].text
-        ) suffix++
+        ) {
+            suffix++
+        }
 
         val aMid = a.subList(prefix, a.size - suffix)
         val bMid = b.subList(prefix, b.size - suffix)

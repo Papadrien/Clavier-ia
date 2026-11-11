@@ -1,11 +1,11 @@
 package fr.junade.taipo.dictionary
 
 import android.content.Context
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.Dispatchers
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.storage.StoredDataFailure
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 /**
  * Instance unique (par processus) du [PersonalDictionaryRepository]. L'écran

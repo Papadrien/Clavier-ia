@@ -8,8 +8,12 @@ class GermanEszettRestorationTest {
 
     private val dictionary = Dictionary.withFrequencies(
         mapOf(
-            "großzügig" to 5_000L, "gross" to 2_000L, "zügig" to 3_000L,
-            "größer" to 40_000L, "großer" to 60_000L, "ich" to 5_000_000L,
+            "großzügig" to 5_000L,
+            "gross" to 2_000L,
+            "zügig" to 3_000L,
+            "größer" to 40_000L,
+            "großer" to 60_000L,
+            "ich" to 5_000_000L,
         ),
         InflectionRules.GERMAN,
         41L,

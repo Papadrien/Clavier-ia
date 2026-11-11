@@ -1,7 +1,7 @@
 package fr.junade.taipo
 
-import android.annotation.SuppressLint
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Canvas
@@ -235,11 +235,14 @@ class KeyboardView(context: Context) : View(context) {
     // Mode une main : boutons de la zone libre (changer de côté, quitter le mode), voir OneHandedControls.
     private val oneHandedSwitchIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_one_hand_switch)) { "Icône changement de côté introuvable" }
         .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
-    private val oneHandedExitIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_one_hand_exit)) { "Icône sortie du mode une main introuvable" }
+    private val oneHandedExitIcon = checkNotNull(ContextCompat.getDrawable(context, R.drawable.ic_one_hand_exit)) {
+        "Icône sortie du mode une main introuvable"
+    }
         .mutate().apply { setTint(context.themeColor(R.color.text_primary)) }
     private val controlFacePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_functional) }
     private val controlShadowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_functional_shadow) }
     private val controlPressedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_pressed) }
+
     // Animation du mode une main (zone des touches, boutons ronds) ; controlsMode : dernier côté actif, pour dessiner les boutons qui rétrécissent à la sortie.
     private val oneHandedTransition = OneHandedTransition()
     private var controlsMode: OneHandedMode = OneHandedMode.RIGHT
@@ -641,7 +644,10 @@ class KeyboardView(context: Context) : View(context) {
         drawTouchZones(canvas)
         drawPopup(canvas)
         drawPreview(canvas)
-        if (backspaceAnimation.isRunning || shiftAnimation.isRunning || spaceBarAnimation.isRunning || digitSwipeAnimation.isRunning ||
+        if (backspaceAnimation.isRunning ||
+            shiftAnimation.isRunning ||
+            spaceBarAnimation.isRunning ||
+            digitSwipeAnimation.isRunning ||
             oneHandedTransition.isRunning
         ) {
             postInvalidateOnAnimation()
@@ -995,8 +1001,12 @@ class KeyboardView(context: Context) : View(context) {
         val freeLeft = if (mode == OneHandedMode.LEFT) zone.rightPx else 0f
         val freeRight = if (mode == OneHandedMode.LEFT) width.toFloat() else zone.leftPx
         return OneHandedControls.layout(
-            freeLeft, freeRight, usableHeightPx(),
-            maxRadius = dp(CONTROL_MAX_RADIUS_DP), margin = dp(CONTROL_MARGIN_DP), minRadius = dp(CONTROL_MIN_RADIUS_DP),
+            freeLeft,
+            freeRight,
+            usableHeightPx(),
+            maxRadius = dp(CONTROL_MAX_RADIUS_DP),
+            margin = dp(CONTROL_MARGIN_DP),
+            minRadius = dp(CONTROL_MIN_RADIUS_DP),
         )
     }
 
@@ -1017,7 +1027,13 @@ class KeyboardView(context: Context) : View(context) {
         val moving = oneHandedTransition.isMoving
         val appear = if (moving) oneHandedTransition.controlsAppear else 1f
         // La flèche de changement de côté pointe vers la zone libre : à droite en mode gauche, retournée en mode droit.
-        val flipX = if (moving) oneHandedTransition.flipX else if (oneHandedMode == OneHandedMode.LEFT) 1f else -1f
+        val flipX = if (moving) {
+            oneHandedTransition.flipX
+        } else if (oneHandedMode == OneHandedMode.LEFT) {
+            1f
+        } else {
+            -1f
+        }
         val cx = controlsCenter(layout)
         val shadow = resources.getDimension(R.dimen.taipo_key_shadow_height)
         OneHandedControls.Button.entries.forEach { button ->
@@ -1187,7 +1203,10 @@ class KeyboardView(context: Context) : View(context) {
             oneHandedTransition.zone // mode une main en cours de ressort : la zone bouge à chaque image, rien n'est mis en cache
         } else {
             contentCache ?: KeyboardWidth.forAvailableWidth(
-                width.toFloat(), resources.displayMetrics.density, oneHandedMode, oneHandedWidthPercent,
+                width.toFloat(),
+                resources.displayMetrics.density,
+                oneHandedMode,
+                oneHandedWidthPercent,
             ).also { contentCache = it }
         }
 

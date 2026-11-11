@@ -6,10 +6,10 @@ import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import fr.junade.taipo.VoiceModelDownloadActivity
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.BuildConfig
 import fr.junade.taipo.R
+import fr.junade.taipo.VoiceModelDownloadActivity
 import fr.junade.taipo.ai.VoiceEngine
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents

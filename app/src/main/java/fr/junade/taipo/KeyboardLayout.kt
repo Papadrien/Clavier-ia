@@ -83,6 +83,7 @@ object Keyboards {
      */
     private val toPageTwo = Key("symbol_page", "?123", KeyAction.SymbolPage, 1.4f)
     private val toPageOne = Key("symbol_page", "=\\<", KeyAction.SymbolPage, 1.4f)
+
     /**
      * Largeur des touches Maj/Effacer : elle est choisie pour que la largeur d'une lettre reste la
      * même sur toutes les rangées (10 unités par rangée). Sur l'AZERTY, la rangée du bas contient

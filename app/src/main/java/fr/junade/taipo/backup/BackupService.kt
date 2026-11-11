@@ -7,15 +7,15 @@ import fr.junade.taipo.KeyShape
 import fr.junade.taipo.KeyboardFont
 import fr.junade.taipo.KeyboardHeight
 import fr.junade.taipo.KeyboardLanguage
+import fr.junade.taipo.KeyboardPreferences
 import fr.junade.taipo.LetterArrangement
 import fr.junade.taipo.OneHandedMode
-import fr.junade.taipo.KeyboardPreferences
 import fr.junade.taipo.ThemeChoice
-import fr.junade.taipo.backdrop.KeyboardBackdrop
 import fr.junade.taipo.ai.CorrectionPromptPreferences
 import fr.junade.taipo.ai.GenerationPromptPreferences
 import fr.junade.taipo.ai.SystemPromptPreferences
 import fr.junade.taipo.ai.TranscriptionPromptPreferences
+import fr.junade.taipo.backdrop.KeyboardBackdrop
 import fr.junade.taipo.clipboard.ClipboardItems
 import fr.junade.taipo.clipboard.ClipboardProvider
 import fr.junade.taipo.dictionary.PersonalDictionary
@@ -145,52 +145,55 @@ object BackupService {
     /** Applique les réglages du clavier présents dans le fichier ; une valeur inconnue de cette version est ignorée. */
     private fun restoreKeyboard(context: Context, settings: BackupKeyboardSettings) {
         val keyboard = KeyboardPreferences(context)
+        restoreKeys(keyboard, settings)
+        restoreLook(keyboard, settings)
+        restoreBehaviour(keyboard, settings)
+        restoreLanguages(keyboard, settings)
+    }
+
+    /** Touches affichées, retour haptique, hauteur, emojis récents, apprentissage. */
+    private fun restoreKeys(keyboard: KeyboardPreferences, settings: BackupKeyboardSettings) {
         settings.numberRow?.let { keyboard.isNumberRowEnabled = it }
         settings.numberRowPasswordOnly?.let { keyboard.isNumberRowInPasswordFieldsOnly = it }
         settings.showEmojiKey?.let { keyboard.isEmojiKeyShown = it }
         settings.showCommaKey?.let { keyboard.isCommaKeyShown = it }
         settings.showPeriodKey?.let { keyboard.isPeriodKeyShown = it }
-        settings.hapticIntensity?.let { key ->
-            HapticIntensity.entries.firstOrNull { it.storageKey == key }?.let { keyboard.hapticIntensity = it }
-        }
-        settings.keyboardHeight?.let { key ->
-            KeyboardHeight.entries.firstOrNull { it.storageKey == key }?.let { keyboard.keyboardHeight = it }
-        }
+        settings.hapticIntensity?.let { key -> HapticIntensity.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.hapticIntensity = it }
+        settings.keyboardHeight?.let { key -> KeyboardHeight.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.keyboardHeight = it }
         // Audit UX-06 : seuls des emojis courts sont repris (un fichier modifié à la main ne peut pas injecter de long texte).
-        settings.recentEmojis?.let { list -> keyboard.recentEmojis = list.filter { it.isNotBlank() && it.length <= MAX_EMOJI_CHARS }.take(RecentEmojis.MAX_SIZE) }
+        settings.recentEmojis?.let { list ->
+            keyboard.recentEmojis = list.filter { it.isNotBlank() && it.length <= MAX_EMOJI_CHARS }.take(RecentEmojis.MAX_SIZE)
+        }
         settings.habitLearning?.let { keyboard.isHabitLearningEnabled = it }
-        settings.themeChoice?.let { key ->
-            // Écrire le réglage met aussi à jour KeyboardTheme.choice. « dynamic » sur un appareil d'avant Android 12 se comporte comme « system ».
-            ThemeChoice.entries.firstOrNull { it.storageKey == key }?.let { keyboard.themeChoice = it }
-        }
-        settings.accentPalette?.let { key ->
-            // Écrire le réglage met aussi à jour KeyboardTheme.palette (le violet si la couleur est réservée au pass premium).
-            AccentPalette.entries.firstOrNull { it.storageKey == key }?.let { keyboard.accentPalette = it }
-        }
-        settings.keyShape?.let { key ->
-            // Écrire le réglage met aussi à jour KeyboardTheme.shape (Arrondi si la forme est réservée au pass premium).
-            KeyShape.entries.firstOrNull { it.storageKey == key }?.let { keyboard.keyShape = it }
-        }
-        settings.keyboardFont?.let { key -> KeyboardFont.entries.firstOrNull { it.storageKey == key }?.let { keyboard.keyboardFont = it } }
-        settings.backdrop?.let { key -> KeyboardBackdrop.entries.firstOrNull { it.storageKey == key }?.let { keyboard.keyboardBackdrop = it } }
-        settings.backdropAnimated?.let { keyboard.isBackdropAnimated = it }
-        settings.keySound?.let { keyboard.isKeySoundEnabled = it }
-        settings.barSound?.let { keyboard.isBarSoundEnabled = it }
-        settings.keySoundVolume?.let { keyboard.keySoundVolumePercent = it } // bornés par les réglages eux-mêmes
-        settings.bottomMarginDp?.let { keyboard.bottomMarginDp = it }
-        settings.adaptiveTouch?.let { keyboard.isAdaptiveTouchEnabled = it }
-        settings.clipboardHistory?.let { keyboard.isClipboardHistoryEnabled = it }
-        settings.oneHandedMode?.let { key -> OneHandedMode.entries.firstOrNull { it.storageKey == key }?.let { keyboard.oneHandedMode = it } }
-        settings.oneHandedWidth?.let { keyboard.oneHandedWidthPercent = it }
-        settings.floating?.let { keyboard.isFloatingKeyboard = it }
-        settings.floatingWidth?.let { keyboard.floatingWidthPercent = it }
-        restoreLanguages(keyboard, settings)
     }
 
     /**
-     * Applique les prompts personnalisés et le modèle choisi. Le modèle n'est repris que s'il est installé sur cet appareil :
-     * sinon le choix actuel est gardé (renvoie vrai). Sur un appareil neuf, le modèle se choisit après son téléchargement.
+     * Apparence. Écrire ces réglages met aussi à jour KeyboardTheme (choix, couleur, forme) ; une couleur ou une forme réservée
+     * au pass premium retombe sur celle d'origine sans le pass, et « dynamic » avant Android 12 se comporte comme « system ».
      */
+    private fun restoreLook(keyboard: KeyboardPreferences, settings: BackupKeyboardSettings) {
+        settings.themeChoice?.let { key -> ThemeChoice.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.themeChoice = it }
+        settings.accentPalette?.let { key -> AccentPalette.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.accentPalette = it }
+        settings.keyShape?.let { key -> KeyShape.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.keyShape = it }
+        settings.keyboardFont?.let { key -> KeyboardFont.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.keyboardFont = it }
+        settings.backdrop?.let { key -> KeyboardBackdrop.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.keyboardBackdrop = it }
+        settings.backdropAnimated?.let { keyboard.isBackdropAnimated = it }
+    }
+
+    /** Sons, marge, zones de frappe, historique, mode une main et flottant (valeurs bornées par les réglages eux-mêmes). */
+    private fun restoreBehaviour(keyboard: KeyboardPreferences, settings: BackupKeyboardSettings) {
+        settings.keySound?.let { keyboard.isKeySoundEnabled = it }
+        settings.barSound?.let { keyboard.isBarSoundEnabled = it }
+        settings.keySoundVolume?.let { keyboard.keySoundVolumePercent = it }
+        settings.bottomMarginDp?.let { keyboard.bottomMarginDp = it }
+        settings.adaptiveTouch?.let { keyboard.isAdaptiveTouchEnabled = it }
+        settings.clipboardHistory?.let { keyboard.isClipboardHistoryEnabled = it }
+        settings.oneHandedMode?.let { key -> OneHandedMode.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.oneHandedMode = it }
+        settings.oneHandedWidth?.let { keyboard.oneHandedWidthPercent = it }
+        settings.floating?.let { keyboard.isFloatingKeyboard = it }
+        settings.floatingWidth?.let { keyboard.floatingWidthPercent = it }
+    }
+
     /** Langue choisie (vide = automatique), clavier multilingue et dispositions : codes inconnus ignorés. */
     private fun restoreLanguages(keyboard: KeyboardPreferences, settings: BackupKeyboardSettings) {
         settings.keyboardLanguage?.let { tag ->
@@ -205,6 +208,10 @@ object BackupService {
         }
     }
 
+    /**
+     * Applique les prompts personnalisés et le modèle choisi. Le modèle n'est repris que s'il est installé sur cet appareil :
+     * sinon le choix actuel est gardé (renvoie vrai). Sur un appareil neuf, le modèle se choisit après son téléchargement.
+     */
     private fun restoreAi(context: Context, settings: BackupAiSettings): Boolean {
         val prompts = promptPreferences(context)
         settings.prompts.forEach { (usage, prompt) ->

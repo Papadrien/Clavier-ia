@@ -1,7 +1,7 @@
 package fr.junade.taipo
 
-import android.content.Context
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -105,23 +105,9 @@ class ClipboardLabelActivity : Activity() {
         updateSaveState()
     }
 
-    private fun buildUi() {
-        val root = LinearLayout(this)
-        root.orientation = LinearLayout.VERTICAL
-        root.setPadding(
-            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_horizontal),
-            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_vertical),
-            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_horizontal),
-            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_bottom),
-        )
-
-        title = TextView(this)
-        title.text = getString(R.string.clipboard_label_title_add)
-        title.setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.taipo_dialog_title_text_size))
-        title.useTaipoFont(TaipoType.Weight.BOLD)
-        root.addView(title, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
-
-        input = EditText(this)
+    /** Champ de saisie (identifiant stable : audit BUG-10). */
+    private fun createInput(): EditText {
+        val input = EditText(this)
         input.id = R.id.clipboard_label_input
         input.inputType = InputType.TYPE_CLASS_TEXT
         input.setSingleLine(true)
@@ -141,6 +127,26 @@ class ClipboardLabelActivity : Activity() {
                 false
             }
         }
+        return input
+    }
+
+    private fun buildUi() {
+        val root = LinearLayout(this)
+        root.orientation = LinearLayout.VERTICAL
+        root.setPadding(
+            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_horizontal),
+            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_vertical),
+            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_horizontal),
+            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_bottom),
+        )
+
+        title = TextView(this)
+        title.text = getString(R.string.clipboard_label_title_add)
+        title.setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.taipo_dialog_title_text_size))
+        title.useTaipoFont(TaipoType.Weight.BOLD)
+        root.addView(title, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+
+        input = createInput()
         root.addView(
             input,
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
@@ -163,7 +169,13 @@ class ClipboardLabelActivity : Activity() {
         saveButton.setOnClickListener { save() }
         val gap = resources.getDimensionPixelSize(R.dimen.taipo_dialog_gap)
         buttons.addView(cancel)
-        buttons.addView(saveButton, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { marginStart = gap })
+        buttons.addView(
+            saveButton,
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                marginStart =
+                    gap
+            },
+        )
         root.addView(
             buttons,
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = gap },
@@ -214,9 +226,9 @@ class ClipboardLabelActivity : Activity() {
 
     private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 
-
     companion object {
         private const val TAG = "ClipboardLabelActivity"
+
         /** Identifiant de l'élément épinglé dont on saisit l'étiquette. */
         const val EXTRA_PINNED_ID = "pinned_id"
         private const val NO_ID = -1L

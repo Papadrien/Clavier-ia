@@ -1,11 +1,11 @@
 package fr.junade.taipo
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.format.Formatter
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
-import android.app.AlertDialog
 import android.widget.LinearLayout
 import android.widget.Toast
 import fr.junade.taipo.ai.VoiceEngine

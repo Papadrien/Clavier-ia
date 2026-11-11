@@ -88,6 +88,8 @@ class SpanishConfusionsTest {
         for (sentence in listOf(
             "Hola, ¿cómo estás?", "¿Dónde está mi teléfono?", "No sé si vendrá.", "Quiero que me dé una respuesta.", "Aún no he terminado.",
             "Aun así, seguiré intentándolo.", "Yo se lo dije ayer.", "No se puede entrar sin permiso.", "Estas manzanas están maduras.",
-        )) assertUntouched(sentence)
+        )) {
+            assertUntouched(sentence)
+        }
     }
 }

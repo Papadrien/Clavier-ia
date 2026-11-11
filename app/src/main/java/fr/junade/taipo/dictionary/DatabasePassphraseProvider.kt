@@ -4,9 +4,9 @@ import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import fr.junade.taipo.storage.StoredDataFailure
 import java.security.KeyStore
 import java.security.SecureRandom
-import fr.junade.taipo.storage.StoredDataFailure
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey

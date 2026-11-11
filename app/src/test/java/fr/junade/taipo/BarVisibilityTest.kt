@@ -367,7 +367,10 @@ class BarVisibilityTest {
 
     @Test
     fun `la frappe efface le tip et rend la bande de mots`() {
-        val zone = typing().apply { showTip(); onTyping() }
+        val zone = typing().apply {
+            showTip()
+            onTyping()
+        }
         val shown = content(zone)
         assertFalse(shown.tip)
         assertTrue(shown.words)
@@ -375,7 +378,10 @@ class BarVisibilityTest {
 
     @Test
     fun `hideTip retire le tip`() {
-        val zone = typing().apply { showTip(); hideTip() }
+        val zone = typing().apply {
+            showTip()
+            hideTip()
+        }
         assertFalse(content(zone).tip)
     }
 
@@ -383,6 +389,13 @@ class BarVisibilityTest {
     fun `le tip n apparait ni menu ouvert ni dans la barre normale ni avec l auto-remplissage`() {
         assertFalse(content(typingMenuOpen().apply { showTip() }).tip)
         assertFalse(content(SuggestionZoneState().apply { showTip() }).tip)
-        assertFalse(content(typing().apply { setInlineAvailable(true); showTip() }).tip)
+        assertFalse(
+            content(
+                typing().apply {
+                    setInlineAvailable(true)
+                    showTip()
+                },
+            ).tip,
+        )
     }
 }

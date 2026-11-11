@@ -1,9 +1,9 @@
 package fr.junade.taipo
 
+import kotlin.math.abs
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import kotlin.math.abs
 
 class KeyClickSynthTest {
 
@@ -121,8 +121,13 @@ class KeyClickSynthTest {
     @Test
     fun `chaque son de bouton a un rendu non vide et deterministe`() {
         val sounds = listOf(
-            KeySound.BAR_BUTTON, KeySound.AI_BUTTON, KeySound.VOICE_START, KeySound.VOICE_END,
-            KeySound.TRANSCRIPTION_START, KeySound.TRANSCRIPTION_LISTEN_END, KeySound.TRANSCRIPTION_DONE,
+            KeySound.BAR_BUTTON,
+            KeySound.AI_BUTTON,
+            KeySound.VOICE_START,
+            KeySound.VOICE_END,
+            KeySound.TRANSCRIPTION_START,
+            KeySound.TRANSCRIPTION_LISTEN_END,
+            KeySound.TRANSCRIPTION_DONE,
         )
         for (sound in sounds) {
             val first = sound.render(seed = 2, variation = 0.04)
@@ -135,7 +140,10 @@ class KeyClickSynthTest {
     fun `la barre espace est plus aigue que les touches`() {
         // Énergie de la dérivée rapportée à l'énergie du signal : croît avec la brillance.
         fun brightness(s: ShortArray): Double {
-            val diff = (1 until s.size).sumOf { val d = (s[it] - s[it - 1]).toDouble(); d * d }
+            val diff = (1 until s.size).sumOf {
+                val d = (s[it] - s[it - 1]).toDouble()
+                d * d
+            }
             val energy = s.sumOf { it.toDouble() * it }
             return diff / energy
         }

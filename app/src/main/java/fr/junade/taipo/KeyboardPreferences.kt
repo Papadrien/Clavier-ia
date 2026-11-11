@@ -345,8 +345,11 @@ class KeyboardPreferences(context: Context) {
     /** Enregistre la disposition de [language] ; la disposition d'origine efface le choix. Relue à l'ouverture du prochain champ. */
     fun setLetterArrangement(language: KeyboardLanguage, arrangement: LetterArrangement) {
         prefs.edit().apply {
-            if (arrangement == LetterArrangement.defaultFor(language)) remove(KEY_ARRANGEMENT_PREFIX + language.tag)
-            else putString(KEY_ARRANGEMENT_PREFIX + language.tag, arrangement.tag)
+            if (arrangement == LetterArrangement.defaultFor(language)) {
+                remove(KEY_ARRANGEMENT_PREFIX + language.tag)
+            } else {
+                putString(KEY_ARRANGEMENT_PREFIX + language.tag, arrangement.tag)
+            }
         }.apply()
     }
 

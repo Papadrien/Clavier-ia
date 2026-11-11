@@ -1,9 +1,9 @@
 package fr.junade.taipo
 
+import kotlin.math.abs
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import kotlin.math.abs
 
 /** Icône retour arrière animée : balancier de gauche à droite, inclinaison du glissement, vie des étincelles. */
 class BackspaceIconPoseTest {

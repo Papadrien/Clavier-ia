@@ -20,7 +20,11 @@ class ChatTranscriptTest {
         val result = ChatTranscript.build(history, "troisième prompt")
 
         val indexes = listOf(
-            "premier prompt", "première réponse", "second prompt", "seconde réponse", "troisième prompt",
+            "premier prompt",
+            "première réponse",
+            "second prompt",
+            "seconde réponse",
+            "troisième prompt",
         ).map { result.indexOf(it) }
         assertTrue(indexes.all { it >= 0 })
         assertEquals(indexes.sorted(), indexes)

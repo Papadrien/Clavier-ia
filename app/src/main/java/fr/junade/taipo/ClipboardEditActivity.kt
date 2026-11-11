@@ -1,7 +1,7 @@
 package fr.junade.taipo
 
-import android.content.Context
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -16,9 +16,9 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
+import fr.junade.taipo.clipboard.ClipHistoryRepository
 import fr.junade.taipo.clipboard.ClipboardEditBridge
 import fr.junade.taipo.clipboard.ClipboardItems
-import fr.junade.taipo.clipboard.ClipHistoryRepository
 import fr.junade.taipo.clipboard.ClipboardProvider
 import fr.junade.taipo.clipboard.PinnedClipRepository
 import kotlinx.coroutines.CancellationException
@@ -131,6 +131,24 @@ class ClipboardEditActivity : Activity() {
         updateSaveState()
     }
 
+    /** Champ de saisie (identifiant stable : audit BUG-10). */
+    private fun createInput(): EditText {
+        val input = EditText(this)
+        input.id = R.id.clipboard_edit_input
+        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        input.gravity = Gravity.TOP or Gravity.START
+        input.minLines = 4
+        input.maxLines = 10
+        input.filters = arrayOf(InputFilter.LengthFilter(ClipboardItems.MAX_PINNED_CHARS))
+        input.contentDescription = getString(R.string.clipboard_edit_input_description)
+        input.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            override fun afterTextChanged(s: Editable?) = updateSaveState()
+        })
+        return input
+    }
+
     private fun buildUi() {
         val root = LinearLayout(this)
         root.orientation = LinearLayout.VERTICAL
@@ -153,19 +171,7 @@ class ClipboardEditActivity : Activity() {
         title.useTaipoFont(TaipoType.Weight.BOLD)
         root.addView(title, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
 
-        input = EditText(this)
-        input.id = R.id.clipboard_edit_input
-        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-        input.gravity = Gravity.TOP or Gravity.START
-        input.minLines = 4
-        input.maxLines = 10
-        input.filters = arrayOf(InputFilter.LengthFilter(ClipboardItems.MAX_PINNED_CHARS))
-        input.contentDescription = getString(R.string.clipboard_edit_input_description)
-        input.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-            override fun afterTextChanged(s: Editable?) = updateSaveState()
-        })
+        input = createInput()
         root.addView(
             input,
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
@@ -188,7 +194,13 @@ class ClipboardEditActivity : Activity() {
         saveButton.setOnClickListener { save() }
         val gap = resources.getDimensionPixelSize(R.dimen.taipo_dialog_gap)
         buttons.addView(cancel)
-        buttons.addView(saveButton, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { marginStart = gap })
+        buttons.addView(
+            saveButton,
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                marginStart =
+                    gap
+            },
+        )
         root.addView(
             buttons,
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = gap },
@@ -246,9 +258,9 @@ class ClipboardEditActivity : Activity() {
 
     private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 
-
     companion object {
         private const val TAG = "ClipboardEditActivity"
+
         /** Identifiant de l'élément épinglé à modifier ; absent pour la dernière copie. */
         const val EXTRA_PINNED_ID = "pinned_id"
 

@@ -8,12 +8,12 @@ import com.k2fsa.sherpa.onnx.OnlineStream
 import com.k2fsa.sherpa.onnx.OnlineTransducerModelConfig
 import fr.junade.taipo.model.VoiceModelFile
 import fr.junade.taipo.model.VoiceModelFileResolver
+import java.util.Collections
+import java.util.WeakHashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import java.util.Collections
-import java.util.WeakHashMap
 
 /**
  * Enveloppe autour de sherpa-onnx (`OnlineRecognizer`) pour la transcription

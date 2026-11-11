@@ -1,10 +1,10 @@
 package fr.junade.taipo.ai
 
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 /** Épopée 14 : l'en-tête WAV envoyé au modèle doit être exactement celui d'un PCM 16 bits mono. */
 class WavEncoderTest {

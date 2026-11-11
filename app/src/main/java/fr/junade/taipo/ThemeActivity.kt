@@ -451,7 +451,10 @@ class ThemeActivity : Activity() {
         val gap = resources.getDimensionPixelSize(R.dimen.taipo_settings_gap_xs)
         val rowGap = resources.getDimensionPixelSize(R.dimen.taipo_settings_gap_md)
         AccentPalette.entries.chunked(SWATCHES_PER_ROW).forEachIndexed { rowIndex, palettes ->
-            val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL; isBaselineAligned = false }
+            val row = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                isBaselineAligned = false
+            }
             repeat(SWATCHES_PER_ROW) { index ->
                 val palette = palettes.getOrNull(index)
                 val item = if (palette != null) {

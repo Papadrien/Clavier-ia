@@ -97,7 +97,8 @@ internal object BarVisibility {
     /** Écoute, transcription ou correction en cours : les boutons concernés servent d'arrêt ou d'indicateur. */
     fun isBusy(voice: VoiceBarState, correction: CorrectionBarState): Boolean =
         voice != VoiceBarState.IDLE ||
-            correction == CorrectionBarState.LOADING || correction == CorrectionBarState.CORRECTING ||
+            correction == CorrectionBarState.LOADING ||
+            correction == CorrectionBarState.CORRECTING ||
             correction == CorrectionBarState.CANCELLING
 
     /**
@@ -195,7 +196,13 @@ internal object BarVisibility {
         // Chargement ou correction en cours : un nouvel appui sur le bouton annule la correction.
         CorrectionBarState.LOADING -> CorrectAppearance(R.string.correction_button_loading, enabled = true, alpha = 1f, loading = true)
         // Traitement en cours : fond violet, opacité pleine (le bouton reste désactivé).
-        CorrectionBarState.CORRECTING -> CorrectAppearance(R.string.correction_button_correcting, enabled = false, alpha = 1f, loading = true, face = R.color.accent)
+        CorrectionBarState.CORRECTING -> CorrectAppearance(
+            R.string.correction_button_correcting,
+            enabled = false,
+            alpha = 1f,
+            loading = true,
+            face = R.color.accent,
+        )
         CorrectionBarState.CANCELLING -> CorrectAppearance(R.string.correction_button_cancelling, enabled = false, alpha = 0.6f, loading = true)
     }
 

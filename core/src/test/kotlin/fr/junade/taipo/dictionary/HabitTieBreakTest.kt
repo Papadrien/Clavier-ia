@@ -2,12 +2,12 @@ package fr.junade.taipo.dictionary
 
 import fr.junade.taipo.KeyboardLanguage
 import fr.junade.taipo.suggestion.NextWordModel
+import kotlin.random.Random
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import kotlin.random.Random
 
 /**
  * Phase 4 des habitudes de correction : départage de candidats à distance d'édition égale par les habitudes

@@ -1,10 +1,10 @@
 package fr.junade.taipo
 
+import kotlin.random.Random
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import kotlin.random.Random
 
 /** Animation « Bond » de l'icône Maj : transitions entre les trois états, retour au repos, majuscule automatique. */
 class ShiftAnimationTest {
@@ -94,7 +94,10 @@ class ShiftAnimationTest {
         fun trajectory(auto: Boolean): List<Float> {
             val a = animation()
             a.go(ShiftState.ON, auto)
-            return List(150) { a.step(0.01f); a.arrowLift }
+            return List(150) {
+                a.step(0.01f)
+                a.arrowLift
+            }
         }
         assertEquals(trajectory(auto = false), trajectory(auto = true))
         // Après le premier rebond (0,38 s, l'ancien second bond), la flèche ne remonte plus franchement.

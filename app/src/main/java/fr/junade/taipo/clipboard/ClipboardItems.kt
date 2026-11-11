@@ -92,7 +92,14 @@ object ClipboardItems {
         val items = ArrayList<Item>(history.size + pinned.size + 1)
         val shown = HashSet<String>()
         if (lastClip != null && lastClip.text !in pinnedTexts) {
-            items += Item(lastClip.text, isSensitive(lastClip.text, lastClip.sensitive), pinnedId = null, isLastClip = true, historyId = historyIdByText[lastClip.text])
+            items +=
+                Item(
+                    lastClip.text,
+                    isSensitive(lastClip.text, lastClip.sensitive),
+                    pinnedId = null,
+                    isLastClip = true,
+                    historyId = historyIdByText[lastClip.text],
+                )
             shown += lastClip.text
         }
         history

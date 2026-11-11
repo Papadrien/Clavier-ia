@@ -1,11 +1,11 @@
 package fr.junade.taipo
 
-import android.graphics.Rect
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Rect
 import android.view.Gravity
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -547,40 +547,77 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         val spring = reveal && content.menuUtilityButtons
         setRevealed(menuButtons.settingsButton, content.menuUtilityButtons, order = 0, full = reveal, row = typingRow, spring = spring)
         setRevealed(
-            menuButtons.clipboardButton, content.menuUtilityButtons, order = 1, full = reveal, row = typingRow, spring = spring,
+            menuButtons.clipboardButton,
+            content.menuUtilityButtons,
+            order = 1,
+            full = reveal,
+            row = typingRow,
+            spring = spring,
             restingAlpha = menuButtons::clipboardRestingAlpha,
         )
         setRevealed(
-            menuButtons.undoButton, content.menuUtilityButtons, order = 2, full = reveal, row = typingRow, spring = spring,
+            menuButtons.undoButton,
+            content.menuUtilityButtons,
+            order = 2,
+            full = reveal,
+            row = typingRow,
+            spring = spring,
             restingAlpha = menuButtons::undoRestingAlpha,
         )
         setRevealed(
-            menuActions.generateButton, actions.generate, order = 3, full = reveal, row = typingRow, spring = spring,
+            menuActions.generateButton,
+            actions.generate,
+            order = 3,
+            full = reveal,
+            row = typingRow,
+            spring = spring,
             restingAlpha = ::generateRestingAlpha,
         )
         setRevealed(
-            menuActions.correctButton, actions.correct, order = 4, full = reveal, row = typingRow, spring = spring,
+            menuActions.correctButton,
+            actions.correct,
+            order = 4,
+            full = reveal,
+            row = typingRow,
+            spring = spring,
             restingAlpha = ::correctRestingAlpha,
         )
         setRevealed(
-            menuActions.transcriptionButton, actions.aiTranscription && aiTranscriptionAvailable, order = 5, full = reveal,
-            row = typingRow, spring = spring, restingAlpha = ::transcriptionRestingAlpha,
+            menuActions.transcriptionButton,
+            actions.aiTranscription && aiTranscriptionAvailable,
+            order = 5,
+            full = reveal,
+            row = typingRow,
+            spring = spring,
+            restingAlpha = ::transcriptionRestingAlpha,
         )
 
         // Rangée normale : la puce de collage apparaît à côté du bouton Smart Clipboard, suivie des actions IA.
         setRevealed(pasteChip, content.pasteChip, order = 0, full = false, row = normalRow)
         val normal = BarVisibility.normalRowActions(mode)
         setRevealed(
-            normalActions.generateButton, normal.generate, order = 3, full = false, row = normalRow,
+            normalActions.generateButton,
+            normal.generate,
+            order = 3,
+            full = false,
+            row = normalRow,
             restingAlpha = ::generateRestingAlpha,
         )
         setRevealed(
-            normalActions.correctButton, normal.correct, order = 4, full = false, row = normalRow,
+            normalActions.correctButton,
+            normal.correct,
+            order = 4,
+            full = false,
+            row = normalRow,
             restingAlpha = ::correctRestingAlpha,
         )
         setRevealed(
-            normalActions.transcriptionButton, normal.aiTranscription && aiTranscriptionAvailable, order = 5, full = false,
-            row = normalRow, restingAlpha = ::transcriptionRestingAlpha,
+            normalActions.transcriptionButton,
+            normal.aiTranscription && aiTranscriptionAvailable,
+            order = 5,
+            full = false,
+            row = normalRow,
+            restingAlpha = ::transcriptionRestingAlpha,
         )
 
         val menuOpen = mode == BarMode.TYPING && zoneState.menuOpen

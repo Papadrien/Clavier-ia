@@ -132,6 +132,7 @@ internal class KeyRenderer(private val context: Context) {
     // Icônes des touches (lot 09) : VectorDrawable de la charte, teintés une fois, redimensionnés au dessin (aucune
     // allocation dans onDraw). Remplacent les glyphes de police (Maj, Effacer) et les tracés Canvas (Entrée, Emoji).
     private val backspaceIcon = loadKeyIcon(R.drawable.ic_key_backspace)
+
     // Lot T6 : Entrée est violette dans les deux thèmes, son icône est donc blanche (text_on_accent), pas la couleur des libellés.
     private val enterIcon = loadKeyIcon(R.drawable.ic_key_enter, R.color.text_on_accent)
 
@@ -141,6 +142,7 @@ internal class KeyRenderer(private val context: Context) {
     private val nextIcon = loadKeyIcon(R.drawable.ic_key_next, R.color.text_on_accent)
     private val doneIcon = loadKeyIcon(R.drawable.ic_key_done, R.color.text_on_accent)
     private val emojiIcon = loadKeyIcon(R.drawable.ic_key_emoji)
+
     // Petit globe en exposant sur la pilule Entrée violette : blanc, légèrement atténué comme l'indice des chiffres (lot T6).
     private val globeIcon = loadKeyIcon(R.drawable.ic_key_globe, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
 
@@ -325,7 +327,11 @@ internal class KeyRenderer(private val context: Context) {
                     drawSpaceBarBlob(canvas, blob, cx, cy)
                 } else {
                     canvas.drawLine(
-                        cx - dims.spaceBarLength, cy, cx + dims.spaceBarLength, cy, spaceBarPaint,
+                        cx - dims.spaceBarLength,
+                        cy,
+                        cx + dims.spaceBarLength,
+                        cy,
+                        spaceBarPaint,
                     )
                 }
             }
@@ -476,7 +482,10 @@ internal class KeyRenderer(private val context: Context) {
 
     private fun placeIcon(icon: Drawable, cx: Float, cy: Float, half: Float) {
         icon.setBounds(
-            (cx - half).roundToInt(), (cy - half).roundToInt(), (cx + half).roundToInt(), (cy + half).roundToInt(),
+            (cx - half).roundToInt(),
+            (cy - half).roundToInt(),
+            (cx + half).roundToInt(),
+            (cy + half).roundToInt(),
         )
     }
 
@@ -491,7 +500,10 @@ internal class KeyRenderer(private val context: Context) {
         val cx = keyRect.centerX()
         val cy = keyRect.centerY()
         icon.setBounds(
-            (cx - half).roundToInt(), (cy - half).roundToInt(), (cx + half).roundToInt(), (cy + half).roundToInt(),
+            (cx - half).roundToInt(),
+            (cy - half).roundToInt(),
+            (cx + half).roundToInt(),
+            (cy + half).roundToInt(),
         )
         if (angleDegrees == 0f) {
             icon.draw(canvas)

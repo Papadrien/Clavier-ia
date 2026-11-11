@@ -3,6 +3,7 @@ package fr.junade.taipo
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -11,13 +12,12 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.os.Build
 import android.view.accessibility.AccessibilityManager
-import androidx.core.view.ViewCompat
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.core.view.ViewCompat
 
 /**
  * Pop-ups du clavier (messages d'information, liste des langues), extraits de [TaipoIme] (audit 2.1).

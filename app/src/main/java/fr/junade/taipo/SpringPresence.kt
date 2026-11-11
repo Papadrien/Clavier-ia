@@ -52,7 +52,9 @@ internal class SpringPresence(private val view: View, private val distancePx: ()
                 override fun onViewAttachedToWindow(v: View) = Unit
 
                 override fun onViewDetachedFromWindow(v: View) {
-                    if (exiting) finishHide() else {
+                    if (exiting) {
+                        finishHide()
+                    } else {
                         stopTicker()
                         apply(1f)
                     }

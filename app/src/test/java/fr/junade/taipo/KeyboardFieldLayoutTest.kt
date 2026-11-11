@@ -23,57 +23,71 @@ class KeyboardFieldLayoutTest {
     @Test
     fun `texte et mot de passe gardent la virgule`() {
         for (type in listOf(FieldType.TEXT, FieldType.PASSWORD)) {
-            for (language in languages) for (numberRow in booleans) for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS_2)) {
-                val layout = Keyboards.layoutOf(id, language, numberRow, type)
-                assertTrue(layout.hasKey("comma"), "$type $language $id")
-                assertFalse(layout.hasKey("email_at") || layout.hasKey("url_slash"))
+            for (language in languages) {
+                for (numberRow in booleans) {
+                    for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS_2)) {
+                        val layout = Keyboards.layoutOf(id, language, numberRow, type)
+                        assertTrue(layout.hasKey("comma"), "$type $language $id")
+                        assertFalse(layout.hasKey("email_at") || layout.hasKey("url_slash"))
+                    }
+                }
             }
         }
     }
 
     @Test
     fun `le type texte par defaut ne change rien`() {
-        for (language in languages) for (numberRow in booleans) {
-            assertSame(
-                Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow),
-                Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow, FieldType.TEXT),
-            )
+        for (language in languages) {
+            for (numberRow in booleans) {
+                assertSame(
+                    Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow),
+                    Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow, FieldType.TEXT),
+                )
+            }
         }
     }
 
     @Test
     fun `e-mail remplace la virgule par arobase sur lettres et symboles`() {
-        for (language in languages) for (numberRow in booleans) for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS_2)) {
-            val layout = Keyboards.layoutOf(id, language, numberRow, FieldType.EMAIL)
-            assertFalse(layout.hasKey("comma"), "$language $id : la virgule doit disparaître")
-            assertTrue(layout.hasKey("email_at"), "$language $id")
-            val at = layout.rows.flatten().first { it.id == "email_at" }
-            assertEquals(KeyAction.TypeChar('@'), at.action)
+        for (language in languages) {
+            for (numberRow in booleans) {
+                for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS_2)) {
+                    val layout = Keyboards.layoutOf(id, language, numberRow, FieldType.EMAIL)
+                    assertFalse(layout.hasKey("comma"), "$language $id : la virgule doit disparaître")
+                    assertTrue(layout.hasKey("email_at"), "$language $id")
+                    val at = layout.rows.flatten().first { it.id == "email_at" }
+                    assertEquals(KeyAction.TypeChar('@'), at.action)
+                }
+            }
         }
     }
 
     @Test
     fun `e-mail garde la meme structure que le clavier de texte`() {
-        for (language in languages) for (numberRow in booleans) {
-            val text = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow, FieldType.TEXT)
-            val email = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow, FieldType.EMAIL)
-            assertEquals(text.id, email.id)
-            assertEquals(text.rows.map { it.size }, email.rows.map { it.size })
-            assertEquals(text.rows.map { row -> row.sumOf { it.weight.toDouble() } }, email.rows.map { row -> row.sumOf { it.weight.toDouble() } })
-            // Seule la virgule change : les lettres, l'emoji, l'espace, le point et entrée sont intacts.
-            val changed = text.rows.flatten().zip(email.rows.flatten()).filter { (a, b) -> a != b }
-            assertEquals(1, changed.size)
-            assertEquals("comma", changed.single().first.id)
+        for (language in languages) {
+            for (numberRow in booleans) {
+                val text = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow, FieldType.TEXT)
+                val email = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow, FieldType.EMAIL)
+                assertEquals(text.id, email.id)
+                assertEquals(text.rows.map { it.size }, email.rows.map { it.size })
+                assertEquals(text.rows.map { row -> row.sumOf { it.weight.toDouble() } }, email.rows.map { row -> row.sumOf { it.weight.toDouble() } })
+                // Seule la virgule change : les lettres, l'emoji, l'espace, le point et entrée sont intacts.
+                val changed = text.rows.flatten().zip(email.rows.flatten()).filter { (a, b) -> a != b }
+                assertEquals(1, changed.size)
+                assertEquals("comma", changed.single().first.id)
+            }
         }
     }
 
     @Test
     fun `URL remplace la virgule par une barre oblique`() {
-        for (language in languages) for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS_2)) {
-            val layout = Keyboards.layoutOf(id, language, false, FieldType.URL)
-            assertFalse(layout.hasKey("comma"))
-            val slash = layout.rows.flatten().first { it.id == "url_slash" }
-            assertEquals(KeyAction.TypeChar('/'), slash.action)
+        for (language in languages) {
+            for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS_2)) {
+                val layout = Keyboards.layoutOf(id, language, false, FieldType.URL)
+                assertFalse(layout.hasKey("comma"))
+                val slash = layout.rows.flatten().first { it.id == "url_slash" }
+                assertEquals(KeyAction.TypeChar('/'), slash.action)
+            }
         }
     }
 
@@ -96,12 +110,16 @@ class KeyboardFieldLayoutTest {
 
     @Test
     fun `champ numerique, pave quel que soit le layout demande`() {
-        for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS_2)) for (language in languages) for (numberRow in booleans) {
-            val pad = Keyboards.layoutOf(id, language, numberRow, FieldType.NUMBER)
-            assertEquals(LayoutId.PAD, pad.id)
-            assertEquals(4, pad.rows.size)
-            pad.rows.forEach { assertEquals(4, it.size) }
-            assertSame(pad, Keyboards.layoutOf(LayoutId.LETTERS, KeyboardLanguage.FR, false, FieldType.NUMBER))
+        for (id in listOf(LayoutId.LETTERS, LayoutId.SYMBOLS_2)) {
+            for (language in languages) {
+                for (numberRow in booleans) {
+                    val pad = Keyboards.layoutOf(id, language, numberRow, FieldType.NUMBER)
+                    assertEquals(LayoutId.PAD, pad.id)
+                    assertEquals(4, pad.rows.size)
+                    pad.rows.forEach { assertEquals(4, it.size) }
+                    assertSame(pad, Keyboards.layoutOf(LayoutId.LETTERS, KeyboardLanguage.FR, false, FieldType.NUMBER))
+                }
+            }
         }
     }
 

@@ -119,6 +119,8 @@ class EncryptedFileStore(
         }
     }
 
+    // Lecture : Keystore, déchiffrement et analyse peuvent lever bien des exceptions, toutes classées par StoredDataFailure.
+    @Suppress("TooGenericExceptionCaught")
     private fun load() {
         var rewriteAsCurrentFormat = false
         try {
@@ -153,6 +155,8 @@ class EncryptedFileStore(
         if (rewriteAsCurrentFormat) flush()
     }
 
+    // Écriture : toute erreur (Keystore, disque) remet la sauvegarde à plus tard, sans perdre les données en mémoire.
+    @Suppress("TooGenericExceptionCaught")
     private fun save() {
         if (!loaded.await(LOAD_WAIT_MS, TimeUnit.MILLISECONDS)) {
             AppLog.w(tag, "Chargement pas terminé : sauvegarde reportée")

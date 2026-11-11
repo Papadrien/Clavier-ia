@@ -24,7 +24,7 @@ fun Activity.applySystemBarInsets() {
         val bars = insets.getInsets(
             WindowInsetsCompat.Type.systemBars() or
                 WindowInsetsCompat.Type.displayCutout() or
-                WindowInsetsCompat.Type.ime()
+                WindowInsetsCompat.Type.ime(),
         )
         view.setPadding(left + bars.left, top + bars.top, right + bars.right, bottom + bars.bottom)
         WindowInsetsCompat.CONSUMED

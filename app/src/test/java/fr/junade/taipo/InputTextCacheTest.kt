@@ -10,10 +10,23 @@ class InputTextCacheTest {
     /** Faux champ : un texte et un curseur, et le nombre de lectures réelles. */
     private class Field(var text: String, var cursor: Int = text.length) {
         var reads = 0
-        fun before(n: Int): String { reads++; return text.substring(maxOf(0, cursor - n), cursor) }
-        fun after(n: Int): String { reads++; return text.substring(cursor, minOf(text.length, cursor + n)) }
-        fun commit(insert: String) { text = text.substring(0, cursor) + insert + text.substring(cursor); cursor += insert.length }
-        fun delete(count: Int) { val from = maxOf(0, cursor - count); text = text.substring(0, from) + text.substring(cursor); cursor = from }
+        fun before(n: Int): String {
+            reads++
+            return text.substring(maxOf(0, cursor - n), cursor)
+        }
+        fun after(n: Int): String {
+            reads++
+            return text.substring(cursor, minOf(text.length, cursor + n))
+        }
+        fun commit(insert: String) {
+            text = text.substring(0, cursor) + insert + text.substring(cursor)
+            cursor += insert.length
+        }
+        fun delete(count: Int) {
+            val from = maxOf(0, cursor - count)
+            text = text.substring(0, from) + text.substring(cursor)
+            cursor = from
+        }
     }
 
     private var now = 1_000L
@@ -146,7 +159,10 @@ class InputTextCacheTest {
         cache.onSelectionUpdate(3, 3, 0, 3)
         cache.textBefore(50, field::before)
         cache.onSelectionUpdate(1, 3, -1, -1)
-        cache.selectedText { field.reads++; "bc" }
+        cache.selectedText {
+            field.reads++
+            "bc"
+        }
         assertEquals("bc", cache.selectedText { error("déjà lu") })
         assertEquals(3, field.reads)
     }
@@ -155,7 +171,12 @@ class InputTextCacheTest {
     fun `une lecture refusee par le champ n'est pas mise en cache`() {
         val field = Field("abc")
         val cache = cache(field)
-        assertNull(cache.textBefore(50) { field.reads++; null })
+        assertNull(
+            cache.textBefore(50) {
+                field.reads++
+                null
+            },
+        )
         assertEquals("abc", cache.textBefore(50, field::before))
         assertEquals(2, field.reads)
     }

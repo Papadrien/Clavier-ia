@@ -181,7 +181,8 @@ class ScreenshotFinder(context: Context) {
          * visibles : la fonction ne marche qu'avec « Tout autoriser ».
          */
         fun hasOnlyPartialAccess(context: Context): Boolean =
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && !hasPermission(context) &&
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
+                !hasPermission(context) &&
                 ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) ==
                 PackageManager.PERMISSION_GRANTED
 

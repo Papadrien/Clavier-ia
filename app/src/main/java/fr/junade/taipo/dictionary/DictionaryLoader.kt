@@ -2,10 +2,10 @@ package fr.junade.taipo.dictionary
 
 import android.content.Context
 import fr.junade.taipo.AppLog
+import fr.junade.taipo.KeyboardLanguage
 import fr.junade.taipo.KeyboardPreferences
 import fr.junade.taipo.Sections
 import fr.junade.taipo.traced
-import fr.junade.taipo.KeyboardLanguage
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 

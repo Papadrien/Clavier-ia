@@ -40,7 +40,14 @@ internal object GermanConfusions {
     }
 
     private val SUBJECT_PRONOUNS = arrayOf(
-        "ich", "du", "er", "sie", "es", "wir", "ihr", "man",
+        "ich",
+        "du",
+        "er",
+        "sie",
+        "es",
+        "wir",
+        "ihr",
+        "man",
     )
 
     private val THINK_WORDS = arrayOf(
@@ -63,7 +70,14 @@ internal object GermanConfusions {
     )
 
     private val QUESTION_WORDS = arrayOf(
-        "wo", "wer", "wie", "was", "warum", "wann", "wieso", "weshalb",
+        "wo",
+        "wer",
+        "wie",
+        "was",
+        "warum",
+        "wann",
+        "wieso",
+        "weshalb",
     )
 
     private val TIME_AFTER_SEIT = arrayOf(
@@ -94,7 +108,10 @@ internal object GermanConfusions {
     )
 
     private val WURDE_FORMS = arrayOf(
-        "wurde", "wurdest", "wurden", "wurdet",
+        "wurde",
+        "wurdest",
+        "wurden",
+        "wurdet",
     )
 
     private val INFINITIVES = arrayOf(
@@ -123,15 +140,28 @@ internal object GermanConfusions {
     )
 
     private val DAY_WORDS = arrayOf(
-        "heute", "gestern", "vorgestern",
+        "heute",
+        "gestern",
+        "vorgestern",
     )
 
     private val DAY_WORDS_AHEAD = arrayOf(
-        "heute", "gestern", "vorgestern", "morgen", "übermorgen",
+        "heute",
+        "gestern",
+        "vorgestern",
+        "morgen",
+        "übermorgen",
     )
 
     private val PREP_DAY = arrayOf(
-        "am", "jeden", "diesen", "guten", "nächsten", "letzten", "schönen", "zu",
+        "am",
+        "jeden",
+        "diesen",
+        "guten",
+        "nächsten",
+        "letzten",
+        "schönen",
+        "zu",
     )
 
     private val DATIVE_VERBS = arrayOf(
@@ -146,26 +176,80 @@ internal object GermanConfusions {
     )
 
     internal val RULES: List<ConfusionRule> = listOf(
-        ConfusionRule("seit", "seid", "seit > seid après « ihr » devant un mot qui ne peut suivre « seit »", previous = oneOf("ihr"), next = oneOf(*AFTER_SEID)),
+        ConfusionRule(
+            "seit",
+            "seid",
+            "seit > seid après « ihr » devant un mot qui ne peut suivre « seit »",
+            previous = oneOf("ihr"),
+            next = oneOf(*AFTER_SEID),
+        ),
         ConfusionRule("seit", "seid", "seit > seid : « wo seit ihr »", previous = oneOf(*QUESTION_WORDS), next = oneOf("ihr")),
         ConfusionRule("seid", "seit", "seid > seit devant une durée ou « wann »", previous = noneOf(*NOT_BEFORE_SEIT), next = oneOf(*TIME_AFTER_SEIT)),
         ConfusionRule("seid", "seit", "seid > seit en début de phrase devant « wann »", next = oneOf("wann"), sentenceStart = true),
-        ConfusionRule("wie", "wir", "wie > wir en début de phrase devant un verbe au pluriel et un mot qui ne peut suivre qu'un sujet", next = oneOf(*PLURAL_VERBS), next2 = oneOf(*SAFE_AFTER_WIR), sentenceStart = true),
+        ConfusionRule(
+            "wie",
+            "wir",
+            "wie > wir en début de phrase devant un verbe au pluriel et un mot qui ne peut suivre qu'un sujet",
+            next = oneOf(*PLURAL_VERBS),
+            next2 = oneOf(*SAFE_AFTER_WIR),
+            sentenceStart = true,
+        ),
         ConfusionRule("wurde", "würde", "wurde > würde devant un infinitif", next = lowercaseOneOf(*INFINITIVES)),
-        ConfusionRule("wurde", "würde", "wurde > würde devant un adverbe ou un pronom puis un infinitif", next = oneOf(*BEFORE_INFINITIVE), next2 = lowercaseOneOf(*INFINITIVES)),
+        ConfusionRule(
+            "wurde",
+            "würde",
+            "wurde > würde devant un adverbe ou un pronom puis un infinitif",
+            next = oneOf(*BEFORE_INFINITIVE),
+            next2 = lowercaseOneOf(*INFINITIVES),
+        ),
         ConfusionRule("wurdest", "würdest", "wurdest > würdest devant un infinitif", next = lowercaseOneOf(*INFINITIVES)),
-        ConfusionRule("wurdest", "würdest", "wurdest > würdest devant un adverbe ou un pronom puis un infinitif", next = oneOf(*BEFORE_INFINITIVE), next2 = lowercaseOneOf(*INFINITIVES)),
+        ConfusionRule(
+            "wurdest",
+            "würdest",
+            "wurdest > würdest devant un adverbe ou un pronom puis un infinitif",
+            next = oneOf(*BEFORE_INFINITIVE),
+            next2 = lowercaseOneOf(*INFINITIVES),
+        ),
         ConfusionRule("wurden", "würden", "wurden > würden devant un infinitif", next = lowercaseOneOf(*INFINITIVES)),
-        ConfusionRule("wurden", "würden", "wurden > würden devant un adverbe ou un pronom puis un infinitif", next = oneOf(*BEFORE_INFINITIVE), next2 = lowercaseOneOf(*INFINITIVES)),
+        ConfusionRule(
+            "wurden",
+            "würden",
+            "wurden > würden devant un adverbe ou un pronom puis un infinitif",
+            next = oneOf(*BEFORE_INFINITIVE),
+            next2 = lowercaseOneOf(*INFINITIVES),
+        ),
         ConfusionRule("wurdet", "würdet", "wurdet > würdet devant un infinitif", next = lowercaseOneOf(*INFINITIVES)),
-        ConfusionRule("wurdet", "würdet", "wurdet > würdet devant un adverbe ou un pronom puis un infinitif", next = oneOf(*BEFORE_INFINITIVE), next2 = lowercaseOneOf(*INFINITIVES)),
-        ConfusionRule("das", "dass", "das > dass après une virgule qui suit un verbe de pensée ou de parole, devant un pronom sujet", previous = lowercaseOneOf(*THINK_WORDS), next = oneOf(*SUBJECT_PRONOUNS), afterComma = true),
+        ConfusionRule(
+            "wurdet",
+            "würdet",
+            "wurdet > würdet devant un adverbe ou un pronom puis un infinitif",
+            next = oneOf(*BEFORE_INFINITIVE),
+            next2 = lowercaseOneOf(*INFINITIVES),
+        ),
+        ConfusionRule(
+            "das",
+            "dass",
+            "das > dass après une virgule qui suit un verbe de pensée ou de parole, devant un pronom sujet",
+            previous = lowercaseOneOf(*THINK_WORDS),
+            next = oneOf(*SUBJECT_PRONOUNS),
+            afterComma = true,
+        ),
         ConfusionRule("mal", "Mal", "mal > Mal après un ordinal ou « jedes »", previous = oneOf(*ORDINAL_BEFORE_MAL)),
-        ConfusionRule("morgen", "Morgen", "morgen > Morgen après « heute », « gestern » ou une préposition", previous = oneOf("heute", "gestern", "vorgestern", "am", "jeden", "diesen", "guten", "nächsten")),
+        ConfusionRule(
+            "morgen",
+            "Morgen",
+            "morgen > Morgen après « heute », « gestern » ou une préposition",
+            previous = oneOf("heute", "gestern", "vorgestern", "am", "jeden", "diesen", "guten", "nächsten"),
+        ),
         ConfusionRule("abend", "Abend", "abend > Abend après un jour ou une préposition", previous = oneOf(*DAY_WORDS_AHEAD)),
         ConfusionRule("abend", "Abend", "abend > Abend après une préposition", previous = oneOf(*PREP_DAY)),
         ConfusionRule("nacht", "Nacht", "nacht > Nacht après un jour", previous = oneOf(*DAY_WORDS_AHEAD)),
-        ConfusionRule("nacht", "Nacht", "nacht > Nacht après gute, letzte, diese ou jede", previous = oneOf("gute", "letzte", "diese", "jede", "nächste", "ganze")),
+        ConfusionRule(
+            "nacht",
+            "Nacht",
+            "nacht > Nacht après gute, letzte, diese ou jede",
+            previous = oneOf("gute", "letzte", "diese", "jede", "nächste", "ganze"),
+        ),
         ConfusionRule("mittag", "Mittag", "mittag > Mittag après un jour ou une préposition", previous = oneOf(*DAY_WORDS_AHEAD)),
         ConfusionRule("mittag", "Mittag", "mittag > Mittag après une préposition", previous = oneOf(*PREP_DAY)),
         ConfusionRule("ihn", "ihm", "ihn > ihm après un verbe qui veut le datif", previous = oneOf(*DATIVE_VERBS)),

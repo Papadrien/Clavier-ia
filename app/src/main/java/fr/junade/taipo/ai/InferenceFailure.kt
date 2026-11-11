@@ -35,12 +35,24 @@ object InferenceFailureClassifier {
     private const val MAX_DEPTH = 8
 
     private val memoryKeywords = listOf(
-        "out of memory", "outofmemory", "bad_alloc", "enomem", "failed to allocate", "cannot allocate",
-        "memory allocation", "mmap",
+        "out of memory",
+        "outofmemory",
+        "bad_alloc",
+        "enomem",
+        "failed to allocate",
+        "cannot allocate",
+        "memory allocation",
+        "mmap",
     )
     private val tooLongKeywords = listOf(
-        "too long", "context length", "context window", "max_num_tokens", "max num tokens", "sequence length",
-        "token limit", "exceeds the maximum",
+        "too long",
+        "context length",
+        "context window",
+        "max_num_tokens",
+        "max num tokens",
+        "sequence length",
+        "token limit",
+        "exceeds the maximum",
     )
 
     fun classify(failure: Throwable): InferenceFailureCause {

@@ -9,18 +9,18 @@ import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import fr.junade.taipo.ai.ChangedRange
 import fr.junade.taipo.ai.CorrectedSentenceMemory
+import fr.junade.taipo.ai.CorrectionCancelledException
 import fr.junade.taipo.ai.CorrectionDiff
 import fr.junade.taipo.ai.CorrectionEngine
 import fr.junade.taipo.ai.CorrectionPlanner
 import fr.junade.taipo.ai.CorrectionSafeguard
 import fr.junade.taipo.ai.InferenceFailureClassifier
-import fr.junade.taipo.ai.messageRes
 import fr.junade.taipo.ai.SpanLocator
 import fr.junade.taipo.ai.TextBlock
+import fr.junade.taipo.ai.messageRes
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.model.AiModel
-import fr.junade.taipo.ai.CorrectionCancelledException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -153,7 +153,8 @@ class CorrectionAiController(
         lastSelectionEnd = newSelEnd
         if (correctionHighlightActive && SystemClock.uptimeMillis() >= ignoreSelectionUpdatesUntil) {
             val selectionUnchanged = correctionZoneEnd >= 0 &&
-                newSelStart == correctionSelectionStart && newSelEnd == correctionSelectionEnd
+                newSelStart == correctionSelectionStart &&
+                newSelEnd == correctionSelectionEnd
             if (!selectionUnchanged) {
                 // Le curseur a bougé (tap ailleurs, texte ajouté par une autre fonction) : le surlignage disparaît.
                 if (correctionZoneEnd >= 0) removeCorrectionHighlight() else correctionHighlightActive = false

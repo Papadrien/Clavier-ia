@@ -82,11 +82,21 @@ class EmojiGridLayoutTest {
         val cells = mutableListOf<String>()
         val headers = mutableListOf<Int>()
         val messages = mutableListOf<Int>()
-        l.forEachVisible(30f, 45f, object : EmojiGridLayout.Visitor {
-            override fun header(section: Int, y: Float) { headers += section }
-            override fun message(section: Int, y: Float) { messages += section }
-            override fun cell(emoji: String, x: Float, y: Float) { cells += emoji }
-        })
+        l.forEachVisible(
+            30f,
+            45f,
+            object : EmojiGridLayout.Visitor {
+                override fun header(section: Int, y: Float) {
+                    headers += section
+                }
+                override fun message(section: Int, y: Float) {
+                    messages += section
+                }
+                override fun cell(emoji: String, x: Float, y: Float) {
+                    cells += emoji
+                }
+            },
+        )
         // Zone 30..45 : seule la section A est touchée (corps de 22 à 52). Sa 1re rangée (22..32) déborde
         // dans la zone, la 3e (42..52) aussi ; l'en-tête (16..22) et la section B (dès 52) sont hors zone.
         assertEquals(emojis("a", 9), cells)
@@ -100,11 +110,21 @@ class EmojiGridLayoutTest {
         val cells = mutableListOf<String>()
         val headers = mutableListOf<Int>()
         val messages = mutableListOf<Int>()
-        l.forEachVisible(0f, l.contentHeight, object : EmojiGridLayout.Visitor {
-            override fun header(section: Int, y: Float) { headers += section }
-            override fun message(section: Int, y: Float) { messages += section }
-            override fun cell(emoji: String, x: Float, y: Float) { cells += emoji }
-        })
+        l.forEachVisible(
+            0f,
+            l.contentHeight,
+            object : EmojiGridLayout.Visitor {
+                override fun header(section: Int, y: Float) {
+                    headers += section
+                }
+                override fun message(section: Int, y: Float) {
+                    messages += section
+                }
+                override fun cell(emoji: String, x: Float, y: Float) {
+                    cells += emoji
+                }
+            },
+        )
         assertEquals(listOf(0, 1, 2), headers)
         assertEquals(listOf(0), messages)
         assertEquals(emojis("a", 9) + emojis("b", 4), cells)

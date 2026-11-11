@@ -1,13 +1,13 @@
 package fr.junade.taipo.clipboard
 
 import android.content.Context
+import fr.junade.taipo.AppLog
+import fr.junade.taipo.PremiumPass
 import fr.junade.taipo.dictionary.DatabasePassphraseProvider
+import fr.junade.taipo.storage.StoredDataFailure
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import fr.junade.taipo.AppLog
-import fr.junade.taipo.storage.StoredDataFailure
-import fr.junade.taipo.PremiumPass
 
 /**
  * Instances uniques (par processus) des dépôts du presse-papiers : [PinnedClipRepository]

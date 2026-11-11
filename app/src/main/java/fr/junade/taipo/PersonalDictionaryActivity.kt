@@ -1,7 +1,7 @@
 package fr.junade.taipo
 
-import android.content.Context
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.view.inputmethod.EditorInfo
@@ -16,10 +16,10 @@ import fr.junade.taipo.dictionary.PersonalDictionaryRepository
 import fr.junade.taipo.dictionary.SystemUserDictionary
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Écran de gestion du dictionnaire personnel (story 1.4) : ajout manuel d'un

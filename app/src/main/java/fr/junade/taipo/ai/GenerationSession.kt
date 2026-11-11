@@ -63,6 +63,7 @@ class GenerationSession(
     private var exchangesInConversation = 0
 
     @Volatile private var stopRequested = false
+
     @Volatile private var generationJob: Job? = null
 
     init {

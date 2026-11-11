@@ -1,9 +1,9 @@
 package fr.junade.taipo.dictionary
 
+import kotlin.random.Random
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import kotlin.random.Random
 
 /**
  * Le pré-filtre par les lettres de [Dictionary.correctionFor] doit donner exactement les mêmes corrections

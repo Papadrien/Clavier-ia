@@ -7,15 +7,15 @@ import com.google.ai.edge.litertlm.EngineConfig
 import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.model.ModelFileResolver
 import fr.junade.taipo.model.ModelLoadException
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Collections
 import java.util.WeakHashMap
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 /**
  * Détient l'unique moteur LiteRT-LM du clavier, partagé par la correction ([CorrectionEngine]) et la
@@ -43,7 +43,9 @@ class LlmEngineHost(private val appContext: Context) {
 
     // Audit QUAL-04 : lus hors du verrou (isLoaded, releaseIfIdle) depuis plusieurs fils.
     @Volatile private var engine: Engine? = null
+
     @Volatile private var loadedModel: AiModel? = null
+
     @Volatile private var loadedFile: File? = null
 
     /** Le moteur chargé tourne sur GPU (choix de l'utilisateur) : un échec de réponse peut alors venir du GPU. */

@@ -28,37 +28,7 @@ object BackupCodec {
     class InvalidBackupException(val reason: Reason, message: String) : Exception(message)
 
     fun encode(data: BackupData): String {
-        val keyboard = JSONObject().apply {
-            data.keyboard.numberRow?.let { put("numberRow", it) }
-            data.keyboard.numberRowPasswordOnly?.let { put("numberRowPasswordOnly", it) }
-            data.keyboard.showEmojiKey?.let { put("showEmojiKey", it) }
-            data.keyboard.showCommaKey?.let { put("showCommaKey", it) }
-            data.keyboard.showPeriodKey?.let { put("showPeriodKey", it) }
-            data.keyboard.hapticIntensity?.let { put("hapticIntensity", it) }
-            data.keyboard.keyboardHeight?.let { put("keyboardHeight", it) }
-            data.keyboard.recentEmojis?.let { put("recentEmojis", JSONArray(it)) }
-            data.keyboard.habitLearning?.let { put("habitLearning", it) }
-            data.keyboard.themeChoice?.let { put("themeChoice", it) }
-            data.keyboard.accentPalette?.let { put("accentPalette", it) }
-            data.keyboard.keyShape?.let { put("keyShape", it) }
-            data.keyboard.keyboardFont?.let { put("keyboardFont", it) }
-            data.keyboard.backdrop?.let { put("backdrop", it) }
-            data.keyboard.backdropAnimated?.let { put("backdropAnimated", it) }
-            data.keyboard.keySound?.let { put("keySound", it) }
-            data.keyboard.barSound?.let { put("barSound", it) }
-            data.keyboard.keySoundVolume?.let { put("keySoundVolume", it) }
-            data.keyboard.bottomMarginDp?.let { put("bottomMarginDp", it) }
-            data.keyboard.adaptiveTouch?.let { put("adaptiveTouch", it) }
-            data.keyboard.clipboardHistory?.let { put("clipboardHistory", it) }
-            data.keyboard.oneHandedMode?.let { put("oneHandedMode", it) }
-            data.keyboard.oneHandedWidth?.let { put("oneHandedWidth", it) }
-            data.keyboard.floating?.let { put("floating", it) }
-            data.keyboard.floatingWidth?.let { put("floatingWidth", it) }
-            data.keyboard.keyboardLanguage?.let { put("keyboardLanguage", it) }
-            data.keyboard.multilingual?.let { put("multilingual", it) }
-            data.keyboard.multilingualLanguages?.let { put("multilingualLanguages", JSONArray(it)) }
-            data.keyboard.letterArrangements?.let { put("letterArrangements", JSONObject(it)) }
-        }
+        val keyboard = keyboardJson(data.keyboard)
         val ai = JSONObject().apply {
             data.ai.activeModelId?.let { put("activeModel", it) }
             if (data.ai.prompts.isNotEmpty()) put("prompts", JSONObject(data.ai.prompts))
@@ -79,9 +49,53 @@ object BackupCodec {
             put("exportedAt", data.exportedAtMillis)
             put("dictionary", JSONArray(data.dictionary))
             put("pinnedClips", pins)
-            put("settings", JSONObject().apply { put("keyboard", keyboard); put("ai", ai) })
+            put(
+                "settings",
+                JSONObject().apply {
+                    put("keyboard", keyboard)
+                    put("ai", ai)
+                },
+            )
         }.toString(2)
     }
+
+    /** Réglages du clavier : seules les valeurs connues sont écrites (un champ absent reste inchangé à la restauration). */
+    private fun keyboardJson(k: BackupKeyboardSettings): JSONObject {
+        val values: List<Pair<String, Any?>> = listOf(
+            "numberRow" to k.numberRow,
+            "numberRowPasswordOnly" to k.numberRowPasswordOnly,
+            "showEmojiKey" to k.showEmojiKey,
+            "showCommaKey" to k.showCommaKey,
+            "showPeriodKey" to k.showPeriodKey,
+            "hapticIntensity" to k.hapticIntensity,
+            "keyboardHeight" to k.keyboardHeight,
+            "recentEmojis" to array(k.recentEmojis),
+            "habitLearning" to k.habitLearning,
+            "themeChoice" to k.themeChoice,
+            "accentPalette" to k.accentPalette,
+            "keyShape" to k.keyShape,
+            "keyboardFont" to k.keyboardFont,
+            "backdrop" to k.backdrop,
+            "backdropAnimated" to k.backdropAnimated,
+            "keySound" to k.keySound,
+            "barSound" to k.barSound,
+            "keySoundVolume" to k.keySoundVolume,
+            "bottomMarginDp" to k.bottomMarginDp,
+            "adaptiveTouch" to k.adaptiveTouch,
+            "clipboardHistory" to k.clipboardHistory,
+            "oneHandedMode" to k.oneHandedMode,
+            "oneHandedWidth" to k.oneHandedWidth,
+            "floating" to k.floating,
+            "floatingWidth" to k.floatingWidth,
+            "keyboardLanguage" to k.keyboardLanguage,
+            "multilingual" to k.multilingual,
+            "multilingualLanguages" to array(k.multilingualLanguages),
+            "letterArrangements" to k.letterArrangements?.let { JSONObject(it) },
+        )
+        return JSONObject().apply { values.forEach { (key, value) -> if (value != null) put(key, value) } }
+    }
+
+    private fun array(list: List<String>?): JSONArray? = list?.let { JSONArray(it) }
 
     /** Lit [text] ; lève [InvalidBackupException] si ce n'est pas une sauvegarde Taipo lisible par cette version. */
     fun decode(text: String): BackupData {

@@ -1,8 +1,8 @@
 package fr.junade.taipo
 
 import android.content.Context
-import android.graphics.drawable.GradientDrawable
 import android.graphics.Rect
+import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.InsetDrawable
 import android.view.Gravity
 import android.view.View

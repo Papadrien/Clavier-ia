@@ -294,8 +294,12 @@ class Dictionary private constructor(
         var result = properNameForm(word, correction, personalWords) ?: correction
         // Point 4 : « … avec Kubernets » : un mot inconnu à majuscule juste après un autre mot est sans doute un nom propre ; il n'est
         // remplacé que par un nom connu (« Adrein » -> « Adrien »), jamais par un mot courant.
-        if (result != null && confidence.protectsMidSentenceCapitals && previousWord != null && isCapitalized(word) &&
-            word.lowercase() !in frequencies && result.lowercase() !in exactNames
+        if (result != null &&
+            confidence.protectsMidSentenceCapitals &&
+            previousWord != null &&
+            isCapitalized(word) &&
+            word.lowercase() !in frequencies &&
+            result.lowercase() !in exactNames
         ) {
             result = null
         }
@@ -808,7 +812,10 @@ class Dictionary private constructor(
                     current[k] = value
                     if (value < rowMin) rowMin = value
                 }
-                if (j >= n - 1 && current[n] <= 1) { found = true; break }
+                if (j >= n - 1 && current[n] <= 1) {
+                    found = true
+                    break
+                }
                 if (rowMin > 1) break
                 val recycled = before
                 before = previous
@@ -885,7 +892,9 @@ class Dictionary private constructor(
     private fun isInflectedForm(lower: String): Boolean = inflections.rules.any { rule ->
         // Une base qui est une faute du corpus (« duree ») ne valide pas sa forme fléchie (« durees »).
         rule.baseOf(lower)?.let {
-            it in frequencies && it !in dominatedByAccented && frequencies.getValue(it) >= inflections.minBaseFrequency &&
+            it in frequencies &&
+                it !in dominatedByAccented &&
+                frequencies.getValue(it) >= inflections.minBaseFrequency &&
                 !isUndoubledConsonant(it, rule)
         } == true
     }
@@ -1084,7 +1093,12 @@ class Dictionary private constructor(
         ): Dictionary {
             // Liste déjà en minuscules (cas des listes de l'application) : pas de copie, ce qui évite de
             // doubler la mémoire avec une liste complète de plusieurs centaines de milliers de mots.
-            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence, accentPolicy, ngrams)
+            if (entries.keys.all {
+                    it == it.lowercase()
+                }
+            ) {
+                return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence, accentPolicy, ngrams)
+            }
             val merged = HashMap<String, Long>(entries.size)
             entries.forEach { (word, count) ->
                 val key = word.lowercase()

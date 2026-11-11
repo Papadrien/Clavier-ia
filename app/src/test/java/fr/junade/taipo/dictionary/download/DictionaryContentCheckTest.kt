@@ -2,12 +2,12 @@ package fr.junade.taipo.dictionary.download
 
 import fr.junade.taipo.dictionary.DictionaryFile
 import java.io.File
+import java.io.IOException
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.IOException
 
 class DictionaryContentCheckTest {
 

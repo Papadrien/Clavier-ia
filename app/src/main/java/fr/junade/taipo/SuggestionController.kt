@@ -10,16 +10,16 @@ import fr.junade.taipo.dictionary.CorrectionHabitsProvider
 import fr.junade.taipo.dictionary.CorrectionHistory
 import fr.junade.taipo.dictionary.Dictionary
 import fr.junade.taipo.dictionary.DictionaryFiles
+import fr.junade.taipo.dictionary.DictionaryLoader
+import fr.junade.taipo.dictionary.HabitContext
+import fr.junade.taipo.dictionary.HabitSignals
 import fr.junade.taipo.dictionary.NextLetterModel
 import fr.junade.taipo.dictionary.NgramModel
+import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.dictionary.download.BigramDownloadWorker
-import fr.junade.taipo.dictionary.DictionaryLoader
 import fr.junade.taipo.dictionary.download.DictionaryDownloadScheduler
 import fr.junade.taipo.dictionary.download.DictionaryDownloadState
 import fr.junade.taipo.dictionary.download.DictionaryDownloadTracker
-import fr.junade.taipo.dictionary.HabitContext
-import fr.junade.taipo.dictionary.HabitSignals
-import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.suggestion.EmailText
 import fr.junade.taipo.suggestion.EmojiSuggesterLoader
 import fr.junade.taipo.suggestion.NextWordModel
@@ -280,6 +280,7 @@ class SuggestionController(
     // Lot 1.4 : les mots du dictionnaire sont calculés hors du thread principal, « le dernier gagne » :
     // chaque nouvelle demande annule la précédente, et un résultat périmé n'est jamais affiché.
     private var suggestionJob: Job? = null
+
     @Volatile // lu par le calcul en arrière-plan pour abandonner une demande dépassée
     private var suggestionSequence = 0
 
@@ -357,8 +358,11 @@ class SuggestionController(
         val promptActive = host.promptActive()
         // Mot touché pendant la dictée : la bande propose ses alternatives (pas d'emoji, d'adresse ni de mot suivant).
         val voiceWordPick = host.isRecording() && host.voiceWordPicked()
-        val idle = (!host.isRecording() || voiceWordPick) && !host.isCorrectionInProgress() &&
-            !host.isEmojiPanelVisible() && !host.isClipboardPanelVisible() && (promptActive || !host.hasSelection())
+        val idle = (!host.isRecording() || voiceWordPick) &&
+            !host.isCorrectionInProgress() &&
+            !host.isEmojiPanelVisible() &&
+            !host.isClipboardPanelVisible() &&
+            (promptActive || !host.hasSelection())
         val available = (promptActive || suggestionsAllowed) && idle
         val emailAvailable = emailsAllowed && idle && !voiceWordPick
         val wordAfter = if (available) wordAfterCursor() else ""
@@ -403,7 +407,14 @@ class SuggestionController(
                 // finit pendant qu'on tape, au lieu de plusieurs en parallèle.
                 if (sequence != suggestionSequence) return@launch
                 val suggestionsStarted = if (autocorrectStats != null) System.nanoTime() else 0L
-                val compound = if (language == KeyboardLanguage.DE && !placement && wordAfter.isEmpty()) compoundSuggestion(dictionary, textBeforeCursor, typed) else null
+                val compound = if (language == KeyboardLanguage.DE &&
+                    !placement &&
+                    wordAfter.isEmpty()
+                ) {
+                    compoundSuggestion(dictionary, textBeforeCursor, typed)
+                } else {
+                    null
+                }
                 val words = traced(Sections.SUGGESTIONS) {
                     // Correction de contexte du mot (« ils on » -> « ont », « il a observe » -> « observé ») ou participe proposé : la
                     // même analyse que l'autocorrection, habitudes et refus compris (voir [ContextualCorrection.lastWordFix]).
@@ -422,12 +433,22 @@ class SuggestionController(
                             previousWord = previousWord,
                         )
                     } else {
-                        dictionary.suggestionSlotsFor(typed, personalWords = personalWords, habits = habits, participle = participle, previousWord = previousWord)
+                        dictionary.suggestionSlotsFor(
+                            typed,
+                            personalWords = personalWords,
+                            habits = habits,
+                            participle = participle,
+                            previousWord = previousWord,
+                        )
                     }
                 }
                 autocorrectStats?.recordLatency(AutocorrectStats.Section.SUGGESTIONS, System.nanoTime() - suggestionsStarted)
                 withContext(Dispatchers.Main) {
-                    if (sequence == suggestionSequence && promptActive == host.promptActive()) publishWords(withEmail(withCompound(plainIfNoAutocorrect(words, promptActive), compound), emailSuggestion))
+                    if (sequence == suggestionSequence &&
+                        promptActive == host.promptActive()
+                    ) {
+                        publishWords(withEmail(withCompound(plainIfNoAutocorrect(words, promptActive), compound), emailSuggestion))
+                    }
                 }
             }
             return
@@ -654,8 +675,11 @@ class SuggestionController(
 
     /** Texte juste après le curseur : dans le prompt en mode prompt, sinon dans le champ de l'application. */
     private fun textAfterCursor(): String =
-        if (host.promptActive()) host.promptTextAfterCursor().take(TEXT_CONTEXT_LOOKBEHIND)
-        else host.inputConnection()?.getTextAfterCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
+        if (host.promptActive()) {
+            host.promptTextAfterCursor().take(TEXT_CONTEXT_LOOKBEHIND)
+        } else {
+            host.inputConnection()?.getTextAfterCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
+        }
 
     /** Suite du mot après le curseur (vide si le curseur est en fin de mot ou hors d'un mot). */
     private fun wordAfterCursor(): String = WordText.leadingWord(textAfterCursor())
@@ -721,6 +745,5 @@ class SuggestionController(
 
         /** Caractères tapés avant de proposer une adresse e-mail dans un texte libre (sans « @ » ni champ d'adresse). */
         private const val MIN_EMAIL_PREFIX_LENGTH = 3
-
     }
 }

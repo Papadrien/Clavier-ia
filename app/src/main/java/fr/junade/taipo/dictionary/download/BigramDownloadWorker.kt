@@ -11,8 +11,8 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.KeyboardLanguage
-import fr.junade.taipo.dictionary.DictionaryFile
 import fr.junade.taipo.dictionary.DictionaryChecksums
+import fr.junade.taipo.dictionary.DictionaryFile
 import fr.junade.taipo.dictionary.DictionaryFiles
 import fr.junade.taipo.dictionary.DictionaryLoader
 import fr.junade.taipo.model.download.ModelFileFetcher

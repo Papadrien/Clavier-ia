@@ -10,9 +10,9 @@ import android.os.SystemClock
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InlineSuggestionsRequest
 import android.view.inputmethod.InlineSuggestionsResponse
+import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputMethodSubtype
 import androidx.annotation.RequiresApi
 import androidx.core.view.inputmethod.EditorInfoCompat
@@ -23,29 +23,30 @@ import fr.junade.taipo.ai.ProtectedWords
 import fr.junade.taipo.ai.TranscriptionPromptPreferences
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
+import fr.junade.taipo.dictionary.PersonalDictionaryProvider
+import fr.junade.taipo.dictionary.SystemDictionaryWords
+import fr.junade.taipo.dictionary.SystemUserDictionary
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.emoji.EmojiCatalog
 import fr.junade.taipo.emoji.MessagingFieldPolicy
+import fr.junade.taipo.model.AiModel
+import fr.junade.taipo.model.ModelAvailability
+import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.suggestion.EmailText
 import fr.junade.taipo.suggestion.NextWordRepository
 import fr.junade.taipo.suggestion.SuggestionPolicy
 import fr.junade.taipo.suggestion.WordText
-import fr.junade.taipo.dictionary.PersonalDictionaryProvider
-import fr.junade.taipo.dictionary.SystemDictionaryWords
-import fr.junade.taipo.dictionary.SystemUserDictionary
-import fr.junade.taipo.model.AiModel
-import fr.junade.taipo.model.ModelAvailability
-import fr.junade.taipo.model.ModelPreferences
+import kotlin.math.abs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.abs
 
 class TaipoIme : InputMethodService() {
 
     private val controller = KeyboardController()
+
     // Vues du clavier : créées par ImeViewComposer (lot 2.3 de la revue), lues ici à travers lui.
     private val keyboardView: KeyboardView get() = viewComposer.keyboardView
     private val correctionBar: CorrectionBarView get() = viewComposer.correctionBar
@@ -358,7 +359,6 @@ class TaipoIme : InputMethodService() {
         )
     }
 
-
     /**
      * Revue de code (performance) : lectures du champ mises en cache ([InputTextCache]). Toute la saisie passe par
      * [getCurrentInputConnection], qui renvoie la connexion enveloppée : ni les contrôleurs ni Android n'ont à le savoir.
@@ -504,8 +504,10 @@ class TaipoIme : InputMethodService() {
         sensitiveField = SensitiveFieldPolicy.isSensitive(info?.inputType ?: 0)
         Analytics.sensitiveFieldActive = sensitiveField // mesure d'usage coupée tant qu'un champ de mot de passe est affiché
         // Zones de frappe adaptatives : jamais dans un champ sensible, d'adresse e-mail ou web (lettres hors langage courant).
-        suggestions.nextLettersAllowed = keyboardPreferences.isAdaptiveTouchEnabled && suggestions.suggestionsAllowed &&
-            !sensitiveField && fieldType != FieldType.URL
+        suggestions.nextLettersAllowed = keyboardPreferences.isAdaptiveTouchEnabled &&
+            suggestions.suggestionsAllowed &&
+            !sensitiveField &&
+            fieldType != FieldType.URL
         keyboardView.setNextLetterPrediction(null) // le nouveau champ repart sans prédiction, la suivante vient du texte du champ
         correctionBar.aiActionsAllowed = !sensitiveField
         // Story 14.5 : le bouton Transcription IA n'existe que si le modèle actif (installé) a une entrée audio.
@@ -649,8 +651,13 @@ class TaipoIme : InputMethodService() {
         correction.onSelectionUpdated(newSelStart, newSelEnd)
         forgetTypedWordIfCursorPlaced(selectionMoved)
         // Astuce : le curseur posé à la main dans le champ (pas par la frappe, la dictée, l'IA ni la barre d'espace).
-        val manualMove = viewComposer.isComposed && newSelStart == newSelEnd && newSelStart != oldSelStart &&
-            !prompt.active && !isRecording && !correctionInProgress && !correction.isSelfEditEcho() &&
+        val manualMove = viewComposer.isComposed &&
+            newSelStart == newSelEnd &&
+            newSelStart != oldSelStart &&
+            !prompt.active &&
+            !isRecording &&
+            !correctionInProgress &&
+            !correction.isSelfEditEcho() &&
             !suggestions.typedRecently() &&
             android.os.SystemClock.uptimeMillis() - lastSpaceCursorMoveAt > SPACE_MOVE_ECHO_MS
         if (manualMove) showGestureTip(gestureTips.onManualCursorMove())
@@ -715,8 +722,10 @@ class TaipoIme : InputMethodService() {
         clearHighlightIfNeeded()
         // Astuces : ⌫ appuyé plusieurs fois de suite (effacer des mots en glissant), chiffre tapé depuis les symboles.
         val action = key.action
-        val digitFromSymbols = action is KeyAction.TypeChar && action.char.isDigit() &&
-            controller.state.activeLayout != LayoutId.LETTERS && !layoutApplier.numberRowEnabled
+        val digitFromSymbols = action is KeyAction.TypeChar &&
+            action.char.isDigit() &&
+            controller.state.activeLayout != LayoutId.LETTERS &&
+            !layoutApplier.numberRowEnabled
         showGestureTip(gestureTips.onKey(backspace = action == KeyAction.Backspace, digitFromSymbols = digitFromSymbols))
 
         // Story 5.1 : en mode prompt, tout passe par le tampon du prompt, avec les mêmes traitements que
@@ -757,11 +766,15 @@ class TaipoIme : InputMethodService() {
         val autocorrection = if (endsTypedWord && autocorrectionAllowed()) applyDictionaryAutocorrection() else null
 
         // Double espace : l'espace précédent est remplacé par ". " (pas de sélection active).
-        val doubleSpaceContext = if (key.action == KeyAction.Space && autocorrection == null && !fieldEditor.hasSelection() &&
+        val doubleSpaceContext = if (key.action == KeyAction.Space &&
+            autocorrection == null &&
+            !fieldEditor.hasSelection() &&
             fieldType.doubleSpacePeriod
         ) {
             currentInputConnection?.getTextBeforeCursor(2, 0)?.toString()
-        } else null
+        } else {
+            null
+        }
 
         val result = controller.onKey(key, doubleSpaceContext, SystemClock.uptimeMillis())
 
@@ -947,10 +960,7 @@ class TaipoIme : InputMethodService() {
         val wordAfter = WordText.leadingWord(textAfter)
         val typed = typedBefore + wordAfter
         if (typed.isEmpty()) return
-        if (!confirmBefore(ic, typedBefore)) { // audit BUG-05 : cache périmé, les suggestions sont recalculées
-            syncAutoCapitalization()
-            return
-        }
+        if (!confirmBeforeOrResync(ic, typedBefore)) return
         // Une espace suit déjà le mot : elle est remplacée par celle qu'on ajoute, jamais doublée.
         val spaceAfter = textAfter.getOrNull(wordAfter.length) == ' '
         // Une virgule suit le mot : aucune espace n'est ajoutée (« mot, » et non « mot , »).
@@ -1058,6 +1068,10 @@ class TaipoIme : InputMethodService() {
     /** Dernier "mot" avant le curseur : lettres/apostrophes/traits d'union contigus en fin de texte. */
     private fun trailingWord(textBeforeCursor: String): String = WordText.trailingWord(textBeforeCursor)
 
+    /** Comme [confirmBefore] ; en cas d'écart (cache périmé, audit BUG-05), les suggestions sont recalculées sur le vrai texte. */
+    private fun confirmBeforeOrResync(ic: InputConnection, expected: String): Boolean =
+        confirmBefore(ic, expected).also { confirmed -> if (!confirmed) syncAutoCapitalization() }
+
     /** Vrai si [expected] précède vraiment le curseur (lecture sans cache, voir [CachingInputConnection.confirmBefore]). */
     private fun confirmBefore(ic: InputConnection, expected: String): Boolean =
         (ic as? CachingInputConnection)?.confirmBefore(expected) ?: true
@@ -1146,7 +1160,6 @@ class TaipoIme : InputMethodService() {
     private fun recordUndoAction(undo: UndoHistory.Undo) {
         if (!sensitiveField) undoController.record(undo)
     }
-
 
     /** Décision 3.3 : le bouton Corriger n'est visible que si le champ contient du texte. */
     private fun updateCorrectionBarVisibility() {

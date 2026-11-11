@@ -19,13 +19,13 @@ import fr.junade.taipo.model.ModelFileResolver
 import fr.junade.taipo.model.ModelLicenseAcceptance
 import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.ModelRecommendation
-import fr.junade.taipo.model.license
 import fr.junade.taipo.model.download.DownloadEnvironment
 import fr.junade.taipo.model.download.DownloadPolicy
 import fr.junade.taipo.model.download.DownloadState
 import fr.junade.taipo.model.download.DownloadTracker
 import fr.junade.taipo.model.download.ModelDownloadScheduler
 import fr.junade.taipo.model.download.ModelRowStatus
+import fr.junade.taipo.model.license
 
 /**
  * Écran « Modèle IA » (épopée 8, story 8.1) : liste les 4 modèles de texte avec leur statut, permet de télécharger un

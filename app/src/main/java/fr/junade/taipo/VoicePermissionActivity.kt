@@ -2,9 +2,9 @@ package fr.junade.taipo
 
 import android.Manifest
 import android.app.Activity
-import android.content.pm.PackageManager
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings

@@ -1,10 +1,10 @@
 package fr.junade.taipo.bench
 
+import fr.junade.taipo.KeyboardLanguage
 import fr.junade.taipo.dictionary.AccentPolicy
+import fr.junade.taipo.dictionary.ContextualCorrection
 import fr.junade.taipo.dictionary.CorrectionConfidence
 import fr.junade.taipo.dictionary.Dictionary
-import fr.junade.taipo.KeyboardLanguage
-import fr.junade.taipo.dictionary.ContextualCorrection
 import fr.junade.taipo.dictionary.FrenchContextCorrector
 import fr.junade.taipo.dictionary.InflectionRule
 import fr.junade.taipo.dictionary.InflectionRules
@@ -157,30 +157,53 @@ object AutocorrectBench {
 
     private fun italian(confidence: CorrectionConfidence, inflections: InflectionRules, accents: AccentPolicy, contextual: Boolean, baseline: String) = Profile(
         KeyboardLanguage.IT, QWERTY, inflections, 102L, confidence,
-        if (contextual) { text, f -> ContextualCorrection.correctWithoutHabits(KeyboardLanguage.IT, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f) } else { _, _ -> null },
+        if (contextual) {
+            { text, f ->
+                ContextualCorrection.correctWithoutHabits(KeyboardLanguage.IT, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f)
+            }
+        } else {
+            { _, _ -> null }
+        },
         "tools/autocorrect-bench/it/sentences-ok.txt", "tools/autocorrect-bench/it/context-cases.tsv", baseline, accents,
     )
 
     private fun portuguese(confidence: CorrectionConfidence, inflections: InflectionRules, accents: AccentPolicy, contextual: Boolean, baseline: String) = Profile(
         KeyboardLanguage.PT, QWERTY, inflections, 91L, confidence,
-        if (contextual) { text, f -> ContextualCorrection.correctWithoutHabits(KeyboardLanguage.PT, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f) } else { _, _ -> null },
+        if (contextual) {
+            { text, f ->
+                ContextualCorrection.correctWithoutHabits(KeyboardLanguage.PT, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f)
+            }
+        } else {
+            { _, _ -> null }
+        },
         "tools/autocorrect-bench/pt/sentences-ok.txt", "tools/autocorrect-bench/pt/context-cases.tsv", baseline, accents,
     )
 
     private fun dutch(confidence: CorrectionConfidence, inflections: InflectionRules, accents: AccentPolicy, contextual: Boolean, baseline: String) = Profile(
         KeyboardLanguage.NL, QWERTY, inflections, 77L, confidence,
-        if (contextual) { text, f -> ContextualCorrection.correctWithoutHabits(KeyboardLanguage.NL, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f) } else { _, _ -> null },
+        if (contextual) {
+            { text, f ->
+                ContextualCorrection.correctWithoutHabits(KeyboardLanguage.NL, text, textMayBeTruncated = false, allowRetro = true, frequencyOf = f)
+            }
+        } else {
+            { _, _ -> null }
+        },
         "tools/autocorrect-bench/nl/sentences-ok.txt", "tools/autocorrect-bench/nl/context-cases.tsv", baseline, accents,
     )
 
     val ITALIAN_LEGACY = italian(CorrectionConfidence.NONE, InflectionRules.NONE, AccentPolicy.FRENCH, false, "tools/autocorrect-bench/it/baseline-legacy.txt")
     val PORTUGUESE_LEGACY = portuguese(
-        CorrectionConfidence.NONE, InflectionRules(listOf(InflectionRule("s"))), AccentPolicy.FRENCH, false, "tools/autocorrect-bench/pt/baseline-legacy.txt",
+        CorrectionConfidence.NONE,
+        InflectionRules(listOf(InflectionRule("s"))),
+        AccentPolicy.FRENCH,
+        false,
+        "tools/autocorrect-bench/pt/baseline-legacy.txt",
     )
     val DUTCH_LEGACY = dutch(CorrectionConfidence.NONE, InflectionRules.NONE, AccentPolicy.FRENCH, false, "tools/autocorrect-bench/nl/baseline-legacy.txt")
 
     val ITALIAN = italian(CorrectionConfidence.ITALIAN, InflectionRules.NONE, AccentPolicy.ITALIAN, true, "tools/autocorrect-bench/it/baseline.txt")
-    val PORTUGUESE = portuguese(CorrectionConfidence.PORTUGUESE, InflectionRules.PORTUGUESE, AccentPolicy.PORTUGUESE, true, "tools/autocorrect-bench/pt/baseline.txt")
+    val PORTUGUESE =
+        portuguese(CorrectionConfidence.PORTUGUESE, InflectionRules.PORTUGUESE, AccentPolicy.PORTUGUESE, true, "tools/autocorrect-bench/pt/baseline.txt")
     val DUTCH = dutch(CorrectionConfidence.DUTCH, InflectionRules.DUTCH, AccentPolicy.DUTCH, true, "tools/autocorrect-bench/nl/baseline.txt")
 
     private var profile: Profile = FRENCH
@@ -202,9 +225,15 @@ object AutocorrectBench {
             appendLine("== Mesures (en %) ==")
             metrics.forEach { (key, value) -> appendLine("%-34s %6.2f".format(key, value)) }
             appendLine()
-            appendLine("== Temps de correctionFor (µs, cette machine) : p50=%d p95=%d p99=%d max=%d ; chargement du dictionnaire %d ms ==".format(
-                timingsMicros[0], timingsMicros[1], timingsMicros[2], timingsMicros[3], loadMillis,
-            ))
+            appendLine(
+                "== Temps de correctionFor (µs, cette machine) : p50=%d p95=%d p99=%d max=%d ; chargement du dictionnaire %d ms ==".format(
+                    timingsMicros[0],
+                    timingsMicros[1],
+                    timingsMicros[2],
+                    timingsMicros[3],
+                    loadMillis,
+                ),
+            )
             appendLine()
             appendLine("== Phrases justes changées à tort (${changedSentences.size}) ==")
             changedSentences.forEach { appendLine(it) }
@@ -242,7 +271,11 @@ object AutocorrectBench {
         // [without] : mots retirés des listes (mesure des mots justes inconnus du dictionnaire, voir [unknownWordMeasures]).
         val entries = if (without.isEmpty()) frequencies else frequencies.filterKeys { it !in without }
         return Dictionary.withFrequencies(
-            entries, profile.inflections, profile.candidateMinFrequency, profile.proximity, properNames = names,
+            entries,
+            profile.inflections,
+            profile.candidateMinFrequency,
+            profile.proximity,
+            properNames = names,
             confidence = profile.confidence, // la même décision que la langue de l'application (DictionaryLoader)
             accentPolicy = profile.accentPolicy,
             ngrams = loadNgrams(root),
@@ -287,8 +320,13 @@ object AutocorrectBench {
     // ------------------------------------------------------------------
 
     private enum class Kind(val label: String) {
-        NEIGHBOR("voisine"), OMISSION("oubli"), DOUBLE("doublon"), SWAP("inversion"), INSERT("ajout"),
-        ACCENT("accent"), APOSTROPHE("apostrophe"),
+        NEIGHBOR("voisine"),
+        OMISSION("oubli"),
+        DOUBLE("doublon"),
+        SWAP("inversion"),
+        INSERT("ajout"),
+        ACCENT("accent"),
+        APOSTROPHE("apostrophe"),
 
         /** Allemand seulement : « ss » tapé pour « ß » (Straße -> Strasse). */
         ESZETT("ss-pour-eszett"),
@@ -338,17 +376,28 @@ object AutocorrectBench {
                     val word = sampler.next()
                     val typo = makeTypo(word, kind, random) ?: continue
                     if (typo == word) continue
-                    if (dictionary.contains(typo)) { onValidWord++; continue }
+                    if (dictionary.contains(typo)) {
+                        onValidWord++
+                        continue
+                    }
                     kindTotal++
                     val t0 = System.nanoTime()
                     val result = dictionary.correctionFor(typo)
                     timings += (System.nanoTime() - t0) / 1_000
                     when {
-                        sameWord(result, word) -> { ok++; kindOk++ }
+                        sameWord(result, word) -> {
+                            ok++
+                            kindOk++
+                        }
                         result == null || result == typo -> missed++
                         else -> {
                             wrong++
-                            if (wrongExamples.size < 25 || (kind == Kind.ACCENT && System.getProperty("dbgaccent") != null)) wrongExamples += "  [$setName/${kind.label}] $typo -> $result (attendu $word)"
+                            if (wrongExamples.size < 25 ||
+                                (kind == Kind.ACCENT && System.getProperty("dbgaccent") != null)
+                            ) {
+                                wrongExamples +=
+                                    "  [$setName/${kind.label}] $typo -> $result (attendu $word)"
+                            }
                         }
                     }
                 }
@@ -375,7 +424,10 @@ object AutocorrectBench {
 
         init {
             var sum = 0L
-            for (i in pool.indices) { sum += frequencies.getValue(pool[i]); cumulative[i] = sum }
+            for (i in pool.indices) {
+                sum += frequencies.getValue(pool[i])
+                cumulative[i] = sum
+            }
         }
 
         fun next(): String {
@@ -648,7 +700,9 @@ object AutocorrectBench {
             val got = typeSentence(dictionary, typed)
             val counts = perCategory.getOrPut(category) { IntArray(2) }
             counts[1]++
-            if (got == expected) counts[0]++ else {
+            if (got == expected) {
+                counts[0]++
+            } else {
                 failing += "$category\t$typed"
                 details += "  [$category] $typed -> $got (attendu $expected)"
             }
@@ -676,7 +730,10 @@ object AutocorrectBench {
         val result = ArrayList<Pair<String, String?>>()
         var i = 0
         while (i < sentence.length) {
-            if (!WordText.isWordChar(sentence[i])) { i++; continue }
+            if (!WordText.isWordChar(sentence[i])) {
+                i++
+                continue
+            }
             var end = i
             while (end < sentence.length && WordText.isWordChar(sentence[end])) end++
             result += sentence.substring(i, end) to NgramModel.previousWordOf(sentence.substring(0, i))
@@ -718,7 +775,10 @@ object AutocorrectBench {
                 val kind = SENTENCE_TYPO_KINDS[random.nextInt(SENTENCE_TYPO_KINDS.size)]
                 val typo = makeTypo(word, kind, random) ?: continue
                 if (typo == word) continue
-                if (dictionary.contains(typo)) { onValid++; continue }
+                if (dictionary.contains(typo)) {
+                    onValid++
+                    continue
+                }
                 val result = dictionary.correctionFor(typo, previousWord = previous)
                 // Le mot attendu est en minuscules (phrase passée en minuscules) : « Paul » pour « paul » est juste.
                 when {
@@ -760,7 +820,12 @@ object AutocorrectBench {
             for (i in expected.indices) {
                 if (expected[i] == got[i]) continue
                 // Accent ou majuscule seulement (« plait » -> « plaît », « he » -> « hé ») : voulu, compté à part.
-                if (benchFold(expected[i].lowercase()) == benchFold(got[i].lowercase())) restoredWords++ else { changedWords++; changedHere = true }
+                if (benchFold(expected[i].lowercase()) == benchFold(got[i].lowercase())) {
+                    restoredWords++
+                } else {
+                    changedWords++
+                    changedHere = true
+                }
             }
             if (changedHere && changedExamples.size < 25) changedExamples += "  $sentence -> $typed"
         }
@@ -814,14 +879,21 @@ object AutocorrectBench {
                 if (options.isEmpty()) continue
                 val typo = word.substring(0, i) + options[random.nextInt(options.size)] + word.substring(i + 1)
                 withTypo++
-                if (firstShown(typo, word, previous) != null) foundWithTypo++ else if (missedExamples.size < 15) missedExamples += "  $previous $typo (attendu $word)"
+                if (firstShown(typo, word, previous) !=
+                    null
+                ) {
+                    foundWithTypo++
+                } else if (missedExamples.size < 15) {
+                    missedExamples += "  $previous $typo (attendu $word)"
+                }
             }
         }
         metrics["completion.frappesEconomisees.ok"] = percent(saved, letters)
         metrics["completion.fautes.ok"] = percent(foundWithTypo, withTypo)
         timings.sort()
         if (timings.isNotEmpty()) {
-            details += "Temps de suggestionSlotsFor (µs, cette machine) : p50=${timings[timings.size / 2]} p95=${timings[timings.size * 95 / 100]} max=${timings.last()}"
+            details +=
+                "Temps de suggestionSlotsFor (µs, cette machine) : p50=${timings[timings.size / 2]} p95=${timings[timings.size * 95 / 100]} max=${timings.last()}"
         }
         details += "Complétion : mots jamais proposés malgré une faute au début :"
         details += missedExamples

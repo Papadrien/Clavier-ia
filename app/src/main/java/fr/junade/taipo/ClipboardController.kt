@@ -517,8 +517,11 @@ class ClipboardController(
      * ni dans les champs qui ne sont pas du texte (téléphone, nombre, sauf code PIN : voir SuggestionPolicy.allowsPasteSuggestion).
      */
     private fun pasteSuggestionAllowed(): Boolean =
-        pasteAllowedInField && !host.isRecording() && !host.isCorrectionInProgress() &&
-            !host.isEmojiPanelVisible() && !isPanelVisible
+        pasteAllowedInField &&
+            !host.isRecording() &&
+            !host.isCorrectionInProgress() &&
+            !host.isEmojiPanelVisible() &&
+            !isPanelVisible
 
     /**
      * Met la puce de la barre d'accord avec l'état de la copie (ou de la capture d'écran, si elle est plus récente), et

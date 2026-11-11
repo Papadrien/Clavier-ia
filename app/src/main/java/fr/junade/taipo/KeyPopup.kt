@@ -23,6 +23,7 @@ internal class KeyPopup(private val view: View) {
         textAlign = Paint.Align.CENTER
         useTaipoFont(view.context, TaipoType.Weight.BOLD)
     }
+
     // Lot T6 : le symbole de la cellule sélectionnée (fond violet) est blanc dans les deux thèmes.
     private val popupSelectedTextPaint = Paint(popupTextPaint).apply {
         color = view.context.themeColor(FaceContent.colorOn(R.color.key_popup_selection))
@@ -125,7 +126,10 @@ internal class KeyPopup(private val view: View) {
         popupPaddingV = paddingV
         // Zone de départ : la touche et l'espace jusqu'à la bulle, avec une petite tolérance.
         popupHomeRect.set(
-            bounds.left - clipMargin, popupRect.bottom, bounds.right + clipMargin, bounds.bottom + clipMargin,
+            bounds.left - clipMargin,
+            popupRect.bottom,
+            bounds.right + clipMargin,
+            bounds.bottom + clipMargin,
         )
         val touchMargin = view.dimen(R.dimen.taipo_popup_touch_margin)
         popupTouchRect.set(popupRect)
@@ -140,8 +144,14 @@ internal class KeyPopup(private val view: View) {
         pivotX = bounds.centerX().coerceIn(popupRect.left, popupRect.right)
         pivotY = bounds.top
         openMaxScale = PopupOpenPose.maxScale(
-            pivotX, pivotY, popupRect.left, popupRect.right, popupRect.top,
-            content.leftPx + margin / 2f, content.rightPx - margin / 2f, -headroom,
+            pivotX,
+            pivotY,
+            popupRect.left,
+            popupRect.right,
+            popupRect.top,
+            content.leftPx + margin / 2f,
+            content.rightPx - margin / 2f,
+            -headroom,
         )
         openLastFrameNanos = 0L
         openSpring.snap(if (ValueAnimator.areAnimatorsEnabled()) PopupOpenPose.START_SCALE else 1f)
@@ -244,7 +254,10 @@ internal class KeyPopup(private val view: View) {
                         icon.setTint(if (selected) popupSelectedTextPaint.color else globeColor)
                     }
                     icon.setBounds(
-                        (cx - half).roundToInt(), (cy - half).roundToInt(), (cx + half).roundToInt(), (cy + half).roundToInt(),
+                        (cx - half).roundToInt(),
+                        (cy - half).roundToInt(),
+                        (cx + half).roundToInt(),
+                        (cy + half).roundToInt(),
                     )
                     icon.draw(canvas)
                     return@forEachIndexed
