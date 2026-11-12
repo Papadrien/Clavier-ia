@@ -749,6 +749,17 @@
     <string name="onboarding_step4_hint">Corriger, Chat et la dictée ont besoin d\'un modèle, téléchargé une fois et utilisé hors ligne. Recommandé pour votre téléphone : %1$s.</string>
     <string name="onboarding_step4_hint_locked">Disponible une fois Taipo sélectionné.</string>
     <string name="onboarding_step4_button">Télécharger %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Autoriser les fonctions</string>
+    <string name="onboarding_step5_title_done">Autorisations choisies</string>
+    <string name="onboarding_step5_hint">Taipo ne demande chacune que pour la fonction qui s\'en sert, et tout reste sur votre téléphone. Vous pouvez en refuser : seule la fonction concernée sera désactivée.</string>
+    <string name="onboarding_step5_hint_locked">Disponible une fois Taipo sélectionné.</string>
+    <string name="onboarding_step5_button">Autoriser</string>
+    <string name="onboarding_permission_granted">✓ %1$s</string>
+    <string name="onboarding_permission_missing">○ %1$s</string>
+    <string name="onboarding_permission_microphone">Micro : dictée vocale</string>
+    <string name="onboarding_permission_notifications">Notifications : progression du téléchargement des modèles</string>
+    <string name="onboarding_permission_screenshots">Photos : captures d\'écran récentes dans le presse-papiers</string>
+    <string name="onboarding_permission_dictionary">Dictionnaire Android : vos mots enregistrés</string>
     <!-- Astuces de gestes (une fois chacune) -->
     <string name="tip_delete_words">Glissez ← sur ⌫ pour effacer des mots</string>
     <string name="tip_move_cursor">Glissez sur Espace pour bouger le curseur</string>

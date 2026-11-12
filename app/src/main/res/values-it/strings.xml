@@ -704,6 +704,17 @@
     <string name="onboarding_step4_hint">Correggi, Chat e dettatura richiedono un modello, scaricato una volta e usato offline. Consigliato per il tuo telefono: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Disponibile quando Taipo è selezionata.</string>
     <string name="onboarding_step4_button">Scarica %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Consenti le funzioni</string>
+    <string name="onboarding_step5_title_done">Autorizzazioni scelte</string>
+    <string name="onboarding_step5_hint">Taipo chiede ogni autorizzazione solo per la funzione che la usa, e tutto resta sul tuo telefono. Puoi rifiutarne qualcuna: solo quella funzione sarà disattivata.</string>
+    <string name="onboarding_step5_hint_locked">Disponibile quando Taipo è selezionato.</string>
+    <string name="onboarding_step5_button">Consenti</string>
+    <string name="onboarding_permission_granted">✓ %1$s</string>
+    <string name="onboarding_permission_missing">○ %1$s</string>
+    <string name="onboarding_permission_microphone">Microfono: dettatura vocale</string>
+    <string name="onboarding_permission_notifications">Notifiche: avanzamento del download dei modelli</string>
+    <string name="onboarding_permission_screenshots">Foto: screenshot recenti negli appunti</string>
+    <string name="onboarding_permission_dictionary">Dizionario Android: le tue parole salvate</string>
     <string name="tip_delete_words">Scorri ← su ⌫ per cancellare parole intere</string>
     <string name="tip_move_cursor">Scorri sulla barra spaziatrice per spostare il cursore</string>
     <string name="tip_switch_language">Tieni premuto Invio, poi il globo</string>

@@ -11,12 +11,15 @@ enum class StepStatus { DONE, CURRENT, LOCKED }
  * - Étape 2 inaccessible tant que Taipo n'est pas activé ; faite quand c'est la méthode de saisie par défaut.
  * - Étape 3 (essai) accessible quand Taipo est sélectionné ; faite quand quelques mots ont été tapés dans le champ d'essai ([tried]).
  * - Étape 4 (activer l'IA) accessible quand Taipo est sélectionné ; faite quand un modèle IA est installé ([aiReady]).
+ * - Étape 5 (autorisations : micro, notifications, captures, dictionnaire) accessible quand Taipo est sélectionné ; faite
+ *   quand tout est accordé ou que l'utilisateur a répondu à la demande ([permissionsDone], voir [AppPermission.stepDone]).
  */
 data class OnboardingState(
     val enabled: Boolean,
     val selected: Boolean,
     val tried: Boolean = false,
     val aiReady: Boolean = false,
+    val permissionsDone: Boolean = false,
 ) {
 
     val activate: StepStatus = if (enabled) StepStatus.DONE else StepStatus.CURRENT
@@ -39,8 +42,14 @@ data class OnboardingState(
         else -> StepStatus.CURRENT
     }
 
-    /** Les quatre étapes sont faites. */
-    val complete: Boolean get() = enabled && selected && tried && aiReady
+    val permissions: StepStatus = when {
+        !(enabled && selected) -> StepStatus.LOCKED
+        permissionsDone -> StepStatus.DONE
+        else -> StepStatus.CURRENT
+    }
+
+    /** Les cinq étapes sont faites. */
+    val complete: Boolean get() = enabled && selected && tried && aiReady && permissionsDone
 
     companion object {
         /**
@@ -53,10 +62,11 @@ data class OnboardingState(
             packageName: String,
             tried: Boolean = false,
             aiReady: Boolean = false,
+            permissionsDone: Boolean = false,
         ): OnboardingState {
             val enabled = packageName in enabledImePackages
             val selected = defaultImeId?.substringBefore('/') == packageName
-            return OnboardingState(enabled = enabled, selected = enabled && selected, tried = tried, aiReady = aiReady)
+            return OnboardingState(enabled = enabled, selected = enabled && selected, tried = tried, aiReady = aiReady, permissionsDone = permissionsDone)
         }
 
         /** Nombre de mots tapés dans le champ d'essai pour que l'étape 3 soit faite. */

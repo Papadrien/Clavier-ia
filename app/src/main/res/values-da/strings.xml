@@ -700,6 +700,17 @@
     <string name="onboarding_step4_hint">Rettelse, chat og diktering kræver en model, der downloades én gang og bruges uden internet. Anbefalet til din telefon: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Tilgængelig, når Taipo er valgt.</string>
     <string name="onboarding_step4_button">Download %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Tillad funktioner</string>
+    <string name="onboarding_step5_title_done">Tilladelser valgt</string>
+    <string name="onboarding_step5_hint">Taipo beder kun om hver tilladelse til den funktion, der bruger den, og alt bliver på din telefon. Du kan afvise hvilken som helst: kun den funktion slås fra.</string>
+    <string name="onboarding_step5_hint_locked">Tilgængelig, når Taipo er valgt.</string>
+    <string name="onboarding_step5_button">Tillad</string>
+    <string name="onboarding_permission_granted">✓ %1$s</string>
+    <string name="onboarding_permission_missing">○ %1$s</string>
+    <string name="onboarding_permission_microphone">Mikrofon: stemmediktat</string>
+    <string name="onboarding_permission_notifications">Notifikationer: downloadstatus for modeller</string>
+    <string name="onboarding_permission_screenshots">Billeder: seneste skærmbilleder i udklipsholderen</string>
+    <string name="onboarding_permission_dictionary">Android-ordbog: dine gemte ord</string>
     <string name="tip_delete_words">Stryg ← på ⌫ for at slette hele ord</string>
     <string name="tip_move_cursor">Stryg på mellemrumstasten for at flytte markøren</string>
     <string name="tip_switch_language">Hold Enter nede, og vælg derefter globussen</string>

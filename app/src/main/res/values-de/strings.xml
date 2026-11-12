@@ -700,6 +700,17 @@
     <string name="onboarding_step4_hint">Korrigieren, Chat und Diktat brauchen ein Modell, das einmal heruntergeladen und offline genutzt wird. Empfohlen für Ihr Telefon: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Verfügbar, sobald Taipo ausgewählt ist.</string>
     <string name="onboarding_step4_button">%1$s herunterladen (%2$s)</string>
+    <string name="onboarding_step5_title">Funktionen erlauben</string>
+    <string name="onboarding_step5_title_done">Berechtigungen gewählt</string>
+    <string name="onboarding_step5_hint">Taipo fragt jede Berechtigung nur für die Funktion an, die sie nutzt, und alles bleibt auf deinem Telefon. Du kannst jede ablehnen: Nur diese Funktion ist dann aus.</string>
+    <string name="onboarding_step5_hint_locked">Verfügbar, sobald Taipo ausgewählt ist.</string>
+    <string name="onboarding_step5_button">Erlauben</string>
+    <string name="onboarding_permission_granted">✓ %1$s</string>
+    <string name="onboarding_permission_missing">○ %1$s</string>
+    <string name="onboarding_permission_microphone">Mikrofon: Spracheingabe</string>
+    <string name="onboarding_permission_notifications">Benachrichtigungen: Download-Fortschritt der Modelle</string>
+    <string name="onboarding_permission_screenshots">Fotos: aktuelle Screenshots in der Zwischenablage</string>
+    <string name="onboarding_permission_dictionary">Android-Wörterbuch: deine gespeicherten Wörter</string>
     <string name="tip_delete_words">Auf ⌫ nach ← wischen, um ganze Wörter zu löschen</string>
     <string name="tip_move_cursor">Auf der Leertaste wischen, um den Cursor zu bewegen</string>
     <string name="tip_switch_language">Eingabetaste lange drücken, dann der Globus</string>

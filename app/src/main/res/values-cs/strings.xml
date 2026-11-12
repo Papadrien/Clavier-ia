@@ -708,6 +708,17 @@
     <string name="onboarding_step4_hint">Oprava, chat a diktování potřebují model, který se stáhne jednou a používá se bez připojení. Doporučeno pro váš telefon: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Dostupné po zvolení Taipo.</string>
     <string name="onboarding_step4_button">Stáhnout %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Povolit funkce</string>
+    <string name="onboarding_step5_title_done">Oprávnění zvolena</string>
+    <string name="onboarding_step5_hint">Taipo žádá o každé oprávnění jen pro funkci, která ho používá, a vše zůstává v telefonu. Kterékoli můžete odmítnout: vypne se jen daná funkce.</string>
+    <string name="onboarding_step5_hint_locked">Dostupné po výběru Taipo.</string>
+    <string name="onboarding_step5_button">Povolit</string>
+    <string name="onboarding_permission_granted">✓ %1$s</string>
+    <string name="onboarding_permission_missing">○ %1$s</string>
+    <string name="onboarding_permission_microphone">Mikrofon: hlasové diktování</string>
+    <string name="onboarding_permission_notifications">Oznámení: průběh stahování modelů</string>
+    <string name="onboarding_permission_screenshots">Fotky: nedávné snímky obrazovky ve schránce</string>
+    <string name="onboarding_permission_dictionary">Slovník Androidu: vaše uložená slova</string>
     <string name="tip_delete_words">Přejetím ← po ⌫ smažete celá slova</string>
     <string name="tip_move_cursor">Přejetím po mezerníku posunete kurzor</string>
     <string name="tip_switch_language">Podržte Enter, pak glóbus</string>

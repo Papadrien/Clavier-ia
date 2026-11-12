@@ -700,6 +700,17 @@
     <string name="onboarding_step4_hint">A javításhoz, a csevegéshez és a diktáláshoz modell kell, amelyet egyszer kell letölteni, és internet nélkül használható. A telefonjához ajánlott: %1$s.</string>
     <string name="onboarding_step4_hint_locked">A Taipo kiválasztása után érhető el.</string>
     <string name="onboarding_step4_button">%1$s letöltése (%2$s)</string>
+    <string name="onboarding_step5_title">Funkciók engedélyezése</string>
+    <string name="onboarding_step5_title_done">Engedélyek kiválasztva</string>
+    <string name="onboarding_step5_hint">A Taipo minden engedélyt csak az azt használó funkcióhoz kér, és minden a telefonodon marad. Bármelyiket elutasíthatod: csak az a funkció lesz kikapcsolva.</string>
+    <string name="onboarding_step5_hint_locked">A Taipo kiválasztása után érhető el.</string>
+    <string name="onboarding_step5_button">Engedélyezés</string>
+    <string name="onboarding_permission_granted">✓ %1$s</string>
+    <string name="onboarding_permission_missing">○ %1$s</string>
+    <string name="onboarding_permission_microphone">Mikrofon: hangalapú diktálás</string>
+    <string name="onboarding_permission_notifications">Értesítések: a modellek letöltési állapota</string>
+    <string name="onboarding_permission_screenshots">Fotók: friss képernyőképek a vágólapon</string>
+    <string name="onboarding_permission_dictionary">Android-szótár: a mentett szavaid</string>
     <string name="tip_delete_words">Húzza ← irányba a ⌫ billentyűn egész szavak törléséhez</string>
     <string name="tip_move_cursor">Húzza az ujját a szóközön a kurzor mozgatásához</string>
     <string name="tip_switch_language">Tartsa lenyomva az Entert, majd a földgömböt</string>

@@ -704,6 +704,17 @@
     <string name="onboarding_step4_hint">Corectarea, chatul și dictarea au nevoie de un model, descărcat o dată și folosit fără internet. Recomandat pentru telefonul tău: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Disponibil după ce Taipo este selectat.</string>
     <string name="onboarding_step4_button">Descarcă %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Permite funcțiile</string>
+    <string name="onboarding_step5_title_done">Permisiuni alese</string>
+    <string name="onboarding_step5_hint">Taipo cere fiecare permisiune doar pentru funcția care o folosește, iar totul rămâne pe telefon. Poți refuza oricare: doar acea funcție va fi oprită.</string>
+    <string name="onboarding_step5_hint_locked">Disponibil după ce Taipo este selectat.</string>
+    <string name="onboarding_step5_button">Permite</string>
+    <string name="onboarding_permission_granted">✓ %1$s</string>
+    <string name="onboarding_permission_missing">○ %1$s</string>
+    <string name="onboarding_permission_microphone">Microfon: dictare vocală</string>
+    <string name="onboarding_permission_notifications">Notificări: progresul descărcării modelelor</string>
+    <string name="onboarding_permission_screenshots">Fotografii: capturi de ecran recente în clipboard</string>
+    <string name="onboarding_permission_dictionary">Dicționarul Android: cuvintele tale salvate</string>
     <string name="tip_delete_words">Glisează ← pe ⌫ pentru a șterge cuvinte întregi</string>
     <string name="tip_move_cursor">Glisează pe Spațiu pentru a muta cursorul</string>
     <string name="tip_switch_language">Apasă lung Enter, apoi globul</string>

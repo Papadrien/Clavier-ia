@@ -8,7 +8,7 @@
     <!--
         Dictionnaire utilisateur du système (mots ajoutés via le souligné rouge) : lecture seule, pour que
         l'autocorrection ne les corrige pas et les propose. Permission runtime demandée depuis l'écran du
-        dictionnaire personnel ; sans elle, rien ne change. Voir SystemUserDictionary.
+        dictionnaire personnel et l'étape « Autorisations » de l'accueil ; sans elle, rien ne change. Voir SystemUserDictionary.
     -->
     <uses-permission android:name="android.permission.READ_USER_DICTIONARY" />
 
@@ -26,7 +26,7 @@
 
     <!--
         Captures d'écran récentes proposées dans le Smart Clipboard (réglage optionnel, demandé depuis les paramètres du
-        clavier) : lecture des images, sur l'appareil seulement. Voir docs/play-console-declarations.md.
+        clavier ou l'étape « Autorisations » de l'accueil) : lecture des images, sur l'appareil seulement. Voir docs/play-console-declarations.md.
     -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <!-- Audit UX-04 : Android 14+ permet de n'autoriser que quelques photos. Déclarée pour que ce choix soit reconnu

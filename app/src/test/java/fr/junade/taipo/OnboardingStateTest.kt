@@ -50,4 +50,24 @@ class OnboardingStateTest {
         assertEquals(StepStatus.CURRENT, state.activate)
         assertEquals(StepStatus.LOCKED, state.choose)
     }
+
+    @Test
+    fun `autorisations verrouillees tant que Taipo n'est pas choisi`() {
+        val state = OnboardingState.from(listOf(pkg), null, pkg)
+        assertEquals(StepStatus.LOCKED, state.permissions)
+    }
+
+    @Test
+    fun `autorisations a faire puis faites`() {
+        assertEquals(StepStatus.CURRENT, OnboardingState.from(listOf(pkg), "$pkg/.TaipoIme", pkg).permissions)
+        val done = OnboardingState.from(listOf(pkg), "$pkg/.TaipoIme", pkg, tried = true, aiReady = true, permissionsDone = true)
+        assertEquals(StepStatus.DONE, done.permissions)
+        assertEquals(true, done.complete)
+    }
+
+    @Test
+    fun `l'accueil n'est pas complet sans l'etape des autorisations`() {
+        val state = OnboardingState.from(listOf(pkg), "$pkg/.TaipoIme", pkg, tried = true, aiReady = true)
+        assertEquals(false, state.complete)
+    }
 }

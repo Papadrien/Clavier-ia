@@ -700,6 +700,17 @@
     <string name="onboarding_step4_hint">Korjaus, chat ja sanelu tarvitsevat mallin, joka ladataan kerran ja jota käytetään ilman verkkoyhteyttä. Suositus puhelimellesi: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Käytettävissä, kun Taipo on valittu.</string>
     <string name="onboarding_step4_button">Lataa %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Salli toiminnot</string>
+    <string name="onboarding_step5_title_done">Luvat valittu</string>
+    <string name="onboarding_step5_hint">Taipo pyytää kutakin lupaa vain sitä käyttävälle toiminnolle, ja kaikki pysyy puhelimessasi. Voit kieltää minkä tahansa: vain se toiminto on pois päältä.</string>
+    <string name="onboarding_step5_hint_locked">Käytettävissä, kun Taipo on valittu.</string>
+    <string name="onboarding_step5_button">Salli</string>
+    <string name="onboarding_permission_granted">✓ %1$s</string>
+    <string name="onboarding_permission_missing">○ %1$s</string>
+    <string name="onboarding_permission_microphone">Mikrofoni: puhesanelu</string>
+    <string name="onboarding_permission_notifications">Ilmoitukset: mallien latauksen edistyminen</string>
+    <string name="onboarding_permission_screenshots">Kuvat: viimeisimmät kuvakaappaukset leikepöydällä</string>
+    <string name="onboarding_permission_dictionary">Android-sanakirja: tallentamasi sanat</string>
     <string name="tip_delete_words">Pyyhkäise ← näppäimellä ⌫ poistaaksesi kokonaisia sanoja</string>
     <string name="tip_move_cursor">Pyyhkäise välilyönnillä siirtääksesi kohdistinta</string>
     <string name="tip_switch_language">Paina Enteriä pitkään ja valitse sitten maapallo</string>

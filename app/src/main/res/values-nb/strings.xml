@@ -700,6 +700,17 @@
     <string name="onboarding_step4_hint">Retting, chat og diktering krever en modell som lastes ned én gang og brukes uten nett. Anbefalt for telefonen din: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Tilgjengelig når Taipo er valgt.</string>
     <string name="onboarding_step4_button">Last ned %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Tillat funksjoner</string>
+    <string name="onboarding_step5_title_done">Tillatelser valgt</string>
+    <string name="onboarding_step5_hint">Taipo ber bare om hver tillatelse for funksjonen som bruker den, og alt blir på telefonen. Du kan avslå hvilken som helst: bare den funksjonen slås av.</string>
+    <string name="onboarding_step5_hint_locked">Tilgjengelig når Taipo er valgt.</string>
+    <string name="onboarding_step5_button">Tillat</string>
+    <string name="onboarding_permission_granted">✓ %1$s</string>
+    <string name="onboarding_permission_missing">○ %1$s</string>
+    <string name="onboarding_permission_microphone">Mikrofon: stemmediktering</string>
+    <string name="onboarding_permission_notifications">Varsler: nedlastingsfremdrift for modeller</string>
+    <string name="onboarding_permission_screenshots">Bilder: nylige skjermbilder i utklippstavlen</string>
+    <string name="onboarding_permission_dictionary">Android-ordbok: de lagrede ordene dine</string>
     <string name="tip_delete_words">Sveip ← på ⌫ for å slette hele ord</string>
     <string name="tip_move_cursor">Sveip på mellomromstasten for å flytte markøren</string>
     <string name="tip_switch_language">Trykk lenge på Enter, og deretter på jordkloden</string>

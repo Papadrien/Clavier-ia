@@ -700,6 +700,17 @@
     <string name="onboarding_step4_hint">Corrigeren, Chat en dictee hebben een model nodig, één keer gedownload en offline gebruikt. Aanbevolen voor je telefoon: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Beschikbaar zodra Taipo is gekozen.</string>
     <string name="onboarding_step4_button">%1$s downloaden (%2$s)</string>
+    <string name="onboarding_step5_title">Functies toestaan</string>
+    <string name="onboarding_step5_title_done">Toestemmingen gekozen</string>
+    <string name="onboarding_step5_hint">Taipo vraagt elke toestemming alleen voor de functie die hem gebruikt, en alles blijft op je telefoon. Je kunt er een weigeren: alleen die functie staat dan uit.</string>
+    <string name="onboarding_step5_hint_locked">Beschikbaar zodra Taipo is gekozen.</string>
+    <string name="onboarding_step5_button">Toestaan</string>
+    <string name="onboarding_permission_granted">✓ %1$s</string>
+    <string name="onboarding_permission_missing">○ %1$s</string>
+    <string name="onboarding_permission_microphone">Microfoon: spraakinvoer</string>
+    <string name="onboarding_permission_notifications">Meldingen: downloadvoortgang van modellen</string>
+    <string name="onboarding_permission_screenshots">Foto\'s: recente screenshots in het klembord</string>
+    <string name="onboarding_permission_dictionary">Android-woordenboek: je opgeslagen woorden</string>
     <string name="tip_delete_words">Veeg ← over ⌫ om hele woorden te wissen</string>
     <string name="tip_move_cursor">Veeg over de spatiebalk om de cursor te verplaatsen</string>
     <string name="tip_switch_language">Houd Enter ingedrukt, dan de wereldbol</string>
