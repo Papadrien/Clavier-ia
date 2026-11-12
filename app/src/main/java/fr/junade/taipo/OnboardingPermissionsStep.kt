@@ -28,20 +28,30 @@ class OnboardingPermissionsStep(
 
     private val sdk: Int get() = Build.VERSION.SDK_INT
 
+    /** Autorisations déclarées par l'application installée : une fonction retirée par un flag n'est pas demandée. */
+    private val declared: Set<String>? by lazy {
+        runCatching {
+            activity.packageManager.getPackageInfo(activity.packageName, PackageManager.GET_PERMISSIONS)
+                .requestedPermissions.orEmpty().toSet()
+        }.getOrNull()
+    }
+
+    private fun applicable(): List<AppPermission> = AppPermission.applicable(sdk, declared)
+
     /** Autorisations déjà accordées parmi celles qui ont un sens sur ce téléphone. */
-    fun granted(): Set<AppPermission> = AppPermission.applicable(sdk).filterTo(mutableSetOf()) { permission ->
+    fun granted(): Set<AppPermission> = applicable().filterTo(mutableSetOf()) { permission ->
         val name = permission.grantingName(sdk) ?: return@filterTo false
         activity.checkSelfPermission(name) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun isDone(): Boolean = AppPermission.stepDone(granted(), sdk, prefs.getBoolean(KEY_ANSWERED, false))
+    fun isDone(): Boolean = AppPermission.stepDone(granted(), sdk, prefs.getBoolean(KEY_ANSWERED, false), declared)
 
     /**
      * Demande d'un coup les autorisations manquantes (Android affiche une fenêtre par autorisation). Si Android ne les
      * affiche plus (refus définitif après une première réponse), ouvre les réglages de l'application à la place.
      */
     fun request() {
-        val missing = AppPermission.applicable(sdk) - granted()
+        val missing = applicable() - granted()
         if (missing.isEmpty()) return
         val answered = prefs.getBoolean(KEY_ANSWERED, false)
         val blocked = answered && missing.none { permission ->
@@ -61,7 +71,7 @@ class OnboardingPermissionsStep(
         if (requestCode != REQUEST_CODE) return false
         prefs.edit().putBoolean(KEY_ANSWERED, true).apply()
         // Captures autorisées ici : la suggestion du Smart Clipboard est allumée, comme depuis les paramètres du clavier.
-        if (ScreenshotFinder.hasPermission(activity)) {
+        if (AppPermission.SCREENSHOTS in applicable() && ScreenshotFinder.hasPermission(activity)) {
             val preferences = KeyboardPreferences(activity)
             if (!preferences.isScreenshotSuggestionEnabled) {
                 preferences.isScreenshotSuggestionEnabled = true
@@ -74,7 +84,7 @@ class OnboardingPermissionsStep(
     /** Une ligne par autorisation, cochée quand elle est accordée. À appeler après le rendu commun de l'étape. */
     fun render(status: StepStatus) {
         val granted = granted()
-        val applicable = AppPermission.applicable(sdk)
+        val applicable = applicable()
         val missing = applicable.any { it !in granted }
         // Étape faite avec des refus : la liste et le bouton restent, pour accorder le reste plus tard.
         val showList = status == StepStatus.CURRENT || (status == StepStatus.DONE && missing)

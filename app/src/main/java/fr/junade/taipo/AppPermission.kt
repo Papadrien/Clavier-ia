@@ -16,7 +16,7 @@ enum class AppPermission {
     /** Progression des téléchargements de modèles écran éteint (Android 13+ seulement). */
     NOTIFICATIONS,
 
-    /** Captures d'écran récentes proposées dans le Smart Clipboard. */
+    /** Captures d'écran récentes proposées dans le Smart Clipboard (si la fonction est compilée, voir [applicable]). */
     SCREENSHOTS,
 
     /** Mots du dictionnaire personnel d'Android, que l'autocorrection respecte et propose. */
@@ -43,8 +43,15 @@ enum class AppPermission {
         private const val SDK_TIRAMISU = 33
         private const val SDK_UPSIDE_DOWN_CAKE = 34
 
-        /** Autorisations qui ont un sens sur cette version d'Android, dans l'ordre d'affichage. */
-        fun applicable(sdkInt: Int): List<AppPermission> = entries.filter { it.manifestNames(sdkInt).isNotEmpty() }
+        /**
+         * Autorisations qui ont un sens sur cette version d'Android, dans l'ordre d'affichage. [declared] : autorisations que
+         * l'application installée déclare dans son manifeste (null : toutes). Une fonction coupée par un flag de compilation
+         * ne déclare plus son autorisation (captures d'écran du presse-papiers) : elle n'est alors pas demandée.
+         */
+        fun applicable(sdkInt: Int, declared: Set<String>? = null): List<AppPermission> = entries.filter { permission ->
+            val name = permission.grantingName(sdkInt) ?: return@filter false
+            declared == null || name in declared
+        }
 
         /** Noms Android à demander d'un coup pour les autorisations [missing]. */
         fun toRequest(missing: Collection<AppPermission>, sdkInt: Int): Array<String> =
@@ -54,7 +61,7 @@ enum class AppPermission {
          * L'étape est faite quand tout est accordé, ou quand l'utilisateur a déjà répondu à la demande ([answered]) : un
          * refus est un choix, l'étape ne reste pas en attente pour autant.
          */
-        fun stepDone(granted: Set<AppPermission>, sdkInt: Int, answered: Boolean): Boolean =
-            answered || granted.containsAll(applicable(sdkInt))
+        fun stepDone(granted: Set<AppPermission>, sdkInt: Int, answered: Boolean, declared: Set<String>? = null): Boolean =
+            answered || granted.containsAll(applicable(sdkInt, declared))
     }
 }

@@ -49,13 +49,18 @@ class AppPermissionTest {
     }
 
     @Test
-    fun `chaque autorisation demandee est declaree dans le manifeste`() {
-        val manifest = listOf(java.io.File("src/main/AndroidManifest.xml"), java.io.File("app/src/main/AndroidManifest.xml"))
-            .first { it.isFile }.readText()
-        for (sdk in listOf(26, 33, 34)) {
-            for (name in AppPermission.toRequest(AppPermission.applicable(sdk), sdk)) {
-                assertTrue("\"$name\"" in manifest, "$name absente du manifeste")
-            }
-        }
+    fun `une autorisation absente du manifeste n'est pas demandee`() {
+        // Captures d'écran du presse-papiers coupées par un flag : READ_MEDIA_IMAGES n'est plus déclarée.
+        val declared = setOf(
+            "android.permission.RECORD_AUDIO",
+            "android.permission.POST_NOTIFICATIONS",
+            "android.permission.READ_USER_DICTIONARY",
+        )
+        assertEquals(
+            listOf(AppPermission.MICROPHONE, AppPermission.NOTIFICATIONS, AppPermission.USER_DICTIONARY),
+            AppPermission.applicable(34, declared),
+        )
+        val granted = setOf(AppPermission.MICROPHONE, AppPermission.NOTIFICATIONS, AppPermission.USER_DICTIONARY)
+        assertTrue(AppPermission.stepDone(granted, 34, answered = false, declared = declared))
     }
 }
