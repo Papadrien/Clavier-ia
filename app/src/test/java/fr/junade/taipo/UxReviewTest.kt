@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/** Revue UX : étapes 3 et 4 de l'accueil, durée du bandeau, déclencheurs des astuces de gestes. */
+/** Revue UX : étapes 3 à 5 de l'accueil, durée du bandeau, déclencheurs des astuces de gestes. */
 class UxReviewTest {
 
     @Test
@@ -24,7 +24,9 @@ class UxReviewTest {
         val done = start.copy(tried = true, aiReady = true)
         assertEquals(StepStatus.DONE, done.tryIt)
         assertEquals(StepStatus.DONE, done.activateAi)
-        assertTrue(done.complete)
+        // L'accueil n'est complet qu'avec la 5e étape (autorisations) : essai et IA ne suffisent plus.
+        assertFalse(done.complete)
+        assertTrue(done.copy(permissionsDone = true).complete)
     }
 
     @Test
