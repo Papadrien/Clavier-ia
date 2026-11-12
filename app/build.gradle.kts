@@ -209,7 +209,7 @@ dependencies {
     // junit-jupiter embarque junit-jupiter-params (@ParameterizedTest, lot 3.3).
     testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
     // org.json réel pour les tests JVM du format de sauvegarde (story 10.3) : celui de android.jar y est « non simulé ».
-    testImplementation("org.json:json:20240303")
+    testImplementation("org.json:json:20260814")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
     // Audit TEST-01 : Robolectric (framework Android sur la JVM) ; ses tests JUnit 4 passent par le moteur Vintage.
     testImplementation(libs.robolectric)
