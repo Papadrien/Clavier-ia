@@ -369,7 +369,10 @@
                 android:layout_height="wrap_content"
                 android:text="@string/keyboard_settings_clipboard_history_description" />
 
-            <View style="@style/TaipoSettingsCardDivider" />
+            <!-- Séparateur, interrupteur et description masqués tant que ScreenshotFinder.FEATURE_ENABLED est faux. -->
+            <View
+                android:id="@+id/title_screenshot_suggestions"
+                style="@style/TaipoSettingsCardDivider" />
 
             <Switch
                 android:id="@+id/switch_screenshot_suggestions"
@@ -379,6 +382,7 @@
                 android:text="@string/keyboard_settings_screenshots_switch" />
 
             <TextView
+                android:id="@+id/description_screenshot_suggestions"
                 style="@style/TaipoText.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

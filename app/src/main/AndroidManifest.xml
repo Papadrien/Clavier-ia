@@ -25,16 +25,10 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!--
-        Captures d'écran récentes proposées dans le Smart Clipboard (réglage optionnel, demandé depuis les paramètres du
-        clavier) : lecture des images, sur l'appareil seulement. Voir docs/play-console-declarations.md.
+        Pas de READ_MEDIA_IMAGES / READ_EXTERNAL_STORAGE : refusées par Google Play pour un clavier (politique « autorisations
+        photos et vidéos »). La suggestion des captures d'écran récentes est désactivée (ScreenshotFinder.FEATURE_ENABLED) ;
+        piste de remplacement par le sélecteur de photos du système : docs/play-console-declarations.md.
     -->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <!-- Audit UX-04 : Android 14+ permet de n'autoriser que quelques photos. Déclarée pour que ce choix soit reconnu
-         (et expliqué) au lieu d'un accès temporaire silencieux : les nouvelles captures ne seraient jamais visibles. -->
-    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
 
     <!--
         Lot 3.4 (S2) : sauvegarde déclarée explicitement. Elle reste activée (réglages du clavier), mais tout ce
