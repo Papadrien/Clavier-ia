@@ -15,6 +15,8 @@ import java.util.Locale
 class EmojiSuggester(
     private val french: Map<String, String>,
     private val english: Map<String, String>,
+    /** Listes des autres langues (`suggestions-<code>.txt`, depuis le 12/11/2026) ; une langue absente ne propose aucun emoji. */
+    private val others: Map<KeyboardLanguage, Map<String, String>> = emptyMap(),
 ) {
 
     /**
@@ -27,13 +29,16 @@ class EmojiSuggester(
         val keywords = when (language) {
             KeyboardLanguage.FR -> french
             KeyboardLanguage.EN -> english
-            // Pas de liste de mots-clés pour les autres langues : aucun emoji proposé (les mots-clés français ou anglais
-            // déclencheraient de faux emojis sur des mots d'une autre langue).
-            else -> return null
+            // Langue sans liste : aucun emoji proposé (les mots-clés français ou anglais déclencheraient de faux emojis sur des mots
+            // d'une autre langue).
+            else -> others[language] ?: return null
         }
         val key = normalize(word)
         keywords[key]?.let { return it }
-        if (key.length > MIN_PLURAL_LENGTH && key.endsWith('s')) return keywords[key.dropLast(1)]
+        // Pluriel en « s » : français et anglais seulement. Ailleurs, les formes fléchies courantes sont écrites dans la liste
+        // (en tchèque, « pes », le chien, deviendrait « pe »).
+        val sPlural = language == KeyboardLanguage.FR || language == KeyboardLanguage.EN
+        if (sPlural && key.length > MIN_PLURAL_LENGTH && key.endsWith('s')) return keywords[key.dropLast(1)]
         return null
     }
 

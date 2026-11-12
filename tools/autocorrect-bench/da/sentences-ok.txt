@@ -1,0 +1,27 @@
+# Korrekte danske sætninger: autokorrekturen må ikke ændre nogen af dem (måler forkerte rettelser).
+# Une phrase par ligne (lignes « # » ignorées). Écrites pour le banc, à faire relire.
+Hej, hvordan har du det?
+Jeg er hjemme nu.
+Hvad skal vi lave i aften?
+Jeg håber, at alt er i orden.
+Tusind tak for hjælpen.
+Jeg ved ikke, hvor han bor.
+Jeg går ned i butikken og køber brød.
+Vi ses i morgen klokken otte.
+Min bror arbejder i København.
+Sæt dig her, tak.
+Hun har to katte og en hund.
+Jeg ringer til dig senere.
+Filmen var virkelig god.
+Hvor er det nærmeste stoppested?
+Jeg har ikke tid, undskyld.
+Jeg elsker dig.
+Hvordan har din mor det?
+Jeg er nødt til at gå nu.
+Det regner i morgen.
+Jeg kan godt lide at læse bøger.
+Hvornår kommer du hjem?
+Vi har boet her i tre år.
+Det er for sent nu.
+Han sagde, at han var træt.
+Kan du give mig en kop kaffe?

@@ -1,0 +1,27 @@
+# Oikeita suomenkielisiä lauseita: automaattinen korjaus ei saa muuttaa yhtäkään niistä (mittaa vääriä korjauksia).
+# Une phrase par ligne (lignes « # » ignorées). Écrites pour le banc, à faire relire.
+Moi, mitä kuuluu?
+Olen jo kotona.
+Mitä teemme tänä iltana?
+Toivottavasti kaikki on hyvin.
+Kiitos paljon avusta.
+En tiedä, missä hän asuu.
+Menen kauppaan ostamaan leipää.
+Nähdään huomenna kahdeksalta.
+Veljeni on töissä Helsingissä.
+Ole hyvä ja istu tähän.
+Hänellä on kaksi kissaa ja koira.
+Soitan sinulle myöhemmin.
+Elokuva oli todella hyvä.
+Missä on lähin pysäkki?
+Minulla ei ole aikaa, anteeksi.
+Rakastan sinua.
+Mitä äidillesi kuuluu?
+Minun täytyy lähteä nyt.
+Huomenna sataa.
+Pidän kirjojen lukemisesta.
+Älä huoli, kaikki järjestyy.
+Asumme pienessä talossa.
+Tämä on minulle tärkeää.
+Haluan kupin kahvia maidolla.
+Hän tuli kotiin myöhään.

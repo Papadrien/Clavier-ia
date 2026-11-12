@@ -1,0 +1,27 @@
+# Poprawne polskie zdania: autokorekta nie może zmienić żadnego z nich (mierzy fałszywe poprawki).
+# Une phrase par ligne (lignes « # » ignorées). Écrites pour le banc, à faire relire.
+Cześć, jak się masz?
+Już jestem w domu.
+Więc co robimy dzisiaj wieczorem?
+Mam nadzieję, że wszystko jest w porządku.
+Ze mną wszystko dobrze, dziękuję.
+Wiem, że to nie jest łatwe.
+To jest moja żona i mój syn.
+Czy możesz mi pomóc?
+Nie wiem, gdzie on mieszka.
+Idę do sklepu po chleb.
+Spotkajmy się jutro o ósmej.
+Mój brat pracuje w Warszawie.
+Dziękuję bardzo za pomoc.
+Proszę, usiądź tutaj.
+Ona ma dwa koty i psa.
+Zadzwonię do ciebie później.
+Było mi bardzo miło.
+Ten film był naprawdę dobry.
+Gdzie jest najbliższy przystanek?
+Nie mam czasu, przepraszam.
+Kocham cię.
+Co słychać u twojej mamy?
+Muszę już iść.
+Jutro będzie padać deszcz.
+Lubię czytać książki.

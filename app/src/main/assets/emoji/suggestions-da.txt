@@ -1,0 +1,70 @@
+# Emojiforslag, dansk: en emoji og derefter de ord, der udløser den (almindelige bøjningsformer skrives ud).
+# Ordre de priorité = ordre du fichier ; mots comparés sans accent ni majuscule ; pas de règle de pluriel (formes écrites).
+# Liste écrite pour Taipo le 12/11/2026, à faire relire par une personne de langue maternelle.
+😀 glad lykkelig smil
+😂 haha hahaha sjovt grin griner
+😍 elsker smuk dejlig
+😘 kys knus
+❤️ kærlighed hjerte
+😢 ked trist
+😭 græder tårer
+😡 vred sur gal
+😴 sove sover søvnig træt
+👍 ok okay fint super perfekt
+👏 bravo tillykke
+🙏 tak
+👋 hej hejsa farvel
+🎉 fest fejrer
+🎂 fødselsdag
+🎁 gave gaver
+🎄 jul juletræ
+🔥 ild varmt hed
+❄️ koldt vinter
+☀️ sol solskin sommer
+🌧️ regn regner
+🍕 pizza
+🍔 burger
+🍝 pasta spaghetti
+🍣 sushi
+🍷 vin
+🍺 øl
+☕ kaffe
+🍵 te
+🍰 kage lagkage
+🍫 chokolade
+🍎 æble
+🍓 jordbær
+🐱 kat katten katte killing
+🐶 hund hunden hunde hvalp
+🐴 hest
+🐦 fugl fugle
+🌹 rose roser
+🌸 blomst blomster
+🚗 bil bilen
+🚲 cykel
+🚌 bus
+🚆 tog
+✈️ fly rejse
+🏠 hjem hjemme hus
+🏖️ strand ferie
+⚽ fodbold kamp
+🎮 spil
+🎵 musik sang
+🎬 film biograf
+📚 bog bøger
+📱 telefon mobil
+💻 computer
+📷 billede foto kamera
+💡 idé
+💰 penge
+📞 ring ringer
+💼 arbejde job
+✅ færdig
+💪 fitness stærk
+🤔 hmm måske
+😅 ups undskyld
+🤒 syg
+😎 sejt
+🤗 krammer
+🤩 fantastisk
+🏆 sejr vandt

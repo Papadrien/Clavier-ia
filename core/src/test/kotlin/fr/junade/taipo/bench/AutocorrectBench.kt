@@ -206,6 +206,59 @@ object AutocorrectBench {
         portuguese(CorrectionConfidence.PORTUGUESE, InflectionRules.PORTUGUESE, AccentPolicy.PORTUGUESE, true, "tools/autocorrect-bench/pt/baseline.txt")
     val DUTCH = dutch(CorrectionConfidence.DUTCH, InflectionRules.DUTCH, AccentPolicy.DUTCH, true, "tools/autocorrect-bench/nl/baseline.txt")
 
+    // ------------------------------------------------------------------
+    // Langues ajoutées le 11/11/2026 : aucune règle de contexte ni de flexion, mêmes réglages que dans `DictionaryLoader`.
+    // Le paramètre `confidence` sert à comparer des réglages (main --lang=<code> ; voir docs/autocorrection-bench.md).
+    // ------------------------------------------------------------------
+
+    /** QWERTY nordique : 11 touches sur les deux premières rangées (å, puis ö ä / æ ø / ø æ), Maj et Effacer de 2 unités. */
+    private fun nordic(top: String, middle: String): KeyProximity {
+        fun row(letters: String) = letters.map { KeyProximity.KeyBox(it, 1f) }
+        return KeyProximity.fromRows(
+            listOf(
+                row(top),
+                row(middle),
+                listOf(KeyProximity.KeyBox(null, 2f)) + row("zxcvbnm") + listOf(KeyProximity.KeyBox(null, 2f)),
+            ),
+        )
+    }
+
+    private val QWERTY_SV = nordic("qwertyuiopå", "asdfghjklöä")
+    private val QWERTY_DA = nordic("qwertyuiopå", "asdfghjklæø")
+    private val QWERTY_NO = nordic("qwertyuiopå", "asdfghjkløæ")
+
+    private fun added(
+        language: KeyboardLanguage,
+        proximity: KeyProximity,
+        candidateMinFrequency: Long,
+        accents: AccentPolicy,
+        confidence: CorrectionConfidence = CorrectionConfidence.LATIN,
+        baseline: String = "tools/autocorrect-bench/${language.tag}/baseline.txt",
+    ) = Profile(
+        language, proximity, InflectionRules.NONE, candidateMinFrequency, confidence, { _, _ -> null },
+        "tools/autocorrect-bench/${language.tag}/sentences-ok.txt", "tools/autocorrect-bench/${language.tag}/context-cases.tsv", baseline,
+        accents,
+    )
+
+    val POLISH = added(KeyboardLanguage.PL, QWERTY, 219L, AccentPolicy.POLISH)
+    val ROMANIAN = added(KeyboardLanguage.RO, QWERTY, 149L, AccentPolicy.ROMANIAN)
+    val CZECH = added(KeyboardLanguage.CS, QWERTZ, 194L, AccentPolicy.CZECH)
+    val HUNGARIAN = added(KeyboardLanguage.HU, QWERTZ, 213L, AccentPolicy.HUNGARIAN)
+    val SWEDISH = added(KeyboardLanguage.SV, QWERTY_SV, 41L, AccentPolicy.NORDIC)
+    val DANISH = added(KeyboardLanguage.DA, QWERTY_DA, 28L, AccentPolicy.NORDIC)
+    val NORWEGIAN = added(KeyboardLanguage.NB, QWERTY_NO, 18L, AccentPolicy.NORDIC)
+    val FINNISH = added(KeyboardLanguage.FI, QWERTY_SV, 134L, AccentPolicy.NORDIC)
+
+    /** Les profils des langues ajoutées, par code (`main --lang=pl`…). */
+    val ADDED: Map<String, Profile> =
+        listOf(POLISH, ROMANIAN, CZECH, HUNGARIAN, SWEDISH, DANISH, NORWEGIAN, FINNISH).associateBy { it.code }
+
+    /** Le même profil avec un autre réglage de décision, sans référence : pour comparer des réglages. */
+    fun withConfidence(base: Profile, confidence: CorrectionConfidence): Profile = Profile(
+        base.language, base.proximity, base.inflections, base.candidateMinFrequency, confidence, base.context,
+        base.sentencesPath, base.casesPath, base.baselinePath + ".compare", base.accentPolicy,
+    )
+
     private var profile: Profile = FRENCH
 
     class Report(
@@ -960,7 +1013,8 @@ fun main(args: Array<String>) {
         "--lang=it-legacy" in args -> AutocorrectBench.ITALIAN_LEGACY
         "--lang=pt-legacy" in args -> AutocorrectBench.PORTUGUESE_LEGACY
         "--lang=nl-legacy" in args -> AutocorrectBench.DUTCH_LEGACY
-        else -> AutocorrectBench.FRENCH
+        else -> args.firstOrNull { it.startsWith("--lang=") }?.removePrefix("--lang=")?.let { AutocorrectBench.ADDED[it] }
+            ?: AutocorrectBench.FRENCH
     }
     val report = AutocorrectBench.run(root, profile)
     println(report.render())

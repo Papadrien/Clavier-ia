@@ -37,6 +37,32 @@ class AutocorrectBaselineTest {
     @Test
     fun `l'autocorrection neerlandaise ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.DUTCH)
 
+    // Langues ajoutées le 11/11/2026 (références du 12/11/2026, réglage LATIN, sans règles de contexte).
+
+    @Test
+    fun `l'autocorrection polonaise ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.POLISH)
+
+    @Test
+    fun `l'autocorrection roumaine ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.ROMANIAN)
+
+    @Test
+    fun `l'autocorrection tcheque ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.CZECH)
+
+    @Test
+    fun `l'autocorrection hongroise ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.HUNGARIAN)
+
+    @Test
+    fun `l'autocorrection suedoise ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.SWEDISH)
+
+    @Test
+    fun `l'autocorrection danoise ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.DANISH)
+
+    @Test
+    fun `l'autocorrection norvegienne ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.NORWEGIAN)
+
+    @Test
+    fun `l'autocorrection finnoise ne regresse pas par rapport a la reference`() = checkNoRegression(AutocorrectBench.FINNISH)
+
     private fun checkNoRegression(profile: AutocorrectBench.Profile) {
         assumeTrue(root != null, "racine du projet introuvable")
         val baseline = AutocorrectBench.readBaseline(root!!, profile)

@@ -1,0 +1,27 @@
+# Helyes magyar mondatok: az automatikus javítás egyiket sem változtathatja meg (a hamis javításokat méri).
+# Une phrase par ligne (lignes « # » ignorées). Écrites pour le banc, à faire relire.
+Szia, hogy vagy?
+Már otthon vagyok.
+Mit csinálunk ma este?
+Remélem, minden rendben van.
+Köszönöm szépen a segítséget.
+Nem tudom, hol lakik.
+Elmegyek a boltba kenyérért.
+Holnap nyolckor találkozunk.
+A bátyám Budapesten dolgozik.
+Kérlek, ülj le ide.
+Két macskája és egy kutyája van.
+Később felhívlak.
+Ez a film nagyon jó volt.
+Hol van a legközelebbi megálló?
+Nincs időm, bocsánat.
+Szeretlek.
+Hogy van az anyukád?
+Most már mennem kell.
+Holnap esni fog az eső.
+Szeretek könyveket olvasni.
+Még nem ettem semmit.
+Meg kell csinálnom a házi feladatot.
+Ő is jön velünk.
+Ez nagyon fontos nekem.
+Kávét kérek tejjel.

@@ -1,0 +1,70 @@
+# Návrhy emoji, čeština: emoji a za ním slova, která ho vyvolají (časté tvary skloňování jsou vypsány).
+# Ordre de priorité = ordre du fichier ; mots comparés sans accent ni majuscule ; pas de règle de pluriel (formes écrites).
+# Liste écrite pour Taipo le 12/11/2026, à faire relire par une personne de langue maternelle.
+😀 úsměv šťastný šťastná rád ráda veselý
+😂 haha hahaha vtipné směšné smích
+😍 zbožňuju krásná krásný úžasná
+😘 pusa pusu pusinky
+❤️ miluju láska srdce
+😢 smutný smutná smutno
+😭 brečím pláč slzy
+😡 naštvaný naštvaná vzteklý
+😴 spát spím ospalý unavený unavená
+👍 ok dobře super souhlas
+👏 bravo gratuluju gratulace
+🙏 díky děkuju prosím
+👋 ahoj čau nazdar
+🎉 párty oslava slavíme
+🎂 narozeniny
+🎁 dárek dárky
+🎄 vánoce stromeček
+🔥 oheň horko horký
+❄️ zima mráz
+☀️ slunce sluníčko léto
+🌧️ déšť prší
+🍕 pizza pizzu
+🍔 burger hamburger
+🍝 těstoviny špagety
+🍣 sushi
+🍷 víno
+🍺 pivo pivko
+☕ káva kávu kafe
+🍵 čaj
+🍰 dort koláč
+🍫 čokoláda čokoládu
+🍎 jablko
+🍓 jahody jahoda
+🐱 kočka kočku kočky kotě
+🐶 pes psa psi pejsek
+🐴 kůň
+🐦 pták ptáci
+🌹 růže
+🌸 květina květiny kytka
+🚗 auto
+🚲 kolo
+🚌 autobus
+🚆 vlak
+✈️ letadlo let cesta
+🏠 domov doma dům
+🏖️ pláž dovolená prázdniny
+⚽ fotbal zápas
+🎮 hra hry
+🎵 hudba písnička
+🎬 film kino
+📚 kniha knihy
+📱 telefon mobil
+💻 počítač notebook
+📷 fotka fotky foťák
+💡 nápad
+💰 peníze prachy
+📞 zavolej volám
+💼 práce
+✅ hotovo
+💪 posilovna silný
+🤔 hmm možná
+😅 jejda promiň pardon
+🤒 nemocný nemocná
+😎 pohoda
+🤗 objetí
+🤩 skvělé úžasné
+🏆 výhra vítězství

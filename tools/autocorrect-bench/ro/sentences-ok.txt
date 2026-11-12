@@ -1,0 +1,27 @@
+# Propoziții corecte în română: corectarea automată nu trebuie să modifice niciuna (măsoară corecturile false).
+# Une phrase par ligne (lignes « # » ignorées). Écrites pour le banc, à faire relire.
+Bună, ce mai faci?
+Sunt acasă acum.
+Ce facem în seara asta?
+Sper că totul este în regulă.
+Mulțumesc foarte mult pentru ajutor.
+Nu știu unde locuiește el.
+Mă duc la magazin să cumpăr pâine.
+Ne vedem mâine la ora opt.
+Fratele meu lucrează la București.
+Te rog, stai aici.
+Ea are două pisici și un câine.
+Te sun mai târziu.
+Filmul a fost foarte bun.
+Unde este cea mai apropiată stație?
+Nu am timp, îmi pare rău.
+Te iubesc.
+Ce mai face mama ta?
+Trebuie să plec acum.
+Mâine va ploua.
+Îmi place să citesc cărți.
+Casa sa este mare.
+El este ca un frate pentru mine.
+Fata lui are cinci ani.
+Peste o oră ajungem acolo.
+Vreau să vin și eu.

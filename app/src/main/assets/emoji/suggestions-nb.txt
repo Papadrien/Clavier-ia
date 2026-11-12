@@ -1,0 +1,70 @@
+# Emojiforslag, norsk bokmål: en emoji og deretter ordene som utløser den (vanlige bøyningsformer skrives ut).
+# Ordre de priorité = ordre du fichier ; mots comparés sans accent ni majuscule ; pas de règle de pluriel (formes écrites).
+# Liste écrite pour Taipo le 12/11/2026, à faire relire par une personne de langue maternelle.
+😀 glad lykkelig smil
+😂 haha hahaha morsomt latter ler
+😍 elsker vakker nydelig
+😘 kyss klem
+❤️ kjærlighet hjerte
+😢 lei trist
+😭 gråter tårer
+😡 sint sur
+😴 sove sover søvnig trøtt sliten
+👍 ok greit fint supert perfekt
+👏 bravo gratulerer
+🙏 takk
+👋 hei heisann hadet
+🎉 fest feirer
+🎂 bursdag
+🎁 gave gaver
+🎄 jul juletre
+🔥 ild varmt het
+❄️ kaldt vinter
+☀️ sol solskinn sommer
+🌧️ regn regner
+🍕 pizza
+🍔 burger
+🍝 pasta spagetti
+🍣 sushi
+🍷 vin
+🍺 øl
+☕ kaffe
+🍵 te
+🍰 kake bløtkake
+🍫 sjokolade
+🍎 eple
+🍓 jordbær
+🐱 katt katten katter kattunge
+🐶 hund hunden hunder valp
+🐴 hest
+🐦 fugl fugler
+🌹 rose roser
+🌸 blomst blomster
+🚗 bil bilen
+🚲 sykkel
+🚌 buss
+🚆 tog
+✈️ fly reise
+🏠 hjem hjemme hus
+🏖️ strand ferie
+⚽ fotball kamp
+🎮 spill
+🎵 musikk sang
+🎬 film kino
+📚 bok bøker
+📱 telefon mobil
+💻 datamaskin pc
+📷 bilde foto kamera
+💡 idé
+💰 penger
+📞 ring ringer
+💼 jobb jobben arbeid
+✅ ferdig
+💪 trening sterk
+🤔 hmm kanskje
+😅 oi beklager unnskyld
+🤒 syk
+😎 kult
+🤗 klemmer
+🤩 fantastisk
+🏆 seier vant
