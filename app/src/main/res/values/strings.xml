@@ -413,7 +413,7 @@
     <string name="licenses_fulltext_show">Show the full license text</string>
     <string name="licenses_fulltext_hide">Hide the license text</string>
     <string name="licenses_fulltext_unreadable">The license text couldn\'t be loaded. Use the link above to read it online.</string>
-    <string name="licenses_usage_nemotron">Voice dictation model (French and English), downloaded on demand and run on your device.</string>
+    <string name="licenses_usage_nemotron">Voice dictation model (multilingual), downloaded on demand and run on your device.</string>
     <string name="licenses_notice_nemotron">Licensed under the OpenMDW License Agreement, version 1.1. Taipo uses an ONNX (int8) export of this model, run with sherpa-onnx.</string>
     <string name="licenses_usage_frequencywords">Word lists for autocorrection and suggestions in the fifteen keyboard languages: French, English, Spanish, German, Italian, Portuguese, Dutch, Polish, Romanian, Czech, Hungarian, Swedish, Danish, Norwegian and Finnish.</string>
     <string name="licenses_usage_aosp_dictionaries">Reference word lists used to check and complete the keyboard word lists (every language except Finnish).</string>
@@ -536,7 +536,7 @@
 
     <string name="model_download_voice_section_title">Voice model</string>
     <string name="model_download_voice_name">Voice model</string>
-    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming</string>
     <string name="model_download_voice_status_debug_unverified">Not installed. Debug: SHA-256 checksums not pinned, they will be logged in logcat (tag VoiceModelDownloadWorker).</string>
     <string name="model_download_voice_notification_title">Downloading the voice model</string>
     <string name="model_download_voice_mobile_message">You\'re not on Wi-Fi. The voice model is about %1$s: downloading it will use part of your data plan.</string>

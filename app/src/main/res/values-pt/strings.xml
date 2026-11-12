@@ -399,7 +399,7 @@
     <string name="licenses_fulltext_show">Mostrar o texto completo da licença</string>
     <string name="licenses_fulltext_hide">Ocultar o texto da licença</string>
     <string name="licenses_fulltext_unreadable">Não foi possível carregar o texto da licença. Use o link acima para lê-lo on-line.</string>
-    <string name="licenses_usage_nemotron">Modelo de ditado por voz (francês e inglês), baixado sob demanda e executado no seu dispositivo.</string>
+    <string name="licenses_usage_nemotron">Modelo de ditado por voz (multilíngue), baixado sob demanda e executado no seu dispositivo.</string>
     <string name="licenses_notice_nemotron">Licenciado sob o OpenMDW License Agreement, versão 1.1. O Taipo usa uma exportação ONNX (int8) deste modelo, executada com sherpa-onnx.</string>
     <string name="licenses_usage_frequencywords">Listas de palavras para a correção automática e as sugestões nos quinze idiomas do teclado: francês, inglês, espanhol, alemão, italiano, português, neerlandês, polonês, romeno, tcheco, húngaro, sueco, dinamarquês, norueguês e finlandês.</string>
     <string name="licenses_usage_aosp_dictionaries">Listas de palavras de referência usadas para verificar e completar as listas do teclado (todos os idiomas, exceto o finlandês).</string>
@@ -522,7 +522,7 @@
     <string name="home_status_update">Atualizar</string>
     <string name="model_download_voice_section_title">Modelo de voz</string>
     <string name="model_download_voice_name">Modelo de voz</string>
-    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming</string>
     <string name="model_download_voice_status_debug_unverified">Não instalado. Depuração: somas SHA-256 não fixadas, elas serão registradas no logcat (tag VoiceModelDownloadWorker).</string>
     <string name="model_download_voice_notification_title">Baixando o modelo de voz</string>
     <string name="model_download_voice_mobile_message">Você não está no Wi-Fi. O modelo de voz tem cerca de %1$s: baixá-lo vai consumir parte do seu plano de dados.</string>

@@ -399,7 +399,7 @@
     <string name="licenses_fulltext_show">Visa hela licenstexten</string>
     <string name="licenses_fulltext_hide">Dölj licenstexten</string>
     <string name="licenses_fulltext_unreadable">Licenstexten kunde inte läsas in. Använd länken ovan för att läsa den online.</string>
-    <string name="licenses_usage_nemotron">Modell för röstdiktering (franska och engelska), laddas ned vid behov och körs på din enhet.</string>
+    <string name="licenses_usage_nemotron">Modell för röstdiktering (flerspråkig), laddas ned vid behov och körs på din enhet.</string>
     <string name="licenses_notice_nemotron">Licensierad enligt OpenMDW License Agreement, version 1.1. Taipo använder en ONNX-export (int8) av modellen, som körs med sherpa-onnx.</string>
     <string name="licenses_usage_frequencywords">Ordlistor för autokorrigering och förslag på tangentbordets femton språk: franska, engelska, spanska, tyska, italienska, portugisiska, nederländska, polska, rumänska, tjeckiska, ungerska, svenska, danska, norska och finska.</string>
     <string name="licenses_usage_aosp_dictionaries">Referensordlistor som använts för att kontrollera och komplettera tangentbordets ordlistor (alla språk utom finska).</string>
@@ -518,7 +518,7 @@
     <string name="home_status_update">Uppdatering</string>
     <string name="model_download_voice_section_title">Röstmodell</string>
     <string name="model_download_voice_name">Röstmodell</string>
-    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming</string>
     <string name="model_download_voice_status_debug_unverified">Inte installerad. Debug: SHA-256-kontrollsummorna är inte fastställda, de loggas i logcat (tagg VoiceModelDownloadWorker).</string>
     <string name="model_download_voice_notification_title">Laddar ned röstmodellen</string>
     <string name="model_download_voice_mobile_message">Du är inte ansluten till wifi. Röstmodellen är cirka %1$s: att ladda ned den förbrukar en del av ditt dataabonnemang.</string>

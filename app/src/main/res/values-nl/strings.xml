@@ -399,7 +399,7 @@
     <string name="licenses_fulltext_show">Volledige licentietekst tonen</string>
     <string name="licenses_fulltext_hide">Licentietekst verbergen</string>
     <string name="licenses_fulltext_unreadable">De licentietekst kon niet worden geladen. Gebruik de link hierboven om hem online te lezen.</string>
-    <string name="licenses_usage_nemotron">Model voor spraakdictee (Frans en Engels), op verzoek gedownload en uitgevoerd op je apparaat.</string>
+    <string name="licenses_usage_nemotron">Model voor spraakdictee (meertalig), op verzoek gedownload en uitgevoerd op je apparaat.</string>
     <string name="licenses_notice_nemotron">Gelicentieerd onder de OpenMDW License Agreement, versie 1.1. Taipo gebruikt een ONNX-export (int8) van dit model, uitgevoerd met sherpa-onnx.</string>
     <string name="licenses_usage_frequencywords">Woordenlijsten voor autocorrectie en suggesties in de vijftien toetsenbordtalen: Frans, Engels, Spaans, Duits, Italiaans, Portugees, Nederlands, Pools, Roemeens, Tsjechisch, Hongaars, Zweeds, Deens, Noors en Fins.</string>
     <string name="licenses_usage_aosp_dictionaries">Referentiewoordenlijsten waarmee de woordenlijsten van het toetsenbord worden gecontroleerd en aangevuld (alle talen behalve het Fins).</string>
@@ -518,7 +518,7 @@
     <string name="home_status_update">Bijwerken</string>
     <string name="model_download_voice_section_title">Spraakmodel</string>
     <string name="model_download_voice_name">Spraakmodel</string>
-    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming</string>
     <string name="model_download_voice_status_debug_unverified">Niet geïnstalleerd. Debug: SHA-256-controlesommen niet vastgelegd, ze worden in logcat gelogd (tag VoiceModelDownloadWorker).</string>
     <string name="model_download_voice_notification_title">Spraakmodel wordt gedownload</string>
     <string name="model_download_voice_mobile_message">Je bent niet verbonden met wifi. Het spraakmodel is ongeveer %1$s: downloaden gebruikt een deel van je databundel.</string>

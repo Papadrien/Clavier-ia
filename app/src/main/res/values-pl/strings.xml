@@ -399,7 +399,7 @@
     <string name="licenses_fulltext_show">Pokaż pełny tekst licencji</string>
     <string name="licenses_fulltext_hide">Ukryj tekst licencji</string>
     <string name="licenses_fulltext_unreadable">Nie udało się wczytać tekstu licencji. Użyj powyższego linku, aby przeczytać go online.</string>
-    <string name="licenses_usage_nemotron">Model dyktowania głosowego (francuski i angielski), pobierany na żądanie i uruchamiany na Twoim urządzeniu.</string>
+    <string name="licenses_usage_nemotron">Model dyktowania głosowego (wielojęzyczny), pobierany na żądanie i uruchamiany na Twoim urządzeniu.</string>
     <string name="licenses_notice_nemotron">Licencja OpenMDW License Agreement, wersja 1.1. Taipo używa eksportu ONNX (int8) tego modelu, uruchamianego przez sherpa-onnx.</string>
     <string name="licenses_usage_frequencywords">Listy słów do autokorekty i podpowiedzi w piętnastu językach klawiatury: francuskim, angielskim, hiszpańskim, niemieckim, włoskim, portugalskim, niderlandzkim, polskim, rumuńskim, czeskim, węgierskim, szwedzkim, duńskim, norweskim i fińskim.</string>
     <string name="licenses_usage_aosp_dictionaries">Referencyjne listy słów użyte do sprawdzenia i uzupełnienia list słów klawiatury (wszystkie języki oprócz fińskiego).</string>
@@ -526,7 +526,7 @@
     <string name="home_status_update">Aktualizacja</string>
     <string name="model_download_voice_section_title">Model głosowy</string>
     <string name="model_download_voice_name">Model głosowy</string>
-    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming</string>
     <string name="model_download_voice_status_debug_unverified">Nie zainstalowano. Debug: sumy SHA-256 nie są przypięte, zostaną zapisane w logcat (tag VoiceModelDownloadWorker).</string>
     <string name="model_download_voice_notification_title">Pobieranie modelu głosowego</string>
     <string name="model_download_voice_mobile_message">Nie jesteś połączony z Wi-Fi. Model głosowy ma około %1$s: pobranie go zużyje część Twojego pakietu danych.</string>

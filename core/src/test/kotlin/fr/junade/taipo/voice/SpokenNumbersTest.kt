@@ -98,9 +98,9 @@ class SpokenNumbersTest {
     }
 
     @Test
-    fun `les autres langues ne changent pas`() {
-        assertEquals("dos y tres", SpokenNumbers.toDigits("dos y tres", KeyboardLanguage.ES))
+    fun `les mots d'une autre langue ne changent pas`() {
         assertEquals("vingt", SpokenNumbers.toDigits("vingt", KeyboardLanguage.DE))
+        assertEquals("zwanzig", fr("zwanzig"))
     }
 
     @Test

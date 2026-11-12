@@ -421,7 +421,7 @@
     <string name="licenses_fulltext_show">Afficher le texte complet de la licence</string>
     <string name="licenses_fulltext_hide">Masquer le texte de la licence</string>
     <string name="licenses_fulltext_unreadable">Le texte de la licence n\'a pas pu être chargé. Utilisez le lien ci-dessus pour le lire en ligne.</string>
-    <string name="licenses_usage_nemotron">Modèle de dictée vocale (français et anglais), téléchargé à la demande et utilisé sur votre appareil.</string>
+    <string name="licenses_usage_nemotron">Modèle de dictée vocale (multilingue), téléchargé à la demande et utilisé sur votre appareil.</string>
     <string name="licenses_notice_nemotron">Distribué sous l\'OpenMDW License Agreement, version 1.1. Taipo utilise un export ONNX (int8) de ce modèle, exécuté avec sherpa-onnx.</string>
     <string name="licenses_usage_frequencywords">Listes de mots pour l\'autocorrection et les suggestions dans les quinze langues du clavier : français, anglais, espagnol, allemand, italien, portugais, néerlandais, polonais, roumain, tchèque, hongrois, suédois, danois, norvégien et finnois.</string>
     <string name="licenses_usage_aosp_dictionaries">Listes de mots de référence qui ont servi à vérifier et à compléter les listes du clavier (toutes les langues sauf le finnois).</string>
@@ -552,7 +552,7 @@
     <!-- Story 8.15 : téléchargement du modèle vocal (écran « Modèle vocal », séparé de « Modèle IA »). -->
     <string name="model_download_voice_section_title">Modèle vocal</string>
     <string name="model_download_voice_name">Modèle vocal</string>
-    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming</string>
     <string name="model_download_voice_status_debug_unverified">Non installé. Debug : empreintes SHA-256 non figées, elles seront relevées dans logcat (tag VoiceModelDownloadWorker).</string>
     <string name="model_download_voice_notification_title">Téléchargement du modèle vocal</string>
     <string name="model_download_voice_mobile_message">Vous n\'êtes pas en Wi-Fi. Le modèle vocal pèse environ %1$s : le téléchargement consommera une partie de votre forfait.</string>

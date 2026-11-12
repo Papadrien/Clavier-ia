@@ -399,7 +399,7 @@
     <string name="licenses_fulltext_show">Vollständigen Lizenztext anzeigen</string>
     <string name="licenses_fulltext_hide">Lizenztext ausblenden</string>
     <string name="licenses_fulltext_unreadable">Der Lizenztext konnte nicht geladen werden. Lesen Sie ihn online über den Link oben.</string>
-    <string name="licenses_usage_nemotron">Sprachmodell für das Diktat (Französisch und Englisch), bei Bedarf heruntergeladen und auf Ihrem Gerät ausgeführt.</string>
+    <string name="licenses_usage_nemotron">Sprachmodell für das Diktat (mehrsprachig), bei Bedarf heruntergeladen und auf Ihrem Gerät ausgeführt.</string>
     <string name="licenses_notice_nemotron">Lizenziert unter dem OpenMDW License Agreement, Version 1.1. Taipo verwendet einen ONNX-Export (int8) dieses Modells, ausgeführt mit sherpa-onnx.</string>
     <string name="licenses_usage_frequencywords">Wortlisten für Autokorrektur und Vorschläge in den fünfzehn Tastatursprachen: Französisch, Englisch, Spanisch, Deutsch, Italienisch, Portugiesisch, Niederländisch, Polnisch, Rumänisch, Tschechisch, Ungarisch, Schwedisch, Dänisch, Norwegisch und Finnisch.</string>
     <string name="licenses_usage_aosp_dictionaries">Referenz-Wortlisten, mit denen die Wortlisten der Tastatur geprüft und ergänzt werden (alle Sprachen außer Finnisch).</string>
@@ -518,7 +518,7 @@
     <string name="home_status_update">Aktualisieren</string>
     <string name="model_download_voice_section_title">Sprachmodell</string>
     <string name="model_download_voice_name">Sprachmodell</string>
-    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming</string>
     <string name="model_download_voice_status_debug_unverified">Nicht installiert. Debug: SHA-256-Prüfsummen nicht hinterlegt, sie werden in logcat protokolliert (Tag VoiceModelDownloadWorker).</string>
     <string name="model_download_voice_notification_title">Sprachmodell wird heruntergeladen</string>
     <string name="model_download_voice_mobile_message">Sie sind nicht im WLAN. Das Sprachmodell ist etwa %1$s groß: Der Download verbraucht einen Teil Ihres Datenvolumens.</string>

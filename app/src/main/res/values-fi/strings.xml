@@ -399,7 +399,7 @@
     <string name="licenses_fulltext_show">Näytä lisenssin koko teksti</string>
     <string name="licenses_fulltext_hide">Piilota lisenssiteksti</string>
     <string name="licenses_fulltext_unreadable">Lisenssitekstiä ei voitu ladata. Lue se verkossa yllä olevan linkin kautta.</string>
-    <string name="licenses_usage_nemotron">Puhesanelumalli (ranska ja englanti), ladataan tarvittaessa ja toimii laitteellasi.</string>
+    <string name="licenses_usage_nemotron">Puhesanelumalli (monikielinen), ladataan tarvittaessa ja toimii laitteellasi.</string>
     <string name="licenses_notice_nemotron">Lisensoitu OpenMDW License Agreementin version 1.1 mukaisesti. Taipo käyttää mallin ONNX-vientiä (int8), jota ajetaan sherpa-onnxilla.</string>
     <string name="licenses_usage_frequencywords">Sanaluettelot automaattiseen korjaukseen ja ehdotuksiin näppäimistön viidellätoista kielellä: ranska, englanti, espanja, saksa, italia, portugali, hollanti, puola, romania, tšekki, unkari, ruotsi, tanska, norja ja suomi.</string>
     <string name="licenses_usage_aosp_dictionaries">Viitesanaluettelot, joilla näppäimistön sanaluettelot on tarkistettu ja täydennetty (kaikki kielet paitsi suomi).</string>
@@ -518,7 +518,7 @@
     <string name="home_status_update">Päivitys</string>
     <string name="model_download_voice_section_title">Puhemalli</string>
     <string name="model_download_voice_name">Puhemalli</string>
-    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming</string>
     <string name="model_download_voice_status_debug_unverified">Ei asennettu. Debug: SHA-256-tarkistussummia ei ole kiinnitetty, ne kirjataan logcatiin (tunniste VoiceModelDownloadWorker).</string>
     <string name="model_download_voice_notification_title">Ladataan puhemallia</string>
     <string name="model_download_voice_mobile_message">Et ole Wi-Fi-verkossa. Puhemalli on noin %1$s: sen lataaminen kuluttaa osan datapaketistasi.</string>

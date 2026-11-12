@@ -399,7 +399,7 @@
     <string name="licenses_fulltext_show">Zobrazit celý text licence</string>
     <string name="licenses_fulltext_hide">Skrýt text licence</string>
     <string name="licenses_fulltext_unreadable">Text licence se nepodařilo načíst. Přečtěte si ho online pomocí odkazu výše.</string>
-    <string name="licenses_usage_nemotron">Model hlasového diktování (francouzština a angličtina), stahovaný na vyžádání a spouštěný ve vašem zařízení.</string>
+    <string name="licenses_usage_nemotron">Model hlasového diktování (vícejazyčný), stahovaný na vyžádání a spouštěný ve vašem zařízení.</string>
     <string name="licenses_notice_nemotron">Licencováno podle OpenMDW License Agreement, verze 1.1. Taipo používá export ONNX (int8) tohoto modelu, spouštěný pomocí sherpa-onnx.</string>
     <string name="licenses_usage_frequencywords">Seznamy slov pro automatické opravy a návrhy v patnácti jazycích klávesnice: francouzštině, angličtině, španělštině, němčině, italštině, portugalštině, nizozemštině, polštině, rumunštině, češtině, maďarštině, švédštině, dánštině, norštině a finštině.</string>
     <string name="licenses_usage_aosp_dictionaries">Referenční seznamy slov použité ke kontrole a doplnění seznamů slov klávesnice (všechny jazyky kromě finštiny).</string>
@@ -526,7 +526,7 @@
     <string name="home_status_update">Aktualizace</string>
     <string name="model_download_voice_section_title">Hlasový model</string>
     <string name="model_download_voice_name">Hlasový model</string>
-    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming</string>
     <string name="model_download_voice_status_debug_unverified">Nenainstalováno. Debug: součty SHA-256 nejsou pevně zadány, zapíší se do logcatu (štítek VoiceModelDownloadWorker).</string>
     <string name="model_download_voice_notification_title">Stahování hlasového modelu</string>
     <string name="model_download_voice_mobile_message">Nejste připojeni k Wi-Fi. Hlasový model má asi %1$s: jeho stažení spotřebuje část vašich dat.</string>

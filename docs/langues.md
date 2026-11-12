@@ -40,7 +40,8 @@ Huit langues ajoutées le 11/11/2026 (pl, ro, cs, hu, sv, da, nb, fi) : voir `di
 | Règles de flexion (pluriels réguliers absents des listes) | oui | es, de, pt, nl | **non** (formes fléchies prises dans les listes) |
 | Réglage de décision mesuré sur un banc | oui | oui | oui, sans contexte (`CorrectionConfidence.LATIN`, références du 12/11/2026) |
 | Emoji proposés d'après le mot | oui | **non** | oui (12/11/2026) |
-| Dictée vocale (modèle Nemotron fr/en) et nombres en chiffres | oui | **non** | **non** |
+| Dictée vocale (modèle Nemotron multilingue, langue détectée seule) | oui | prise en charge par le modèle, **à tester** | prise en charge par le modèle, **à tester** |
+| Nombres dictés écrits en chiffres (« zwanzig » -> « 20 ») | oui | oui (12/11/2026) | oui (12/11/2026) |
 | IA (correction, chat, dictée IA Gemma 4) | oui | multilingue, non mesuré | multilingue, non mesuré |
 | Interface traduite | oui | oui (à relire) | oui (à relire) |
 
@@ -72,6 +73,18 @@ Dispositions nordiques (11 touches par rangée) :
 - [ ] Rangée de chiffres activée, mode une main, clavier flottant : rien ne déborde.
 - [ ] Bulle d'accents sur la 11e touche et sur les lettres du bord droit : la bulle reste dans l'écran.
 - [ ] Zones de frappe adaptatives (réglage « Précision de frappe ») : pas de touche inatteignable.
+
+Dictée vocale (pour chacune des 13 langues autres que fr et en : es, de, it, pt, nl, pl, ro, cs, hu, sv, da, nb, fi) :
+- [ ] Dicter une phrase simple dans la langue, clavier réglé sur cette langue : le texte sort dans la bonne langue, avec ses
+      lettres (ł, ș, ř, ő, å, ø...), sans passage au français ou à l'anglais en cours de phrase.
+- [ ] Aucune étiquette de langue (`<pl-PL>`, `<sv-SE>`...) dans le texte inséré : le modèle en a dans son vocabulaire, et le code ne
+      les retire pas.
+- [ ] Nombres : dire « vingt-trois », « deux mille vingt-six », « trois virgule cinq » et « vingt pour cent » dans la langue
+      (ex. de « dreiundzwanzig », pl « dwa tysiące dwadzieścia sześć », sv « tre komma fem », fi « kaksikymmentä prosenttia ») :
+      ils s'écrivent en chiffres (« 23 », « 2026 », « 3,5 », « 20 % ») ; et un article seul reste en lettres (de « ein Haus »,
+      sv « en katt », hu « egy ház »). Noter la forme exacte renvoyée par le modèle si un nombre reste en lettres : en un mot
+      ou en plusieurs, avec ou sans trait d'union.
+- [ ] Dicter juste après avoir basculé de langue (globe) : la dictée suit, et les nombres sont lus dans la nouvelle langue.
 
 Multilingue :
 - [ ] Basculer (appui long sur Entrée, globe) entre le français et une langue nordique : la disposition et le dictionnaire suivent.

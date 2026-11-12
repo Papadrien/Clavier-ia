@@ -8,8 +8,8 @@ package fr.junade.taipo.model
 private const val VOICE_MODEL_BASE_URL = "https://taipo-worker.junade-models.workers.dev/"
 
 /**
- * Les 4 fichiers du modèle de transcription vocale (Nemotron 3.5 ASR Streaming, export sherpa-onnx multilingue
- * fr/en — voir docs/decisions-techniques.md, PR sherpa-onnx #3732/#3734, release v1.13.5).
+ * Les 4 fichiers du modèle de transcription vocale (Nemotron 3.5 ASR Streaming, export sherpa-onnx du modèle
+ * multilingue, 35 langues dont les 15 du clavier — voir docs/decisions-techniques.md, PR sherpa-onnx #3732/#3734, release v1.13.5).
  *
  * Deux façons de les obtenir (comme pour les modèles de texte) : le téléchargement dans l'app (story 8.15, [downloadUrl]
  * et [sha256] ci-dessous) ou, en debug seulement, les fichiers fournis à la main via le sélecteur du téléphone (écran

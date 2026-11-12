@@ -399,7 +399,7 @@
     <string name="licenses_fulltext_show">Afișează textul complet al licenței</string>
     <string name="licenses_fulltext_hide">Ascunde textul licenței</string>
     <string name="licenses_fulltext_unreadable">Textul licenței nu a putut fi încărcat. Folosește linkul de mai sus pentru a-l citi online.</string>
-    <string name="licenses_usage_nemotron">Model de dictare vocală (franceză și engleză), descărcat la cerere și rulat pe dispozitivul tău.</string>
+    <string name="licenses_usage_nemotron">Model de dictare vocală (multilingv), descărcat la cerere și rulat pe dispozitivul tău.</string>
     <string name="licenses_notice_nemotron">Licențiat sub OpenMDW License Agreement, versiunea 1.1. Taipo folosește un export ONNX (int8) al acestui model, rulat cu sherpa-onnx.</string>
     <string name="licenses_usage_frequencywords">Liste de cuvinte pentru corectarea automată și sugestii în cele cincisprezece limbi ale tastaturii: franceză, engleză, spaniolă, germană, italiană, portugheză, neerlandeză, poloneză, română, cehă, maghiară, suedeză, daneză, norvegiană și finlandeză.</string>
     <string name="licenses_usage_aosp_dictionaries">Liste de cuvinte de referință folosite pentru a verifica și completa listele de cuvinte ale tastaturii (toate limbile, cu excepția finlandezei).</string>
@@ -522,7 +522,7 @@
     <string name="home_status_update">Actualizare</string>
     <string name="model_download_voice_section_title">Model vocal</string>
     <string name="model_download_voice_name">Model vocal</string>
-    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming</string>
     <string name="model_download_voice_status_debug_unverified">Neinstalat. Debug: sumele SHA-256 nu sunt fixate, vor fi înregistrate în logcat (eticheta VoiceModelDownloadWorker).</string>
     <string name="model_download_voice_notification_title">Se descarcă modelul vocal</string>
     <string name="model_download_voice_mobile_message">Nu ești conectat la Wi-Fi. Modelul vocal are aproximativ %1$s: descărcarea lui va consuma o parte din abonamentul tău de date.</string>

@@ -399,7 +399,7 @@
     <string name="licenses_fulltext_show">A licenc teljes szövegének megjelenítése</string>
     <string name="licenses_fulltext_hide">A licencszöveg elrejtése</string>
     <string name="licenses_fulltext_unreadable">A licencszöveget nem sikerült betölteni. Olvassa el online a fenti hivatkozással.</string>
-    <string name="licenses_usage_nemotron">Hangdiktálási modell (francia és angol), igény szerint letöltve és az eszközén futtatva.</string>
+    <string name="licenses_usage_nemotron">Hangdiktálási modell (többnyelvű), igény szerint letöltve és az eszközén futtatva.</string>
     <string name="licenses_notice_nemotron">Az OpenMDW License Agreement 1.1-es verziója alapján licencelve. A Taipo a modell ONNX (int8) exportját használja, sherpa-onnx segítségével futtatva.</string>
     <string name="licenses_usage_frequencywords">Szólisták az automatikus javításhoz és a javaslatokhoz a billentyűzet tizenöt nyelvén: francia, angol, spanyol, német, olasz, portugál, holland, lengyel, román, cseh, magyar, svéd, dán, norvég és finn.</string>
     <string name="licenses_usage_aosp_dictionaries">Referencia-szólisták, amelyekkel a billentyűzet szólistáit ellenőrizték és kiegészítették (a finn kivételével minden nyelven).</string>
@@ -518,7 +518,7 @@
     <string name="home_status_update">Frissítés</string>
     <string name="model_download_voice_section_title">Hangmodell</string>
     <string name="model_download_voice_name">Hangmodell</string>
-    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming</string>
     <string name="model_download_voice_status_debug_unverified">Nincs telepítve. Debug: a SHA-256 ellenőrzőösszegek nincsenek rögzítve, a logcatbe kerülnek (VoiceModelDownloadWorker címke).</string>
     <string name="model_download_voice_notification_title">A hangmodell letöltése</string>
     <string name="model_download_voice_mobile_message">Nem csatlakozik Wi-Fi-hez. A hangmodell körülbelül %1$s: letöltése adatkerete egy részét felhasználja.</string>

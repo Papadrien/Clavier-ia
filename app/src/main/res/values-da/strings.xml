@@ -399,7 +399,7 @@
     <string name="licenses_fulltext_show">Vis hele licensteksten</string>
     <string name="licenses_fulltext_hide">Skjul licensteksten</string>
     <string name="licenses_fulltext_unreadable">Licensteksten kunne ikke indlæses. Brug linket ovenfor til at læse den online.</string>
-    <string name="licenses_usage_nemotron">Model til stemmediktering (fransk og engelsk), downloades efter behov og kører på din enhed.</string>
+    <string name="licenses_usage_nemotron">Model til stemmediktering (flersproget), downloades efter behov og kører på din enhed.</string>
     <string name="licenses_notice_nemotron">Licenseret under OpenMDW License Agreement, version 1.1. Taipo bruger en ONNX-eksport (int8) af modellen, der køres med sherpa-onnx.</string>
     <string name="licenses_usage_frequencywords">Ordlister til autokorrektur og forslag på tastaturets femten sprog: fransk, engelsk, spansk, tysk, italiensk, portugisisk, nederlandsk, polsk, rumænsk, tjekkisk, ungarsk, svensk, dansk, norsk og finsk.</string>
     <string name="licenses_usage_aosp_dictionaries">Referenceordlister, der er brugt til at kontrollere og supplere tastaturets ordlister (alle sprog undtagen finsk).</string>
@@ -518,7 +518,7 @@
     <string name="home_status_update">Opdatering</string>
     <string name="model_download_voice_section_title">Stemmemodel</string>
     <string name="model_download_voice_name">Stemmemodel</string>
-    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming</string>
     <string name="model_download_voice_status_debug_unverified">Ikke installeret. Debug: SHA-256-tjeksummerne er ikke fastlagt, de logges i logcat (tag VoiceModelDownloadWorker).</string>
     <string name="model_download_voice_notification_title">Downloader stemmemodellen</string>
     <string name="model_download_voice_mobile_message">Du er ikke på wi-fi. Stemmemodellen fylder ca. %1$s: at downloade den bruger en del af dit dataabonnement.</string>

@@ -399,7 +399,7 @@
     <string name="licenses_fulltext_show">Vis hele lisensteksten</string>
     <string name="licenses_fulltext_hide">Skjul lisensteksten</string>
     <string name="licenses_fulltext_unreadable">Lisensteksten kunne ikke lastes inn. Bruk lenken ovenfor for å lese den på nett.</string>
-    <string name="licenses_usage_nemotron">Modell for stemmediktering (fransk og engelsk), lastes ned ved behov og kjører på enheten din.</string>
+    <string name="licenses_usage_nemotron">Modell for stemmediktering (flerspråklig), lastes ned ved behov og kjører på enheten din.</string>
     <string name="licenses_notice_nemotron">Lisensiert under OpenMDW License Agreement, versjon 1.1. Taipo bruker en ONNX-eksport (int8) av modellen, som kjøres med sherpa-onnx.</string>
     <string name="licenses_usage_frequencywords">Ordlister for autokorrektur og forslag på tastaturets femten språk: fransk, engelsk, spansk, tysk, italiensk, portugisisk, nederlandsk, polsk, rumensk, tsjekkisk, ungarsk, svensk, dansk, norsk og finsk.</string>
     <string name="licenses_usage_aosp_dictionaries">Referanseordlister som er brukt til å kontrollere og supplere tastaturets ordlister (alle språk unntatt finsk).</string>
@@ -518,7 +518,7 @@
     <string name="home_status_update">Oppdatering</string>
     <string name="model_download_voice_section_title">Talemodell</string>
     <string name="model_download_voice_name">Talemodell</string>
-    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming</string>
     <string name="model_download_voice_status_debug_unverified">Ikke installert. Debug: SHA-256-sjekksummene er ikke fastsatt, de logges i logcat (tagg VoiceModelDownloadWorker).</string>
     <string name="model_download_voice_notification_title">Laster ned talemodellen</string>
     <string name="model_download_voice_mobile_message">Du er ikke på Wi-Fi. Talemodellen er omtrent %1$s: å laste den ned bruker en del av dataabonnementet ditt.</string>
