@@ -142,10 +142,10 @@ class MainActivity : Activity() {
         )
         bindRow(R.id.button_model_download, R.string.button_model_download, R.string.home_row_model_download_subtitle, ModelDownloadActivity::class.java)
         bindRow(R.id.button_model_settings, R.string.button_model_settings, R.string.home_row_model_settings_subtitle, ModelSettingsActivity::class.java)
-        // Story 8.12 : le chargement d'un modèle à la main est réservé au debug (la variante benchmark n'est pas debug).
-        val localModelVisible = LocalModelAccess.isVisible(BuildConfig.DEBUG)
-        findViewById<View>(R.id.button_model_settings).visibility = if (localModelVisible) View.VISIBLE else View.GONE
-        findViewById<View>(R.id.divider_model_settings).visibility = if (localModelVisible) View.VISIBLE else View.GONE
+        // Stories 8.12 et 8.15 : le chargement des modèles à la main est réservé au debug (la variante benchmark n'est pas
+        // debug) ; ses deux lignes sont dans la section « Debug », en bas de l'accueil.
+        findViewById<View>(R.id.debug_local_models).visibility =
+            if (LocalModelAccess.isVisible(BuildConfig.DEBUG)) View.VISIBLE else View.GONE
         // Story 8.15 : le modèle vocal se télécharge depuis son propre écran « Modèle vocal », distinct de « Modèle IA ».
         bindRow(
             R.id.button_voice_model_settings,
@@ -153,15 +153,12 @@ class MainActivity : Activity() {
             R.string.home_row_voice_model_subtitle,
             VoiceModelDownloadActivity::class.java,
         )
-        // Le chargement des fichiers vocaux à la main est réservé au debug, comme celui du modèle de texte (8.12).
         bindRow(
             R.id.button_voice_model_local,
             R.string.button_voice_model_local,
             R.string.home_row_voice_model_local_subtitle,
             VoiceModelSettingsActivity::class.java,
         )
-        findViewById<View>(R.id.button_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE
-        findViewById<View>(R.id.divider_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE
         bindRow(R.id.button_system_prompts, R.string.button_system_prompts, R.string.home_row_system_prompts_subtitle, SystemPromptsActivity::class.java)
         // Pass premium : sans lui, la ligne porte un cadenas et ouvre l'écran du pass (lecture et modification des prompts réservées).
         findViewById<View>(R.id.button_system_prompts).setOnClickListener {

@@ -472,20 +472,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <!-- Story 8.12 : ce séparateur et la ligne « Modèle IA local » ne sont visibles qu'en build debug (MainActivity). -->
-        <View
-            android:id="@+id/divider_model_settings"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/taipo_settings_divider_thickness"
-            android:layout_marginStart="@dimen/taipo_settings_card_padding"
-            android:background="@color/settings_divider" />
-
-        <include
-            android:id="@+id/button_model_settings"
-            layout="@layout/view_settings_row"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/taipo_settings_divider_thickness"
@@ -494,20 +480,6 @@
 
         <include
             android:id="@+id/button_voice_model_settings"
-            layout="@layout/view_settings_row"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <!-- Story 8.15 : ce séparateur et la ligne « Modèle vocal local » ne sont visibles qu'en build debug (MainActivity). -->
-        <View
-            android:id="@+id/divider_voice_model_local"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/taipo_settings_divider_thickness"
-            android:layout_marginStart="@dimen/taipo_settings_card_padding"
-            android:background="@color/settings_divider" />
-
-        <include
-            android:id="@+id/button_voice_model_local"
             layout="@layout/view_settings_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -642,7 +614,7 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <!-- Builds debug seulement (MainActivity) : forçage du pass premium, pour tester les deux états sans achat. -->
+    <!-- Builds debug seulement (MainActivity) : forçage du pass premium, diagnostic, astuces et chargement des modèles en local. -->
     <LinearLayout
         android:id="@+id/debug_section"
         android:layout_width="match_parent"
@@ -686,6 +658,35 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/taipo_settings_gap_md"
             android:text="@string/home_debug_reset_tips" />
+
+        <!-- Stories 8.12 et 8.15 : chargement des modèles à la main (fichiers locaux), réservé au debug (LocalModelAccess). -->
+        <LinearLayout
+            android:id="@+id/debug_local_models"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_settings_card"
+            android:clipToOutline="true"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md">
+
+            <include
+                android:id="@+id/button_model_settings"
+                layout="@layout/view_settings_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/taipo_settings_divider_thickness"
+                android:layout_marginStart="@dimen/taipo_settings_card_padding"
+                android:background="@color/settings_divider" />
+
+            <include
+                android:id="@+id/button_voice_model_local"
+                layout="@layout/view_settings_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
