@@ -70,6 +70,13 @@ internal class KeyPopup(private val view: View) {
     fun selectedSymbol(): Char? = popupGrid.getOrNull(popupSelectedRow)?.getOrNull(popupSelectedCol)
 
     /**
+     * Vrai si (x, y) est resté sur la touche d'origine d'une bulle sans choix présélectionné (bulle du point) : relâcher
+     * là saisit la touche elle-même, comme un appui simple, au lieu de ne rien saisir.
+     */
+    fun isOnHomeWithoutDefault(x: Float, y: Float): Boolean =
+        key != null && popupDefaultRow < 0 && !popupRect.contains(x, y) && popupHomeRect.contains(x, y)
+
+    /**
      * Ouvre la bulle de [pressed] au-dessus de sa position [bounds]. [headroom] : place disponible au-dessus de la vue ;
      * [content] : zone horizontale des touches.
      */

@@ -362,6 +362,18 @@ class KeyboardViewRegressionTest {
     }
 
     @Test
+    fun unAppuiLongSurLePointRelacheSansBougerSaisitLePoint() {
+        val period = slot("period")
+        val t = SystemClock.uptimeMillis()
+        send(MotionEvent.ACTION_DOWN, period.bounds.exactCenterX(), period.bounds.exactCenterY(), t)
+        Thread.sleep(ViewConfiguration.getLongPressTimeout() + LONG_PRESS_MARGIN_MS)
+        instrumentation.waitForIdleSync()
+        send(MotionEvent.ACTION_UP, period.bounds.exactCenterX(), period.bounds.exactCenterY(), t)
+        val symbol = (typed.singleOrNull()?.action as? KeyAction.TypeChar)?.char
+        assertEquals("relâcher la bulle du point sur la touche saisit le point", '.', symbol)
+    }
+
+    @Test
     fun deuxDoigtsSaisissentLesDeuxTouchesDansLOrdre() {
         val a = slot("letter_a")
         val z = slot("letter_z")
