@@ -238,7 +238,8 @@ class ModelDownloadActivity : ModelScreenActivity() {
     /** Tap sur « Télécharger » / « Réessayer » : contrôles réseau et espace (8.3, 8.4), puis démarrage. */
     private fun onDownloadClicked(model: AiModel) {
         // Story 8.11 : la mention de licence (Gemma 3) s'affiche avant tout téléchargement, une seule fois par licence.
-        if (model.license.mustAskBeforeDownload(licenseAcceptance.isAccepted(model.license))) {
+        val license = model.license
+        if (license != null && license.mustAskBeforeDownload(licenseAcceptance.isAccepted(license))) {
             showLicenseDialog(model)
             return
         }
@@ -263,16 +264,17 @@ class ModelDownloadActivity : ModelScreenActivity() {
 
     /** Mention des Gemma Terms of Use et de la Prohibited Use Policy, avec liens ; « Accepter » relance le téléchargement. */
     private fun showLicenseDialog(model: AiModel) {
+        val license = model.license ?: return // modèle personnalisé : jamais téléchargé ici
         val dialogContext = ContextThemeWrapper(this, R.style.MessageDialogTheme)
         val content = LayoutInflater.from(dialogContext).inflate(R.layout.dialog_model_license, null)
         content.applyTaipoFontToTree()
         content.findViewById<TextView>(R.id.license_dialog_message).text =
             getString(R.string.model_license_dialog_message, model.technicalName)
         content.findViewById<View>(R.id.license_dialog_link_terms).setOnClickListener {
-            openWebLink(model.license.termsUrl)
+            openWebLink(license.termsUrl)
         }
         content.findViewById<View>(R.id.license_dialog_link_policy).setOnClickListener {
-            model.license.policyUrl?.let(::openWebLink)
+            license.policyUrl?.let(::openWebLink)
         }
         content.findViewById<View>(R.id.license_dialog_link_conditions).setOnClickListener {
             startActivity(android.content.Intent(this, TermsActivity::class.java))
@@ -281,7 +283,7 @@ class ModelDownloadActivity : ModelScreenActivity() {
             .setTitle(getString(R.string.model_license_dialog_title, model.displayName(this)))
             .setView(content)
             .setPositiveButton(R.string.model_license_dialog_accept) { _, _ ->
-                licenseAcceptance.accept(model.license)
+                licenseAcceptance.accept(license)
                 onDownloadClicked(model)
             }
             .setNegativeButton(R.string.model_license_dialog_cancel, null)

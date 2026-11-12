@@ -70,5 +70,8 @@ data class BackupAiSettings(
         const val PROMPT_CORRECTION = "correction"
         const val PROMPT_GENERATION = "generation"
         const val PROMPT_TRANSCRIPTION = "transcription"
+
+        /** Préfixe des prompts du modèle personnalisé dans le fichier (« custom_model_correction »...). */
+        const val CUSTOM_MODEL_PREFIX = "custom_model_"
     }
 }

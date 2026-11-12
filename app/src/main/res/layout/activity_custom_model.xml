@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Page « Modèle personnalisé » (pack premium, ou build debug) : avertissement, fichier du modèle, réglages, prompts système. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/container_custom_model"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/taipo_settings_screen_padding">
+
+        <TextView
+            style="@style/TaipoText.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/custom_model_title"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_md" />
+
+        <!-- Avertissement : compatibilité avec LiteRT-LM et responsabilité de l'utilisateur. Texte posé par CustomModelActivity. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_settings_card"
+            android:padding="@dimen/taipo_settings_card_padding"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_xl">
+
+            <TextView
+                style="@style/TaipoText.Section"
+                android:id="@+id/custom_model_disclaimer_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/custom_model_disclaimer_title" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:id="@+id/custom_model_disclaimer_compatibility"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+                android:text="@string/custom_model_disclaimer_responsibility" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/TaipoText.Section"
+            android:id="@+id/custom_model_file_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/custom_model_file_title"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+
+        <TextView
+            style="@style/TaipoText.Info"
+            android:id="@+id/custom_model_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            style="@style/TaipoText.Info"
+            android:id="@+id/custom_model_warning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+            android:textColor="@color/settings_warning_text"
+            android:visibility="gone" />
+
+        <Button
+            style="@style/TaipoButton.Primary"
+            android:id="@+id/button_custom_model_pick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md"
+            android:text="@string/custom_model_pick" />
+
+        <Button
+            style="@style/TaipoButton.Secondary"
+            android:id="@+id/button_custom_model_test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+            android:text="@string/custom_model_test" />
+
+        <Button
+            style="@style/TaipoButton.Secondary"
+            android:id="@+id/button_custom_model_forget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+            android:text="@string/custom_model_forget" />
+
+        <TextView
+            style="@style/TaipoText.Status"
+            android:id="@+id/custom_model_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+            android:visibility="gone" />
+
+        <Switch
+            android:id="@+id/switch_custom_model_active"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xl"
+            android:textStyle="bold"
+            android:text="@string/custom_model_use" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/custom_model_use_description" />
+
+        <Switch
+            android:id="@+id/switch_custom_model_audio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_lg"
+            android:textStyle="bold"
+            android:text="@string/custom_model_audio" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/custom_model_audio_description" />
+
+        <TextView
+            style="@style/TaipoText.Section"
+            android:id="@+id/custom_model_prompts_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
+            android:text="@string/custom_model_prompts_title" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_lg"
+            android:text="@string/custom_model_prompts_description" />
+
+        <!-- Une section par prompt (correction, chat, transcription IA), ajoutée par CustomModelActivity. -->
+        <LinearLayout
+            android:id="@+id/container_custom_model_prompts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
+</ScrollView>

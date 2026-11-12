@@ -169,6 +169,16 @@ class MainActivity : Activity() {
             }
             startActivity(target)
         }
+        bindRow(R.id.button_custom_model, R.string.custom_model_title, R.string.home_row_custom_model_subtitle, CustomModelActivity::class.java)
+        // Pack premium (toujours ouvert en debug) : sans lui, la ligne porte un cadenas et ouvre l'écran du pack.
+        findViewById<View>(R.id.button_custom_model).setOnClickListener {
+            val target = if (CustomModelAccess.allowed) {
+                Intent(this, CustomModelActivity::class.java)
+            } else {
+                PremiumActivity.intent(this, PremiumActivity.SOURCE_CUSTOM_MODEL)
+            }
+            startActivity(target)
+        }
         bindRow(R.id.button_backup, R.string.button_backup, R.string.home_row_backup_subtitle, BackupActivity::class.java)
         bindRow(R.id.button_terms, R.string.button_terms, R.string.home_row_terms_subtitle, TermsActivity::class.java)
         bindRow(R.id.button_licenses, R.string.button_licenses, R.string.home_row_licenses_subtitle, LicensesActivity::class.java)
@@ -271,6 +281,12 @@ class MainActivity : Activity() {
         } else {
             getString(R.string.premium_locked_item, getString(R.string.button_system_prompts))
         }
+        // Ligne « Modèle personnalisé » : même cadenas que les prompts système.
+        val customModel = findViewById<View>(R.id.button_custom_model)
+        val customAllowed = CustomModelAccess.allowed
+        customModel.findViewById<ImageView>(R.id.row_chevron)
+            .setImageResource(if (customAllowed) R.drawable.ic_chevron_right else R.drawable.ic_lock)
+        customModel.contentDescription = if (customAllowed) null else getString(R.string.premium_locked_item, getString(R.string.custom_model_title))
         if (BuildConfig.DEBUG) {
             val bought = getString(if (PremiumPass.isPurchased) R.string.home_debug_premium_bought else R.string.home_debug_premium_not_bought)
             val state = when (PremiumPass.debugOverride) {

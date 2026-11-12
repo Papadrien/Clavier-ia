@@ -15,6 +15,7 @@ import fr.junade.taipo.ai.WavEncoder
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.model.AiModel
+import fr.junade.taipo.model.ModelPreferences
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -115,7 +116,7 @@ class AiTranscriptionController(
             return
         }
         val model = host.activeModel()
-        if (model == null || !model.hasAudioInput) {
+        if (model == null || !ModelPreferences(context).acceptsAudio(model)) {
             host.showMessage(context.getString(R.string.ai_transcription_no_audio_model))
             return
         }
@@ -162,7 +163,7 @@ class AiTranscriptionController(
                     host.showMessage(context.getString(R.string.ai_transcription_too_short))
                     return@launch
                 }
-                if (model == null || !model.hasAudioInput) {
+                if (model == null || !ModelPreferences(context).acceptsAudio(model)) {
                     host.showMessage(context.getString(R.string.ai_transcription_no_audio_model))
                     return@launch
                 }

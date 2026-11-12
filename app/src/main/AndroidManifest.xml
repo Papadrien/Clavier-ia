@@ -142,6 +142,13 @@
             android:windowSoftInputMode="adjustResize"
             android:exported="false" />
 
+        <!-- Modèle IA personnalisé (pack premium, ou build debug) : fichier .litertlm fourni par l'utilisateur et ses prompts. -->
+        <activity
+            android:name=".CustomModelActivity"
+            android:label="@string/custom_model_title"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false" />
+
         <activity
             android:name=".VoiceModelSettingsActivity"
             android:label="@string/voice_model_title"

@@ -100,6 +100,22 @@ enum class AiModel(
             "e75b1386809cda8e0fda1ef93a39f75b70d400b9/gemma-4-E4B-it.litertlm",
         approxDownloadBytes = 3_650_000_000L,
     ),
+
+    /**
+     * Modèle personnalisé : un fichier `.litertlm` choisi par l'utilisateur (pack premium, ou build debug : voir
+     * `CustomModelAccess`), compatible avec la version de LiteRT-LM intégrée. Hors catalogue ([entriesOrdered]) : pas de
+     * téléchargement, pas d'empreinte ni de taille de référence, entrée audio selon le réglage de sa page ([ModelPreferences.acceptsAudio]).
+     */
+    CUSTOM(
+        id = "personnalise",
+        displayNameRes = R.string.model_name_custom,
+        subtitleRes = R.string.model_subtitle_custom,
+        technicalName = "LiteRT-LM",
+        huggingFaceRepo = "",
+        approxSizeBytesMin = 1L,
+        approxSizeBytesMax = Long.MAX_VALUE,
+        fileHintRes = R.string.model_hint_custom,
+    ),
     ;
 
     fun displayName(context: Context): String = context.getString(displayNameRes)
@@ -123,8 +139,8 @@ enum class AiModel(
 
         fun byId(id: String?): AiModel? = values().firstOrNull { it.id == id }
 
-        /** Liste ordonnée des 4 modèles, dans l'ordre Ultra-léger → Performant. */
-        fun entriesOrdered(): List<AiModel> = values().toList()
+        /** Catalogue : les 4 modèles de Taipo, dans l'ordre Ultra-léger → Performant (sans le modèle personnalisé [CUSTOM]). */
+        fun entriesOrdered(): List<AiModel> = values().filter { it != CUSTOM }
 
         /** Ordre des listes des paramètres (sélecteur et écran « Modèle IA ») : Performant → Ultra-léger, l'inverse de [entriesOrdered]. */
         fun entriesForDisplay(): List<AiModel> = entriesOrdered().reversed()

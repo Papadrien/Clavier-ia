@@ -512,7 +512,7 @@ class TaipoIme : InputMethodService() {
         correctionBar.aiActionsAllowed = !sensitiveField
         // Story 14.5 : le bouton Transcription IA n'existe que si le modèle actif (installé) a une entrée audio.
         correctionBar.aiTranscriptionAvailable =
-            ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled)?.hasAudioInput == true
+            ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled)?.let(modelPreferences::acceptsAudio) == true
         suggestions.isEmailAddressField = fieldType == FieldType.EMAIL
         messagingField = MessagingFieldPolicy.isMessagingField(info?.packageName, info?.inputType ?: 0)
         controller.setAutoCapitalization(

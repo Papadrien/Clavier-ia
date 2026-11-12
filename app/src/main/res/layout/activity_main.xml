@@ -495,6 +495,19 @@
             layout="@layout/view_settings_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <!-- Modèle personnalisé : pack premium (cadenas sans lui, MainActivity.renderPremium), toujours ouvert en build debug. -->
+        <include
+            android:id="@+id/button_custom_model"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <TextView
