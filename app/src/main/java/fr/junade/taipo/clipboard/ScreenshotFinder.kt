@@ -101,6 +101,14 @@ class ScreenshotFinder(context: Context) {
         /** Les copies du cache sont supprimées au bout d'une heure. */
         private const val CACHE_MAX_AGE_MILLIS = 60 * 60 * 1000L
 
+        /**
+         * Fonction désactivée depuis la 2.0.0 : Google Play refuse READ_MEDIA_IMAGES pour un clavier, la permission a donc été
+         * retirée du manifeste. Tant que ce drapeau est faux, [hasPermission] répond toujours non : rien n'est observé ni lu,
+         * et le réglage est masqué. Ne le repasser à vrai qu'avec une solution acceptée par la Play Console
+         * (voir docs/play-console-declarations.md, section Photos).
+         */
+        const val FEATURE_ENABLED = false
+
         /** Permission d'images à demander selon la version d'Android. */
         val permission: String
             get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -110,7 +118,7 @@ class ScreenshotFinder(context: Context) {
             }
 
         fun hasPermission(context: Context): Boolean =
-            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+            FEATURE_ENABLED && ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
 
         fun authority(context: Context): String = context.packageName + ".fileprovider"
 
