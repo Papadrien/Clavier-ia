@@ -54,10 +54,9 @@ class OnboardingPermissionsStep(
         val missing = applicable() - granted()
         if (missing.isEmpty()) return
         val answered = prefs.getBoolean(KEY_ANSWERED, false)
-        val blocked = answered && missing.none { permission ->
-            permission.manifestNames(sdk).any { activity.shouldShowRequestPermissionRationale(it) }
-        }
-        if (blocked) {
+        // Refus définitif : une réponse a déjà été donnée et Android ne propose plus aucune des demandes manquantes.
+        val canStillAsk = missing.any { permission -> permission.manifestNames(sdk).any { activity.shouldShowRequestPermissionRationale(it) } }
+        if (answered && !canStillAsk) {
             runCatching {
                 activity.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", activity.packageName, null)))
             }

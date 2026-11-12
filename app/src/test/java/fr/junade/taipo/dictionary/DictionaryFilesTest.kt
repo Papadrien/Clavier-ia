@@ -12,7 +12,10 @@ class DictionaryFilesTest {
 
     @Test
     fun `deux fichiers par langue, aux noms du bucket`() {
-        assertEquals("https://taipo-worker.junade-models.workers.dev/dictionaries-2026-11-12/fr.txt", DictionaryFiles.remoteUrl(KeyboardLanguage.FR, DictionaryFile.FULL))
+        assertEquals(
+            "https://taipo-worker.junade-models.workers.dev/dictionaries-2026-11-12/fr.txt",
+            DictionaryFiles.remoteUrl(KeyboardLanguage.FR, DictionaryFile.FULL),
+        )
         assertEquals(
             "https://taipo-worker.junade-models.workers.dev/dictionaries-2026-11-12/names/fr.txt",
             DictionaryFiles.remoteUrl(KeyboardLanguage.FR, DictionaryFile.NAMES),
