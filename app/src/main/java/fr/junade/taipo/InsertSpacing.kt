@@ -14,12 +14,16 @@ object InsertSpacing {
 
     /**
      * [text] entouré des espaces nécessaires : [before] est le caractère juste avant le point d'insertion (null en début
-     * de champ), [after] celui juste après (null en fin de champ). [text] est supposé déjà débarrassé de ses blancs de bord.
+     * de champ), [after] celui juste après (null en fin de champ). Un blanc au bord de [text] tient lieu d'espace.
      */
     fun around(before: Char?, text: String, after: Char?): String {
         if (text.isEmpty()) return text
-        val prefix = if (before != null && !before.isWhitespace() && before !in NO_SPACE_AFTER && text.first() !in NO_SPACE_BEFORE) " " else ""
-        val suffix = if (after != null && !after.isWhitespace() && after !in NO_SPACE_BEFORE && text.last() !in NO_SPACE_AFTER) " " else ""
+        // Un texte qui commence (ou finit) déjà par un blanc garde le sien : pas d'espace en double (« Merci.  À bientôt. »).
+        val prefix = if (before != null && !before.joins(NO_SPACE_AFTER) && !text.first().joins(NO_SPACE_BEFORE)) " " else ""
+        val suffix = if (after != null && !after.joins(NO_SPACE_BEFORE) && !text.last().joins(NO_SPACE_AFTER)) " " else ""
         return prefix + text + suffix
     }
+
+    /** Ce caractère se colle au texte voisin : blanc, ou caractère de [set]. */
+    private fun Char.joins(set: String) = isWhitespace() || this in set
 }

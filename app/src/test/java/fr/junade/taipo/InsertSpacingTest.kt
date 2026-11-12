@@ -35,6 +35,12 @@ class InsertSpacingTest {
     }
 
     @Test
+    fun `un blanc deja au bord du texte n'est pas double`() {
+        assertEquals(" À bientôt.", InsertSpacing.around('.', " À bientôt.", null))
+        assertEquals("La mer ", InsertSpacing.around(null, "La mer ", 'e'))
+    }
+
+    @Test
     fun `un texte vide reste vide`() {
         assertEquals("", InsertSpacing.around('a', "", 'b'))
     }
