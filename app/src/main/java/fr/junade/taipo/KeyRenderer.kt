@@ -605,7 +605,7 @@ internal class KeyRenderer(private val context: Context) {
     private fun autoSizeTextPaint(key: Key, label: String = "") {
         val base = when (key.id) {
             // « ?123 » et « ABC » : même taille, réduite de 30 % (demande du 12/11/2026 : « ABC » paraissait trop gros à côté).
-            "toggle" -> dims.keyTextSizeLarge * TOGGLE_123_TEXT_RATIO
+            "toggle" -> toggleLabelTextSize(dims.keyTextSizeLarge)
             "symbol_page" -> dims.keyTextSize * SYMBOL_PAGE_TEXT_RATIO // « ?123 » et « =\< » : 4 signes sur une touche étroite
             else -> dims.keyTextSize
         }
@@ -654,11 +654,12 @@ internal class KeyRenderer(private val context: Context) {
 
     companion object {
         /**
-         * Touches translucides sur un fond à motif : face à 73 %, ombre à 60 %. Revue du 10/11/2026 : transparence réduite de 30 %
-         * (maquettes : face à 62 %, ombre à 43 %, soit 38 % et 57 % de transparence, ramenées à 27 % et 40 %).
+         * Touches translucides sur un fond à motif : face à 78 %, ombre à 68 %. Revue du 10/11/2026 : transparence réduite de 30 %
+         * (maquettes : face à 62 %, ombre à 43 %, soit 38 % et 57 % de transparence, ramenées à 27 % et 40 %). Demande du
+         * 12/11/2026 : encore 20 % de moins (21,6 % et 32 % de transparence, soit 200 et 173 sur 255).
          */
-        const val TRANSLUCENT_FACE_ALPHA = 187
-        const val TRANSLUCENT_SHADOW_ALPHA = 153
+        const val TRANSLUCENT_FACE_ALPHA = 200
+        const val TRANSLUCENT_SHADOW_ALPHA = 173
         private const val OPAQUE = 255
 
         /** Lot 21 : « pas de caractère » (voir [shiftedChar]). */
@@ -669,7 +670,13 @@ internal class KeyRenderer(private val context: Context) {
         private const val TOGGLE_123_TEXT_RATIO = 0.7f
 
         /** Libellé de plusieurs signes : jamais plus de cette part de la largeur de la touche. */
-        private const val LABEL_MAX_WIDTH_RATIO = 0.8f
+        const val LABEL_MAX_WIDTH_RATIO = 0.8f
+
+        /**
+         * Taille du libellé « ?123 » / « ABC » (en pixels) à partir de `taipo_key_text_size_large` déjà convertie. Partagée
+         * avec la touche « ABC » du panneau emoji, pour que les deux panneaux aient la même.
+         */
+        fun toggleLabelTextSize(keyTextSizeLarge: Float): Float = keyTextSizeLarge * TOGGLE_123_TEXT_RATIO
 
         /**
          * Nom de la langue sur l'espace pendant le glissement : part de l'allongement du trait reprise en largeur par le mot

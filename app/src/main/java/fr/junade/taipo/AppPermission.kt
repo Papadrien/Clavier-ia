@@ -1,6 +1,7 @@
 package fr.junade.taipo
 
 import android.Manifest
+import fr.junade.taipo.clipboard.ScreenshotFinder
 import fr.junade.taipo.dictionary.SystemUserDictionary
 
 /**
@@ -47,10 +48,15 @@ enum class AppPermission {
          * Autorisations qui ont un sens sur cette version d'Android, dans l'ordre d'affichage. [declared] : autorisations que
          * l'application installée déclare dans son manifeste (null : toutes). Une fonction coupée par un flag de compilation
          * ne déclare plus son autorisation (captures d'écran du presse-papiers) : elle n'est alors pas demandée.
+         * [screenshotsEnabled] : drapeau de la suggestion des captures ([ScreenshotFinder.FEATURE_ENABLED], coupée pour Google Play).
          */
-        fun applicable(sdkInt: Int, declared: Set<String>? = null): List<AppPermission> = entries.filter { permission ->
+        fun applicable(
+            sdkInt: Int,
+            declared: Set<String>? = null,
+            screenshotsEnabled: Boolean = ScreenshotFinder.FEATURE_ENABLED,
+        ): List<AppPermission> = entries.filter { permission ->
             val name = permission.grantingName(sdkInt) ?: return@filter false
-            declared == null || name in declared
+            (permission != SCREENSHOTS || screenshotsEnabled) && (declared == null || name in declared)
         }
 
         /** Noms Android à demander d'un coup pour les autorisations [missing]. */

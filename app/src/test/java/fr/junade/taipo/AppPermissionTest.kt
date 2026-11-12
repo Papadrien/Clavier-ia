@@ -13,9 +13,16 @@ class AppPermissionTest {
     fun `pas de notifications a demander avant Android 13`() {
         assertEquals(
             listOf(AppPermission.MICROPHONE, AppPermission.SCREENSHOTS, AppPermission.USER_DICTIONARY),
-            AppPermission.applicable(32),
+            AppPermission.applicable(32, screenshotsEnabled = true),
         )
-        assertEquals(AppPermission.entries.toList(), AppPermission.applicable(33))
+        assertEquals(AppPermission.entries.toList(), AppPermission.applicable(33, screenshotsEnabled = true))
+    }
+
+    @Test
+    fun `captures non demandees tant que la fonction est coupee`() {
+        assertFalse(AppPermission.SCREENSHOTS in AppPermission.applicable(34, screenshotsEnabled = false))
+        // Drapeau actuel : la suggestion des captures est coupée pour Google Play.
+        assertEquals(fr.junade.taipo.clipboard.ScreenshotFinder.FEATURE_ENABLED, AppPermission.SCREENSHOTS in AppPermission.applicable(34))
     }
 
     @Test
@@ -42,10 +49,10 @@ class AppPermissionTest {
     fun `etape faite quand tout est accorde ou que l'utilisateur a repondu`() {
         val all = AppPermission.applicable(34).toSet()
         assertTrue(AppPermission.stepDone(all, 34, answered = false))
-        assertFalse(AppPermission.stepDone(setOf(AppPermission.MICROPHONE), 34, answered = false))
+        assertFalse(AppPermission.stepDone(emptySet(), 34, answered = false))
         assertTrue(AppPermission.stepDone(emptySet(), 34, answered = true))
         // Avant Android 13, les notifications ne manquent pas.
-        assertTrue(AppPermission.stepDone(all - AppPermission.NOTIFICATIONS, 32, answered = false))
+        assertTrue(AppPermission.stepDone(AppPermission.applicable(32).toSet(), 32, answered = false))
     }
 
     @Test
