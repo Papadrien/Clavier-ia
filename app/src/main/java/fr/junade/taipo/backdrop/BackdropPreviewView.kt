@@ -75,7 +75,8 @@ class BackdropPreviewView(context: Context) : View(context) {
     }
 
     private companion object {
-        const val SCROLL_TO_PHASE = 0.012f
+        /** Avance du motif par pixel défilé. Demande du 12/11/2026 : divisée par 4 (0,012 auparavant). */
+        const val SCROLL_TO_PHASE = 0.003f
         const val KEYS_PER_ROW = 7
         const val GAP_RATIO = 0.025f
         const val OPAQUE = 255
