@@ -21,7 +21,7 @@ splashscreen = "1.2.0"
 benchmark = "1.4.1"
 uiautomator = "2.3.0"
 # LiteRT-LM figé à 0.17.1 (compilé avec Kotlin 2.4.0, d'où le surclassement du KGP dans build.gradle.kts).
-litertlm = "0.17.1"
+litertlm = "0.19.1"
 # Téléchargement des modèles (épopée 8) : WorkManager, travail au premier plan.
 work = "2.12.0"
 
