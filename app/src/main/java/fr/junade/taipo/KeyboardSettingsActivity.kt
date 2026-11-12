@@ -353,6 +353,12 @@ class KeyboardSettingsActivity : Activity() {
 
     private fun setUpScreenshotSuggestions(preferences: KeyboardPreferences) {
         val switch = findViewById<CompoundButton>(R.id.switch_screenshot_suggestions)
+        if (!ScreenshotFinder.FEATURE_ENABLED) {
+            // Fonction désactivée (permission retirée pour Google Play) : la section entière est masquée.
+            listOf(R.id.title_screenshot_suggestions, R.id.switch_screenshot_suggestions, R.id.description_screenshot_suggestions)
+                .forEach { findViewById<View>(it).visibility = View.GONE }
+            return
+        }
         screenshotSwitch = switch
         switch.isChecked = preferences.isScreenshotSuggestionEnabled && ScreenshotFinder.hasPermission(this)
         switch.setOnCheckedChangeListener { _, checked ->

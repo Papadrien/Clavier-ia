@@ -65,7 +65,7 @@ jobs:
       # Même mécanisme et mêmes secrets qu'AnimalTimer :
       #   ANDROID_KEYSTORE_BASE64 et ANDROID_KEY_PROPERTIES
       # Projet Android natif : key.properties à la racine, keystore dans app/
-      # (storeFile=keystore.jks est résolu relativement au module app).
+      # (storeFile est résolu relativement au module app ; le keystore est décodé sous ce nom).
       - name: Setup Android signing
         if: steps.variant.outputs.variant == 'release'
         env:
@@ -78,17 +78,23 @@ jobs:
             echo "::error::Secrets ANDROID_KEYSTORE_BASE64 et ANDROID_KEY_PROPERTIES absents : build release impossible (voir docs/release.md)."
             exit 1
           fi
-          echo "$KEYSTORE_BASE64" | base64 --decode > app/keystore.jks
+          # Correctif jks (main) : le keystore est décodé sous le nom donné par storeFile, résolu depuis le module app.
           echo "$KEY_PROPERTIES" > key.properties
+          STORE_FILE=$(grep -E '^storeFile=' key.properties | head -n1 | cut -d= -f2- | tr -d '\r' | xargs)
+          if [ -z "$STORE_FILE" ]; then
+            echo "::error::storeFile absent de ANDROID_KEY_PROPERTIES"; exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > "app/$STORE_FILE"
+          test -s "app/$STORE_FILE" || { echo "::error::keystore vide : app/$STORE_FILE"; exit 1; }
           echo "✅ Signing release (secrets)"
 
-      - name: Build APK (${{ steps.variant.outputs.variant }})
+      - name: Build APK + AAB (${{ steps.variant.outputs.variant }})
         run: |
           if [ "${{ steps.variant.outputs.variant }}" = "release" ]; then
             # Audit CI-02 : l'AAB est ce que Play accepte ; l'APK reste pour les essais.
             ./gradlew assembleRelease bundleRelease
           else
-            ./gradlew assembleDebug
+            ./gradlew assembleDebug bundleDebug
           fi
 
       - name: Upload APK
