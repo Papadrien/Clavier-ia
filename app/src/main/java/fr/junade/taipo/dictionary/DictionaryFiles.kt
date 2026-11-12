@@ -33,8 +33,12 @@ object DictionaryFiles {
     /** Même serveur (Worker Cloudflare devant R2) que les modèles : voir `VoiceModelFile` et `AiModel`. */
     const val SERVER_BASE_URL = "https://taipo-worker.junade-models.workers.dev/"
 
-    /** Dossier du bucket R2 (même nom que le dossier local). */
-    const val REMOTE_DIRECTORY = "dictionaries"
+    /**
+     * Dossier du bucket R2. « dictionaries » jusqu'au 12/11/2026 ; « dictionaries-2026-11-12 » depuis l'enrichissement des listes de
+     * prénoms et noms (empreintes changées, voir [DictionaryChecksums]) : tout le dossier y est déposé, l'ancien reste pour les
+     * versions déjà publiées.
+     */
+    const val REMOTE_DIRECTORY = "dictionaries-2026-11-12"
 
     fun directory(filesDir: File): File = File(filesDir, DIRECTORY_NAME)
 

@@ -74,3 +74,11 @@ ne connaissent pas ces langues et ne les demandent jamais). À envoyer depuis `d
 Tant qu'ils ne sont pas sur le serveur, ces langues s'affichent et se tapent (disposition, accents), mais sans correction ni suggestions
 (« Pas encore téléchargé » dans le détail de la langue). Leurs empreintes sont déjà dans `DictionaryChecksums`.
 
+
+## Prénoms et noms enrichis (12/11/2026) : nouveau dossier du bucket
+Les 15 listes `names/<code>.txt` ont changé (prénoms et noms de famille ajoutés, voir `dictionaries/SOURCES.txt`) : leurs empreintes
+aussi. `DictionaryFiles.REMOTE_DIRECTORY` passe à `dictionaries-2026-11-12`.
+**À faire avant de publier la version** : envoyer **tout** le dossier `dictionaries/` du projet (listes complètes, `names/`, `bigrams/`)
+dans `dictionaries-2026-11-12/` sur le bucket, mêmes chemins ; garder `dictionaries/` pour les versions déjà publiées.
+Limite : une langue déjà installée n'est pas retéléchargée (pas de mise à jour automatique) ; les nouvelles listes n'arrivent qu'aux
+nouvelles installations de langue.

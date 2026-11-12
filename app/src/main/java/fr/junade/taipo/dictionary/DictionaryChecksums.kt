@@ -36,21 +36,21 @@ object DictionaryChecksums {
     )
 
     private val names = mapOf(
-        "fr" to "e1744e51eb5abb05d5c3e2cc4d149bf71c3e381638360e45be7896521e896047",
-        "en" to "dfa1b37e855636d793afd1e8deaac3cf53c5fb1c073a83801f8ba02f35a1c144",
-        "es" to "be6977b36cb86b5ced30f3aecb33779215ecba282161edb7ca3a60b8fd34ad9a",
-        "de" to "ecbd1b4e21acf4bbefdf77b1dc2b9cc7caefc82580ba16a9059ca77e1f944d0f",
-        "it" to "135e8fe2587f396a5540083136c9ccaa5466df2c90460746bf8b9c7f093ff8b5",
-        "pt" to "6ffba8d2b02dc379f5318c45328c75aeb481af22a38815acb02f5f55b89b8a71",
-        "nl" to "52e86ddf8a7016b3a49e041d528388bab44f802a07a05add355a9a4a74ca9e4f",
-        "pl" to "e9ff3f179b9b248febe2fc342de5d1335a7028d47ec8f1fa5f606aff6da0080f",
-        "ro" to "f7b543a4a96f0515143f4cfe9c2331cfcbfd7c52889587ed3f95b4ad3a09b148",
-        "cs" to "01a056ed1e3c1ed48f8789b1ee9cf409facf83170060969aa729969e6215252e",
-        "hu" to "3806506ef69f96ac65e5c830e80a002cb93baa14cff549ad5757eaafdd4331b0",
-        "sv" to "1d2ca05f8957c2aac185b7c43e1fbc7dd26f4cda184ee4b1aa083ef328979a2e",
-        "da" to "31fa2b6babf8843fe801a822c4ceafdfb32e75166f815177b5bbe07574a1a6eb",
-        "nb" to "df9e050b3641649bfab5f530f6f988e161293588bc251109e48a0ce22116511a",
-        "fi" to "1022520020e4135373b9a33d97dc9dcabe1edb950caa41a8f3bcdcb55aab9d33",
+        "fr" to "baf0eba15377b34c682e75524248aa476689ee9c15fb732211a1c7f0c0cdd8e6",
+        "en" to "88bfc58d0672896b13cbb79ef1edba10bbc6d26b5ed5799bdd7fe08bd27689a9",
+        "es" to "17e54154ae75fc2abf325c82637ec503f4ac01d8a9907597694ba78633e723a4",
+        "de" to "d86af6cd5be32e67ee8e4f7b5b974be25cf731f32ef2cb895cc82388942d3a84",
+        "it" to "f034f0a5abd4997f4bd7a2fabc3ac789a54108b9034debf02e75ed2a512141e5",
+        "pt" to "fbac4404c9985d763930ac359516682195fcb2ba494473dce75d626dc1fadead",
+        "nl" to "80a43fc61c7f2acf10d3e5c8f826a9ba8a42e717385b40d4743477c512d9ae39",
+        "pl" to "23b7e39eb910f265d5043b9086b9e5e199bd3b17ea16cf7242b9846ee3104fea",
+        "ro" to "430f016d520048b185ca7e8c392f9f24cf5c5d1ef66dada2b9e1978b8b8bd8fe",
+        "cs" to "f3bee6ed853fa0bcb6dcae53c3f6c79802a5b33c7e62d69af608df68c02aee59",
+        "hu" to "5345051199b7216a81ae7238c70f40f8831fd605f4ae622f8005772ec3d86f5e",
+        "sv" to "ff1d5b0fc5af4f46d8ea8fb521250b8db193d4a770f94121e54ef27f6c436d1d",
+        "da" to "60f0b11a598ac8d5c2192d5983de239731fb9cf3112cf2db992cf914d3050ee6",
+        "nb" to "f67bb0918a0f83c0657d508323a7fdc286d94066693e16d4e70eb34a657303ea",
+        "fi" to "24796f3763d604a953495958ca1758fa24c12a58ef26848e9c2d1ff3cdac90ef",
     )
 
     private val bigrams = mapOf(
