@@ -96,7 +96,8 @@ class KeyboardController(initialState: KeyboardState = KeyboardState()) {
 
             KeyAction.Shift -> {
                 val previousTap = lastShiftTapAt
-                val isDoubleTap = uptimeMillis != null && previousTap != null &&
+                val isDoubleTap = uptimeMillis != null &&
+                    previousTap != null &&
                     uptimeMillis - previousTap in 0..SHIFT_DOUBLE_TAP_MS
                 state = when {
                     // Verrouillage actif : un appui le désactive.

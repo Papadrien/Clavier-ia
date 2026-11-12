@@ -1,0 +1,70 @@
+# Emoji-ehdotukset, suomi: emoji ja sen jälkeen sanat, jotka tuovat sen esiin (yleiset taivutusmuodot kirjoitetaan auki).
+# Ordre de priorité = ordre du fichier ; mots comparés sans accent ni majuscule ; pas de règle de pluriel (formes écrites).
+# Liste écrite pour Taipo le 12/11/2026, à faire relire par une personne de langue maternelle.
+😀 hymy iloinen onnellinen
+😂 haha hahaha hauska naurattaa
+😍 ihana kaunis upea
+😘 pusu pusuja suukko
+❤️ rakastan rakkaus sydän
+😢 surullinen
+😭 itken itku kyyneleet
+😡 vihainen raivoissaan
+😴 nukkua nukun väsynyt
+👍 ok okei hyvä selvä täydellinen
+👏 bravo onnea onneksi
+🙏 kiitos kiitti
+👋 moi hei terve moikka
+🎉 juhlat bileet juhlitaan
+🎂 synttärit syntymäpäivä
+🎁 lahja lahjat
+🎄 joulu joulukuusi
+🔥 tuli kuuma
+❄️ kylmä talvi
+☀️ aurinko aurinkoista kesä
+🌧️ sade sataa
+🍕 pizza pizzaa
+🍔 hampurilainen burgeri
+🍝 pasta spagetti
+🍣 sushi
+🍷 viini
+🍺 olut kalja
+☕ kahvi kahvia
+🍵 tee teetä
+🍰 kakku
+🍫 suklaa suklaata
+🍎 omena
+🍓 mansikka mansikoita
+🐱 kissa kissan kissat kissanpentu
+🐶 koira koiran koirat pentu
+🐴 hevonen
+🐦 lintu linnut
+🌹 ruusu ruusut
+🌸 kukka kukat
+🚗 auto
+🚲 pyörä
+🚌 bussi
+🚆 juna
+✈️ lentokone lento matka
+🏠 koti kotona talo
+🏖️ ranta loma
+⚽ jalkapallo peli
+🎮 pelit pelata
+🎵 musiikki laulu biisi
+🎬 elokuva leffa
+📚 kirja kirjat
+📱 puhelin kännykkä
+💻 tietokone läppäri
+📷 kuva kuvat kamera
+💡 idea
+💰 raha rahaa
+📞 soita soitan
+💼 työ töissä
+✅ valmis
+💪 sali vahva
+🤔 hmm ehkä
+😅 hups anteeksi sori
+🤒 kipeä sairas
+😎 siisti
+🤗 halaus haleja
+🤩 mahtava upeaa
+🏆 voitto voitimme

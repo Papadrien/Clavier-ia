@@ -49,11 +49,11 @@ class PrivacyContentTest {
 
     private val locales = listOf(
         Locale(
-            "values", "on your device", "download", "Keyboard settings > Usage data", "Never your text",
+            "values", "on your device", "download", "My data > Share usage data", "Never your text",
             "password fields", "identifier", "a Junadé server", "nothing to turn off", "no telemetry",
         ),
         Locale(
-            "values-fr", "sur votre appareil", "télécharger", "Paramètres du clavier > Données d", "Jamais votre texte",
+            "values-fr", "sur votre appareil", "télécharger", "Mes données > Partager les données d", "Jamais votre texte",
             "champs de mot de passe", "identifiant", "serveur de Junadé", "rien à désactiver", "ni télémétrie",
         ),
     )
@@ -93,6 +93,12 @@ class PrivacyContentTest {
             assertTrue(strings["privacy_section_3_body"]!!.contains(l.settingsPath), l.folder)
             assertTrue(!strings["keyboard_settings_analytics_switch"].isNullOrBlank(), l.folder)
         }
+    }
+
+    @Test
+    fun `les journaux techniques de Google Play Billing sont annonces`() {
+        // Audit PRIV-02 : la bibliothèque du pass premium envoie ses propres journaux à Google (README, docs/analytics.md).
+        for (l in locales) assertTrue(l.strings["privacy_section_2_body"]!!.contains("Google Play Billing"), l.folder)
     }
 
     @Test

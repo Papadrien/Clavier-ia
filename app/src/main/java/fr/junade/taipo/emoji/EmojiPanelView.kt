@@ -14,8 +14,8 @@ import android.widget.TextView
 import fr.junade.taipo.KeyboardWidth
 import fr.junade.taipo.PillKeyDrawable
 import fr.junade.taipo.R
-import fr.junade.taipo.dimen
 import fr.junade.taipo.announceAsButton
+import fr.junade.taipo.dimen
 import fr.junade.taipo.setFixedTextSizeRes
 import fr.junade.taipo.themeColor
 import fr.junade.taipo.useTaipoFont
@@ -285,7 +285,6 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
             view.layoutParams = params
         }
     }
-
 
     companion object {
         /** Hauteur de la rangée d'onglets et de la rangée du bas, par rapport à une rangée de touches. */

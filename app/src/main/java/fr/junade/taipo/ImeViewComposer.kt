@@ -203,7 +203,8 @@ class ImeViewComposer(
             host.playAiButtonSound()
             host.onCorrectClicked()
         }
-        correctionBar.setOnActionsMenuClickListener { // robot (menu de gauche) : même vibration qu'une touche
+        correctionBar.setOnActionsMenuClickListener {
+            // robot (menu de gauche) : même vibration qu'une touche
             host.haptic()
             host.playAiButtonSound()
         }

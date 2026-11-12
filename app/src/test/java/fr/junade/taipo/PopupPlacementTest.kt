@@ -13,7 +13,11 @@ class PopupPlacementTest {
     @Test
     fun `le choix presélectionne est centre au dessus de la touche`() {
         val left = PopupPlacement.left(
-            keyCenterX = 500f, anchorInPopup = defaultAnchor, popupWidth = popupWidth, minLeft = 4f, maxRight = 1076f,
+            keyCenterX = 500f,
+            anchorInPopup = defaultAnchor,
+            popupWidth = popupWidth,
+            minLeft = 4f,
+            maxRight = 1076f,
         )
         assertEquals(500f, left + defaultAnchor)
     }
@@ -21,7 +25,11 @@ class PopupPlacementTest {
     @Test
     fun `sans choix par defaut la bulle entiere est centree`() {
         val left = PopupPlacement.left(
-            keyCenterX = 500f, anchorInPopup = popupWidth / 2f, popupWidth = popupWidth, minLeft = 4f, maxRight = 1076f,
+            keyCenterX = 500f,
+            anchorInPopup = popupWidth / 2f,
+            popupWidth = popupWidth,
+            minLeft = 4f,
+            maxRight = 1076f,
         )
         assertEquals(500f, left + popupWidth / 2f)
     }
@@ -29,7 +37,11 @@ class PopupPlacementTest {
     @Test
     fun `pres du bord gauche la bulle reste visible`() {
         val left = PopupPlacement.left(
-            keyCenterX = 20f, anchorInPopup = defaultAnchor, popupWidth = popupWidth, minLeft = 4f, maxRight = 1076f,
+            keyCenterX = 20f,
+            anchorInPopup = defaultAnchor,
+            popupWidth = popupWidth,
+            minLeft = 4f,
+            maxRight = 1076f,
         )
         assertEquals(4f, left)
     }
@@ -37,7 +49,11 @@ class PopupPlacementTest {
     @Test
     fun `pres du bord droit la bulle reste visible`() {
         val left = PopupPlacement.left(
-            keyCenterX = 1060f, anchorInPopup = defaultAnchor, popupWidth = popupWidth, minLeft = 4f, maxRight = 1076f,
+            keyCenterX = 1060f,
+            anchorInPopup = defaultAnchor,
+            popupWidth = popupWidth,
+            minLeft = 4f,
+            maxRight = 1076f,
         )
         assertEquals(1076f - popupWidth, left)
     }
@@ -45,7 +61,11 @@ class PopupPlacementTest {
     @Test
     fun `une zone plus etroite que la bulle ne plante pas`() {
         val left = PopupPlacement.left(
-            keyCenterX = 100f, anchorInPopup = defaultAnchor, popupWidth = popupWidth, minLeft = 4f, maxRight = 100f,
+            keyCenterX = 100f,
+            anchorInPopup = defaultAnchor,
+            popupWidth = popupWidth,
+            minLeft = 4f,
+            maxRight = 100f,
         )
         assertEquals(4f, left)
     }

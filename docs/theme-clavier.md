@@ -3,8 +3,11 @@
 ## Périmètre
 
 - Le thème ne concerne que **le clavier** (touches, barre du haut, suggestions, panneaux emoji / Smart Clipboard, mode prompt).
-- Les **écrans de l'application restent toujours sombres** (`KeyboardTheme.wrap` force le mode nuit), de même que les fenêtres de
-  dialogue lancées par le clavier (`ClipboardEditActivity`, `ClipboardLabelActivity`).
+- Les **écrans de l'application suivent le même thème que le clavier** (11/11/2026) : `KeyboardTheme.wrap` pose la palette du
+  choix « Apparence » (Système par défaut), couleurs du fond d'écran comprises. Thèmes Android de base clair (`values/themes.xml`,
+  `Platform.*`) et sombre (`values-night/themes.xml`) ; barres système à icônes sombres en clair. Un écran ouvert pendant un
+  changement se recrée quand on y revient (`ScreenThemeTracker`) ; l'écran « Apparence » se recrée aussitôt. Texte des boutons et
+  badges violets : `text_on_accent` (blanc) dans les deux thèmes. Le splash garde son fond sombre (logo prévu pour lui).
 - minSdk reste **26** (décision du 01/11/2026).
 - Première étape : thèmes **Clair**, **Sombre**, **Système, automatique**. « Couleur dynamique » (Android 12+) vient ensuite.
   « Mes thèmes » et « Couleurs » de la page Thème sont repoussés (personnalisation = pack premium, voir le contexte projet).

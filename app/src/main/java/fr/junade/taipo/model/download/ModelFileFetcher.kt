@@ -3,11 +3,11 @@ package fr.junade.taipo.model.download
 import android.content.Context
 import android.os.SystemClock
 import fr.junade.taipo.AppLog
-import kotlinx.coroutines.delay
 import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlinx.coroutines.delay
 
 /**
  * Téléchargement sûr d'un seul fichier (stories 8.3, 8.4, 8.8 et 8.9), partagé par le worker des modèles de texte et
@@ -159,8 +159,11 @@ object ModelFileFetcher {
                 is InstallResult.Installed -> Outcome.Done(result.sizeBytes, result.sha256)
                 is InstallResult.Cancelled ->
                     // Coupure de connexion : on retente tout seul ; Wi-Fi quitté sans accord données mobiles : on s'arrête.
-                    if (networkLost) Outcome.Failed(DownloadFailure.NETWORK, retryable = lostKind == NetworkKind.NONE)
-                    else Outcome.Cancelled
+                    if (networkLost) {
+                        Outcome.Failed(DownloadFailure.NETWORK, retryable = lostKind == NetworkKind.NONE)
+                    } else {
+                        Outcome.Cancelled
+                    }
                 is InstallResult.Failed -> {
                     AppLog.w(TAG, "Installation échouée : ${result.reason}", result.cause)
                     val reason = DownloadFailureMapper.from(result)
@@ -263,7 +266,8 @@ object ModelFileFetcher {
             }
             else -> {
                 AppLog.w(TAG, "Réponse inattendue : HTTP ${response.code}")
-                return Plan.Stop(Outcome.Failed(DownloadFailure.SERVER))
+                // Audit REL-02 : serveur saturé ou en panne passagère : nouvelle tentative avec le délai habituel.
+                return Plan.Stop(Outcome.Failed(DownloadFailure.SERVER, retryable = DownloadPolicy.isRetryableHttpStatus(response.code)))
             }
         }
         // Le serveur doit annoncer une taille cohérente avec le fichier attendu.

@@ -45,6 +45,7 @@ class ClipHistoryRepository(
                 val opened = dao.await()
                 try {
                     opened.deleteOlderThan(clock() - retentionMillis()) // purge au démarrage de la base
+                    opened.deleteSensitive() // audit SEC-01 : copies sensibles gardées par les versions précédentes
                 } catch (e: CancellationException) {
                     throw e
                 } catch (t: Throwable) {
@@ -74,6 +75,12 @@ class ClipHistoryRepository(
      */
     suspend fun record(text: String, copiedAtMillis: Long, sensitive: Boolean): Boolean {
         if (ClipboardItems.historyRefusal(text)) return false
+        // Audit SEC-01 : une copie sensible (gestionnaire de mots de passe, numéro de carte) n'est jamais écrite sur le disque ;
+        // elle reste proposée, masquée, par la puce de collage (en mémoire). Une copie antérieure du même texte est effacée.
+        if (ClipboardItems.isSensitive(text, sensitive)) {
+            dao.await().deleteWithText(text)
+            return false
+        }
         val now = clock()
         val known = copiedAtMillis > 0
         val copiedAt = if (known) minOf(copiedAtMillis, now) else now
@@ -112,4 +119,9 @@ class ClipHistoryRepository(
 
     /** Supprime la ligne [id]. Retourne vrai si elle existait. */
     suspend fun remove(id: Long): Boolean = dao.await().deleteById(id) > 0
+
+    /** Efface tout l'historique (réglage « Historique du presse-papiers » désactivé). */
+    suspend fun clearAll() {
+        dao.await().deleteAll()
+    }
 }

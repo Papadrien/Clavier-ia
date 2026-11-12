@@ -1,0 +1,2001 @@
+# Phrases Tatoeba (CC BY 2.0 FR) jamais comptées dans dictionaries/bigrams/hu.txt : voir tools/build_ngrams.py.
+Az oktatás ezen a világon kiábrándít engem.
+A tökéletessége csak egy hibán múlt.
+Feltételezem, hogy ez a dolog másnak tűnik, ha sokáig gondolkodol rajta.
+Fél pohár sör után látott evéshez.
+Levelet írtam otthon lévő szüleimnek.
+Van egy barátom, aki Angliában él.
+El fogom fogadni a javaslatodat.
+Senki sem ért meg engem.
+Nem áll módomban új autót venni.
+Egy órát vártam a barátodra.
+Mi a helyzet a halpiacon?
+Amíg elmegy vásárolni, a gyermekei magukra maradnak.
+Nem is tudok és nem is hallottam róla semmit.
+A város nyugati részében él.
+Satoru ötünk közül a leggyorsabb futó.
+Milyen szerepet tölt be az Internet az oktatásban?
+Mi annak az úrnak a foglalkozása?
+Egész nap ezen járt az eszem.
+Szeretnék egy asztalt foglalni két személyre.
+Nem akarom hátralevő életemet azzal tölteni, hogy ezt sajnálom.
+A találkozás az emberi kapcsolatok fontos eleme.
+Az asztalra a furcsa csomagot dobtam.
+Nem az erőfeszítéseinek köszönhetően lett sikeres, hanem mert épp szerencsés volt.
+Amint a síp megszólal, a verseny elkezdődik.
+Meglep, hogy japán autótok van.
+Ezekben a poharakban nincs víz.
+Egy napig nem tudnánk elleni víz nélkül.
+Vacsora után letörölte az asztalt.
+Még mindig ragaszkodtak ehhez az elmélethez.
+A bor palackba töltött költészet.
+A matematika olyan, mint a fizika logikája.
+Teljes joggal büszke az apjára.
+A pénzt szét kell osztani a rászorulók között.
+Ezek mind csak panaszkodni tudnak!
+Newton figyelte, hogyan esik le az alma a fáról.
+A barátom Henry, tegnap nem volt az órán, ahogy én sem.
+Betegség miatt Smith tanár úr előadását lefújták.
+- Akarsz még egy csésze kávét? - Nem, köszönöm.
+Ezen a lemezen sok szép dal van.
+Nem tudja a bal kéz, mit csinál a jobb kéz.
+Hat alma van a dobozban.
+A nap lenyugodott, ők befejezték munkájukat.
+Kinek nem jaj, annak nem baj.
+Vettem egy tucat kanalat és két tucat villát.
+A hátsó ajtón keresztül jöttünk, másképp észrevettek volna minket.
+Azt hiszem, hogy együttélésünk befolyásolta életmódodat.
+Néztünk, de nem láttunk semmit.
+Ha akárki így beszélne hozzám, hívnám a rendőrséget.
+Kiment az állomásra elkísérni a barátját.
+Ez a kölyök egy istencsapása!
+Nem szeretném elmondani neki az igazat.
+Élelmiszerhiány miatt az egész városban kitört az erőszak.
+Ki az, aki tisztelet és csodálat nélkül tudja olvasni bátor emberek hősies tetteit?
+Vett egy mély lélegzetet, mielőtt belépett főnöke irodájába.
+Nem vagyok biztos benne, hogy lesz-e erre időm.
+Ne felejts el holnap meglátogatni.
+Kanadában franciául és angolul beszélnek.
+Észrevettem, hogy a papucsomat hordja.
+Nem szólt egy szót sem.
+Minden személynek váltania kell jegyet.
+Jövő hét hétfőig vagy keddig.
+Törpe csak törpe marad, ha hegytetőn áll is.
+Gondold meg előbb, mit fogsz csinálni.
+Biztosan ismered a helyes irányt?
+Megszámolta a szoba négy sarkát.
+Sírva fakadt, amikor meglátta az arcát.
+A fiú tagadta, hogy lopta a kerékpárt.
+Nagyon elfoglalt voltam múlt héten.
+A húgom túl elhamarkodottan cselekszik, és gyakran nem vesz észre fontos dolgokat.
+Büszkén viselte a zöld csillagot.
+Árnyékban feküdtek a fáradt munkások.
+Mikor fogadnak engem a hivatalban?
+A játékosok két csoportot alkottak.
+Azonnal csináld meg a házidat.
+A tengerész feszesen rögzítette a köteleket.
+Szeretnék szobát foglalni a hotelban.
+Már több ezer mondatot alkottam.
+A jegyespár meghívta a rokonságot a lakodalomba.
+A költő a város pereméről írt.
+Az észak lányáról olvastam egy regényt.
+Küldök önnek egy képet a családomról.
+Rögtön észrevette, hogy hamis hangot ütött meg.
+Júliusban már aratják a gabonát.
+Az elektromos gitár másképp hangzik, mint az akusztikus.
+Az osztály kapcsolatban van a bányász szakszervezettel.
+A költőnek nehéz útja volt a sikerig.
+Hosszú távon sok pénzt spórolhatunk meg a gép megvásárlásával.
+A lehető legkeményebben tanult franciául.
+Ha nem dolgozol, semmit se fogsz kapni.
+A vádlottak csöndben álltak a bíróság előtt.
+A kisfiú most lovagolt először.
+Az égen madárként való repülés vágya inspirálta a repülőgép feltalálását.
+A fiam még nem tud számolni.
+Gyakrabban kell-e vizelnie, mint máskor, és minden alkalommal csak kevés vizelete van-e?
+Neki a kiadóknál befolyásos kapcsolatai vannak.
+Ostobaság volt tőled, hogy pénzt adtál neki kölcsön.
+Amikor jelt adunk, vegyen mély lélegzetet és erősen nyomjon maga is!
+Volt-e már kankója, szifilisze, vagy más nemi betegsége?
+A faji megkülönböztetés ellen harcolt.
+Betegsége miatt most ne igyon alkoholos italokat!
+Adok önnek egy levelet az orvosa számára.
+Az arany ára minden nap változik.
+Azt gondolom, hogy hiába próbáljuk rábeszélni őt.
+Liliom illata töltötte be a szobát.
+Ez a történet érdekes tényről mesél nekünk.
+Az egészség többet ér a gazdagságnál.
+Mikor tv-t nézek, hamar elálmosodom.
+Kérem, postán küldje el a könyvet!
+A jövő héten meglátogatom a nagybátyámat.
+Mi mind élveztük a filmet.
+White úr körülbelül egyidős velem.
+Nyugodt alvás után jó ötletünk támad.
+Nincs pénzem új motorbiciklire, ezért ezzel a régivel kell valahogy odaérnem.
+Egy arcizma sem rándult meg.
+Meghasad a szívem a bánattól.
+A hölgy anyagi gondokkal küzd.
+Talán egy hétig lesznek távol otthonról.
+Ebben a könyvben sok gyönyörű illusztráció van.
+A betegség hamar jön, de nehezen megy el.
+Ha Nérót említik, a zsarnokság és kegyetlenség jut az eszembe.
+Ez a víz olajjal szennyezett.
+Ha túl sokat eszünk, gyomorrontást kapunk.
+A jövőben talán híres művész lesz belőle.
+Gyerekkoromban gyakran sétáltam az erdőben.
+Tapasztalata előnyt jelentett másokkal szemben.
+Kérem, töltsön neki egy pohár sört.
+A munkahelyemen én vagyok a legfiatalabb.
+Te vagy a legfontosabb ember mindannyiunk közt.
+Az iskolában nyári szünet lesz.
+Tornázom, mert egészséges akarok maradni.
+Emlékszem a házra, amelyben felnőttem.
+Egészségügyi könyveket óvatosan olvass. Egy nyomdahiba az életedbe kerülhet.
+Ez egy nagyon élénk utca.
+A padon ültem és vártam.
+Tegnap megvettem az autót amire már nagyon régen vágytam.
+Nem fürödtek, mert hideg volt.
+Amikor az elméletét először hirdették ki, senki nem hitt benne.
+Kellemes nyaralásra számítok a tengerparton.
+Tud olvasni, de nem tud jól írni.
+A sarokba egy fehér zongorát helyeztek.
+Alig hibázik, amikor angolul ír.
+Nem, én még nem írtam meg.
+Neki jutott a hús, nekem csak a csont.
+A bizonyítványomat a fiókba tettem, hogy anya meg ne lássa.
+Gyászba öltözött asszonyok álltak a halott körül.
+Sajnos belefutottam a reggeli csúcsforgalomba.
+A nagy hal megeszi a kicsit.
+Tavasszal visszatértek a gólyák a faluba.
+A rendetlen otthont még elviselem, de a mocskosat utálom.
+- Kedvesem, olyan vagy, mint a cukor.
+Aki sokat ígér, keveset ad.
+Kövér izzadságcseppek gördültek le homlokáról.
+Ma reggel részegség utáni állapotban van.
+Keresztelő, lagzi, tor - nincsen költség nélkül.
+A rendőrök vallomást csikartak ki a vádlottól.
+Felugrott, mintha kígyó csípte volna meg.
+Ha mindenre kíváncsi vagy, hamar megöregszel.
+Őrizd meg a gyertyát éjszakára.
+Minden hónapban félretesz egy kis pénzt.
+Folt nélküli lelkiismeret a legpuhább párna.
+Egy tányér lencséért adta el az örökségét.
+Minden madárnak a saját fészke tetszik.
+Az ülés elnöke helyes mederbe terelte a vitát.
+Hol tanult meg ilyen jól csehül?
+A hölgy túl van terhelve munkával.
+A kérdésed nem kapcsolódik a tárgyhoz.
+Meggyőződésem, hogy a dolgok jobbra fordulnak.
+A betegnek erő, a csirkének halál.
+A bátorságának köszönhetően megnyerte a csatát.
+Egy golyó átfúródott a sisakon.
+Nézd! Ott száll fel egy repülő!
+A hírek hallatán dühbe gurult.
+A gyógyszer a nyelvnek keserű, de a vérnek gyógyító.
+Tom és Jane összevesztek, de másnap reggel már kibékültek.
+Az orvos sztetoszkópot helyezett a páciens mellére.
+Ne vedd készpénznek az ígéretét.
+Egy kis gőz van a fejében.
+Senki sem lehet próféta a saját hazájában.
+Még a legravaszabb róka is csapdába esik.
+Ez a gyógyszer nem használt nekem.
+Egy busz elállta az utamat.
+Két nagy ablak fölött selyem függöny lóg.
+A múlt éjjel ellopták a karórámat.
+Önkéntelenül kicsúszott a száján valami.
+Ezt nem úszod meg büntetlenül!
+A messze lévő mindig szép.
+Aki szerencsés a játékban, szerencsétlen a szerelemben.
+A "dohányozni tilos" táblák ellenére, a hajógépész nyíltan füstölt egész idő alatt.
+Anyám attól félt, hogy piszkos leszek.
+Harapófogóval kell kihúzni belőle a szót.
+A szokás hatalma gyakran győz.
+Szükség esetén feltétlenül hívj fel!
+Kiraktuk a csizmáját a küszöbön túlra.
+Szükségem van az útlevelére és három fényképre.
+Jane ma hiányzik az iskolából.
+Még nem határoztad el magad?
+A harag egy fajta energia.
+Savanyú a kedve egész nap.
+Három ember minimum elfér ezen a kanapén.
+Nem akarlak megszégyeníteni, csupán intelek.
+A vásárhoz két ember kell.
+Szerencsére már túl vagyunk a veszélyen.
+Attól tartok, hogy úgy van.
+Az örök világosság fényeskedjék neki.
+Tévedés volt, hogy ide jöttem.
+A szomszédaim nagyon kedves emberek.
+Kinek kellene gondoskodnia az idősekről?
+Nem tudtuk, hogy melyik autóbuszra szálljunk fel.
+Volt neki bizalma, - ami nekem nem volt.
+Ez a jegy két személyre szól.
+Szereti szétszedni az elektromos készülékeket.
+Bocsáss meg, hogy a keresztneveden hívlak.
+Büntetést fizettem, mert nem volt elég a bélyeg.
+A sast úgy tekintik, mint a madarak királyát.
+A regény érdekes, nehéz letenni a könyvet.
+Szép az idő, menjünk gyalog.
+A doboz tartalma a címkén van felírva.
+Hol találtad ezt a hitvány kutyát?
+A homok apró szemcsékből áll.
+A munkás elsápadt, amikor meghallotta, hogy elbocsájtották.
+Fél fejjel magasabb vagy mint én.
+Most elfoglalt vagyok, mert rendbe kell szednem a lakásomat.
+Az életfelfogásod más, mint az enyém.
+A gazdaság igen rossz állapotban volt.
+El kellett volna fogadnia a tanácsát.
+Éppen csak, hogy elkezdte olvasni a könyvet, mikor valaki kopogott az ajtón.
+Mi a gond a lakásban való meztelenkedéssel?
+A hindu hívők számára a tehenek szent állatok.
+Ez a város jólétét fogja fenyegetni.
+Na, ugye nem halsz meg?
+Ma reggel felhős az ég.
+Udvariatlanság volt tőle, hogy nem köszönt el.
+Neked többé nincs módod megmondani, hogy mit tegyek.
+Ágyban kéne maradnia három vagy négy napig.
+Tom felkészült, bármi is történjen.
+A nagyapám öt éve halt meg.
+Tegnap találkoztam Mary-vel az utcán.
+A segítséged nélkül megfulladhattam volna.
+- Uram, maga egy imperialista! - Maga uram, pedig egy troll!
+Ez a jegy három napig érvényes.
+Távolítsa el a magot és a szárat.
+Még sohasem hallottam erről a városról.
+Nem nagyon szeretem a kávét.
+Nem tetszik nekem, hogy mindig késel.
+Magyarország biztosítja a tisztességes gazdasági verseny feltételeit.
+Fordítsd le a következő mondatokat japánra.
+A Kormány általános hatáskörű területi államigazgatási szerve a fővárosi és megyei kormányhivatal.
+Az ügyészi szervezetet a legfőbb ügyész vezeti és irányítja, kinevezi az ügyészeket.
+A helyi önkormányzat dönt a helyi adók fajtájáról és mértékéről.
+Törvény elrendelhet a helyi önkormányzat kötelező feladatának társulásban történő ellátását.
+A dörgés és a villámlás természeti jelenség.
+A Költségvetési Tanács elnökét a köztársasági elnök nevezi ki hat évre.
+Kérem, válaszoljon kínaiul vagy angolul.
+A csapatkapitány a pályára vezette a játékosokat.
+Fázom, kapcsold be a fűtést.
+Az oroszlán az állatok királya.
+Úgy döntött, hogy orvos lesz.
+Nem lehetett látni még egy csillagot sem.
+Meg tudná mondani, hogyan kell kitölteni ezt az űrlapot?
+Harry-nek sikerült úszva átkelnie a folyón.
+Minden alkalommal 30 eurómba kerül, ha elmegyek a fogorvoshoz.
+Az üzlet nem zár be délben.
+Az olyan halak, mint a ponty vagy a pisztráng, édesvízben élnek.
+A cseresznyevirágzás most van a csúcspontján.
+Az ön férjének egy alapos egészségügyi vizsgálat elvégzését javaslom.
+Csak egy falat kenyeret ettem.
+Olyan kedves volt, hogy kölcsönadta az autóját nekem, amikor az enyém lerobbant.
+Vakító fény vágott a szemébe.
+Semmi sem kellemesebb, mint az utazás.
+A vihar miatt nem tudtunk időben érkezni.
+Vettünk egy nagy zongorát, ami a fél nappalit elfoglalta.
+Kényszerítette őt, hogy spenótot egyen.
+Olyan álmos voltam, hogy véletlenül ülve elszundítottam.
+Ebben a folyóban egyetlen hal sem él már.
+Ennek az útnak már el kellett volna készülnie az eredeti tervek szerint.
+A kisgyermeket kínozta a mostohaanyja.
+Nem csoda, hogy ilyet kellett mondania.
+Most vagy soha! - kiáltotta a költő.
+A családtagjaid közül nincs senki, aki tud németül?
+A bizottság nyolc tagból áll.
+Ez a híd stabilnak tűnik.
+A felesége pénze nélkül sohase lett volna rendező.
+Az öreg ember a földre esett.
+Hino úr volt az aki lefordította a könyvet spanyolról japánra.
+Ezen a reggelen későn keltem.
+Sohasem láttalak főzni. Tudsz te egyáltalán főzni?
+Kalapot tettél föl, hogy védd a fejedet.
+Némelyik ház kevésbé tetszik nekem.
+Minden, amit én akarok, az te vagy.
+Egy ember nekem adta a házát.
+Ebben a nagy ködben nem tudom fölismerni a közlekedési táblákat.
+Az elnök kijelentette, hogy lemond.
+Építettem a fiamnak egy új házat.
+A házat igen soká építették.
+A szoba ki van takarítva.
+Péter a barátjával sétált a parkban.
+Akként emlékszem anyádra, amilyen volt harminc évvel ezelőtt.
+Sokat segített nekem elnöki feladatomban.
+A lány abbahagyta a dohányzást.
+Az eszperantó sokszorta könnyebb, mint bármelyik nemzeti nyelv.
+A tündér azzá változott, amivé akart.
+Mosolya most más volt, mint reggel.
+Odafutott hozzá, mintha meg akarná csókolni.
+A lányt kétszer léptették elő, mióta belépett ehhez a céghez.
+Az az ország két másikkal határos.
+Ezt a könyvet tudom neked ajánlani.
+A lány nem alkalmas tanárnak.
+Mi? Nem hallom, amit mondasz.
+Mondj nekem valamit, amit nem tudok!
+Azt mondták nekem, hogy ennek a gyógyszernek a bevétele után majd jobban érzem magam.
+Nem tudom elképzelni az életet nélküle.
+Ennek a könyvnek az utolsó fejezete.
+Ez volt az első repülőutam.
+Csekély keresetéből a lehető legjobban élt.
+A sofőr felelős az utasok biztonságáért.
+Sok év eltelt azóta, és az agyam gyenge a sok szenvedés miatt.
+Csukd be a könyvet, és nézz rám!
+Elégedetten jöttem el az orvostól.
+Szeretném, ha nem hagynák figyelmen kívül öt.
+Múlt éjjel a tetőről figyeltük a csillagokat.
+Jobban szereti a francia nyelvet, mint a németet.
+Abbahagyta a dohányzást, hogy megőrizze az egészségét.
+Nekünk nem tetszik a matek.
+Egyik angolul, a másik japánul beszél.
+Ez az a számítógép, amelyen írja a cikkeit.
+Kate tudja, hogyan kell tortát készíteni.
+Van egy asztal ebben a szobában.
+Az iskola antik órája elütötte a kilencet.
+A közvetítők szerepére akart utalni.
+A felhőkön át a völgy mélyén látszik az erdő zöld tengere.
+Az öregember mindig nosztalgiával gondolt a régi, szép napokra.
+Szeretném felpróbálni a kék csíkos szoknyát.
+Három autója közül az egyik kék, a többi fehér.
+Kölcsönvettem a szótárt a barátomtól.
+A kérdésnek csak egyetlen értelmezése lehetséges.
+Ülj le és pihenj egy kicsit.
+Csukd be az ajtót, ha elmész.
+A meredek kaptató az egyetlen út a határhoz.
+Légy óvatos, a férfinak fegyvere van.
+El akarsz válni, vagy nem?
+A rossz idő miatt mégsem néztem meg a város nevezetességeit.
+Az emberek állást foglalnak az abortusz ügyében.
+Van neki egy kicsi, fekete kutyája.
+Az olvasói levelek a vélemények széles spektrumát tükrözik.
+Tom csak nagy nehezen találta meg a kulcsát.
+Egy sürgős üzlet miatt utazott Oszakába.
+A háziállatok temetőjében temettem el a kutyámat.
+Nem tudtam, hogy tud angolul.
+Elmúltak a meleg nyári napok, és hűvös őszi napok következtek.
+Csak egy kicsit egyedül szeretnék lenni.
+Nem tudtam, hogy sebész vagy.
+Ismered azt a lányt, aki az ablak mellett áll?
+A magyarázatod nekem túlságosan elvont.
+Van néhány homályos pont a javaslatában.
+A Jupiter holdjain esetleg van élet.
+A Hold másik oldalán van egy titkos támaszpont.
+Mindenki meglepődött azon, hogy sikerült letennie a vizsgát vezetésből.
+Ki volt a szerencsés, aki végül örökölt.
+Az emberek, akik városban laknak, nem ismerik a vidéki élet örömét.
+El tudom mondani visszafelé az ábécét öt másodperc alatt.
+Kérem, térjünk vissza a tizedik oldalra.
+"Írd tegnap egy levelet?" "Igen, írt."
+Emelje fel a kezét, ha tudja a választ.
+Csavard ki jól a ruhákat, mielőtt kiteregeted.
+A problémád hasonlít az enyémre.
+A házadat be kellene festeni.
+Egy alma leesett a fáról.
+Meglepő, hogy neki ezt nem kell ismernie.
+Néha jó érzés, csak úgy céltalanul kóborolni.
+A tó ezen a helyen a legmélyebb.
+Annak, amit mondasz, semmi értelme.
+Nem tudom abbahagyni a tüsszentést.
+Megdöbbenve hallottam, hogy meghalt drog túladagolásban. Nekem mindig olyan őszintének tűnt.
+Hirtelen melegebb lett az idő.
+Légy szíves, küldj magadról egy fényképet.
+Két kilométerre van egy forrás.
+Két oszlop között feszítettük ki a drótot.
+Azt gondoltam, hogy ez nem lehet igaz.
+Attól félek, rossz híreim vannak.
+Melyik baráti csoportnak vagy a tagja?
+Tom évek óta nem zongorázik.
+A hangos zenétől Fred mindig a falra mászik.
+Soha nem csináltam még ilyet.
+Kilencre be kell érnünk a munkába.
+Hogy fogsz megélni munka nélkül?
+Árulnak egyáltalán még valahol ólmozott benzint?
+Azonban az a jó, ha a "je" elöljárót a lehető legritkábban használjuk.
+Mondani és cselekedni nem ugyanaz.
+Egy részeg ember leesett a lépcsőn.
+Először kételkedett, de hamarosan magáévá tette a tanácsomat.
+Hogy emberiek legyünk, meg kell haladnunk állati természetünket.
+Az apja egy kőfejtőben dolgozik.
+Tom ugyanolyan kamerát vett, amilyen Marinak van.
+Az az érzésem, hogy valami szörnyűség fog történni.
+Megmutatod nekem, amit tegnap vettél?
+Néhány kérdést intéztem az orvoshoz.
+Szükségem van valamire, ami emlékeztet engem rád.
+Mivel egész nap gyalogoltam, nagyon fáradt vagyok.
+Röviddel a színdarab előtt balesetet szenvedtünk.
+Ezek közül egyik kép se tetszik nekem.
+Ha esik is, elutazom holnap, korán reggel.
+Sürgős esetben milyen számot kell felhívnom?
+Soha többé ne csinálj ilyet!
+Tudod, hogy miért utálom Tomot? Mert mindenütt ott van.
+Ebben a házban laktam, amikor még kicsi voltam.
+Mennyi pénzt adtál az autódért?
+Föl tud nekem váltani egy ötdollárost?
+Szükségem van valamilyen jó szótárra.
+Én mindig ebben a negyedben akartam lakni.
+Elnézést kérek Öntől, én külföldi vagyok és nem olyan jól értek csehül.
+Nem tudom, hogy miért kell ez nekem.
+Ez a fotó a szülőkről készült.
+Néhány bátor utas elcsípte a zsebtolvajt, és átadta a rendőrségnek.
+Minden évben a külföldiek ezrei látogatnak el Japánba.
+Sajnos, kicsit túl fiatal vagy.
+Te még egyszer sem voltál ott.
+Beszéltem egy nagyon szimpatikus kisasszonnyal.
+Ugyanolyan intelligens, mint amilyen szép.
+Az ágyba tette a kisbabáját.
+A bútorok ebben a hivatalban igazán modernek.
+Csak nagyon finom vécépapírt vásárolok.
+Neked csak két választási lehetőséged van.
+Az én házam a város északi részén van.
+Beszállt az autóba és elhajtott onnan.
+Biztosan ki fogok tudni találni egy megoldást.
+Ne zavarj engem, amikor tanulok.
+Szeretném odaadni neked a kulcsot, de nincs hozzá jogom.
+Úgy gondolom, 3 év hosszú idő.
+Nem tudunk tortát sütni, amíg nincs meg minden hozzávalónk.
+Fogj egy papírt és írj!
+Jane betegen fekszik az ágyban.
+Nem egy fogkrém, egy arctisztító hab!
+Remélem, hogy neked tetszenek a csokoládé torták.
+Ismerek annyi francia szót, ami elég, hogy megértessem magam.
+Nem, én nem vagyok házas.
+Találkoztam a fivéreddel az utcán.
+Mellemre hajtotta a fejét, hogy meghallgassa a szívverésemet.
+Mindenki jól bánt a gyermekkel, az mégis félt, hogy megint megverik.
+A barátaink mindig hiányoznak nekünk.
+Elment az állomásra, hogy elbúcsúzzon tőle.
+A rossz időjárás az egészségére is kihatott.
+Nem tudom, hogy meg tudom-e ezt tenni, de meg fogom kísérelni.
+Egy angol csak a nyelvében különbözik egy amerikaitól.
+Nem, Müller úr nincs itt. Eszik és nem jön egy óra előtt vissza.
+Kérlek, még ne tedd le!
+Lennél olyan kedves, hogy kölcsön adod a könyvedet?
+A legnagyobb párt Olaszországban azoké, akik nem szavaznak.
+Az az érzésem, hogy Tom csak kihasznál engem.
+Jimmy mindent tud az autókról.
+Gondolod, hogy én nem tudom mi folyik itt?
+Tom megmasszírozta a fájós lábait.
+Semmit nem tehettél volna, hogy megakadályozd.
+Fordítva vette fel a pulóverét.
+Sajnos nem tudok tovább maradni.
+Az arab nyelv nem nehéz.
+A republikánus jelölt nyerte a választást.
+Három szilvafa áll a kertben.
+Miért nem kérdezed meg Tomit, magát?
+Tom a táskámat a szállodában felejtette.
+Szívesen olvasnék könyveket a Beatlesről.
+Azután, amit az első pohár után csinált, mit fog tenni a második után?
+A saját házát mindenki ismeri.
+A ti szobátok nagyobb, mint az enyém.
+Ki tudja nyitni az ablakot?
+Remélem, hogy apa hamarosan visszajön külföldről.
+Tom gazdag és híres akar lenni.
+A tanácsom nélkül felsültél volna.
+Sikerül befejezned a munkát időben?
+Nem tudom, hogy valójában hogy hívják.
+Tudod, hol van egy érmés nyilvános telefon?
+Nem szükséges részt venned a mai találkozón.
+Ezen fog nevetni az egész világ.
+Nem csak a sportot, a zenét is szeretem.
+Muszáj megtennünk a megelőző intézkedéseket az árvízzel szemben.
+Milyen régen élsz már ezen a szigeten?
+A pincérnők fiatalok, csinosak, szexisek és jól öltözöttek.
+Fel tudnád nekem ezt olvasni?
+Olyan sokat dolgozott, hogy tönkretette az egészségét.
+Melyik a leghosszabb angol szó?
+Tom nem mindig mond igazat.
+Van itt valaki, aki beszél japánul?
+Ma a nacionalizmus Európa legszörnyűbb ellensége.
+Nem tudtam elérni őt a hivatalában.
+Nem mondták meg nekem, amit abban a levélben írtam.
+Legalább háromszáz ember tartózkodott az előadóteremben.
+A kislányt ők fogadták örökbe.
+A táskád az íróasztalomon fekszik.
+A gyerekeknek egy történetet mesélnek, hogy elaludjanak - a felnőttek ettől ébrednek fel.
+Te csak egy gyerek vagy.
+Fullasztó volt a levegő a teremben.
+Mikor értél vissza az útról?
+Meg kell látogatnom a barátomat a kórházban.
+Papilio, az egy nagyon szép szó.
+Szeretném ezt még egyszer hallani!
+Sokkal nehezebb megadni egy szó jelentését, mint egy példát mondani a használatára.
+A halál minden embert megtalál.
+Ne hagyj értéket az autódban!
+Tom nem gondolja, hogy Mary-nek igaza van.
+Ha egy nőt meggyilkolnak, mindig a férj vagy a szerető az első számú gyanúsított.
+Én itt lakom a közelben.
+Még soha nem hallottam édesanyámat énekelni.
+Az anya megcsókolta a gyereket.
+Éhes vagyok, mert még nem ettem semmit.
+A barátom nem használ tejet.
+A kiárusításon vásároltam három pulóvert.
+Éppen az ellenkezőjét tette annak, mint amit akartam.
+Sajnálatos lenne, ha eltűnne ez a szó.
+Tom szeretett volna maradni vacsorára, de vissza kellett mennie dolgozni.
+Úgy nézel ki, mint egy fiú.
+Mi mindketten tudjuk, hogy ez nem valóságos.
+Azt szeretném, ha segítenél nekem Marikát elfelejteni.
+Nem normális dolog ennyit enni.
+Nem szívesen eszem olyan halat, amelyikben sok szálka van.
+Te nem tudod, hogy udvariatlanság megkérdezni egy nőt a koráról?
+Mi van, ha nemet mondok?
+Ez a mondat nehezebb, mint amilyennek első pillantásra tűnt.
+Nem is tudom, mit mondjak.
+Nem tudta, hogy Shakespeare írta a Rómeó és Júliát.
+Tessék adni egy pohár tejet.
+Elaludtam, mert a vekker nem csengett.
+Nem számít, hogy melyik csapat nyeri a játszmát.
+Tudni akarom, mi olyan vicces.
+Nem úgy nézel ki, mint aki jól van.
+2008-ban ismerkedtünk meg, és egy évvel később házasodtunk össze.
+Ez a mű érdekesnek tűnik.
+Egyik legjobb barátom hagyott cserben.
+A kemencében sült kenyér sokkal finomabb, mint a bolti.
+Bocsánat, hol vannak a tojások?
+Még nem kaptunk levelet tőle.
+Nem mentem el a bulira, mert beteg voltam.
+Ismered a férfit ezen a fényképen?
+Derítsd ki, hogy kivel beszélt Tom.
+A neve nem volt a listán.
+Először mérjük meg a lázát!
+Biztos vagyok abban, hogy nem lenne túl nehéz megtalálni, hogy ki hatolt be a rendszerünkbe.
+A kutyát elütötte egy kamion.
+Ezt a hotelt tavaly építették.
+A jövő hónaptól már nem kell bérletet venni a feleségemnek, mert hatvanöt éves lett.
+Mi a neve a legjobb barátodnak?
+Te jobban tudsz főzni, mint én.
+Zene nélkül nem tudok élni.
+Abban bízom, hogy hétfőn nem írunk dolgozatot.
+Jó napot! Maga Sherlock Holmes?
+A demokrácia egy más dolog?
+Azt tanácsolom mindenkinek, hogy olvassa el a tájékoztatót.
+Amikor apa motorozni ment, anya mindig aggódott, nehogy baja legyen.
+Péternek mostanában nagyon magas a telefonszámlája.
+Piroskának nagy szüksége lenne pénzre, de fél kölcsönkérni a barátaitól.
+A héten fokozottan figyeltem arra, hogy egészségesen étkezzem.
+Egy kicsit beképzelt voltam, de most már tökéletes vagyok.
+A csapatmunka lényege az, hogy mindig van kit hibáztatni.
+A kakas a tojás apja.
+Próbálj meg válaszolni minden kérdésemre!
+A békéhez nem bombák kellenek!
+Piroska puhára főzte a gyümölcsöket.
+Miért olyan nehéz az élet?
+Haza kellene mennem, mielőtt a szüleim aggódni kezdenek.
+Reggel a szálloda bejáratánál találkozunk.
+Sok pénzt költöttünk az áruházban.
+Van egy anyajegy az arcomon.
+Holnapra mindenki tanulja meg ezt a verset!
+Most be kell fejeznem a beszélgetést.
+Adj a kutyának étvágygerjesztő nevet és edd meg!
+Sok gondot okoztál a családomnak.
+Atyai jótanácsokat kaptam az utazásom előtt.
+Tomi angolul is és franciául is beszél.
+Tomi harmincéves korában halt meg.
+A tea nagyon keserű és nincs jó íze.
+Miért vagy egyszerre olyan kíváncsi?
+A kulcsot tedd a lábtörlő alá!
+Ez a mű elég könnyen fordítható.
+Mikor tört ki a második világháború?
+A macskám megölt egy mókust.
+Van egy barátom, aki Tokióban lakik.
+Magam is boldogulok ezzel a feladattal.
+A gyerekek megint betörték az ablakot.
+Azt gondolom. hogy Tomi csal.
+Nem szeretem az új dolgokat.
+A túró a kedvenc ételem.
+Az angol után a német a legnépszerűbb idegen nyelv Oroszországban.
+A hétvégét a barátaimmal töltöttem.
+Én már készen vagyok, indulhatunk.
+Ne várjunk tovább rá, menjünk!
+Jól süsd át a húst!
+El akarták titkolni előlem, hogy itthon vagy.
+Nem csinálnak mást, csak panaszkodnak.
+Az az álmom, hogy tanár legyek.
+Azt gyanítom, hogy Éva nem mondott igazat.
+A mondatban van egy hiba.
+Két órát vártam a hóban az autóbuszra.
+Péter bácsi, milyen a hallása?
+Tom soha nem fizetett nekem.
+Nem volt nagy szerelem köztük.
+Senki nem tudja, hogy merre kell menni?
+A nővérem öt évvel idősebb nálam.
+Tom kivette a ruhásszekrényből a kabátját és felvette.
+Tom átfordult a másik oldalára és szunyókált még 15 percet.
+Megfogod ezt a táskát, amíg megnézem a térképet?
+A falu már nem olyan, mint régen.
+Hogyan vegyük rá Pétert, hogy beszéljen?
+Jól esne egy csésze kávé.
+Az iskola után Tom részmunkaidőben dolgozik.
+Ha felnövök, én is tanár leszek.
+A hadsereg ellenállás nélkül haladt.
+Tom könyörgött Mary-nek, hogy adjon neki még egy esélyt.
+Évát a mentők vitték be a kórházba.
+Az erdő nagyon nyugodt volt.
+Sajnos nem vagytok alkalmasak építő vitára.
+Péter egy szép gyűrűvel kedveskedett Évának.
+Péter egy új csillárt vett az étkezőbe.
+Sosem gondoltam, hogy ennyire makacs.
+Szeretném, ha Tomi megtanulna beszélni franciául.
+Miért nem látogatom meg Tomot?
+Sosem fogom elfelejteni ezt a napot.
+Nem tudom, hogy hol aludjak az éjszaka.
+Ne légy már olyan finnyás!
+Gondoltam, hogy nem idősebb 30 évesnél.
+Mondd meg Tomnak, hogy várjon meg.
+Soha többé nem vásárolok ettől.
+A barátaim közül íme néhány.
+Sikerül megakadályoznom, hogy a fiam megint elutazzon Kínába.
+Itt van, idd meg ezt.
+Tegnap egy igen érdekes történetet olvastam.
+A hátán feküdt és fölfelé nézett az égre.
+Színes gyertyákat fogok önteni karácsonyra.
+Az apja balesete tönkretette Béla gyerekkorát.
+Ebben a házban lakik az egyik osztálytársam.
+Hogy hívják az új fiút?
+Köszönöm, hogy mellém álltál a bajban.
+Tomi és Mari azt tervezi, hogy holnap kirándulni mennek, ha megjavul az idő.
+Csak meg akartam nézni a leveleimet.
+Nagyon meghatódtam ezen a filmen.
+Küldök egy levelet bátyámnak, aki Szapporóban lakik.
+Be kell végeznem a munkámat.
+Aludtam egy kicsit az ebédszünetben, mert nagyon fáradt voltam.
+Úgy kezelnek bennünket, mint az idiótákat.
+Azt mondta az orvosom, hetente legalább háromszor kellene úsznom.
+Tényleg nem érzem jól magam.
+A vezető olyan szerencsés volt, hogy megmenekült a haláltól.
+A könyv, melyet a gyermeked darabokra tépett, az enyém volt.
+Maradj nálunk egy pár napig!
+Az újságkihordó széthordja az újságokat, bármilyen az idő.
+Megnézheted, de nincs jogod elvinni.
+Azt tanácsolom mindenkinek, hogy néhány napig ne menjen a hegyekbe kirándulni!
+A fiam már tud gondoskodni magáról.
+A házam építés alatt áll.
+Az apám megint nősülni akar.
+Ha nem hozol nekem piát, haza se gyere!
+Mennyibe kerül ez a piros kalap?
+Apukám két évvel fiatalabb anyukámnál.
+Neked soha nincs kedved semmihez.
+Fogd be a szád és ne szólj semmit.
+Az vesse az első követ, aki ártatlan.
+Tom, nézd mit találtam a szófa alatt.
+Meg kívánod enni azt itt?
+Nem kéne mindent magamra venni.
+Iszonyú emlékeim vannak a háborúról.
+Ez a hapsi totál lökött!
+Akinek vaj van a a fején, az ne menjen a napra.
+Lehet, hogy valaki tudná használni.
+Alaposan körülnéztél tegnap Piroska lakásában?
+Béla egy veszélyes fickó, már kétszer ült a börtönben verekedés miatt.
+Sajnos apám már nem tartozik a csoporthoz.
+Péter megint idejött és a pénzét követelte.
+Szinte semennyit sem beszélek franciául.
+Nagyon jó kérdést tettél fel nekem.
+Milyen élmények fűzik még ehhez a színházhoz?
+Te és Tom még együtt vagytok?
+Még soha sem láttam őt ilyen dühösnek.
+Legyél figyelmes! A kés nagyon éles.
+Akkor is elmegyek táncolni, ha a férjem nem jön velem.
+Az elkövetők nem hagytak nyomokat maguk után.
+Béla arra kérte Évát, hogy ne a fekete ruháját viselje az operában.
+Ez a zenész nagyon híres a dzsessz világában.
+Judit kislánya már tud olvasni.
+Judit a körtéket csak áron alul tudta eladni a piacon.
+Óva intelek benneteket, hogy a farkasokat etessétek!
+Ezzel az énekléssel engem is lenyűgöztél.
+Meg volt elégedve, hogy aláírták a békeszerződést.
+Amikor Béla több napra elmegy a barátaival vadászni, Judit nagyon ideges lesz.
+Befejezem az olvasást, mert kezd fáradni a szemem és már későre is jár.
+Szerinted, mi itt a megoldás?
+A tanulók jó alapokat szereztek ebben az iskolában.
+Mikor indul szombaton az első busz?
+A fiam légiósnak akar állni.
+Judit engem hibáztat, hogy a lányunk megszökött itthonról.
+Éva is törődjön a saját dolgával!
+Mit akart tőled a főnököd?
+Mit akart a lányodtól az a csöves?
+Miért legyek én a szóvivő?
+Miről szól ez a dal?
+Nem vártam, hogy Tomot valaha újra látom itt.
+Számolom a perceket, míg újra nem találkozunk.
+Mindenki rajtam nevetett a strandon.
+Amit Béla tanácsolt, az megvalósítható.
+Ezek a gyerekek nagyon fegyelmezetlenek.
+Judit most még nem vágyik új kapcsolatra.
+Lehet, hogy Béla lopta el az anyám gyűrűjét?
+Judit soha nem állított ilyet.
+Egy hete nem kell szednem a gyógyszert.
+Nyugodj meg, csak provokál téged.
+Ezek a fiúk nagyon erősek.
+Ugye jól tudom, hogy nincs férjed?
+Senkire nem tudtam figyelni, mert nagy volt a zaj.
+Le tudod oltani a világítást?
+Bocsánat, szabad feltennem neked egy kérdést?
+A váza, amelyet eltört, a nagynénémé.
+Mit vegyek ajándékba az unokatestvéremnek?
+A kabátodat az ajtó mellé akasztottad.
+Rosszul ítéltük meg a fiadat.
+Az újszülött súlya négy kiló volt.
+Találkozhatunk jövő héten, ha akarod.
+Néhány perc múlva kész vagyok.
+Éva bevallotta nekem, hogy még nem feküdt le az új fiújával.
+A nővéremék egy koszovói árvát akarnak örökbe fogadni.
+Úgy látom, hogy hiába törtem magam.
+A lányom nem találta meg a számítását külföldön.
+Péter Bécsben nyitja az első kávézóját.
+A metaforákat nem kell szó szerint érteni.
+Mielőtt aláírod, olvasd át figyelmesen!
+Bob átadta a buszon a helyét egy idős asszonynak.
+Hiába hízelegsz most, ezzel nem mész semmire nálam.
+Lásd be, hogy ez a baleset a te hibádból történt!
+Judit az új végrendeletében minden vagyonát az unokájára íratott.
+Az alagutat elzárták a forgalomtól.
+A mi időnkben nem mertünk volna visszabeszélni a tanárnak.
+Siess te is a többiek után!
+Kikérjük magunknak ezt a gyanúsítgatást!
+Miért nem fogadtad meg a tanácsaimat?
+Nem adhatunk el semmit, amig apád nem ad rá engedélyt.
+A nagymamám kifizette helyettem az összes tartozásomat.
+De jó, hogy a bátyám is eljön velünk nyaralni.
+Az apósod rejteget valamit előlünk.
+Ez az étterem mindenekelőtt a konyhájáról ismert.
+Ami jó neked, jó nekem.
+A rossz idő áthúzta a tervünket, hogy kirándulni megyünk.
+Ők mondták azt, ami történt?
+Azt hiszem, kicsit sokat ittam.
+Éva Prágában szeretne venni egy lakást.
+A bátyám Nápolyban akar venni egy lakást.
+Hogyan fogsz boldogulni munka nélkül?
+Az öreg húsvágó tőkénket a lányom örökölte.
+A nő ügyesebb, mint a férfi.
+Meddig van a temető nyitva?
+Ezt a kabátomat egy turkálóban vettem.
+Jól áll neked ez a fehér ruha.
+Most egy ideig nem fogok húst enni.
+Tom még mindig ott van.
+Remélem időben megkapjuk a vízumot.
+Táviratot kell küldenem a szüleimnek.
+Ma reggel nagyon hűvös volt.
+Többször le kellene ülnötök beszélgetni.
+Hagyjátok már nyugodtan enni a nagyapátokat!
+Piroska téged okol az egészért.
+A kabát az egy ruhadarab.
+Emlékszem rá, amikor még csak kislány voltál.
+Biztosan elkövetett már megint valami disznóságot, mert nagyon ködösít.
+Nyáron, amikor izzadunk, sok vizet kell inni.
+A külföldi áruházban nem volt szükségem pénzre, kártyával fizettem.
+Itt nem elég a vállalkozó kedv.
+Nem tudná rövidebbre fogni a mondandóját?
+Tűnjünk el, mielőtt bárki észreveszi, hogy itt jártunk.
+Dan Linda lakását nézte az ablakából.
+Kíméljen meg az ostoba megjegyzéseitől!
+Jobb harcolni valamiért, mint valami ellen.
+Hol találok egy értelmes embert?
+Milyen italra hívhatom meg, hölgyem?
+Hétfőn nem tudok menni, mert ügyeletes leszek a kórházban.
+Jobb, ha most azonnal elmész!
+Flóra intézkedik helyettem az iskolában.
+Úgy érzed, közömbös vagy mindenkinek?
+A srác jóval tapasztaltabb volt nálam.
+Csináld tovább a munkádat, mint ha itt sem lennék!
+Még nem kaptam visszajelzést tőlük.
+Bodri nem szereti a pórázt.
+Miért nem veszel néhány cserép muskátlit az erkélyre?
+A vásárlók olcsó áruért tülekednek.
+Mi lenne, ha besegítenék nektek egy kicsit?
+Mondd meg az anyósodnak, hogy ne telefonáljon ide többet.
+Egy nagyon jó dolog történt ma.
+A férjem soha nem azt csinálja, amit mondok neki.
+Már tíz éve itt laknak.
+Az ember akkor ismeri meg magát, ha elveszíti mindenét.
+A férjem még nem is sejti, hogy tudom hova jár esténként.
+Muszáj leszel az éjszakát nálam tölteni.
+Márk már itt áll fél órája.
+A vőlegényemnek két autója van.
+Vigyázz, a sok cukor árt az egészségnek!
+Milyen jó színe van, Renáta.
+Megtaláltam a kulcsot Tom kabátzsebében.
+Mit tehetnék én már érted ilyen betegen?
+Ebben a fiókban semmi sincs.
+Miért nem kérdezzük meg egyszerűen Tomot, ahelyett hogy itt találgatunk tovább?
+Nem is tudom, hogy mikor voltam utoljára ilyen izgatott.
+Most állt meg a házunk előtt két rendőrségi autó.
+Azonnal szedd a sátorfádat és takarodj innen!
+A férfi nem a fán terem.
+Fokozódik a nézőtéren a feszültség.
+Amíg a férjem egy sörözőben dolgozott, mindig részegen jött haza.
+Maradt még egy vagy két dolog, amit a bőröndbe kell rakni.
+Az volt a véleménye, hogy minden remekül megy.
+A nőkkel csak a baj van.
+A kertjének egy kis gondozásra van szüksége.
+Nagyon jól érzem magam melletted.
+Az arcán látszott, hogy erősen gondolkodik.
+A nőkkel jóban kell lenni.
+Azt mondja Tomi, hogy két hete Bostonban volt.
+Kénytelen voltam törölni a tervet.
+Ráér később is. Látom, hogy most nagyon el vagy foglalva.
+A házamban lévő sütő nem működött jól ma.
+Fogd be a szád! Ez csak kettőnkre tartozik.
+A nővérem egy új ruhára gyűjti a pénzt.
+Ruhát tesz a székre Mária.
+Mária a székre tette a ruháját.
+Először beszélt úgy, mint polgármester.
+Ez az, amit most meg akarok csinálni.
+Béla is törődjön a saját dolgával.
+Az öcséd egy kicsit elszámolta magát.
+Sok ismerőse van, barátja azonban kevés.
+John olyan idős, mint a testvérem.
+Ezt az embert nem könnyű lerázni.
+Tom már biztos túl van a harmincon.
+Brazília háborút üzent Argentínának 1825-ben.
+Csak a jók kaphatnak ajándékot.
+Ki tanítana meg engem szörfözni?
+Ez a gumicsónak csak négyszemélyes.
+Egy kicsit később tudok csak fizetni neked, ugye nem baj?
+Az ég egyre feketébb lett.
+Miben sántikál ez a lány?
+Néha az őrületbe kergeted a tanárod.
+Az unokatesóm adott egy pólót.
+Elfogy a levegő beszéd közben.
+A tanár szigorúan nézett rám.
+Nyakkendőt csak az irodában viselek.
+A tejesüvegeket az ajtó elé tettem.
+Kevés pénzből nagyon nehéz megélni.
+Tom tisztában van a saját hibáival.
+Az alapvető dolgokat nem vettem meg.
+Nagyon sokat dolgozom, kevés pénzért.
+Ne vedd komolyan a férjemet, csak tréfál.
+Anyukám emlékére írtam egy verset.
+Gyerekkoromban én is szerelmes voltam Annába.
+Légy szíves, kelts fel reggel.
+Miért is veszünk olyan dolgokat, amire valószínűleg nincs szükségünk?
+Érzed a különbséget a kettő között?
+Akkor is úgy lesz, ahogy én akarom.
+Megmart ez a hülye macska.
+Tom nem akar erről beszélni.
+A munkanélküliség jelentős ütemben nő.
+Apádnak már nyugdíjba kellene mennie.
+Tom már nem ugyanaz, aki egykor volt.
+Tom úgy él mint egy szerzetes.
+Ne próbáld a húgodat utánozni!
+A templomban jótékony célú gyűjtést tartanak.
+Itt biztos, hogy nem találja meg senki.
+Láttam néhány majmot felmászni a fára.
+Szóval, miért kerestél fel bennünket?
+Segítséggel szökött meg a börtönből.
+Éva tovább olvasott a konyhában.
+Ez a téma soha nem jött elő.
+Arra nem gondoltál, hogy a lányod hazudhatott is?
+Meddig tűröd, hogy a férjed így beszéljen veled?
+Nem az én hibám volt, hidd el!
+Tom a bostoni kutatóközpont alkalmazásában áll.
+Aranka, ez a mondat érthetetlen.
+Tom még mindig nem ismeri az igazságot.
+Tom azt mondja, hogy nem tud franciául.
+Úgy aludt Tom, mint a mormota.
+Soha nem kételkedtem a szavaiban.
+Végül mégis kaptál apádtól pénzt?
+Tom pont most ért haza.
+Még nem vagy kész az induláshoz, igaz?
+Nem érdekelnek ezentúl a kifogásaid.
+Más nem törődik vele, csak mi.
+A rendőrök felszólították a gyanúsítottat, hogy dobja el a fegyverét.
+Ki az okosabb, a nő vagy a férfi?
+Ettől a perctől én parancsolok ebben a házban!
+Ezt nem a feleségem írta alá.
+Ha tudtam volna, hogy ez lesz, sose egyezem bele.
+Kérem, vigyázzanak, az ajtók záródnak.
+Eddig sem mosogattam, most se fogok.
+Három órai várakozás elég hosszú idő.
+A mai nap nem ettem.
+Tegnap támadt egy jó ötletem.
+Van egy macskája. A cica fehér.
+Egyszer valamiben tönkre kell menni!
+Te nem vesztenéd el a fejed?
+Én is ugyanebben az örömben részesültem.
+Elnézést kérek, ha valakit megbántottam volna.
+Azt hiszem, nagy hibát követsz el.
+Holnapig el kell olvasnom a könyvet.
+El sem hiszitek, hogy milyen boldog vagyok.
+Ma egyáltalán nem leszek itthon.
+Miért akarnál kiugrani az ablakon?
+Hűvös szél fúj a tenger felől.
+Tom szinte soha nem azt teszi, amit korábban beígért.
+Meglep, hogy szerinted Tomi barátságtalan. Hozzám mindig nagyon barátságos volt.
+Ezek a könyvek nem csak a gyermekek részére valók.
+Nem értem, miért nyugtalan a kutyám.
+Nem értem, hogy miért nyugtalankodik.
+Ne légy már olyan szerény, fiam!
+Az emberek egyre kevesebbet olvasnak.
+Hét év alatt egyszer sem kaptunk jutalmat.
+Nem is olyan régen még ellenségek voltunk.
+Senki nem hallotta a lövéseket?
+Megesik, hogy elalszom az osztályban.
+Meg akartam hálálni a nővérednek a jóságát!
+Láttuk, hogyan kínozta az állatokat!
+A fejünkre szakadt a tető.
+Egy elsietett házasság ritkán végződik jól.
+Engem már nem érdekel senki.
+Szükségünk van a lelki békére.
+Nem kell kapkodni, mindenki ráér.
+A lányom itthon van már.
+A hatos villamos a színház felé megy?
+Én is hallottam már az új lányról.
+Végre megérkezett az első csoport.
+Nagyon reméljük, hogy úgy is lesz.
+Nagyon meg voltam elégedve veled.
+Szerintem a Tomi egy jó név lenne a fiúnknak.
+Ez nem elég jó indok rá.
+Hol van az elektromos csatlakozás?
+Nekünk most igazán nem sikerült ez az év.
+Nem akarja Tom, hogy lássák, hogy veled beszél.
+Tamás megbeszélte Marival az ügyet.
+Nem is volt olyan szörnyű, ugye?
+Azt hiszem, ezt az esetet jelentenem kell!
+Nem adtam nekik választási lehetőséget.
+A te országodban milyen az éghajlat?
+Úgy nézel, mintha kísértetet láttál volna.
+Jánosnak nevezték el a fiukat.
+Eredj, keresd meg a gyerekeket!
+Béla senkit sem akar látni, még minket sem.
+Már ezt is elmondtam neked többször.
+Furcsán hangzik, és mégis igaz.
+Még jó, hogy itt volt a fiam.
+Nem akarlak olyasmire rávenni, amit később megbánnál.
+Az első napom rettenetes volt.
+Elég nagy vagy már ahhoz, hogy gondoskodj magadról.
+A fiúk gyakran okoznak csalódást.
+Béla felugrott az asztaltól és elrohant.
+Éva idegesen nézte az óráját.
+Nekem ez a könyv nem tetszik.
+Sok olyan ember van, aki csak egy nyelven tud.
+Hogy csak úgy egyszerűen csináljak belőle egy rövid szárú nadrágot?
+A húgod már majdnem tizenhét éves.
+A tészta még mindig vastag egy kicsit.
+Éva hamar túlteszi magát az ilyesmin.
+Senki nem akarta kifizetni a számlát.
+Hagyd élni azt a rovart.
+Valami baj történt a fiával?
+Egy nyelv alapos elsajátításához körülbelül 10 ezer óra tanulás szükséges.
+Rengeteg szennyes ruha gyűlik össze egy hét alatt.
+Honnan veszik, hogy én tettem?
+Ennyi még kitelik tőled, ugye?
+Ez olyan, mint amit én akarok csinálni.
+Kérem önt a legnagyobb titoktartásra.
+Úgy tűnik, itt emberek élnek.
+Neked nem fordult fel a gyomrod?
+A főnök egy hármas megközelítést vázolt fel, amellyel meg akarja fordítani a vállalat sorsát.
+Én csak altatóval tudok aludni.
+Igaz, én mindig óvatos vagyok az ilyen emberekkel.
+Ezt a kérdést nem lehet pontosan megválaszolni.
+Bizonyára máskor is akart vele találkozni.
+Lehet, hogy nem fogalmaztak elég világosan.
+Mindannyian ugyanabban a cipőben járunk.
+Sokat beszélek magamban, de ne is foglalkozz vele.
+Péter egy szép napon visszajön értem.
+Sajnálom hölgyem, de hiába fáradt ide.
+Rendben van. Az injekció nem fog fájni. Csak egy kis szúrást fog érezni.
+Nem, én ezt nem írtam.
+A jó viszonyt először magaddal alakítsd ki!
+Grey úr nem szerette a munkáját.
+Mivel közeleg a karácsony, be kell szereznem néhány dolgot.
+Azt válaszolta, hogy jól tud úszni.
+A gyerekeink nagyon jól kijönnek egymással.
+Az apám nem tehet semmiről.
+Fel-alá sétálgattam az esti szürkületben a hajó fedélzetén.
+Valami még mindig nem stimmel.
+Engem miért nem hívtak meg?
+Ami nekem kell, azt már megtaláltam.
+Maradnak még velük valameddig, így van?
+Már tizenegy óra! Most már tessék lefeküdni!
+Hogy a fene enné meg! Ez lapos.
+Éva szereti, ha pezseg körülötte az élet.
+Nem tudhatom, hogy mire gondolsz.
+Nehezen mentem az első nap az iskolába.
+Mit kell tennem, hogy előbb teljesüljön a tervem?
+Tehát csak viccnek szántad az egészet?
+Errefelé ritkán esik a hó.
+Még ebben a helyzetben is képes vagy idétlenkedni?
+Mi az ablakból mindent láttunk.
+Ebben az indiai étteremben kizárólag vegetáriánus ételeket lehet fogyasztani.
+Úgy véli, többet kellene aludnod.
+Legjobb lesz, ha elmegyek a piacra.
+Az egyház nem szomjazik vérre.
+Általában sosem vagyok otthon, amikor a füvet nyírják, ezért csak a lenyírt gyepet látom.
+A gyerek már nem ragaszkodik hozzád.
+Ezt még nem mondta nektek senki?
+Lám, van, akinek még telik ilyen ruhára.
+Én gondolkodás nélkül elfogadnám ezt a munkát.
+Vennünk kellett volna még egy üveg bort.
+Évike, van még egy kis kávé?
+Az lesz a legnagyobb gondom, hogy eldöntsem, mit kezdjek az összes pénzzel, amit nyertem.
+A sok pénz a legnagyobb gondom.
+Tamás látta, hogy Marinak gyakran vannak fájdalmai.
+Ön kifejezetten elégedett a házasságával?
+Olyan sokan voltak a bárban, hogy alig lehetett mozogni.
+Nem kellene megalapozatlan szóbeszédeknek figyelmet szentelned.
+Ez az első alkalom, hogy aláírok egy szerződést.
+Komoly segítséget ajánlok most neked.
+Hozd le légy szíves az emeletről a papucsomat.
+Sietned kell, ha velem akarsz jönni.
+A mai napom elég nyugodt volt.
+Sose láttam ilyen kövér bálnát.
+Legalább világosítsa fel a fiúkat.
+Nem kellett volna őket meghívnod.
+Kár, hogy nem tudnak eljönni.
+Ahová lépek ott fű nem terem.
+Hála az égnek, hogy valaki főzött kávét.
+Senki sem tudja megmondani, miért.
+Te még nem tudod, mi a házasság, fiam!
+Szólnom se kellene hozzád, egy szót sem.
+Felálltam, hogy egy idős ember le tudjon ülni a helyemre.
+Tomi láthatóan élvezi az autóvezetést.
+Sajnos nehéz volt a felfogása.
+Mennyit fizettél ma a vendéglőben?
+Engem mindig vonzott a szabad élet.
+Ne legyél a lányommal nagyon szűkmarkú.
+Ez a gyerekek javát fogja szolgálni.
+Kérlek, olyan tisztán hagyd ezt a helyet, ahogy te is szeretnéd átvenni.
+Ezt még ők is elismerték.
+Hol ronthattad el a kapcsolatot?
+Nem az vagy, akinek véled magad.
+Nem tudom, mikor szabadulok meg tőle.
+Jobb lesz, ha mindent megtudnak a gyerekek.
+Sokat dolgoztam az utóbbi hónapokban.
+Tom tud ennél jobbat is.
+Még mindig nem ébredtem föl teljesen.
+Tomi éppen nem csinál semmit.
+Honnan vesszük ehhez a pénzt?
+Meg vagytok elégedve a vacsorával?
+Vedd le a serpenyőt a tűzről.
+Mivel nyugtassuk meg az utasokat?
+Tom nem fogja meggondolni magát.
+Amennyire én ismerem, becsületes ember.
+Majd én beszélek a fejével.
+Az értekezletet tegnap tartották meg.
+A szerző nem egy másik személyről írt, hanem saját magáról.
+Most ez nem megy másként, csak így.
+Maradj még egy pár napot itthon, lányom!
+Tomi a hirdetési szektorban dolgozik.
+Ez a hely nem biztonságos.
+Ez hogy lehet a te hibád?
+Megmondtam, hogy fehér színű legyen a tükrös szekrény!
+Hidd el, hogy a szemüveg nagyon fontos.
+Péternek már nem él az apja.
+Nem kell ahhoz kiabálni, hogy meghallják a hangodat.
+Tomi nem tudott megülni a fenekén.
+Nem mondtál el minden részletet.
+Nem hiszem el, hogy nem ismerted meg a saját öcséd.
+Minden vásárlóját név szerint ismeri.
+Akarsz ma este moziba menni?
+Azt a sok butaságot már nem lehet tovább bírni!
+Tánc közben az lehetsz, ami csak lenni szeretnél.
+A munka könnyebbik oldalát fogom meg.
+Nincs semmi ok az aggodalomra.
+Ez az ügy nem halad.
+Senki nem vette észre, hogy mi folyik itt?
+Magának is az én gyerekemmel van baja?
+Egyelőre jó nekem ez a szoba.
+Maga nem talált ki semmit?
+Ha máshogy nem megy, olvasd el a használati utasítást.
+A bevétel fele a tied lehet.
+Béla rá sem nézett az asszonyra.
+De utálom az ilyen hülye embereket.
+Az is lehet, hogy bomba van benne.
+Tomi ellenállhatatlannak tartja magát. Mária elviselhetetlennek tartja őt.
+Tom épp a kimosott ruhákat teríti ki.
+Én ezt szívesen átengedem neked.
+Lakva ismerszik meg az ember.
+Nem áll meg az élet.
+Ezek az állatok mennyire veszélyesek ránk?
+Tomi figyelte, ahogy Mari eszik.
+Nem tudok megállni a lejtőn.
+Mindenki szeretett volna már otthon lenni.
+Nem ilyen szokott lenni Tomi.
+Néhány éve halt meg Tom.
+Ez az őrült tenyészti a csótányokat gyufásdobozban.
+Kötelező tantárgy lett, hogyan éljünk egyedül.
+Ez a kutya túl veszélyes ahhoz, hogy póráz nélkül legyen.
+Ne rugdosd ezt az asztalt!
+Az utcán egy teremtett lelket sem lehetett látni.
+Nem vagytok ti okosabbak nálam.
+Ez a néhány perc is hosszú volt nekem.
+Olvasta már a mai lapokat?
+Hidd el, többen vannak velem, mint gondolnád!
+Nem emlékszem, hogy kikértem volna a véleményed!
+Néhány mondatot mondott csak el.
+Láttam a fiam szemében a félelmet.
+A helyedben nem lennék olyan optimista.
+Tom eltévesztette a lehajtót, és eltévedt.
+Megvannak még a régi rossz szokásaid?
+Miért mondjátok, hogy Tom Bostonban lakik, amikor már rég átköltözött Chicagóba?
+Nem engedik meg, hogy elmenjek.
+Egy-két napon belül vissza fog jönni.
+Neked is leesett a tantusz?
+Végre sikerült megtalálni a lányt.
+Nekem ebből mi hasznom van?
+Ez itt nem olyan egyszerű, mint ahogy kinéz.
+Azt hittem, te nem jössz.
+A nővérednek nem kell tudni róla.
+Nem volt elég jó a fiamnak.
+A családodról még nem beszéltél.
+A gyerek már nem törődik a kutyával.
+Ha itt lennél, együtt süthetnénk süteményt.
+Neked most nem kéne itt lenned!
+Évek óta vártunk egy ilyen lehetőségre.
+Mit fog tenni most a bátyád?
+Ezek az emberek mind nagyon barátságosak és udvariasak.
+Te úgy hiszed, hogy Tomi gazdag?
+Tom messzire el fog menni.
+Tudom, hogy ez nem lehetséges.
+Ha szabálytalanságot látsz, jelenteni kell!
+Az autók majd' összeérnek a parkolóban.
+A tojássárgáját elkeverjük a vaníliás cukorral.
+Este gyúrjuk össze és másnapig hűvös helyen letakarva pihentetjük.
+Mindezt 30-35 percen át erősen keverjük.
+Ne aggódj! Itt biztonságban vagyunk.
+Ez nem ér annyit, amennyiért vetted.
+Nem én akarok az első lenni!
+Nem megmondtam neked, hogy ne mozogj?
+Nem szeretek a városban élni.
+Nem mondok rossz dolgokat a gyerekeiről.
+A cég különböző termékekkel foglalkozik.
+Akkor válaszolsz, amikor csak akarsz.
+Az autó a sarkon jobbra kanyarodott el.
+Meglepődtünk egy borzalmas hírtől ma reggel.
+Mari valójában nem is beteg, csak úgy tesz.
+Én ezt akarom. Én ezt követelem. Én ezt parancsolom.
+Remélem, ez segíteni fog rajtunk.
+Finom lángost ettünk a strandon.
+Mit ennétek ma ebédre, gyerekek?
+- Mária, honnan hoztad ezeket a nagy tojásokat? - Az udvarból, természetesen.
+Tedd, vagy ne tedd, de sose próbáld!
+Én nem akarom Évát megvádolni.
+Péter most megint erősen dadog.
+Túl hosszúra nőtt a hajad.
+Az én kutyám is beteg.
+Ez a kísérlet kudarcot vallott.
+Máriát kielégítette egy kiadós shoppingolás.
+A poharat letakarta a kezével.
+Még egy kis időre vissza kell mennem.
+Mivel túl sokan voltunk, nem fértünk el egy asztalnál mindnyájan.
+Az ügy le van zárva.
+Kosaraztunk, aztán lementünk a strandra.
+Nem ez volt a szándékom.
+Ennek éppen az ellenkezője az igaz.
+Az összes pénzedért sem megyek hozzád.
+Apámnak ez volt a kedvenc pipája.
+Jó lenne, ha partnerek lennénk.
+Menjél, és vegyél egy láda sört.
+Az ajtó nem volt zárva.
+Majd több időt szánok a háztartásra.
+A rossz idő végett törölték a meccset.
+Nem félek a nagy erős, ijesztő emberektől.
+Ne mondd nekem, hogy lazítsak.
+Az örömben osztozni jó érzés.
+Legközelebb hozd az összes barátodat!
+Az edző jól meghajtotta a csapatot.
+Nem tudod, mi a csudát keresnek?
+Ön most hova akar menni?
+Nagyon boldog vagyok Tom miatt.
+Tom azt mondta, hogy ágyban akar reggelizni.
+Apu, mi a különbség a maffia és a kormány között?
+Tom a múlt héten jött.
+Biztos vagy benne, hogy nem beszélnek már egymással?
+Elveszlek, ha befested a hajad.
+Egyáltalán nem vagyok féltékeny az életedre.
+Foglalkoznunk kell ezzel a problémával.
+Maga csak ne féltse ezeket a fiúkat!
+Vannak barátaid az osztálytársaid között?
+Minek gondolkodjam, amikor itt vagy?
+Két hajóról még nem tudunk semmit.
+Eljött az ideje, hogy tegeződjünk!
+Tetszenek nekem ezek a kalapok.
+Az anyja az ajtóban állt.
+Tud szájról olvasni a barátja?
+A kutyám gyakran úgy tesz, mintha aludna.
+Ez az ajtó automatikusan záródik.
+A kár akár a 300.000 forintot is elérheti.
+Most éppen mindenféle más dologgal van tele a fejem.
+A pókokat és skorpiókat a pókszabásúak közé sorolják.
+A behízelgő magatartás meglehetősen zavaró is lehet.
+Én vagyok az új tanár.
+Lépj arrébb a puska mellől.
+Nem tudok itt fákat ültetni. A föld túl száraz.
+Szinte minden nap elmegyek bevásárolni.
+Mire emlékeztet ez a kalap?
+Lehetetlenség, hogy dél előtt odaérjek.
+Hagyom a húgomat, hogy az új számítógépemet használja.
+A földön sok ember van.
+Hat óránként kell bevennem egyet a gyógyszeremből.
+Neked nem kell csinálnod semmit.
+Szükségem van arra, hogy megbízz bennem.
+A macska, amit találtál, az enyém.
+Hogy fitt maradjak, megragadok minden alkalmat, hogy tekerjek egyet.
+Ebben az életben már minden voltam.
+Ez nem csak a te, hanem a mi feladatunk is.
+Sok filmet alacsony költségvetésből gyárt le a független filmipar.
+Tomit soha nem hívták partikra.
+Mi a legkisebb távolság, amit valaha mértek?
+Erőt vettem magamon és egyszerűen csak megkérdeztem tőle.
+Tudtam, hogy egyszer szükséged lesz rám.
+Már megint te vagy az?
+Figyelmeztettem, de nem hallgatott rám.
+Nem tudok mozdulatlanul ülni sokáig.
+Biztos voltam benne, hogy a mi oldalunkon állsz.
+Melletted, más nőkre rá sem nézek.
+Éva nem akarta elfogadni a tényeket.
+Áruld el, hogy hol van Éva!
+Én vagyok az, nem ismersz meg?
+Tom ragaszkodik ahhoz, hogy beszélhessen veled.
+A saját érdekében legyen ott!
+Ez már nem lehet véletlen.
+Ennek a fának minden ágán van egy alma.
+Azzá váltál, aki szerettél volna lenni.
+Hurrá! Egy ember, aki figyelmesen olvas és észrevesz akár egy hiányzó vesszőt is.
+Mit írt a kislányod magáról legutóbb?
+Még a zsarolás sem megy neked.
+Nem tudtam elhinni, hogy ide jutottunk.
+Szatyor nélkül, nem tudom hazavinni a csomagot.
+Neki jutott szülei összes szeretete.
+Recsegett a szék, amint leült.
+A nő csak látszatból tiltakozott.
+A hölgy elsápadt a haragtól.
+Szereti őt és engem is.
+Nagyon válogatós, amikor arról van szó, hogy szállodát kell választani.
+Ez egy meleg és kényelmes hely.
+Most már tudni akarok mindent!
+Belátom, hogy Évának van igaza.
+Boldogság cseppeket ejtenek, valódi kincseket mégsem rejtenek.
+Játszol még más hangszeren is a zongorán kívül?
+Nagyon örülök, hogy nem voltam ott.
+Azt hittem, hogy mostanra már halott leszel.
+Azt szeretném, hogy hagyd el a házam.
+Próbára kell tennem a szerencsémet.
+Sír a gyerek, mert éhes.
+Csak homok, ameddig a szem ellát.
+A tiszta víz olyan, mint a folyóvíz.
+Egyik ismerősöm nemrég egyfajta spirituális ébredést tapasztalt.
+Nagy öröm látni, hogy a mondataidat számos más nyelvre lefordítják.
+Izgalmasnak találom a fordítás kihívásait.
+Ne játssz azzal a fegyverrel, nem játék!
+Melyik az a német nyelvű könyv, amit legjobban szeretsz?
+Ez az adás minden második héten megy.
+Ez nem lehet igaz, hogy megint eltévedtünk.
+Menjünk innen, nehogy gyanút fogjanak!
+Azt sem tudom, mennyi pénzem van, vagy hogy egyáltalán van-e.
+Remélem, hogy meg tudom tenni.
+Tomi több mint száz nyelven el tudja mondani, hogy szereti a menyéteket.
+Az új körülményekhez illesztettem a tervemet.
+A birodalom a kis országokat mind magába olvasztotta.
+Van édesvízi- és tengeri kagyló is.
+Te most valószínűleg nagyon éhes vagy.
+Olyan feszes a bőre, mint egy tinié.
+Tom azt mondja, hogy nem éhes.
+Elmondtad már Tomnak, miért nem szeretsz te itt?
+Amit tudnod kellene rólam, hogy reggelenként sokáig elalszom.
+Amit tudnod kell rólam, számítógépes játékfüggő vagyok.
+Tomi idegesen figyelte az orvost.
+Mit gondolnának rólad a barátaid?
+Könnyű kigúnyolni most az ötleteiket, de akkor azok teljesen ésszerűen tűntek.
+Kikeltem az ágyból, és odaültem zongorázni.
+Vág az esze, mint a borotva.
+Júniustól szeptemberig nagy a hajtás nálunk.
+Jobb idegenektől édességet nem elfogadni.
+Tom azt állítja, hogy még soha nem csalta meg a feleségét.
+Nehezen sajátítottam el a cseh nyelvet.
+Mit szólnátok egy kis szórakozáshoz?
+Bárcsak ne mesélted volna el azt a sztorit az anyámnak!
+Soha többé ne érj hozzám!
+Ezek nem fognak leszállni rólad.
+Három lánya van, az egyik férjhez ment, de a másik kettő nem.
+Senki sem értékeli az igyekezetét.
+Mindenki, aki ismerte, szerette őt.
+Idén még csak egyszer voltam Bécsben.
+Tomi azt mondta Marinak, hogy néhány nappal ezelőtt befejezte a munkát.
+Japán nincs olyan nagy, mint Kanada.
+A nők szeretik a bajuszos férfiakat.
+Egy szánk van, de két fülünk.
+Örülök, hogy önként felajánlotta, hogy segít.
+Ezt fejben nem tudom kiszámolni.
+Mikor kezdett megromlani a házasságuk?
+Azt hittem, fél hármat mondtunk.
+Nem akartak sok időt tölteni azzal, hogy erről beszélnek.
+Miét nem szólt hozzád senki?
+Tom elindult az ajtó felé.
+Tudok innen küldeni egy faxot?
+Meg kellene nézned a tortát.
+Egy nap visszatér majd Japánba.
+Kiégetted a ruhádat a pattogó parázzsal.
+Mit gondolsz erről a pasiról?
+Soha többé nem fogom látni Tomit.
+Üsd fel először a tojásokat, és add a leveshez.
+Az a levél nem nekünk szól.
+Ilyen feleséget szántam a fiamnak.
+Melyik óceán van Kína és Amerika között?
+Meg kell néznem, mit készítettél.
+Két napon keresztül nem aludtam.
+Tessék postára adni nekem ezt a levelet.
+Bárcsak tudnám, mi oka volt rá?
+Örülök, hogy legyűrted a náthát.
+Azt hiszem, most már mennünk kellene.
+Lehet, hogy később szükségünk lesz rá.
+Nem tudom szétválasztani a képzeletet a valóságtól.
+Tényleg sokra vitte a lányod.
+Már majdnem négy éve is van, hogy Tom életét vesztette az autóbalesetben.
+Nem sajnáltam rá az időmet.
+Ez nem megfelelő hely az ilyen vitára.
+Te megcsalnád Évát, ha alkalmad lenne rá?
+A császár a nép egységének a jelképe.
+Te nem érted. Meg fog ölni!
+A szüleim még nem tudják.
+Ez a busz nem áll meg itt.
+Ne osztozzunk meg inkább rajta?
+Értékes gyűrűt kaptam a születésnapomra.
+A tények megerősítik ezt a hipotézist.
+Te is irigy vagy rám?
+Már lehet kapni előregyártott házat.
+Egy nagy tubus fogkrémet akarok.
+Nehéz út vezetett a boldogságomhoz.
+Nincs minden műtárgya kiállítva a múzeumnak.
+Nem bírom a magaslati levegőt.
+Ha te nem teszed meg, majd megteszem én.
+A gravitáció a tárgyakat a föld középpontja felé vonzza.
+Éva már reménytelennek tartja a helyzetet.
+Én nem mondtam önről, hogy bolond.
+Gondolod, hogy Éva szándékosan csinálta?
+Éva jobbnál jobb cuccokat dobott ki a szemétbe.
+Azért még nem mondtam el neked mindent.
+Tudod, hogy nem ehetek disznóhúst.
+Tomnak hívnia kellett volna rendőrséget.
+Nem hajlandó hagyományos könyvet írni.
+Egyikünk sem vágyott többre soha.
+Mi a véleményed a szerelmes regényekről?
+Remélhetőleg nem öl meg téged az, hogy nevetséges vagy!
+Nem árt, ha ezt tudjuk.
+Ez nem egy barátságos meccs volt.
+Hiányoznak közülünk a karizmatikus egyéniségek.
+Nem vagyok teljesen biztos benne.
+Tom kitette Mary-t a szállodánál.
+Az orvos azt mondta, hogy ez a betegség kezelhetetlen.
+Az iskolában sokat csúfoltak emiatt.
+Hogyan írják az ön vezetéknevét?
+Ceruzával van írva, hogy ki tudd radírozni.
+Tedd be harminc másodpercre a mikrosütőbe.
+Mi mozgatta meg ennyire a fantáziádat?
+Most helyrehozhatja, amit tegnap elrontott.
+A könyvtárig öt perc séta.
+Hogyan jött be a szobánkba?
+Nekem nem kell ilyen nagy kocsi!
+A medvét a bundája védi meg a hidegtől.
+A bátyám is problémákkal küzd.
+Egy szobát szeretnék a kertre való kilátással.
+Nem a tárgy, hanem az ember a fontos.
+Gondolj arra, mi lesz később.
+Neked is van kit gyászolnod.
+Te a végletekig kihasználsz engem.
+A tűzoltóság a rendőrség mellett van.
+Az autisták jobbára nem néznek a másik ember szemébe, akivel beszélnek.
+Ha megmondjuk mi a baja, nem ad hálapénzt.
+Ez a kiskutya nem volt hosszú életű.
+Nem kell mindent egyedül csinálnia.
+Ki nem állhatom a halloweent.
+Napjainkban a karóra nemcsak az időt mutatja, hanem a viselőjének a szociális státuszát is.
+Hány év telt el azóta?
+Kölyök korától fogva ezt csinálja.
+Másodszor is elolvastam a könyvedet.
+Mozogjunk egy kicsit, hogy legyen étvágyunk.
+Ezt nem vagyok képes tovább elviselni.
+Kutyák kaparták ki a holtestet.
+Ne felejtsd el kivinni a szemetet!
+A féltékenység nem egyenlő az irigységgel. Ne keverd össze a kettőt! Van különbség közöttük.
+Tom úgy érzi, hogy mindenki becsapta.
+Ha idejönnek, adj nekik egy kis ételt, de semmi pénzt!
+Újra meg akarom nézni a filmet.
+Úgy gondolom, hogy maradjunk és harcoljunk.
+Tomnak odaítélték a díjat poszthumusz.
+Ne beszélj már olyan hangosan!
+Kinek van joga eldönteni, hogy mi számít sértőnek?
+A pingvinek szeme lehetővé teszi a víz alatt való látást.
+Tomnak több alkohol van a hűtőjében, mint étel.
+Érdemes fontolóra venni az ajánlatát.
+A kedvezmény az alapár 20%-a.
+Minden kétséget kizáróan a kerékpár a leghatékonyabb közlekedési eszköz.
+Amiről te beszélsz, nem kapcsolódik a témához.
+Nem a munkámból gazdagodtam meg.
+Tom azt mondja, hogy az utca bármelyik oldalán parkolhatunk.
+Egy nap majd megtudod az igazságot.
+Mindenkinek elmondtad, hol lesz a gyűlés?
+Szerintem a lehető legkorábban kellene elindulnod.
+Ez nem fogja Tomit boldoggá tenni.
+Még tésztát sem tudnak főzni!
+A cipőket kiraktam az ajtó elé.
+Csak tarts ki, amig visszajövök!
+Az egyik múzeumban egy nagyon régi homokórát láttam.
+Azt mondod, már csak én hiányoztam?
+Tényleg nagyon büszke vagyok rád.
+Még maga Tom sem volt meggyőződve.
+Hogy mondják franciául, hogy "köszönöm"?
+Az útlevelem már nem érvényes.
+Ha Tom megy, akkor én nem.
+Még főtlen ez a tészta.
+Tom jobban ismeri a helyzetet, mint én.
+Már lassan megszokja az új helyzetet.
+Haladéktalanul szükséges egy hatékonyabb kezelési mód erre a betegségre.
+Megbeszélni való üzleti dolgaink vannak.
+Tamás lemosta a vért a kezéről.
+Nehéz kitérni a bűn elől.
+A meccsre, szurkolói sálat vettem.
+Kér hozzá tejet vagy cukrot?
+Tomi nem szereti a banánt.
+Megemelem a kalapom előtte a fáradozásaiért.
+Írd fel ezeket a szavakat!
+Egyik levél követte a másikat.
+Tegnap is kivágtak öt fát az erdőben.
+A könyvesbolt a park közelében van.
+Ismerem a valódi nevét és tudom hol él.
+Most csak egyedül szeretnék lenni egy kicsit.
+Tényleg sajnálom, hogy olyan pesszimista vagy az életedet illetően.
+Fáj a torkom. Nincsen rá valami szirupod?
+Tom és Mary egymásra vannak utalva.
+Ön teát vagy kávét iszik?
+Tom vacsora nélkül az ágyba küldte a lányát.
+Még nem beszélek jól angolul.
+A oktatás tudományának akarom szentelni az életemet.
+Másnap reggel a hóember teljesen elolvadt.
+Kikapcsolom a tévét, ha nem nézed.
+Gyakran fekszik az ágyban és olvas.
+Manu Chao kilenc nyelven énekel a dalaiban, Julio Iglesias tizennégyen.
+Évát nem volt nehéz rábeszélni.
+Nem vágom ezt a dolgot.
+Tulajdonképpen semmit nem tud erről.
+Már csak az a kérdés, hogyan fogjuk kifizetni.
+Ma este minálunk fogunk közösen énekelni.
+Minden reggel eszek savanyú káposztát.
+A hierarchia nem az egyenlőséget példázza.
+Nem tudtam kielégíteni az elvárását.
+Mire a tűzoltók megérkeztek, a ház már teljesen leégett.
+Gyakran szokott ilyet csinálni a barátod?
+Én nem szeretem a frázisokat.
+Erről mit ír elő a szabályzat?
+Talán kapcsolatba kellene lépnünk Tomival.
+Mást nem akarok, csak horgászni.
+Nagyobb baj is történt már kettőnkkel.
+Figyelj oda, hogyan beszélsz, Tom!
+Engem nem érdekel, hogy mit mondott Tamás.
+Kérjük, adja meg titkos kódját.
+Tiszta időben látszik a távolban a Fudzsi hegy.
+Ne adj hitelt és ne is kérj kölcsön!
+Fiatal korában keményen tanult, s ez hozzájárult a későbbi sikereihez.
+Tom fiatal, de tudja, hogy mit csinál.
+Kellemes karácsonyt Tom minden támogatójának, és szívből kívánunk mindenkinek nagyon boldog és békés 2016-ot!
+Vettem egy új kalapot az áruházban.
+Nálunk az alapiskola nyolc osztályos.
+Tom el fogja magyarázni mindannyiunknak.
+Miért ilyen későn hívsz fel?
+Nem tennéd meg, hogy hagysz egy kicsit gondolkodni?
+Senki nem tudja, miért ölte meg magát.
+Jó, de utána ne panaszkodj.
+Bő egy órán át tartott.
+Cirka tízmillió tonna szenet bányásznak ki naponta Kínában.
+A sasnak éles a szeme.
+Nyáron a kertünk pompázott a virágokban.
+Ha holnap esik, kocsival fogunk menni.
+Tegyél, kérlek, pontot a mondatod végére!
+A cég vásárolt egy modern gyártósort.
+Segítettem Tomnak, noha elfoglalt voltam.
+Egy szép, öreg épületben lakom.
+Minden hazugságban van valami igazság.
+Ezt a könyvet érdemes többször is elolvasni.
+Határozottan nem kedveli Tomi Marit.
+Úgy gondolom, túl rövid a szoknyád.
+A szabadságot mindig védelmezni kell.
+Lehet, hogy be sem jöttünk az országba?
+Tom nem fogja tudni megakadályozni, hogy Mary ezt tegye.
+Tomi el akart velünk jönni.
+Megállapíthattuk, hogy a szomszédság egy kicsit veszélyes.
+Tom sokat iszik a válása óta.
+Téged keres Tomi és Mari.
+Ez nem hangzik túl keménynek.
+Tom már magasabb, mint az apja.
+Tom fogyókúrázik, mert kissé túlsúlyos.
+Apám egy mihaszna naplopó volt, aki egész nap a hátsóján üldögélt és csipszet evett.
+Kefével sikálta fel a konyha padlóját.
+Vettem egy teleszkópot és egy csillagászati témájú könyvet.
+A főnök két művezetőt vett fel.
+Tom Ausztráliában is nagyon híres.
+Ennek a háznak szilárd alapja van.
+A ládán rajta van a gyártó bélyege.
+Engem felidegesítenek az unalmas beszédei.
+Csak érvényes útlevéllel lehet átlépni az államhatárt.
+Nem dughatjuk a fejünket a homokba.
+Ünneplőbe öltözött udvaronc kísérte a vendégeket.
+Sokkal fittebb vagyok, karcsúbb és szexibb, köszönhető a rendőrök elől való állandó menekülésnek.
+Amikor másokat megbántasz, magadat is megbántod.
+Hadd menjek el a bálba. Én is szeretnék táncolni.
+Nézzetek a szemembe, és mondjátok, hogy nem ti voltatok.
+Az eszperantó a kedvenc nyelvem.
+Majd hívlak, ha megint szükségem lesz rád.
+Ez nem volt benne az alkuban.
+A kisasszony nagyon vigyázott a hosszú, ápolt körmeire.
+Nagy árat fizettem az ügyetlenségem miatt.
+Pontosan hol van a házad?
+Öreg vagyok én már az ilyesmihez.
+A kormány támogatja a kiemelkedő tehetséget.
+Bizottság állapította meg a verseny eredményét.
+Nem tudom bezárni ezt a bőröndöt.
+Az ötödik osztályban volt szeretőm.
+Egy szívesség nem kerül semmibe.
+Földönkívüli behatolók támadták meg a Földet.
+A férfi széttárta majd karba tette a kezét.
+Mária és férje elhatározták, hogy adoptálnak egy gyermeket.
+A terroristák megölték a fivéremet.
+Nem tudom elhinni, hogy tényleg ezt tette.
+A halál sincs ingyen - az élet az ára.
+Most mindkét kezem tele van.
+Az arca majdnem olyan, mint az apjáé.
+Kezdje el, ha mondani akar valamit.
+A szívem olasz, az agyam német.
+A maszturbációt sok vallás bűnnek és tisztátalan dolognak tekinti.
+Van még az a termék?
+Senki nem ette meg a tortát.
+Azon tűnődött, milyen lehet vele csókolózni.
+Bejött a nappaliba az anya, és elmondta, hogy kész a vacsora.
+Én vagyok a hibás ebben.
+Az emberek feltalálták az elektromos tolószéket, nehogy szerencsétlen mozgássérült egy kicsit is mozogni tudjon.
+Már megint a földön hagytad a ruhádat! Tedd a helyére!
+Több mint száz embert még mindig nem találnak.
+Miféle állatok fognak belőlünk kifejlődni?
+Nem szabadna előfordulnia, hogy bárkinek ilyesmit kelljen tennie.
+Tomi és Mária intelligens emberek.
+A filozófus jelzőt valószínűleg nem érdemeltem ki.
+Át akarom alakítani a konyhámat.
+Ironikus értelmű a hozzászólásod, ugye?
+Még mindig van egy elintézetlen ügyünk.
+Nagyon kényelmes ez az ágy.
+Végül úgy döntött, hogy az igazat fogja mondani.
+Az ázsiaiaknak általában fekete hajuk van.
+Meglehetősen kihalt volt a strand.
+És önök, uraim, kérem, jöjjenek utánam.
+A bizottságunk tíz tagból áll.
+Elfogadjuk majd az önök feltételeit.
+Van egy jó hírem a számodra.
+Erős fagyok várhatóak ma estére.
+Meg tudod fejteni a rejtvényt?
+Valami oka kellett, hogy legyen ennek.
+Tom nyerte a legjobb mellékszereplő Oscar-díját.
+Én nem olyan vagyok, mint Tomi.
+Azt szeretném csak megtudni, miért ment el Tomi.
+A nyuszika fut a pusztában.
+Nehezen alkalmazkodott az új környezetéhez.
+Ha ezt megtenne nekem, nagy segítségemre lenne.
+Az ügyvéd nagyon magas áron dolgozott.
+Tom nyerte meg a mérkőzést.
+Te nem iszol elég vizet.
+Rögtön papírra vetettem ezt a gondolatot.
+Tomi körülnézett, és akkor valamit súgott a fülébe.
+Igazság szerint, semmi problémám veled.
+Vedd meg, amire szükséged van.
+Tom felesége három éve halt meg.
+A számítógépek mindenképpen fontos szerepet játszanak az életünkben, akár tetszik nekünk, akár nem.
+Repült már valaki közületek helikopterrel?
+Tetszenek nekem a szakállas férfiak.
+A kínai nyelvtan nem olyan bonyolult, mint a tagalog.
+Hülyék voltak, hogy nem tartották be a tanácsodat.
+Attól tartok, hogy megváltoztak a szabályok.
+Ha túl hevesen szereted az asszonyodat, nem fogod sokáig szeretni őt.
+Ne mondd meg neki, hogy itt vagyok.
+Istennel nem vitatkozik az ember.
+Általában nem vásárolok az interneten.
+Fordíts kellő időt a játékra, hisz az az örök fiatalság titka!
+Harminc éven keresztül éltem itt.
+Ha meg akarnálak ölni, meg tudnálak.
+Mária úgy döntött, hogy leteszi a cigit.
+Vidd ki, kérlek, az asztalt.
+Hány mentőcsónak van ezen a hajón?
+Rövidre fogta a szavait, mert az idő sürgetett.
+Lehettünk már becslésem szerint vagy százan.
+Tom családja nem túl nagy.
+Amikor kisfiú voltam vágytam egy kerékpárra.
+Szerintem egész biztosan Tom törte be az ablakot.
+Hidd el nekem, hogy minden esélyt, ami csak ezen az úton adódhat becsülettel kipróbáltam.
+A hiúság érzése elnyomta benne a könyörületességet.
+A hogylétéről kérdezted? Mit mondott?
+Ami véd a hideg ellen, a meleg ellen is véd.
+Mikor a hotelhoz értem, már besötétedett.
+A folyó ezen a ponton a legszélesebb.
+Nem szeretem összekeverni az üzletet és a szórakozást.
+Az éles fájdalom miatt nem tudok a jobb csípőmön fekve aludni.
+A sas horgas csőrével tépte a kis állat húsát.
+Megszólalt a vészcsengő, mindannyiunknak el kellett hagynunk az épületet.
+Már sötét volt, de egy lámpa némi fényt vetett az utcára.
+Nem állt szándékomban elbátortalanítani téged.
+Végül is kénytelenek voltunk lenyelni a keserűséget.
+Ezt ennyivel nem lehet elintézni.
+Meg tudsz különböztetni egy kacsát egy libától?
+Legyen szíves visszaülni a helyére, kérem!
+A kutyák félnek a kígyóktól.
+Tomi mondta, hogy senki nem sebesült meg.
+A veszteségek miatt szomorodott el a gazda.
+Szabadidejében szívesen úszik és teniszezik.
+Ebben az országban sose havazik.
+Az angol hasznos az üzleti életben.
+Azért halt meg, hogy mi élhessünk.
+Tom mindig is úriember volt.
+Tom csak könnyebben sérült meg.
+Amikor felnőttem, még nem volt áramunk.
+Tom egy barna házban lakik.
+Péter megölte a két öccsét.
+Azt mondtad, máskor is jöhetek.
+Már elhagyta a két utcai árust is.
+Remélem, hogy láthatom még egyszer.
+Tomi egy gyilkos pillantást vetett Máriára, és távozott.
+A kosárlabda volt a kedvenc sportom a középiskolában.
+Csak meg kell találnom őt.
+Tom fél órája ment el.
+Tom sosem bukkant fel újra.
+A bölcsesség nem tökéletességet jelent.
+Tomi felnyalta a porcukrot az asztalról.
+Tomi Mari oldalán is megbámulja a csajokat a városban a szeme sarkából.
+Ha az álmaidat valóra szeretnéd váltani, akkor nem szabad aludnod.
+Péter nem volt bent nálad?
+A fejében össze-vissza kergették egymást a gondolatok.
+Az egyik nem gátolja a másikat.
+Tomi többé nem dolgozik itt.
+A villám egy elektromos jelenség.
+A villám kettéhasította a vastag tölgyfát.
+Hiába próbáltuk lebeszélni a dohányzásról.
+Akinek vannak barátai, annak nincsen szüksége gazdagságra.
+A szétszóródott fémhulladék arra engedte következtetni Tomit, hogy éjszaka egy repülő csészealj zuhanhatott ott le.
+Szigorúan nézte a férjét, olyan átható tekintettel, mint eddig még soha.
+Az igazság ott van kint.
+Dani megfenyegette Lindát, hogy megöli.
+Nem bánod, ha leülök ide?
+Mindegy, hol van - mindig mellette vannak a testőrei.
+Nagyon ritkán megyek gyalog a munkahelyre.
+Úgy tett, mint aki beteg.
+Nyomorúságos körülmények között kellett ott rabszolgamunkát végezniük.
+Tomi a telt idomú hölgyeket kedveli igazából.
+Hogy lehet a matematikában hiba?
+Ez a történet egyszerűen nem lehet igaz.
+Oszd el, kérlek, a pizzát három részre.
+Figyelj már oda, a mindenségit!
+Az irányt a Sarkcsillag jelölte ki a számomra.
+Tomi csak a kedvenc macijával tud elaludni.
+A testét barna bunda borította.
+Aktív életet él és kitűnő fizikai állapotnak örvend.
+Tom nem örvend errefelé népszerűségnek.
+Hogy ez a fiú milyen ostoba!
+Mária szeretője előbb elaludt az ágy alatt, mint ők ketten.
+Az égbolt tele van csillagokkal.
+Na, mi volt a randidon Tomival?
+Isten házában talált magának megnyugvást Tom.
+Három évet húzott le a börtönben.
+Úgy néz ki, hogy Tom egyazon véleményen van velünk.
+Tom csettintett egyet a nyelvével.
+Amikor Tomi az almára pillantott, amit evett éppen, látta, hogy egy fél kukacot is megevett.
+Itt van az én kulcsom.
+Semmit sem értettem abból, amit Tom mondott.
+Annak ellenére, hogy dühös volt, türelmesen figyelt rám.
+Káromkodott Tomi, amikor a drága okostelefonja beleesett a klotyóba.
+Amit ez a férfi csinált, az botrányos.
+Több időt töltöttek csókolózással, mint a filmmel.
+Szeretnék neked mondani még valamit.
+A rendőrség óvadék ellenében elengedte őt.
+Eredete hosszú ideig parázs viták tárgya volt.
+Gyűjtsd össze a gondolataidat, mielőtt nekiállsz dolgozni.
+A telefon nagyon sokáig csengett.
+Legalább mi mondjunk igazat, ha már mindenki hazudik.
+Tamásnak vörös volt az orra.
+Tom azt mondja, hogy nyugdíjba megy.
+Nézd már, milyen széles válla van ennek a csajnak!
+Mennyibe van neked ez a hobbi?
+Tudod, Tom vissza akar szerezni.
+Tudod, hogy Tom hová ment?
+Világosan emlékszem, hogy a pisztolyokat beledobta a folyóba.
+Láttam felszállni Tomit a vonatra.
+Az igazat kellene, hogy mondd.
+Mária férje gyötrelmes halála után fellélegzett.
+Az anya az asztalra tette a cukortartót.
+Telefonálni fogok neked, ha megérkeztem.
+Tomi ha teheti, kolbászos fagyit mindig eszik.
+Sajnálom, hogy ilyen sokáig kellett várnod.
+Olyan ördögien gyors vagyok, hogy már meg is érkezek, mielőtt egyáltalán elindultam volna.
+Tessék elfogadni az alázatos bocsánatkérésemet.
+Szerintem ez egy elég unalmas mondat.
+Tom egy csomó időt tölt Maryvel.
+Tom nem bocsátott meg nekem.
+Csehszlovákia és Jugoszlávia az első világháború után az antant által létrehozott országok voltak.
+Mikor lesz már vége ennek az őrületnek?
+Semmiképpen ne engedd ki a kutyát.
+Szerintem Tom le fog mondani.
+Gondolom, korábban kellett volna megtennem.
+Mária, meg kell osztanod a bátyáddal!
+A legtöbb ember nem vizsgálja ki alaposan a politikai állásfoglalását.
+Az Amerikai Egyesült Államokban egy asszonynak átlagosan csak három gyermeke van.
+Ez nem kutya, hanem róka.
+Nem emlékszem, hogy kikértem volna a véleményedet.
+Kelly meg fog jelenni a televízióban.
+Én tisztelem az idős embereket.
+Egy baleset történt az imént.
+Manyi kerülte a téma érintését.
+Azt hiszem, Tomi ebben tévedett.
+Tom gyakran lóg a telefonon.
+Sok könyvet kellene olvasni, amikor az ember fiatal.
+A hal elbújt a kövek alá.
+Tom szülei a célvonalnál várnak rá.
+A legjobb barátomnak ma születésnapja van.
+A legjobb barátom mindig jó tanácsokat ad nekem.
+Mit ajánlana? Spagettit vagy pizzát?
+Nem sokat tudunk arról, hogy mi történt.
+A tányérokhoz folyékony mosószert használok.
+Csak ámulok és bámulok, hogy megnőttek a srácaid.
+Én egyszerűen csak nem akarlak téged elveszíteni.
+A sorsom a te kezedben van.
+A zene nem egy nyelv. De néhány nyelv nekem olyan, mint a zene.
+Emlékszem, hogy ezt a történetet egyszer már hallottam.
+Nem fogom hagyni magam átverni.
+Ez a ceruza jobb a másiknál.
+Ezt a nagy házat ki is kell ám fűteni télen!
+Te nem túlságosan szereted Tomot, igaz?
+Ott akarom hagyni a kocsimat.
+A kenyai maratoni futó a célnál leborult a földre, és keresztet vetett.
+Váó! Te marha ügyes vagy!
+Háromszáz méterre áll az autóm innen.
+Egy érdekes cikket olvastam ma reggel.
+Mit gondolsz, mennyiért vettem ezt a kabátot a piacon?
+Tomi úgy érezte, hogy Mária semmibe sem veszi őt.
+Hogy szereted a kávét: cukorral vagy anélkül?
+Hogy mersz visszabeszélni! Csináld azt, amit én mondok neked!
+Tomi az öreg vasútállomás közelében lakik.
+Most jött el az én időm.
+Megmutatom neked, hogyan kell halat fogni.
+Hogy én hazudok? Ugyan, Tom! Kit érdekel ez? Én csak érdekeket képviselek.
+Ha engem kérdezel, nincs semmi kifogásom.
+Az egészben az a legborzasztóbb, hogy én állítottam össze a listát.
+Mindent túléltél eddig, ami veled történt.
+A lányom nagyon szeret ugrókötelezni.
+Mit mond egy férfi, amikor derékig vízben áll? - Ezt nem érem fel ésszel!
+Most csak én vagyok itt egyedül.
+Még mindig nem tudom elhinni, hogy a Télapó nem is létezik valójában!
+Nem tudom magamnak garantálni, hogy továbbra is itt éljek.
+Pokollá teszi a férje életét.
+A szeme tele lett könnyel.
+A gyerekeim szeretnek a nagymamánál vendégeskedni.
+Nagyon fárasztó volt a mai nap.
+Mária a gyerekeivel szemben minimalista, a férjével szemben viszont hatalmasak az elvárásai.
+Amint hazaért, talált egy új levelet az üzenetei között.
+Egy kevéske pénzzel tartozom neki.
+Úgy hiszem, Elvis még él.
+Hallottam, hogy nyílt nemrég egy jó cukrászda a stadion mellett.
+Tudja, hol él Hudson asszony?
+Minden évben emberek milliói halnak éhen.
+Szerintem ez nem olyan dolog, amit én meg tudok tenni.
+Tom akkor csak 13 éves volt.
+Az emberek kegyetlenek tudnak lenni.
+Ez a legkényelmesebb fotel, amiben valaha ültem.
+Én, veled ellentétben, megkínálom a többieket is.
+Megígéred, hogy nem csapsz be?
+Hála az égnek, túl vagyunk rajta!
+Gratulálok mindenkinek, kedves kollégák, szép teljesítményt értünk el együtt!
+Senki nem tud olyan gyorsan futni, mint Tom.
+Nem tudom eldönteni, hogy ez bók vagy sértés.
+Jessie rosszul beszélt franciául és németül még rosszabban.
+A lány kecses mozdulattal becsukta az ablakot.
+Csak adj nekem egy kis időt!
+Ez a fürdőhely már nem olyan népszerű, mint korábban.
+A gyermekek éppen krétával rajzolnak a járdára.
+Azt szeretné, hogy elmondjam Önnek, hogy mit remélek?
+Meg kell tanulni kifejezni magam más nyelven.
+Ezt én el nem olvasom!
+Nincs egyetlen könyvem sem, amit elolvassak!
+Mikor látogatsz meg? Szombaton vagy vasárnap?
+Nagyon fontos, hogy beszéljek Tommal.
+Hagyja a kezét a zsebében!
+Ha megtanulsz főzni, Isten rá a tanúm, elveszlek feleségül.
+A szomszédnak a macskája szereti a mi kertünket.
+Úristen! Ti tényleg azt gondoljátok, hogy nekem közöm van ehhez az egészhez?
+Az esős napok kivételével biciklivel megyek az irodába.
+Te azt látod, amit látni akarsz.
+Tomi magyarázatot adott a történtekre.
+Ingyen kaptam ezt a kerékpárt.
+Ne fecséreld el az időt, mert abból áll az élet.
+Mindenféle fura kalandba csöppentek az őserdőben, és különös meglepetésekben volt részük a sivatagban is.
+Tom még nem érkezett meg?
+Kivettem Párizsban egy szobát egy hónapra.
+Olyan sok a mondanivalóm, hogy nem tudom, hol is kezdjem.
+- Ahány ember, annyi tünet. - mormolta az orvos.
+Kérlek, ne igyál bele az üvegbe!
+Semmiképpen nem akarom elveszíteni a kedvesemet; érte még az életemet is odaadnám.
+Csak azt tudnám elismételni, amit előbb is mondtam.
+Semmi értelme a sírásnak. Senki sem fog meghallani.
+Iskolába járáshoz vett egy kerékpárt.
+Ha nem csinálom, nem lesz meg.
+Jó lesz az úgy, ha először velük beszélünk?
+Nem voltam teljesen tisztában vele, mi lett volna a következő lépés.
+Láttad te már egyáltalán Máriát smink nélkül?
+Azért még ne dobd ki, mert törött!
+Ez gyorsvonat. Nem sok helyen fog megállni.
+Meghívhatom az osztálytársaimat a születésnapi zsúromra?
+Hiába próbálnád meg elmagyarázni egy kétdimenziós lénynek a harmadik dimenziót, úgysem fogná fel.
+A várható terméshozam alulmarad a tavalyihoz képest.
+Milyen régóta nem láttalak titeket!
+Hallom, hogy a szomszéd házaspár már megint veszekszik.
+A kutyák vadul ugattak, mert érezték a róka szagát a közelben.
+A közös európai kultúra alapja a keresztény kultúra, és semmiképpen nem a liberalizmus.
+Kilencven éves kora óta a nagymamám süket, mint az ágyú.
+Mondd neki, hogy épp vacsorázom.
+Mutatta neked valaha Tom azt a levelet?
+A gyerekek itt nincsenek kitéve veszélynek játék közben.
+Képtelen vagyok megmagyarázni, miért történt.
+Az új évben mindent másképp csinálok.
+Az óvónéni sem bír vele, a múltkor is elvette Tom tízóraiját.
+A papilio egy nagyon szép szó.
+Tegnap óta semmit sem ettem.
+Csak annyit szedjél ki, amennyit majd meg is fogsz enni.
+A rendőrség nagy együttműködést tanúsított.
+Nekem ez a véleményem, és szeretném, ha tiszteletben tartanád!
+Ki szabad mennem az utcára?
+Nagyobb tisztelettel kellene önöknek bánniuk az emberekkel.
+A tető beomlott a hó súlya alatt.
+Én nem hallottam egy autót sem.
+A sikerünk titka: kis tételben játszani, sokat kaszálni.
+Nem akarsz velem helyet cserélni?
+Egy hétig nem leszek itthon.
+Nem kell itt maradnia velem.
+Ezek lelketlen spekulánsok, akik lepaktáltak az Ördöggel.
+Sok dolgom volt a héten.
+Nagyon sürgős ez a dolog.
+Egy embert találtak fenn a jégbe fagyva, de még semmit nem tudnak róla.
+Ha ön jobban kedveli az alsó ágyat, én teljesen elégedett leszek a felsővel.
+Ha rá akarsz gyújtani, akkor menj ki, kérlek.
+Tudtam, hogy meg kell csinálnom.
+Tele volt gazzal a kertünk.
+Bizonyára Máriáról gondoskodik most Tomi.
+Öt meg három az nyolc.
+Tamás mézzel szereti a teát?
+Valóban azt akarod, hogy én táncoljak veled?
+Voltam néhányszor Magyarországon, nagyon kedvelem az országotokat.
+Jó napot, Georges! Hogy vagy?
+Mária összefogja a mosott ruhát.
+Javaslom, takarítsd össze a szobádat, mielőtt hazaérkezik anyád.
+Tegnap volt az ősz első napja.
+Rettentő hideg az idei tél.
+Tom háromszor sütötte el a fegyvert.
+Bosszút akartunk, és bosszút is álltunk.
+Művésznő, nagy rajongója vagyok a munkásságának! Az összes filmjét láttam.
+Tomi becsukta a szemét, és úgy tett, mint aki alszik.
+Azt mondta a főnök, sürgős.
+Az a személy már nem él.
+A poszméhek nagyobbak a méheknél.
+Ma ez lesz; de mi lesz holnap?
+Akarsz szexelni velem ma este?
+Tom szereti a csípős curry-t.
+Még mindig nem vettem meg mindent, ami kell nekem.
+Önnek fogalma sincs az én szándékomról.
+El tudod vezetni ezt a hidroplánt?
+A vasútállomáson egy csavargót láttam.
+Vártam a katarzist, de igazából nem éreztem semmit.
+Tomi széjjel tépte az írást.
+Úgy ellátták a baját, azt se tudta megmondani, hogy fiú-e vagy lány.
+- Ez egyáltalán nem bonyolult! Ez tiszta fizika. - Na, itt kezdődnek a bajok!
+Politikusok? Ezek? Én még a mosogatást sem bíznám rájuk!
+- Tomi, te meg milyen férfi vagy, hogy neked nincsen véleményed? - kérdezte tőle Mari.
+Tomi nem tudott munkát találni.
+Túl sokat engedsz meg magadnak!
+Gyere és igyál meg velem most egy forró teát!
+Nem ment férjhez, de van egy gyereke.
+Édesapám egy órát adott nekem, én meg elvesztettem.
+Tom felolvasta a levelet, bár Mary már tudta, mi van benne.
+Tamás nem tudja, hogy Mária most hol van.
+Sok hó volt múlt télen.
+Múlt áprilisban tettem egy kanadai körutazást.
+El tudod hinni, hogy Tom még csak tizenhárom?
+Megállapodást írtak alá az új vonatok beszerzéséről.
+Timi egy értekezleten számolt be eredményeiről.
+Úgy látszik, Brüsszel képtelen különbséget tenni menekültek és bevándorlók között.
+Érzem a szagát annak, amit szagolsz.
+Az árulók jutalma halál! - hangzottak a várkapitány kemény szavai.
+Meg sem mozdulnak a csavarok, úgy be vannak rozsdásodva.
+Melyik szobában találom az ügyeletes orvost?
+Miért van ez a szekrény bezárva?
+Minek ugrottam volna utána, ha magam sem tudok úszni?
+Úgy tűnt, hogy a busz késett.
+És mit kell tennem ezért a pénzért?
+Mély és tiszta a víz.
+Senki nem akarja megcsinálni, de egyikünknek meg kell tennie.
+A kitartás bármit lehetségessé tesz.
+Nem voltak a gyűlésen ötvennél többen.
+Tomi a megtakarított pénzét a matrac alatt tartja.
+Miért nem csinált senki semmit?
+Megrágta a menyét a kábeleket a motortérben.
+Ezt mindenki meg tudja csinálni.
+Mária egy két lábon járó többnyelvű szótár.
+Tomnak elég sok pénze van.
+Tamás épp beszél most valakivel. Tud várni?
+Egy sürgős üzleti ügy miatt töröltem a találkozómat.
+Ha a németet meg tudtad tanulni, valószínűleg nem lesz semmi problémád a franciával sem.
+A teremben egy kristálycsillár lóg.
+A házunk előtt már megint felbontják az utat.
+Ma nem vagyok jó formában.
+Tomnak el kellett végeznie egy küldetést.
+Egymásra néztünk, hogy mit tegyünk.
+Van egy nővérem és egy öcsém.
+Tomnak volt egy pár javaslata.
+Színek nélkül szürke és sivár a világ.
+Igaz, hogy te vagy az erősebb, de én vagyok a gyorsabb.
+Igaz, hogy az amerikaiak szeretik a pizzát?
+Tud engem valaki erre emlékeztetni?
+Köszönöm, hogy elmondtad nekem az igazat.
+Ez az út nagyon keskeny.
+És így sok kis kedves meglepetést találok a postaládámban.
+Mit tehetünk a stressz ellen?
+Most nem tudsz nekünk segíteni.
+A Greenpeace fáradságosan küzd a világunk megmentéséért.
+Amíg lopáson rajta nem kapnak valakit, addig nem is tolvaj.
+Vasárnaponként vendéglőbe szoktunk menni, de most már ezt nem tudjuk magunknak megengedni.
+Az olyan vegyész, aki nem fizikus, az senki.
+Az anyósom egy öregek otthonában él.
+A nyakkendője ketchupos, ráadásul az inge meg gyűrött.
+Feltehetném ismét ugyanezt a kérdést.
+Már tíz éve férj és feleség.
+Miért nem az igazságot mondtátok el egyszerűen?
+Ellátta a sebeit és morfiumot adott neki.
+Azt a hegyet hó fedi.
+Tamás ügyvéd, ráadásul nagyon jó.
+Valamelyest javult a megítélésünk, de még mindig csak kevesen bíznak bennünk.
+Tom évek óta közeli barátom.
+Nem ön az első, aki ezzel a kéréssel fordul hozzánk a héten.
+Tedd csak ide le őket.
+Kívánom neked, hogy légy boldog!
+Azt hiszem, elvesztettem a jegyemet.
+Ezeket a csigákat meg lehet enni.
+Nem tudom azt mondani, hogy sajnálattal hallom.
+Azt hiszem, nem működnek a megérzéseim.
+Tiszta szénhidrát a mai étrended is!
+Már megint csipsszel tömöd a fejedet?
+Folyton hibát talál a titkára munkájában.
+A nagylelkűség sajnos nem tartozik a férjem ismert erényei közé.
+Tomnak nagyon jó üzleti érzéke van.
+El fogom mondani önöknek az igazat.
+Egy-két hónap múlva nem emlékszel majd ilyen apró részletekre.
+Mikor volt utoljára elmosogatva az a pohár, amiből iszol?
+Anyád mondta ezt neked, ugye?
+Tomi nagyon igénytelen, Mária meg nagyon undok.
+Én azt egy szóval se mondtam, hogy beszélek angolul; csak annyit, hogy értem valamennyire.
+Gyerekek, olyan lapos a buli, ha nem történik valami, én fogom magam, és hazamegyek.
+Először vakard le magadról a sarat!
+Bámulta önt. Nem vette észre?
+Felfedeztem egy titkos átjárót a könyvtárban.
+Csúnyán van írva a levél.
+Van olyan módszer, amelyik mindig működik?
+Ön szeret veszélyesen élni, nemde?
+Mit csináltál egész idő alatt?
+Odaköszöntem nekik, de azok csak néztek rám bambán.
+Tudtam, hogy láttam már valahol ezt a fickót.
+Még a legrövidebb mondatok is jobbak az anyanyelvi beszélők kezében.
+- Jössz? - Rögtön. Csak felveszek egy friss inget.
+Nagyon számít rád, úgyhogy ne okozz neki csalódást!
+Nagyon jól emlékszem a fickóra, mert valami nagyon furcsa akcentussal beszélt.
+Egymásba szerettek abban a pillanatban, amikor a tekintetük találkozott.
+Nem voltam se élő, se holt, olyan zavarban voltam.
+Nem fogok nemet elfogadni válaszként.
+Mosás közben összement a pólóm.
+Azt hiszem, ez a legmagasabb fa, amelyet valaha is láttam.
+A kockában van egy henger, és a hengerben egy golyó.
+A kopt keresztények Egyiptomban folyamatos életveszélynek vannak kitéve.
+Tomot kivéve mindenki megette a halat.
+Mindenki meggazdagszik, csak én nem.
+Nem foglalkozik ezzel senki - kivéve téged.
+Tudod, hogy mit akart ma itt Tomi?
+Tom nem bírta tovább a faluban, felköltözött a fővárosba.
+- Meddig hittél a Télapóban? - Soha sem hittem a Télapóban. Nálunk a Jézuska jár.
+Azt mondta Tomi, hogy beszélni akar velem.
+Menjünk el vacsorázni ma este!
+Mi ez a szörnyű zaj?
+Határozottan emlékszem, hogy maga állt ott a sorban, csak akkor piros kabátban volt.
+Ha ezt gondolod rólam, akkor a legjobb, ha nem is találkozunk többet.
+Édesanyám azt mondta, hogy jobb lenne, ha nem mennék ki ilyen szörnyű időben.
+Ez azt jelenti, hogy nem tudod?
+Tom végrendelet nélkül halt meg.
+Azért tanulunk történelmet, hogy tanuljunk belőle.
+Mire emlékszel a tegnap estéről?
+Az én véleményem különbözik a tiédtől.
+Megteheti, csak gondoljon a következményekre is!
+Úgy hiszem, tartozom neked egy bocsánatkéréssel.
+Be kell vágnom ezeket a szabályokat.
+Ne hidd, hogy nekem nincsenek ilyen napjaim.

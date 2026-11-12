@@ -18,8 +18,14 @@ class AutocorrectStatsTest {
 
     private val dictionary = Dictionary.withFrequencies(
         mapOf(
-            "bonjour" to 5_000L, "monde" to 5_000L, "bateau" to 5_000L, "gateau" to 5_000L, "chat" to 5_000L,
-            "chapeau" to 5_000L, "maison" to 5_000L, "fenetre" to 5_000L,
+            "bonjour" to 5_000L,
+            "monde" to 5_000L,
+            "bateau" to 5_000L,
+            "gateau" to 5_000L,
+            "chat" to 5_000L,
+            "chapeau" to 5_000L,
+            "maison" to 5_000L,
+            "fenetre" to 5_000L,
         ),
         InflectionRules.NONE,
     )

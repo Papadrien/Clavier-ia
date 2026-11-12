@@ -1,7 +1,7 @@
 package fr.junade.taipo
 
-import fr.junade.taipo.DeleteSwipeController.Companion.wordToDeleteBeforeCursor
 import android.view.inputmethod.InputConnection
+import fr.junade.taipo.DeleteSwipeController.Companion.wordToDeleteBeforeCursor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

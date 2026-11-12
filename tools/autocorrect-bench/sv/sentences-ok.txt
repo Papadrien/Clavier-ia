@@ -1,0 +1,27 @@
+# Korrekta svenska meningar: autokorrigeringen får inte ändra någon av dem (mäter felaktiga korrigeringar).
+# Une phrase par ligne (lignes « # » ignorées). Écrites pour le banc, à faire relire.
+Hej, hur mår du?
+Jag är hemma nu.
+Vad ska vi göra i kväll?
+Jag hoppas att allt är bra.
+Tack så mycket för hjälpen.
+Jag vet inte var han bor.
+Jag går till affären och köper bröd.
+Vi ses i morgon klockan åtta.
+Min bror jobbar i Stockholm.
+Snälla, sätt dig här.
+Hon har två katter och en hund.
+Jag ringer dig senare.
+Filmen var verkligen bra.
+Var ligger närmaste hållplats?
+Jag har inte tid, förlåt.
+Jag älskar dig.
+Hur mår din mamma?
+Jag måste gå nu.
+Det kommer att regna i morgon.
+Jag tycker om att läsa böcker.
+Han sa att han var trött.
+Vi har bott här i tre år.
+Det är för sent nu.
+Där är huset vi köpte.
+När kommer du hem?

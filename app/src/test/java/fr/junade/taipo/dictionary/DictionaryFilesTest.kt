@@ -13,7 +13,10 @@ class DictionaryFilesTest {
     @Test
     fun `deux fichiers par langue, aux noms du bucket`() {
         assertEquals("https://taipo-worker.junade-models.workers.dev/dictionaries/fr.txt", DictionaryFiles.remoteUrl(KeyboardLanguage.FR, DictionaryFile.FULL))
-        assertEquals("https://taipo-worker.junade-models.workers.dev/dictionaries/names/fr.txt", DictionaryFiles.remoteUrl(KeyboardLanguage.FR, DictionaryFile.NAMES))
+        assertEquals(
+            "https://taipo-worker.junade-models.workers.dev/dictionaries/names/fr.txt",
+            DictionaryFiles.remoteUrl(KeyboardLanguage.FR, DictionaryFile.NAMES),
+        )
         assertEquals(2, DictionaryFile.entries.size)
     }
 
@@ -23,7 +26,10 @@ class DictionaryFilesTest {
         assertFalse(DictionaryFiles.isInstalled(dir, language))
         DictionaryFile.entries.dropLast(1).forEach { write(DictionaryFiles.localFile(dir, language, it)) }
         assertEquals(listOf(DictionaryFile.FULL), DictionaryFiles.missing(dir, language))
-        DictionaryFiles.localFile(dir, language, DictionaryFile.FULL).apply { parentFile?.mkdirs(); writeText("") }
+        DictionaryFiles.localFile(dir, language, DictionaryFile.FULL).apply {
+            parentFile?.mkdirs()
+            writeText("")
+        }
         assertFalse(DictionaryFiles.isInstalled(dir, language))
         write(DictionaryFiles.localFile(dir, language, DictionaryFile.FULL))
         assertTrue(DictionaryFiles.isInstalled(dir, language))

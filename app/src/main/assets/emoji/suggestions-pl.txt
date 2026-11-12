@@ -1,0 +1,70 @@
+# Podpowiedzi emoji, polski: emoji, a po nim słowa, które je wywołują (najczęstsze formy odmiany wpisane wprost).
+# Ordre de priorité = ordre du fichier ; mots comparés sans accent ni majuscule ; pas de règle de pluriel (formes écrites).
+# Liste écrite pour Taipo le 12/11/2026, à faire relire par une personne de langue maternelle.
+😀 uśmiech szczęśliwy szczęśliwa zadowolony zadowolona radosny
+😂 haha hahaha xd śmieszne śmieszny zabawne
+😍 uwielbiam piękna piękny cudowny cudowna
+😘 buziak buziaki całuję całusy
+❤️ kocham miłość serce serduszko
+😢 smutny smutna smutno
+😭 płaczę płacz łzy
+😡 zły zła wściekły wściekła
+😴 śpię spać śpiący zmęczony zmęczona
+👍 ok okej dobrze super zgoda
+👏 brawo gratulacje gratuluję
+🙏 dzięki dziękuję proszę
+👋 cześć hej siema pa elo
+🎉 impreza imprezka świętujemy
+🎂 urodziny
+🎁 prezent prezenty
+🎄 święta wigilia choinka
+🔥 ogień gorąco gorący
+❄️ zimno zima mróz
+☀️ słońce słonecznie lato
+🌧️ deszcz pada
+🍕 pizza pizzę
+🍔 burger hamburger
+🍝 makaron spaghetti
+🍣 sushi
+🍷 wino
+🍺 piwo piwko
+☕ kawa kawę kawka
+🍵 herbata herbatę
+🍰 ciasto tort
+🍫 czekolada czekoladę
+🍎 jabłko
+🍓 truskawki truskawka
+🐱 kot kotek kota koty
+🐶 pies piesek psa psy
+🐴 koń
+🐦 ptak ptaki
+🌹 róża róże
+🌸 kwiat kwiaty kwiatki
+🚗 samochód auto
+🚲 rower
+🚌 autobus
+🚆 pociąg
+✈️ samolot lot podróż
+🏠 dom domu
+🏖️ plaża wakacje urlop
+⚽ piłka mecz
+🎮 gra gry
+🎵 muzyka piosenka
+🎬 film kino
+📚 książka książki
+📱 telefon
+💻 komputer laptop
+📷 zdjęcie zdjęcia aparat
+💡 pomysł
+💰 pieniądze kasa
+📞 zadzwoń dzwonię
+💼 praca pracy
+✅ gotowe zrobione
+💪 siłownia silny
+🤔 hmm myślę może
+😅 ups przepraszam sorry
+🤒 chory chora
+😎 spoko
+🤗 przytulam uścisk
+🤩 niesamowite świetnie
+🏆 wygrana wygraliśmy zwycięstwo

@@ -43,7 +43,8 @@ KEEP_FREQ = 1000
 TYPO_DOMINANCE = 50
 MIN_FREQ = 5
 # Seuils de proposition de DictionaryLoader.candidateMinFrequency.
-CANDIDATE_MIN = {"fr": 100, "en": 149, "es": 142, "de": 48, "it": 102, "pt": 91, "nl": 77}
+CANDIDATE_MIN = {"fr": 100, "en": 149, "es": 142, "de": 48, "it": 102, "pt": 91, "nl": 77,
+                 "pl": 221, "ro": 166, "cs": 198, "hu": 214, "sv": 42, "da": 29, "nb": 19, "fi": 134}
 # Un mot ajouté ne dépasse pas ce multiple du seuil de proposition (au-delà, il serait proposé avant des mots déjà connus).
 ADD_CAP_SHARE = 3
 # Note AOSP minimale d'un mot ajouté : en dessous, surtout des noms de famille et du bruit (« sher » en allemand, f = 23).
@@ -64,6 +65,13 @@ CHAT = {
     "it": {"lol", "ok", "okay", "wifi", "selfie", "emoji", "cmq", "nn", "xké", "xchè", "tvb", "tvtb", "grz", "ahah", "ahahah"},
     "pt": {"kkk", "kkkk", "vc", "vcs", "tb", "tbm", "blz", "ok", "okay", "wifi", "selfie", "emoji", "rs", "rsrs", "obg", "pq", "tô", "tá", "pra"},
     "nl": {"lol", "ok", "oké", "okay", "wifi", "selfie", "emoji", "doei", "hoi", "ff", "idd", "wss", "lekkerrr"},
+    "pl": {"lol", "ok", "okej", "wifi", "selfie", "emoji", "xd", "nwm", "jj", "spoko", "elo", "siema", "pzdr", "dzk", "dzięki"},
+    "ro": {"lol", "ok", "okay", "wifi", "selfie", "emoji", "pa", "pupici", "mersi", "msg", "nush", "bn", "pls"},
+    "cs": {"lol", "ok", "okay", "wifi", "selfie", "emoji", "jj", "nj", "čau", "ahoj", "dík", "díky", "pls", "xd"},
+    "hu": {"lol", "ok", "oké", "okés", "wifi", "selfie", "emoji", "szia", "sziasztok", "pls", "köszi", "xd", "puszi"},
+    "sv": {"lol", "ok", "okej", "wifi", "selfie", "emoji", "hej", "tjena", "mvh", "typ", "asså", "nån", "nåt"},
+    "da": {"lol", "ok", "okay", "wifi", "selfie", "emoji", "hej", "mvh", "vh", "fedt", "nå", "nej"},
+    "nb": {"lol", "ok", "okei", "wifi", "selfie", "emoji", "hei", "mvh", "nei", "ikke", "kos", "digg"},
 }
 # Un mot employé au moins ce nombre de fois dans les phrases Tatoeba de la langue est en usage : jamais retiré (« tofu » en espagnol).
 TATOEBA_EVIDENCE = 3

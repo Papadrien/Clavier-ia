@@ -1,0 +1,534 @@
+# Phrases Tatoeba (CC BY 2.0 FR) jamais comptées dans dictionaries/bigrams/ro.txt : voir tools/build_ngrams.py.
+Înțelepciunea nu vine în mod automat cu vârsta.
+Vorbiți mai rar, vă rog.
+Nu am văzut niciodată un apus de soare atât de frumos.
+Ai avut un sfârșit de săptămână plăcut?
+Dacă înveți din greu, vei deveni un student bun.
+Astfel de incidente sunt destul de obișnuite.
+Prietenia noastră nu a durat.
+Au simțit că el nu avea nici o șansă de a câștiga alegerile.
+Sper să merg în Canada anul viitor.
+Fustele mini nu mai sunt la modă.
+M-am consultat cu sora mea.
+Vă rog să îmi răspundeți în scurtă vreme.
+Toate acele flori arată la fel.
+Mi-a dat ce bani avea la el.
+N-am fost niciodată într-o închisoare.
+Măcar lasă-mă să te ajut cu masa.
+Câinele, văzând că nu mă poate ajunge, a început să latre.
+Un om a scris istoria.
+Să ne pregătim de clonare.
+Vă deranjează să deschideți fereastra?
+Rosa Parks a fost arestată.
+Omul rău e speriat de înălțimi.
+Provincia furnizează diverse materii prime vecinilor săi.
+S-a simțit incomod după ce ea l-a sărutat.
+Aceste cizme sunt bune pentru mersul prin zăpadă mare.
+Mai degrabă n-aș spune nimic despre politică.
+Dându-i usturoi câinelui meu va cauza vreo problemă?
+Această țară este bogată în petrol.
+Ochii de pisică sunt foarte sensibili la lumină.
+Crezi că mâine va fi o zi frumoasă?
+Vreau un masaj. Am nevoie să mă relaxez.
+Dacă n-ar fi fost apa, n-am fi putut trăi.
+Centimetrul este o unitate de lungime.
+Compania a fost înființată în 1974.
+Am fost mușcat de o mulțime de insecte în pădure.
+Nu îi vom găsi niciodată perechea.
+Cred că a venit timpul să-mi fac tema.
+Nu a putut să meargă la petrecere pentru că era bolnav.
+Politica lui pune accentul pe bunăstarea națională.
+Trebuie să luăm în considerație tinerețea lui.
+Minorii nu pot fi mineri.
+Am avut cel mai ciudat vis aseară, dar nu mai țin minte nimic.
+O săptămână are șapte zile.
+Vaporul a trecut de Ecuator ieri.
+Ea nu ar fi fericită cu el.
+Am hotărât să scriu periodic articole în limba engleză.
+Să luăm în considerare cel mai rău lucru care s-ar putea întâmpla.
+Există multe cuvinte pe care nu le înțeleg.
+Când am plecat de la gară, am văzut un bărbat.
+Pentru a fi perfectă îi lipsea doar un defect.
+Ce ar fi lumea fără femei?
+Calculatoarele îi prostesc pe oameni.
+Tatăl meu s-a întors din Osaka săptămâna trecută.
+Eu, Eclesiastul, am fost împărat peste Israel, în Ierusalim.
+Tom a decis să renunțe la școală și să lucreze cu normă întreagă.
+Doctore, vindecă-te pe tine însuți.
+Întoarce- ți ochii de la mine fiindcă mă tulbură!
+Prima operetă românească a fost jucată la Iași în 1848.
+Ați avut o călătorie plăcută, domnule?
+Tom este agentul lui Mary.
+Lunile cele mai ploioase sunt mai, iunie, iulie și august.
+Sunt o mulțime de locuri frumoase în Japonia.
+Cineva mi-a furat permisul de conducere.
+Ionel, pune ceașca pe farfurioară!
+În jurul prânzului s-au înregistrat câteva averse.
+Ea spune că va veni mâine.
+Este un porumbel alb pe acoperiș.
+Am auzit ce s-a întâmplat la școală.
+Tom și Mary se gândesc la divorț.
+Deciziile financiare sunt foarte importante.
+După-amiază trebuie să fac pregătirile pentru excursie.
+Din mai multe motive mă simt mai activă noaptea.
+Tom are un avion privat.
+De ce ar trebui să-i mulțumesc lui Tom?
+Aceasta a fost cea mai captivantă carte pe care am citit-o.
+Nu trebuie să te schimbi.
+Ea este soția lui actuală.
+Absența lui a dus la tot felul de zvonuri.
+Ești sigur că nu putem repara această cameră foto?
+Despre ce este tot acest tam-tam?
+Îmi place această casă așa cum este.
+Această casă este foarte mică.
+Aceste case sunt întunecate și murdare.
+Nu ai nici măcar o idee!
+Tocmai am sosit. Nici măcar n-am desfăcut încă valizele.
+Mary lucrează în Africa pentru o organizație non-guvernamentală.
+A împărțit pâinea în două.
+Cămașa trebuie să fie călcată.
+Nu e nevoie să-mi spui ce să fac.
+Știu cât de mult ai muncit.
+Atunci eram pe cale să ies din casă.
+Eșecul său se datorează ignoranței sale.
+De unde ai știut că se va întâmpla asta?
+Sunt bucuros să te văd.
+Am găsit mănușile care erau sub scaun.
+Nu pot accepta propunerea dumneavoastră, deoarece nu este corectă și rezonabilă.
+Nu cred că te-ar lăsa să faci asta.
+Dar eu nu cred că tatăl meu a vrut ca eu să o fac.
+Lieutenant, răbdarea mea este mai scurtă decât sabia mea.
+Cred că Tom este ori homosexual ori bisexual.
+În ciuda ploii a început.
+Nu am mai văzut de mult timp un film atât de bun.
+M-ai omorât cu muzica clasică, niște manele n-ai?
+Tatălui meu îi place cafeaua să fie tare.
+Nu-mi pasă cât de mult te mănâncă. Nu o scărpina.
+Probabil că este foarte obosit după lunga plimbare.
+Ei au cerut încetarea luptelor.
+Dineul oficial a avut loc la Casa Albă.
+Te rog să nu fii supărat că ți-am vopsit gardul.
+Racheta s-a îndreptat către sud-vest.
+Mă pricep la dat sfaturi.
+Avem mochetă pe hol și un covor în sufragerie.
+În New York dolarul valora opt șilingi.
+Ne-am condus rudele până la stația de autobuz.
+Solurile și apele formează suprafața pământului.
+Cred că nu ar trebui să îl inviți pe Tom la petrecerea ta.
+Am pus-o pe sora mea să îmi facă poză.
+De ce nu l-a oprit cineva pe Tom?
+Pe 14 martie este Ziua Pi.
+Școala începe în luna aprilie.
+În luna septembrie 2015, rata șomajului în Japonia a fost de 3,4 la sută.
+Noi am suferit o hemoragie cerebrală.
+Indienii nu au fost mulțumiți cu această înțelegere.
+Cu siguranță că Tom poate fi de încredere.
+Tom nu a citit raportul pe care l-ai scris.
+Tom încă are rucsacul pe care tatăl său i l-a dat.
+Nimănui nu-i place să plătească taxe.
+Noi am alergat în jurul parcului.
+Tatăl meu gestionează un magazin.
+Tatăl meu lucrează pentru o bancă.
+Generalul Jackson a eșuat în a captura cel puțin un indian.
+Te rog să vorbești cu voce tare.
+Să începem cu primul capitol.
+Sunt ocupat ca o albină.
+Nimeni nu a răspuns la telefon.
+Nu pot să răspund la solicitarea dumneavoastră, fără să mă gândesc.
+Aud că tatăl lui e în străinătate.
+I-am cerut să deschidă o fereastră.
+El a recunoscut că a furat aurul.
+El a recunoscut defectele sale.
+El e întotdeauna acasă duminica.
+Tiparele verbului trebuie să fie învățate.
+Există un abis între mine și conștiința mea.
+Noi nu am fost acasă ieri.
+Ai găsit un om bun.
+Nu judeca un om după hainele pe care le poartă.
+Ea a mers până la gară pentru a-l însoți.
+Nu pot vorbi franceza bine.
+O să te aștept 123 de ani.
+Lui Tom nu-i place să mănânce pește.
+Persoana care stă lângă poartă e Tom.
+N-am făcut mare lucru în ultimele zile.
+Tom nu se așteaptă la nimic de la Mary.
+Tom i-a cerut lui Mary să se întâlnească cu el după școală.
+De când au plecat cei mai buni oameni, erorile s-au îndesit la firma noastră.
+Tom și Mary au cam aceeași vârstă.
+N-am avut nicio problemă în a găsi biroul lui.
+Merg prin cartierul chinezesc și admir simbolurile frumoase pe care tot nu le înțeleg încă.
+De obicei fac o baie înainte de a merge la culcare.
+Magazinul vinde tot felul de ornamente.
+Manierele la masă variază de la o țară la alta.
+Ei au ales cele mai bune două lucrări.
+Tom a vrut să-și scoată tatuajul.
+Am fost dat afară din liceu.
+Acum suntem în luna septembrie, dar vremea este foarte călduroasă.
+O să cumpăr o jucărie pentru copil.‎
+El cheltuie foarte mulți bani.
+Nu lua în seamă ceea ce spune tatăl tău.
+Asta deja nu se mai folosește în sens figurat.
+Prima lecție în democrație este de a respecta voința poporului.
+S-ar putea să trăiesc mai mult decât tine.
+Poți să călărești un cal?
+Știu ce vrei să spui.
+Se pare că e cald afară.
+Îmi va fi dor de voi toți.
+Pâinea asta e tare ca piatra.
+Aveți vreo întrebare despre meniu?
+Nu puteți bea apă aici.
+Dumnezeu să vă aibă în pază!
+Să nu-i permitem lui Tom să facă asta.
+Mai este și altceva de mâncare?
+Ai fost marinar, nu-i așa?
+Doream să o vezi și tu.
+Se pare că robinetul din bucătărie picură.
+Unele persoane sunt greu de mulțumit.
+Ai ortografiat greșit numele meu.
+Ea i-a curățat un măr.
+În chimie, poate azotul să formeze o legătură simplă?
+Muntele Kilimanjaro este un vulcan inactiv, situat în Tanzania.
+Tom a spus că nu a mâncat niciodată mâncare tailandeză.
+Tom este modest, nu-i așa?
+Tom vine aici din când în când.
+Știința a făcut progrese remarcabile.
+El a supraviețuit în mod miraculos.
+Tom ar fi cu siguranță de acord.
+Ulterior Sam a fost asasinat.
+Tom a fost surprins cu adevărat.
+Cele două țări vecine, diferă între ele în toate privințele.
+Sunt dispus să încerc orice.
+Mi-ar plăcea să stau aici cu ei.
+Doctorul a spus că trebuie să te odihnești mai mult.
+Stai în afara razei vizuale.
+Nu mă asociez cu astfel de oameni.
+Îmi plac toți peștii cu excepția țiparilor.
+El a pus câteva întrebări relevante.
+Bob este obișnuit cu munca grea.
+Hackerii sunt experți în a obține măsuri de securitate informatică.
+Poți vorbi aproximativ patruzeci de limbi diferite.
+Tom s-a depășit pe el însuși de data asta.
+Tu pari a fi terminat.
+Îmi actualizez blog-ul în fiecare lună.
+Nu vreau să fac o greșeală.
+Am ezitat doar un pic.
+El renovează case vechi în Spania.
+Mi-aș fi dorit să fi mers la Boston cu Tom.
+Erorile fatale apar din neatenție.
+Un vânt puternic s-a stârnit.
+Multe companii de software oferă versiuni gratuite ale produselor lor, dar cu funcționalitate limitată.
+Ea este cea care câștigă pâinea în familia aceasta.
+Mă scuzați, unde pot găsi o delicatesă?
+El a avut toate motivele să procedeze astfel.
+Tom nu a răspuns imediat.
+Cum a putut Tom să se înșele așa de mult?
+Tom crede că el este mai bun la franceză decât este de fapt.
+Și-au periat zăpada de pe căciuli.
+Este doar o soluție temporară.
+Nu-ți face griji de asta.
+Am mâncat prea mult astăzi.
+Am fost în grădină toată după-amiaza.
+Mary nu vrea să facă asta singură.
+Unde este gara de tren?
+Știi unde îl pot găsi pe Tom?
+Tom nu se va întoarce aici niciodată.
+Tom nu mă place în mod deosebit.
+De ce te mănâncă mușcăturile de țânțar?
+Nu mi-ai dat nici o șansă.
+De ce este aici atâta liniște?
+Nu puteți fi mai liniștiți?
+Fiecare are partea lui slabă.
+Sami era un ateist înverșunat.
+Mașina asta scoate o mie de șuruburi pe oră.
+Îmi macin cafeaua manual cu o râșniță de cafea ce are o manivelă.
+Tom se așteaptă să aibă companie.
+El a studiat decorațiuni interioare.
+Cel puțin zece oameni au rămas în urmă.
+Am pus unul pe fugă.
+De ce îmi împăturești hainele?
+Cum ați poruncit, Excelența Voastră.
+Nu cred că lui Tom îi pasă de asta.
+Am stat în Boston timp de trei ani.
+Tom nu va mai merge să înoate astăzi.
+Tom nu este interesat nici el.
+Mă simt bine după exerciții.
+Te-ar deranja dacă aș veni și eu?
+El a spus că era prea bătrân ca să facă asta.
+Nu cred că avem de ales.
+Tom i-a citit lui Mary o poveste de noapte bună.
+Am crezut că va fi ușor de făcut.
+Există loc pentru toată lumea pe Pământ.
+Giovanni și Sara s-au căsătorit acum 2 ani în Germania.
+Tom și Mary au renunțat la vechile lor calculatoare.
+Pentru un gândăcel, o lovitură de cioc poate fi mortală.
+Nu e nevoie să vă scuzați.
+Este foarte drăguț din partea dumneavoastră să-mi arătați drumul.
+Te duci la petrecerea de rămas-bun a lui Tom?
+Studiam engleza când ai sunat ieri.
+Aș putea încerca să o fac?
+Nu-mi plac florile foarte mult.
+Există zvonuri că s-au despărțit.
+Tom preferă vinul roșu vinului alb.
+Uneori depinde și de noroc.
+Tom a scris o sonată.
+Tom nu e, de fapt, directorul.
+Vii la Rio pentru Jocurile Olimpice?
+Trebuie să obțin un pașaport.
+Te rog spune-mi versiunea ta la ceea ce s-a întâmplat.
+De ce nu vă putem vizita?
+Vino și ajută la spălarea tacâmurilor.
+Avem o mașină de spălat în subsol.
+Sosul este aproape gata. Abia acum adăugăm pătrunjel și busuioc.
+Asta nu este o informație utilă.
+Ea și-a pierdut cheile de la mașină.
+Mă întreb dacă Tom și Mary sunt entuziasmați.
+Lui îi place să cânte.
+Acum că Mary a plecat, Tom este mai fericit.
+Tom s-a gândit că Mary a fost cea care a făcut asta.
+Nu am cântat niciodată în public.
+Nu mă tem de corectitudinea politică.
+Cât de mult ai stat în Brazilia?
+El a fost influențat cu ușurință.
+Bănuiesc că Tom nu mă va crede.
+Pari deosebit de convins de asta.
+De ce nu te duci sus să te întinzi puțin?
+Nu toată lumea este săracă.
+Dl Yamada trăiește în suburbiile din Tokyo.
+Tom va fi un profesor bun.
+Nu Tom a fost cel care mi-a spus să fac asta.
+Îi voi da un sfat.
+El a spus că nu se simte bine.
+Câinele lui Tom latră foarte mult.
+Anul viitor ziua mea de naștere va cădea într-o duminică.
+N-am putut găsi nicio problemă la mașina ta.
+Educația este cheia împotriva gândirii de turmă.
+A ajuta pe alții nu este niciodată o pierdere de timp.
+S-a îmbolnăvit de o boală nemiloasă.
+Întâlnirea s-a anulat din cauza taifunului.
+Oricum nu este treaba ta.
+Judecăm greșelile altora ca procurori, dar pe ale noastre ca avocați ai apărării.
+Tom n-ar fi trebuit să cheltuiască așa de mulți bani.
+S-ar putea să plouă mâine.
+Pot s-o scriu în franceză?
+Îți voi da jumătate din sandvișul meu.
+Tom și Mary nu se căsătoresc.
+Doar fă ce am făcut și eu.
+Dacă mi-ar fi spus adevărul, l-aș fi iertat.
+Ia-o pe asta sau pe cealaltă.
+Știu că Tom este sincer.
+Nu mă duc în Australia anul acesta.
+El nu mai este cum a fost.
+Logodnica lui este deja măritată.
+Tom a sosit în stație târziu.
+Multe accidente se întâmplă lângă casă.
+Tom crede că este arătos.
+Niciunul dintre sfaturile sale nu a fost util.
+De ce e așa tăcută?
+Îmi place să ajut oamenii.
+Spune că nu e vinovat.
+El a spus că poate vedea fantome.
+Ea este bogată, tânără și frumoasă.
+Cu toate astea, eu vreau să merg acolo.
+Un străin a venit la mine și m-a întrebat cât e ceasul.
+Tom n-a făcut-o nici pe asta.
+Tom se confruntă cu o problemă dificilă.
+Trebuie să-ți amintești această propoziție.
+Să nu ne certăm din cauza asta.
+Tom nu petrece suficient timp cu copiii săi.
+Nu cred că ea este acasă.
+Tom a facut totul pentru noi.
+Vreți să mergem cu voi?
+A fost a tatălui meu.
+Pachetul dumneavoastră va fi trimis mâine.
+Toată vara am stat acasă.
+Nu suntem singurii care credem că nu este vinovat.
+La concert au fost mai mulți oameni decât se așteptau.
+Ar fi foarte convenabil dacă am cenzura astfel de comentarii.
+Un măr a căzut pe pământ.
+Nu mă așteptam s-o întâlnesc într-un astfel de loc.
+Ei știu cât de mult îi iubesc.
+I-am rugat să-mi cânte un cântec.
+Tom își poate permite să fie pretențios.
+Nu știe ce să răspundă la asta.
+M-am întors pentru că am vrut să mă întorc.
+Am promis să nu spun nimic.
+Nu sunt deloc îngrijorat de asta.
+Tom are o cicatrice pe încheietura mâinii de când a încercat să se sinucidă.
+Aș prefera să n-o fac singur.
+Nu era cazul să faci asta fără să mă întrebi mai întâi.
+Tom părea să se bucure de timpul petrecut cu Mary.
+Ieri nu am putut să-l vizităm pe Tom. Nu am avut timp pentru asta.
+De câte ori te-am rugat să-ți faci curat în cameră?!
+Ei bine, nu mai ai noroc!
+Știi cine a fost Vlad Țepeș?
+Layla a ales să facă asta.
+Când îți vei face temele?
+Nu vin ca dușman, ci ca prieten.
+Ei au întrebat dacă pot ajuta.
+Cred că soțul meu este nebun.
+Vreau să vindeți produsul nostru la magazinul dumneavoastră.
+Cred că e mai bine să plec mai devreme.
+Toată lumea se naște narcisistă.
+Tom a transmis oribilele știri.
+Îți par foarte bătrân, Tom?
+Ce vârstă are cel mai în vârstă?
+Am vorbit cu Sandra despre o problemă importantă.
+Știe că îi urăște pe musulmani.
+A început să vorbească cu câinele.
+Spune-i lui Tom că mă uit la știri.
+Tom nu mai este în Boston.
+Era deja mort când a ajuns la spital.
+Prietena mea este o bună dansatoare.
+Ea se teme că el se va rătăci.
+Aia nu e mai bună decât cea pe care o aveam.
+Te poți exprima în engleză?
+Jos din pat cu tine!
+Am o mașină de culoare roz.
+Știu că trebuia să rămân la Boston.
+Vom cumpăra și o sticlă de vin roșu.
+Hai să stăm aici puțin și să ascultăm.
+Plâng pentru că te iubesc.
+Dă-ne o șansă să investigăm.
+Tom nu înțelege ce se petrece.
+Tom are două felii de pâine.
+A fost sedusă de Mary.
+Probabil că ai dreptate din nou.
+Nu judeca ca să nu fii judecat.
+De ce faci asta acum?
+Cleopatra se afla la Roma în ziua în care Iulius Cezar a fost asasinat.
+Un cerc are trei sute șaizeci de grade.
+Papagalul vecinului meu vorbește limba română.
+Doriți să mergeți la mare?
+Rămâne de văzut cine câștigă.
+Nu se poate să nu mă vezi.
+Nu se cuvine să strigi la părinții tăi.
+De obicei, nu beau cafea.
+Nu se duce să construiască baze militare în România?
+Vreau să vorbesc cu Tom.
+Ni s-a vândut un vis care a fost de fapt un mare coșmar.
+Pentru numele lui Dumnezeu, oprește-te!
+Este multă pâine în casa mea dacă vrei să mănânci.
+Noi avem două materii noi semestrul acesta.
+Comerciantul a semnat un contract de furnizare pe termen lung pentru a-și asigura mărfurile cerute.
+Dacă e ca la simulare, e posibil de făcut.
+Eu nu aveam cunoștință de prezența sa.
+Eu sunt deja pe punctul de a o face.
+Eu n-am trișat la examen.
+Am avut probleme cu trezirea.
+Această propoziție este adevărată și frumoasă. Cu siguranță nu o voi uita niciodată.
+Viața este o luptă împotriva morții.
+Sami s-a spălat pe față și pe dinți.
+Știu că Tom este un pic mai tânăr decât mine.
+Profesorul nostru spune că toată lumea are nevoie de fizică.
+Diferența dintre galică și portugheză mi se pare uneori o simplă chestiune de accent.
+Au semănat un câmp de secară.
+Inteligența artificială învață rapid și nu uită niciodată ceea ce a învățat.
+Avem nevoie de nouă persoane pentru acest joc.
+Îmi place zăpada. Este atât de frumoasă!
+Tom nu este încă așa de convins.
+Jocul a fost inventat de diavol.
+Nu consuma mâncare la conservă expirată.
+În patria sa mamă Germania, hot-dog-ul se chema frankfurter.
+Am uitat complet să fac asta.
+Bucuria ta este mulțumirea mea.
+Erorile sunt corectate acolo unde sunt detectate.
+Mi-a venit o foame teribilă.
+Nu mă ating de nimic.
+Ar fi trebuit să refuzi o propunere atât de nedreaptă.
+Frunzele sunt proaspete după o ploaie.
+Oare cine va fi următoarea victimă?
+Ei au spus că nu le place să facă asta.
+Vreau să-i dau numele tău bebelușului.
+Ei se laudă cu victoria lor.
+Nu te voi forța să faci nimic ceea ce nu vrei să faci.
+Ce se întâmplă când murim?
+Bătrânul a murit în camera lui.
+Moartea lui Tom s-a stabilit că a fost un înec accidental.
+Știe că nu ar trebui să fie aici.
+Nu am un cont personal.
+El a pierdut conștiința după accident.
+Nu arătați ca și cum ați fi fost obosite.
+Tom merge adesea la biserică.
+El a spus că devenea obosit.
+Nu s-ar mai fi întâlnit niciodată.
+În viața mea a devenit noapte când ai plecat.
+Mi-e atât de dor de acel prieten.
+Sunetul ploii este muzică pentru mine.
+Încheie-ți bine haina, e foarte frig afară.
+Cei care repetă abaterea sunt rareori iertați.
+Prin Cuvântul Său, Dumnezeu a creat universul.
+Într-un permis de conducere românesc se găsește de obicei un singur talon.
+Accelerează puțin, altfel mașina se va opri pe această pantă.
+Iubesc petalele mov ale acestei flori.
+A intrat la vecinul său pentru o scurtă conversație.
+El a învățat să jongleze cu trei mingi.
+Soldații s-au pregătit pentru lupta decisivă.
+Expertiza sa în domeniul IT este recunoscută internațional.
+Domnule, vă rog să mă ascultați!
+Nu vrem să avem prin jur oameni cu reputație proastă.
+Mary este o mare vorbitoare, dar o ascultătoare prost.
+Tăcere țipă mai tare decât orice discuție.
+Ar trebui să o citesc chiar acum?
+Imperiile supraviețuiesc atâta timp cât produc mai mult decât consumă.
+Democrația este cel mai rău regim posibil, cu excepția tuturor celorlalte.
+Erica este o tânără femeie bogată și frumoasă.
+Nedreptatea prosperă, violența este larg răspândită.
+Nu e timp de pierdut; viața e scurtă.
+Aștept aici de o oră.
+Eu am văzut-o pe ea, dar ea nu m-a văzut.
+Tom chiar ține un secret?
+Senatorii ar trebui să promulge legi?
+Acesta este singurul lucru necesar.
+Din ce oraș vin Maria și Marco? — Maria și Marco vin de la Roma.
+Cred că eu și Tom suntem de aceeași părere.
+E amuzant să termini întrebările în engleză cu cuvântul „nu”, nu?
+Cred că guvernul va trimite armata să se ocupe de dizidenți.
+Cred că ai slabe șanse să reușești lovitura aia.
+Tom nu mai lucrează ca bucătar.
+Vreau să-mi spui tot ce știi despre despărțirea Jessicăi și a lui Jeffrey.
+Trebuie să cumpărăm mai multe gustări pentru copii.
+Este bun de te lingi pe degete.
+Ea mănâncă două mere roșii.
+Cei care călătoresc mult spun multe minciuni.
+Ceea ce a trecut, a trecut, a dispărut pentru totdeauna.
+Tom nu-și putea permite un avocat.
+Ne întâlnim în fața magazinului.
+El spune că este urgent.
+Nu te-au învățat părinții tăi nimic?
+Privirea ei reflectă apele adânci.
+Te rog să scrii asta undeva.
+Am auzit că nu au pașaport.
+Vreau să vorbesc despre noul articol cu voi.
+De ce nu mi-ai prezentat prietenii tăi?
+Tom doarme, dar Mary este trează.
+Trebuie să sunați la bancă.
+La piață sunt multe standuri cu legume, fructe și carne.
+Am rezervat o masă în acest local.
+Ei se plimbă cu barca pe Rin.
+Acest magazin propune rochii de seară abordabile.
+Aceste ouă fierte sunt încă prea fierbinți!
+Acest portar este foarte slab. Nu a apărat nicio minge.
+Fii atent când traversezi strada!
+Mary purta o fustă înflorată.
+Care era înălțimea zidurilor orașului?
+De ce stau flamingii într-un picior?
+Guvernul construi zidul pentru a îi opri pe oameni să meargă în Berlinul de Vest.
+Guvernul vrea să dubleze energia eoliană.
+Tom, Mary, John și Alice au strigat în același timp.
+El a uitat din nou cheile!
+Soțul meu îi ia pe părinții mei de la gară.
+Ești mereu trist fără bani.
+Rațele au început să bată din aripi.
+Mama este atât de furioasă pe mine!
+Au închiriat o mașină în timpul lunii lor de miere.
+Casa va fi în curând vopsită.
+Încearcă această haină de iarnă. Este groasă și călduroasă.
+Nu uita să închizi ușa înainte de a pleca!
+Ce aplicație folosești pentru a trimite mesaje?
+Poștașul mi-a lăsat o scrisoare care nu era a mea.
+Mami, tati, nu găsesc gelul de duș!
+La ce oră este deschisă catedrala din Milano?
+Ți-ar plăcea un film în weekend?
+Antrenamentul a fost foarte epuizant. Abia puteam să respir.
+Nu vreau decât să-ți spun că te admir mult.
+Se uită la film împreună.

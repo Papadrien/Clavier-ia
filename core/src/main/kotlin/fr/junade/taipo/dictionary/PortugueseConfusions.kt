@@ -41,7 +41,8 @@ internal object PortugueseConfusions {
     private val SUBJECTS = arrayOf("você", "voce", "ele", "ela", "tudo", "isso", "isto", "nada", "quem")
 
     /** Ce qui suit « onde está » et jamais le démonstratif « esta » (qui précède un nom). */
-    private val AFTER_WHERE_IS = arrayOf("o", "a", "os", "as", "meu", "minha", "meus", "minhas", "teu", "tua", "seu", "sua", "você", "voce", "ele", "ela", "tudo")
+    private val AFTER_WHERE_IS =
+        arrayOf("o", "a", "os", "as", "meu", "minha", "meus", "minhas", "teu", "tua", "seu", "sua", "você", "voce", "ele", "ela", "tudo")
 
     /** Verbes qui suivent « a gente » (« a gente vai », « a gente não pode »). */
     private val AFTER_WE = arrayOf(
@@ -76,7 +77,15 @@ internal object PortugueseConfusions {
 
         // --- a gente ---
         add(ConfusionRule("agente", "a gente", "agente > a gente en début de phrase devant un verbe", sentenceStart = true, next = oneOf(*AFTER_WE)))
-        add(ConfusionRule("agente", "a gente", "agente > a gente devant un verbe, hors « o agente »", previous = noneOf(*BEFORE_AGENT_NOUN), next = oneOf(*AFTER_WE)))
+        add(
+            ConfusionRule(
+                "agente",
+                "a gente",
+                "agente > a gente devant un verbe, hors « o agente »",
+                previous = noneOf(*BEFORE_AGENT_NOUN),
+                next = oneOf(*AFTER_WE),
+            ),
+        )
 
         // --- mots soudés ---
         add(ConfusionRule("concerteza", "com certeza", "concerteza > com certeza", always = true))

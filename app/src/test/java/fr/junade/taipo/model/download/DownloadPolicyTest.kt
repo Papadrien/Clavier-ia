@@ -70,12 +70,14 @@ class DownloadPolicyTest {
 
     @Test
     fun `les URL des modeles Gemma 4 sont en HTTPS et pointent vers le bon fichier`() {
+        // Audit REL-01 : figées sur une révision (pas « main »), pour que le fichier téléchargé reste celui de [AiModel.sha256].
+        listOf(AiModel.EQUILIBRE, AiModel.PERFORMANT).forEach { assertFalse(it.downloadUrl!!.contains("/resolve/main/"), it.id) }
         assertEquals(
-            "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm",
+            "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/5b472bf479ec0e944b01c214b46fec082b3e8c01/gemma-4-E2B-it.litertlm",
             AiModel.EQUILIBRE.downloadUrl,
         )
         assertEquals(
-            "https://huggingface.co/litert-community/gemma-4-E4B-it-litert-lm/resolve/main/gemma-4-E4B-it.litertlm",
+            "https://huggingface.co/litert-community/gemma-4-E4B-it-litert-lm/resolve/e75b1386809cda8e0fda1ef93a39f75b70d400b9/gemma-4-E4B-it.litertlm",
             AiModel.PERFORMANT.downloadUrl,
         )
         assertEquals(
@@ -162,5 +164,11 @@ class DownloadPolicyTest {
         assertTrue(decision is DownloadDecision.InsufficientSpace)
         decision as DownloadDecision.InsufficientSpace
         assertEquals(600_000_000L + DownloadPolicy.SAFETY_MARGIN_BYTES, decision.requiredBytes)
+    }
+
+    @Test
+    fun `les reponses HTTP passageres sont retentees`() {
+        listOf(429, 500, 502, 503, 504).forEach { assertTrue(DownloadPolicy.isRetryableHttpStatus(it), "HTTP $it") }
+        listOf(400, 401, 403, 404, 410).forEach { assertFalse(DownloadPolicy.isRetryableHttpStatus(it), "HTTP $it") }
     }
 }

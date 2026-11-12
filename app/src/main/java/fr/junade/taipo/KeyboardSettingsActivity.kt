@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
@@ -13,10 +12,12 @@ import android.widget.CompoundButton
 import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.Toast
 import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.clipboard.ClipboardProvider
 import fr.junade.taipo.clipboard.ScreenshotFinder
 import fr.junade.taipo.dictionary.CorrectionHabitsProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * Écran « Paramètres du clavier » (v3 : réglages rangés en cartes). Dans l'ordre : Langues (ligne vers [LanguagesActivity]),
@@ -36,7 +37,7 @@ class KeyboardSettingsActivity : Activity() {
     /** Lecteur d'aperçu du curseur de volume (préparé au premier toucher du curseur). */
     private val previewPlayer by lazy { KeySoundPlayer(applicationContext) }
 
-    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
+    // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }
@@ -90,6 +91,7 @@ class KeyboardSettingsActivity : Activity() {
             }
         }
 
+        setUpClipboardHistory(preferences)
         setUpScreenshotSuggestions(preferences)
 
         val radioGroup = findViewById<RadioGroup>(R.id.radio_group_haptic)
@@ -335,6 +337,20 @@ class KeyboardSettingsActivity : Activity() {
      * « Proposer les captures d'écran récentes » : l'activer demande la permission d'images (un clavier ne peut pas la demander
      * lui-même). Le réglage n'est enregistré qu'une fois la permission accordée ; il reste coché seulement tant qu'elle l'est.
      */
+    /** Audit SEC-01 : historique du presse-papiers ; le désactiver efface tout de suite l'historique existant. */
+    private fun setUpClipboardHistory(preferences: KeyboardPreferences) {
+        val switch = findViewById<CompoundButton>(R.id.switch_clipboard_history)
+        switch.isChecked = preferences.isClipboardHistoryEnabled
+        switch.setOnCheckedChangeListener { _, checked ->
+            preferences.isClipboardHistoryEnabled = checked
+            Analytics.setting(this, "clipboard_history", checked)
+            if (!checked) {
+                val history = ClipboardProvider.historyRepository(this)
+                ProcessScope.launch(Dispatchers.IO) { runCatching { history.clearAll() } }
+            }
+        }
+    }
+
     private fun setUpScreenshotSuggestions(preferences: KeyboardPreferences) {
         val switch = findViewById<CompoundButton>(R.id.switch_screenshot_suggestions)
         screenshotSwitch = switch
@@ -342,7 +358,7 @@ class KeyboardSettingsActivity : Activity() {
         switch.setOnCheckedChangeListener { _, checked ->
             if (settingScreenshotSwitch) return@setOnCheckedChangeListener
             if (checked && !ScreenshotFinder.hasPermission(this)) {
-                requestPermissions(arrayOf(ScreenshotFinder.permission), REQUEST_SCREENSHOT_PERMISSION)
+                requestPermissions(ScreenshotFinder.requestedPermissions, REQUEST_SCREENSHOT_PERMISSION)
             } else {
                 preferences.isScreenshotSuggestionEnabled = checked
                 Analytics.setting(this, "screenshot_suggestions", checked)
@@ -353,14 +369,20 @@ class KeyboardSettingsActivity : Activity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode != REQUEST_SCREENSHOT_PERMISSION) return
-        val granted = grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
+        val granted = ScreenshotFinder.hasPermission(this)
         KeyboardPreferences(this).isScreenshotSuggestionEnabled = granted
         Analytics.setting(this, "screenshot_suggestions", granted)
         if (!granted) {
             settingScreenshotSwitch = true
             screenshotSwitch?.isChecked = false
             settingScreenshotSwitch = false
-            Toast.makeText(this, R.string.keyboard_settings_screenshots_denied, Toast.LENGTH_LONG).show()
+            // Audit UX-04 : « Sélectionner des photos » ne suffit pas, les nouvelles captures ne seraient pas visibles.
+            val message = if (ScreenshotFinder.hasOnlyPartialAccess(this)) {
+                R.string.keyboard_settings_screenshots_partial
+            } else {
+                R.string.keyboard_settings_screenshots_denied
+            }
+            showScreenMessage(message)
         }
     }
 
@@ -374,7 +396,7 @@ class KeyboardSettingsActivity : Activity() {
             .setMessage(R.string.keyboard_settings_habits_clear_message)
             .setPositiveButton(R.string.keyboard_settings_habits_clear_confirm) { _, _ ->
                 CorrectionHabitsProvider.repository(this).clear()
-                Toast.makeText(this, R.string.keyboard_settings_habits_cleared, Toast.LENGTH_SHORT).show()
+                showScreenMessage(R.string.keyboard_settings_habits_cleared)
             }
             .setNegativeButton(R.string.keyboard_settings_habits_clear_cancel, null)
             .show()

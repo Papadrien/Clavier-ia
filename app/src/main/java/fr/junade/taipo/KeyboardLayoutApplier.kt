@@ -67,5 +67,7 @@ internal class KeyboardLayoutApplier(
         keyboardView.spaceLabel = if (current.compactEnter) state.language.displayName else null
         keyboardView.isCapsLock = state.isCapsLock
         keyboardView.showsGlobeOnEnter = current.compactEnter
+        // Audit UX-10 : la touche Entrée montre l'action du champ ; en mode prompt, Entrée garde son rôle (retour à la ligne).
+        keyboardView.enterActionIcon = if (ime.prompt.active) EnterAction.Icon.ENTER else EnterAction.iconFor(EnterAction.of(ime.editorInfo()))
     }
 }

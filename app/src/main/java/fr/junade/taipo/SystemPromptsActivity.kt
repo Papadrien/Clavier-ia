@@ -9,7 +9,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.StringRes
 import fr.junade.taipo.ai.CorrectionPromptPreferences
 import fr.junade.taipo.ai.GenerationPromptPreferences
@@ -23,7 +22,7 @@ import fr.junade.taipo.ai.TranscriptionPromptPreferences
  */
 class SystemPromptsActivity : Activity() {
 
-    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
+    // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }
@@ -79,7 +78,10 @@ class SystemPromptsActivity : Activity() {
         // Identifiant propre à chaque section : sans lui, les deux champs partageraient le même état à la rotation.
         val edit = section.findViewById<EditText>(R.id.edit_system_prompt).also { it.id = editId }
         val status = section.findViewById<TextView>(R.id.text_system_prompt_status)
-        section.findViewById<TextView>(R.id.text_system_prompt_title).setText(title)
+        section.findViewById<TextView>(R.id.text_system_prompt_title).apply {
+            setText(title)
+            labelFor = editId // audit A11Y-03 : TalkBack nomme le champ par le titre de sa section
+        }
         section.findViewById<TextView>(R.id.text_system_prompt_description).setText(description)
 
         fun refreshStatus() {
@@ -95,18 +97,18 @@ class SystemPromptsActivity : Activity() {
             preferences.save(edit.text.toString())
             edit.setText(preferences.get()) // champ vide ou identique au défaut : on revoit le défaut
             refreshStatus()
-            Toast.makeText(this, R.string.system_prompt_saved, Toast.LENGTH_SHORT).show()
+            showScreenMessage(R.string.system_prompt_saved)
         }
         // Consulter le défaut sans perdre le prompt personnalisé : il est seulement affiché, pas enregistré.
         section.findViewById<Button>(R.id.button_show_default_system_prompt).setOnClickListener {
             edit.setText(preferences.default)
-            Toast.makeText(this, R.string.system_prompt_default_shown, Toast.LENGTH_SHORT).show()
+            showScreenMessage(R.string.system_prompt_default_shown)
         }
         section.findViewById<Button>(R.id.button_reset_system_prompt).setOnClickListener {
             preferences.reset()
             edit.setText(preferences.get())
             refreshStatus()
-            Toast.makeText(this, R.string.system_prompt_reset_done, Toast.LENGTH_SHORT).show()
+            showScreenMessage(R.string.system_prompt_reset_done)
         }
     }
 }

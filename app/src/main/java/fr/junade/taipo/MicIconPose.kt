@@ -37,16 +37,23 @@ internal object VoiceLevel {
     }
 }
 
-/** Ressort amorti : monte vite vers sa cible, la dépasse d'environ 20 % puis se stabilise (même ressort que les maquettes). */
-internal class SpringValue(var value: Float = 0f) {
+/**
+ * Ressort amorti : monte vite vers sa cible et s'y pose, selon le style d'animation choisi ([MotionStyle], relu à chaque pas :
+ * Ressort la dépasse d'environ 20 % puis se stabilise, Vif s'y pose sans la dépasser, Gelée rebondit davantage). [style] : style
+ * imposé (aperçus de la page « Apparence ») ; null, celui du clavier ([MotionStyle.current]).
+ */
+internal class SpringValue(var value: Float = 0f, private val style: MotionStyle? = null) {
     var velocity = 0f
         private set
 
     fun step(target: Float, dtSeconds: Float) {
+        val motion = style ?: MotionStyle.current
+        val stiffness = motion.stiffness
+        val damping = motion.damping
         val n = ceil(dtSeconds / SUBSTEP_S).toInt().coerceAtLeast(1)
         val h = dtSeconds / n
         repeat(n) {
-            velocity += (STIFFNESS * (target - value) - DAMPING * velocity) * h
+            velocity += (stiffness * (target - value) - damping * velocity) * h
             value += velocity * h
         }
     }
@@ -62,10 +69,6 @@ internal class SpringValue(var value: Float = 0f) {
     }
 
     private companion object {
-        const val OMEGA = 20f
-        const val ZETA = 0.456f
-        const val STIFFNESS = OMEGA * OMEGA
-        const val DAMPING = 2f * ZETA * OMEGA
         const val SUBSTEP_S = 0.004f
         const val SETTLED_DISTANCE = 0.002f
         const val SETTLED_SPEED = 0.01f

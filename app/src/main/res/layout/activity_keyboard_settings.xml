@@ -357,6 +357,21 @@
             <View style="@style/TaipoSettingsCardDivider" />
 
             <Switch
+                android:id="@+id/switch_clipboard_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/keyboard_settings_clipboard_history_switch" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/keyboard_settings_clipboard_history_description" />
+
+            <View style="@style/TaipoSettingsCardDivider" />
+
+            <Switch
                 android:id="@+id/switch_screenshot_suggestions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

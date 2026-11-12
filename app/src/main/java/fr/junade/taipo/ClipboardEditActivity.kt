@@ -1,7 +1,7 @@
 package fr.junade.taipo
 
-import android.content.Context
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -15,10 +15,9 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
-import android.widget.Toast
+import fr.junade.taipo.clipboard.ClipHistoryRepository
 import fr.junade.taipo.clipboard.ClipboardEditBridge
 import fr.junade.taipo.clipboard.ClipboardItems
-import fr.junade.taipo.clipboard.ClipHistoryRepository
 import fr.junade.taipo.clipboard.ClipboardProvider
 import fr.junade.taipo.clipboard.PinnedClipRepository
 import kotlinx.coroutines.CancellationException
@@ -44,7 +43,7 @@ import kotlinx.coroutines.withTimeoutOrNull
  */
 class ClipboardEditActivity : Activity() {
 
-    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
+    // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }
@@ -60,8 +59,12 @@ class ClipboardEditActivity : Activity() {
     private var original = ""
     private var loaded = false
 
+    // Audit BUG-10 : activité recréée (thème, police) : le champ a déjà retrouvé le texte en cours, on ne le remplace pas.
+    private var restored = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        restored = savedInstanceState != null
         repository = ClipboardProvider.repository(this)
         historyRepository = ClipboardProvider.historyRepository(this)
         pinnedId = intent.getLongExtra(EXTRA_PINNED_ID, NO_ID)
@@ -75,15 +78,15 @@ class ClipboardEditActivity : Activity() {
                     historyRepository.history.first { list -> list.any { it.id == historyId } }
                 }?.firstOrNull { it.id == historyId }
                 if (entry == null) {
-                    toast(getString(R.string.clipboard_edit_not_found))
-                    finish()
+                    finishWithMessage(getString(R.string.clipboard_edit_not_found))
                 } else {
                     show(entry.text)
                 }
             }
         } else if (pinnedId == NO_ID) {
             // Lue une seule fois puis effacée : le texte ne reste pas dans un champ statique.
-            val text = ClipboardEditBridge.lastClipText
+            // Recréée, l'activité ne retrouve plus le texte dans le pont (déjà consommé) : il est dans l'état sauvegardé.
+            val text = ClipboardEditBridge.lastClipText ?: savedInstanceState?.getString(STATE_ORIGINAL)
             ClipboardEditBridge.lastClipText = null
             if (text == null) {
                 finish() // processus recréé : plus rien à modifier
@@ -96,13 +99,17 @@ class ClipboardEditActivity : Activity() {
                     repository.pinned.first { list -> list.any { it.id == pinnedId } }
                 }?.firstOrNull { it.id == pinnedId }
                 if (clip == null) {
-                    toast(getString(R.string.clipboard_edit_not_found))
-                    finish()
+                    finishWithMessage(getString(R.string.clipboard_edit_not_found))
                 } else {
                     show(clip.text)
                 }
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(STATE_ORIGINAL, original)
     }
 
     override fun onDestroy() {
@@ -113,10 +120,30 @@ class ClipboardEditActivity : Activity() {
     private fun show(text: String) {
         original = text
         loaded = true
-        input.setText(text)
-        input.setSelection(text.length)
+        if (!restored) {
+            input.setText(text)
+            input.setSelection(text.length)
+        }
         input.requestFocus()
         updateSaveState()
+    }
+
+    /** Champ de saisie (identifiant stable : audit BUG-10). */
+    private fun createInput(): EditText {
+        val input = EditText(this)
+        input.id = R.id.clipboard_edit_input
+        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        input.gravity = Gravity.TOP or Gravity.START
+        input.minLines = 4
+        input.maxLines = 10
+        input.filters = arrayOf(InputFilter.LengthFilter(ClipboardItems.MAX_PINNED_CHARS))
+        input.contentDescription = getString(R.string.clipboard_edit_input_description)
+        input.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            override fun afterTextChanged(s: Editable?) = updateSaveState()
+        })
+        return input
     }
 
     private fun buildUi() {
@@ -141,18 +168,7 @@ class ClipboardEditActivity : Activity() {
         title.useTaipoFont(TaipoType.Weight.BOLD)
         root.addView(title, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
 
-        input = EditText(this)
-        input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
-        input.gravity = Gravity.TOP or Gravity.START
-        input.minLines = 4
-        input.maxLines = 10
-        input.filters = arrayOf(InputFilter.LengthFilter(ClipboardItems.MAX_PINNED_CHARS))
-        input.contentDescription = getString(R.string.clipboard_edit_input_description)
-        input.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-            override fun afterTextChanged(s: Editable?) = updateSaveState()
-        })
+        input = createInput()
         root.addView(
             input,
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
@@ -175,7 +191,13 @@ class ClipboardEditActivity : Activity() {
         saveButton.setOnClickListener { save() }
         val gap = resources.getDimensionPixelSize(R.dimen.taipo_dialog_gap)
         buttons.addView(cancel)
-        buttons.addView(saveButton, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { marginStart = gap })
+        buttons.addView(
+            saveButton,
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                marginStart =
+                    gap
+            },
+        )
         root.addView(
             buttons,
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = gap },
@@ -201,8 +223,7 @@ class ClipboardEditActivity : Activity() {
         }
         if (pinnedId == NO_ID && historyId == NO_ID) {
             ClipboardEditBridge.onLastClipEdited?.invoke(text)
-            toast(getString(R.string.clipboard_edit_done))
-            finish()
+            finishWithMessage(getString(R.string.clipboard_edit_done))
             return
         }
         saveButton.isEnabled = false
@@ -212,34 +233,35 @@ class ClipboardEditActivity : Activity() {
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                toast(getString(R.string.clipboard_edit_error, e.message ?: e.javaClass.simpleName))
+                AppLog.e(TAG, "Échec de la modification", e) // détail technique : journal de debug seulement (audit PRIV-03)
+                toast(getString(R.string.clipboard_edit_error))
                 updateSaveState()
                 return@launch
             }
             when (result) {
                 ClipboardItems.EditResult.SAVED -> {
-                    toast(getString(R.string.clipboard_edit_done))
-                    finish()
+                    finishWithMessage(getString(R.string.clipboard_edit_done))
                 }
                 ClipboardItems.EditResult.NOT_FOUND -> {
-                    toast(getString(R.string.clipboard_edit_not_found))
-                    finish()
+                    finishWithMessage(getString(R.string.clipboard_edit_not_found))
                 }
                 ClipboardItems.EditResult.EMPTY, ClipboardItems.EditResult.TOO_LONG -> updateSaveState()
             }
         }
     }
 
-    private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-
+    private fun toast(message: String) = showScreenMessage(message)
 
     companion object {
+        private const val TAG = "ClipboardEditActivity"
+
         /** Identifiant de l'élément épinglé à modifier ; absent pour la dernière copie. */
         const val EXTRA_PINNED_ID = "pinned_id"
 
         /** Story 2.9 : identifiant de la ligne d'historique à modifier ; absent pour la dernière copie et les épinglés. */
         const val EXTRA_HISTORY_ID = "history_id"
         private const val NO_ID = -1L
+        private const val STATE_ORIGINAL = "original"
         private const val LOAD_TIMEOUT_MS = 3_000L
     }
 }

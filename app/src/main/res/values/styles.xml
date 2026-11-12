@@ -25,6 +25,8 @@
     <!-- Principal : violet #8C00FF sur ombre #6800AB. -->
     <style name="TaipoButton.Primary">
         <item name="android:background">@drawable/bg_button_primary</item>
+        <!-- Blanc sur le violet, aussi en thème clair (où le texte ordinaire devient sombre). -->
+        <item name="android:textColor">@color/button_text_on_accent</item>
     </style>
 
     <!-- Secondaire : gris #2B2B2B sur ombre #191919. -->
@@ -160,7 +162,8 @@
 
     <style name="TaipoSegment" parent="TaipoRadioButton">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
+        <!-- Hauteur fixe : la taille automatique du texte (plus bas) a besoin d'une hauteur connue. -->
+        <item name="android:layout_height">@dimen/taipo_segment_min_height</item>
         <item name="android:layout_weight">1</item>
         <item name="android:button">@null</item>
         <item name="android:background">@drawable/bg_segment</item>
@@ -171,6 +174,12 @@
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
         <item name="android:textSize">@dimen/taipo_settings_text_caption</item>
+        <!-- Traductions (allemand, espagnol, portugais, néerlandais) : le texte rétrécit pour tenir sur une ligne au lieu
+             d'être tronqué (« Izquier… »). -->
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMinTextSize">@dimen/taipo_segment_min_text_size</item>
+        <item name="android:autoSizeMaxTextSize">@dimen/taipo_settings_text_caption</item>
+        <item name="android:autoSizeStepGranularity">1sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/segment_text</item>
     </style>

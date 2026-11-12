@@ -4,6 +4,7 @@ import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import fr.junade.taipo.storage.StoredDataFailure
 import java.security.KeyStore
 import java.security.SecureRandom
 import javax.crypto.Cipher
@@ -95,11 +96,17 @@ class DatabasePassphraseProvider(
     }
 
     private fun decrypt(stored: String): ByteArray {
+        // Audit BUG-02 : un blob mal formé est une corruption définitive (StoredDataFailure), pas une erreur passagère.
         val parts = stored.split(SEPARATOR)
-        require(parts.size == 2) { "Format de clé chiffrée invalide" }
+        if (parts.size != 2) throw StoredDataFailure.CorruptedDataException("Format de clé chiffrée invalide")
+        val (iv, encrypted) = try {
+            decode(parts[0]) to decode(parts[1])
+        } catch (e: IllegalArgumentException) {
+            throw StoredDataFailure.CorruptedDataException("Clé chiffrée illisible", e)
+        }
         val cipher = Cipher.getInstance(TRANSFORMATION)
-        cipher.init(Cipher.DECRYPT_MODE, getOrCreateKeystoreKey(), GCMParameterSpec(GCM_TAG_BITS, decode(parts[0])))
-        return cipher.doFinal(decode(parts[1]))
+        cipher.init(Cipher.DECRYPT_MODE, getOrCreateKeystoreKey(), GCMParameterSpec(GCM_TAG_BITS, iv))
+        return cipher.doFinal(encrypted)
     }
 
     private fun encode(bytes: ByteArray): String = Base64.encodeToString(bytes, Base64.NO_WRAP)

@@ -11,13 +11,13 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
-import android.widget.Toast
 import fr.junade.taipo.KeyboardPreferences
 import fr.junade.taipo.KeyboardTheme
 import fr.junade.taipo.R
 import fr.junade.taipo.applySystemBarInsets
 import fr.junade.taipo.applyTaipoFontToTree
 import fr.junade.taipo.automaticKeyboardLanguage
+import fr.junade.taipo.showScreenMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -119,6 +119,6 @@ class MemoryDiagnosticActivity : Activity() {
         val text = output.text?.toString().orEmpty()
         if (text.isBlank()) return
         getSystemService(ClipboardManager::class.java)?.setPrimaryClip(ClipData.newPlainText(getString(R.string.diagnostic_title), text))
-        Toast.makeText(this, R.string.diagnostic_copied, Toast.LENGTH_SHORT).show()
+        showScreenMessage(R.string.diagnostic_copied)
     }
 }

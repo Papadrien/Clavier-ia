@@ -28,7 +28,8 @@ enum class ModelLicense(
         termsUrl = "https://ai.google.dev/gemma/apache_2",
         policyUrl = null,
         requiresAcceptance = false,
-    );
+    ),
+    ;
 
     /** Vrai si l'écran de mention doit s'afficher avant ce téléchargement, selon que la licence a déjà été acceptée. */
     fun mustAskBeforeDownload(alreadyAccepted: Boolean): Boolean = requiresAcceptance && !alreadyAccepted

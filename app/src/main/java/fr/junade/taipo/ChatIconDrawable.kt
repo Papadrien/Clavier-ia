@@ -124,7 +124,11 @@ internal class ChatIconDrawable(private val sizePx: Int) : Drawable() {
     /** L'animation ne tourne que tant que le bouton est visible ; au retour, elle reprend où elle s'était arrêtée. */
     override fun setVisible(visible: Boolean, restart: Boolean): Boolean {
         val changed = super.setVisible(visible, restart)
-        if (!visible) cancel() else if (ValueAnimator.areAnimatorsEnabled()) ensureTicking()
+        if (!visible) {
+            cancel()
+        } else if (ValueAnimator.areAnimatorsEnabled()) {
+            ensureTicking()
+        }
         return changed
     }
 

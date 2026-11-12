@@ -1,7 +1,6 @@
 package fr.junade.taipo
 
 import android.view.KeyEvent
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import fr.junade.taipo.emoji.EmojiText
@@ -130,14 +129,11 @@ internal class FieldEditor(
 
     /** Entrée : retour à la ligne dans un champ multiligne ou sans action, sinon l'action de l'éditeur (Envoyer, Rechercher…). */
     fun pressEnter() {
-        val options = ime.editorInfo()?.imeOptions ?: 0
-        val action = options and EditorInfo.IME_MASK_ACTION
-        val isMultiline = options and EditorInfo.IME_FLAG_NO_ENTER_ACTION != 0
-        val hasAction = action != EditorInfo.IME_ACTION_NONE && action != EditorInfo.IME_ACTION_UNSPECIFIED
-        if (isMultiline || !hasAction) {
-            ime.inputConnection()?.commitText("\n", 1)
-        } else {
-            sendKey(KeyEvent.KEYCODE_ENTER)
+        val ic = ime.inputConnection() ?: return
+        when (val action = EnterAction.of(ime.editorInfo())) {
+            EnterAction.Newline -> ic.commitText("\n", 1)
+            // Audit BUG-01 : l'action de l'éditeur, comme le clavier d'Android ; la touche simulée ne sert que de repli.
+            is EnterAction.Perform -> if (!ic.performEditorAction(action.actionId)) sendKey(KeyEvent.KEYCODE_ENTER)
         }
     }
 

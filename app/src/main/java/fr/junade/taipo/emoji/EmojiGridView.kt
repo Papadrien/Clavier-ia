@@ -1,11 +1,5 @@
 package fr.junade.taipo.emoji
 
-import fr.junade.taipo.R
-import fr.junade.taipo.TaipoType
-import fr.junade.taipo.dimen
-import fr.junade.taipo.themeColor
-import fr.junade.taipo.useTaipoFont
-import fr.junade.taipo.fixedHeightTextDimen
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
@@ -21,6 +15,12 @@ import android.widget.OverScroller
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.customview.widget.ExploreByTouchHelper
+import fr.junade.taipo.R
+import fr.junade.taipo.TaipoType
+import fr.junade.taipo.dimen
+import fr.junade.taipo.fixedHeightTextDimen
+import fr.junade.taipo.themeColor
+import fr.junade.taipo.useTaipoFont
 import kotlin.math.abs
 
 /**

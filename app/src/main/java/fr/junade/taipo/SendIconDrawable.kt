@@ -153,8 +153,13 @@ internal class SendIconDrawable(private val sizePx: Int, private val faceRadiusP
         arrowSpring.step(arrowTarget(), dt)
         stopSpring.step(stopTarget(), dt)
         invalidateSelf()
-        val calm = mode != SendIconMode.LOADING && !launching && ringTime < 0f && enterDelay <= 0f &&
-            orbit.value <= 0f && arrowSpring.isSettled(arrowTarget()) && stopSpring.isSettled(stopTarget())
+        val calm = mode != SendIconMode.LOADING &&
+            !launching &&
+            ringTime < 0f &&
+            enterDelay <= 0f &&
+            orbit.value <= 0f &&
+            arrowSpring.isSettled(arrowTarget()) &&
+            stopSpring.isSettled(stopTarget())
         if (calm) cancel()
     }
 

@@ -2,10 +2,10 @@ package fr.junade.taipo.model
 
 import android.content.Context
 import fr.junade.taipo.R
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.security.MessageDigest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Résout un [AiModel] vers un fichier local utilisable par LiteRT-LM.
@@ -63,6 +63,7 @@ object ModelFileResolver {
                     digest.update(buffer, 0, read)
                     output.write(buffer, 0, read)
                 }
+                output.fd.sync() // audit BUG-03 : copie sur le disque avant le renommage
             }
         }
 

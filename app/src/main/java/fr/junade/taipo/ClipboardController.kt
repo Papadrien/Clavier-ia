@@ -100,6 +100,9 @@ class ClipboardController(
 
         /** Majuscule automatique, état des touches et barre : à resynchroniser après un collage ou la fermeture du panneau. */
         fun resyncKeyboard()
+
+        /** Le champ affiché est un champ de mot de passe (audit SEC-01). */
+        fun sensitiveFieldActive(): Boolean
     }
 
     private var panel: ClipboardPanelView? = null
@@ -210,6 +213,7 @@ class ClipboardController(
         inputActive = false
         mainHandler.removeCallbacks(pasteExpiryRunnable)
         stopScreenshotWatch()
+        scope.launch(Dispatchers.IO) { screenshotFinder.purgeShared() } // audit UX-04 : copies de plus d'une heure
     }
 
     /** Le même bouton de la barre ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme. */
@@ -332,7 +336,7 @@ class ClipboardController(
                 throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de l'épinglage", t)
-                host.showMessage(context.getString(R.string.clipboard_pin_error, t.message ?: t.javaClass.simpleName))
+                host.showMessage(context.getString(R.string.clipboard_pin_error))
             }
         }
     }
@@ -382,7 +386,7 @@ class ClipboardController(
         } catch (t: Throwable) {
             AppLog.e(TAG, "Échec de l'ouverture de l'écran de modification", t)
             ClipboardEditBridge.lastClipText = null
-            host.showMessage(context.getString(R.string.clipboard_edit_error, t.message ?: t.javaClass.simpleName))
+            host.showMessage(context.getString(R.string.clipboard_edit_error))
         }
     }
 
@@ -400,7 +404,7 @@ class ClipboardController(
             context.startActivity(intent)
         } catch (t: Throwable) {
             AppLog.e(TAG, "Échec de l'ouverture du pop-up d'étiquette", t)
-            host.showMessage(context.getString(R.string.clipboard_label_error, t.message ?: t.javaClass.simpleName))
+            host.showMessage(context.getString(R.string.clipboard_label_error))
         }
     }
 
@@ -414,7 +418,7 @@ class ClipboardController(
                 throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de la suppression d'une étiquette", t)
-                host.showMessage(context.getString(R.string.clipboard_label_delete_error, t.message ?: t.javaClass.simpleName))
+                host.showMessage(context.getString(R.string.clipboard_label_delete_error))
             }
         }
     }
@@ -462,7 +466,7 @@ class ClipboardController(
                 throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de la suppression d'un élément du presse-papiers", t)
-                host.showMessage(context.getString(R.string.clipboard_delete_error, t.message ?: t.javaClass.simpleName))
+                host.showMessage(context.getString(R.string.clipboard_delete_error))
             }
         }
     }
@@ -493,6 +497,10 @@ class ClipboardController(
      */
     private fun recordInHistory(snapshot: ClipboardReader.Snapshot) {
         if (ClipboardItems.historyRefusal(snapshot.text)) return
+        // Audit SEC-01 : historique désactivé dans les réglages, ou copie faite depuis un champ de mot de passe (avant
+        // Android 13, le drapeau « sensible » n'existe pas : c'est le seul indice qu'on a).
+        if (!keyboardPreferences.isClipboardHistoryEnabled) return
+        if (inputActive && host.sensitiveFieldActive()) return
         scope.launch {
             try {
                 historyRepository.record(snapshot.text, snapshot.copiedAtMillis, snapshot.sensitive)
@@ -509,8 +517,11 @@ class ClipboardController(
      * ni dans les champs qui ne sont pas du texte (téléphone, nombre, sauf code PIN : voir SuggestionPolicy.allowsPasteSuggestion).
      */
     private fun pasteSuggestionAllowed(): Boolean =
-        pasteAllowedInField && !host.isRecording() && !host.isCorrectionInProgress() &&
-            !host.isEmojiPanelVisible() && !isPanelVisible
+        pasteAllowedInField &&
+            !host.isRecording() &&
+            !host.isCorrectionInProgress() &&
+            !host.isEmojiPanelVisible() &&
+            !isPanelVisible
 
     /**
      * Met la puce de la barre d'accord avec l'état de la copie (ou de la capture d'écran, si elle est plus récente), et

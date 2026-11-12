@@ -25,8 +25,18 @@ object EmojiText {
      * rester supprimable une par une.
      */
     private fun isEmojiBase(cp: Int): Boolean =
-        cp >= 0x1F000 || cp in 0x2190..0x2BFF || cp == 0xA9 || cp == 0xAE || cp == 0x203C || cp == 0x2049 ||
-            cp == 0x2122 || cp == 0x2139 || cp == 0x3030 || cp == 0x303D || cp == 0x3297 || cp == 0x3299
+        cp >= 0x1F000 ||
+            cp in 0x2190..0x2BFF ||
+            cp == 0xA9 ||
+            cp == 0xAE ||
+            cp == 0x203C ||
+            cp == 0x2049 ||
+            cp == 0x2122 ||
+            cp == 0x2139 ||
+            cp == 0x3030 ||
+            cp == 0x303D ||
+            cp == 0x3297 ||
+            cp == 0x3299
 
     /** Début du point de code qui se termine juste avant [endExclusive] (> 0). */
     private fun previousStart(text: CharSequence, endExclusive: Int): Int =

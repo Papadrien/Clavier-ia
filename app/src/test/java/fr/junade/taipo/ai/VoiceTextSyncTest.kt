@@ -126,8 +126,12 @@ class VoiceTextSyncTest {
             var text = ""
             override fun textBeforeCursor(length: Int): String? = text.takeLast(length)
             override fun textAfterCursor(length: Int): String? = after.take(length)
-            override fun deleteBeforeCursor(length: Int) { text = text.dropLast(length) }
-            override fun commit(text: String) { this.text += text }
+            override fun deleteBeforeCursor(length: Int) {
+                text = text.dropLast(length)
+            }
+            override fun commit(text: String) {
+                this.text += text
+            }
             override fun beginBatchEdit() = Unit
             override fun endBatchEdit() = Unit
         }

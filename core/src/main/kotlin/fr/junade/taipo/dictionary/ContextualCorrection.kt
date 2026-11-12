@@ -54,6 +54,10 @@ object ContextualCorrection {
         KeyboardLanguage.IT -> ItalianContextCorrector.correct(text, textMayBeTruncated, allowRetro, frequencyOf)
         KeyboardLanguage.PT -> PortugueseContextCorrector.correct(text, textMayBeTruncated, allowRetro, frequencyOf)
         KeyboardLanguage.NL -> DutchContextCorrector.correct(text, textMayBeTruncated, allowRetro, frequencyOf)
+        // Langues ajoutées le 11/11/2026 : pas encore de table de confusions (homophones, accords) ; le mot seul est corrigé.
+        KeyboardLanguage.PL, KeyboardLanguage.RO, KeyboardLanguage.CS, KeyboardLanguage.HU,
+        KeyboardLanguage.SV, KeyboardLanguage.DA, KeyboardLanguage.NB, KeyboardLanguage.FI,
+        -> null
     }
 
     /**

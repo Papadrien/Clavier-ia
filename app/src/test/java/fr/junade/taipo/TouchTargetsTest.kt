@@ -1,12 +1,12 @@
 package fr.junade.taipo
 
 import fr.junade.taipo.dictionary.NextLetterModel
+import java.util.Random
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.util.Random
 
 /** Zones de frappe adaptatives, étape 2 : géométrie ancrée des zones de toucher d'une rangée. */
 class TouchTargetsTest {
@@ -67,7 +67,10 @@ class TouchTargetsTest {
 
     @Test
     fun `les bords exterieurs de la rangee ne bougent pas`() {
-        val probabilities = List<Double?>(10) { 0.01 }.toMutableList().apply { this[0] = 0.9; this[9] = 0.9 }
+        val probabilities = List<Double?>(10) { 0.01 }.toMutableList().apply {
+            this[0] = 0.9
+            this[9] = 0.9
+        }
         val edges = TouchTargets.edges(widths(), probabilities)
         assertEquals(0f, edges.first(), 0f)
         assertEquals(10f, edges.last(), eps)

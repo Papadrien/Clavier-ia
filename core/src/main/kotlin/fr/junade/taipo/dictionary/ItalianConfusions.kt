@@ -78,13 +78,37 @@ internal object ItalianConfusions {
         add(ConfusionRule("pò", "po'", "pò > po'", always = true))
 
         // --- ho / ha / hanno ---
-        add(ConfusionRule("o", "ho", "o > ho entre io, non ou un pronom et un participe", previous = oneOf("io", "non", "ne", "ce", "lo", "la", "li", "le"), next = PARTICIPLE_LIKE))
+        add(
+            ConfusionRule(
+                "o",
+                "ho",
+                "o > ho entre io, non ou un pronom et un participe",
+                previous = oneOf("io", "non", "ne", "ce", "lo", "la", "li", "le"),
+                next = PARTICIPLE_LIKE,
+            ),
+        )
         add(ConfusionRule("o", "ho", "o > ho dans « io o fame »", previous = oneOf("io", "non"), next = oneOf(*HAVE_NOUNS)))
         add(ConfusionRule("a", "ha", "a > ha entre un sujet ou un pronom et un participe", previous = oneOf(*BEFORE_HAS), next = PARTICIPLE_LIKE))
-        add(ConfusionRule("anno", "hanno", "anno > hanno entre un sujet ou un pronom et un participe", previous = oneOf(*BEFORE_HAVE_PLURAL), next = PARTICIPLE_LIKE))
+        add(
+            ConfusionRule(
+                "anno",
+                "hanno",
+                "anno > hanno entre un sujet ou un pronom et un participe",
+                previous = oneOf(*BEFORE_HAVE_PLURAL),
+                next = PARTICIPLE_LIKE,
+            ),
+        )
 
         // --- dà, sì, qual è ---
-        add(ConfusionRule("da", "dà", "da > dà dans « mi da fastidio »", previous = oneOf("mi", "ti", "ci", "gli", "vi"), next = oneOf("fastidio", "retta", "ragione", "torto", "noia")))
+        add(
+            ConfusionRule(
+                "da",
+                "dà",
+                "da > dà dans « mi da fastidio »",
+                previous = oneOf("mi", "ti", "ci", "gli", "vi"),
+                next = oneOf("fastidio", "retta", "ragione", "torto", "noia"),
+            ),
+        )
         add(ConfusionRule("si", "sì", "si > sì en début de phrase, suivi d'une ponctuation", sentenceStart = true, punctAfter = true))
         add(ConfusionRule("qual'è", "qual è", "qual'è > qual è", always = true))
         add(ConfusionRule("qual'era", "qual era", "qual'era > qual era", always = true))

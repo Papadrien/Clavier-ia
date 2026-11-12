@@ -4,7 +4,10 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
+import android.database.ContentObserver
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,7 +18,6 @@ import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -59,7 +61,7 @@ class MainActivity : Activity() {
         value.float
     }
 
-    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
+    // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }
@@ -72,7 +74,7 @@ class MainActivity : Activity() {
         findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
         // Mesure du nombre de nouveaux utilisateurs : événement envoyé une seule fois par installation.
-        Analytics.firstOpen(this)
+        Analytics.firstOpen(this) // sans effet tant que l'utilisateur n'a pas accepté la mesure d'usage (audit PRIV-01)
 
         step1 = stepViews(1, R.id.step1_card, R.id.step1_badge, R.id.step1_title, R.id.step1_hint, R.id.button_enable)
         step2 = stepViews(2, R.id.step2_card, R.id.step2_badge, R.id.step2_title, R.id.step2_hint, R.id.button_select)
@@ -94,16 +96,44 @@ class MainActivity : Activity() {
         }
 
         findViewById<View>(R.id.button_enable).setOnClickListener {
+            watchKeyboardEnabled()
             startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS))
         }
         // Sélecteur de méthode de saisie d'Android : il ne liste que les claviers activés (étape 1 faite).
         findViewById<View>(R.id.button_select).setOnClickListener {
             getSystemService(InputMethodManager::class.java)?.showInputMethodPicker()
         }
-        bindRow(R.id.button_keyboard_settings, R.string.button_keyboard_settings, R.string.home_row_keyboard_settings_subtitle, KeyboardSettingsActivity::class.java)
+        bindRows()
+        setUpPremium()
+        setUpAnalyticsSwitch()
+
+        // Titres de groupe annoncés comme des titres par TalkBack (navigation par titres).
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.section_keyboard), true)
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.section_ai), true)
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.section_data), true)
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.section_about), true)
+
+        // Demande d'avis : un « lancement » est une nouvelle instance de l'écran d'accueil (pas une rotation ni une
+        // recréation après arrêt du processus, qui arrivent avec un état sauvegardé).
+        if (savedInstanceState == null) InAppReview.onAppLaunched(this)
+    }
+
+    /** Lignes de l'accueil : titre, sous-titre et écran ouvert. */
+    private fun bindRows() {
+        bindRow(
+            R.id.button_keyboard_settings,
+            R.string.button_keyboard_settings,
+            R.string.home_row_keyboard_settings_subtitle,
+            KeyboardSettingsActivity::class.java,
+        )
         bindRow(R.id.button_theme, R.string.button_theme, R.string.home_row_theme_subtitle, ThemeActivity::class.java)
-        bindRow(R.id.button_home_languages, R.string.languages_title, R.string.languages_title, LanguagesActivity::class.java)
-        bindRow(R.id.button_personal_dictionary, R.string.button_personal_dictionary, R.string.home_row_personal_dictionary_subtitle, PersonalDictionaryActivity::class.java)
+        bindRow(R.id.button_home_languages, R.string.languages_title, R.string.home_row_languages_subtitle, LanguagesActivity::class.java)
+        bindRow(
+            R.id.button_personal_dictionary,
+            R.string.button_personal_dictionary,
+            R.string.home_row_personal_dictionary_subtitle,
+            PersonalDictionaryActivity::class.java,
+        )
         bindRow(R.id.button_model_download, R.string.button_model_download, R.string.home_row_model_download_subtitle, ModelDownloadActivity::class.java)
         bindRow(R.id.button_model_settings, R.string.button_model_settings, R.string.home_row_model_settings_subtitle, ModelSettingsActivity::class.java)
         // Story 8.12 : le chargement d'un modèle à la main est réservé au debug (la variante benchmark n'est pas debug).
@@ -111,9 +141,19 @@ class MainActivity : Activity() {
         findViewById<View>(R.id.button_model_settings).visibility = if (localModelVisible) View.VISIBLE else View.GONE
         findViewById<View>(R.id.divider_model_settings).visibility = if (localModelVisible) View.VISIBLE else View.GONE
         // Story 8.15 : le modèle vocal se télécharge depuis son propre écran « Modèle vocal », distinct de « Modèle IA ».
-        bindRow(R.id.button_voice_model_settings, R.string.button_voice_model_settings, R.string.home_row_voice_model_subtitle, VoiceModelDownloadActivity::class.java)
+        bindRow(
+            R.id.button_voice_model_settings,
+            R.string.button_voice_model_settings,
+            R.string.home_row_voice_model_subtitle,
+            VoiceModelDownloadActivity::class.java,
+        )
         // Le chargement des fichiers vocaux à la main est réservé au debug, comme celui du modèle de texte (8.12).
-        bindRow(R.id.button_voice_model_local, R.string.button_voice_model_local, R.string.home_row_voice_model_local_subtitle, VoiceModelSettingsActivity::class.java)
+        bindRow(
+            R.id.button_voice_model_local,
+            R.string.button_voice_model_local,
+            R.string.home_row_voice_model_local_subtitle,
+            VoiceModelSettingsActivity::class.java,
+        )
         findViewById<View>(R.id.button_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE
         findViewById<View>(R.id.divider_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE
         bindRow(R.id.button_system_prompts, R.string.button_system_prompts, R.string.home_row_system_prompts_subtitle, SystemPromptsActivity::class.java)
@@ -130,18 +170,6 @@ class MainActivity : Activity() {
         bindRow(R.id.button_terms, R.string.button_terms, R.string.home_row_terms_subtitle, TermsActivity::class.java)
         bindRow(R.id.button_licenses, R.string.button_licenses, R.string.home_row_licenses_subtitle, LicensesActivity::class.java)
         bindRow(R.id.button_privacy, R.string.button_privacy, R.string.home_row_privacy_subtitle, PrivacyActivity::class.java)
-        setUpPremium()
-        setUpAnalyticsSwitch()
-
-        // Titres de groupe annoncés comme des titres par TalkBack (navigation par titres).
-        ViewCompat.setAccessibilityHeading(findViewById(R.id.section_keyboard), true)
-        ViewCompat.setAccessibilityHeading(findViewById(R.id.section_ai), true)
-        ViewCompat.setAccessibilityHeading(findViewById(R.id.section_data), true)
-        ViewCompat.setAccessibilityHeading(findViewById(R.id.section_about), true)
-
-        // Demande d'avis : un « lancement » est une nouvelle instance de l'écran d'accueil (pas une rotation ni une
-        // recréation après arrêt du processus, qui arrivent avec un état sauvegardé).
-        if (savedInstanceState == null) InAppReview.onAppLaunched(this)
     }
 
     // L'état des étapes vient d'Android (réglages système, sélecteur) : on le relit au retour sur l'écran et quand le
@@ -157,15 +185,46 @@ class MainActivity : Activity() {
     }
 
     override fun onDestroy() {
+        stopWatchingKeyboardEnabled()
         billing.close()
         super.onDestroy()
     }
 
+    // Audit UX-02 : l'utilisateur active Taipo dans les réglages système ; dès que c'est fait, on le ramène ici et on ouvre le
+    // sélecteur de clavier (étape 2), au lieu de le laisser chercher le chemin du retour.
+    private var enabledObserver: ContentObserver? = null
+    private var pickerOnReturn = false
+
+    private fun watchKeyboardEnabled() {
+        if (enabledObserver != null) return
+        val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(selfChange: Boolean) {
+                if (!readOnboardingState().enabled) return
+                stopWatchingKeyboardEnabled()
+                pickerOnReturn = true
+                startActivity(
+                    Intent(this@MainActivity, MainActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                )
+            }
+        }
+        contentResolver.registerContentObserver(Settings.Secure.getUriFor(Settings.Secure.ENABLED_INPUT_METHODS), false, observer)
+        enabledObserver = observer
+    }
+
+    private fun stopWatchingKeyboardEnabled() {
+        enabledObserver?.let { contentResolver.unregisterContentObserver(it) }
+        enabledObserver = null
+    }
+
     /** Pass premium : carte d'offre, ligne de « À propos » et, en build debug, bouton de forçage tout en bas. */
     private fun setUpPremium() {
-        billing = PremiumBilling(this, object : PremiumBilling.Listener {
-            override fun onStateChanged(state: PremiumBilling.State) = renderPremium()
-        })
+        billing = PremiumBilling(
+            this,
+            object : PremiumBilling.Listener {
+                override fun onStateChanged(state: PremiumBilling.State) = renderPremium()
+            },
+        )
         val row = findViewById<View>(R.id.button_premium)
         row.findViewById<TextView>(R.id.row_title).setText(R.string.premium_title)
         row.setOnClickListener { startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_ABOUT)) }
@@ -183,7 +242,7 @@ class MainActivity : Activity() {
         }
         findViewById<View>(R.id.button_debug_reset_tips).setOnClickListener {
             GestureTips.resetAll(this)
-            Toast.makeText(this, R.string.home_debug_reset_tips_done, Toast.LENGTH_SHORT).show()
+            showScreenMessage(R.string.home_debug_reset_tips_done)
         }
         findViewById<View>(R.id.button_debug_premium).setOnClickListener {
             val states = PremiumPass.DebugOverride.entries
@@ -229,13 +288,39 @@ class MainActivity : Activity() {
             isChecked = analyticsPreferences.isEnabled
             setOnCheckedChangeListener { _, checked ->
                 analyticsPreferences.isEnabled = checked
-                if (checked) Analytics.setting(this@MainActivity, "analytics", true)
+                renderAnalyticsConsent()
+                if (checked) onAnalyticsAccepted()
             }
         }
+        findViewById<View>(R.id.button_analytics_accept).setOnClickListener {
+            analyticsPreferences.isEnabled = true
+            findViewById<CompoundButton>(R.id.switch_analytics).isChecked = true // l'écouteur fait le reste
+            renderAnalyticsConsent()
+        }
+        findViewById<View>(R.id.button_analytics_refuse).setOnClickListener {
+            analyticsPreferences.isEnabled = false
+            renderAnalyticsConsent()
+        }
+        renderAnalyticsConsent()
+    }
+
+    /** Audit PRIV-01 : la carte d'accord reste en tête de l'accueil tant que l'utilisateur n'a pas choisi. */
+    private fun renderAnalyticsConsent() {
+        findViewById<View>(R.id.analytics_consent_card).visibility =
+            if (AnalyticsPreferences(this).consentAnswered) View.GONE else View.VISIBLE
+    }
+
+    private fun onAnalyticsAccepted() {
+        Analytics.firstOpen(this) // n'est envoyé qu'une fois, et seulement après l'accord
+        Analytics.setting(this, "analytics", true)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
+        if (hasFocus && pickerOnReturn) {
+            pickerOnReturn = false
+            if (!readOnboardingState().selected) getSystemService(InputMethodManager::class.java)?.showInputMethodPicker()
+        }
         if (hasFocus) {
             renderOnboarding(readOnboardingState())
             renderPremium() // la carte du pass n'apparaît qu'une fois Taipo choisi (sélecteur qui vient de se fermer)
@@ -315,7 +400,7 @@ class MainActivity : Activity() {
         val ready = status == ModelStatus.READY
         badge.text = label
         badge.setBackgroundResource(if (ready) R.drawable.bg_status_badge_ready else R.drawable.bg_status_badge_attention)
-        badge.setTextColor(getColor(if (ready) R.color.text_primary else R.color.settings_warning_text))
+        badge.setTextColor(getColor(if (ready) R.color.text_on_accent else R.color.settings_warning_text)) // blanc sur le violet
         badge.visibility = View.VISIBLE
     }
 
@@ -350,10 +435,38 @@ class MainActivity : Activity() {
 
     private fun renderOnboarding(state: OnboardingState) {
         lastOnboarding = state
-        renderStep(step1, state.activate, R.string.onboarding_step1_title, R.string.onboarding_step1_title_done, R.string.onboarding_step1_hint, R.string.onboarding_step1_hint)
-        renderStep(step2, state.choose, R.string.onboarding_step2_title, R.string.onboarding_step2_title_done, R.string.onboarding_step2_hint, R.string.onboarding_step2_hint_locked)
-        renderStep(step3, state.tryIt, R.string.onboarding_step3_title, R.string.onboarding_step3_title_done, R.string.onboarding_step3_hint, R.string.onboarding_step3_hint_locked)
-        renderStep(step4, state.activateAi, R.string.onboarding_step4_title, R.string.onboarding_step4_title_done, R.string.onboarding_step4_hint, R.string.onboarding_step4_hint_locked)
+        renderStep(
+            step1,
+            state.activate,
+            R.string.onboarding_step1_title,
+            R.string.onboarding_step1_title_done,
+            R.string.onboarding_step1_hint,
+            R.string.onboarding_step1_hint,
+        )
+        renderStep(
+            step2,
+            state.choose,
+            R.string.onboarding_step2_title,
+            R.string.onboarding_step2_title_done,
+            R.string.onboarding_step2_hint,
+            R.string.onboarding_step2_hint_locked,
+        )
+        renderStep(
+            step3,
+            state.tryIt,
+            R.string.onboarding_step3_title,
+            R.string.onboarding_step3_title_done,
+            R.string.onboarding_step3_hint,
+            R.string.onboarding_step3_hint_locked,
+        )
+        renderStep(
+            step4,
+            state.activateAi,
+            R.string.onboarding_step4_title,
+            R.string.onboarding_step4_title_done,
+            R.string.onboarding_step4_hint,
+            R.string.onboarding_step4_hint_locked,
+        )
         // Étape 4 : le modèle recommandé selon la mémoire du téléphone, nommé dans l'explication et sur le bouton.
         if (state.activateAi == StepStatus.CURRENT) {
             val memory = ActivityManager.MemoryInfo()

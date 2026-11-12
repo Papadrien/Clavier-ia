@@ -248,6 +248,8 @@
     <dimen name="taipo_settings_card_corner_radius">10dp</dimen>
     <dimen name="taipo_settings_card_padding">12dp</dimen>
     <dimen name="taipo_settings_divider_thickness">1dp</dimen>
+    <!-- Message dans la page (ScreenMessage) : ombre au-dessus du contenu. -->
+    <dimen name="taipo_screen_message_elevation">6dp</dimen>
 
     <!-- ===== Dialogues et contrôles Android (lot 17) ===== -->
     <!-- Fenêtres de dialogue (pop-up d'information, modification et étiquette du presse-papiers) : rayon des coins
@@ -317,4 +319,6 @@
     <dimen name="taipo_spinner_arrow_margin">12dp</dimen>
     <dimen name="taipo_spinner_item_min_height">48dp</dimen>
     <dimen name="taipo_spinner_item_padding_horizontal">16dp</dimen>
+    <!-- Taille minimale du texte d'un segment (taille automatique, voir TaipoSegment). -->
+    <dimen name="taipo_segment_min_text_size">10sp</dimen>
 </resources>

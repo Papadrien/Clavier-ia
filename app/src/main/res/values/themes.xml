@@ -2,12 +2,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Open Sans (lot 02) : police par défaut des composants standards. Les vues du clavier la posent
          explicitement (voir TaipoType), car elles ne reçoivent pas ce thème. -->
-    <!-- Écrans de l'application : toujours sombres, quel que soit le thème du système ou du clavier (KeyboardTheme.wrap force
-         le mode nuit). Seul le clavier a un thème clair (ThemeChoice). forceDarkAllowed=false : le système n'a pas à réassombrir un thème déjà sombre. -->
+    <!-- Écrans de l'application : même thème que le clavier (ThemeChoice, page « Apparence » ; « Système » par défaut), posé par
+         KeyboardTheme.wrap. Les couleurs viennent des deux palettes (values/ et values-night/colors.xml) ; seuls les thèmes
+         Android de base diffèrent (Platform.*, clair ici, sombre dans values-night/themes.xml). forceDarkAllowed=false : le
+         système n'a pas à réassombrir lui-même les écrans. -->
 
     <!-- Pas de barre d'action framework : chaque écran affiche déjà son propre titre dans la page,
          et la barre d'action se superposait au contenu en mode bord à bord. -->
-    <style name="AppTheme" parent="android:Theme.Material.NoActionBar">
+    <style name="AppTheme" parent="Platform.AppTheme">
         <!-- Lot 16 : fond des écrans = fond du clavier (#0E0E0E). Visible aussi sous les barres système (bord à bord). -->
         <item name="android:windowBackground">@color/keyboard_background</item>
         <item name="android:colorAccent">@color/accent</item>
@@ -37,7 +39,7 @@
     </style>
 
     <!-- Story 2.6 : fenêtre de modification d'un élément du presse-papiers. -->
-    <style name="EditDialogTheme" parent="android:Theme.Material.Dialog.NoActionBar">
+    <style name="EditDialogTheme" parent="Platform.EditDialogTheme">
         <item name="android:colorAccent">@color/accent</item>
         <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
         <item name="android:fontFamily">@font/open_sans</item>
@@ -58,7 +60,7 @@
     </style>
 
     <!-- Pop-up d'information du clavier (remplace les toasts). -->
-    <style name="MessageDialogTheme" parent="android:Theme.Material.Dialog.Alert">
+    <style name="MessageDialogTheme" parent="Platform.MessageDialogTheme">
         <item name="android:colorAccent">@color/accent</item>
         <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
         <item name="android:fontFamily">@font/open_sans</item>
@@ -82,4 +84,13 @@
         <!-- Le message d'un AlertDialog est en textColorSecondary : blanc ici, pour rester lisible. -->
         <item name="android:textColorSecondary">@color/text_primary</item>
     </style>
+
+    <!-- Thèmes Android de base, version claire (la version sombre est dans values-night/themes.xml). Barres système à icônes
+         sombres sur le fond clair. -->
+    <style name="Platform.AppTheme" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+    </style>
+    <style name="Platform.EditDialogTheme" parent="android:Theme.Material.Light.Dialog.NoActionBar" />
+    <style name="Platform.MessageDialogTheme" parent="android:Theme.Material.Light.Dialog.Alert" />
 </resources>

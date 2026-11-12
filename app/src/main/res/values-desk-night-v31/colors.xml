@@ -2,9 +2,9 @@
 <!-- CHARTE TAIPO, palette « Couleur dynamique » SOMBRE (lot T7, Android 12+).
      Remplace les valeurs de la charte (section « Charte » de values/colors.xml) par les tons du fond d'écran
      (@android:color/system_accent1_* et system_neutral1_*) ; les rôles, qui ne font que nommer l'usage, ne sont pas redéclarés.
-     QUALIFICATIF « desk » : détourné pour que SEULE la configuration du clavier en couleur dynamique choisisse ces fichiers.
-     KeyboardTheme.configuration force le type d'interface à « desk » pour ce thème et à « normal » pour tous les autres,
-     écrans de l'application compris (toujours sombres, violets) : ils ne voient donc jamais ces valeurs.
+     QUALIFICATIF « desk » : détourné pour que SEULE la configuration en couleur dynamique choisisse ces fichiers.
+     KeyboardTheme.configuration force le type d'interface à « desk » pour ce thème (clavier, et écrans de l'application via
+     KeyboardTheme.wrap) et à « normal » pour tous les autres.
      Les deux fichiers (clair et sombre) déclarent les mêmes noms (AccessibilityContrastTest). Les tons ne se mesurent pas hors
      de l'appareil (ils dépendent du fond d'écran) : à juger à l'écran, texte blanc sur accent1_600 compris. -->
 <resources>

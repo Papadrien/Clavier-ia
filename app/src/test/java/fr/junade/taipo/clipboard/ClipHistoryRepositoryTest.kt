@@ -102,6 +102,24 @@ class ClipHistoryRepositoryTest {
             state.value = state.value.filterNot { it.id == id }
             before - state.value.size
         }
+
+        override suspend fun deleteWithText(text: String): Int = locked {
+            val before = state.value.size
+            state.value = state.value.filterNot { it.text == text }
+            before - state.value.size
+        }
+
+        override suspend fun deleteSensitive(): Int = locked {
+            val before = state.value.size
+            state.value = state.value.filterNot { it.sensitive }
+            before - state.value.size
+        }
+
+        override suspend fun deleteAll(): Int = locked {
+            val before = state.value.size
+            state.value = emptyList()
+            before
+        }
     }
 
     private var now = 100 * HOUR
@@ -143,12 +161,19 @@ class ClipHistoryRepositoryTest {
     }
 
     @Test
-    fun `un contenu sensible est enregistre comme les autres, avec son drapeau`() = runBlocking {
-        assertTrue(repository.record("secret", now - 1, sensitive = true))
+    fun `un contenu sensible n est jamais enregistre`() = runBlocking {
+        assertFalse(repository.record("secret", now - 1, sensitive = true))
+        assertFalse(repository.record("4111 1111 1111 1111", now - 1, sensitive = false)) // numéro de carte reconnu
         assertTrue(repository.record("normal", now - 2, sensitive = false))
-        val history = awaitHistory { it.size == 2 }
-        assertTrue(history.first { it.text == "secret" }.sensitive)
-        assertFalse(history.first { it.text == "normal" }.sensitive)
+        assertEquals(listOf("normal"), texts())
+    }
+
+    @Test
+    fun `clearAll vide l historique`() = runBlocking {
+        repository.record("a", now - 1, false)
+        repository.record("b", now - 2, false)
+        repository.clearAll()
+        assertTrue(dao.state.value.isEmpty())
     }
 
     @Test
@@ -208,10 +233,10 @@ class ClipHistoryRepositoryTest {
     }
 
     @Test
-    fun `recopier un texte deja present en sensible le marque sensible`() = runBlocking {
+    fun `recopier en sensible un texte deja present l efface de l historique`() = runBlocking {
         repository.record("a", now - 2_000, sensitive = false)
-        repository.record("a", now - 1_000, sensitive = true)
-        assertTrue(dao.state.value.single().sensitive)
+        assertFalse(repository.record("a", now - 1_000, sensitive = true))
+        assertTrue(dao.state.value.isEmpty())
     }
 
     @Test

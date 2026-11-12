@@ -3,22 +3,22 @@ package fr.junade.taipo
 import android.content.Context
 import android.os.Handler
 import android.os.SystemClock
+import android.view.View
 import fr.junade.taipo.ai.ChatExchange
-import fr.junade.taipo.ai.InferenceFailureClassifier
-import fr.junade.taipo.ai.messageRes
 import fr.junade.taipo.ai.FieldContext
 import fr.junade.taipo.ai.GenerationPrompt
 import fr.junade.taipo.ai.GenerationPromptPreferences
 import fr.junade.taipo.ai.GenerationSession
+import fr.junade.taipo.ai.InferenceFailureClassifier
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.ai.PromptConversation
 import fr.junade.taipo.ai.PromptMessageStatus
 import fr.junade.taipo.ai.VoiceField
+import fr.junade.taipo.ai.messageRes
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.model.AiModel
-import android.view.View
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -317,7 +317,8 @@ class PromptModeController(
      */
     private fun onModelLoadingChanged(loading: Boolean) {
         if (this::promptBar.isInitialized) promptBar.modelLoading = loading
-        if (this::chatZone.isInitialized && conversation.isGenerating &&
+        if (this::chatZone.isInitialized &&
+            conversation.isGenerating &&
             conversation.messages.lastOrNull()?.response.isNullOrEmpty()
         ) {
             chatZone.showLastResponseWaiting() // les étincelles en orbite, chargement ou attente du premier morceau

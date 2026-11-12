@@ -1,8 +1,8 @@
 package fr.junade.taipo.dictionary
 
+import kotlin.random.Random
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import kotlin.random.Random
 
 /**
  * Lot 1.4 : la distance bornée (arrêt anticipé) doit donner exactement le même verdict que la
@@ -56,7 +56,9 @@ class DictionaryBoundedDistanceTest {
                     2 -> if (chars.isNotEmpty()) chars[random.nextInt(chars.size)] = 'a' + random.nextInt(26)
                     else -> if (chars.size > 1) {
                         val i = random.nextInt(chars.size - 1)
-                        val tmp = chars[i]; chars[i] = chars[i + 1]; chars[i + 1] = tmp
+                        val tmp = chars[i]
+                        chars[i] = chars[i + 1]
+                        chars[i + 1] = tmp
                     }
                 }
             }

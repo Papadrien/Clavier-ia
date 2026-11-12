@@ -233,9 +233,12 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
             pin.text = "\uD83D\uDCCC"
             pin.setTextSizeRes(R.dimen.taipo_clip_pin_text_size)
             pin.contentDescription = context.getString(R.string.clipboard_pinned_description)
-            frame.addView(pin, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.TOP or Gravity.END).apply {
-                setMargins(0, dimen(R.dimen.taipo_clip_pin_margin_top).toInt(), dimen(R.dimen.taipo_clip_pin_margin_end).toInt(), 0)
-            })
+            frame.addView(
+                pin,
+                LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.TOP or Gravity.END).apply {
+                    setMargins(0, dimen(R.dimen.taipo_clip_pin_margin_top).toInt(), dimen(R.dimen.taipo_clip_pin_margin_end).toInt(), 0)
+                },
+            )
         }
         frame.contentDescription = if (item.sensitive) {
             context.getString(R.string.clipboard_paste_description_masked)
@@ -253,10 +256,16 @@ class ClipboardPanelView(context: Context) : FrameLayout(context) {
         // Lot 20 : TalkBack annonce un bouton et nomme ses deux actions (coller ; menu de l'appui long), au lieu de « activer ».
         frame.announceAsButton()
         ViewCompat.replaceAccessibilityAction(
-            frame, AccessibilityActionCompat.ACTION_CLICK, context.getString(R.string.a11y_clipboard_action_paste), null,
+            frame,
+            AccessibilityActionCompat.ACTION_CLICK,
+            context.getString(R.string.a11y_clipboard_action_paste),
+            null,
         )
         ViewCompat.replaceAccessibilityAction(
-            frame, AccessibilityActionCompat.ACTION_LONG_CLICK, context.getString(R.string.a11y_clipboard_action_menu), null,
+            frame,
+            AccessibilityActionCompat.ACTION_LONG_CLICK,
+            context.getString(R.string.a11y_clipboard_action_menu),
+            null,
         )
         return frame
     }

@@ -29,6 +29,9 @@
         clavier) : lecture des images, sur l'appareil seulement. Voir docs/play-console-declarations.md.
     -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!-- Audit UX-04 : Android 14+ permet de n'autoriser que quelques photos. Déclarée pour que ce choix soit reconnu
+         (et expliqué) au lieu d'un accès temporaire silencieux : les nouvelles captures ne seraient jamais visibles. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
@@ -52,6 +55,7 @@
         android:supportsRtl="true"
         android:fullBackupContent="@xml/backup_rules"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:localeConfig="@xml/locales_config"
         android:theme="@style/AppTheme">
 
         <!--

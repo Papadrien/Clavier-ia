@@ -154,6 +154,7 @@ class SuggestionZoneStateTest {
         state.setClipboardPanelOpen(false)
         assertEquals(BarMode.NORMAL, state.mode)
     }
+
     @Test
     fun `une ecoute lancee depuis la barre normale la garde meme si du texte arrive`() {
         val state = SuggestionZoneState()

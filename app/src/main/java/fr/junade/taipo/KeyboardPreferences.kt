@@ -63,6 +63,17 @@ class KeyboardPreferences(context: Context) {
      * images. Désactivé par défaut : il demande la permission d'images, accordée depuis l'écran des paramètres. Sans cette
      * permission le réglage reste sans effet, même activé (elle peut être retirée dans les réglages Android).
      */
+    /**
+     * Audit SEC-01 : historique du presse-papiers (copies récentes gardées dans la base chiffrée, 12 h ou 7 jours avec le pass).
+     * Activé par défaut ; désactivé, plus rien n'est enregistré et l'historique existant est effacé (écran des paramètres).
+     * Les copies sensibles ne sont jamais enregistrées, quel que soit ce réglage.
+     */
+    var isClipboardHistoryEnabled: Boolean
+        get() = prefs.getBoolean(KEY_CLIPBOARD_HISTORY, DEFAULT_CLIPBOARD_HISTORY)
+        set(value) {
+            prefs.edit().putBoolean(KEY_CLIPBOARD_HISTORY, value).apply()
+        }
+
     var isScreenshotSuggestionEnabled: Boolean
         get() = prefs.getBoolean(KEY_SCREENSHOT_SUGGESTION, DEFAULT_SCREENSHOT_SUGGESTION)
         set(value) {
@@ -119,6 +130,18 @@ class KeyboardPreferences(context: Context) {
         set(value) {
             prefs.edit().putString(KEY_KEY_SHAPE, value.storageKey).apply()
             KeyboardTheme.shape = KeyShape.effective(value, PremiumPass.isActive)
+        }
+
+    /**
+     * Style des animations (section « Animations » de la page « Apparence »), Ressort par défaut. Gelée est réservée au pack
+     * premium : sans lui, le clavier reprend Ressort ([MotionStyle.effective]) mais le choix est gardé pour le retour du pack.
+     * Écrire le réglage met aussi à jour [MotionStyle.current].
+     */
+    var motionStyle: MotionStyle
+        get() = MotionStyle.fromStorageKey(prefs.getString(KEY_MOTION_STYLE, null))
+        set(value) {
+            prefs.edit().putString(KEY_MOTION_STYLE, value.storageKey).apply()
+            MotionStyle.current = MotionStyle.effective(value, PremiumPass.isActive)
         }
 
     /**
@@ -334,8 +357,11 @@ class KeyboardPreferences(context: Context) {
     /** Enregistre la disposition de [language] ; la disposition d'origine efface le choix. Relue à l'ouverture du prochain champ. */
     fun setLetterArrangement(language: KeyboardLanguage, arrangement: LetterArrangement) {
         prefs.edit().apply {
-            if (arrangement == LetterArrangement.defaultFor(language)) remove(KEY_ARRANGEMENT_PREFIX + language.tag)
-            else putString(KEY_ARRANGEMENT_PREFIX + language.tag, arrangement.tag)
+            if (arrangement == LetterArrangement.defaultFor(language)) {
+                remove(KEY_ARRANGEMENT_PREFIX + language.tag)
+            } else {
+                putString(KEY_ARRANGEMENT_PREFIX + language.tag, arrangement.tag)
+            }
         }.apply()
     }
 
@@ -395,6 +421,7 @@ class KeyboardPreferences(context: Context) {
         private const val SUFFIX_LANDSCAPE = "_landscape"
         private const val KEY_ACCENT_PALETTE = "accent_palette"
         private const val KEY_KEY_SHAPE = "key_shape"
+        private const val KEY_MOTION_STYLE = "motion_style"
         private const val KEY_ADAPTIVE_TOUCH = "adaptive_touch_enabled"
         private const val KEY_SHOW_TOUCH_ZONES = "show_touch_zones"
         private const val KEY_NUMBER_ROW = "number_row_enabled"
@@ -406,6 +433,8 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_SHOW_COMMA_KEY = "show_comma_key"
         private const val KEY_SHOW_PERIOD_KEY = "show_period_key"
         const val DEFAULT_SHOW_BOTTOM_KEY = true
+        private const val KEY_CLIPBOARD_HISTORY = "clipboard_history_enabled"
+        const val DEFAULT_CLIPBOARD_HISTORY = true
         private const val KEY_SCREENSHOT_SUGGESTION = "screenshot_suggestion_enabled"
         const val DEFAULT_SCREENSHOT_SUGGESTION = false
         private const val KEY_DIGIT_SWIPE_USED = "digit_swipe_used"

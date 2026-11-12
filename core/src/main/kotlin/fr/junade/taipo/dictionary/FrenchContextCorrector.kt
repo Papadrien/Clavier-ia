@@ -175,14 +175,17 @@ object FrenchContextCorrector {
             // Devant un infinitif, après un mot qui exclut le verbe avoir : « quelque chose a manger », « j'ai a faire ».
             val infinitiveLike = next.isPlain && !next.hasElision && participleOf(next.core, frequencyOf) != null
             // Un verbe qui appelle « à » devant un infinitif : « réussir a finir », « il continue a manger ».
-            val excludesVerb = previous.head in BEFORE_A_INFINITIVE || previous.core in WORDS_BEFORE_A ||
-                previous.head in VERBS_BEFORE_A || previous.head in VERBS_BEFORE_A_INFINITIVE
+            val excludesVerb = previous.head in BEFORE_A_INFINITIVE ||
+                previous.core in WORDS_BEFORE_A ||
+                previous.head in VERBS_BEFORE_A ||
+                previous.head in VERBS_BEFORE_A_INFINITIVE
             return if (infinitiveLike && excludesVerb) grave else null
         }
         if (isSubjectLike(previous)) return null
         // Après un verbe qui appelle « à » : « je vais a Paris », « il pense a toi », « pour réussir a » (un infinitif ne
         // peut pas être le sujet de « a » dans une phrase courante, alors que « aide » ou « arrive » peuvent être des noms).
-        return if (previous.head in VERBS_BEFORE_A || previous.core in WORDS_BEFORE_A ||
+        return if (previous.head in VERBS_BEFORE_A ||
+            previous.core in WORDS_BEFORE_A ||
             previous.head in INFINITIVES_BEFORE_A
         ) {
             grave
@@ -497,7 +500,11 @@ object FrenchContextCorrector {
 
     /** Locutions de trois mots où « a » est toujours « à » : « à quelle heure », « à quel moment », « à peu près ». */
     private val A_PHRASES = setOf(
-        "quelle" to "heure", "quelle" to "date", "quel" to "moment", "quel" to "endroit", "peu" to "près",
+        "quelle" to "heure",
+        "quelle" to "date",
+        "quel" to "moment",
+        "quel" to "endroit",
+        "peu" to "près",
     )
 
     /** Formes de être (sans « été », qui est aussi un nom : « l'été a commencé » ; ni « soit » : « soit a, soit b »). */

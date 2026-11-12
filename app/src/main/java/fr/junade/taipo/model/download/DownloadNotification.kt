@@ -47,23 +47,45 @@ object DownloadNotification {
     }
 
     /** [screen] : écran ouvert au toucher de la notification (« Modèle IA » ou « Modèle vocal »). */
+    /**
+     * Audit UX-05 : fin du téléchargement, réussi ou en échec (pas après une annulation par l'utilisateur). La notification de
+     * progression disparaît avec le travail : celle-ci, sous un autre identifiant, reste jusqu'à ce qu'on la touche.
+     */
+    fun notifyFinished(context: Context, notificationId: Int, success: Boolean, modelName: String, screen: Class<*>) {
+        val manager = context.getSystemService(NotificationManager::class.java) ?: return
+        ensureChannel(context, manager)
+        val notification = Notification.Builder(context, CHANNEL_ID)
+            .setSmallIcon(if (success) android.R.drawable.stat_sys_download_done else android.R.drawable.stat_notify_error)
+            .setContentTitle(
+                context.getString(if (success) R.string.model_download_done_title else R.string.model_download_failed_title, modelName),
+            )
+            .setContentText(context.getString(if (success) R.string.model_download_done_text else R.string.model_download_failed_text))
+            .setContentIntent(openScreen(context, screen))
+            .setAutoCancel(true)
+            .build()
+        runCatching { manager.notify(notificationId + FINISHED_ID_OFFSET, notification) } // refusée si les notifications sont coupées
+    }
+
+    private fun ensureChannel(context: Context, manager: NotificationManager) {
+        if (manager.getNotificationChannel(CHANNEL_ID) != null) return
+        manager.createNotificationChannel(
+            NotificationChannel(CHANNEL_ID, context.getString(R.string.model_download_channel_name), NotificationManager.IMPORTANCE_LOW),
+        )
+    }
+
+    private fun openScreen(context: Context, screen: Class<*>): PendingIntent = PendingIntent.getActivity(
+        context,
+        0,
+        Intent(context, screen).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+    )
+
+    private const val FINISHED_ID_OFFSET = 100
+
     private fun build(context: Context, title: String, percent: Int?, cancel: PendingIntent, screen: Class<*>): Notification {
         val manager = context.getSystemService(NotificationManager::class.java)
-        if (manager?.getNotificationChannel(CHANNEL_ID) == null) {
-            manager?.createNotificationChannel(
-                NotificationChannel(
-                    CHANNEL_ID,
-                    context.getString(R.string.model_download_channel_name),
-                    NotificationManager.IMPORTANCE_LOW,
-                ),
-            )
-        }
-        val openScreen = PendingIntent.getActivity(
-            context,
-            0,
-            Intent(context, screen).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
+        manager?.let { ensureChannel(context, it) }
+        val openScreen = openScreen(context, screen)
         return Notification.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.stat_sys_download)
             .setContentTitle(title)

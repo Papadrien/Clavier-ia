@@ -1,0 +1,27 @@
+# Korrekte norske setninger: autokorrekturen skal ikke endre noen av dem (måler feilaktige rettinger).
+# Une phrase par ligne (lignes « # » ignorées). Écrites pour le banc, à faire relire.
+Hei, hvordan har du det?
+Jeg er hjemme nå.
+Hva skal vi gjøre i kveld?
+Jeg håper alt er i orden.
+Tusen takk for hjelpen.
+Jeg vet ikke hvor han bor.
+Jeg går på butikken og kjøper brød.
+Vi ses i morgen klokka åtte.
+Broren min jobber i Oslo.
+Vær så snill og sett deg her.
+Hun har to katter og en hund.
+Jeg ringer deg senere.
+Filmen var veldig bra.
+Hvor er nærmeste holdeplass?
+Jeg har ikke tid, beklager.
+Jeg elsker deg.
+Hvordan har moren din det?
+Jeg må gå nå.
+Det kommer til å regne i morgen.
+Jeg liker å lese bøker.
+Han sa at han var trøtt.
+Vi har bodd her i tre år.
+Det er for sent nå.
+Når kommer du hjem?
+Jeg kom hjem før middag.

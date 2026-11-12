@@ -1,12 +1,12 @@
 package fr.junade.taipo.dictionary
 
+import java.util.Random
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.util.Random
 
 /** Modèle de la lettre suivante (zones de frappe adaptatives, étape 1) : probabilités d'après le début du mot. */
 class NextLetterModelTest {

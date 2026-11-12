@@ -10,7 +10,6 @@ import android.view.View
 import android.widget.CompoundButton
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import fr.junade.taipo.ai.AiAcceleration
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.model.ActiveModelAfterDeletion
@@ -19,13 +18,13 @@ import fr.junade.taipo.model.ModelFileResolver
 import fr.junade.taipo.model.ModelLicenseAcceptance
 import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.ModelRecommendation
-import fr.junade.taipo.model.license
 import fr.junade.taipo.model.download.DownloadEnvironment
 import fr.junade.taipo.model.download.DownloadPolicy
 import fr.junade.taipo.model.download.DownloadState
 import fr.junade.taipo.model.download.DownloadTracker
 import fr.junade.taipo.model.download.ModelDownloadScheduler
 import fr.junade.taipo.model.download.ModelRowStatus
+import fr.junade.taipo.model.license
 
 /**
  * Écran « Modèle IA » (épopée 8, story 8.1) : liste les 4 modèles de texte avec leur statut, permet de télécharger un
@@ -146,7 +145,7 @@ class ModelDownloadActivity : ModelScreenActivity() {
         if (badgeLabel != null) {
             views.badge.setText(badgeLabel)
             views.badge.setBackgroundResource(R.drawable.bg_status_badge_ready)
-            views.badge.setTextColor(getColor(R.color.text_primary))
+            views.badge.setTextColor(getColor(R.color.text_on_accent)) // blanc sur le violet, aussi en thème clair
         }
 
         views.progress.visibility = View.GONE
@@ -346,7 +345,7 @@ class ModelDownloadActivity : ModelScreenActivity() {
                 } else {
                     getString(R.string.model_delete_done, Formatter.formatFileSize(appContext, freed))
                 }
-                Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+                showScreenMessage(text)
             }
         }, "taipo-model-delete").start()
     }

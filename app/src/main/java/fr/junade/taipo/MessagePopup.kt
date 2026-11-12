@@ -3,6 +3,7 @@ package fr.junade.taipo
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -11,10 +12,12 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.accessibility.AccessibilityManager
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.core.view.ViewCompat
 
 /**
  * Pop-ups du clavier (messages d'information, liste des langues), extraits de [TaipoIme] (audit 2.1).
@@ -166,6 +169,10 @@ class MessagePopup(private val context: Context, private val host: Host) {
             elevation = BANNER_ELEVATION_DP * density
             applyTaipoFontToTree()
             setOnClickListener { dismissBanner() }
+            // Audit A11Y-02 : le bandeau apparaît dans sa propre fenêtre ; TalkBack l'annonce par son titre de volet, et
+            // relit le texte s'il change.
+            accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
+            ViewCompat.setAccessibilityPaneTitle(this, message)
         }
         val margin = (BANNER_MARGIN_DP * density).toInt()
         val popup = PopupWindow(text, anchor.width - 2 * margin, ViewGroup.LayoutParams.WRAP_CONTENT, false).apply {
@@ -177,12 +184,24 @@ class MessagePopup(private val context: Context, private val host: Host) {
         return try {
             popup.showAsDropDown(anchor, margin, margin)
             banner = popup
-            handler.postDelayed(hideBanner, bannerDuration(message))
+            handler.postDelayed(hideBanner, accessibleDuration(bannerDuration(message)))
             true
         } catch (t: Throwable) {
             AppLog.w(TAG, "Bandeau impossible à afficher, repli sur la fenêtre", t)
             false
         }
+    }
+
+    /**
+     * Durée d'affichage allongée selon le réglage d'accessibilité « Délai pour agir » (Android 10+), et doublée au moins quand
+     * TalkBack est actif : le message doit avoir le temps d'être lu à voix haute (audit A11Y-02).
+     */
+    private fun accessibleDuration(durationMs: Long): Long {
+        val manager = context.getSystemService(AccessibilityManager::class.java) ?: return durationMs
+        val talkBack = manager.isTouchExplorationEnabled
+        val base = if (talkBack) durationMs * 2 else durationMs
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return base
+        return manager.getRecommendedTimeoutMillis(base.toInt(), AccessibilityManager.FLAG_CONTENT_TEXT).toLong()
     }
 
     private fun attach(popup: AlertDialog, token: IBinder) {

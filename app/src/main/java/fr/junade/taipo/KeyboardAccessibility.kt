@@ -81,12 +81,27 @@ internal class KeySlot(val key: Key, val bounds: android.graphics.Rect)
  */
 internal class KeySpeech(private val context: Context) {
 
-    fun describe(key: Key, layoutId: LayoutId, shifted: Boolean, capsLock: Boolean): String = when (val action = key.action) {
+    /** Nom parlé de la touche Entrée selon l'action du champ (audit UX-10). */
+    private fun enterLabel(icon: EnterAction.Icon): Int = when (icon) {
+        EnterAction.Icon.ENTER -> R.string.a11y_key_enter
+        EnterAction.Icon.SEARCH -> R.string.a11y_key_enter_search
+        EnterAction.Icon.SEND -> R.string.a11y_key_enter_send
+        EnterAction.Icon.NEXT -> R.string.a11y_key_enter_next
+        EnterAction.Icon.DONE -> R.string.a11y_key_enter_done
+    }
+
+    fun describe(
+        key: Key,
+        layoutId: LayoutId,
+        shifted: Boolean,
+        capsLock: Boolean,
+        enterIcon: EnterAction.Icon = EnterAction.Icon.ENTER,
+    ): String = when (val action = key.action) {
         is KeyAction.TypeChar ->
             charName(if (shifted && layoutId == LayoutId.LETTERS && action.char.isLetter()) action.char.uppercaseChar() else action.char)
         KeyAction.Shift -> context.getString(if (capsLock) R.string.a11y_key_caps_lock else R.string.a11y_key_shift)
         KeyAction.Backspace -> context.getString(R.string.a11y_key_backspace)
-        KeyAction.Enter -> context.getString(R.string.a11y_key_enter)
+        KeyAction.Enter -> context.getString(enterLabel(enterIcon))
         KeyAction.Space -> context.getString(R.string.a11y_key_space)
         KeyAction.Emoji -> context.getString(R.string.a11y_key_emoji)
         KeyAction.SymbolPage ->
@@ -168,7 +183,7 @@ internal class KeyboardAccessibility(private val view: KeyboardView) : ExploreBy
         event.contentDescription = if (slot != null) describe(slot.key) else ""
     }
 
-    private fun describe(key: Key): String = speech.describe(key, view.layout.id, view.isShifted, view.isCapsLock)
+    private fun describe(key: Key): String = speech.describe(key, view.layout.id, view.isShifted, view.isCapsLock, view.enterActionIcon)
 
     /** Caractères de l'appui long d'une touche : la grille de la bulle, ou à défaut le chiffre d'indice. */
     private fun alternates(key: Key): List<Char> =

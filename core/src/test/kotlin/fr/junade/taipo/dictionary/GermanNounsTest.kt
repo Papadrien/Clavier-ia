@@ -9,8 +9,14 @@ class GermanNounsTest {
 
     private val dictionary = Dictionary.withFrequencies(
         mapOf(
-            "haus" to 70_000L, "hohe" to 5_000L, "höhe" to 4_000L, "ich" to 5_000_000L, "sehe" to 90_000L, "das" to 3_000_000L,
-            "essen" to 67_000L, "gehen" to 300_000L,
+            "haus" to 70_000L,
+            "hohe" to 5_000L,
+            "höhe" to 4_000L,
+            "ich" to 5_000_000L,
+            "sehe" to 90_000L,
+            "das" to 3_000_000L,
+            "essen" to 67_000L,
+            "gehen" to 300_000L,
         ),
         candidateMinFrequency = 41L,
         properNames = listOf("Haus", "Höhe", "Jürgen", "Krankenhaus", "Straße"),

@@ -6,9 +6,10 @@ import fr.junade.taipo.KeyboardLanguage
  * Dictée : les nombres dits en toutes lettres par le modèle vocal sont écrits en chiffres (« vingt-trois » -> « 23 »,
  * « deux mille vingt-six » -> « 2026 », « trois virgule cinq » -> « 3,5 », « vingt pour cent » -> « 20 % »).
  *
- * Français et anglais, les deux langues du modèle vocal ; le texte des autres langues est rendu tel quel. Les nombres
- * s'écrivent avec ou sans traits d'union (« vingt et un », « vingt-et-un », « quatre-vingt-dix-sept », « soixante et onze »),
- * y compris en belge et en suisse (« septante », « huitante », « nonante »). Un nombre s'arrête à toute ponctuation.
+ * Français et anglais ici, avec leurs règles propres ; les treize autres langues du clavier passent par [CompoundNumberRules]
+ * (lexiques dans [NumberLexicons]). En français, les nombres s'écrivent avec ou sans traits d'union (« vingt et un »,
+ * « vingt-et-un », « quatre-vingt-dix-sept », « soixante et onze »), y compris en belge et en suisse (« septante »,
+ * « huitante », « nonante »). Un nombre s'arrête à toute ponctuation.
  *
  * Mots ambigus, laissés en lettres quand ils sont seuls : « un », « une » et « one » (articles : « un chat », « one of
  * them ») ; « neuf » (adjectif : « un vélo neuf ») sauf suivi d'un mot qui n'est pas une liaison (« neuf ans »). Les
@@ -24,14 +25,15 @@ object SpokenNumbers {
         val rules = when (language) {
             KeyboardLanguage.FR -> French
             KeyboardLanguage.EN -> English
-            else -> return text
+            else -> NumberLexicons.rules(language)
         }
         return Converter(text, rules).convert()
     }
 
     /** Une langue : son vocabulaire et sa grammaire des nombres. */
-    private abstract class Rules {
-        abstract val vocabulary: Set<String>
+    internal abstract class Rules {
+        /** [part] (un mot ou une partie de mot à trait d'union, en minuscules) peut appartenir à un nombre. */
+        abstract fun accepts(part: String): Boolean
         abstract val decimalWords: Set<String>
         abstract val decimalSeparator: String
         abstract val groupSeparator: String
@@ -54,7 +56,7 @@ object SpokenNumbers {
         private val words: List<Word> = WORD.findAll(text).map { match ->
             val lower = match.value.lowercase()
             val parts = lower.split('-')
-            Word(match.range.first, match.range.last + 1, lower, parts.takeIf { list -> list.all { it in rules.vocabulary } })
+            Word(match.range.first, match.range.last + 1, lower, parts.takeIf { list -> list.all(rules::accepts) })
         }.toList()
 
         private val out = StringBuilder(text.length)
@@ -204,8 +206,10 @@ object SpokenNumbers {
             "car",
         )
 
-        override val vocabulary: Set<String> =
+        private val vocabulary: Set<String> =
             units.keys + teens.keys + tens.keys + scales.flatMap { it.first } + hundred + zero + setOf(THOUSAND, "vingts", "et")
+
+        override fun accepts(part: String) = part in vocabulary
         override val decimalWords = setOf("virgule")
         override val decimalSeparator = ","
         override val groupSeparator = NARROW_NO_BREAK_SPACE
@@ -355,8 +359,10 @@ object SpokenNumbers {
         )
         private val scales = listOf("billion" to 1_000_000_000L, "million" to 1_000_000L, "thousand" to 1_000L)
 
-        override val vocabulary: Set<String> =
+        private val vocabulary: Set<String> =
             units.keys + teens.keys + tens.keys + scales.map { it.first } + setOf("hundred", "zero", "and", "a")
+
+        override fun accepts(part: String) = part in vocabulary
         override val decimalWords = setOf("point")
         override val decimalSeparator = "."
         override val groupSeparator = ","

@@ -126,9 +126,18 @@ class ThemePreviewView @JvmOverloads constructor(
         var face: Int
         var shadow: Int
         when (key.kind) {
-            PreviewKeyKind.LETTER, PreviewKeyKind.SPACE -> { face = palette.letter; shadow = palette.letterShadow }
-            PreviewKeyKind.MODIFIER, PreviewKeyKind.BAR_BUTTON -> { face = palette.modifier; shadow = palette.modifierShadow }
-            PreviewKeyKind.ENTER -> { face = palette.enter; shadow = palette.enterShadow }
+            PreviewKeyKind.LETTER, PreviewKeyKind.SPACE -> {
+                face = palette.letter
+                shadow = palette.letterShadow
+            }
+            PreviewKeyKind.MODIFIER, PreviewKeyKind.BAR_BUTTON -> {
+                face = palette.modifier
+                shadow = palette.modifierShadow
+            }
+            PreviewKeyKind.ENTER -> {
+                face = palette.enter
+                shadow = palette.enterShadow
+            }
         }
         val tint = if (palette.dynamic) AccentPalette.DEFAULT else accent
         face = tint.recolor(face)

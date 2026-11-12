@@ -63,8 +63,12 @@
     <string name="voice_button_loading">Chargement…</string>
     <string name="voice_button_recording">Écoute…</string>
     <string name="voice_button_transcribing">Transcription…</string>
+    <string name="voice_permission_settings_title">Micro désactivé</string>
+    <string name="voice_permission_settings_message">La saisie vocale a besoin du micro. Android ne le demande plus : autorisez-le dans les réglages de Taipo (Autorisations > Micro).</string>
+    <string name="voice_permission_settings_open">Ouvrir les réglages</string>
+    <string name="voice_permission_settings_cancel">Plus tard</string>
     <string name="voice_permission_denied">Permission micro requise : appuyez à nouveau sur Dicter après l\'avoir accordée.</string>
-    <string name="voice_error">Échec de la transcription : %1$s</string>
+    <string name="voice_error">La saisie vocale a échoué. Réessayez.</string>
     <string name="voice_mic_unavailable">Micro indisponible : il est peut-être utilisé par une autre application. Réessayez dans un instant.</string>
     <string name="voice_mic_lost">Le micro ne répond plus : dictée interrompue.</string>
     <string name="voice_backlog_overflow">La transcription ne suit plus le rythme de la parole : dictée interrompue, le texte déjà transcrit est conservé.</string>
@@ -116,8 +120,11 @@
     <string name="keyboard_settings_show_emoji_key">Afficher la touche emoji</string>
     <string name="keyboard_settings_show_comma_key">Afficher la touche virgule</string>
     <string name="keyboard_settings_show_period_key">Afficher la touche point</string>
+    <string name="keyboard_settings_clipboard_history_switch">Historique du presse-papiers</string>
+    <string name="keyboard_settings_clipboard_history_description">Garde vos copies récentes pour les recoller (12 heures, 7 jours avec le pack premium). Les mots de passe et numéros de carte ne sont jamais gardés. Le désactiver efface l\'historique.</string>
     <string name="keyboard_settings_screenshots_switch">Proposer les captures d\'écran récentes</string>
     <string name="keyboard_settings_screenshots_description">Propose de coller votre dernière capture d\'écran. Demande l\'accès à vos photos ; rien n\'est envoyé.</string>
+    <string name="keyboard_settings_screenshots_partial">Seules quelques photos sont autorisées : les nouvelles captures ne seraient pas visibles. Choisissez « Tout autoriser » dans les réglages Android pour utiliser cette option.</string>
     <string name="keyboard_settings_screenshots_denied">L\'accès aux photos a été refusé. Autorisez-le dans les réglages Android pour utiliser cette option.</string>
     <string name="keyboard_settings_language_title">Langue du clavier</string>
     <string name="keyboard_settings_haptic_title">Vibrations</string>
@@ -208,7 +215,7 @@
     <string name="clipboard_pin_too_long">Trop long pour être épinglé (10 000 caractères max)</string>
     <string name="clipboard_pin_sensitive">Contenu sensible : impossible à épingler</string>
     <string name="clipboard_pin_empty">Rien à épingler</string>
-    <string name="clipboard_pin_error">Échec de l\'épinglage : %1$s</string>
+    <string name="clipboard_pin_error">L\'épinglage a échoué. Réessayez.</string>
     <string name="clipboard_menu_edit">Modifier</string>
     <string name="clipboard_delete_confirm_message">Supprimer cet élément ?</string>
     <string name="clipboard_delete_confirm_cancel">Annuler</string>
@@ -222,7 +229,7 @@
     <string name="clipboard_edit_save">Enregistrer</string>
     <string name="clipboard_edit_done">Élément modifié</string>
     <string name="clipboard_edit_not_found">Élément introuvable</string>
-    <string name="clipboard_edit_error">Échec de la modification : %1$s</string>
+    <string name="clipboard_edit_error">La modification a échoué. Réessayez.</string>
     <string name="clipboard_menu_label_add">Ajouter une étiquette</string>
     <string name="clipboard_menu_label_edit">Modifier l\'étiquette</string>
     <string name="clipboard_menu_label_delete">Supprimer l\'étiquette</string>
@@ -233,9 +240,9 @@
     <string name="clipboard_label_input_description">Étiquette</string>
     <string name="clipboard_label_counter">%1$d / %2$d</string>
     <string name="clipboard_label_done">Étiquette enregistrée</string>
-    <string name="clipboard_label_error">Échec de l\'enregistrement de l\'étiquette : %1$s</string>
-    <string name="clipboard_label_delete_error">Échec de la suppression de l\'étiquette : %1$s</string>
-    <string name="clipboard_delete_error">Échec de la suppression : %1$s</string>
+    <string name="clipboard_label_error">L\'étiquette n\'a pas pu être enregistrée. Réessayez.</string>
+    <string name="clipboard_label_delete_error">L\'étiquette n\'a pas pu être supprimée. Réessayez.</string>
+    <string name="clipboard_delete_error">La suppression a échoué. Réessayez.</string>
 
     <!-- ===== Accessibilité (lot 20) : noms parlés par TalkBack des touches dessinées au Canvas, états et actions ===== -->
     <string name="a11y_keyboard_description">Clavier Taipo</string>
@@ -243,6 +250,10 @@
     <string name="a11y_key_caps_lock">Verrouillage des majuscules</string>
     <string name="a11y_key_backspace">Effacer</string>
     <string name="a11y_key_enter">Entrée</string>
+    <string name="a11y_key_enter_search">Rechercher</string>
+    <string name="a11y_key_enter_send">Envoyer</string>
+    <string name="a11y_key_enter_next">Suivant</string>
+    <string name="a11y_key_enter_done">OK</string>
     <string name="a11y_key_space">Espace</string>
     <string name="a11y_key_emoji">Emoji</string>
     <string name="a11y_key_to_symbols">Chiffres et symboles</string>
@@ -371,6 +382,10 @@
     <string name="model_download_mobile_message">Vous n\'êtes pas en Wi-Fi. Le modèle %1$s pèse environ %2$s : le téléchargement consommera une grande partie de votre forfait.</string>
     <string name="model_download_mobile_confirm">Télécharger</string>
     <string name="model_download_mobile_cancel">Annuler</string>
+    <string name="model_download_done_title">%1$s : prêt</string>
+    <string name="model_download_done_text">Le modèle est installé et prêt à servir.</string>
+    <string name="model_download_failed_title">%1$s : échec du téléchargement</string>
+    <string name="model_download_failed_text">Touchez pour réessayer.</string>
     <string name="model_download_channel_name">Téléchargement des modèles</string>
     <string name="model_download_notification_title">Téléchargement du modèle %1$s</string>
     <string name="model_download_cancel">Annuler</string>
@@ -406,12 +421,12 @@
     <string name="licenses_fulltext_show">Afficher le texte complet de la licence</string>
     <string name="licenses_fulltext_hide">Masquer le texte de la licence</string>
     <string name="licenses_fulltext_unreadable">Le texte de la licence n\'a pas pu être chargé. Utilisez le lien ci-dessus pour le lire en ligne.</string>
-    <string name="licenses_usage_nemotron">Modèle de dictée vocale (français et anglais), téléchargé à la demande et utilisé sur votre appareil.</string>
+    <string name="licenses_usage_nemotron">Modèle de dictée vocale (multilingue), téléchargé à la demande et utilisé sur votre appareil.</string>
     <string name="licenses_notice_nemotron">Distribué sous l\'OpenMDW License Agreement, version 1.1. Taipo utilise un export ONNX (int8) de ce modèle, exécuté avec sherpa-onnx.</string>
-    <string name="licenses_usage_frequencywords">Listes de mots pour l\'autocorrection et les suggestions dans les sept langues du clavier : français, anglais, espagnol, allemand, italien, portugais et néerlandais.</string>
-    <string name="licenses_usage_aosp_dictionaries">Listes de mots de référence qui ont servi à vérifier et à compléter les listes du clavier dans les sept langues.</string>
+    <string name="licenses_usage_frequencywords">Listes de mots pour l\'autocorrection et les suggestions dans les quinze langues du clavier : français, anglais, espagnol, allemand, italien, portugais, néerlandais, polonais, roumain, tchèque, hongrois, suédois, danois, norvégien et finnois.</string>
+    <string name="licenses_usage_aosp_dictionaries">Listes de mots de référence qui ont servi à vérifier et à compléter les listes du clavier (toutes les langues sauf le finnois).</string>
     <string name="licenses_notice_aosp_dictionaries">Des mots des listes du clavier de l\'Android Open Source Project (publiées par HeliBoard) ont été ajoutés aux listes de Taipo, avec une fréquence calculée par Taipo, et ont servi à retirer des mots qu\'elles ne contiennent pas. Sous licence Apache 2.0.</string>
-    <string name="licenses_usage_tatoeba">Paires de mots (quel mot suit habituellement un autre) qui aident l\'autocorrection à choisir le bon mot en français, anglais, italien, portugais et néerlandais, et mots ajoutés aux listes italienne, portugaise et néerlandaise.</string>
+    <string name="licenses_usage_tatoeba">Paires de mots (quel mot suit habituellement un autre) qui aident l\'autocorrection à choisir le bon mot dans toutes les langues du clavier sauf l\'espagnol et l\'allemand, et mots ajoutés aux listes italienne, portugaise et néerlandaise.</string>
     <string name="licenses_notice_tatoeba">Comptes de paires de mots calculés par Taipo à partir des phrases du corpus collaboratif Tatoeba (tatoeba.org), sous licence CC BY 2.0 FR. Seuls des comptes de mots et de paires de mots consécutifs sont conservés, pas les phrases.</string>
     <string name="licenses_notice_frequencywords">Listes de mots adaptées de FrequencyWords de Hermit Dave (contenu 2018, issu du corpus OpenSubtitles 2018), sous licence CC BY-SA 4.0. Modifications apportées par Taipo : mots passés en minuscules et normalisés ; fragments, abréviations, entrées contenant des chiffres ou des caractères d\'autres alphabets retirés ; mots rares et fautes de frappe probables retirés ; quelques entrées ajoutées à la main. Les listes ainsi adaptées sont partagées sous la même licence, CC BY-SA 4.0.</string>
     <string name="licenses_usage_litertlm">Moteur qui exécute les modèles Gemma sur votre appareil.</string>
@@ -486,13 +501,13 @@
     <string name="privacy_section_1_title">1. Traitement sur votre appareil</string>
     <string name="privacy_section_1_body">La correction, la génération de texte, la saisie vocale et la dictée IA sont exécutées sur votre appareil par des modèles installés localement. Le texte que vous saisissez, copiez ou dictez et l\'audio de vos enregistrements ne sont envoyés à aucun serveur. L\'audio d\'une dictée IA reste en mémoire le temps du traitement : il n\'est jamais enregistré dans un fichier.</string>
     <string name="privacy_section_2_title">2. Connexions Internet</string>
-    <string name="privacy_section_2_body">Taipo se connecte à Internet pour télécharger les fichiers des modèles IA, à votre demande : depuis un serveur de Junadé pour les modèles Gemma 3 et les modèles de saisie vocale, et depuis Hugging Face pour les modèles Gemma 4. Il télécharge aussi, depuis ce même serveur de Junadé, le dictionnaire de chaque langue du clavier que vous utilisez (quelques Mo, automatiquement dès qu\'une langue est choisie). Ces serveurs reçoivent les informations techniques habituelles d\'une connexion (adresse IP, fichier demandé), jamais votre texte ni vos enregistrements. Taipo envoie aussi, sauf si vous le désactivez dans les paramètres du clavier, une mesure d\'usage anonyme à Aptabase, un service européen (voir la section 3). De temps en temps, Taipo peut aussi vous proposer de laisser un avis : cette fenêtre est affichée par Google Play, qui reçoit votre note et votre commentaire ; Taipo ne les reçoit pas.</string>
+    <string name="privacy_section_2_body">Taipo se connecte à Internet pour télécharger les fichiers des modèles IA, à votre demande : depuis un serveur de Junadé pour les modèles Gemma 3 et les modèles de saisie vocale, et depuis Hugging Face pour les modèles Gemma 4. Il télécharge aussi, depuis ce même serveur de Junadé, le dictionnaire de chaque langue du clavier que vous utilisez (quelques Mo, automatiquement dès qu\'une langue est choisie). Ces serveurs reçoivent les informations techniques habituelles d\'une connexion (adresse IP, fichier demandé), jamais votre texte ni vos enregistrements. Seulement si vous l\'acceptez (Taipo vous le demande sur l\'accueil ; Mes données > Partager les données d\'utilisation), Taipo envoie aussi une mesure d\'usage anonyme à Aptabase, un service européen (voir la section 3). La bibliothèque Google Play Billing, qui sert au pack premium, envoie ses propres journaux techniques à Google ; ils ne contiennent jamais votre texte. De temps en temps, Taipo peut aussi vous proposer de laisser un avis : cette fenêtre est affichée par Google Play, qui reçoit votre note et votre commentaire ; Taipo ne les reçoit pas.</string>
     <string name="privacy_section_3_title">3. Aucune collecte de données personnelles</string>
-    <string name="privacy_section_3_body">Taipo n\'a pas de compte et pas de publicité. Il mesure son usage de façon anonyme avec Aptabase : des événements comme « une correction IA a réussi », « un modèle a été téléchargé » ou « un réglage a changé », avec la version de l\'application, la version d\'Android, le modèle de l\'appareil et sa langue, plus deux tranches approximatives : depuis combien de temps l\'application est installée et sur combien de jours elle a été utilisée (par exemple « 8 à 30 jours »), jamais des valeurs exactes. Jamais votre texte, ce que vous copiez ou dictez, ni un identifiant de l\'appareil ou de la personne, et rien depuis les champs de mot de passe. Vous pouvez la désactiver à tout moment dans Paramètres du clavier > Données d\'utilisation. Comme pour toute connexion Internet, les serveurs d\'Aptabase reçoivent techniquement l\'adresse IP de la requête ; Taipo ne la voit ni ne la conserve jamais (voir la politique de confidentialité d\'Aptabase pour son traitement). Taipo lui-même ne collecte aucune donnée personnelle vous concernant.</string>
+    <string name="privacy_section_3_body">Taipo n\'a pas de compte et pas de publicité. Il mesure son usage de façon anonyme avec Aptabase : des événements comme « une correction IA a réussi », « un modèle a été téléchargé » ou « un réglage a changé », avec la version de l\'application, la version d\'Android, le modèle de l\'appareil et sa langue, plus deux tranches approximatives : depuis combien de temps l\'application est installée et sur combien de jours elle a été utilisée (par exemple « 8 à 30 jours »), jamais des valeurs exactes. Jamais votre texte, ce que vous copiez ou dictez, ni un identifiant de l\'appareil ou de la personne, et rien depuis les champs de mot de passe. Elle est désactivée tant que vous ne l\'avez pas acceptée, et vous pouvez changer d\'avis à tout moment dans Mes données > Partager les données d\'utilisation. Comme pour toute connexion Internet, les serveurs d\'Aptabase reçoivent techniquement l\'adresse IP de la requête ; Taipo ne la voit ni ne la conserve jamais (voir la politique de confidentialité d\'Aptabase pour son traitement). Taipo lui-même ne collecte aucune donnée personnelle vous concernant.</string>
     <string name="privacy_section_4_title">4. Champs de mot de passe</string>
-    <string name="privacy_section_4_body">Dans un champ de mot de passe ou de code secret, les actions IA (Corriger, Générer, Dicter, Dictée IA) et le presse-papiers sont désactivés : le contenu du champ n\'est pas lu et le micro n\'est pas ouvert.</string>
+    <string name="privacy_section_4_body">Dans un champ de mot de passe ou de code secret, les actions IA (Corriger, Générer, Dicter, Dictée IA) et le panneau Smart Clipboard sont désactivés : le contenu du champ n\'est pas lu et le micro n\'est pas ouvert. La puce de collage reste, pour coller un mot de passe copié depuis un gestionnaire ; il reste masqué (••••). Les copies signalées sensibles (mots de passe) et les numéros de carte ne sont jamais gardés dans l\'historique du presse-papiers.</string>
     <string name="privacy_section_5_title">5. Ce qui est conservé sur l\'appareil</string>
-    <string name="privacy_section_5_body">Votre dictionnaire personnel, les éléments du presse-papiers et vos réglages restent sur votre appareil, dans des bases chiffrées. Les désinstaller supprime ces données. Vous pouvez aussi les exporter dans un fichier non chiffré (Mes données > Sauvegarde et restauration) : ce fichier ne quitte l\'appareil que si vous le déplacez vous-même. Si vous activez la proposition des captures d\'écran (Paramètres du clavier), Taipo demande l\'accès à vos photos : il vérifie seulement qu\'une capture récente existe, et lit l\'image elle-même, sur votre appareil, quand vous touchez la suggestion. Une copie temporaire reste dans le cache de l\'application une heure au plus et n\'est jamais envoyée.</string>
+    <string name="privacy_section_5_body">Votre dictionnaire personnel, les éléments du presse-papiers et vos réglages restent sur votre appareil, dans des bases chiffrées. Désinstaller l\'application supprime ces données. Vous pouvez aussi les exporter dans un fichier non chiffré (Mes données > Sauvegarde et restauration) : ce fichier ne quitte l\'appareil que si vous le déplacez vous-même. Si vous activez la proposition des captures d\'écran (Paramètres du clavier), Taipo demande l\'accès à vos photos : il vérifie seulement qu\'une capture récente existe, et lit l\'image elle-même, sur votre appareil, quand vous touchez la suggestion. Une copie temporaire reste dans le cache de l\'application une heure au plus et n\'est jamais envoyée.</string>
     <string name="privacy_section_6_title">6. Apprentissage et précision de frappe</string>
     <string name="privacy_section_6_body">Le clavier compte, sur cet appareil, les corrections que vous annulez ou laissez en place, les mots que vous validez et les adresses e-mail que vous tapez, pour s\'adapter à vous et vous proposer vos adresses dès que vous en commencez une. Seuls des compteurs de mots et de corrections, et vos adresses e-mail, sont conservés, chiffrés, jamais de phrases. Rien n\'est compté dans les champs sensibles ni en navigation privée ; les adresses e-mail sont aussi retenues dans les champs d\'adresse, jamais dans les mots de passe. La zone de toucher des lettres les plus probables d\'après le mot en cours grandit un peu : un appui légèrement décentré tombe quand même sur la bonne touche. Les touches gardent leur aspect et leur taille. Calculé sur l\'appareil à partir du mot que vous tapez, rien n\'est conservé ni envoyé. Inactif dans les champs de mot de passe, d\'adresse e-mail et d\'adresse web.</string>
     <string name="button_terms">Conditions d\'utilisation</string>
@@ -537,7 +552,7 @@
     <!-- Story 8.15 : téléchargement du modèle vocal (écran « Modèle vocal », séparé de « Modèle IA »). -->
     <string name="model_download_voice_section_title">Modèle vocal</string>
     <string name="model_download_voice_name">Modèle vocal</string>
-    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming (fr/en)</string>
+    <string name="model_download_voice_technical_name">Nemotron 3.5 ASR Streaming</string>
     <string name="model_download_voice_status_debug_unverified">Non installé. Debug : empreintes SHA-256 non figées, elles seront relevées dans logcat (tag VoiceModelDownloadWorker).</string>
     <string name="model_download_voice_notification_title">Téléchargement du modèle vocal</string>
     <string name="model_download_voice_mobile_message">Vous n\'êtes pas en Wi-Fi. Le modèle vocal pèse environ %1$s : le téléchargement consommera une partie de votre forfait.</string>
@@ -606,7 +621,7 @@
     <string name="dictionary_failed_system_stop">Android a interrompu le téléchargement. Appuyez sur Réessayer.</string>
     <string name="dictionary_failed_other">Le téléchargement a échoué. Réessayez.</string>
     <!-- Tip affiché à la place des suggestions après un chiffre saisi par appui long (rangée de chiffres désactivée) -->
-    <string name="digit_swipe_tip">Swipe vers le bas</string>
+    <string name="digit_swipe_tip">Plus rapide : glisser vers le bas sur la touche</string>
     <string name="keyboard_settings_touch_title">Précision de frappe</string>
     <string name="keyboard_settings_touch_switch">Zones de frappe adaptatives</string>
     <string name="keyboard_settings_touch_description">Les lettres les plus probables deviennent un peu plus faciles à toucher. Calculé sur l\'appareil, rien n\'est conservé.</string>
@@ -620,7 +635,7 @@
     <string name="theme_choice_light">Clair</string>
     <string name="theme_choice_dark">Sombre</string>
     <string name="theme_choice_system_description">Système, automatique</string>
-    <string name="theme_choice_dynamic">Couleur dynamique</string>
+    <string name="theme_choice_dynamic">Dynamique</string>
     <string name="theme_section_color">Couleur</string>
     <string name="theme_section_backdrop">Fond du clavier</string>
     <string name="theme_backdrop_animated">Animer le fond pendant la frappe</string>
@@ -637,7 +652,7 @@
     <string name="theme_font_description">Touches, suggestions et barre du haut. Les écrans de l\'application gardent leur police.</string>
     <string name="theme_font_sample">Bonjour ! On se voit à 19 h ?</string>
     <string name="keyboard_font_system">Police du téléphone</string>
-    <string name="licenses_usage_keyboard_font">Police du clavier, au choix dans la page Thème (pass premium).</string>
+    <string name="licenses_usage_keyboard_font">Police du clavier, au choix dans la page Thème (pack premium).</string>
     <string name="accent_violet">Violet Taipo</string>
     <string name="accent_indigo">Indigo</string>
     <string name="accent_blue">Bleu vif</string>
@@ -657,6 +672,13 @@
     <string name="key_shape_mechanical">Mécanique</string>
     <string name="key_shape_outline">Contour</string>
     <string name="key_shape_bare">Sans fond</string>
+    <!-- Section « Animations » de la page Apparence (MotionStyle) -->
+    <string name="theme_section_motion">Animations</string>
+    <string name="theme_motion_caption">Bulles des touches, boutons de la barre, barres du mode chat et icônes animées.</string>
+    <string name="motion_style_spring">Ressort</string>
+    <string name="motion_style_snappy">Vif</string>
+    <string name="motion_style_jelly">Gelée</string>
+    <string name="home_row_languages_subtitle">Langues et dispositions du clavier</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Apparence</string>
     <string name="languages_title">Langues</string>
@@ -670,11 +692,14 @@
     <string name="language_detail_footer">La disposition choisie ici s\'applique quand %1$s est la langue active. Le bouton Retirer n\'apparaît que s\'il reste une autre langue.</string>
     <string name="language_layout_note_azerty">France, Belgique</string>
     <string name="language_layout_note_qwerty">International</string>
-    <string name="language_layout_note_qwertz">Allemagne, Suisse, Autriche</string>
+    <string name="language_layout_note_qwertz">Allemagne, Autriche, Suisse, Tchéquie, Hongrie</string>
     <string name="language_layout_note_qwerty_n">Habituelle en espagnol</string>
     <string name="language_layout_note_colemak">Ergonomique</string>
-    <!-- Pass premium -->
-    <string name="premium_title">Pass premium</string>
+    <string name="language_layout_note_qwerty_sv">Suède, Finlande</string>
+    <string name="language_layout_note_qwerty_da">Danemark</string>
+    <string name="language_layout_note_qwerty_no">Norvège</string>
+    <!-- Pack premium -->
+    <string name="premium_title">Pack premium</string>
     <string name="premium_price_fallback">2,99 €</string>
     <string name="premium_tagline">Une fois, à vie. Tout reste sur votre téléphone.</string>
     <string name="premium_colors_title">Neuf couleurs pour le clavier</string>
@@ -684,35 +709,39 @@
     <string name="premium_prompts_example">« Corrige les fautes sans changer mon style ni mes tournures. »</string>
     <string name="premium_clipboard_title">Presse-papiers étendu</string>
     <string name="premium_clipboard_text">Copies gardées 7 jours au lieu de 12 h. Jusqu\'à 50 éléments épinglés au lieu de 5.</string>
-    <string name="premium_free_reminder">La frappe, les langues, l\'IA et la sauvegarde restent gratuites, avec ou sans pass.</string>
-    <string name="premium_buy">Acheter le pass</string>
-    <string name="premium_buy_with_price">Acheter le pass · %1$s</string>
+    <string name="premium_free_reminder">La frappe, les langues, l\'IA et la sauvegarde restent gratuites, avec ou sans pack.</string>
+    <string name="premium_buy">Acheter le pack</string>
+    <string name="premium_buy_with_price">Acheter le pack · %1$s</string>
     <string name="premium_restore">Restaurer mon achat</string>
-    <string name="premium_active_title">Pass actif</string>
+    <string name="premium_active_title">Pack actif</string>
     <string name="premium_active_thanks">Merci ! Les couleurs, vos consignes pour l\'IA et le presse-papiers étendu sont débloqués.</string>
-    <string name="premium_status_pending">Paiement en attente : le pass s\'activera dès que Google Play l\'aura confirmé.</string>
-    <string name="premium_status_unavailable">Google Play n\'est pas disponible sur cet appareil, ou le pass n\'a pas pu être chargé. Vérifiez votre connexion puis réessayez.</string>
+    <string name="premium_status_pending">Paiement en attente : le pack s\'activera dès que Google Play l\'aura confirmé.</string>
+    <string name="premium_status_unavailable">Google Play n\'est pas disponible sur cet appareil, ou le pack n\'a pas pu être chargé. Vérifiez votre connexion puis réessayez.</string>
     <string name="premium_status_error">L\'achat n\'a pas abouti. Aucun montant n\'a été débité ; vous pouvez réessayer.</string>
     <string name="premium_status_restoring">Recherche de votre achat…</string>
-    <string name="premium_status_nothing_to_restore">Aucun achat du pass trouvé sur ce compte Google.</string>
-    <string name="premium_unlock">Débloquer avec le pass premium</string>
-    <string name="premium_locked_item">%1$s, réservé au pass premium</string>
-    <string name="home_premium_card_title">Pass premium</string>
+    <string name="premium_status_nothing_to_restore">Aucun achat du pack trouvé sur ce compte Google.</string>
+    <string name="premium_unlock">Débloquer avec le pack premium</string>
+    <string name="premium_locked_item">%1$s, réservé au pack premium</string>
+    <string name="home_analytics_consent_title">Aider à améliorer Taipo ?</string>
+    <string name="home_analytics_consent_text">Taipo peut envoyer une mesure d\'usage anonyme à Aptabase, un service européen : quelles fonctions servent et si elles marchent, jamais votre texte, ce que vous copiez ou dictez, ni aucun identifiant. Vous pouvez changer d\'avis à tout moment dans la section « Mes données ».</string>
+    <string name="home_analytics_consent_refuse">Non merci</string>
+    <string name="home_analytics_consent_accept">Partager</string>
+    <string name="home_premium_card_title">Pack premium</string>
     <string name="home_premium_card_text">Neuf couleurs pour le clavier, vos propres consignes pour l\'IA et un presse-papiers qui garde vos copies 7 jours.</string>
     <string name="home_premium_card_button">Découvrir</string>
     <string name="home_premium_card_close">Masquer</string>
     <string name="home_row_premium_subtitle_offer">Couleurs, consignes de l\'IA, presse-papiers étendu</string>
     <string name="home_row_premium_subtitle_active">Actif, merci !</string>
     <string name="home_section_debug">Debug</string>
-    <string name="home_debug_premium">Pass premium : %1$s</string>
+    <string name="home_debug_premium">Pack premium : %1$s</string>
     <string name="home_debug_premium_none">état Google Play (%1$s)</string>
     <string name="home_debug_premium_active">forcé actif</string>
     <string name="home_debug_premium_inactive">forcé inactif</string>
     <string name="home_debug_premium_bought">acheté</string>
     <string name="home_debug_premium_not_bought">non acheté</string>
     <string name="home_debug_premium_hint">Touchez pour passer à l\'état suivant. Bouton présent dans les builds debug seulement.</string>
-    <string name="clipboard_pin_full_free">Limite atteinte : 5 éléments épinglés en version gratuite. Le pass premium en permet 50.</string>
-    <string name="clipboard_pin_full_action">Voir le pass</string>
+    <string name="clipboard_pin_full_free">Limite atteinte : 5 éléments épinglés en version gratuite. Le pack premium en permet 50.</string>
+    <string name="clipboard_pin_full_action">Voir le pack</string>
     <!-- Installation, étapes 3 et 4 -->
     <string name="onboarding_step3_title_done">Essai réussi</string>
     <string name="onboarding_step4_title">Activer l\'IA</string>

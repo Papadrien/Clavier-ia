@@ -1,13 +1,12 @@
 package fr.junade.taipo
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.format.Formatter
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
-import android.app.AlertDialog
 import android.widget.LinearLayout
-import android.widget.Toast
 import fr.junade.taipo.ai.VoiceEngine
 import fr.junade.taipo.model.VoiceModelFile
 import fr.junade.taipo.model.VoiceModelFileResolver
@@ -87,7 +86,7 @@ class VoiceModelDownloadActivity : ModelScreenActivity() {
         if (present) {
             views.badge.setText(R.string.model_download_badge_installed)
             views.badge.setBackgroundResource(R.drawable.bg_status_badge_ready)
-            views.badge.setTextColor(getColor(R.color.text_primary))
+            views.badge.setTextColor(getColor(R.color.text_on_accent)) // blanc sur le violet, aussi en thème clair
         }
 
         views.progress.visibility = View.GONE
@@ -227,7 +226,7 @@ class VoiceModelDownloadActivity : ModelScreenActivity() {
                 } else {
                     getString(R.string.model_delete_done, Formatter.formatFileSize(appContext, freed))
                 }
-                Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+                showScreenMessage(text)
             }
         }, "taipo-voice-model-delete").start()
     }
