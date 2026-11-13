@@ -74,9 +74,12 @@ object ModelFileFetcher {
         onProgress: (Long) -> Unit = {},
         onVerifying: () -> Unit = {},
         beforeCommit: () -> Unit = {},
+        allowResume: Boolean = true,
     ): Outcome {
         val parsed = URL(url)
         if (parsed.protocol != "https") return Outcome.Failed(DownloadFailure.SERVER)
+        // Sans reprise (petits fichiers sans empreinte) : un partiel laissé par une tentative précédente n'est jamais recollé.
+        if (!allowResume) PartialDownload.discard(destination)
 
         val offset = PartialDownload.usableOffset(destination, System.currentTimeMillis())
         val savedMarker = if (offset > 0) PartialDownload.readMarker(destination) else null
@@ -194,13 +197,14 @@ object ModelFileFetcher {
         onProgress: (Long) -> Unit = {},
         onVerifying: () -> Unit = {},
         beforeCommit: () -> Unit = {},
+        allowResume: Boolean = true,
     ): Outcome {
         var lastOffset = PartialDownload.currentOffset(destination)
         var failuresWithoutProgress = 0
         while (true) {
             val outcome = fetch(
                 context, url, destination, expectedSha256, acceptContentLength, allowMobileData, isActive,
-                keepPartialOnStop, onTotal, onProgress, onVerifying, beforeCommit,
+                keepPartialOnStop, onTotal, onProgress, onVerifying, beforeCommit, allowResume,
             )
             if (outcome !is Outcome.Failed || !outcome.retryable || !isActive()) return outcome
 
