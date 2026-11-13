@@ -5,7 +5,7 @@
   (JNI sherpa-onnx, LiteRT-LM, SQLCipher conservés). Règles larges par prudence, non encore validées sur appareil.
 - **versionCode** : variable `VERSION_CODE`, sinon `GITHUB_RUN_NUMBER` (automatique sur GitHub Actions), sinon 1.
 - **Signature** : seulement si `key.properties` (racine du dépôt) ou `TAIPO_KEYSTORE_PATH` est défini ; sinon l'APK release n'est pas signé.
-- **Gradle** : `org.gradle.caching=true`. Versions de Room (unique) et de `litertlm-android` (figée à 0.17.1) dans `gradle/libs.versions.toml`.
+- **Gradle** : `org.gradle.caching=true`. Versions de Room (unique) et de `litertlm-android` (figée) dans `gradle/libs.versions.toml`.
 
 ## Secrets GitHub pour signer (décision D6 : Play App Signing recommandé, clé d'**upload**)
 Les mêmes que AnimalTimer : `ANDROID_KEYSTORE_BASE64` (keystore encodé en base64) et `ANDROID_KEY_PROPERTIES`

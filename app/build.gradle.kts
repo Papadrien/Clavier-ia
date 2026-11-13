@@ -165,7 +165,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
 
     // Runtime d'inférence locale (décision du 23/09/2026 : docs/decisions-techniques.md).
-    // Version figée à 0.17.1 dans gradle/libs.versions.toml (lot 1.2 de la revue) : plus de
+    // Version figée dans gradle/libs.versions.toml (clé litertlm ; lot 1.2 de la revue) : plus de
     // "latest.release", pour des builds CI reproductibles. Pour monter de version, modifier
     // uniquement cette ligne du catalogue, puis rejouer correction, prompt et dictée sur appareil.
     implementation(libs.litertlm.android)
