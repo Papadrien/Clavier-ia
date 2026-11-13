@@ -102,6 +102,9 @@ class VoiceController(
 
     private val voiceEngineHolder = lazy { VoiceEngine(context.applicationContext) }
     private val voiceEngine by voiceEngineHolder
+
+    /** Moteur de dictée, partagé avec la transcription IA de Gemma 3 (un seul modèle vocal en mémoire). */
+    fun engine(): VoiceEngine = voiceEngine
     private val voiceModelPreferences by lazy { VoiceModelPreferences(context.applicationContext) }
     private var voiceRecorder: VoiceRecorder? = null
 
@@ -319,7 +322,7 @@ class VoiceController(
                     if (t is MicUnavailableException) {
                         context.getString(R.string.voice_mic_unavailable)
                     } else {
-                        context.getString(R.string.voice_error, t.message ?: t.javaClass.simpleName)
+                        context.getString(R.string.voice_error)
                     },
                 )
             }
@@ -370,7 +373,7 @@ class VoiceController(
                 throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de la transcription vocale", t)
-                host.showMessage(context.getString(R.string.voice_error, t.message ?: t.javaClass.simpleName))
+                host.showMessage(context.getString(R.string.voice_error))
             } finally {
                 isTranscribing = false
                 host.setVoiceBarState(VoiceBarState.IDLE)

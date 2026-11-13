@@ -221,7 +221,7 @@ class KeyboardLayoutTest {
             val layout = lettersWithNumberRow(language)
             val ids = layout.rows.flatten().map { it.id }
             assertEquals(ids.size, ids.distinct().size, "Ids en double dans ${layout.id} ($language)")
-            assertTrue(layout.rows.all { it.size <= 10 })
+            assertTrue(layout.rows.all { it.size <= LetterArrangement.defaultFor(language).keysPerRow })
             assertTrue(layout.rows.flatten().all { it.weight > 0f })
         }
     }
@@ -246,8 +246,10 @@ class KeyboardLayoutTest {
     fun `sans rangee de chiffres les touches du haut saisissent 1 a 0 par appui long`() {
         languages.forEach { language ->
             val topRow = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow = false).rows.first()
-            assertEquals(10, topRow.size)
-            assertEquals("1234567890".toList(), topRow.map { it.longPressChar })
+            assertEquals(LetterArrangement.defaultFor(language).keysPerRow, topRow.size)
+            assertEquals("1234567890".toList(), topRow.take(10).map { it.longPressChar })
+            // QWERTY nordiques : la 11e touche (å) n'a pas de chiffre, comme sur Gboard.
+            assertTrue(topRow.drop(10).all { it.longPressChar == null }, "$language")
         }
     }
 
@@ -412,9 +414,9 @@ class KeyboardLayoutTest {
     fun `sans rangee de chiffres toutes les touches du haut ont une bulle`() {
         languages.forEach { language ->
             val topRow = Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow = false).rows.first()
-            topRow.forEach { key ->
-                assertTrue(key.popup.isNotEmpty(), "${language} ${key.id} : bulle attendue")
-                assertEquals(key.longPressChar, popupItems(key).first(), "${language} ${key.id}")
+            topRow.take(10).forEach { key ->
+                assertTrue(key.popup.isNotEmpty(), "$language ${key.id} : bulle attendue")
+                assertEquals(key.longPressChar, popupItems(key).first(), "$language ${key.id}")
             }
         }
     }

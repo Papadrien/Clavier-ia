@@ -60,7 +60,18 @@ object DictionaryFiles {
 
     /** Langues dont les bigrammes existent et dont l'autocorrection s'en sert (`CorrectionConfidence.contextWeight`). */
     val BIGRAM_LANGUAGES: Set<KeyboardLanguage> =
-        setOf(KeyboardLanguage.FR, KeyboardLanguage.EN, KeyboardLanguage.IT, KeyboardLanguage.PT, KeyboardLanguage.NL)
+        setOf(KeyboardLanguage.FR, KeyboardLanguage.EN, KeyboardLanguage.IT, KeyboardLanguage.PT, KeyboardLanguage.NL) +
+            // 11/11/2026 : bigrammes Tatoeba (tools/build_ngrams.py).
+            setOf(
+                KeyboardLanguage.PL,
+                KeyboardLanguage.RO,
+                KeyboardLanguage.CS,
+                KeyboardLanguage.HU,
+                KeyboardLanguage.SV,
+                KeyboardLanguage.DA,
+                KeyboardLanguage.NB,
+                KeyboardLanguage.FI,
+            )
 
     /** Vrai si [language] a des bigrammes et qu'ils ne sont pas encore là. */
     fun bigramsMissing(filesDir: File, language: KeyboardLanguage): Boolean =
@@ -89,6 +100,15 @@ object DictionaryFiles {
             KeyboardLanguage.IT -> 2_910_000L
             KeyboardLanguage.PT -> 2_960_000L
             KeyboardLanguage.NL -> 3_170_000L
+            // 11/11/2026.
+            KeyboardLanguage.PL -> 5_520_000L
+            KeyboardLanguage.RO -> 3_440_000L
+            KeyboardLanguage.CS -> 6_150_000L
+            KeyboardLanguage.HU -> 9_390_000L
+            KeyboardLanguage.SV -> 2_350_000L
+            KeyboardLanguage.DA -> 1_830_000L
+            KeyboardLanguage.NB -> 1_460_000L
+            KeyboardLanguage.FI -> 7_090_000L
         }
     }
 }

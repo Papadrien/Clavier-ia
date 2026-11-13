@@ -44,8 +44,11 @@ class LetterArrangementLayoutTest {
             assertEquals(5, numbered.rows.size, "$language $arrangement")
             val ids = plain.rows.flatten().map { it.id }
             assertEquals(ids.size, ids.distinct().size, "ids en double : $language $arrangement")
-            assertEquals(10f, plain.referenceUnits, 0.001f, "largeur de référence : $language $arrangement")
-            assertTrue(plain.rows.all { rowUnits(it) <= 10.001f }, "rangée trop large : $language $arrangement")
+            val width = arrangement.keysPerRow.toFloat() // 10 unités, 11 pour les QWERTY nordiques
+            assertEquals(width, plain.referenceUnits, 0.001f, "largeur de référence : $language $arrangement")
+            assertTrue(plain.rows.all { rowUnits(it) <= width + 0.001f }, "rangée trop large : $language $arrangement")
+            // La rangée du bas (espace…) occupe toute la largeur, même à 11 unités.
+            assertEquals(width, rowUnits(plain.rows.last()), 0.001f, "rangée du bas : $language $arrangement")
             assertTrue(plain.rows.flatten().all { it.weight > 0f })
         }
     }
@@ -86,9 +89,32 @@ class LetterArrangementLayoutTest {
     fun `sans rangee de chiffres les dix touches du haut saisissent 1 a 0 par appui long`() {
         combinations.forEach { (language, arrangement) ->
             val top = letters(language, arrangement).rows.first()
-            assertEquals(10, top.size, "$language $arrangement")
-            assertEquals("1234567890".toList(), top.map { it.longPressChar }, "$language $arrangement")
+            assertEquals(arrangement.keysPerRow, top.size, "$language $arrangement")
+            assertEquals("1234567890".toList(), top.take(10).map { it.longPressChar }, "$language $arrangement")
+            assertTrue(top.drop(10).all { it.longPressChar == null }, "11e touche sans chiffre : $language $arrangement")
         }
+    }
+
+    @Test
+    fun `les dispositions nordiques ont leurs lettres sur des touches`() {
+        fun rows(language: KeyboardLanguage) = Keyboards.layoutOf(LayoutId.LETTERS, language).rows.take(3).map(::chars)
+        assertEquals(listOf("qwertyuiopå", "asdfghjklöä", "zxcvbnm"), rows(KeyboardLanguage.SV))
+        assertEquals(listOf("qwertyuiopå", "asdfghjklöä", "zxcvbnm"), rows(KeyboardLanguage.FI))
+        assertEquals(listOf("qwertyuiopå", "asdfghjklæø", "zxcvbnm"), rows(KeyboardLanguage.DA))
+        assertEquals(listOf("qwertyuiopå", "asdfghjkløæ", "zxcvbnm"), rows(KeyboardLanguage.NB))
+        assertEquals("qwertzuiop", rows(KeyboardLanguage.CS).first())
+        assertEquals("qwertzuiop", rows(KeyboardLanguage.HU).first())
+    }
+
+    @Test
+    fun `les lettres propres aux nouvelles langues sont en appui long`() {
+        fun popupOf(language: KeyboardLanguage, letter: Char) =
+            Keyboards.layoutOf(LayoutId.LETTERS, language).rows.flatten().first { it.id == "letter_$letter" }.popup.flatten()
+        assertTrue('ł' in popupOf(KeyboardLanguage.PL, 'l'))
+        assertTrue('ż' in popupOf(KeyboardLanguage.PL, 'z') && 'ź' in popupOf(KeyboardLanguage.PL, 'z'))
+        assertTrue('ș' in popupOf(KeyboardLanguage.RO, 's') && 'ț' in popupOf(KeyboardLanguage.RO, 't'))
+        assertTrue('ř' in popupOf(KeyboardLanguage.CS, 'r') && 'ů' in popupOf(KeyboardLanguage.CS, 'u'))
+        assertTrue('ő' in popupOf(KeyboardLanguage.HU, 'o') && 'ű' in popupOf(KeyboardLanguage.HU, 'u'))
     }
 
     @Test

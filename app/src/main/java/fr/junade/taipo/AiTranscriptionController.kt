@@ -15,6 +15,8 @@ import fr.junade.taipo.ai.WavEncoder
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.model.AiModel
+import fr.junade.taipo.model.ModelPreferences
+import fr.junade.taipo.model.VoiceModelPreferences
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +32,10 @@ import kotlinx.coroutines.withContext
  * L'audio n'existe que dans la mémoire du processus, le temps de l'enregistrement et du traitement : aucun fichier,
  * donc rien à supprimer après une annulation, une erreur ou un processus tué. Ni l'audio ni le texte ne sont écrits dans
  * les journaux. Toutes les méthodes sont à appeler depuis le thread principal.
+ *
+ * Gemma 3 (Fourmi, Colibri), sans entrée audio (13/11/2026) : même bouton et même déroulé, mais l'enregistrement passe par
+ * la dictée (modèle vocal) puis le texte est reformulé par le modèle ([AiTranscriptionEngine.dictate] puis
+ * [AiTranscriptionEngine.rewrite]) ; jusqu'à 10 minutes d'enregistrement. Sans modèle vocal, l'écran « Modèle vocal » s'ouvre.
  */
 class AiTranscriptionController(
     private val context: Context,
@@ -66,6 +72,7 @@ class AiTranscriptionController(
     }
 
     private val recorder = AiTranscriptionRecorder(context, scope)
+    private val voiceModelPreferences by lazy { VoiceModelPreferences(context.applicationContext) }
     private var job: Job? = null
     private var state = AiTranscriptionBarState.IDLE
 
@@ -109,14 +116,25 @@ class AiTranscriptionController(
         job?.cancel()
     }
 
+    /**
+     * Le modèle traite l'audio lui-même (Gemma 4, ou modèle personnalisé réglé ainsi sur sa page) ; sinon dictée avec le modèle vocal
+     * puis reformulation du texte.
+     */
+    private fun nativeAudio(model: AiModel): Boolean = ModelPreferences(context).acceptsAudio(model)
+
     private fun start() {
         if (host.voiceRecording() || host.aiBusy()) {
             host.showMessage(context.getString(R.string.ai_transcription_busy))
             return
         }
         val model = host.activeModel()
-        if (model == null || !model.hasAudioInput) {
+        if (model == null) {
             host.showMessage(context.getString(R.string.ai_transcription_no_audio_model))
+            return
+        }
+        if (!nativeAudio(model) && !voiceModelPreferences.isComplete()) {
+            // Gemma 3 passe par la dictée : sans modèle vocal, on ouvre son écran, comme le bouton Vocal.
+            ModelScreenRedirect.openVoice(context)
             return
         }
         if (context.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -125,7 +143,7 @@ class AiTranscriptionController(
             return
         }
         try {
-            recorder.start()
+            recorder.start(if (nativeAudio(model)) AiTranscriptionRecorder.MAX_SECONDS else AiTranscriptionRecorder.DICTATION_MAX_SECONDS)
         } catch (e: MicUnavailableException) {
             AppLog.w(TAG, "micro indisponible", e)
             host.showMessage(context.getString(R.string.ai_transcription_mic_unavailable))
@@ -162,13 +180,19 @@ class AiTranscriptionController(
                     host.showMessage(context.getString(R.string.ai_transcription_too_short))
                     return@launch
                 }
-                if (model == null || !model.hasAudioInput) {
+                if (model == null) {
                     host.showMessage(context.getString(R.string.ai_transcription_no_audio_model))
                     return@launch
                 }
-                val seconds = samples.size.toDouble() / AiTranscriptionRecorder.SAMPLE_RATE
-                val wav = withContext(Dispatchers.Default) { WavEncoder.pcm16Mono(samples, AiTranscriptionRecorder.SAMPLE_RATE) }
-                val text = engine.transcribe(model, wav, seconds, isCancelled = { cancelled }, onLoading = { })
+                val text = if (nativeAudio(model)) {
+                    val seconds = samples.size.toDouble() / AiTranscriptionRecorder.SAMPLE_RATE
+                    val wav = withContext(Dispatchers.Default) { WavEncoder.pcm16Mono(samples, AiTranscriptionRecorder.SAMPLE_RATE) }
+                    engine.transcribe(model, wav, seconds, isCancelled = { cancelled }, onLoading = { })
+                } else {
+                    // Gemma 3 : dictée, puis reformulation du texte brut (le texte brut est gardé si la réponse est écartée).
+                    val raw = engine.dictate(samples, isCancelled = { cancelled })
+                    if (raw.isEmpty() || cancelled) raw else engine.rewrite(model, raw, isCancelled = { cancelled }, onLoading = { })
+                }
                 if (cancelled) return@launch
                 when {
                     text.isEmpty() -> host.showMessage(context.getString(R.string.ai_transcription_no_speech))

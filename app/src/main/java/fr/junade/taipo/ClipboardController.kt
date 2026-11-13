@@ -100,6 +100,9 @@ class ClipboardController(
 
         /** Majuscule automatique, état des touches et barre : à resynchroniser après un collage ou la fermeture du panneau. */
         fun resyncKeyboard()
+
+        /** Le champ affiché est un champ de mot de passe (audit SEC-01). */
+        fun sensitiveFieldActive(): Boolean
     }
 
     private var panel: ClipboardPanelView? = null
@@ -210,6 +213,7 @@ class ClipboardController(
         inputActive = false
         mainHandler.removeCallbacks(pasteExpiryRunnable)
         stopScreenshotWatch()
+        scope.launch(Dispatchers.IO) { screenshotFinder.purgeShared() } // audit UX-04 : copies de plus d'une heure
     }
 
     /** Le même bouton de la barre ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme. */
@@ -332,7 +336,7 @@ class ClipboardController(
                 throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de l'épinglage", t)
-                host.showMessage(context.getString(R.string.clipboard_pin_error, t.message ?: t.javaClass.simpleName))
+                host.showMessage(context.getString(R.string.clipboard_pin_error))
             }
         }
     }
@@ -382,7 +386,7 @@ class ClipboardController(
         } catch (t: Throwable) {
             AppLog.e(TAG, "Échec de l'ouverture de l'écran de modification", t)
             ClipboardEditBridge.lastClipText = null
-            host.showMessage(context.getString(R.string.clipboard_edit_error, t.message ?: t.javaClass.simpleName))
+            host.showMessage(context.getString(R.string.clipboard_edit_error))
         }
     }
 
@@ -400,7 +404,7 @@ class ClipboardController(
             context.startActivity(intent)
         } catch (t: Throwable) {
             AppLog.e(TAG, "Échec de l'ouverture du pop-up d'étiquette", t)
-            host.showMessage(context.getString(R.string.clipboard_label_error, t.message ?: t.javaClass.simpleName))
+            host.showMessage(context.getString(R.string.clipboard_label_error))
         }
     }
 
@@ -414,7 +418,7 @@ class ClipboardController(
                 throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de la suppression d'une étiquette", t)
-                host.showMessage(context.getString(R.string.clipboard_label_delete_error, t.message ?: t.javaClass.simpleName))
+                host.showMessage(context.getString(R.string.clipboard_label_delete_error))
             }
         }
     }
@@ -462,7 +466,7 @@ class ClipboardController(
                 throw e // annulation de la tâche (clavier fermé…) : à laisser remonter, ce n'est pas une erreur
             } catch (t: Throwable) {
                 AppLog.e(TAG, "Échec de la suppression d'un élément du presse-papiers", t)
-                host.showMessage(context.getString(R.string.clipboard_delete_error, t.message ?: t.javaClass.simpleName))
+                host.showMessage(context.getString(R.string.clipboard_delete_error))
             }
         }
     }
@@ -493,6 +497,10 @@ class ClipboardController(
      */
     private fun recordInHistory(snapshot: ClipboardReader.Snapshot) {
         if (ClipboardItems.historyRefusal(snapshot.text)) return
+        // Audit SEC-01 : historique désactivé dans les réglages, ou copie faite depuis un champ de mot de passe (avant
+        // Android 13, le drapeau « sensible » n'existe pas : c'est le seul indice qu'on a).
+        if (!keyboardPreferences.isClipboardHistoryEnabled) return
+        if (inputActive && host.sensitiveFieldActive()) return
         scope.launch {
             try {
                 historyRepository.record(snapshot.text, snapshot.copiedAtMillis, snapshot.sensitive)
@@ -509,8 +517,11 @@ class ClipboardController(
      * ni dans les champs qui ne sont pas du texte (téléphone, nombre, sauf code PIN : voir SuggestionPolicy.allowsPasteSuggestion).
      */
     private fun pasteSuggestionAllowed(): Boolean =
-        pasteAllowedInField && !host.isRecording() && !host.isCorrectionInProgress() &&
-            !host.isEmojiPanelVisible() && !isPanelVisible
+        pasteAllowedInField &&
+            !host.isRecording() &&
+            !host.isCorrectionInProgress() &&
+            !host.isEmojiPanelVisible() &&
+            !isPanelVisible
 
     /**
      * Met la puce de la barre d'accord avec l'état de la copie (ou de la capture d'écran, si elle est plus récente), et
@@ -612,19 +623,26 @@ class ClipboardController(
      * `commitContent` (autorisation de lecture temporaire). Un refus du champ ou un échec de copie est expliqué par un message.
      */
     private fun pasteScreenshot(shot: ScreenshotSuggestionState.Shot) {
+        // Collage déjà en cours (double appui) : on le laisse finir. L'annuler ne stoppait pas la copie, qui pouvait encore
+        // écrire pendant qu'un second collage préparait la sienne.
+        if (screenshotPasteJob?.isActive == true) return
         host.haptic()
         host.playKeySound(KeySound.KEY) // même tic que le collage d'une carte du Smart Clipboard
         host.clearHighlight()
-        screenshotPasteJob?.cancel()
         screenshotPasteJob = scope.launch {
-            val uri = withContext(Dispatchers.IO) { screenshotFinder.copyForSharing(shot) }
+            val shared = withContext(Dispatchers.IO) { screenshotFinder.copyForSharing(shot) }
             val ic = host.inputConnection()
             val info = host.editorInfo()
-            if (uri == null || ic == null || info == null) {
+            if (shared == null || ic == null || info == null) {
                 host.showMessage(context.getString(R.string.clipboard_screenshot_error))
                 return@launch
             }
-            val content = InputContentInfoCompat(uri, ClipDescription(SCREENSHOT_LABEL, arrayOf(shot.mimeType)), null)
+            if (!ImageAcceptance.accepts(fieldImageMimeTypes, shared.mimeType)) {
+                host.showMessage(context.getString(R.string.clipboard_screenshot_refused))
+                return@launch
+            }
+            val description = ClipDescription(SCREENSHOT_LABEL, arrayOf(shared.mimeType))
+            val content = InputContentInfoCompat(shared.uri, description, null)
             val accepted = InputConnectionCompat.commitContent(ic, info, content, InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION, null)
             if (!accepted) {
                 host.showMessage(context.getString(R.string.clipboard_screenshot_refused))

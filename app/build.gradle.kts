@@ -18,11 +18,13 @@ android {
         // Lot 2.1 : versionCode croissant en CI (VERSION_CODE, sinon le numéro d'exécution GitHub
         // Actions) ; 1 en local. Play refuse un versionCode déjà publié.
         versionCode = (System.getenv("VERSION_CODE") ?: System.getenv("GITHUB_RUN_NUMBER"))?.toIntOrNull() ?: 1
-        versionName = "2.0.0"
+        versionName = "3.0.0"
 
         // Mesure d'usage anonyme (SDK Aptabase, serveur UE). Une clé d'application Aptabase n'est pas un secret : elle ne permet
         // que d'envoyer des événements, et figure de toute façon dans l'APK. Voir docs/analytics.md.
         buildConfigField("String", "APTABASE_APP_KEY", "\"A-EU-8162668661\"")
+        // Version de LiteRT-LM intégrée (clé litertlm du catalogue) : affichée sur la page « Modèle personnalisé ».
+        buildConfigField("String", "LITERT_LM_VERSION", "\"${libs.versions.litertlm.get()}\"")
 
         // Lot 4.1 (B7, décision D7) : les bibliothèques natives de la dictée (sherpa-onnx) n'existent que pour
         // arm64-v8a. La release (et la variante benchmark) ne contient donc que cet ABI ; la variante debug
@@ -114,6 +116,10 @@ android {
         buildConfig = true
     }
 
+    // Robolectric lit les ressources et les assets fusionnés de l'app (textes, dimensions, listes de démarrage).
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 kotlin {
@@ -161,7 +167,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
 
     // Runtime d'inférence locale (décision du 23/09/2026 : docs/decisions-techniques.md).
-    // Version figée à 0.17.1 dans gradle/libs.versions.toml (lot 1.2 de la revue) : plus de
+    // Version figée dans gradle/libs.versions.toml (clé litertlm ; lot 1.2 de la revue) : plus de
     // "latest.release", pour des builds CI reproductibles. Pour monter de version, modifier
     // uniquement cette ligne du catalogue, puis rejouer correction, prompt et dictée sur appareil.
     implementation(libs.litertlm.android)
@@ -205,8 +211,12 @@ dependencies {
     // junit-jupiter embarque junit-jupiter-params (@ParameterizedTest, lot 3.3).
     testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
     // org.json réel pour les tests JVM du format de sauvegarde (story 10.3) : celui de android.jar y est « non simulé ».
-    testImplementation("org.json:json:20240303")
+    testImplementation("org.json:json:20260814")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
+    // Audit TEST-01 : Robolectric (framework Android sur la JVM) ; ses tests JUnit 4 passent par le moteur Vintage.
+    testImplementation(libs.robolectric)
+    testImplementation("junit:junit:4.13.2")
+    testRuntimeOnly(libs.junit.vintage.engine)
 
     // Tests instrumentés (src/androidTest, lot 3.3) : `./gradlew connectedDebugAndroidTest` sur appareil.
     // JUnit 5 n'est pas pris en charge côté appareil : ces tests sont en JUnit 4. Versions à confirmer
@@ -218,4 +228,9 @@ dependencies {
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+    // Robolectric télécharge l'image d'Android depuis Maven Central. Propriété facultative (par exemple dans
+    // ~/.gradle/gradle.properties) pour un autre dépôt, si Maven Central est inaccessible ou limité.
+    providers.gradleProperty("taipo.robolectricRepo").orNull?.let { systemProperty("robolectric.dependency.repo.url", it) }
+    // Robolectric touche aux descripteurs de fichiers internes du JDK (mémoire partagée de l'application simulée).
+    jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED", "--add-opens=java.base/java.io=ALL-UNNAMED")
 }

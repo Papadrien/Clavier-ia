@@ -136,6 +136,7 @@ object ModelInstaller {
                     total += read
                     onProgress(total)
                 }
+                output.fd.sync() // audit BUG-03 : données sur le disque avant le contrôle et le renommage
             }
         } catch (e: IOException) {
             // Écriture ou fermeture du fichier (disque plein…) : rien à reprendre.

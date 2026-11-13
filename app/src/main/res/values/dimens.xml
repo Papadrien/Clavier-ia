@@ -28,6 +28,9 @@
          Valeurs de départ à ajuster sur screenshot. -->
     <dimen name="taipo_key_shadow_height">2dp</dimen>
     <dimen name="taipo_key_shadow_pressed_height">1dp</dimen>
+    <!-- Forme des touches (KeyShape) : trait de « Contour », marge du plateau éclairé de « Mécanique ». -->
+    <dimen name="taipo_key_outline_width">1.5dp</dimen>
+    <dimen name="taipo_key_plateau_inset">3dp</dimen>
 
     <!-- Texte des touches. -->
     <dimen name="taipo_key_text_size">22sp</dimen>
@@ -245,6 +248,8 @@
     <dimen name="taipo_settings_card_corner_radius">10dp</dimen>
     <dimen name="taipo_settings_card_padding">12dp</dimen>
     <dimen name="taipo_settings_divider_thickness">1dp</dimen>
+    <!-- Message dans la page (ScreenMessage) : ombre au-dessus du contenu. -->
+    <dimen name="taipo_screen_message_elevation">6dp</dimen>
 
     <!-- ===== Dialogues et contrôles Android (lot 17) ===== -->
     <!-- Fenêtres de dialogue (pop-up d'information, modification et étiquette du presse-papiers) : rayon des coins
@@ -263,6 +268,26 @@
     <dimen name="taipo_input_text_size">16sp</dimen>
     <!-- Ligne de commutateur ou de bouton radio : hauteur minimale de la zone tactile (lot 18, auparavant 48dp dans chaque ligne). -->
     <dimen name="taipo_settings_row_min_height">48dp</dimen>
+    <!-- Vignettes des fonds du clavier (page Thème). -->
+    <dimen name="taipo_backdrop_preview_height">96dp</dimen>
+    <dimen name="taipo_backdrop_preview_key_radius">3dp</dimen>
+
+    <!-- Clavier flottant : coins et ombre de la carte, marge minimale avec les bords de l'écran, poignée de déplacement. -->
+    <dimen name="taipo_floating_corner_radius">16dp</dimen>
+    <dimen name="taipo_floating_elevation">8dp</dimen>
+    <dimen name="taipo_floating_screen_margin">4dp</dimen>
+    <dimen name="taipo_floating_handle_height">22dp</dimen>
+    <dimen name="taipo_floating_handle_bar_width">40dp</dimen>
+    <dimen name="taipo_floating_handle_bar_height">4dp</dimen>
+    <!-- Glisser la poignée de cette distance sous le bas de l'écran recolle le clavier. -->
+    <dimen name="taipo_floating_dock_overshoot">48dp</dimen>
+    <!-- Zone d'ancrage « Relâcher pour ancrer », au bas de l'écran (au-dessus de la barre de navigation). -->
+    <dimen name="taipo_floating_dock_zone_height">72dp</dimen>
+    <!-- Sélecteur segmenté des paramètres du clavier (v3) : piste, segments et marge intérieure. -->
+    <dimen name="taipo_segmented_group_corner_radius">10dp</dimen>
+    <dimen name="taipo_segmented_group_padding">3dp</dimen>
+    <dimen name="taipo_segment_corner_radius">8dp</dimen>
+    <dimen name="taipo_segment_min_height">42dp</dimen>
 
     <!-- Page « Thème » (lot T5) : hauteur de l'aperçu d'une carte, taille et marge de la coche de sélection, contour d'une carte
          au repos et choisie. -->
@@ -270,6 +295,7 @@
     <dimen name="taipo_theme_check_size">24dp</dimen>
     <dimen name="taipo_theme_check_icon_size">16dp</dimen>
     <dimen name="taipo_theme_check_margin">6dp</dimen>
+    <dimen name="taipo_theme_lock_padding">4dp</dimen>
     <dimen name="taipo_theme_card_stroke">1dp</dimen>
     <dimen name="taipo_theme_card_stroke_selected">2dp</dimen>
     <!-- Section « Couleur » de la page « Thème » : pastille d'une couleur d'accent et anneau de la pastille choisie. -->
@@ -293,4 +319,6 @@
     <dimen name="taipo_spinner_arrow_margin">12dp</dimen>
     <dimen name="taipo_spinner_item_min_height">48dp</dimen>
     <dimen name="taipo_spinner_item_padding_horizontal">16dp</dimen>
+    <!-- Taille minimale du texte d'un segment (taille automatique, voir TaipoSegment). -->
+    <dimen name="taipo_segment_min_text_size">10sp</dimen>
 </resources>

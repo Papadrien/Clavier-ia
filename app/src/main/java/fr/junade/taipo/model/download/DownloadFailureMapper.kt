@@ -18,8 +18,10 @@ object DownloadFailureMapper {
     fun fromException(cause: Throwable?): DownloadFailure = when {
         cause == null -> DownloadFailure.OTHER
         isDiskFull(cause) -> DownloadFailure.NO_SPACE
-        cause is SocketException || cause is SocketTimeoutException ||
-            cause is UnknownHostException || cause is SSLException -> DownloadFailure.NETWORK
+        cause is SocketException ||
+            cause is SocketTimeoutException ||
+            cause is UnknownHostException ||
+            cause is SSLException -> DownloadFailure.NETWORK
         else -> DownloadFailure.OTHER
     }
 

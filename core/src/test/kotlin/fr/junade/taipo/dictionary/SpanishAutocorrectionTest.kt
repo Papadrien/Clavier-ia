@@ -20,8 +20,12 @@ class SpanishAutocorrectionTest {
     )
 
     private fun dictionary(policy: AccentPolicy) = Dictionary.withFrequencies(
-        frequencies, InflectionRules.SPANISH, 183L, KeyProximity.NONE,
-        confidence = CorrectionConfidence.SPANISH, accentPolicy = policy,
+        frequencies,
+        InflectionRules.SPANISH,
+        183L,
+        KeyProximity.NONE,
+        confidence = CorrectionConfidence.SPANISH,
+        accentPolicy = policy,
     )
 
     private val spanish = dictionary(AccentPolicy.SPANISH)

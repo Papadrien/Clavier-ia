@@ -1,0 +1,70 @@
+# Emojiförslag, svenska: en emoji och sedan orden som utlöser den (vanliga böjningsformer skrivs ut).
+# Ordre de priorité = ordre du fichier ; mots comparés sans accent ni majuscule ; pas de règle de pluriel (formes écrites).
+# Liste écrite pour Taipo le 12/11/2026, à faire relire par une personne de langue maternelle.
+😀 glad lycklig leende
+😂 haha hahaha roligt skratt
+😍 älskar vacker fantastisk
+😘 puss pussar kyss
+❤️ kärlek hjärta
+😢 ledsen sorgsen
+😭 gråter tårar
+😡 arg förbannad sur
+😴 sova sover sömnig trött
+👍 ok okej bra toppen perfekt
+👏 bravo grattis
+🙏 tack snälla
+👋 hej hejsan tjena hejdå
+🎉 fest firar
+🎂 födelsedag
+🎁 present presenter
+🎄 jul julgran
+🔥 eld varmt het
+❄️ kallt vinter
+☀️ sol soligt sommar
+🌧️ regn regnar
+🍕 pizza
+🍔 hamburgare burgare
+🍝 pasta spagetti
+🍣 sushi
+🍷 vin
+🍺 öl
+☕ kaffe fika
+🍵 te
+🍰 tårta kaka
+🍫 choklad
+🍎 äpple
+🍓 jordgubbar jordgubbe
+🐱 katt katten katter kattunge
+🐶 hund hunden hundar valp
+🐴 häst
+🐦 fågel fåglar
+🌹 ros rosor
+🌸 blomma blommor
+🚗 bil bilen
+🚲 cykel
+🚌 buss
+🚆 tåg
+✈️ flyg flygplan resa
+🏠 hem hemma hus
+🏖️ strand semester
+⚽ fotboll match
+🎮 spel spela
+🎵 musik låt
+🎬 film bio
+📚 bok böcker
+📱 telefon mobil
+💻 dator
+📷 foto bild kamera
+💡 idé
+💰 pengar
+📞 ring ringer
+💼 jobb jobbet arbete
+✅ klart färdig
+💪 gym stark
+🤔 hmm kanske
+😅 oj förlåt
+🤒 sjuk
+😎 schysst
+🤗 kram kramar
+🤩 grymt fantastiskt
+🏆 vinst vann seger

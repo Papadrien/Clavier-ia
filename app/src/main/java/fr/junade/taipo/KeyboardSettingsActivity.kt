@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
@@ -13,16 +12,19 @@ import android.widget.CompoundButton
 import android.widget.RadioGroup
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.Toast
 import fr.junade.taipo.analytics.Analytics
+import fr.junade.taipo.clipboard.ClipboardProvider
 import fr.junade.taipo.clipboard.ScreenshotFinder
 import fr.junade.taipo.dictionary.CorrectionHabitsProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
- * Écran « Paramètres du clavier ». Contient l'activation de la rangée de
- * chiffres (story 1.5) et le niveau de retour haptique (story 1.11) et la
- * hauteur du clavier (story 1.12), ainsi que l'option « Apprendre de mes habitudes » et l'effacement des
- * habitudes de correction. Les langues (liste, disposition, dictionnaire) ont leur propre écran : [LanguagesActivity].
+ * Écran « Paramètres du clavier » (v3 : réglages rangés en cartes). Dans l'ordre : Langues (ligne vers [LanguagesActivity]),
+ * Disposition des touches (rangée de chiffres, touches du bas), Taille et position (hauteur, marge du bas, mode du clavier :
+ * normal, une main ou flottant, et leurs largeurs),
+ * Sons et vibrations, Saisie intelligente (apprentissage des habitudes, captures d'écran), puis le lien Confidentialité.
+ * En debug seulement : Précision de frappe.
  */
 class KeyboardSettingsActivity : Activity() {
 
@@ -35,7 +37,7 @@ class KeyboardSettingsActivity : Activity() {
     /** Lecteur d'aperçu du curseur de volume (préparé au premier toucher du curseur). */
     private val previewPlayer by lazy { KeySoundPlayer(applicationContext) }
 
-    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
+    // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }
@@ -89,6 +91,7 @@ class KeyboardSettingsActivity : Activity() {
             }
         }
 
+        setUpClipboardHistory(preferences)
         setUpScreenshotSuggestions(preferences)
 
         val radioGroup = findViewById<RadioGroup>(R.id.radio_group_haptic)
@@ -109,6 +112,7 @@ class KeyboardSettingsActivity : Activity() {
             isChecked = preferences.isKeySoundEnabled
             setOnCheckedChangeListener { _, checked ->
                 preferences.isKeySoundEnabled = checked
+                updateVolumeVisibility(preferences)
                 Analytics.setting(this@KeyboardSettingsActivity, "key_sound", checked)
             }
         }
@@ -117,10 +121,12 @@ class KeyboardSettingsActivity : Activity() {
             isChecked = preferences.isBarSoundEnabled
             setOnCheckedChangeListener { _, checked ->
                 preferences.isBarSoundEnabled = checked
+                updateVolumeVisibility(preferences)
                 Analytics.setting(this@KeyboardSettingsActivity, "bar_sound", checked)
             }
         }
         setUpSoundVolume(preferences)
+        updateVolumeVisibility(preferences)
         setUpBottomMargin(preferences)
         setUpOneHanded(preferences)
 
@@ -203,6 +209,12 @@ class KeyboardSettingsActivity : Activity() {
         })
     }
 
+    /** Le curseur du volume n'a d'objet que si le son des touches ou celui de la barre est activé : masqué sinon. */
+    private fun updateVolumeVisibility(preferences: KeyboardPreferences) {
+        val anySound = preferences.isKeySoundEnabled || preferences.isBarSoundEnabled
+        findViewById<View>(R.id.group_sound_volume).visibility = if (anySound) View.VISIBLE else View.GONE
+    }
+
     /** Curseur « Marge inférieure » (0 à 100 dp) : écrit au fil du déplacement, relu par le clavier à l'ouverture du prochain champ. */
     private fun setUpBottomMargin(preferences: KeyboardPreferences) {
         val seekBar = findViewById<SeekBar>(R.id.seek_bottom_margin)
@@ -228,41 +240,79 @@ class KeyboardSettingsActivity : Activity() {
         })
     }
 
-    /** Mode une main : côté (désactivé, gauche, droite) et largeur de la zone des touches, relus à la prochaine ouverture d'un champ. */
+    /**
+     * Mode du clavier : normal, une main (à gauche, à droite) ou flottant, un seul à la fois ; puis les deux largeurs,
+     * indépendantes (mode une main, clavier flottant), toujours affichées. Relus à la prochaine ouverture d'un champ.
+     */
     private fun setUpOneHanded(preferences: KeyboardPreferences) {
-        val group = findViewById<RadioGroup>(R.id.radio_group_one_handed)
-        val ids = mapOf(
-            OneHandedMode.OFF to R.id.radio_one_handed_off,
-            OneHandedMode.LEFT to R.id.radio_one_handed_left,
-            OneHandedMode.RIGHT to R.id.radio_one_handed_right,
-        )
-        group.check(ids.getValue(preferences.oneHandedMode))
+        val group = findViewById<RadioGroup>(R.id.radio_group_keyboard_mode)
+        val current = when {
+            preferences.isFloatingKeyboard -> R.id.radio_mode_floating
+            preferences.oneHandedMode == OneHandedMode.LEFT -> R.id.radio_mode_left
+            preferences.oneHandedMode == OneHandedMode.RIGHT -> R.id.radio_mode_right
+            else -> R.id.radio_mode_normal
+        }
+        group.check(current)
         group.setOnCheckedChangeListener { _, checkedId ->
-            val selected = ids.entries.firstOrNull { it.value == checkedId }?.key ?: return@setOnCheckedChangeListener
-            preferences.oneHandedMode = selected
-            Analytics.setting(this, "one_handed_mode", selected.storageKey)
+            val (floating, oneHanded, key) = when (checkedId) {
+                R.id.radio_mode_left -> Triple(false, OneHandedMode.LEFT, "left")
+                R.id.radio_mode_right -> Triple(false, OneHandedMode.RIGHT, "right")
+                R.id.radio_mode_floating -> Triple(true, OneHandedMode.OFF, "floating")
+                R.id.radio_mode_normal -> Triple(false, OneHandedMode.OFF, "normal")
+                else -> return@setOnCheckedChangeListener
+            }
+            preferences.isFloatingKeyboard = floating
+            preferences.oneHandedMode = oneHanded
+            Analytics.setting(this, "keyboard_mode", key)
         }
 
-        val seekBar = findViewById<SeekBar>(R.id.seek_one_handed_width)
-        val label = findViewById<TextView>(R.id.text_one_handed_width)
+        setUpWidthSlider(
+            seekBar = findViewById(R.id.seek_one_handed_width),
+            label = findViewById(R.id.text_one_handed_width),
+            valueText = R.string.keyboard_settings_one_handed_width_value,
+            range = OneHandedWidth.MIN_PERCENT..OneHandedWidth.MAX_PERCENT,
+            initial = preferences.oneHandedWidthPercent,
+            analyticsKey = "one_handed_width",
+        ) { preferences.oneHandedWidthPercent = it }
+        setUpWidthSlider(
+            seekBar = findViewById(R.id.seek_floating_width),
+            label = findViewById(R.id.text_floating_width),
+            valueText = R.string.keyboard_settings_floating_width_value,
+            range = FloatingWidth.MIN_PERCENT..FloatingWidth.MAX_PERCENT,
+            initial = preferences.floatingWidthPercent,
+            analyticsKey = "floating_width",
+        ) { preferences.floatingWidthPercent = it }
+    }
+
+    /** Curseur de largeur en % ([range]) : écrit au fil du déplacement, mesuré au relâchement. */
+    @Suppress("LongParameterList")
+    private fun setUpWidthSlider(
+        seekBar: SeekBar,
+        label: TextView,
+        valueText: Int,
+        range: IntRange,
+        initial: Int,
+        analyticsKey: String,
+        save: (Int) -> Unit,
+    ) {
         fun showValue(percent: Int) {
-            label.text = getString(R.string.keyboard_settings_one_handed_width_value, percent)
+            label.text = getString(valueText, percent)
             seekBar.contentDescription = label.text
         }
-        seekBar.max = OneHandedWidth.MAX_PERCENT - OneHandedWidth.MIN_PERCENT
-        seekBar.progress = preferences.oneHandedWidthPercent - OneHandedWidth.MIN_PERCENT
-        showValue(preferences.oneHandedWidthPercent)
+        seekBar.max = range.last - range.first
+        seekBar.progress = initial - range.first
+        showValue(initial)
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(bar: SeekBar, progress: Int, fromUser: Boolean) {
-                val percent = progress + OneHandedWidth.MIN_PERCENT
+                val percent = progress + range.first
                 showValue(percent)
-                if (fromUser) preferences.oneHandedWidthPercent = percent
+                if (fromUser) save(percent)
             }
 
             override fun onStartTrackingTouch(bar: SeekBar) = Unit
 
             override fun onStopTrackingTouch(bar: SeekBar) {
-                Analytics.setting(this@KeyboardSettingsActivity, "one_handed_width", bar.progress + OneHandedWidth.MIN_PERCENT)
+                Analytics.setting(this@KeyboardSettingsActivity, analyticsKey, bar.progress + range.first)
             }
         })
     }
@@ -287,6 +337,20 @@ class KeyboardSettingsActivity : Activity() {
      * « Proposer les captures d'écran récentes » : l'activer demande la permission d'images (un clavier ne peut pas la demander
      * lui-même). Le réglage n'est enregistré qu'une fois la permission accordée ; il reste coché seulement tant qu'elle l'est.
      */
+    /** Audit SEC-01 : historique du presse-papiers ; le désactiver efface tout de suite l'historique existant. */
+    private fun setUpClipboardHistory(preferences: KeyboardPreferences) {
+        val switch = findViewById<CompoundButton>(R.id.switch_clipboard_history)
+        switch.isChecked = preferences.isClipboardHistoryEnabled
+        switch.setOnCheckedChangeListener { _, checked ->
+            preferences.isClipboardHistoryEnabled = checked
+            Analytics.setting(this, "clipboard_history", checked)
+            if (!checked) {
+                val history = ClipboardProvider.historyRepository(this)
+                ProcessScope.launch(Dispatchers.IO) { runCatching { history.clearAll() } }
+            }
+        }
+    }
+
     private fun setUpScreenshotSuggestions(preferences: KeyboardPreferences) {
         val switch = findViewById<CompoundButton>(R.id.switch_screenshot_suggestions)
         if (!ScreenshotFinder.FEATURE_ENABLED) {
@@ -300,7 +364,7 @@ class KeyboardSettingsActivity : Activity() {
         switch.setOnCheckedChangeListener { _, checked ->
             if (settingScreenshotSwitch) return@setOnCheckedChangeListener
             if (checked && !ScreenshotFinder.hasPermission(this)) {
-                requestPermissions(arrayOf(ScreenshotFinder.permission), REQUEST_SCREENSHOT_PERMISSION)
+                requestPermissions(ScreenshotFinder.requestedPermissions, REQUEST_SCREENSHOT_PERMISSION)
             } else {
                 preferences.isScreenshotSuggestionEnabled = checked
                 Analytics.setting(this, "screenshot_suggestions", checked)
@@ -311,14 +375,20 @@ class KeyboardSettingsActivity : Activity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode != REQUEST_SCREENSHOT_PERMISSION) return
-        val granted = grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
+        val granted = ScreenshotFinder.hasPermission(this)
         KeyboardPreferences(this).isScreenshotSuggestionEnabled = granted
         Analytics.setting(this, "screenshot_suggestions", granted)
         if (!granted) {
             settingScreenshotSwitch = true
             screenshotSwitch?.isChecked = false
             settingScreenshotSwitch = false
-            Toast.makeText(this, R.string.keyboard_settings_screenshots_denied, Toast.LENGTH_LONG).show()
+            // Audit UX-04 : « Sélectionner des photos » ne suffit pas, les nouvelles captures ne seraient pas visibles.
+            val message = if (ScreenshotFinder.hasOnlyPartialAccess(this)) {
+                R.string.keyboard_settings_screenshots_partial
+            } else {
+                R.string.keyboard_settings_screenshots_denied
+            }
+            showScreenMessage(message)
         }
     }
 
@@ -332,7 +402,7 @@ class KeyboardSettingsActivity : Activity() {
             .setMessage(R.string.keyboard_settings_habits_clear_message)
             .setPositiveButton(R.string.keyboard_settings_habits_clear_confirm) { _, _ ->
                 CorrectionHabitsProvider.repository(this).clear()
-                Toast.makeText(this, R.string.keyboard_settings_habits_cleared, Toast.LENGTH_SHORT).show()
+                showScreenMessage(R.string.keyboard_settings_habits_cleared)
             }
             .setNegativeButton(R.string.keyboard_settings_habits_clear_cancel, null)
             .show()

@@ -5,17 +5,19 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Handler
 import android.os.Looper
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import fr.junade.taipo.KeyRenderer
 import fr.junade.taipo.KeyboardWidth
 import fr.junade.taipo.PillKeyDrawable
 import fr.junade.taipo.R
-import fr.junade.taipo.dimen
 import fr.junade.taipo.announceAsButton
+import fr.junade.taipo.dimen
 import fr.junade.taipo.setFixedTextSizeRes
 import fr.junade.taipo.themeColor
 import fr.junade.taipo.useTaipoFont
@@ -49,7 +51,14 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
     private val grid = EmojiGridView(context)
     private val bottomBar = LinearLayout(context)
     private val bottomSpacer = View(context)
-    private val abcKey = makeTextKey("ABC")
+    private val abcKey = makeTextKey("ABC").apply {
+        // Même taille que la touche « ABC » de la page des symboles (KeyRenderer) ; réduite si le libellé ne tient pas dans
+        // 80 % de la largeur de la touche (police large comme OpenDyslexic).
+        val size = KeyRenderer.toggleLabelTextSize(context.dimen(R.dimen.taipo_key_text_size_large))
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, size)
+        maxLines = 1
+        addOnLayoutChangeListener { view, left, _, right, _, _, _, _, _ -> fitLabelWidth(view as TextView, right - left, size) }
+    }
     private val backspaceKey = makeIconKey(R.drawable.ic_key_backspace)
 
     private var closeListener: OnCloseListener? = null
@@ -186,6 +195,16 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
         styleKey(this)
     }
 
+    /** Réduit le libellé de [view] pour qu'il tienne dans [KeyRenderer.LABEL_MAX_WIDTH_RATIO] de la largeur [width]. */
+    private fun fitLabelWidth(view: TextView, width: Int, size: Float) {
+        if (width <= 0) return
+        // Largeur à la taille [size], déduite de la taille actuelle (proportionnelle) : le Paint de la vue n'est pas modifié.
+        val textWidth = view.paint.measureText(view.text.toString()) * size / view.textSize
+        val maxWidth = width * KeyRenderer.LABEL_MAX_WIDTH_RATIO
+        val fitted = if (textWidth > maxWidth) size * maxWidth / textWidth else size
+        if (fitted != view.textSize) view.post { view.setTextSize(TypedValue.COMPLEX_UNIT_PX, fitted) }
+    }
+
     /** Touche secondaire à icône blanche (l'icône du clavier, lot 09), sur une face #2B2B2B à ombre. */
     private fun makeIconKey(iconRes: Int): ImageView = ImageView(context).apply {
         setImageResource(iconRes)
@@ -285,7 +304,6 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
             view.layoutParams = params
         }
     }
-
 
     companion object {
         /** Hauteur de la rangée d'onglets et de la rangée du bas, par rapport à une rangée de touches. */

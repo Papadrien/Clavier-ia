@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Écran « Pass premium » (PremiumActivity) : prix, les trois avantages (couleurs, prompts, presse-papiers), ce qui reste gratuit,
+<!-- Écran « Pass premium » (PremiumActivity) : prix, les quatre avantages (couleurs, prompts, presse-papiers, apparence), ce qui reste gratuit,
      achat et restauration. Pass actif : remerciement à la place des boutons d'achat. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -97,6 +97,29 @@
                 android:text="@string/premium_prompts_example" />
         </LinearLayout>
 
+        <!-- Avantage : modèle IA personnalisé (fichier .litertlm de l'utilisateur, avec ses prompts). -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_settings_card"
+            android:padding="@dimen/taipo_settings_card_padding"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md">
+
+            <TextView
+                style="@style/TaipoText.Section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/premium_custom_model_title" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+                android:text="@string/premium_custom_model_text" />
+        </LinearLayout>
+
         <!-- Avantage 3 : presse-papiers étendu. -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -118,6 +141,29 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/taipo_settings_gap_xs"
                 android:text="@string/premium_clipboard_text" />
+        </LinearLayout>
+
+        <!-- Avantage 4 : apparence (fonds animés, formes de touches, polices, style d'animation Gelée). -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_settings_card"
+            android:padding="@dimen/taipo_settings_card_padding"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md">
+
+            <TextView
+                style="@style/TaipoText.Section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/premium_style_title" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+                android:text="@string/premium_style_text" />
         </LinearLayout>
 
         <TextView
@@ -150,5 +196,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/taipo_settings_gap_sm"
             android:text="@string/premium_restore" />
+
+        <!-- Pack actif (page de remerciement) : retour direct à l'accueil, à la place des boutons d'achat. -->
+        <Button
+            style="@style/TaipoButton.Primary"
+            android:id="@+id/button_premium_home"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_lg"
+            android:visibility="gone"
+            android:text="@string/premium_back_home" />
     </LinearLayout>
 </ScrollView>

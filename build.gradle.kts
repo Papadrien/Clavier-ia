@@ -7,7 +7,7 @@ plugins {
     // unique : gradle/libs.versions.toml (plugin et artefacts). KSP 2.3.x est indépendant de la
     // version de Kotlin ; 2.3.10+ corrige la compatibilité avec Kotlin 2.4.0
     // et avec le Kotlin intégré d'AGP 9.
-    id("com.google.devtools.ksp") version "2.3.11" apply false
+    id("com.google.devtools.ksp") version "2.3.13" apply false
     alias(libs.plugins.room) apply false
 }
 
@@ -18,8 +18,8 @@ plugins {
 // Cf. https://kotl.in/gradle/agp-built-in-kotlin
 //
 // Le Kotlin intégré à AGP 9.4.0 est la 2.2.10, qui ne sait pas lire les
-// classes .kotlin_module de litertlm-android 0.17.1 (compilées avec Kotlin
-// 2.4.0). La doc Android documente ce cas précis : surclasser la version du
+// classes .kotlin_module de litertlm-android (0.17.1 et suivantes, compilées avec
+// Kotlin 2.4.0 ; version dans gradle/libs.versions.toml). La doc Android documente ce cas précis : surclasser la version du
 // Kotlin Gradle Plugin (KGP) utilisée par le Kotlin intégré via un
 // classpath buildscript, sans réappliquer le plugin kotlin.android.
 buildscript {

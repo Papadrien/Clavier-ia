@@ -40,5 +40,13 @@ If you do not know, or if the request is too vague, say so in one sentence."""
         KeyboardLanguage.IT -> "Italian"
         KeyboardLanguage.PT -> "Portuguese"
         KeyboardLanguage.NL -> "Dutch"
+        KeyboardLanguage.PL -> "Polish"
+        KeyboardLanguage.RO -> "Romanian"
+        KeyboardLanguage.CS -> "Czech"
+        KeyboardLanguage.HU -> "Hungarian"
+        KeyboardLanguage.SV -> "Swedish"
+        KeyboardLanguage.DA -> "Danish"
+        KeyboardLanguage.NB -> "Norwegian (Bokmål)"
+        KeyboardLanguage.FI -> "Finnish"
     }
 }

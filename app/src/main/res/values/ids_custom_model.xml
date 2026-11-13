@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Champs des prompts de la page « Modèle personnalisé » (un par section, pour que leur état survive à la rotation). -->
+    <item name="edit_custom_model_prompt_correction" type="id" />
+    <item name="edit_custom_model_prompt_generation" type="id" />
+    <item name="edit_custom_model_prompt_transcription" type="id" />
+</resources>

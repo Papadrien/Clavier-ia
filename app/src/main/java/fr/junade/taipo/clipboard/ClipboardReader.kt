@@ -42,6 +42,13 @@ class ClipboardReader(context: Context, private val onChanged: () -> Unit) {
     }
 
     /** Le texte actuellement copié, ou null (presse-papiers vide, contenu qui n'est pas du texte, lecture refusée). */
+    // Audit PERF-02 : dernière copie lue. La description (légère) suffit à savoir si la copie a changé ; le contenu, qui peut
+    // peser jusqu'à 1 Mo et transite par un appel au système, n'est relu que pour une nouvelle copie.
+    // Clé de la copie : horodatage, libellé et types. L'horodatage seul ne suffit pas si deux copies tombent dans la même
+    // milliseconde (ou si l'horloge est figée, comme dans les tests).
+    private var lastKey: String? = null
+    private var lastSnapshot: Snapshot? = null
+
     fun read(): Snapshot? {
         val cm = manager ?: return null
         return try {
@@ -51,16 +58,27 @@ class ClipboardReader(context: Context, private val onChanged: () -> Unit) {
             ) {
                 return null
             }
+            val timestamp = description.timestamp
+            val key = if (timestamp > 0) copyKey(description) else null
+            lastSnapshot?.let { if (key != null && key == lastKey) return it }
             val clip = cm.primaryClip ?: return null
             if (clip.itemCount == 0) return null
             val text = clip.getItemAt(0).text?.toString() ?: return null
-            Snapshot(text, clip.description.timestamp, isSensitive(clip.description))
+            Snapshot(text, clip.description.timestamp, isSensitive(clip.description)).also {
+                lastKey = key
+                lastSnapshot = it
+            }
         } catch (e: RuntimeException) {
             // SecurityException (lecture refusée par le système) ou échec de transfert d'un très gros
             // contenu : pas de suggestion, sans faire planter le clavier.
             AppLog.w(TAG, "Lecture du presse-papiers impossible", e)
             null
         }
+    }
+
+    private fun copyKey(description: ClipDescription): String = buildString {
+        append(description.timestamp).append('|').append(description.label).append('|')
+        for (i in 0 until description.mimeTypeCount) append(description.getMimeType(i)).append(',')
     }
 
     private fun isSensitive(description: ClipDescription): Boolean {

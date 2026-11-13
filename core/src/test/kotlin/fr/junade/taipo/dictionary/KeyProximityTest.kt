@@ -137,8 +137,12 @@ class KeyProximityTest {
             letters("qsdfghjklm"),
             listOf(KeyProximity.KeyBox(null, 1.4f)) + letters("wxcvbn'") + listOf(KeyProximity.KeyBox(null, 1.6f)),
             listOf(
-                KeyProximity.KeyBox(null, 1.4f), KeyProximity.KeyBox(',', 1f), KeyProximity.KeyBox(null, 1f),
-                KeyProximity.KeyBox(KeyProximity.SPACE, 3.8f), KeyProximity.KeyBox('.', 1f), KeyProximity.KeyBox(null, 1.8f),
+                KeyProximity.KeyBox(null, 1.4f),
+                KeyProximity.KeyBox(',', 1f),
+                KeyProximity.KeyBox(null, 1f),
+                KeyProximity.KeyBox(KeyProximity.SPACE, 3.8f),
+                KeyProximity.KeyBox('.', 1f),
+                KeyProximity.KeyBox(null, 1.8f),
             ),
         ),
     )

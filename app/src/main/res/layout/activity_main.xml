@@ -190,7 +190,7 @@
         android:orientation="horizontal"
         android:background="@drawable/bg_settings_card"
         android:padding="@dimen/taipo_settings_card_padding"
-        android:layout_marginBottom="@dimen/taipo_settings_gap_xl">
+        android:layout_marginBottom="@dimen/taipo_settings_gap_md">
 
         <TextView
             android:id="@+id/step4_badge"
@@ -231,8 +231,164 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- Étape 5 : activer la dictée (télécharger le modèle vocal) ; le bouton ouvre l'écran « Modèle vocal ». -->
+    <LinearLayout
+        android:id="@+id/step5_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/bg_settings_card"
+        android:padding="@dimen/taipo_settings_card_padding"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_md">
+
+        <TextView
+            android:id="@+id/step5_badge"
+            android:layout_width="@dimen/taipo_step_badge_size"
+            android:layout_height="@dimen/taipo_step_badge_size"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="@dimen/taipo_settings_text_caption"
+            android:textColor="@color/text_primary"
+            android:importantForAccessibility="no" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/taipo_settings_gap_md"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/TaipoText.Section"
+                android:id="@+id/step5_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:id="@+id/step5_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+
+            <Button
+                style="@style/TaipoButton.Primary"
+                android:id="@+id/button_activate_voice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_md" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Étape 6 : autorisations des fonctions (micro, notifications, dictionnaire Android), demandées ensemble ;
+         la liste montre ce qui est accordé (OnboardingPermissionsStep.render). Chacune reste facultative. -->
+    <LinearLayout
+        android:id="@+id/step6_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/bg_settings_card"
+        android:padding="@dimen/taipo_settings_card_padding"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_xl">
+
+        <TextView
+            android:id="@+id/step6_badge"
+            android:layout_width="@dimen/taipo_step_badge_size"
+            android:layout_height="@dimen/taipo_step_badge_size"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="@dimen/taipo_settings_text_caption"
+            android:textColor="@color/text_primary"
+            android:importantForAccessibility="no" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/taipo_settings_gap_md"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/TaipoText.Section"
+                android:id="@+id/step6_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:id="@+id/step6_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+
+            <LinearLayout
+                android:id="@+id/permissions_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+                android:orientation="vertical" />
+
+            <Button
+                style="@style/TaipoButton.Primary"
+                android:id="@+id/button_allow_permissions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_md"
+                android:text="@string/onboarding_step6_button" />
+        </LinearLayout>
+    </LinearLayout>
+
     <!-- Pass premium : carte d'offre, montrée une fois les 3 étapes faites, tant que le pass n'est pas actif et qu'elle n'a pas
          été masquée (MainActivity.renderPremium). Le pass reste accessible par la ligne « Pass premium » de « À propos ». -->
+    <!-- Audit PRIV-01 : accord explicite pour la mesure d'usage, tant que l'utilisateur n'a pas répondu. -->
+    <LinearLayout
+        android:id="@+id/analytics_consent_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_settings_card"
+        android:padding="@dimen/taipo_settings_card_padding"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_xl"
+        android:visibility="gone">
+
+        <TextView
+            style="@style/TaipoText.Section"
+            android:id="@+id/analytics_consent_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/home_analytics_consent_title" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/home_analytics_consent_text" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md">
+
+            <Button
+                style="@style/TaipoButton.Secondary"
+                android:id="@+id/button_analytics_refuse"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="@dimen/taipo_settings_gap_sm"
+                android:text="@string/home_analytics_consent_refuse" />
+
+            <Button
+                style="@style/TaipoButton.Primary"
+                android:id="@+id/button_analytics_accept"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/home_analytics_consent_accept" />
+        </LinearLayout>
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/premium_card"
         android:layout_width="match_parent"
@@ -365,20 +521,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <!-- Story 8.12 : ce séparateur et la ligne « Modèle IA local » ne sont visibles qu'en build debug (MainActivity). -->
-        <View
-            android:id="@+id/divider_model_settings"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/taipo_settings_divider_thickness"
-            android:layout_marginStart="@dimen/taipo_settings_card_padding"
-            android:background="@color/settings_divider" />
-
-        <include
-            android:id="@+id/button_model_settings"
-            layout="@layout/view_settings_row"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/taipo_settings_divider_thickness"
@@ -391,16 +533,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <!-- Story 8.15 : ce séparateur et la ligne « Modèle vocal local » ne sont visibles qu'en build debug (MainActivity). -->
         <View
-            android:id="@+id/divider_voice_model_local"
             android:layout_width="match_parent"
             android:layout_height="@dimen/taipo_settings_divider_thickness"
             android:layout_marginStart="@dimen/taipo_settings_card_padding"
             android:background="@color/settings_divider" />
 
         <include
-            android:id="@+id/button_voice_model_local"
+            android:id="@+id/button_system_prompts"
             layout="@layout/view_settings_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -411,8 +551,9 @@
             android:layout_marginStart="@dimen/taipo_settings_card_padding"
             android:background="@color/settings_divider" />
 
+        <!-- Modèle personnalisé : pack premium (cadenas sans lui, MainActivity.renderPremium), toujours ouvert en build debug. -->
         <include
-            android:id="@+id/button_system_prompts"
+            android:id="@+id/button_custom_model"
             layout="@layout/view_settings_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -505,6 +646,18 @@
         android:clipToOutline="true">
 
         <include
+            android:id="@+id/button_whats_new"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
             android:id="@+id/button_terms"
             layout="@layout/view_settings_row"
             android:layout_width="match_parent"
@@ -535,7 +688,7 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <!-- Builds debug seulement (MainActivity) : forçage du pass premium, pour tester les deux états sans achat. -->
+    <!-- Builds debug seulement (MainActivity) : forçage du pass premium, diagnostic, astuces et chargement des modèles en local. -->
     <LinearLayout
         android:id="@+id/debug_section"
         android:layout_width="match_parent"
@@ -571,6 +724,43 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/taipo_settings_gap_md"
             android:text="@string/home_debug_diagnostic" />
+
+        <Button
+            style="@style/TaipoButton.Secondary"
+            android:id="@+id/button_debug_reset_tips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md"
+            android:text="@string/home_debug_reset_tips" />
+
+        <!-- Stories 8.12 et 8.15 : chargement des modèles à la main (fichiers locaux), réservé au debug (LocalModelAccess). -->
+        <LinearLayout
+            android:id="@+id/debug_local_models"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_settings_card"
+            android:clipToOutline="true"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md">
+
+            <include
+                android:id="@+id/button_model_settings"
+                layout="@layout/view_settings_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/taipo_settings_divider_thickness"
+                android:layout_marginStart="@dimen/taipo_settings_card_padding"
+                android:background="@color/settings_divider" />
+
+            <include
+                android:id="@+id/button_voice_model_local"
+                layout="@layout/view_settings_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

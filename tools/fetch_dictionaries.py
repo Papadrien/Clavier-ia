@@ -39,6 +39,15 @@ SINGLE_LETTER_WORDS = {
     "it": set("aeiouè"),
     "pt": set("aeoéà"),
     "nl": set("eu"),
+    # Langues ajoutées le 11/11/2026.
+    "pl": set("aiouwz"),
+    "ro": set("aeio"),
+    "cs": set("aikosuvz"),
+    "hu": set("as"),
+    "sv": set("iåö"),
+    "da": set("iåø"),
+    "nb": set("iåø"),
+    "fi": set(),
 }
 
 # Alphabet de chaque langue (minuscules) : tout autre caractère fait rejeter le mot.
@@ -49,6 +58,24 @@ ALPHABETS = {
     "it": "abcdefghijklmnopqrstuvwxyzàèéìíîòóùú",
     "pt": "abcdefghijklmnopqrstuvwxyzáàâãçéêíóôõú",
     "nl": "abcdefghijklmnopqrstuvwxyzáäçéèêëíïóöúüû",
+    "pl": "abcdefghijklmnopqrstuvwxyząćęłńóśźż",
+    "ro": "abcdefghijklmnopqrstuvwxyzăâîșț",
+    "cs": "abcdefghijklmnopqrstuvwxyzáčďéěíňóřšťúůýž",
+    "hu": "abcdefghijklmnopqrstuvwxyzáéíóöőúüű",
+    "sv": "abcdefghijklmnopqrstuvwxyzåäöé",
+    "da": "abcdefghijklmnopqrstuvwxyzæøåé",
+    "nb": "abcdefghijklmnopqrstuvwxyzæøåéèêóòô",
+    "fi": "abcdefghijklmnopqrstuvwxyzäöåšž",
+}
+
+# Code de la liste source quand il diffère de celui du clavier : FrequencyWords nomme « no » le norvégien bokmål.
+SOURCE_CODES = {"nb": "no"}
+
+# Lettres réécrites avant le contrôle de l'alphabet : roumain, s et t à cédille (anciens encodages) -> virgule souscrite ;
+# hongrois, õ et û (encodage Latin-1 de ő et ű) -> ő, ű.
+LETTER_FIXES = {
+    "ro": str.maketrans({"ş": "ș", "ţ": "ț"}),
+    "hu": str.maketrans({"õ": "ő", "û": "ű", "ô": "ő"}),
 }
 
 # Anglais : formes sans apostrophe qui ne sont pas des mots (fautes du corpus, corrigées vers la contraction).
@@ -71,6 +98,7 @@ OUTPUT_DIR = Path(__file__).resolve().parent.parent / "dictionaries"
 
 
 def read_source(code: str, source_dir: Path | None) -> str:
+    code = SOURCE_CODES.get(code, code)
     if source_dir is not None:
         return (source_dir / f"{code}_full.txt").read_text(encoding="utf-8")
     last_error = None
@@ -94,6 +122,8 @@ def clean(code: str, raw: str) -> dict[str, int]:
         if len(parts) != 2 or not parts[1].isdigit():
             continue
         word = unicodedata.normalize("NFC", parts[0].lower().replace("’", "'"))
+        if code in LETTER_FIXES:
+            word = word.translate(LETTER_FIXES[code])
         count = int(parts[1])
         if count < MIN_FREQUENCY or not WORD.match(word) or not set(word) <= allowed:
             continue

@@ -28,15 +28,20 @@ enum class ModelLicense(
         termsUrl = "https://ai.google.dev/gemma/apache_2",
         policyUrl = null,
         requiresAcceptance = false,
-    );
+    ),
+    ;
 
     /** Vrai si l'écran de mention doit s'afficher avant ce téléchargement, selon que la licence a déjà été acceptée. */
     fun mustAskBeforeDownload(alreadyAccepted: Boolean): Boolean = requiresAcceptance && !alreadyAccepted
 }
 
-/** Licence applicable au modèle (Gemma 3 → conditions Gemma, Gemma 4 → Apache 2.0). */
-val AiModel.license: ModelLicense
+/**
+ * Licence applicable au modèle (Gemma 3 → conditions Gemma, Gemma 4 → Apache 2.0). Null pour le modèle personnalisé : sa licence est
+ * celle du fichier choisi, sous la responsabilité de l'utilisateur (avertissement de sa page).
+ */
+val AiModel.license: ModelLicense?
     get() = when (this) {
         AiModel.ULTRA_LEGER, AiModel.LEGER -> ModelLicense.GEMMA_TERMS
         AiModel.EQUILIBRE, AiModel.PERFORMANT -> ModelLicense.APACHE_2
+        AiModel.CUSTOM -> null
     }

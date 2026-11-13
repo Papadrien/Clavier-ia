@@ -27,7 +27,9 @@ class GermanConfusionsTest {
 
     @Test
     fun `les confusions evidentes sont corrigees`() {
-        val failures = CORRECTED.filter { (sentence, expected) -> typed(sentence) != expected }.map { (sentence, expected) -> "$sentence -> ${typed(sentence)} (attendu $expected)" }
+        val failures = CORRECTED.filter { (sentence, expected) ->
+            typed(sentence) != expected
+        }.map { (sentence, expected) -> "$sentence -> ${typed(sentence)} (attendu $expected)" }
         assertEquals(emptyList<String>(), failures)
     }
 

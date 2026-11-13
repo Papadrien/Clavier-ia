@@ -67,11 +67,17 @@ object PremiumPass {
     }
 
     /**
-     * Le clavier suit le nouvel état : la couleur choisie s'applique (ou retombe sur le violet). Ses vues sont recréées à la prochaine
-     * ouverture d'un champ, la palette faisant partie de [KeyboardTheme.Look].
+     * Le clavier suit le nouvel état : la couleur, la forme, la police et le style d'animation choisis s'appliquent (ou retombent sur
+     * le violet, Arrondi, Open Sans et Ressort). Ses vues sont recréées à la prochaine ouverture d'un champ (palette, forme et police sont comparées à celles
+     * de leur création).
      */
     private fun applyToKeyboard(context: Context) {
-        KeyboardTheme.palette = AccentPalette.effective(KeyboardPreferences(context).accentPalette, isActive)
+        val preferences = KeyboardPreferences(context)
+        KeyboardTheme.palette = AccentPalette.effective(preferences.accentPalette, isActive)
+        KeyboardTheme.shape = KeyShape.effective(preferences.keyShape, isActive)
+        MotionStyle.current = MotionStyle.effective(preferences.motionStyle, isActive)
+        TaipoType.keyboardFont = KeyboardFont.effective(preferences.keyboardFont, isActive)
+        // Le fond du clavier est relu à chaque ouverture de champ (KeyboardBackdrop.effective), rien à poser ici.
     }
 
     /** État effectif : le forçage du debug l'emporte, dans un build debug seulement. Logique pure, testée en JVM. */
@@ -82,7 +88,8 @@ object PremiumPass {
 
     private fun prefs(context: Context) = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    private const val PREFS_NAME = "premium_prefs"
+    /** Exclu des sauvegardes (audit SEC-04) : l'état d'achat vient de Google Play, relu par [fr.junade.taipo.premium.PremiumBilling.refresh]. */
+    const val PREFS_NAME = "premium_prefs"
     private const val KEY_PURCHASED = "purchased"
     private const val KEY_DEBUG_OVERRIDE = "debug_override"
 }

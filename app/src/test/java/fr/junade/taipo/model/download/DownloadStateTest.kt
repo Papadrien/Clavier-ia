@@ -1,15 +1,15 @@
 package fr.junade.taipo.model.download
 
 import fr.junade.taipo.model.AiModel
+import java.io.IOException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.io.IOException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 class DownloadStateTest {
 

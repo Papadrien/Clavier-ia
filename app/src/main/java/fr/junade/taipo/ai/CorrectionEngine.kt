@@ -5,6 +5,7 @@ import android.os.SystemClock
 import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.Conversation
 import com.google.ai.edge.litertlm.ConversationConfig
+import fr.junade.taipo.AppLog
 import fr.junade.taipo.model.AiModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +13,6 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import fr.junade.taipo.AppLog
 
 /**
  * La correction a été annulée par l'utilisateur (second appui sur le bouton Corriger pendant le chargement).
@@ -110,7 +110,7 @@ class CorrectionEngine(
                 runningConversation = conversation
                 try {
                     val response = conversation.sendMessage(userTurn)
-                    // `Message.text` n'existe pas encore dans litertlm-android 0.17.1 (build en
+                    // `Message.text` n'existe pas dans litertlm-android (0.17.1, et toujours pas en 0.19.1 : build en
                     // erreur : "Unresolved reference 'text'"). La doc officielle Kotlin
                     // (https://ai.google.dev/edge/litert-lm/android) montre `print(conversation
                     // .sendMessage(...))` et `println("Answer: $response")` : Message expose donc
@@ -143,10 +143,5 @@ class CorrectionEngine(
 
         /** Pause entre la fin d'une inférence arrêtée et la fermeture de sa conversation native. */
         private const val NATIVE_GRACE_MS = 500L
-    }
-
-    /** Libère le moteur partagé s'il y en a un de chargé. À appeler quand l'IME est détruit. */
-    fun close() {
-        host.close()
     }
 }

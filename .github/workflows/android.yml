@@ -5,6 +5,7 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main, develop]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,18 +15,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v6
+      # JDK 21 : Robolectric 4.17 exige Java 21 pour simuler Android 16 (API 36, voir robolectric.properties) ; sous JDK 17 tous
+      # les tests Robolectric échouent à l'initialisation (UnsupportedOperationException, DefaultSdkProvider). Le code reste compilé
+      # pour Java 17 (sourceCompatibility, jvmTarget).
+      - name: Set up JDK 21
+        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
+        with:
+          validate-wrappers: true # audit CI-03 : le gradle-wrapper.jar versionné est comparé aux empreintes officielles
 
       - run: ./gradlew :app:dependencies --configuration debugRuntimeClasspath | grep litertlm
+
+      # Robolectric (tests JVM du framework Android) télécharge une image d'Android d'environ 150 Mo dans ~/.m2 : mise en cache.
+      - name: Cache Robolectric
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.m2/repository/org/robolectric
+          key: robolectric-${{ hashFiles('gradle/libs.versions.toml', 'app/src/test/resources/robolectric.properties') }}
 
       # Tests JVM : ceux de l'app (testDebugUnitTest) et ceux du module :core (dictionnaire, autocorrection, suggestions),
       # un module JVM pur qui n'a pas de tâche testDebugUnitTest : sans :core:test, ses tests ne tourneraient jamais en CI.
@@ -59,39 +72,113 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           KEY_PROPERTIES: ${{ secrets.ANDROID_KEY_PROPERTIES }}
         run: |
-          if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "$KEY_PROPERTIES" > key.properties
-            STORE_FILE=$(grep -E '^storeFile=' key.properties | head -n1 | cut -d= -f2- | tr -d '\r' | xargs)
-            if [ -z "$STORE_FILE" ]; then
-              echo "❌ storeFile absent de ANDROID_KEY_PROPERTIES"; exit 1
-            fi
-            echo "$KEYSTORE_BASE64" | base64 --decode > "app/$STORE_FILE"
-            test -s "app/$STORE_FILE" || { echo "❌ keystore vide : app/$STORE_FILE"; exit 1; }
-            echo "✅ Signing release (secrets)"
-          else
-            keytool -genkey -v -keystore app/keystore.jks -alias taipo-debug -keyalg RSA -keysize 2048 -validity 10000 -storepass taipo-debug-pwd -keypass taipo-debug-pwd -dname "CN=Taipo Debug, OU=Dev, O=Taipo, L=Paris, C=FR" 2>/dev/null
-            printf 'storePassword=taipo-debug-pwd\nkeyPassword=taipo-debug-pwd\nkeyAlias=taipo-debug\nstoreFile=keystore.jks\n' > key.properties
-            echo "✅ Signing debug stable (sans secrets)"
+          # Audit CI-01 : sans les secrets, échec franc. Une clé générée à la volée changerait à chaque exécution : les APK
+          # ne se mettraient plus à jour l'un sur l'autre, et un AAB signé ainsi serait refusé par Play.
+          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$KEY_PROPERTIES" ]; then
+            echo "::error::Secrets ANDROID_KEYSTORE_BASE64 et ANDROID_KEY_PROPERTIES absents : build release impossible (voir docs/release.md)."
+            exit 1
           fi
+          # Correctif jks (main) : le keystore est décodé sous le nom donné par storeFile, résolu depuis le module app.
+          echo "$KEY_PROPERTIES" > key.properties
+          STORE_FILE=$(grep -E '^storeFile=' key.properties | head -n1 | cut -d= -f2- | tr -d '\r' | xargs)
+          if [ -z "$STORE_FILE" ]; then
+            echo "::error::storeFile absent de ANDROID_KEY_PROPERTIES"; exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > "app/$STORE_FILE"
+          test -s "app/$STORE_FILE" || { echo "::error::keystore vide : app/$STORE_FILE"; exit 1; }
+          echo "✅ Signing release (secrets)"
 
       - name: Build APK + AAB (${{ steps.variant.outputs.variant }})
         run: |
           if [ "${{ steps.variant.outputs.variant }}" = "release" ]; then
+            # Audit CI-02 : l'AAB est ce que Play accepte ; l'APK reste pour les essais.
             ./gradlew assembleRelease bundleRelease
           else
             ./gradlew assembleDebug bundleDebug
           fi
 
       - name: Upload APK
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: apk-${{ steps.variant.outputs.variant }}
           path: app/build/outputs/apk/*/*.apk
           if-no-files-found: error
 
-      - name: Upload AAB
-        uses: actions/upload-artifact@v7
+      # Audit CI-02 : bundle et fichier de correspondance R8 (pour lire les traces de plantage de Play), release seulement.
+      - name: Upload AAB et mapping
+        if: steps.variant.outputs.variant == 'release'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          name: aab-${{ steps.variant.outputs.variant }}
-          path: app/build/outputs/bundle/*/*.aab
+          name: aab-release
+          path: |
+            app/build/outputs/bundle/release/*.aab
+            app/build/outputs/mapping/release/mapping.txt
           if-no-files-found: error
+
+  # Envoi sur Google Play, canal de test fermé « alpha », à chaque push sur main (merge d'une PR), une fois le build release
+  # réussi. Le secret PLAY_SERVICE_ACCOUNT_JSON (clé du compte de service, droits limités aux canaux de test de Taipo) est dans
+  # l'environnement GitHub `play`, réservé à la branche main : une PR ne peut pas le lire. Pas d'action tierce :
+  # tools/play_upload.py appelle l'API Google Play directement. Voir docs/release.md.
+  play-upload:
+    needs: android-build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: play
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Récupérer l'AAB et le mapping
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: aab-release
+          path: play
+
+      - name: Envoi dans le canal alpha
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then
+            echo "::warning::Secret PLAY_SERVICE_ACCOUNT_JSON absent de l'environnement play : envoi sur Play sauté."
+            exit 0
+          fi
+          AAB=$(find play -name '*.aab' | head -n1)
+          MAPPING=$(find play -name 'mapping.txt' | head -n1)
+          test -n "$AAB" || { echo "::error::AAB introuvable dans l'artefact aab-release"; exit 1; }
+          python3 tools/play_upload.py --package fr.junade.taipo --track alpha --aab "$AAB" ${MAPPING:+--mapping "$MAPPING"} \
+            --release-notes distribution/release-notes
+
+  # Audit CI-04 : tests instrumentés (Room + SQLCipher + Keystore réels) sur émulateur, sur main et à la demande : ils sont
+  # longs et ne doivent pas ralentir chaque pull request.
+  instrumented-tests:
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v6.2.0
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
+
+      - name: Activer KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Tests instrumentés
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: ./gradlew connectedDebugAndroidTest

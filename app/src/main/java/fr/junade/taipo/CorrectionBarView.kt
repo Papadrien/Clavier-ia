@@ -1,11 +1,11 @@
 package fr.junade.taipo
 
-import android.graphics.Rect
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Rect
 import android.view.Gravity
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -29,7 +29,7 @@ import fr.junade.taipo.dictionary.WordSuggestion
  * affiché si le modèle de correction doit être rechargé. Le bouton Vocal est posé par-dessus les deux rangées : il ne bouge
  * jamais, mais compte comme dernier élément de leur répartition.
  *
- * Animations : un seul ressort ([BarReveal.springProgress]). Normale vers saisie : la rangée normale monte et sort par le haut
+ * Animations : un seul ressort ([BarReveal.springProgress], réglé par le style d'animation [MotionStyle]). Normale vers saisie : la rangée normale monte et sort par le haut
  * de la barre, la rangée de saisie monte depuis le bas à sa suite et le robot entre par la gauche ; le sens inverse fait le
  * chemin contraire. Un bouton qui change de place glisse en ressort ([SpaceBetweenRow]).
  */
@@ -90,8 +90,8 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     private val menuActions = AiActionButtons(context, style)
     val voiceButton = ImageButton(context)
 
-    /** Astuce de geste ([showGestureTip]) : pilule posée sur la rangée affichée, entre le premier bouton et Vocal. */
-    private val gestureTip = GestureTipPillView(context)
+    /** Astuce de geste ([showGestureTip]) ou pilule des nouveautés ([WhatsNew]), entre le premier bouton et Vocal ; lue par l'IME. */
+    internal val gestureTip = GestureTipPillView(context)
     private val hideGestureTipRunnable = Runnable { hideGestureTip() }
 
     private var listener: OnCorrectListener? = null
@@ -251,8 +251,8 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
         // Astuce de geste : au-dessus des rangées (elle masque ce qu'elle recouvre), marges posées par onMeasure.
         gestureTip.visibility = View.GONE
-        gestureTip.setOnClickListener { hideGestureTip() }
-        addView(gestureTip, LayoutParams(LayoutParams.MATCH_PARENT, barHeight, Gravity.TOP).apply { topMargin = paddingV })
+        gestureTip.onClose = { hideGestureTip() } // au toucher ; la pilule des nouveautés lance ensuite son action
+        addView(gestureTip, LayoutParams(LayoutParams.WRAP_CONTENT, barHeight, Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply { topMargin = paddingV })
 
         // Lot 20 : zone tactile des boutons étendue à 48 dp (36 dp dessinés), sans changer le rendu.
         expandChildTouchTargets(this::touchTargets)
@@ -265,7 +265,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     /**
      * Boutons que la zone tactile étendue peut viser : ceux des rangées affichées, et Vocal. Pendant une astuce de geste, la
-     * pilule remplace les boutons qu'elle recouvre.
+     * pilule (à la largeur de son texte, centrée) remplace les boutons qu'elle recouvre ; ceux d'à côté restent touchables.
      */
     private fun touchTargets(): List<View> {
         val targets = ArrayList<View>()
@@ -274,7 +274,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             if (row.visibility != View.VISIBLE) continue
             for (index in 0 until row.childCount) {
                 val child = row.getChildAt(index)
-                if (tipShown && row.left + child.right > gestureTip.left) continue
+                if (tipShown && row.left + child.right > gestureTip.left && row.left + child.left < gestureTip.right) continue
                 targets.add(child)
             }
         }
@@ -468,28 +468,30 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     /** Story 2.1/2.4 : début de la frappe, retour aux suggestions de mots (le menu se referme). */
     fun collapseMenu() {
-        removeCallbacks(hideDigitTipRunnable)
+        hideDigitTip() // l'astuce des chiffres se ferme à la frappe suivante (les autres astuces restent)
         zoneState.onTyping()
         render()
     }
 
-    private val hideDigitTipRunnable = Runnable { hideDigitTip() }
+    /** Vrai tant que la pilule montre l'astuce des chiffres ([showDigitTip]). */
+    private var digitTipShown = false
 
-    /** Tip « Swipe vers le bas » à la place des suggestions, jusqu'à la prochaine frappe ou [DIGIT_TIP_DURATION_MS]. */
+    /**
+     * Astuce « glisser vers le bas » après un chiffre saisi par appui long : même pilule que les astuces de gestes
+     * ([showGestureTip]), jusqu'à la prochaine frappe, au glissement ([hideDigitTip]) ou après [DIGIT_TIP_DURATION_MS].
+     */
     fun showDigitTip() {
-        zoneState.showTip()
-        render()
-        removeCallbacks(hideDigitTipRunnable)
-        postDelayed(hideDigitTipRunnable, DIGIT_TIP_DURATION_MS)
+        digitTipShown = showGestureTip(context.getString(R.string.digit_swipe_tip), DIGIT_TIP_DURATION_MS)
     }
 
     /**
      * Astuce de geste ([GestureTips]) dans la barre, pendant [durationMs] ou jusqu'à un toucher sur la pilule ; la frappe ne la
      * retire pas. Faux si la barre n'est pas affichée (l'astuce sera proposée plus tard).
      */
-    fun showGestureTip(message: String, durationMs: Long): Boolean {
+    internal fun showGestureTip(message: String, durationMs: Long, pill: GestureTipPillView.Content = GestureTipPillView.Content()): Boolean {
         if (!isShown || !isLaidOut || width == 0) return false
-        gestureTip.setMessage(message)
+        digitTipShown = false
+        gestureTip.setMessage(message, pill)
         val wasVisible = gestureTip.visibility == View.VISIBLE
         gestureTip.visibility = View.VISIBLE
         if (!wasVisible) BarReveal.enter(gestureTip, fromEnd = false, full = false)
@@ -499,6 +501,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     }
 
     fun hideGestureTip() {
+        digitTipShown = false
         removeCallbacks(hideGestureTipRunnable)
         if (gestureTip.visibility != View.VISIBLE) return
         BarReveal.cancel(gestureTip)
@@ -506,9 +509,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     }
 
     fun hideDigitTip() {
-        removeCallbacks(hideDigitTipRunnable)
-        zoneState.hideTip()
-        render()
+        if (digitTipShown) hideGestureTip()
     }
 
     /**
@@ -542,45 +543,82 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
         // Rangée de saisie.
         robotButton.visibility = View.VISIBLE
-        zoneView.render(content.words, content.inline, content.tip)
-        setRevealed(zoneView, content.words || content.inline || content.tip, order = 0, full = reveal, row = typingRow)
+        zoneView.render(content.words, content.inline)
+        setRevealed(zoneView, content.words || content.inline, order = 0, full = reveal, row = typingRow)
         val spring = reveal && content.menuUtilityButtons
         setRevealed(menuButtons.settingsButton, content.menuUtilityButtons, order = 0, full = reveal, row = typingRow, spring = spring)
         setRevealed(
-            menuButtons.clipboardButton, content.menuUtilityButtons, order = 1, full = reveal, row = typingRow, spring = spring,
+            menuButtons.clipboardButton,
+            content.menuUtilityButtons,
+            order = 1,
+            full = reveal,
+            row = typingRow,
+            spring = spring,
             restingAlpha = menuButtons::clipboardRestingAlpha,
         )
         setRevealed(
-            menuButtons.undoButton, content.menuUtilityButtons, order = 2, full = reveal, row = typingRow, spring = spring,
+            menuButtons.undoButton,
+            content.menuUtilityButtons,
+            order = 2,
+            full = reveal,
+            row = typingRow,
+            spring = spring,
             restingAlpha = menuButtons::undoRestingAlpha,
         )
         setRevealed(
-            menuActions.generateButton, actions.generate, order = 3, full = reveal, row = typingRow, spring = spring,
+            menuActions.generateButton,
+            actions.generate,
+            order = 3,
+            full = reveal,
+            row = typingRow,
+            spring = spring,
             restingAlpha = ::generateRestingAlpha,
         )
         setRevealed(
-            menuActions.correctButton, actions.correct, order = 4, full = reveal, row = typingRow, spring = spring,
+            menuActions.correctButton,
+            actions.correct,
+            order = 4,
+            full = reveal,
+            row = typingRow,
+            spring = spring,
             restingAlpha = ::correctRestingAlpha,
         )
         setRevealed(
-            menuActions.transcriptionButton, actions.aiTranscription && aiTranscriptionAvailable, order = 5, full = reveal,
-            row = typingRow, spring = spring, restingAlpha = ::transcriptionRestingAlpha,
+            menuActions.transcriptionButton,
+            actions.aiTranscription && aiTranscriptionAvailable,
+            order = 5,
+            full = reveal,
+            row = typingRow,
+            spring = spring,
+            restingAlpha = ::transcriptionRestingAlpha,
         )
 
         // Rangée normale : la puce de collage apparaît à côté du bouton Smart Clipboard, suivie des actions IA.
         setRevealed(pasteChip, content.pasteChip, order = 0, full = false, row = normalRow)
         val normal = BarVisibility.normalRowActions(mode)
         setRevealed(
-            normalActions.generateButton, normal.generate, order = 3, full = false, row = normalRow,
+            normalActions.generateButton,
+            normal.generate,
+            order = 3,
+            full = false,
+            row = normalRow,
             restingAlpha = ::generateRestingAlpha,
         )
         setRevealed(
-            normalActions.correctButton, normal.correct, order = 4, full = false, row = normalRow,
+            normalActions.correctButton,
+            normal.correct,
+            order = 4,
+            full = false,
+            row = normalRow,
             restingAlpha = ::correctRestingAlpha,
         )
         setRevealed(
-            normalActions.transcriptionButton, normal.aiTranscription && aiTranscriptionAvailable, order = 5, full = false,
-            row = normalRow, restingAlpha = ::transcriptionRestingAlpha,
+            normalActions.transcriptionButton,
+            normal.aiTranscription && aiTranscriptionAvailable,
+            order = 5,
+            full = false,
+            row = normalRow,
+            restingAlpha = ::transcriptionRestingAlpha,
         )
 
         val menuOpen = mode == BarMode.TYPING && zoneState.menuOpen
@@ -647,7 +685,11 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         val enterFromY = if (toTyping) barHeightPx else -barHeightPx
         val leaveToY = if (toTyping) -barHeightPx else barHeightPx
         val robotTravel = (typingRow.paddingLeft + iconButtonWidth).toFloat()
-        val total = BarReveal.SPRING_DURATION_MS + ROW_ENTER_DELAY_MS
+        // Style d'animation lu une fois : un changement de réglage pendant la transition ne la déforme pas.
+        val style = MotionStyle.current
+        val springMs = style.revealDurationMs
+        val enterDelayMs = (ROW_ENTER_DELAY_MS * style.curtainScale).toLong()
+        val total = springMs + enterDelayMs
         // Pendant la transition, les rangées ne dépassent ni en haut (barre d'emojis récents) ni en bas (clavier) : elles
         // disparaissent sous le bord de la barre. La racine du clavier ne coupe pas ses enfants (clipChildren = false, pour la
         // bulle d'accents), et le rognage des rangées par la barre n'a lieu qu'à ce prix : on rogne donc la barre elle-même.
@@ -657,17 +699,17 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             interpolator = LinearInterpolator()
             addUpdateListener { update ->
                 val elapsed = (update.animatedValue as Float) * total
-                val leave = (elapsed / BarReveal.SPRING_DURATION_MS).coerceIn(0f, 1f)
-                val enter = ((elapsed - ROW_ENTER_DELAY_MS) / BarReveal.SPRING_DURATION_MS).coerceIn(0f, 1f)
-                enterRow.translationY = BarReveal.glideOffset(enterFromY, enter)
+                val leave = (elapsed / springMs).coerceIn(0f, 1f)
+                val enter = ((elapsed - enterDelayMs) / springMs).coerceIn(0f, 1f)
+                enterRow.translationY = BarReveal.glideOffset(enterFromY, enter, style)
                 enterRow.alpha = (enter / ROW_FADE_IN).coerceIn(0f, 1f)
-                leaveRow.translationY = leaveToY * BarReveal.springProgress(leave)
+                leaveRow.translationY = leaveToY * BarReveal.springProgress(leave, style)
                 leaveRow.alpha = 1f - (leave / ROW_FADE_OUT).coerceIn(0f, 1f)
                 // Le robot entre par la gauche de l'écran (ou y retourne) pendant que sa rangée monte (ou descend).
                 robotButton.translationX = if (toTyping) {
-                    BarReveal.glideOffset(-robotTravel, enter)
+                    BarReveal.glideOffset(-robotTravel, enter, style)
                 } else {
-                    -robotTravel * BarReveal.springProgress(leave)
+                    -robotTravel * BarReveal.springProgress(leave, style)
                 }
             }
             addListener(

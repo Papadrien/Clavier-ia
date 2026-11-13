@@ -3,11 +3,11 @@ package fr.junade.taipo.model.download
 import android.content.Context
 import android.os.SystemClock
 import fr.junade.taipo.AppLog
-import kotlinx.coroutines.delay
 import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlinx.coroutines.delay
 
 /**
  * Téléchargement sûr d'un seul fichier (stories 8.3, 8.4, 8.8 et 8.9), partagé par le worker des modèles de texte et
@@ -74,9 +74,12 @@ object ModelFileFetcher {
         onProgress: (Long) -> Unit = {},
         onVerifying: () -> Unit = {},
         beforeCommit: () -> Unit = {},
+        allowResume: Boolean = true,
     ): Outcome {
         val parsed = URL(url)
         if (parsed.protocol != "https") return Outcome.Failed(DownloadFailure.SERVER)
+        // Sans reprise (petits fichiers sans empreinte) : un partiel laissé par une tentative précédente n'est jamais recollé.
+        if (!allowResume) PartialDownload.discard(destination)
 
         val offset = PartialDownload.usableOffset(destination, System.currentTimeMillis())
         val savedMarker = if (offset > 0) PartialDownload.readMarker(destination) else null
@@ -159,8 +162,11 @@ object ModelFileFetcher {
                 is InstallResult.Installed -> Outcome.Done(result.sizeBytes, result.sha256)
                 is InstallResult.Cancelled ->
                     // Coupure de connexion : on retente tout seul ; Wi-Fi quitté sans accord données mobiles : on s'arrête.
-                    if (networkLost) Outcome.Failed(DownloadFailure.NETWORK, retryable = lostKind == NetworkKind.NONE)
-                    else Outcome.Cancelled
+                    if (networkLost) {
+                        Outcome.Failed(DownloadFailure.NETWORK, retryable = lostKind == NetworkKind.NONE)
+                    } else {
+                        Outcome.Cancelled
+                    }
                 is InstallResult.Failed -> {
                     AppLog.w(TAG, "Installation échouée : ${result.reason}", result.cause)
                     val reason = DownloadFailureMapper.from(result)
@@ -191,13 +197,14 @@ object ModelFileFetcher {
         onProgress: (Long) -> Unit = {},
         onVerifying: () -> Unit = {},
         beforeCommit: () -> Unit = {},
+        allowResume: Boolean = true,
     ): Outcome {
         var lastOffset = PartialDownload.currentOffset(destination)
         var failuresWithoutProgress = 0
         while (true) {
             val outcome = fetch(
                 context, url, destination, expectedSha256, acceptContentLength, allowMobileData, isActive,
-                keepPartialOnStop, onTotal, onProgress, onVerifying, beforeCommit,
+                keepPartialOnStop, onTotal, onProgress, onVerifying, beforeCommit, allowResume,
             )
             if (outcome !is Outcome.Failed || !outcome.retryable || !isActive()) return outcome
 
@@ -259,11 +266,19 @@ object ModelFileFetcher {
                     PartialDownload.discard(destination)
                     return Plan.Stop(Outcome.Failed(DownloadFailure.CORRUPTED, retryable = true))
                 }
+                val served = PartialDownload.validatorOf(connection.getHeaderField("ETag"), connection.getHeaderField("Last-Modified"))
+                if (!PartialDownload.sameFile(savedMarker?.validator, served)) {
+                    // Le fichier du serveur a changé (même taille ou non) et le serveur a ignoré `If-Range` : on repart de zéro.
+                    AppLog.w(TAG, "Validateur différent de celui du partiel : reprise abandonnée")
+                    PartialDownload.discard(destination)
+                    return Plan.Stop(Outcome.Failed(DownloadFailure.CORRUPTED, retryable = true))
+                }
                 range.total
             }
             else -> {
                 AppLog.w(TAG, "Réponse inattendue : HTTP ${response.code}")
-                return Plan.Stop(Outcome.Failed(DownloadFailure.SERVER))
+                // Audit REL-02 : serveur saturé ou en panne passagère : nouvelle tentative avec le délai habituel.
+                return Plan.Stop(Outcome.Failed(DownloadFailure.SERVER, retryable = DownloadPolicy.isRetryableHttpStatus(response.code)))
             }
         }
         // Le serveur doit annoncer une taille cohérente avec le fichier attendu.

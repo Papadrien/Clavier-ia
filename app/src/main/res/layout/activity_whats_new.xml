@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nouveautés : une carte par nouveauté (item_terms_section), ajoutées par WhatsNewActivity à partir de WhatsNew.items. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/taipo_settings_screen_padding">
+
+        <TextView
+            style="@style/TaipoText.Title"
+            android:id="@+id/whats_new_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/whats_new_heading" />
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_xl"
+            android:text="@string/whats_new_intro" />
+
+        <LinearLayout
+            android:id="@+id/whats_new_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
+</ScrollView>

@@ -98,6 +98,18 @@ internal class KeyRenderer(private val context: Context) {
 
     private val keyRect = RectF()
 
+    // Forme des touches (page « Apparence ») : lue à la création, les vues sont recréées quand elle change (KeyboardTheme.Look).
+    private val shape = KeyboardTheme.shape
+    private val facePath = Path()
+    private val plateauRect = RectF()
+    private val plateauInset = context.dimen(R.dimen.taipo_key_plateau_inset)
+    private val plateauPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.key_plateau) }
+    private val outlinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        color = context.themeColor(R.color.key_outline)
+        strokeWidth = context.dimen(R.dimen.taipo_key_outline_width)
+    }
+
     // Animation « Élastique » du chiffre (glissement vers le bas sur une touche du haut) : voir DigitSwipeAnimation.
     var digitSwipeAnimation: DigitSwipeAnimation? = null
     private val digitPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -114,21 +126,52 @@ internal class KeyRenderer(private val context: Context) {
     var backspaceIconAngle = 0f
 
     // Lot 21 : un caractère à dessiner sans passer par String.
-    private val pillRect = RectF()
     private val charBuffer = CharArray(1)
     private var lastKeyTextSize = -1f
 
     // Icônes des touches (lot 09) : VectorDrawable de la charte, teintés une fois, redimensionnés au dessin (aucune
     // allocation dans onDraw). Remplacent les glyphes de police (Maj, Effacer) et les tracés Canvas (Entrée, Emoji).
     private val backspaceIcon = loadKeyIcon(R.drawable.ic_key_backspace)
+
     // Lot T6 : Entrée est violette dans les deux thèmes, son icône est donc blanche (text_on_accent), pas la couleur des libellés.
     private val enterIcon = loadKeyIcon(R.drawable.ic_key_enter, R.color.text_on_accent)
+
+    // Audit UX-10 : icône de l'action du champ (Rechercher, Envoyer, Suivant, OK), chargées une fois comme les autres.
+    private val searchIcon = loadKeyIcon(R.drawable.ic_key_search, R.color.text_on_accent)
+    private val sendIcon = loadKeyIcon(R.drawable.ic_key_send, R.color.text_on_accent)
+    private val nextIcon = loadKeyIcon(R.drawable.ic_key_next, R.color.text_on_accent)
+    private val doneIcon = loadKeyIcon(R.drawable.ic_key_done, R.color.text_on_accent)
     private val emojiIcon = loadKeyIcon(R.drawable.ic_key_emoji)
+
     // Petit globe en exposant sur la pilule Entrée violette : blanc, légèrement atténué comme l'indice des chiffres (lot T6).
     private val globeIcon = loadKeyIcon(R.drawable.ic_key_globe, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
 
+    // Sans clavier multilingue, l'appui long sur Entrée n'ouvre que le mode une main : son icône (celle de la bulle) prend
+    // la place du globe, pour signaler qu'il y a quelque chose derrière l'appui long.
+    private val oneHandedHintIcon = loadKeyIcon(R.drawable.ic_key_one_hand, R.color.text_on_accent).apply { alpha = GLOBE_ALPHA }
+
     /** Clavier multilingue actif : la pilule Entrée affiche un petit globe en exposant (appui long = langue). */
+    /**
+     * Fond du clavier à motif (page « Thème ») : les touches (sauf Entrée) deviennent translucides pour laisser voir le motif.
+     * Les lettres gardent leur couleur, donc leur contraste.
+     */
+    var translucentKeys = false
+        set(value) {
+            if (field == value) return
+            field = value
+            val face = if (value) TRANSLUCENT_FACE_ALPHA else OPAQUE
+            val shadow = if (value) TRANSLUCENT_SHADOW_ALPHA else OPAQUE
+            normalPaint.alpha = face
+            secondaryPaint.alpha = face
+            activePaint.alpha = face
+            normalShadowPaint.alpha = shadow
+            secondaryShadowPaint.alpha = shadow
+        }
+
     var showsGlobeOnEnter = false
+
+    /** Action du champ courant, dessinée sur la touche Entrée (audit UX-10). */
+    var enterActionIcon = EnterAction.Icon.ENTER
 
     // État de la vue pour le dessin en cours, fixé au début de chaque [draw] (aucune allocation).
     private var dims: DrawDimens = DrawDimens(context)
@@ -257,7 +300,7 @@ internal class KeyRenderer(private val context: Context) {
 
         val style = keyStyle(key)
         // Face : la couleur de la charte ; Maj verrouillée / clavier de symboles affiché = état actif (touche à bascule).
-        // L'état pressé ne change pas la couleur : il enfonce la touche (voir ci-dessous).
+        // L'état pressé enfonce la touche ; sans ombre (formes Plat, Contour, Sans fond), il change la couleur (voir drawFace).
         val face = when {
             key.action is KeyAction.Shift && isShifted -> activePaint
             key.action is KeyAction.ToggleLayout && layout.id.isSymbols -> activePaint
@@ -270,22 +313,7 @@ internal class KeyRenderer(private val context: Context) {
             KeyStyle.SECONDARY -> secondaryShadowPaint
             KeyStyle.NORMAL -> normalShadowPaint
         }
-        // Ombre = la touche entière ; la face la recouvre en laissant voir l'épaisseur en bas. Au repos, l'ombre
-        // visible fait [taipo_key_shadow_height]. Pressée, la touche s'enfonce : l'ombre visible se réduit à
-        // [taipo_key_shadow_pressed_height] et la face descend de la différence (sa taille ne change pas).
-        // L'emprise de référence (zones tactiles, dimensions) ne change pas ; le contenu suit la face.
-        val radius = dims.keyCornerRadius
-        val restShadow = minOf(dims.keyShadowHeight, keyRect.height() * MAX_SHADOW_RATIO)
-        val shownShadow = if (key == pressedKey) minOf(dims.keyShadowPressedHeight, restShadow) else restShadow
-        keyRect.top += restShadow - shownShadow
-        if (style == KeyStyle.ACCENT) {
-            // Entrée est une pilule : toute la largeur de la touche, extrémités en demi-cercles.
-            drawPillKey(canvas, shownShadow, shadow, face)
-        } else {
-            canvas.drawRoundRect(keyRect, radius, radius, shadow)
-            keyRect.bottom -= shownShadow
-            canvas.drawRoundRect(keyRect, radius, radius, face)
-        }
+        drawFace(canvas, key, style, face, shadow)
 
         when (key.action) {
             KeyAction.Space -> {
@@ -299,7 +327,11 @@ internal class KeyRenderer(private val context: Context) {
                     drawSpaceBarBlob(canvas, blob, cx, cy)
                 } else {
                     canvas.drawLine(
-                        cx - dims.spaceBarLength, cy, cx + dims.spaceBarLength, cy, spaceBarPaint,
+                        cx - dims.spaceBarLength,
+                        cy,
+                        cx + dims.spaceBarLength,
+                        cy,
+                        spaceBarPaint,
                     )
                 }
             }
@@ -330,7 +362,7 @@ internal class KeyRenderer(private val context: Context) {
         val upper = shiftedChar(key, layout, isShifted)
         val label = if (upper == NO_CHAR) displayLabel(key, layout, isShifted) else ""
         if (upper != NO_CHAR || label.isNotEmpty()) {
-            autoSizeTextPaint(key)
+            autoSizeTextPaint(key, label)
             val baseline = keyRect.centerY() - (textPaint.ascent() + textPaint.descent()) / 2f
             if (upper != NO_CHAR) {
                 drawChar(canvas, upper, keyRect.centerX(), baseline, textPaint)
@@ -342,28 +374,99 @@ internal class KeyRenderer(private val context: Context) {
     }
 
     /**
-     * Touche pilule (Entrée) : face en capsule sur toute la largeur de la touche (rayon = la moitié de la hauteur de la
-     * face, ou de la largeur si la touche est plus haute que large), sur une capsule d'ombre décalée vers le bas. Laisse
-     * [keyRect] réduit à la face, pour centrer le contenu.
+     * Face et ombre de la touche, selon la forme choisie ([shape], voir [KeyShape]). Ombre = la face décalée vers le bas ; au
+     * repos, l'ombre visible fait [taipo_key_shadow_height] (multipliée par [KeyShape.shadowFactor]). Pressée, la touche s'enfonce :
+     * l'ombre visible se réduit à [taipo_key_shadow_pressed_height] et la face descend de la différence (sa taille ne change pas).
+     * Sans ombre (Plat, Contour, Sans fond), l'appui se voit à la couleur de la face. L'emprise de référence (zones tactiles,
+     * dimensions) ne change pas. Laisse [keyRect] réduit à la face, pour centrer le contenu. Sans allocation.
      */
-    private fun drawPillKey(canvas: Canvas, shownShadow: Float, shadow: Paint, face: Paint) {
-        val faceHeight = keyRect.height() - shownShadow
-        val radius = minOf(keyRect.width(), faceHeight) / 2f
-        pillRect.set(keyRect.left, keyRect.top, keyRect.right, keyRect.top + faceHeight)
-        pillRect.offset(0f, shownShadow)
-        canvas.drawRoundRect(pillRect, radius, radius, shadow)
-        pillRect.offset(0f, -shownShadow)
-        canvas.drawRoundRect(pillRect, radius, radius, face)
+    private fun drawFace(canvas: Canvas, key: Key, style: KeyStyle, face: Paint, shadow: Paint) {
+        val accent = style == KeyStyle.ACCENT
+        val pressed = key == pressedKey
+        val toggled = face === activePaint
+        val maxShadow = keyRect.height() * (if (shape.hasPlateau) MAX_MECHANICAL_SHADOW_RATIO else MAX_SHADOW_RATIO)
+        val restShadow = minOf(dims.keyShadowHeight * shape.shadowFactor, maxShadow)
+        val shownShadow = if (pressed) minOf(dims.keyShadowPressedHeight * shape.shadowFactor, restShadow) else restShadow
+        keyRect.top += restShadow - shownShadow
         keyRect.bottom -= shownShadow
+        // Face dessinée : le cercle de Rond est centré dans la touche, les autres formes en occupent toute la place.
+        val width = keyRect.width()
+        val height = keyRect.height()
+        val faceWidth = shape.faceWidth(accent, width, height)
+        val faceHeight = shape.faceHeight(accent, width, height)
+        keyRect.inset((width - faceWidth) / 2f, (height - faceHeight) / 2f)
+        val corner = shape.cornerSize(accent, faceWidth, faceHeight, dims.keyCornerRadius)
+        when (shape.body(accent)) {
+            KeyShape.FaceBody.FILLED -> {
+                if (shownShadow > 0f) {
+                    keyRect.offset(0f, shownShadow)
+                    drawShape(canvas, corner, shadow)
+                    keyRect.offset(0f, -shownShadow)
+                }
+                drawShape(canvas, corner, if (pressed && shape.pressTintsFace && !accent) activePaint else face)
+                if (shape.hasPlateau) drawPlateau(canvas, corner)
+            }
+            // Touche creuse : un trait ; pleine sous le doigt et quand elle est active (Maj, symboles).
+            KeyShape.FaceBody.OUTLINED -> {
+                if (pressed || toggled) drawShape(canvas, corner, if (toggled) activePaint else face)
+                val half = outlinePaint.strokeWidth / 2f
+                keyRect.inset(half, half)
+                drawShape(canvas, maxOf(corner - half, 0f), outlinePaint)
+                keyRect.inset(-half, -half)
+            }
+            // Sans fond : rien au repos, la face sous le doigt et quand la touche est active.
+            KeyShape.FaceBody.BARE -> if (pressed || toggled) drawShape(canvas, corner, if (toggled) activePaint else face)
+        }
+    }
+
+    /** Silhouette de la forme dans [keyRect] : rectangle arrondi de rayon [corner], ou coins coupés de [corner] (Biseau). */
+    private fun drawShape(canvas: Canvas, corner: Float, paint: Paint) {
+        if (shape.outline() == KeyShape.Outline.ROUNDED_RECT) {
+            canvas.drawRoundRect(keyRect, corner, corner, paint)
+            return
+        }
+        val r = keyRect
+        facePath.rewind()
+        facePath.moveTo(r.left + corner, r.top)
+        facePath.lineTo(r.right - corner, r.top)
+        facePath.lineTo(r.right, r.top + corner)
+        facePath.lineTo(r.right, r.bottom - corner)
+        facePath.lineTo(r.right - corner, r.bottom)
+        facePath.lineTo(r.left + corner, r.bottom)
+        facePath.lineTo(r.left, r.bottom - corner)
+        facePath.lineTo(r.left, r.top + corner)
+        facePath.close()
+        canvas.drawPath(facePath, paint)
     }
 
     /**
-     * Contenu de la pilule Entrée : le symbole d'entrée, centré ; en mode multilingue, un petit globe en exposant, en haut
-     * à droite comme l'indice des chiffres, replié vers l'intérieur pour rester dans la courbe de la pilule.
+     * Mécanique : plateau éclairé sur le haut de la face (keycap). Le contenu remonte au centre du plateau ([keyRect] réduit d'autant).
+     */
+    private fun drawPlateau(canvas: Canvas, corner: Float) {
+        val inset = minOf(plateauInset, keyRect.width() / 4f, keyRect.height() / 4f)
+        plateauRect.set(keyRect.left + inset, keyRect.top + inset * PLATEAU_TOP_RATIO, keyRect.right - inset, keyRect.bottom - inset * 2f)
+        val radius = maxOf(corner - inset / 2f, 0f)
+        canvas.drawRoundRect(plateauRect, radius, radius, plateauPaint)
+        keyRect.bottom -= inset
+    }
+
+    /**
+     * Contenu de la pilule Entrée : le symbole d'entrée, centré, et en exposant, en haut à droite comme l'indice des chiffres
+     * (replié vers l'intérieur pour rester dans la courbe de la pilule), ce qu'ouvre l'appui long : un petit globe en mode
+     * multilingue, sinon l'icône du mode une main.
      */
     private fun drawEnterContent(canvas: Canvas) {
-        drawKeyIcon(canvas, enterIcon)
-        if (!showsGlobeOnEnter) return
+        drawKeyIcon(
+            canvas,
+            when (enterActionIcon) {
+                EnterAction.Icon.ENTER -> enterIcon
+                EnterAction.Icon.SEARCH -> searchIcon
+                EnterAction.Icon.SEND -> sendIcon
+                EnterAction.Icon.NEXT -> nextIcon
+                EnterAction.Icon.DONE -> doneIcon
+            },
+        )
+        val hintIcon = if (showsGlobeOnEnter) globeIcon else oneHandedHintIcon
         val size = dims.hintTextSize * GLOBE_HINT_SCALE
         val half = size / 2f
         val radius = minOf(keyRect.width(), keyRect.height()) / 2f
@@ -373,13 +476,16 @@ internal class KeyRenderer(private val context: Context) {
         val dy = (cy - half) - (keyRect.top + radius)
         val dx = if (reach > abs(dy)) sqrt(reach * reach - dy * dy) else 0f
         val cx = keyRect.right - radius + dx - half
-        placeIcon(globeIcon, cx, cy, half)
-        globeIcon.draw(canvas)
+        placeIcon(hintIcon, cx, cy, half)
+        hintIcon.draw(canvas)
     }
 
     private fun placeIcon(icon: Drawable, cx: Float, cy: Float, half: Float) {
         icon.setBounds(
-            (cx - half).roundToInt(), (cy - half).roundToInt(), (cx + half).roundToInt(), (cy + half).roundToInt(),
+            (cx - half).roundToInt(),
+            (cy - half).roundToInt(),
+            (cx + half).roundToInt(),
+            (cy + half).roundToInt(),
         )
     }
 
@@ -394,7 +500,10 @@ internal class KeyRenderer(private val context: Context) {
         val cx = keyRect.centerX()
         val cy = keyRect.centerY()
         icon.setBounds(
-            (cx - half).roundToInt(), (cy - half).roundToInt(), (cx + half).roundToInt(), (cy + half).roundToInt(),
+            (cx - half).roundToInt(),
+            (cy - half).roundToInt(),
+            (cx + half).roundToInt(),
+            (cy + half).roundToInt(),
         )
         if (angleDegrees == 0f) {
             icon.draw(canvas)
@@ -493,16 +602,30 @@ internal class KeyRenderer(private val context: Context) {
         )
     }
 
-    private fun autoSizeTextPaint(key: Key) {
+    private fun autoSizeTextPaint(key: Key, label: String = "") {
         val base = when (key.id) {
-            // « ?123 » (page des lettres) : police réduite de 30 % ; « ABC » garde la taille large.
-            "toggle" -> if (layout.id == LayoutId.LETTERS) dims.keyTextSizeLarge * TOGGLE_123_TEXT_RATIO else dims.keyTextSizeLarge
+            // « ?123 » et « ABC » : même taille, réduite de 30 % (demande du 12/11/2026 : « ABC » paraissait trop gros à côté).
+            "toggle" -> toggleLabelTextSize(dims.keyTextSizeLarge)
             "symbol_page" -> dims.keyTextSize * SYMBOL_PAGE_TEXT_RATIO // « ?123 » et « =\< » : 4 signes sur une touche étroite
             else -> dims.keyTextSize
         }
         // Rangées basses (paysage, hauteur réduite) : le texte ne doit pas déborder de la touche.
         // Lot 21 : la taille n'est reposée sur le Paint que si elle change (la plupart des touches ont la même).
-        val size = base.coerceAtMost(keyRect.height() * 0.62f)
+        var size = base.coerceAtMost(keyRect.height() * 0.62f)
+        setKeyTextSize(size)
+        // Libellés de plusieurs signes (« ABC », « ?123 ») : une police large (OpenDyslexic, lettres très espacées) les ferait
+        // déborder de la touche ; ils sont réduits pour tenir dans [LABEL_MAX_WIDTH_RATIO] de sa largeur.
+        if (label.length > 1) {
+            val maxWidth = keyRect.width() * LABEL_MAX_WIDTH_RATIO
+            val width = textPaint.measureText(label)
+            if (width > maxWidth) {
+                size *= maxWidth / width
+                setKeyTextSize(size)
+            }
+        }
+    }
+
+    private fun setKeyTextSize(size: Float) {
         if (size != lastKeyTextSize) {
             lastKeyTextSize = size
             textPaint.textSize = size
@@ -530,12 +653,29 @@ internal class KeyRenderer(private val context: Context) {
     }
 
     companion object {
+        /**
+         * Touches translucides sur un fond à motif : face à 81 %, ombre à 72 %. Transparence réduite deux fois de 30 % : revue du
+         * 10/11/2026 (maquettes : 38 % et 57 % de transparence, ramenées à 27 % et 40 %), puis le 13/11/2026 (19 % et 28 %).
+         */
+        const val TRANSLUCENT_FACE_ALPHA = 207
+        const val TRANSLUCENT_SHADOW_ALPHA = 184
+        private const val OPAQUE = 255
+
         /** Lot 21 : « pas de caractère » (voir [shiftedChar]). */
         const val NO_CHAR = '\u0000'
 
         /** Taille du libellé des touches de bascule entre les pages de symboles, par rapport à une touche normale. */
         private const val SYMBOL_PAGE_TEXT_RATIO = 0.75f
         private const val TOGGLE_123_TEXT_RATIO = 0.7f
+
+        /** Libellé de plusieurs signes : jamais plus de cette part de la largeur de la touche. */
+        const val LABEL_MAX_WIDTH_RATIO = 0.8f
+
+        /**
+         * Taille du libellé « ?123 » / « ABC » (en pixels) à partir de `taipo_key_text_size_large` déjà convertie. Partagée
+         * avec la touche « ABC » du panneau emoji, pour que les deux panneaux aient la même.
+         */
+        fun toggleLabelTextSize(keyTextSizeLarge: Float): Float = keyTextSizeLarge * TOGGLE_123_TEXT_RATIO
 
         /**
          * Nom de la langue sur l'espace pendant le glissement : part de l'allongement du trait reprise en largeur par le mot
@@ -547,6 +687,12 @@ internal class KeyRenderer(private val context: Context) {
 
         // Garde-fou : l'ombre ne dépasse jamais cette part de la hauteur de la touche (rangées basses en paysage).
         private const val MAX_SHADOW_RATIO = 0.15f
+
+        /** Mécanique : le flanc, plus épais, peut aller jusqu'à 22 % de la hauteur de la touche. */
+        private const val MAX_MECHANICAL_SHADOW_RATIO = 0.22f
+
+        /** Mécanique : marge du plateau en haut, en part de sa marge sur les côtés. */
+        private const val PLATEAU_TOP_RATIO = 0.6f
 
         /** Icônes des touches : jamais plus de cette part de la hauteur de la face (rangées basses en paysage). */
         const val KEY_ICON_MAX_RATIO = 0.62f

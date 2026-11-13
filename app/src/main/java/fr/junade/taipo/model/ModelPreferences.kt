@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import fr.junade.taipo.CustomModelAccess
 
 /**
  * Persiste, pour chaque [AiModel], le fichier local choisi par l'utilisateur
@@ -23,6 +24,26 @@ class ModelPreferences(context: Context) {
 
     fun setActiveModel(model: AiModel) {
         prefs.edit().putString(KEY_ACTIVE_MODEL, model.id).apply()
+    }
+
+    /** Fait du modèle personnalisé le modèle actif, en retenant le modèle qu'il remplace (rétabli par [deactivateCustomModel]). */
+    fun activateCustomModel() {
+        val previous = activeModel()
+        val editor = prefs.edit().putString(KEY_ACTIVE_MODEL, AiModel.CUSTOM.id)
+        if (previous != null && previous != AiModel.CUSTOM) editor.putString(KEY_BEFORE_CUSTOM, previous.id)
+        editor.apply()
+    }
+
+    /**
+     * Le modèle personnalisé cesse d'être actif : le modèle qu'il remplaçait revient s'il est toujours installé, sinon le premier
+     * modèle installé du catalogue, sinon aucun (story 8.5).
+     */
+    fun deactivateCustomModel() {
+        if (activeModel() != AiModel.CUSTOM) return
+        val before = AiModel.byId(prefs.getString(KEY_BEFORE_CUSTOM, null))?.takeIf(::isInstalled)
+        val next = before ?: AiModel.entriesOrdered().firstOrNull(::isInstalled)
+        prefs.edit().remove(KEY_BEFORE_CUSTOM).apply()
+        if (next != null) setActiveModel(next) else clearActiveModel()
     }
 
     /** Oublie le modèle actif (story 8.13 : le dernier modèle installé vient d'être supprimé, 8.5 s'applique alors). */
@@ -61,11 +82,24 @@ class ModelPreferences(context: Context) {
      * fichier), ou si un fichier a été fourni à la main.
      */
     fun isInstalled(model: AiModel): Boolean {
+        // Modèle personnalisé : seulement avec le pack premium (ou en debug). Sans lui, il reste enregistré mais ne sert pas.
+        if (model == AiModel.CUSTOM && !CustomModelAccess.allowed) return false
         if (isDownloaded(model)) {
             val file = ModelFileResolver.localFileFor(appContext, model)
             return file.isFile && file.length() == downloadedSizeFor(model)
         }
         return savedUriFor(model) != null
+    }
+
+    /**
+     * Le modèle accepte de l'audio en entrée (bouton Transcription IA). Catalogue : d'après le modèle ([AiModel.hasAudioInput]) ;
+     * modèle personnalisé : d'après le réglage de sa page ([setCustomModelAudio]), l'app ne pouvant pas le savoir d'avance.
+     */
+    fun acceptsAudio(model: AiModel): Boolean =
+        if (model == AiModel.CUSTOM) prefs.getBoolean(KEY_CUSTOM_AUDIO, false) else model.hasAudioInput
+
+    fun setCustomModelAudio(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_CUSTOM_AUDIO, enabled).apply()
     }
 
     fun savedUriFor(model: AiModel): Uri? =
@@ -148,5 +182,7 @@ class ModelPreferences(context: Context) {
     companion object {
         private const val PREFS_NAME = "ai_model_prefs"
         private const val KEY_ACTIVE_MODEL = "active_model"
+        private const val KEY_CUSTOM_AUDIO = "custom_model_audio"
+        private const val KEY_BEFORE_CUSTOM = "model_before_custom"
     }
 }

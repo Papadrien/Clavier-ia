@@ -13,7 +13,8 @@ import androidx.annotation.ColorRes
  * sienne en résolvant ses couleurs avec une configuration où le mode nuit est forcé selon [mode], au lieu de suivre celui de
  * l'appareil. [mode] vient du réglage ([choice], de type [ThemeChoice]) ; en « Système, automatique », il suit le thème de l'appareil.
  *
- * **Les écrans de l'application restent toujours sombres** : [wrap] force le mode nuit, quel que soit le réglage.
+ * **Les écrans de l'application suivent le même thème** ([wrap]) ; un écran ouvert se recrée après un changement
+ * ([ScreenThemeTracker]).
  *
  * Repeindre le clavier (lot T4) : ses vues lisent leurs couleurs à leur création. [TaipoIme] les recrée quand le thème effectif
  * ([mode]) a changé depuis leur création : à l'ouverture d'un champ (réglage modifié pendant que le clavier était masqué) et,
@@ -45,6 +46,13 @@ object KeyboardTheme {
     @Volatile
     var palette: AccentPalette = AccentPalette.DEFAULT
 
+    /**
+     * Forme des touches choisie (section « Forme des touches » de la page « Apparence »), déjà ramenée à Arrondi si elle n'est
+     * pas utilisable ([KeyShape.effective]). Posée comme [palette] : au démarrage du processus et à chaque changement du réglage.
+     */
+    @Volatile
+    var shape: KeyShape = KeyShape.DEFAULT
+
     /** Palette du clavier en ce moment : le réglage, ou le thème de l'appareil en mode automatique. */
     val mode: Mode get() = choice.resolve(isSystemNight())
 
@@ -54,11 +62,17 @@ object KeyboardTheme {
     /**
      * Apparence effective du clavier : palette claire ou sombre ([mode]), couleurs du fond d'écran ou non ([dynamic]) et couleur
      * d'accent ([accent] ; toujours le violet en couleur dynamique, dont l'accent vient du fond d'écran).
-     * [TaipoIme] la compare à celle de la création des vues pour savoir s'il faut les recréer.
+     * et forme des touches ([shape]). [TaipoIme] la compare à celle de la création des vues pour savoir s'il faut les recréer.
      */
-    data class Look(val mode: Mode, val dynamic: Boolean, val accent: AccentPalette = AccentPalette.DEFAULT)
+    data class Look(
+        val mode: Mode,
+        val dynamic: Boolean,
+        val accent: AccentPalette = AccentPalette.DEFAULT,
+        val shape: KeyShape = KeyShape.DEFAULT,
+    )
 
-    val look: Look get() = dynamic.let { isDynamic -> Look(mode, isDynamic, if (isDynamic) AccentPalette.DEFAULT else palette) }
+    val look: Look
+        get() = dynamic.let { isDynamic -> Look(mode, isDynamic, if (isDynamic) AccentPalette.DEFAULT else palette, shape) }
 
     /** Ressources de l'apparence effective, gardées tant qu'elle ne change pas (et jusqu'au prochain changement de configuration). */
     @Volatile
@@ -85,10 +99,17 @@ object KeyboardTheme {
     fun themed(context: Context): Context = context.createConfigurationContext(configuration(context, mode, dynamic))
 
     /**
-     * Contexte à donner aux écrans (activités) : leurs ressources suivent toujours la palette sombre. À utiliser dans
-     * `attachBaseContext`.
+     * Contexte à donner aux écrans (activités), à utiliser dans `attachBaseContext` : leurs ressources suivent le thème choisi
+     * pour le clavier (page « Apparence » : système, clair, sombre ou couleurs du fond d'écran), comme le clavier lui-même.
+     * Un écran créé avant un changement de thème se recrée de lui-même ([needsRecreate]).
      */
-    fun wrap(base: Context): Context = base.createConfigurationContext(configuration(base, Mode.DARK))
+    fun wrap(base: Context): Context = base.createConfigurationContext(configuration(base, mode, dynamic))
+
+    /** Apparence avec laquelle un écran a été créé, à comparer au retour sur l'écran ([needsRecreate]). */
+    fun screenLook(): Pair<Mode, Boolean> = mode to dynamic
+
+    /** Vrai si le thème a changé depuis [created] (réglage modifié, ou thème du système changé avec le choix « Système »). */
+    fun needsRecreate(created: Pair<Mode, Boolean>): Boolean = created != screenLook()
 
     private fun resources(context: Context): Resources {
         val current = look

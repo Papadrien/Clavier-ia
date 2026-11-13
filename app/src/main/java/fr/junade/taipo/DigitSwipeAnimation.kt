@@ -152,14 +152,18 @@ internal class DigitSwipeAnimation(
         var v = 0f
         var target = 0f
         private var stiffness = BOUNCE_STIFFNESS
-        private var damping = 2f * BOUNCE_DAMPING_RATIO * sqrt(BOUNCE_STIFFNESS)
+        private var dampingRatio = BOUNCE_DAMPING_RATIO
 
         fun configure(stiffness: Float, dampingRatio: Float) {
             this.stiffness = stiffness
-            damping = 2f * dampingRatio * sqrt(stiffness)
+            this.dampingRatio = dampingRatio
         }
 
         fun step(dt: Float) {
+            // Réglages faits pour le style Ressort : transposés dans le style d'animation choisi.
+            val style = MotionStyle.current
+            val stiffness = style.tuneStiffness(this.stiffness)
+            val damping = 2f * style.tuneDampingRatio(dampingRatio) * sqrt(stiffness)
             val n = ceil(dt / SUBSTEP_S).toInt().coerceAtLeast(1)
             val h = dt / n
             repeat(n) {

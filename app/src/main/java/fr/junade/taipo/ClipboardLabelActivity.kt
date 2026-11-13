@@ -1,7 +1,7 @@
 package fr.junade.taipo
 
-import android.content.Context
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -16,7 +16,6 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
-import android.widget.Toast
 import fr.junade.taipo.clipboard.ClipboardItems
 import fr.junade.taipo.clipboard.ClipboardProvider
 import fr.junade.taipo.clipboard.PinnedClipRepository
@@ -40,7 +39,7 @@ import kotlinx.coroutines.withTimeoutOrNull
  */
 class ClipboardLabelActivity : Activity() {
 
-    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
+    // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }
@@ -55,8 +54,12 @@ class ClipboardLabelActivity : Activity() {
     private var original = ""
     private var loaded = false
 
+    // Audit BUG-10 : activité recréée (thème, police) : le champ a déjà retrouvé le texte en cours, on ne le remplace pas.
+    private var restored = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        restored = savedInstanceState != null
         pinnedId = intent.getLongExtra(EXTRA_PINNED_ID, NO_ID)
         if (pinnedId == NO_ID) {
             finish()
@@ -71,12 +74,16 @@ class ClipboardLabelActivity : Activity() {
                 repository.pinned.first { list -> list.any { it.id == pinnedId } }
             }?.firstOrNull { it.id == pinnedId }
             if (clip == null) {
-                toast(getString(R.string.clipboard_edit_not_found))
-                finish()
+                finishWithMessage(getString(R.string.clipboard_edit_not_found))
             } else {
                 show(clip.label)
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(STATE_ORIGINAL, original)
     }
 
     override fun onDestroy() {
@@ -88,29 +95,18 @@ class ClipboardLabelActivity : Activity() {
         original = label.orEmpty()
         loaded = true
         title.text = getString(if (label == null) R.string.clipboard_label_title_add else R.string.clipboard_label_title_edit)
-        input.setText(original)
-        input.setSelection(original.length)
+        if (!restored) {
+            input.setText(original)
+            input.setSelection(original.length)
+        }
         input.requestFocus()
         updateSaveState()
     }
 
-    private fun buildUi() {
-        val root = LinearLayout(this)
-        root.orientation = LinearLayout.VERTICAL
-        root.setPadding(
-            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_horizontal),
-            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_vertical),
-            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_horizontal),
-            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_bottom),
-        )
-
-        title = TextView(this)
-        title.text = getString(R.string.clipboard_label_title_add)
-        title.setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.taipo_dialog_title_text_size))
-        title.useTaipoFont(TaipoType.Weight.BOLD)
-        root.addView(title, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
-
-        input = EditText(this)
+    /** Champ de saisie (identifiant stable : audit BUG-10). */
+    private fun createInput(): EditText {
+        val input = EditText(this)
+        input.id = R.id.clipboard_label_input
         input.inputType = InputType.TYPE_CLASS_TEXT
         input.setSingleLine(true)
         input.imeOptions = EditorInfo.IME_ACTION_DONE
@@ -129,6 +125,26 @@ class ClipboardLabelActivity : Activity() {
                 false
             }
         }
+        return input
+    }
+
+    private fun buildUi() {
+        val root = LinearLayout(this)
+        root.orientation = LinearLayout.VERTICAL
+        root.setPadding(
+            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_horizontal),
+            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_vertical),
+            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_horizontal),
+            resources.getDimensionPixelSize(R.dimen.taipo_dialog_content_padding_bottom),
+        )
+
+        title = TextView(this)
+        title.text = getString(R.string.clipboard_label_title_add)
+        title.setTextSize(TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.taipo_dialog_title_text_size))
+        title.useTaipoFont(TaipoType.Weight.BOLD)
+        root.addView(title, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+
+        input = createInput()
         root.addView(
             input,
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
@@ -151,7 +167,13 @@ class ClipboardLabelActivity : Activity() {
         saveButton.setOnClickListener { save() }
         val gap = resources.getDimensionPixelSize(R.dimen.taipo_dialog_gap)
         buttons.addView(cancel)
-        buttons.addView(saveButton, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { marginStart = gap })
+        buttons.addView(
+            saveButton,
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                marginStart =
+                    gap
+            },
+        )
         root.addView(
             buttons,
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply { topMargin = gap },
@@ -181,31 +203,32 @@ class ClipboardLabelActivity : Activity() {
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                toast(getString(R.string.clipboard_label_error, e.message ?: e.javaClass.simpleName))
+                AppLog.e(TAG, "Échec de l'enregistrement de l'étiquette", e) // détail technique : journal de debug seulement (audit PRIV-03)
+                toast(getString(R.string.clipboard_label_error))
                 updateSaveState()
                 return@launch
             }
             when (result) {
                 ClipboardItems.LabelResult.SAVED -> {
-                    toast(getString(R.string.clipboard_label_done))
-                    finish()
+                    finishWithMessage(getString(R.string.clipboard_label_done))
                 }
                 ClipboardItems.LabelResult.NOT_FOUND -> {
-                    toast(getString(R.string.clipboard_edit_not_found))
-                    finish()
+                    finishWithMessage(getString(R.string.clipboard_edit_not_found))
                 }
                 ClipboardItems.LabelResult.EMPTY, ClipboardItems.LabelResult.TOO_LONG -> updateSaveState()
             }
         }
     }
 
-    private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-
+    private fun toast(message: String) = showScreenMessage(message)
 
     companion object {
+        private const val TAG = "ClipboardLabelActivity"
+
         /** Identifiant de l'élément épinglé dont on saisit l'étiquette. */
         const val EXTRA_PINNED_ID = "pinned_id"
         private const val NO_ID = -1L
+        private const val STATE_ORIGINAL = "original"
         private const val LOAD_TIMEOUT_MS = 3_000L
     }
 }

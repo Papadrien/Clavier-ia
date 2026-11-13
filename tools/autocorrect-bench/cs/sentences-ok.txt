@@ -1,0 +1,27 @@
+# Správné české věty: automatické opravy nesmějí změnit žádnou z nich (měří falešné opravy).
+# Une phrase par ligne (lignes « # » ignorées). Écrites pour le banc, à faire relire.
+Ahoj, jak se máš?
+Už jsem doma.
+Co budeme dělat dnes večer?
+Doufám, že je všechno v pořádku.
+Děkuji moc za pomoc.
+Nevím, kde bydlí.
+Jdu do obchodu pro chleba.
+Uvidíme se zítra v osm.
+Můj bratr pracuje v Praze.
+Prosím, posaď se tady.
+Má dvě kočky a psa.
+Zavolám ti později.
+Ten film byl opravdu dobrý.
+Kde je nejbližší zastávka?
+Nemám čas, promiň.
+Miluju tě.
+Jak se má tvoje máma?
+Už musím jít.
+Zítra bude pršet.
+Rád čtu knížky.
+Bydlíme v novém bytě.
+Přišel ze školy pozdě.
+Chci být doma.
+Je to pro mě důležité.
+Mám rád kávu s mlékem.

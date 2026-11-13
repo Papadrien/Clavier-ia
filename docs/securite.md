@@ -39,9 +39,8 @@ l'hygiène (dérivation standard, séparation par usage, format versionné), pas
 - À la sélection d'un fichier de modèle IA, son **SHA-256 est calculé en arrière-plan** (flux, blocs de 1 Mo,
   progression affichée, annulé si un autre fichier est choisi pour le même modèle), enregistré avec le fichier
   et affiché (texte sélectionnable) pour comparaison avec la page du dépôt Hugging Face.
-- `AiModel.sha256` (référence attendue) est **null pour tous les modèles** : je n'ai pas pu relever les
-  empreintes officielles (pas d'accès réseau) et ne les devine pas. Dès qu'une valeur est renseignée, un écart
-  affiche un avertissement (`checksumWarning`). À ne renseigner que si une seule variante du modèle est supportée.
+- `AiModel.sha256` (référence attendue) est renseigné pour les 4 modèles (vérifié le 11/11/2026 contre les révisions
+  Hugging Face figées dans les URL de Gemma 4). Un écart affiche un avertissement (`checksumWarning`) et bloque le téléchargement.
 - Le modèle vocal (4 fichiers sherpa-onnx) n'est pas concerné par ce lot.
 - Non fait, volontairement : vérifier l'empreinte pendant la copie interne du modèle (`ModelFileResolver`). C'est
   le chemin qui charge l'IA ; à faire avec un compilateur sous la main.
@@ -88,7 +87,8 @@ l'hygiène (dérivation standard, séparation par usage, format versionné), pas
 - **Dans un champ sensible** : Corriger, Générer, Vocal, Transcription IA et le bouton Smart Clipboard sont grisés (opacité réduite) mais
   restent touchables : un appui affiche « Désactivé dans les champs de mot de passe… » et n'exécute rien. Le texte du champ n'est pas lu.
   Le micro n'est pas ouvert.
-- **Puce de collage** : déjà bloquée dans ces champs (`SuggestionPolicy.allowsPasteSuggestion`).
+- **Puce de collage** : volontairement proposée dans ces champs (coller un mot de passe copié depuis un gestionnaire) ; une copie
+  signalée sensible y reste masquée (« •••• »). Voir `SuggestionPolicy.allowsPasteSuggestion`.
 - **Navigation privée** (`IME_FLAG_NO_PERSONALIZED_LEARNING`) : non traitée comme sensible, elle coupe seulement l'apprentissage.
 
 ## Menu « Confidentialité » (épopée 10, story 10.2)
@@ -114,3 +114,19 @@ l'hygiène (dérivation standard, séparation par usage, format versionné), pas
   rien n'est supprimé ; les réglages du fichier remplacent les réglages actuels. Le modèle IA du fichier n'est repris que s'il est déjà installé
   sur l'appareil. Un fichier d'un format plus récent, d'un autre programme ou de plus de 5 Mo est refusé.
 - Ni le contenu du fichier ni les données ne sont écrits dans les journaux.
+
+## Audit du 11/11/2026 (corrections)
+
+- **Effacement des données** (BUG-02) : dictionnaire personnel, presse-papiers et modèles appris ne sont effacés (avec leur clé)
+  que si `StoredDataFailure.isUnrecoverable` juge la lecture définitivement impossible (étiquette GCM fausse, clé Keystore
+  invalidée, fichier qui n'est pas une base). Une erreur passagère laisse les données intactes ; rien ne les écrase jusqu'au
+  démarrage suivant (`EncryptedFileStore`).
+- **Écritures durables** (BUG-03) : `fsync` avant chaque renommage (`writeAtomically`, modèles téléchargés ou copiés).
+- **Presse-papiers** (SEC-01) : une copie signalée sensible ou un numéro de carte n'est jamais écrit dans l'historique (les anciennes
+  lignes sensibles sont purgées à l'ouverture de la base). Réglage « Historique du presse-papiers » (activé par défaut) : désactivé,
+  rien n'est enregistré et l'historique est effacé. Pas d'enregistrement pendant qu'un champ de mot de passe est affiché.
+- **Apprentissage** (SEC-02) : rien n'est appris dans un champ d'une ligne qui pose `TYPE_TEXT_FLAG_NO_SUGGESTIONS` (identifiants,
+  codes). Les suggestions y restent proposées (décision Google Keep).
+- **Dictionnaires** (SEC-03) : empreintes SHA-256 figées (`DictionaryChecksums`), voir `docs/dictionnaires-distants.md`.
+- **Pass premium** (SEC-04) : `premium_prefs.xml` exclu des sauvegardes ; l'état vient de Google Play.
+- **Messages d'erreur** (PRIV-03) : plus aucun message d'exception affiché à l'utilisateur.

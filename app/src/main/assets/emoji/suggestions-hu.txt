@@ -1,0 +1,70 @@
+# Emoji-javaslatok, magyar: egy emoji, utána az azt kiváltó szavak (a gyakori ragozott alakok külön szerepelnek).
+# Ordre de priorité = ordre du fichier ; mots comparés sans accent ni majuscule ; pas de règle de pluriel (formes écrites).
+# Liste écrite pour Taipo le 12/11/2026, à faire relire par une personne de langue maternelle.
+😀 mosoly boldog vidám örülök
+😂 haha hahaha vicces nevetés
+😍 imádom gyönyörű csodás
+😘 puszi puszik csók
+❤️ szeretlek szerelem szív
+😢 szomorú
+😭 sírok sírás könnyek
+😡 dühös mérges ideges
+😴 alvás alszom álmos fáradt
+👍 ok oké jó szuper rendben
+👏 bravó gratulálok gratula
+🙏 köszi köszönöm kérlek
+👋 szia sziasztok helló hali
+🎉 buli parti ünnepelünk
+🎂 szülinap születésnap
+🎁 ajándék ajándékok
+🎄 karácsony fenyőfa
+🔥 tűz meleg forró
+❄️ hideg tél
+☀️ nap napsütés nyár
+🌧️ eső esik
+🍕 pizza pizzát
+🍔 burger hamburger
+🍝 tészta spagetti
+🍣 sushi
+🍷 bor
+🍺 sör
+☕ kávé kávét
+🍵 tea teát
+🍰 torta süti sütemény
+🍫 csoki csokoládé
+🍎 alma
+🍓 eper
+🐱 macska macskát cica cicák
+🐶 kutya kutyát kutyus
+🐴 ló
+🐦 madár madarak
+🌹 rózsa
+🌸 virág virágok
+🚗 autó
+🚲 bicikli bringa
+🚌 busz
+🚆 vonat
+✈️ repülő repülés utazás
+🏠 otthon ház itthon
+🏖️ strand nyaralás szabadság
+⚽ foci meccs
+🎮 játék játékok
+🎵 zene dal
+🎬 film mozi
+📚 könyv könyvek
+📱 telefon mobil
+💻 számítógép laptop
+📷 fotó fénykép
+💡 ötlet
+💰 pénz
+📞 hívj hívlak
+💼 munka meló
+✅ kész
+💪 edzés erős
+🤔 hmm talán
+😅 hupsz bocsi bocsánat
+🤒 beteg
+😎 laza
+🤗 ölelés ölellek
+🤩 fantasztikus csodálatos
+🏆 győzelem nyertünk

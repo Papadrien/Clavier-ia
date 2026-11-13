@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Paramètres du clavier (v3) : un titre de section au-dessus de chaque carte, comme l'accueil. Ordre : Langues,
+     Disposition des touches, Taille et position, Sons et vibrations, Saisie intelligente, puis le lien Confidentialité.
+     Les choix à quelques valeurs (hauteur, mode une main, vibrations) sont des sélecteurs segmentés (TaipoSegment).
+     La carte « Précision de frappe » n'est visible qu'en debug (KeyboardSettingsActivity). -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -13,80 +17,15 @@
             style="@style/TaipoText.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_title"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_lg" />
-
-        <Switch
-            android:id="@+id/switch_number_row"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_number_row" />
-
-        <Switch
-            android:id="@+id/switch_number_row_passwords"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
-            android:text="@string/keyboard_settings_number_row_passwords" />
+            android:text="@string/keyboard_settings_title" />
 
         <TextView
             style="@style/TaipoText.Section"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_bottom_row_title"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
-
-        <Switch
-            android:id="@+id/switch_show_emoji_key"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_show_emoji_key" />
-
-        <Switch
-            android:id="@+id/switch_show_comma_key"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
-            android:text="@string/keyboard_settings_show_comma_key" />
-
-        <Switch
-            android:id="@+id/switch_show_period_key"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
-            android:text="@string/keyboard_settings_show_period_key" />
-
-        <TextView
-            android:id="@+id/title_screenshot_suggestions"
-            style="@style/TaipoText.Section"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_screenshots_title"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
-
-        <Switch
-            android:id="@+id/switch_screenshot_suggestions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_screenshots_switch" />
-
-        <TextView
-            android:id="@+id/description_screenshot_suggestions"
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_screenshots_description"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
-
-        <TextView
-            style="@style/TaipoText.Section"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/languages_title"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
+            android:layout_marginTop="@dimen/taipo_settings_gap_lg"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm"
+            android:text="@string/languages_title" />
 
         <!-- Une ligne vers l'écran « Langues » (liste des langues, disposition et dictionnaire de chacune) ; résumé posé par KeyboardSettingsActivity. -->
         <LinearLayout
@@ -105,190 +44,352 @@
 
         <TextView
             style="@style/TaipoText.Section"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_haptic_title"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
-
-        <RadioGroup
-            android:id="@+id/radio_group_haptic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="@dimen/taipo_settings_gap_xl"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm"
+            android:text="@string/keyboard_settings_layout_title" />
 
-            <RadioButton
-                android:id="@+id/radio_haptic_off"
+        <LinearLayout
+            style="@style/TaipoSettingsCard">
+
+            <Switch
+                android:id="@+id/switch_number_row"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_haptic_off" />
+                android:textStyle="bold"
+                android:text="@string/keyboard_settings_number_row" />
 
-            <RadioButton
-                android:id="@+id/radio_haptic_light"
+            <Switch
+                android:id="@+id/switch_number_row_passwords"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_haptic_light" />
+                android:textStyle="bold"
+                android:text="@string/keyboard_settings_number_row_passwords" />
 
-            <RadioButton
-                android:id="@+id/radio_haptic_medium"
+            <View style="@style/TaipoSettingsCardDivider" />
+
+            <TextView
+                style="@style/TaipoText.Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_haptic_medium" />
+                android:text="@string/keyboard_settings_bottom_row_title" />
 
-            <RadioButton
-                android:id="@+id/radio_haptic_strong"
+            <Switch
+                android:id="@+id/switch_show_emoji_key"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_haptic_strong" />
+                android:textStyle="bold"
+                android:text="@string/keyboard_settings_show_emoji_key" />
 
-        </RadioGroup>
+            <Switch
+                android:id="@+id/switch_show_comma_key"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/keyboard_settings_show_comma_key" />
 
-        <Switch
-            android:id="@+id/switch_key_sound"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_lg"
-            android:text="@string/keyboard_settings_key_sound" />
-
-        <Switch
-            android:id="@+id/switch_bar_sound"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_lg"
-            android:text="@string/keyboard_settings_bar_sound" />
-
-        <TextView
-            android:id="@+id/text_sound_volume"
-            style="@style/TaipoText.Section"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_lg" />
-
-        <SeekBar
-            android:id="@+id/seek_sound_volume"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs"
-            android:max="100"
-            android:contentDescription="@string/keyboard_settings_sound_volume" />
+            <Switch
+                android:id="@+id/switch_show_period_key"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/keyboard_settings_show_period_key" />
+        </LinearLayout>
 
         <TextView
             style="@style/TaipoText.Section"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_height_title"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
-
-        <RadioGroup
-            android:id="@+id/radio_group_height"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="@dimen/taipo_settings_gap_xl"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm"
+            android:text="@string/keyboard_settings_size_title" />
 
-            <RadioButton
-                android:id="@+id/radio_height_compact"
+        <LinearLayout
+            style="@style/TaipoSettingsCard">
+
+            <TextView
+                style="@style/TaipoText.Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_height_compact" />
+                android:text="@string/keyboard_settings_height_title" />
 
-            <RadioButton
-                android:id="@+id/radio_height_small"
+            <RadioGroup
+                android:id="@+id/radio_group_height"
+                style="@style/TaipoSegmentedGroup">
+
+                <RadioButton
+                    android:id="@+id/radio_height_compact"
+                    style="@style/TaipoSegment"
+                    android:contentDescription="@string/keyboard_settings_height_compact"
+                    android:text="@string/keyboard_settings_height_compact_short" />
+
+                <RadioButton
+                    android:id="@+id/radio_height_small"
+                    style="@style/TaipoSegment"
+                    android:contentDescription="@string/keyboard_settings_height_small"
+                    android:text="@string/keyboard_settings_height_small_short" />
+
+                <RadioButton
+                    android:id="@+id/radio_height_normal"
+                    style="@style/TaipoSegment"
+                    android:contentDescription="@string/keyboard_settings_height_normal"
+                    android:text="@string/keyboard_settings_height_normal_short" />
+
+                <RadioButton
+                    android:id="@+id/radio_height_large"
+                    style="@style/TaipoSegment"
+                    android:contentDescription="@string/keyboard_settings_height_large"
+                    android:text="@string/keyboard_settings_height_large_short" />
+
+                <RadioButton
+                    android:id="@+id/radio_height_extra_large"
+                    style="@style/TaipoSegment"
+                    android:contentDescription="@string/keyboard_settings_height_extra_large"
+                    android:text="@string/keyboard_settings_height_extra_large_short" />
+            </RadioGroup>
+
+            <View style="@style/TaipoSettingsCardDivider" />
+
+            <TextView
+                style="@style/TaipoText.Label"
+                android:id="@+id/text_bottom_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <SeekBar
+                android:id="@+id/seek_bottom_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_height_small" />
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+                android:minHeight="@dimen/taipo_settings_row_min_height"
+                android:contentDescription="@string/keyboard_settings_bottom_margin" />
 
-            <RadioButton
-                android:id="@+id/radio_height_normal"
+            <View style="@style/TaipoSettingsCardDivider" />
+
+            <TextView
+                style="@style/TaipoText.Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_height_normal" />
+                android:text="@string/keyboard_settings_mode_title" />
 
-            <RadioButton
-                android:id="@+id/radio_height_large"
+            <!-- Mode du clavier : normal, une main (à gauche, à droite) ou flottant ; un seul à la fois. -->
+            <RadioGroup
+                android:id="@+id/radio_group_keyboard_mode"
+                style="@style/TaipoSegmentedGroup">
+
+                <RadioButton
+                    android:id="@+id/radio_mode_normal"
+                    style="@style/TaipoSegment"
+                    android:text="@string/keyboard_settings_mode_normal" />
+
+                <RadioButton
+                    android:id="@+id/radio_mode_left"
+                    style="@style/TaipoSegment"
+                    android:contentDescription="@string/keyboard_settings_mode_left_description"
+                    android:text="@string/keyboard_settings_mode_left" />
+
+                <RadioButton
+                    android:id="@+id/radio_mode_right"
+                    style="@style/TaipoSegment"
+                    android:contentDescription="@string/keyboard_settings_mode_right_description"
+                    android:text="@string/keyboard_settings_mode_right" />
+
+                <RadioButton
+                    android:id="@+id/radio_mode_floating"
+                    style="@style/TaipoSegment"
+                    android:contentDescription="@string/keyboard_settings_mode_floating_description"
+                    android:text="@string/keyboard_settings_mode_floating" />
+            </RadioGroup>
+
+            <TextView
+                style="@style/TaipoText.Label"
+                android:id="@+id/text_one_handed_width"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_height_large" />
+                android:layout_marginTop="@dimen/taipo_settings_gap_sm" />
 
-            <RadioButton
-                android:id="@+id/radio_height_extra_large"
+            <SeekBar
+                android:id="@+id/seek_one_handed_width"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_height_extra_large" />
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+                android:minHeight="@dimen/taipo_settings_row_min_height"
+                android:contentDescription="@string/keyboard_settings_one_handed_width" />
 
-        </RadioGroup>
+            <TextView
+                style="@style/TaipoText.Label"
+                android:id="@+id/text_floating_width"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_sm" />
+
+            <SeekBar
+                android:id="@+id/seek_floating_width"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+                android:minHeight="@dimen/taipo_settings_row_min_height"
+                android:contentDescription="@string/keyboard_settings_floating_width" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/keyboard_settings_one_handed_hint" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/text_bottom_margin"
             style="@style/TaipoText.Section"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_lg" />
-
-        <SeekBar
-            android:id="@+id/seek_bottom_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs"
-            android:max="100"
-            android:contentDescription="@string/keyboard_settings_bottom_margin" />
+            android:layout_marginTop="@dimen/taipo_settings_gap_xl"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm"
+            android:text="@string/keyboard_settings_sounds_title" />
 
-        <!-- Mode une main : côté (désactivé / gauche / droite) et largeur de la zone des touches. -->
+        <LinearLayout
+            style="@style/TaipoSettingsCard">
+
+            <TextView
+                style="@style/TaipoText.Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/keyboard_settings_haptic_title" />
+
+            <RadioGroup
+                android:id="@+id/radio_group_haptic"
+                style="@style/TaipoSegmentedGroup">
+
+                <RadioButton
+                    android:id="@+id/radio_haptic_off"
+                    style="@style/TaipoSegment"
+                    android:contentDescription="@string/keyboard_settings_haptic_off"
+                    android:text="@string/keyboard_settings_haptic_off_short" />
+
+                <RadioButton
+                    android:id="@+id/radio_haptic_light"
+                    style="@style/TaipoSegment"
+                    android:text="@string/keyboard_settings_haptic_light" />
+
+                <RadioButton
+                    android:id="@+id/radio_haptic_medium"
+                    style="@style/TaipoSegment"
+                    android:text="@string/keyboard_settings_haptic_medium" />
+
+                <RadioButton
+                    android:id="@+id/radio_haptic_strong"
+                    style="@style/TaipoSegment"
+                    android:text="@string/keyboard_settings_haptic_strong" />
+            </RadioGroup>
+
+            <View style="@style/TaipoSettingsCardDivider" />
+
+            <Switch
+                android:id="@+id/switch_key_sound"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/keyboard_settings_key_sound" />
+
+            <Switch
+                android:id="@+id/switch_bar_sound"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/keyboard_settings_bar_sound" />
+
+            <!-- Volume : affiché seulement si l'un des deux sons est activé (KeyboardSettingsActivity.updateVolumeVisibility). -->
+            <LinearLayout
+                android:id="@+id/group_sound_volume"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/taipo_settings_gap_sm">
+
+                <TextView
+                    style="@style/TaipoText.Label"
+                    android:id="@+id/text_sound_volume"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <SeekBar
+                    android:id="@+id/seek_sound_volume"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+                    android:minHeight="@dimen/taipo_settings_row_min_height"
+                    android:contentDescription="@string/keyboard_settings_sound_volume" />
+            </LinearLayout>
+        </LinearLayout>
+
         <TextView
             style="@style/TaipoText.Section"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_one_handed_title"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
-
-        <RadioGroup
-            android:id="@+id/radio_group_one_handed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginTop="@dimen/taipo_settings_gap_xl"
+            android:layout_marginBottom="@dimen/taipo_settings_gap_sm"
+            android:text="@string/keyboard_settings_smart_title" />
 
-            <RadioButton
-                android:id="@+id/radio_one_handed_off"
+        <LinearLayout
+            style="@style/TaipoSettingsCard">
+
+            <Switch
+                android:id="@+id/switch_habit_learning"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_one_handed_off" />
+                android:textStyle="bold"
+                android:text="@string/keyboard_settings_habits_switch" />
 
-            <RadioButton
-                android:id="@+id/radio_one_handed_left"
+            <TextView
+                style="@style/TaipoText.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_one_handed_left" />
+                android:text="@string/keyboard_settings_habits_description" />
 
-            <RadioButton
-                android:id="@+id/radio_one_handed_right"
+            <Button
+                android:id="@+id/button_habit_clear"
+                style="@style/TaipoButton.Secondary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_one_handed_right" />
+                android:layout_marginTop="@dimen/taipo_settings_gap_md"
+                android:text="@string/keyboard_settings_habits_clear" />
 
-        </RadioGroup>
+            <View style="@style/TaipoSettingsCardDivider" />
 
-        <TextView
-            android:id="@+id/text_one_handed_width"
-            style="@style/TaipoText.Section"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_lg" />
+            <Switch
+                android:id="@+id/switch_clipboard_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/keyboard_settings_clipboard_history_switch" />
 
-        <SeekBar
-            android:id="@+id/seek_one_handed_width"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs"
-            android:contentDescription="@string/keyboard_settings_one_handed_width" />
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/keyboard_settings_clipboard_history_description" />
 
-        <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_one_handed_hint" />
+            <!-- Séparateur, interrupteur et description masqués tant que ScreenshotFinder.FEATURE_ENABLED est faux. -->
+            <View
+                android:id="@+id/title_screenshot_suggestions"
+                style="@style/TaipoSettingsCardDivider" />
 
-        <!-- Groupe « Précision de frappe » : visible uniquement en build debug (voir KeyboardSettingsActivity). -->
+            <Switch
+                android:id="@+id/switch_screenshot_suggestions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/keyboard_settings_screenshots_switch" />
+
+            <TextView
+                android:id="@+id/description_screenshot_suggestions"
+                style="@style/TaipoText.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/keyboard_settings_screenshots_description" />
+        </LinearLayout>
+
+        <!-- Builds debug seulement : réglages en cours de validation (masqués en release par KeyboardSettingsActivity). -->
         <LinearLayout
             android:id="@+id/group_touch_precision"
             android:layout_width="match_parent"
@@ -298,62 +399,36 @@
 
             <TextView
                 style="@style/TaipoText.Section"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_touch_title"
-                android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
-                android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
-
-            <Switch
-                android:id="@+id/switch_adaptive_touch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_touch_switch" />
+                android:layout_marginTop="@dimen/taipo_settings_gap_xl"
+                android:layout_marginBottom="@dimen/taipo_settings_gap_sm"
+                android:text="@string/keyboard_settings_touch_title" />
 
-            <TextView
-                style="@style/TaipoText.Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/keyboard_settings_touch_description"
-                android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+            <LinearLayout
+                style="@style/TaipoSettingsCard">
 
-            <Switch
-                android:id="@+id/switch_touch_zones_debug"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/taipo_settings_gap_md"
-                android:text="@string/keyboard_settings_touch_zones_debug" />
+                <Switch
+                    android:id="@+id/switch_adaptive_touch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="@string/keyboard_settings_touch_switch" />
 
+                <TextView
+                    style="@style/TaipoText.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/keyboard_settings_touch_description" />
+
+                <Switch
+                    android:id="@+id/switch_touch_zones_debug"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="@string/keyboard_settings_touch_zones_debug" />
+            </LinearLayout>
         </LinearLayout>
-
-        <TextView
-            style="@style/TaipoText.Section"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_habits_title"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_sm" />
-
-        <Switch
-            android:id="@+id/switch_habit_learning"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_habits_switch" />
-
-        <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_habits_description"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
-
-        <Button
-            android:id="@+id/button_habit_clear"
-            style="@style/TaipoButton.Secondary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/keyboard_settings_habits_clear"
-            android:layout_marginTop="@dimen/taipo_settings_gap_md" />
 
         <!-- Revue UX : le détail de ce que le clavier garde est dans la page Confidentialité (section 6) ; les données
              d'utilisation se règlent dans « Mes données », sur l'accueil. -->
@@ -362,7 +437,7 @@
             android:id="@+id/link_privacy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_xxl"
+            android:layout_marginTop="@dimen/taipo_settings_gap_xl"
             android:minHeight="@dimen/taipo_settings_row_min_height"
             android:gravity="center_vertical"
             android:textColor="@color/taipo_purple_light"

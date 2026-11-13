@@ -1,7 +1,6 @@
 package fr.junade.taipo
 
 import android.view.KeyEvent
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.ExtractedTextRequest
 import android.view.inputmethod.InputConnection
 import fr.junade.taipo.emoji.EmojiText
@@ -71,8 +70,13 @@ internal class FieldEditor(
         ime.haptic()
         ime.clearHighlight() // un surlignage de correction ne vaut plus une fois le texte modifié
         ime.clearPendingAutocorrection()
-        var toInsert = text
         val selected = ic.getSelectedText(0)?.toString().orEmpty()
+        // Une espace devant (et derrière) si le texte voisin la demande : la réponse ne se colle pas au mot ou à l'emoji
+        // qui précède. Avec une sélection, l'ajout vient après elle : le caractère d'avant est sa dernière lettre.
+        val charBefore = selected.lastOrNull() ?: ic.getTextBeforeCursor(1, 0)?.lastOrNull()
+        val charAfter = ic.getTextAfterCursor(1, 0)?.firstOrNull()
+        val spaced = InsertSpacing.around(charBefore, text, charAfter)
+        var toInsert = spaced
         val start = ime.lastSelectionStart
         val end = ime.lastSelectionEnd
         if (selected.isNotEmpty() || (start >= 0 && end >= 0 && start != end)) {
@@ -80,13 +84,13 @@ internal class FieldEditor(
                 val after = maxOf(start, end)
                 ic.setSelection(after, after) // le texte sélectionné reste en place, l'ajout vient après
             } else {
-                toInsert = selected + text // position inconnue : on remet le texte sélectionné, puis l'ajout
+                toInsert = selected + spaced // position inconnue : on remet le texte sélectionné, puis l'ajout
             }
         }
         ime.correction.markSelfEdit()
         ic.commitText(toInsert, 1)
         // Position inconnue : le texte sélectionné a été remis devant l'ajout (il remplaçait la sélection).
-        ime.recordUndoEdit(inserted = toInsert, original = if (toInsert != text) selected else "")
+        ime.recordUndoEdit(inserted = toInsert, original = if (toInsert != spaced) selected else "")
         return true
     }
 
@@ -125,14 +129,11 @@ internal class FieldEditor(
 
     /** Entrée : retour à la ligne dans un champ multiligne ou sans action, sinon l'action de l'éditeur (Envoyer, Rechercher…). */
     fun pressEnter() {
-        val options = ime.editorInfo()?.imeOptions ?: 0
-        val action = options and EditorInfo.IME_MASK_ACTION
-        val isMultiline = options and EditorInfo.IME_FLAG_NO_ENTER_ACTION != 0
-        val hasAction = action != EditorInfo.IME_ACTION_NONE && action != EditorInfo.IME_ACTION_UNSPECIFIED
-        if (isMultiline || !hasAction) {
-            ime.inputConnection()?.commitText("\n", 1)
-        } else {
-            sendKey(KeyEvent.KEYCODE_ENTER)
+        val ic = ime.inputConnection() ?: return
+        when (val action = EnterAction.of(ime.editorInfo())) {
+            EnterAction.Newline -> ic.commitText("\n", 1)
+            // Audit BUG-01 : l'action de l'éditeur, comme le clavier d'Android ; la touche simulée ne sert que de repli.
+            is EnterAction.Perform -> if (!ic.performEditorAction(action.actionId)) sendKey(KeyEvent.KEYCODE_ENTER)
         }
     }
 

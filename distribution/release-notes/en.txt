@@ -1,0 +1,6 @@
+What's new in Taipo 3
+• Floating keyboard
+• 15 languages: English, French, German, Spanish, Italian, Portuguese, Dutch, Polish, Romanian, Czech, Hungarian, Swedish, Danish, Norwegian and Finnish
+• A look that suits you
+• AI transcription with every model
+• Even more privacy

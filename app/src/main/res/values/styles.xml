@@ -25,6 +25,8 @@
     <!-- Principal : violet #8C00FF sur ombre #6800AB. -->
     <style name="TaipoButton.Primary">
         <item name="android:background">@drawable/bg_button_primary</item>
+        <!-- Blanc sur le violet, aussi en thème clair (où le texte ordinaire devient sombre). -->
+        <item name="android:textColor">@color/button_text_on_accent</item>
     </style>
 
     <!-- Secondaire : gris #2B2B2B sur ombre #191919. -->
@@ -123,6 +125,63 @@
         <item name="android:minHeight">@dimen/taipo_settings_row_min_height</item>
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:textSize">@dimen/taipo_settings_text_lead</item>
+    </style>
+
+    <!-- Fenêtre du clavier flottant : pas de montée depuis le bas (la carte apparaît sur place), fondu à la fermeture. -->
+    <style name="FloatingKeyboardWindowAnimation">
+        <item name="android:windowEnterAnimation">@null</item>
+        <item name="android:windowExitAnimation">@anim/floating_keyboard_exit</item>
+    </style>
+
+    <!-- Paramètres du clavier (v3) : carte de réglages et trait de séparation entre deux groupes d'une même carte. -->
+    <style name="TaipoSettingsCard">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/bg_settings_card</item>
+        <item name="android:padding">@dimen/taipo_settings_card_padding</item>
+    </style>
+
+    <style name="TaipoSettingsCardDivider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/taipo_settings_divider_thickness</item>
+        <item name="android:layout_marginTop">@dimen/taipo_settings_gap_md</item>
+        <item name="android:layout_marginBottom">@dimen/taipo_settings_gap_md</item>
+        <item name="android:background">@color/settings_divider</item>
+    </style>
+
+    <!-- Sélecteur segmenté : un RadioGroup horizontal (piste) de RadioButton sans rond (segments de même largeur). -->
+    <style name="TaipoSegmentedGroup">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/taipo_settings_gap_sm</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">@drawable/bg_segmented_group</item>
+        <item name="android:padding">@dimen/taipo_segmented_group_padding</item>
+    </style>
+
+    <style name="TaipoSegment" parent="TaipoRadioButton">
+        <item name="android:layout_width">0dp</item>
+        <!-- Hauteur fixe : la taille automatique du texte (plus bas) a besoin d'une hauteur connue. -->
+        <item name="android:layout_height">@dimen/taipo_segment_min_height</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/bg_segment</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">@dimen/taipo_segment_min_height</item>
+        <item name="android:paddingStart">@dimen/taipo_settings_gap_xs</item>
+        <item name="android:paddingEnd">@dimen/taipo_settings_gap_xs</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">@dimen/taipo_settings_text_caption</item>
+        <!-- Traductions (allemand, espagnol, portugais, néerlandais) : le texte rétrécit pour tenir sur une ligne au lieu
+             d'être tronqué (« Izquier… »). -->
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMinTextSize">@dimen/taipo_segment_min_text_size</item>
+        <item name="android:autoSizeMaxTextSize">@dimen/taipo_settings_text_caption</item>
+        <item name="android:autoSizeStepGranularity">1sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/segment_text</item>
     </style>
 
     <!-- Liste déroulante : fond de champ de saisie avec flèche, liste ouverte sur le fond des dialogues. -->

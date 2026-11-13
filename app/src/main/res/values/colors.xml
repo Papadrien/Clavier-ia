@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- CHARTE TAIPO, palette CLAIRE (refonte graphique, lot 01 ; thèmes du clavier, lot T1-T3).
      Deux palettes de mêmes noms : values-night/colors.xml (sombre) et values/colors.xml (claire, ce fichier).
-     Les écrans de l'application sont toujours sombres (KeyboardTheme.wrap force le mode nuit) ; le clavier choisit sa palette
+     Les écrans de l'application et le clavier suivent le même thème (ThemeChoice, KeyboardTheme.wrap et KeyboardTheme.mode) ; ils choisissent leur palette
      selon le thème (ThemeChoice, KeyboardTheme.mode). Ne modifier une valeur que dans la section « Charte » ; la section « Rôles »
      ne fait que nommer l'usage. Garde-fous : AccessibilityContrastTest (contrastes des deux palettes), RefonteResourcesRegressionTest (mêmes noms). -->
 <resources>
@@ -53,6 +53,12 @@
     <color name="key_hint">@color/taipo_text_muted</color>
     <!-- Barre centrale de la touche espace (lot 06). -->
     <color name="key_space_bar">@color/taipo_space_bar</color>
+    <!-- Forme des touches (KeyShape). key_outline : trait des touches « Contour », 3:1 au moins sur le fond (AccessibilityContrastTest).
+         key_plateau : voile clair du plateau des touches « Mécanique », posé sur la face. -->
+    <color name="key_outline">@color/taipo_space_bar</color>
+    <color name="key_plateau">#59FFFFFF</color>
+    <!-- Disque sous le cadenas des cartes réservées au pass (page « Apparence »). -->
+    <color name="theme_lock_scrim">#99000000</color>
 
     <!-- Barre du haut, prompt, bande de suggestions, zone de chat. -->
     <color name="surface_button">@color/taipo_key_secondary</color>

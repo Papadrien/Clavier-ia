@@ -90,6 +90,19 @@ class CachingInputConnection(
     override fun replaceText(start: Int, end: Int, text: CharSequence, newCursorPosition: Int, textAttribute: TextAttribute?): Boolean =
         written { super.replaceText(start, end, text, newCursorPosition, textAttribute) }
 
+    /**
+     * Audit BUG-05 : vérifie, sans passer par le cache, que [expected] précède bien le curseur dans le champ. À appeler
+     * avant d'effacer du texte calculé d'après le cache : l'éditeur a pu refuser ou transformer une insertion précédente
+     * (longueur maximale, filtre, mise en forme) sans que le cache le sache. En cas d'écart, le cache est vidé.
+     */
+    fun confirmBefore(expected: CharSequence): Boolean {
+        if (expected.isEmpty()) return true
+        val actual = super.getTextBeforeCursor(expected.length, 0) ?: return true // le champ ne dit rien : on garde le comportement d'origine
+        if (actual.toString() == expected.toString()) return true
+        cache.onOtherWrite()
+        return false
+    }
+
     override fun closeConnection() {
         cache.reset()
         super.closeConnection()

@@ -1,0 +1,13504 @@
+jeg 5251
+er 4616
+det 2627
+ikke 2589
+du 2577
+i 2292
+å 2288
+en 2122
+har 1983
+på 1692
+tom 1661
+til 1549
+han 1535
+og 1307
+for 1103
+med 1021
+var 1009
+som 970
+hun 960
+av 932
+vi 907
+at 895
+kan 841
+et 757
+de 695
+vil 680
+meg 676
+hva 642
+så 640
+den 581
+om 576
+dette 445
+hvor 400
+min 388
+deg 383
+seg 369
+må 364
+denne 355
+skal 351
+hadde 329
+når 327
+veldig 318
+ha 315
+være 311
+ble 310
+noe 304
+vet 302
+fra 294
+liker 285
+kommer 284
+noen 272
+men 270
+alle 266
+gjøre 248
+mange 246
+enn 241
+hvorfor 228
+ingen 228
+oss 223
+skulle 220
+tror 219
+bare 214
+ut 212
+dere 209
+aldri 207
+mye 203
+kunne 202
+la 198
+går 194
+ville 193
+ser 189
+trenger 188
+gjør 186
+hvem 186
+blir 185
+mary 185
+hvordan 181
+bli 180
+etter 180
+din 175
+ta 166
+vært 165
+opp 164
+hvis 162
+mer 162
+alt 156
+gå 156
+kom 151
+se 151
+eller 150
+ham 147
+få 146
+snakker 143
+sin 140
+sa 136
+alltid 134
+man 130
+god 128
+hele 128
+bor 126
+to 125
+over 122
+maria 121
+tre 118
+da 115
+litt 115
+her 112
+gjorde 111
+uten 110
+si 109
+snakke 109
+ved 108
+sier 104
+tok 102
+hans 100
+elsker 99
+gikk 98
+der 97
+gang 97
+gi 97
+andre 96
+nå 96
+bør 95
+før 95
+ønske 95
+får 94
+ingenting 93
+henne 92
+ofte 91
+mine 90
+hver 89
+virkelig 86
+blitt 83
+burde 83
+fordi 83
+tar 83
+folk 81
+mot 81
+gjort 80
+sett 80
+fikk 79
+finne 79
+år 79
+inn 78
+helt 77
+synes 76
+dag 75
+nok 75
+stor 75
+dem 73
+nesten 72
+sine 72
+godt 71
+visste 71
+mitt 70
+allerede 69
+disse 69
+fortsatt 69
+lære 69
+vær 69
+bedre 68
+spiser 68
+huset 67
+kjøpte 67
+selv 67
+tid 67
+ga 66
+komme 66
+lenge 65
+flere 64
+ønsker 64
+felles 63
+måtte 63
+toms 63
+ganske 62
+hjelpe 62
+livet 62
+mellom 62
+også 62
+snakket 62
+ganger 60
+nye 60
+siden 60
+bilen 59
+første 59
+like 59
+sami 59
+samme 59
+føler 58
+spise 58
+vår 58
+faren 57
+kjøpe 57
+ned 57
+boken 56
+gammel 56
+ditt 55
+jobber 55
+dra 54
+fortelle 54
+langt 54
+neste 53
+trodde 53
+forstår 52
+ny 52
+penger 52
+grunn 51
+under 51
+hater 50
+holde 50
+mennesker 50
+sammen 50
+døde 49
+jo 49
+kjenner 49
+ligger 49
+sitt 49
+står 49
+tilbake 49
+dine 48
+rett 48
+språk 48
+fortalte 47
+gjennom 47
+hunden 47
+hvilken 47
+lyst 47
+vanskelig 47
+begynte 46
+finnes 46
+eneste 45
+fant 45
+gir 45
+klar 45
+mannen 45
+rundt 45
+siste 45
+spiller 45
+bra 44
+mistet 44
+barna 43
+dro 43
+igjen 43
+kanskje 43
+prøvde 43
+ting 43
+vite 43
+drikker 42
+dårlig 42
+gått 42
+mann 42
+spiste 42
+ti 42
+verden 42
+glad 41
+hennes 41
+leve 41
+barn 40
+ferdig 40
+holdt 40
+høre 40
+mens 40
+redd 40
+svært 40
+akkurat 39
+hatt 39
+klokken 39
+skrive 39
+slik 39
+broren 38
+byen 38
+gode 38
+lang 38
+tenker 38
+beste 37
+hører 37
+hørte 37
+jobbe 37
+katten 37
+lese 37
+lett 37
+store 37
+annet 36
+ei 36
+gamle 36
+leser 36
+moren 35
+sikker 35
+veien 35
+én 35
+begynner 34
+bruker 34
+drar 34
+foreldrene 34
+gjerne 34
+viktig 34
+bruke 33
+hjemme 33
+snart 33
+spille 33
+spurte 33
+vant 33
+begge 32
+fem 32
+kommet 32
+læreren 32
+sover 32
+stort 32
+stå 32
+våre 32
+forklare 31
+håper 31
+lage 31
+største 31
+vanligvis 31
+venn 31
+vårt 31
+fleste 30
+fransk 30
+hjem 30
+lever 30
+likte 30
+lurer 30
+tro 30
+par 29
+satt 29
+skrev 29
+studere 29
+tatt 29
+tiden 29
+venner 29
+annen 28
+dessverre 28
+fort 28
+fått 28
+heller 28
+leste 28
+liten 28
+prøver 28
+slo 28
+takk 28
+tenke 28
+dager 27
+funnet 27
+jobben 27
+klarte 27
+lite 27
+lærer 27
+mor 27
+sent 27
+skolen 27
+trengte 27
+virker 27
+øynene 27
+boston 26
+engelsk 26
+feil 26
+fortalt 26
+født 26
+gitt 26
+hjelper 26
+holder 26
+mest 26
+prøve 26
+skjer 26
+slutt 26
+venter 26
+bo 25
+deres 25
+egen 25
+flink 25
+husker 25
+hørt 25
+kjent 25
+klarer 25
+landet 25
+mat 25
+ord 25
+ringte 25
+skjedde 25
+skriver 25
+snill 25
+sted 25
+svare 25
+ba 24
+bestemte 24
+egentlig 24
+fint 24
+hos 24
+lager 24
+møte 24
+pleide 24
+seks 24
+sitter 24
+skriv 24
+spørre 24
+vann 24
+vennligst 24
+ventet 24
+yanni 24
+både 23
+finner 23
+forelsket 23
+hjelp 23
+høres 23
+lei 23
+navnet 23
+rommet 23
+sannsynligvis 23
+slags 23
+vel 23
+dagen 22
+fire 22
+forrige 22
+følge 22
+først 22
+gav 22
+glemte 22
+hendene 22
+heter 22
+hundre 22
+interessert 22
+japan 22
+laget 22
+lest 22
+norsk 22
+reiste 22
+stille 22
+stolt 22
+bestemt 21
+bøker 21
+ett 21
+full 21
+hund 21
+kjente 21
+låne 21
+mener 21
+mindre 21
+passe 21
+ringe 21
+sto 21
+timer 21
+vei 21
+bak 20
+bort 20
+elsket 20
+enda 20
+foran 20
+gutten 20
+kaldt 20
+kjøpt 20
+lille 20
+morgen 20
+måte 20
+møtte 20
+nytt 20
+regnet 20
+slå 20
+spist 20
+svarte 20
+sønnen 20
+tenkte 20
+uansett 20
+viste 20
+all 19
+bilde 19
+brev 19
+døren 19
+forstå 19
+frem 19
+følte 19
+glem 19
+hold 19
+hvilket 19
+høy 19
+jobbet 19
+kjøper 19
+kjøre 19
+kjørte 19
+klare 19
+lange 19
+legger 19
+maten 19
+minutter 19
+nær 19
+reiser 19
+slutte 19
+sov 19
+studerer 19
+tidlig 19
+vente 19
+vis 19
+vondt 19
+besøke 18
+bodde 18
+bok 18
+borte 18
+bryr 18
+dit 18
+egne 18
+endelig 18
+flyet 18
+fortell 18
+klart 18
+kun 18
+leter 18
+liv 18
+mente 18
+merke 18
+prøv 18
+reise 18
+setter 18
+sist 18
+spis 18
+spør 18
+stod 18
+tenkt 18
+brevet 17
+enig 17
+fin 17
+hit 17
+hvert 17
+john 17
+koster 17
+kvinne 17
+legge 17
+lot 17
+måten 17
+møtt 17
+nettopp 17
+norge 17
+problemer 17
+råd 17
+skjønner 17
+spilte 17
+svømme 17
+ute 17
+vannet 17
+varmt 17
+vennene 17
+åpnet 17
+algerie 16
+beskytte 16
+består 16
+blant 16
+bøkene 16
+drepe 16
+forteller 16
+giftet 16
+helst 16
+historien 16
+hverandre 16
+kaller 16
+kona 16
+lenger 16
+løp 16
+politiet 16
+problemet 16
+redde 16
+skipet 16
+skrevet 16
+sluttet 16
+sta 16
+ønsket 16
+absolutt 15
+alene 15
+betale 15
+del 15
+drikke 15
+eldre 15
+greit 15
+hardt 15
+huske 15
+kaffe 15
+krever 15
+lagt 15
+land 15
+mulig 15
+personer 15
+ring 15
+sendte 15
+sette 15
+snø 15
+spørsmålet 15
+sykkelen 15
+særlig 15
+sønn 15
+toget 15
+tokyo 15
+tyskland 15
+vakker 15
+velkommen 15
+vise 15
+viser 15
+ærlig 15
+best 14
+betyr 14
+bodd 14
+dyr 14
+dø 14
+faktisk 14
+familien 14
+farlig 14
+foretrekker 14
+fremdeles 14
+innen 14
+interessant 14
+kjører 14
+kone 14
+kort 14
+lov 14
+løse 14
+opptatt 14
+overrasket 14
+oversette 14
+passer 14
+ringer 14
+sagt 14
+skynd 14
+små 14
+tennis 14
+tidligere 14
+time 14
+tretti 14
+utrolig 14
+vanlig 14
+vare 14
+vennen 14
+været 14
+ankom 13
+arbeidet 13
+bedt 13
+ber 13
+bil 13
+blåser 13
+boka 13
+falt 13
+fullstendig 13
+grådig 13
+guttene 13
+hånd 13
+japansk 13
+jenta 13
+kongen 13
+lav 13
+lærte 13
+løpet 13
+melk 13
+meningen 13
+møtet 13
+oppe 13
+ordet 13
+person 13
+planen 13
+savner 13
+setninger 13
+sitte 13
+smaker 13
+stedet 13
+svar 13
+tennene 13
+tusen 13
+usa 13
+venstre 13
+visst 13
+altfor 12
+arbeid 12
+barnet 12
+begynt 12
+blå 12
+brød 12
+datamaskinen 12
+definitivt 12
+engang 12
+enhver 12
+faen 12
+ferd 12
+filmen 12
+fortsatte 12
+forventer 12
+føle 12
+gift 12
+gifte 12
+glass 12
+gud 12
+handler 12
+hus 12
+hvilke 12
+hvit 12
+hyggelig 12
+håret 12
+kjæresten 12
+kjærlighet 12
+klokka 12
+leker 12
+leksene 12
+lo 12
+lå 12
+meget 12
+minst 12
+miste 12
+nødvendig 12
+pass 12
+pengene 12
+plutselig 12
+selger 12
+sjelden 12
+skje 12
+snakk 12
+spesielt 12
+stand 12
+stoppe 12
+sulten 12
+svaret 12
+syntes 12
+tilbrakte 12
+trøste 12
+uke 12
+unnskyld 12
+vekk 12
+vent 12
+besøkte 11
+bilder 11
+bildet 11
+bill 11
+dersom 11
+drakk 11
+dårlige 11
+døra 11
+ekstremt 11
+elske 11
+ene 11
+fornøyd 11
+fortsette 11
+fram 11
+himmelen 11
+hjalp 11
+inneholder 11
+innså 11
+invitert 11
+jente 11
+kastet 11
+katt 11
+klærne 11
+kunnskap 11
+latin 11
+legen 11
+ligner 11
+lukter 11
+mamma 11
+norske 11
+nærheten 11
+nøkkelen 11
+onkelen 11
+planlegger 11
+reparere 11
+sang 11
+sende 11
+skoene 11
+slike 11
+stole 11
+stolen 11
+stoler 11
+synd 11
+syv 11
+sånn 11
+tegn 11
+tendens 11
+tide 11
+tilgi 11
+tingene 11
+tjene 11
+tjener 11
+tredje 11
+trøtt 11
+ung 11
+unngå 11
+vakre 11
+varm 11
+vasker 11
+verdt 11
+viktigste 11
+vinduet 11
+virket 11
+be 10
+begynne 10
+bekymret 10
+bygge 10
+bøyde 10
+dagens 10
+dekket 10
+dollar 10
+drepte 10
+drog 10
+eier 10
+elevene 10
+fast 10
+festen 10
+flyttet 10
+fortjener 10
+følg 10
+glede 10
+glemt 10
+gråter 10
+gull 10
+hesten 10
+hjertet 10
+håpet 10
+høsten 10
+høyere 10
+høyre 10
+imot 10
+intet 10
+kameraet 10
+kopp 10
+kveld 10
+legg 10
+lært 10
+merket 10
+middag 10
+natt 10
+nødt 10
+omtrent 10
+oslo 10
+personen 10
+plukket 10
+rette 10
+rik 10
+rom 10
+rød 10
+sant 10
+sengen 10
+side 10
+simpelthen 10
+skjedd 10
+skjøt 10
+skru 10
+slett 10
+sove 10
+spørsmål 10
+starter 10
+søsteren 10
+tolv 10
+traff 10
+ulike 10
+umulig 10
+unge 10
+varme 10
+verste 10
+vinner 10
+øl 10
+an 9
+anelse 9
+babyen 9
+bekymre 9
+besøkt 9
+bordet 9
+bruk 9
+bussen 9
+columbus 9
+datteren 9
+dratt 9
+dreier 9
+drikk 9
+dumme 9
+endret 9
+enkel 9
+ennå 9
+esperanto 9
+foreldre 9
+forlate 9
+forskjell 9
+greier 9
+hagen 9
+halvparten 9
+hatten 9
+henger 9
+hodet 9
+hoppet 9
+hull 9
+hvite 9
+jorden 9
+kampen 9
+kledd 9
+leiligheten 9
+leke 9
+livets 9
+london 9
+lukk 9
+ni 9
+pennen 9
+presidenten 9
+problem 9
+regner 9
+romanen 9
+rødt 9
+røyker 9
+satte 9
+selge 9
+setning 9
+sint 9
+snøen 9
+solgte 9
+stadig 9
+stasjonen 9
+større 9
+sunn 9
+svart 9
+synger 9
+te 9
+teori 9
+tjue 9
+treffe 9
+vaske 9
+vinteren 9
+yngre 9
+åpne 9
+åtte 9
+alvorlig 8
+amerikanske 8
+ansiktet 8
+beklager 8
+betalt 8
+brøt 8
+byens 8
+danser 8
+di 8
+drømmer 8
+ellers 8
+ender 8
+enkelt 8
+epler 8
+familie 8
+feilen 8
+forbi 8
+forhold 8
+forstått 8
+frankrike 8
+fri 8
+frokost 8
+fulgte 8
+føles 8
+gråt 8
+hester 8
+husene 8
+husk 8
+kina 8
+kjolen 8
+kjæreste 8
+kristoffer 8
+krysse 8
+kysset 8
+lagde 8
+les 8
+levde 8
+lyver 8
+løftet 8
+løpe 8
+mangler 8
+mening 8
+menn 8
+meste 8
+mørkt 8
+nektet 8
+new 8
+oppførte 8
+plager 8
+resten 8
+rima 8
+rør 8
+sendt 8
+sies 8
+sjefen 8
+skylder 8
+slutten 8
+solen 8
+språket 8
+startet 8
+stund 8
+støtte 8
+svømmer 8
+telefonen 8
+telefonnummeret 8
+teorien 8
+trøstet 8
+tvil 8
+tysk 8
+utenfor 8
+varte 8
+velge 8
+våken 8
+afrika 7
+ansvarlig 7
+antar 7
+australia 7
+bror 7
+datter 7
+dumt 7
+farge 7
+flyr 7
+foregår 7
+forskjellen 7
+forventet 7
+frakken 7
+fremtiden 7
+frisk 7
+fullt 7
+fyren 7
+gal 7
+galt 7
+gjemte 7
+glade 7
+gleder 7
+grenser 7
+grønne 7
+halvt 7
+hjulpet 7
+hovedstaden 7
+hunder 7
+inviterte 7
+isen 7
+jobb 7
+kilometer 7
+kjeder 7
+kjøp 7
+klatret 7
+kofferten 7
+kranglet 7
+lette 7
+levert 7
+lider 7
+likt 7
+lillesøsteren 7
+lovet 7
+lukke 7
+lukket 7
+lyset 7
+lær 7
+mål 7
+målet 7
+måned 7
+naturen 7
+nei 7
+nest 7
+noensinne 7
+oppdaget 7
+oppfører 7
+oppgaven 7
+pappa 7
+pusser 7
+pusten 7
+raskere 7
+regne 7
+rev 7
+rolle 7
+røyke 7
+selvfølgelig 7
+sen 7
+send 7
+situasjon 7
+sjanse 7
+skip 7
+skriker 7
+skynde 7
+stjålet 7
+studenter 7
+søster 7
+trakk 7
+trekke 7
+tretten 7
+tross 7
+turen 7
+tv 7
+tvunget 7
+vakkert 7
+vasket 7
+verdifull 7
+verken 7
+vidt 7
+vokst 7
+våren 7
+åpen 7
+åpenbart 7
+amerika 6
+aner 6
+ansvar 6
+antall 6
+artikkelen 6
+begynnelsen 6
+bestefaren 6
+besteforeldrene 6
+bestilte 6
+beundrer 6
+bob 6
+butikken 6
+bygget 6
+bytte 6
+danse 6
+delta 6
+driver 6
+effekt 6
+egg 6
+eksempel 6
+elever 6
+elven 6
+erfaring 6
+europeiske 6
+faktum 6
+faller 6
+ferien 6
+filmer 6
+fisk 6
+flasker 6
+flytte 6
+flytter 6
+forandret 6
+forberedt 6
+forestille 6
+forsøkte 6
+fortsetter 6
+fremmed 6
+frie 6
+fungerer 6
+fylt 6
+gangen 6
+genseren 6
+gjett 6
+gresk 6
+grunnen 6
+grønnsaker 6
+halv 6
+heldigvis 6
+herr 6
+hverken 6
+hvile 6
+hør 6
+høye 6
+høyt 6
+kalles 6
+kalte 6
+kjempet 6
+kjøtt 6
+klasse 6
+koselig 6
+kuttet 6
+latet 6
+ledig 6
+lengre 6
+lettere 6
+lure 6
+lyden 6
+midt 6
+mulighet 6
+møtes 6
+natten 6
+navn 6
+nære 6
+nøyaktig 6
+omkring 6
+oppgave 6
+ordboken 6
+overraskende 6
+oversetter 6
+paraplyen 6
+positiv 6
+pris 6
+rart 6
+rekke 6
+respektere 6
+restaurant 6
+riktig 6
+riktige 6
+ris 6
+rådet 6
+sammenligne 6
+sannheten 6
+savnet 6
+setningen 6
+skape 6
+skille 6
+skiller 6
+skjebnen 6
+skrivebordet 6
+sliten 6
+slutter 6
+smakte 6
+snakkes 6
+snudde 6
+sommeren 6
+spillet 6
+starte 6
+stemme 6
+sukker 6
+svensk 6
+sørg 6
+tak 6
+takket 6
+tilbringe 6
+toppen 6
+uendelig 6
+utvikle 6
+vinden 6
+øye 6
+adressen 5
+angrep 5
+ankommer 5
+avhenger 5
+avisen 5
+basert 5
+behøver 5
+berømt 5
+besatt 5
+bestemme 5
+betydning 5
+bevise 5
+blek 5
+blomsten 5
+bortkastet 5
+brant 5
+brillene 5
+brukes 5
+bry 5
+by 5
+dammen 5
+danset 5
+dansk 5
+dum 5
+dømt 5
+energi 5
+engelske 5
+england 5
+eplene 5
+europa 5
+fanget 5
+femte 5
+fjor 5
+flygende 5
+flyplassen 5
+forsiktig 5
+forsto 5
+forvekslet 5
+frukt 5
+fullføre 5
+fører 5
+føttene 5
+gjenta 5
+glipp 5
+grunner 5
+gutter 5
+hatet 5
+heldig 5
+helsen 5
+historie 5
+hotellet 5
+hvitt 5
+is 5
+italienske 5
+kaffen 5
+kake 5
+kald 5
+kartet 5
+kinesisk 5
+klassisk 5
+klatre 5
+kler 5
+koblet 5
+krone 5
+landets 5
+late 5
+ler 5
+ligge 5
+lillebroren 5
+linje 5
+lunsj 5
+lurte 5
+lønner 5
+mandag 5
+mangel 5
+ment 5
+mestre 5
+mike 5
+moderne 5
+mora 5
+musikken 5
+møter 5
+narr 5
+nevne 5
+norges 5
+nærmet 5
+nøklene 5
+onkel 5
+oppnådd 5
+orker 5
+overbevist 5
+overens 5
+overtale 5
+paris 5
+per 5
+planer 5
+plass 5
+pleier 5
+påvirker 5
+realisere 5
+reddet 5
+reglene 5
+rekker 5
+respekt 5
+respekterer 5
+resultatet 5
+rydde 5
+røyking 5
+san 5
+situasjonen 5
+sjekke 5
+skade 5
+skjorten 5
+skjønte 5
+skrudde 5
+skuffe 5
+sofaen 5
+spennende 5
+stol 5
+studert 5
+syk 5
+såvidt 5
+søstrene 5
+takke 5
+tenkning 5
+tilbudet 5
+tilfeldigvis 5
+tilfelle 5
+tillate 5
+tillegg 5
+treet 5
+trygg 5
+tørr 5
+ulv 5
+ulykken 5
+utsatt 5
+velsigne 5
+viktigere 5
+viss 5
+vitsen 5
+vokste 5
+vurderer 5
+åpenhet 5
+økonomiske 5
+alder 4
+allergisk 4
+anbefale 4
+anklager 4
+annenhver 4
+ante 4
+avhengig 4
+avviste 4
+bagasjen 4
+balanse 4
+bekymrer 4
+biter 4
+blomstene 4
+bluse 4
+blyanten 4
+blåste 4
+boksen 4
+bryte 4
+buss 4
+bøy 4
+delen 4
+dermed 4
+dmitri 4
+dobbelt 4
+drømte 4
+dukket 4
+dusjer 4
+dypt 4
+døv 4
+enklere 4
+evakuert 4
+evnen 4
+fare 4
+fiender 4
+fikse 4
+film 4
+fjellet 4
+flest 4
+fly 4
+forklaring 4
+forlater 4
+fornuft 4
+forsker 4
+forskjellig 4
+forstanden 4
+forstyrre 4
+forutse 4
+forårsaket 4
+fred 4
+fremmede 4
+frykt 4
+fullført 4
+fyll 4
+følelse 4
+gave 4
+gavene 4
+gjemmer 4
+gratulerer 4
+hvisket 4
+håpe 4
+hår 4
+idet 4
+idé 4
+imponert 4
+importerer 4
+india 4
+informasjon 4
+innrømme 4
+innrømmer 4
+interesse 4
+ja 4
+jentene 4
+jenter 4
+kalle 4
+kart 4
+kino 4
+kjøleskapet 4
+kjør 4
+kjøttet 4
+klimaet 4
+kniv 4
+kommunisere 4
+konen 4
+kontakt 4
+kontoret 4
+kopper 4
+korte 4
+krig 4
+kurs 4
+landskapet 4
+later 4
+leder 4
+leilighet 4
+leppene 4
+livene 4
+lommeboken 4
+lykkelig 4
+lytte 4
+lyve 4
+låse 4
+løy 4
+makten 4
+medlem 4
+meninger 4
+meningsløst 4
+metode 4
+minner 4
+minnes 4
+morsom 4
+muligheten 4
+naboen 4
+negativ 4
+nekter 4
+nevnte 4
+nordmenn 4
+nummer 4
+nøye 4
+oftere 4
+olje 4
+ombord 4
+omringet 4
+oppgaver 4
+ordene 4
+overnatte 4
+oversett 4
+oversettelsen 4
+parkere 4
+plaget 4
+pluss 4
+prate 4
+produktet 4
+prosent 4
+puss 4
+påkjørt 4
+raper 4
+rar 4
+regjering 4
+retten 4
+risikere 4
+roe 4
+rose 4
+salt 4
+savne 4
+sider 4
+sjokolade 4
+skadet 4
+ski 4
+skjule 4
+sko 4
+skogen 4
+skole 4
+slapp 4
+slappe 4
+slette 4
+sola 4
+soldaten 4
+sovet 4
+spill 4
+spørsmålene 4
+stammer 4
+steder 4
+stemningen 4
+stopp 4
+student 4
+stukket 4
+stykke 4
+sur 4
+sveits 4
+sverige 4
+svømte 4
+sårede 4
+takknemlig 4
+takler 4
+tanken 4
+tanker 4
+tapt 4
+tenk 4
+tillit 4
+torsdag 4
+treffer 4
+trenge 4
+tritt 4
+truffet 4
+trær 4
+tålmodighet 4
+uavhengig 4
+uker 4
+usikker 4
+utstyrt 4
+utviklingen 4
+valg 4
+valget 4
+varianter 4
+veggene 4
+vennens 4
+vennlig 4
+viet 4
+voksen 4
+ærlighet 4
+ødelagte 4
+østerrike 4
+advare 3
+amuletten 3
+anbefalte 3
+angrer 3
+ann 3
+ansette 3
+atten 3
+badet 3
+baggen 3
+bakte 3
+banket 3
+begravet 3
+behov 3
+benekter 3
+beskytter 3
+besluttet 3
+bestemoren 3
+bevisst 3
+blotte 3
+blødde 3
+bortsett 3
+brevene 3
+brydde 3
+bunn 3
+byene 3
+bygd 3
+bygning 3
+central 3
+daglige 3
+damen 3
+dret 3
+dronningen 3
+ekornet 3
+eksempler 3
+elefant 3
+elva 3
+enige 3
+ensomheten 3
+erfaringer 3
+favorittsangen 3
+femten 3
+firma 3
+flyter 3
+fokuserer 3
+folks 3
+forbindelse 3
+fordeler 3
+forent 3
+forente 3
+foreslår 3
+forfatteren 3
+forsikre 3
+forskere 3
+forskeren 3
+forsov 3
+forsøker 3
+framfor 3
+friske 3
+fuji 3
+fødselen 3
+gatene 3
+gaven 3
+genser 3
+gjem 3
+gradvis 3
+graven 3
+greide 3
+grunnlaget 3
+grusom 3
+gulrøtter 3
+hardere 3
+hardkokte 3
+haug 3
+helse 3
+helte 3
+hemmelighet 3
+hensyn 3
+hest 3
+hjelpen 3
+hopp 3
+horoskopet 3
+hotell 3
+innerst 3
+innrømmet 3
+innsjøen 3
+inntrykk 3
+intelligens 3
+internasjonal 3
+irriterende 3
+italia 3
+jakt 3
+karakter 3
+katrine 3
+kjedet 3
+kjemper 3
+kjole 3
+klasserommet 3
+klør 3
+kommunikasjon 3
+kropp 3
+kysten 3
+kødder 3
+lekene 3
+leserne 3
+levere 3
+leverte 3
+lokket 3
+lukten 3
+lykkelige 3
+lås 3
+læring 3
+lønnen 3
+løsningen 3
+magasiner 3
+mandlene 3
+mangelen 3
+martine 3
+matematikk 3
+menneskelig 3
+mental 3
+metodene 3
+mistenker 3
+mistenkt 3
+motsatte 3
+nesen 3
+nordmann 3
+nordmannen 3
+nød 3
+ok 3
+oppføre 3
+oppvokst 3
+overdrive 3
+overrasker 3
+overtalte 3
+ovnen 3
+paraply 3
+pasienten 3
+peiling 3
+polske 3
+populær 3
+presentere 3
+press 3
+prøvd 3
+pulver 3
+pønsker 3
+relativt 3
+ri 3
+ryggen 3
+sammenlignet 3
+seint 3
+senest 3
+sjakk 3
+skammet 3
+skjeve 3
+skrudd 3
+skuffelsen 3
+skuffet 3
+skutt 3
+skyggen 3
+skylden 3
+smartere 3
+stede 3
+sterkere 3
+stiller 3
+stormen 3
+strekker 3
+strikket 3
+synet 3
+systemet 3
+sølte 3
+taket 3
+tallerken 3
+teksten 3
+teppet 3
+teste 3
+tilbringer 3
+tilgir 3
+tilkall 3
+tiltrukket 3
+tirsdag 3
+trafikk 3
+trodd 3
+trygge 3
+trykk 3
+trykket 3
+trærne 3
+tull 3
+tuller 3
+tusenvis 3
+tydelige 3
+tyngre 3
+tårn 3
+ugler 3
+universet 3
+unntatt 3
+utadvendt 3
+utdanningssystemet 3
+utsetter 3
+vandret 3
+vannkopper 3
+vanskeligheter 3
+vask 3
+veide 3
+vekket 3
+vilje 3
+villig 3
+yokohama 3
+albert 2
+albumet 2
+aldeles 2
+analytiske 2
+arbeidsmarkedet 2
+argumentet 2
+artiklene 2
+banker 2
+barack 2
+baren 2
+begreper 2
+bekker 2
+beredt 2
+bergen 2
+betaling 2
+betydningen 2
+bidra 2
+bite 2
+blodtrykket 2
+blomst 2
+blyant 2
+brasil 2
+bred 2
+bursdagsgave 2
+bølge 2
+damp 2
+danmarks 2
+dekorerte 2
+deltatt 2
+drevet 2
+dritt 2
+dukke 2
+einstein 2
+eldste 2
+endres 2
+enkelhet 2
+ensomhet 2
+falafel 2
+fan 2
+finere 2
+fiolinist 2
+flinkere 2
+flis 2
+fluer 2
+forbindelser 2
+forbløffet 2
+forelske 2
+foreslo 2
+forhindring 2
+formerer 2
+fornybar 2
+forsinket 2
+fortest 2
+fotavtrykk 2
+frakk 2
+fristet 2
+frédéric 2
+fy 2
+følelsen 2
+førerkortet 2
+genève 2
+gitarer 2
+gjenlyd 2
+gjenopplive 2
+gladest 2
+glimt 2
+gren 2
+grupper 2
+grusomme 2
+gudene 2
+gulvet 2
+gutta 2
+gåtens 2
+hamburg 2
+handen 2
+havre 2
+havregryn 2
+heavy 2
+hekser 2
+hente 2
+het 2
+hinder 2
+hindre 2
+hobbyen 2
+homer 2
+hovedkontoret 2
+hånda 2
+håndflatene 2
+idéen 2
+importert 2
+informasjonen 2
+innlagt 2
+innrøm 2
+interesserer 2
+involvert 2
+januar 2
+kasserollen 2
+kinnene 2
+kjempeflink 2
+kjennskap 2
+klype 2
+knivene 2
+kniver 2
+knuste 2
+knyttet 2
+kollega 2
+komplekst 2
+konstant 2
+kontanter 2
+krangel 2
+kristus 2
+københavn 2
+lasagne 2
+laste 2
+lavere 2
+lekte 2
+lily 2
+liter 2
+lopper 2
+los 2
+luigi 2
+lukte 2
+låner 2
+løk 2
+lønn 2
+mars 2
+melde 2
+mellommenneskelige 2
+mere 2
+mesterstykke 2
+mette 2
+misfornøyd 2
+misforstått 2
+mosen 2
+motstå 2
+musene 2
+måneden 2
+mørkere 2
+nederland 2
+nettbrett 2
+nordiske 2
+nærmer 2
+nøl 2
+oppførselen 2
+opplagt 2
+opplevelser 2
+oppmerksom 2
+oppskrift 2
+orden 2
+ordner 2
+ordspråk 2
+overflaten 2
+overgangen 2
+overhodet 2
+pablo 2
+parasittene 2
+peke 2
+politiets 2
+portugal 2
+potetene 2
+praksis 2
+prinsen 2
+pølser 2
+radikaler 2
+rakk 2
+redsel 2
+rente 2
+sammenligning 2
+samvittigheten 2
+sangen 2
+savnede 2
+sekretær 2
+seksti 2
+selgeren 2
+selskapene 2
+siktet 2
+sittet 2
+sjenert 2
+skalv 2
+skamme 2
+skammer 2
+skremmer 2
+skuff 2
+skyldig 2
+slit 2
+smarte 2
+smiler 2
+snev 2
+snødd 2
+solidaritet 2
+soveromsdøren 2
+spøk 2
+strategier 2
+strebe 2
+stress 2
+strukturert 2
+suksessrik 2
+svakheter 2
+søren 2
+sørger 2
+tabbe 2
+taco 2
+talent 2
+tankeløst 2
+tilgang 2
+tilgjengelig 2
+tilsett 2
+trengs 2
+troverdigheten 2
+tulle 2
+tur-retur 2
+tvers 2
+tvert 2
+tvilsomt 2
+tydelighet 2
+typisk 2
+ulm 2
+ulykkelig 2
+undersøke 2
+ungene 2
+urettferdig 2
+utarbeide 2
+utkanten 2
+utslitte 2
+uttrykket 2
+vansker 2
+variert 2
+vedder 2
+verdsetter 2
+verne 2
+virkning 2
+vits 2
+volumet 2
+våg 2
+våget 2
+ynket 2
+ånden 2
+årsaken 2
+ætt 2
+økning 2
+det er 739
+jeg er 570
+jeg har 555
+til å 495
+er en 386
+er ikke 347
+er det 299
+jeg vil 290
+for å 280
+tom er 223
+det var 213
+du er 213
+han er 211
+har du 202
+er du 166
+har ikke 162
+kan ikke 162
+dette er 158
+at jeg 152
+du ikke 151
+i dag 150
+jeg kan 147
+er et 146
+jeg vet 145
+tom har 145
+jeg liker 141
+har en 137
+kan du 132
+hun er 129
+jeg tror 125
+jeg var 124
+jeg skulle 120
+å være 120
+du har 118
+at du 117
+du kan 117
+er veldig 117
+han har 117
+vi har 115
+ikke å 110
+i går 109
+å gjøre 108
+at han 105
+kan jeg 105
+gjøre det 104
+i en 103
+du må 100
+hva er 96
+jeg skal 94
+skulle ønske 89
+tom og 89
+vil ikke 89
+hun har 85
+jeg ikke 84
+jeg hadde 83
+at tom 82
+er i 81
+vil du 81
+kommer til 80
+var en 80
+i morgen 79
+hun var 78
+hvis du 78
+ikke noe 78
+at det 77
+la oss 75
+jeg kunne 73
+på det 72
+var ikke 72
+jeg må 71
+med deg 71
+er den 70
+han var 69
+og mary 69
+vet ikke 69
+bor i 68
+hva som 67
+i det 67
+tom var 66
+vil ha 66
+det ikke 65
+å bli 65
+har vært 64
+på en 63
+vi er 63
+er så 62
+jeg trenger 61
+vi må 61
+du vil 60
+hvor er 60
+på meg 60
+felles med 59
+ønske jeg 58
+for meg 57
+om det 57
+en gang 56
+liker å 56
+med en 56
+med å 56
+å gå 56
+en av 55
+er for 55
+jeg elsker 54
+jeg så 54
+med tom 54
+som en 54
+som er 54
+er på 53
+har aldri 53
+og jeg 53
+jeg ble 52
+men jeg 52
+med meg 51
+å se 51
+av en 50
+gjør det 50
+liker ikke 50
+jeg kommer 49
+når du 49
+hvor mange 48
+sa at 48
+vet at 48
+en stor 47
+hva jeg 47
+var det 47
+å spise 47
+en god 46
+jeg ser 46
+når jeg 46
+til meg 46
+å lære 46
+at vi 45
+det du 45
+ikke at 45
+jeg bor 45
+snakke med 45
+tom sa 45
+vet du 45
+at hun 44
+han hadde 44
+i et 44
+på at 44
+så mye 44
+å ta 44
+en ny 43
+mer enn 43
+tror du 43
+hver dag 42
+å få 42
+å snakke 42
+de er 41
+du bør 41
+inn i 41
+de har 40
+han ikke 40
+ikke ha 40
+ikke på 40
+la meg 40
+på grunn 40
+på å 40
+til tom 40
+å ha 40
+det som 39
+grunn av 39
+har blitt 39
+hvor mye 39
+ikke så 39
+meg ikke 39
+å si 39
+denne boken 38
+du en 38
+ha en 38
+jeg ville 38
+med oss 38
+da jeg 37
+for det 37
+gi meg 37
+hvem er 37
+ikke en 37
+ikke er 37
+lyst til 37
+noe å 37
+skal du 37
+trenger ikke 37
+du trenger 36
+for deg 36
+har allerede 36
+prøvde å 36
+på seg 36
+til felles 36
+at de 35
+det hele 35
+ikke det 35
+jeg trodde 35
+kunne ikke 35
+meg for 35
+seg selv 35
+sikker på 35
+var veldig 35
+er dette 34
+han ble 34
+hvor lenge 34
+i denne 34
+om å 34
+se på 34
+som ikke 34
+som jeg 34
+ut som 34
+å skrive 34
+det har 33
+en mann 33
+gjort det 33
+gjør du 33
+ikke til 33
+med henne 33
+min er 33
+på skolen 33
+var i 33
+ønsker å 33
+de fleste 32
+det en 32
+du skal 32
+har et 32
+med dem 32
+med ham 32
+ser ut 32
+å komme 32
+du burde 31
+faren min 31
+for at 31
+han vil 31
+har ingen 31
+hva du 31
+ikke i 31
+jeg blir 31
+sier at 31
+skal vi 31
+snakket med 31
+ut av 31
+uten å 31
+vært i 31
+å studere 31
+år siden 31
+du til 30
+en veldig 30
+for en 30
+ikke kan 30
+jeg forstår 30
+jeg føler 30
+jeg snakker 30
+med et 30
+på den 30
+sammen med 30
+som om 30
+til en 30
+tror ikke 30
+tror jeg 30
+vanskelig å 30
+det jeg 29
+det kommer 29
+du ha 29
+er bare 29
+er ingen 29
+er min 29
+er å 29
+har gjort 29
+har ingenting 29
+i den 29
+ikke hva 29
+ikke sant 29
+jeg håper 29
+jeg kom 29
+jeg tar 29
+med det 29
+må være 29
+på deg 29
+så jeg 29
+tom hadde 29
+tom kommer 29
+vil bli 29
+ville ikke 29
+å kjøpe 29
+av deg 28
+begynte å 28
+det til 28
+du at 28
+gjøre noe 28
+hadde ikke 28
+har jeg 28
+hele tatt 28
+i boston 28
+ikke gå 28
+jeg synes 28
+men det 28
+noen ganger 28
+redd for 28
+seg ikke 28
+så du 28
+til deg 28
+å drikke 28
+av det 27
+det i 27
+det kan 27
+du klar 27
+er ganske 27
+for sent 27
+hva han 27
+hvorfor er 27
+jeg kjøpte 27
+liker du 27
+mary er 27
+om han 27
+om jeg 27
+seg i 27
+synes du 27
+tom vil 27
+vi kan 27
+å lese 27
+av de 26
+av meg 26
+broren min 26
+du noen 26
+du vet 26
+han så 26
+her er 26
+i kveld 26
+jeg hater 26
+jeg kjenner 26
+kommer du 26
+meg en 26
+meg i 26
+meg selv 26
+noen gang 26
+og det 26
+og en 26
+seg for 26
+ser på 26
+som helst 26
+til boston 26
+vil at 26
+alt for 25
+bare en 25
+bedre enn 25
+ble født 25
+du om 25
+du på 25
+du ser 25
+du skulle 25
+en bok 25
+er mange 25
+et par 25
+gjorde alt 25
+hun ble 25
+hun hadde 25
+hva skal 25
+i fjor 25
+jeg lurer 25
+lurer på 25
+til at 25
+til det 25
+tom ble 25
+vær så 25
+være en 25
+å spille 25
+deg ikke 24
+en gammel 24
+en hund 24
+er fra 24
+har det 24
+har sett 24
+jeg ønsker 24
+kan gjøre 24
+kom til 24
+opp i 24
+på bordet 24
+som har 24
+så snill 24
+tom ville 24
+ved å 24
+vi skal 24
+å finne 24
+å holde 24
+du gjør 23
+er alltid 23
+fordi jeg 23
+gjorde det 23
+hadde en 23
+har gått 23
+har to 23
+i nærheten 23
+ikke være 23
+jeg få 23
+kan være 23
+om du 23
+skal gjøre 23
+takk for 23
+vant til 23
+vi var 23
+å ikke 23
+å leve 23
+deg en 22
+du kommer 22
+enn å 22
+er her 22
+ferdig med 22
+har fått 22
+hun så 22
+ikke om 22
+interessert i 22
+jeg går 22
+kunne du 22
+på denne 22
+svare på 22
+tid til 22
+å dra 22
+å gi 22
+å jobbe 22
+det blir 21
+det vil 21
+en kvinne 21
+er helt 21
+er klar 21
+er redd 21
+et problem 21
+ha gjort 21
+han liker 21
+hun ikke 21
+hvis det 21
+i japan 21
+ikke med 21
+ikke se 21
+jeg fikk 21
+jeg får 21
+jeg tok 21
+jeg visste 21
+livet er 21
+meg med 21
+meg til 21
+må gjøre 21
+må ikke 21
+noe til 21
+pleide å 21
+selv om 21
+skal jeg 21
+skulle ha 21
+tom liker 21
+tror at 21
+å lage 21
+å svømme 21
+den eneste 20
+den er 20
+den nye 20
+det går 20
+det ser 20
+dra til 20
+er din 20
+er fortsatt 20
+er jeg 20
+er tom 20
+fortelle deg 20
+går kveld 20
+i dette 20
+ikke den 20
+ikke gjøre 20
+jeg gjorde 20
+jeg spiser 20
+jeg tenker 20
+klar for 20
+lett å 20
+men ikke 20
+moren min 20
+på ham 20
+på hva 20
+si det 20
+som du 20
+som et 20
+så på 20
+tom sier 20
+tror tom 20
+vet hva 20
+vil være 20
+å forstå 20
+bilen min 19
+burde ikke 19
+det samme 19
+det siste 19
+du i 19
+en time 19
+er mye 19
+er svært 19
+er virkelig 19
+et stort 19
+for et 19
+gang i 19
+har dere 19
+har han 19
+hjelpe deg 19
+hvordan man 19
+i rommet 19
+i verden 19
+ikke for 19
+jeg hørte 19
+jeg leste 19
+jeg spiste 19
+kommer ikke 19
+meg om 19
+på så 19
+snakker du 19
+til mary 19
+til skolen 19
+tilbake til 19
+tom kan 19
+trenger en 19
+ut i 19
+var så 19
+visste at 19
+aldri vært 18
+alt dette 18
+av å 18
+de ikke 18
+den som 18
+det finnes 18
+det på 18
+din er 18
+du det 18
+en liten 18
+er litt 18
+er vanskelig 18
+fortalte meg 18
+føler meg 18
+har lyst 18
+har vi 18
+hele dagen 18
+hele tiden 18
+hvis jeg 18
+hvordan kan 18
+ikke et 18
+ikke snakke 18
+ingenting til 18
+jeg gikk 18
+jeg leser 18
+kommer fra 18
+nok til 18
+om at 18
+om dagen 18
+om en 18
+på et 18
+seg med 18
+seg om 18
+si noe 18
+skal være 18
+snakker ikke 18
+som kan 18
+så mange 18
+tom ikke 18
+tom skulle 18
+tre år 18
+å bo 18
+å fortelle 18
+å spørre 18
+alt er 17
+bli en 17
+de andre 17
+deg om 17
+dere er 17
+det noe 17
+du hva 17
+du snakker 17
+er alt 17
+er glad 17
+er sikker 17
+etter en 17
+finne ut 17
+forstår ikke 17
+født i 17
+ga meg 17
+hadde vært 17
+han kom 17
+han kommer 17
+han sier 17
+hun vil 17
+hva vil 17
+hvem som 17
+ikke finne 17
+ikke har 17
+ikke si 17
+ikke vær 17
+jeg burde 17
+jeg ga 17
+jeg gjør 17
+jeg måtte 17
+jeg prøvde 17
+kunne finne 17
+meg på 17
+om tom 17
+passe på 17
+prøver å 17
+på vei 17
+siden av 17
+tom så 17
+tror det 17
+var den 17
+vi ikke 17
+være alene 17
+å røyke 17
+de var 16
+deg for 16
+deg i 16
+deg selv 16
+den andre 16
+der er 16
+dere ikke 16
+det bra 16
+det å 16
+du gjøre 16
+du kunne 16
+du var 16
+du å 16
+elsker deg 16
+en dag 16
+en venn 16
+er at 16
+er de 16
+er han 16
+er mer 16
+er nesten 16
+et brev 16
+gjøre dette 16
+gå på 16
+han tok 16
+har alltid 16
+har tre 16
+i norge 16
+ikke hadde 16
+ikke lenger 16
+ingenting felles 16
+jeg å 16
+mange ganger 16
+med på 16
+meg et 16
+min har 16
+min mor 16
+mye penger 16
+må ha 16
+noen som 16
+når det 16
+når han 16
+når man 16
+prøve å 16
+på henne 16
+på veien 16
+snakke om 16
+som skjedde 16
+stå opp 16
+så fort 16
+ta en 16
+tenker på 16
+til den 16
+til et 16
+tom tok 16
+ut på 16
+var et 16
+veldig godt 16
+vi vet 16
+vil gjerne 16
+vil gjøre 16
+vil jeg 16
+ville ha 16
+være i 16
+å forklare 16
+å hjelpe 16
+år gammel 16
+aldri til 15
+at dette 15
+av dem 15
+av oss 15
+begynner å 15
+bilde av 15
+denne setningen 15
+det for 15
+det med 15
+dro til 15
+du meg 15
+du virkelig 15
+en bil 15
+er lett 15
+for mye 15
+for oss 15
+føler seg 15
+gå til 15
+hadde på 15
+har mange 15
+har skjedd 15
+her i 15
+hvor ofte 15
+hvordan jeg 15
+i australia 15
+ikke la 15
+ingenting å 15
+jeg meg 15
+jeg prøver 15
+lære å 15
+merke til 15
+noe felles 15
+om hva 15
+på om 15
+på tv 15
+seg til 15
+skulle ikke 15
+slutte å 15
+som det 15
+som skjer 15
+tenke på 15
+tom fortalte 15
+ut til 15
+var på 15
+vi hadde 15
+vi trenger 15
+visste ikke 15
+vært der 15
+at mary 14
+av et 14
+bestemte seg 14
+da han 14
+den beste 14
+det et 14
+det skjedde 14
+det ville 14
+du får 14
+du går 14
+du med 14
+du sier 14
+en katt 14
+en sta 14
+er også 14
+er som 14
+er viktig 14
+et bilde 14
+etter å 14
+flink til 14
+foreldrene mine 14
+før du 14
+før han 14
+glemte å 14
+gå og 14
+ha noe 14
+ha vært 14
+hadde ingenting 14
+ham om 14
+han fikk 14
+hans er 14
+har bare 14
+har rett 14
+hun liker 14
+hva gjør 14
+hva har 14
+hvorfor tom 14
+i løpet 14
+ikke bare 14
+ikke engang 14
+ikke glem 14
+ikke var 14
+jeg drar 14
+jeg fant 14
+jeg møtte 14
+kjøpe en 14
+lenge har 14
+leter etter 14
+man kan 14
+mange av 14
+med den 14
+med dette 14
+meg at 14
+meg hva 14
+må du 14
+må jeg 14
+må passe 14
+neste uke 14
+noe annet 14
+noen av 14
+og de 14
+på spørsmålet 14
+ser du 14
+sin egen 14
+slutt å 14
+stolt av 14
+så er 14
+så lenge 14
+ta med 14
+til australia 14
+tom skal 14
+vi vil 14
+ville være 14
+å høre 14
+å regne 14
+alle andre 13
+alt jeg 13
+av den 13
+deg til 13
+denne byen 13
+det gjør 13
+du snill 13
+du tror 13
+en annen 13
+en gutt 13
+en jente 13
+en stund 13
+en uke 13
+enig med 13
+er like 13
+er stolt 13
+et veldig 13
+forelsket i 13
+fortelle meg 13
+fra å 13
+får ikke 13
+første gang 13
+gi opp 13
+god natt 13
+ha et 13
+han gikk 13
+han kan 13
+han kunne 13
+han snakker 13
+han trenger 13
+han ville 13
+har hatt 13
+har noe 13
+hunden min 13
+huset mitt 13
+hva slags 13
+i byen 13
+i livet 13
+i tokyo 13
+i tyskland 13
+ikke hvordan 13
+jeg aldri 13
+jeg drikker 13
+jeg heter 13
+jeg jobber 13
+jeg sier 13
+kan gå 13
+kan se 13
+kan vi 13
+lang tid 13
+løpet av 13
+maria har 13
+mary ikke 13
+med denne 13
+meg litt 13
+meg noe 13
+meg å 13
+mitt er 13
+må ta 13
+noe som 13
+nå er 13
+over at 13
+seg en 13
+sett en 13
+sier han 13
+skynd deg 13
+som vil 13
+språk som 13
+til og 13
+tom at 13
+tom ga 13
+tom gjorde 13
+tom ser 13
+ut hvordan 13
+var du 13
+venter på 13
+å synge 13
+å vite 13
+bare for 12
+består av 12
+bo i 12
+de hadde 12
+deg å 12
+dessverre kan 12
+det noen 12
+det skal 12
+det verste 12
+du gjorde 12
+en kniv 12
+enn meg 12
+er aldri 12
+er bedre 12
+er dere 12
+er sulten 12
+er vant 12
+et språk 12
+etter at 12
+ferd med 12
+finnes det 12
+flere ganger 12
+folk som 12
+for seg 12
+full av 12
+giftet seg 12
+gikk inn 12
+glad for 12
+glad i 12
+går til 12
+ham i 12
+han bor 12
+han gjorde 12
+har bodd 12
+har lest 12
+har mistet 12
+hva med 12
+hva synes 12
+hva var 12
+hvem vil 12
+hvor du 12
+i ferd 12
+i hagen 12
+i hele 12
+i tre 12
+ikke alle 12
+ikke hvorfor 12
+ikke jeg 12
+ikke leve 12
+ikke tro 12
+ingenting om 12
+jeg husker 12
+jeg klarer 12
+kan ta 12
+klarer ikke 12
+mange mennesker 12
+men du 12
+måte å 12
+nesten ikke 12
+noen andre 12
+nok av 12
+når de 12
+og med 12
+og så 12
+opp med 12
+opp tidlig 12
+råd til 12
+sa han 12
+seg og 12
+si meg 12
+skal bli 12
+sluttet å 12
+som mulig 12
+stand til 12
+så deg 12
+til henne 12
+tom døde 12
+tom vet 12
+tom visste 12
+veldig glad 12
+vi bør 12
+vil bare 12
+være der 12
+å møte 12
+å redde 12
+å skje 12
+alle sammen 11
+av at 11
+av seg 11
+bilen din 11
+ble hjemme 11
+ble ikke 11
+boken er 11
+byen i 11
+dag er 11
+de kan 11
+de to 11
+de vil 11
+dem som 11
+den samme 11
+det beste 11
+det ble 11
+det der 11
+det hadde 11
+dette var 11
+du blir 11
+du et 11
+du liker 11
+du vært 11
+en del 11
+en grådig 11
+enn deg 11
+enn jeg 11
+er best 11
+er grådig 11
+er lei 11
+er noe 11
+er opptatt 11
+et brekkjern 11
+forrige uke 11
+før jeg 11
+gi deg 11
+ha det 11
+han sa 11
+har bestemt 11
+har funnet 11
+har kjøpt 11
+hjelpe meg 11
+hun gjorde 11
+hun ser 11
+hva tom 11
+hvor jeg 11
+hvorfor jeg 11
+i klassen 11
+i london 11
+i stand 11
+i to 11
+i uken 11
+i usa 11
+i å 11
+ikke bli 11
+ikke helt 11
+ikke sett 11
+ikke veldig 11
+ikke ville 11
+jeg glemte 11
+jeg hører 11
+jobber for 11
+kan svømme 11
+kunne ha 11
+lei av 11
+ligger i 11
+ligger på 11
+mary var 11
+må vi 11
+møte deg 11
+noe sånt 11
+når hun 11
+og mer 11
+opp på 11
+prøv å 11
+på dette 11
+på noe 11
+reise til 11
+sa det 11
+sa til 11
+slik at 11
+snill og 11
+stole på 11
+synes det 11
+så det 11
+tar det 11
+tendens til 11
+tenkt å 11
+til i 11
+to ganger 11
+tom blir 11
+tom for 11
+tom gjør 11
+tom i 11
+tom må 11
+tom til 11
+trenger du 11
+var helt 11
+var her 11
+vare på 11
+veien til 11
+ventet på 11
+vet hvor 11
+vi skulle 11
+vondt i 11
+være så 11
+å svare 11
+å tape 11
+alle er 10
+av denne 10
+begynt å 10
+brev til 10
+bør ikke 10
+dag har 10
+de gjorde 10
+de siste 10
+den største 10
+det eneste 10
+det første 10
+det greit 10
+det han 10
+det ingen 10
+det regner 10
+det regnet 10
+det virker 10
+ditt er 10
+du hadde 10
+du og 10
+du så 10
+du tar 10
+du ville 10
+eller ikke 10
+en fin 10
+en helt 10
+en lang 10
+en leilighet 10
+en tendens 10
+enn de 10
+er bra 10
+er gammel 10
+er hun 10
+er ingenting 10
+er laget 10
+er mitt 10
+er sta 10
+et godt 10
+et nytt 10
+et sted 10
+for ikke 10
+for tom 10
+fordi det 10
+fornøyd med 10
+fortell meg 10
+fått nok 10
+følge med 10
+gang jeg 10
+gå hjem 10
+gå ut 10
+går ikke 10
+hadde ingen 10
+hadde jeg 10
+han skal 10
+han skulle 10
+han visste 10
+har hun 10
+har kommet 10
+har nettopp 10
+hun tok 10
+hvor gammel 10
+hvor lang 10
+hvorfor har 10
+høre på 10
+hører på 10
+i de 10
+i mange 10
+i år 10
+ikke alltid 10
+ikke fransk 10
+ikke her 10
+ikke hvor 10
+ikke komme 10
+ikke kunne 10
+ikke min 10
+ikke rør 10
+ikke ta 10
+ikke tom 10
+jeg ba 10
+jeg holder 10
+jeg mente 10
+jeg sa 10
+jeg snakket 10
+kan bli 10
+kan få 10
+kan ha 10
+kjøpte en 10
+klar til 10
+klarte ikke 10
+kom hjem 10
+kommer tilbake 10
+laget av 10
+langt fra 10
+leve uten 10
+litt mer 10
+maria er 10
+mary har 10
+meg som 10
+men han 10
+mens han 10
+mens jeg 10
+min bror 10
+måtte gjøre 10
+noe om 10
+når kommer 10
+nærheten av 10
+og et 10
+og ikke 10
+om ham 10
+om morgenen 10
+om noen 10
+på engelsk 10
+på landet 10
+på samme 10
+rett til 10
+ring meg 10
+se deg 10
+ser ikke 10
+skal ha 10
+snakke fransk 10
+som hadde 10
+som han 10
+som tom 10
+som å 10
+så sta 10
+sønnen min 10
+ta på 10
+ta vare 10
+til de 10
+til slutt 10
+tom jobber 10
+tom kjøpte 10
+tre dager 10
+trenger å 10
+tro at 10
+trodde du 10
+tror han 10
+unnskyld meg 10
+var bare 10
+ved siden 10
+verden er 10
+vil det 10
+vil heller 10
+virkelig ikke 10
+være et 10
+være her 10
+være med 10
+yanni er 10
+å bruke 10
+å løse 10
+å miste 10
+å oversette 10
+å prøve 10
+å reise 10
+å stå 10
+absolutt ingenting 9
+akkurat nå 9
+av disse 9
+bli med 9
+blir det 9
+bodde i 9
+bor på 9
+bryr seg 9
+de som 9
+deg noe 9
+deg på 9
+del av 9
+den første 9
+denne filmen 9
+der borte 9
+det høres 9
+det igjen 9
+det meste 9
+det må 9
+det vi 9
+dette landet 9
+dette prosjektet 9
+din hjelp 9
+dreier seg 9
+du deg 9
+du hvor 9
+du mener 9
+du noe 9
+du sikker 9
+du være 9
+eldre enn 9
+en kopp 9
+en måned 9
+en setning 9
+enn en 9
+er fullstendig 9
+er gift 9
+er interessert 9
+er stor 9
+er til 9
+er trøtt 9
+er umulig 9
+er utrolig 9
+et barn 9
+et glass 9
+for alle 9
+for dem 9
+for den 9
+for første 9
+forstår meg 9
+fortsette å 9
+frem til 9
+gammel venn 9
+gjør meg 9
+går på 9
+ham til 9
+han døde 9
+han la 9
+har begynt 9
+har dårlig 9
+har gitt 9
+har lagt 9
+har på 9
+hatt en 9
+henne i 9
+hjemme i 9
+hull i 9
+hun dro 9
+hva de 9
+hva det 9
+hvem skal 9
+hvordan du 9
+hører du 9
+i fare 9
+i leiligheten 9
+i mitt 9
+i morges 9
+ikke blir 9
+ikke få 9
+ikke kommer 9
+ikke kommet 9
+ikke mange 9
+ikke råd 9
+ikke vet 9
+jeg bare 9
+jeg fortalte 9
+jeg kjente 9
+jeg klarte 9
+jeg legger 9
+jeg likte 9
+jeg mener 9
+jeg ringer 9
+jeg står 9
+jeg tenkte 9
+kan snakke 9
+kom for 9
+kona mi 9
+lagt på 9
+liker det 9
+lov til 9
+mange bøker 9
+mange år 9
+mary sa 9
+med mary 9
+med noen 9
+med seg 9
+meg og 9
+mener du 9
+mens du 9
+min far 9
+min til 9
+mye bedre 9
+mye koster 9
+mye mer 9
+må finne 9
+må gå 9
+ned i 9
+når er 9
+når vi 9
+og er 9
+og gikk 9
+og vi 9
+om bord 9
+om dette 9
+om henne 9
+om noe 9
+onkelen min 9
+pass på 9
+på søndager 9
+på tide 9
+sa du 9
+seg et 9
+seg ned 9
+seg å 9
+sier du 9
+skal ikke 9
+skolen i 9
+skulle gjøre 9
+snakket om 9
+som deg 9
+som var 9
+største byen 9
+så ham 9
+så meg 9
+ta av 9
+tenker du 9
+tenkte på 9
+til min 9
+til oss 9
+til sengs 9
+til stasjonen 9
+tok av 9
+tom en 9
+tom fikk 9
+tom prøvde 9
+ute av 9
+var aldri 9
+velkommen til 9
+venn av 9
+vi ble 9
+vi bor 9
+vi gikk 9
+vi kommer 9
+viktig å 9
+vil aldri 9
+ville aldri 9
+viste meg 9
+å dø 9
+å kjøre 9
+å kunne 9
+å reparere 9
+å sitte 9
+å snø 9
+å sove 9
+å tenke 9
+å vente 9
+ønske at 9
+ønske du 9
+aldri sett 8
+alt som 8
+at ingen 8
+av dere 8
+av guttene 8
+av ham 8
+av huset 8
+bare én 8
+ber deg 8
+bodd i 8
+boken til 8
+bra med 8
+bruke denne 8
+bruker du 8
+byen er 8
+da hun 8
+den gamle 8
+den mest 8
+dere alle 8
+det mulig 8
+det være 8
+dette fenomenet 8
+du lyst 8
+du si 8
+en drink 8
+en drøm 8
+en dårlig 8
+en gave 8
+en hvit 8
+en måte 8
+en person 8
+en vakker 8
+enn han 8
+er akkurat 8
+er alle 8
+er allerede 8
+er farlig 8
+er forelsket 8
+er full 8
+er nå 8
+er to 8
+er ute 8
+et annet 8
+et ord 8
+folk har 8
+for dette 8
+for henne 8
+for noen 8
+fordi han 8
+foreldrene dine 8
+forklare det 8
+fortalt meg 8
+fortsatte å 8
+fra australia 8
+fra tom 8
+fra tyskland 8
+få en 8
+gang har 8
+gitt meg 8
+han går 8
+har glemt 8
+har skrevet 8
+har tatt 8
+har ventet 8
+hele natten 8
+holde følge 8
+holdt på 8
+hun bor 8
+hun kommer 8
+hun sier 8
+hun snakker 8
+hun ville 8
+husker du 8
+hva heter 8
+hva ville 8
+hvem sin 8
+hvem var 8
+hvor han 8
+hvordan er 8
+hvordan var 8
+hvorfor snakker 8
+hyggelig å 8
+høyere enn 8
+i all 8
+i fengsel 8
+i fred 8
+i hodet 8
+i huset 8
+i min 8
+i paris 8
+i øyeblikket 8
+ikke fortelle 8
+ikke hjelpe 8
+ikke mye 8
+ikke noen 8
+ikke spise 8
+ikke trenger 8
+ikke vært 8
+invitert til 8
+jeg ber 8
+jeg gir 8
+jeg mistet 8
+jeg pleide 8
+jeg savner 8
+jeg setter 8
+jeg stoler 8
+kameraet mitt 8
+katten er 8
+katten min 8
+kjøpt en 8
+kjøpte et 8
+klar over 8
+kledd i 8
+kom tilbake 8
+komme med 8
+kommer aldri 8
+kristoffer columbus 8
+kunne jeg 8
+latin er 8
+lei meg 8
+liker ham 8
+man ikke 8
+mann av 8
+maria og 8
+med de 8
+med i 8
+meg det 8
+meg mye 8
+men de 8
+mente ikke 8
+min ble 8
+min hund 8
+min var 8
+mot meg 8
+må hjelpe 8
+ned på 8
+noe du 8
+noe i 8
+noe jeg 8
+nok penger 8
+når en 8
+nødt til 8
+og se 8
+om deg 8
+om hun 8
+om meg 8
+om sommeren 8
+oss ikke 8
+planlegger å 8
+på alle 8
+på besøk 8
+på de 8
+på festen 8
+på med 8
+på møtet 8
+på oss 8
+på tom 8
+resten av 8
+rundt i 8
+sett deg 8
+si at 8
+sin mor 8
+skal ta 8
+snakker dere 8
+snakker engelsk 8
+snakker om 8
+som alle 8
+som de 8
+som den 8
+som hun 8
+som meg 8
+som regel 8
+spille tennis 8
+stolt over 8
+sykkelen min 8
+så god 8
+så godt 8
+så tom 8
+så vi 8
+til middag 8
+tok en 8
+tom gikk 8
+tom kunne 8
+tom tror 8
+tre ganger 8
+trenger et 8
+uansett hva 8
+under bordet 8
+var der 8
+var for 8
+var kledd 8
+var mer 8
+var syk 8
+vei til 8
+veldig god 8
+veldig lite 8
+vet ingenting 8
+vet jeg 8
+vi kunne 8
+vil alltid 8
+vil snakke 8
+vil trøste 8
+ville du 8
+ville jeg 8
+vise deg 8
+vært en 8
+å besøke 8
+å betale 8
+å føle 8
+å nå 8
+én gang 8
+ønsket å 8
+aldri ha 7
+alle har 7
+alltid med 7
+alt han 7
+anelse om 7
+annet enn 7
+at alle 7
+at den 7
+at en 7
+at man 7
+av dette 7
+av og 7
+bare et 7
+bedt om 7
+bekymret for 7
+bestemt seg 7
+bestemte meg 7
+ble det 7
+ble tvunget 7
+bli i 7
+blir du 7
+blir ikke 7
+blåser fra 7
+broren din 7
+bryr meg 7
+bør du 7
+bøyde seg 7
+de fant 7
+de må 7
+de sa 7
+deg litt 7
+deg med 7
+deg og 7
+dekket av 7
+den ikke 7
+den lille 7
+den siste 7
+den tiden 7
+denne boka 7
+det det 7
+det dreier 7
+det fra 7
+det huset 7
+det lille 7
+det mange 7
+det sies 7
+det tok 7
+dette problemet 7
+dra hjem 7
+drikker ikke 7
+drog til 7
+du den 7
+du gi 7
+du gjort 7
+du hjelpe 7
+du hvordan 7
+du sa 7
+du snakke 7
+du tom 7
+du ønsker 7
+døde av 7
+døde i 7
+eller annen 7
+en bedre 7
+en eller 7
+en feil 7
+en idiot 7
+eneste som 7
+er borte 7
+er definitivt 7
+er død 7
+er enig 7
+er faktisk 7
+er ferdig 7
+er flink 7
+er gal 7
+er god 7
+er meningen 7
+er rett 7
+er tre 7
+er varmt 7
+er vel 7
+et år 7
+faen ta 7
+finne en 7
+for de 7
+for ti 7
+for tre 7
+fordi hun 7
+forklare dette 7
+fra deg 7
+fullt av 7
+får du 7
+føler jeg 7
+følte seg 7
+ganger har 7
+gifte seg 7
+gjerne ha 7
+gjorde en 7
+gjøre feil 7
+gjøre i 7
+gjøre med 7
+glem å 7
+guttene har 7
+går det 7
+ha blitt 7
+hadde sett 7
+halvparten av 7
+ham en 7
+ham ikke 7
+han begynte 7
+han dro 7
+han jobber 7
+han jobbet 7
+han mistet 7
+han ser 7
+han spiste 7
+han vet 7
+han viste 7
+har god 7
+har noen 7
+har tom 7
+hele livet 7
+hennes er 7
+her for 7
+hjelpe oss 7
+holder på 7
+hovedstaden i 7
+hun ga 7
+hun gikk 7
+hun la 7
+hun trengte 7
+huset ditt 7
+hva kan 7
+hvem har 7
+hver gang 7
+hver morgen 7
+hvilket språk 7
+hvor skal 7
+hvordan har 7
+håper at 7
+håper det 7
+i alle 7
+i amerika 7
+i samme 7
+i sengen 7
+i stedet 7
+i tide 7
+i timevis 7
+i utlandet 7
+i vekt 7
+ikke forstår 7
+ikke gi 7
+ikke hjemme 7
+ikke holde 7
+ikke huske 7
+ikke langt 7
+ikke lett 7
+ikke like 7
+ikke lyst 7
+ikke måtte 7
+ikke nok 7
+ikke opp 7
+ikke redd 7
+ikke særlig 7
+ikke tid 7
+ingen anelse 7
+ingen rolle 7
+ingen som 7
+ingen trøstet 7
+inn på 7
+japan er 7
+jeg bestemte 7
+jeg bryr 7
+jeg en 7
+jeg foretrekker 7
+jeg gjøre 7
+jeg også 7
+jeg ringte 7
+jeg si 7
+jeg skjønner 7
+jeg skriver 7
+jeg sover 7
+jeg spiller 7
+jeg spilte 7
+jeg spurte 7
+jeg studerer 7
+jeg ta 7
+jeg traff 7
+jeg venter 7
+jobber i 7
+jobber som 7
+kan bruke 7
+kan dere 7
+kan man 7
+kan noen 7
+kjæresten min 7
+kjøpte denne 7
+kjøpte du 7
+klokken seks 7
+kom du 7
+kom og 7
+kom på 7
+komme inn 7
+kommer hjem 7
+kommer jeg 7
+kunne gjøre 7
+kunnskap om 7
+la seg 7
+lenge blir 7
+litt penger 7
+lo av 7
+man er 7
+mange folk 7
+mannen som 7
+mary ville 7
+med maria 7
+men vi 7
+mennesker som 7
+mer penger 7
+mer tid 7
+min på 7
+min venn 7
+mine egne 7
+mine venner 7
+mulig å 7
+må dra 7
+må gjøres 7
+må snakke 7
+møtte en 7
+navnet hans 7
+nest største 7
+nesten alle 7
+new york 7
+noe er 7
+noe med 7
+noe problem 7
+noe særlig 7
+noen mennesker 7
+nå har 7
+ofte til 7
+og den 7
+og få 7
+og maria 7
+og til 7
+og tom 7
+og å 7
+om natten 7
+opptatt i 7
+oss alle 7
+oss i 7
+oss til 7
+penger på 7
+problemer med 7
+på ferie 7
+på jorden 7
+på kino 7
+på ski 7
+på stranden 7
+seg opp 7
+selv og 7
+sent på 7
+ser veldig 7
+si til 7
+siden jeg 7
+sies at 7
+skal gi 7
+skal til 7
+skrev et 7
+slo opp 7
+slutten av 7
+som ble 7
+som kommer 7
+som må 7
+som vi 7
+spiller tennis 7
+spiser du 7
+sto opp 7
+står opp 7
+så en 7
+så langt 7
+så ut 7
+så vidt 7
+søsteren min 7
+ta den 7
+tar feil 7
+tegn på 7
+til læreren 7
+til neste 7
+ting som 7
+tjene penger 7
+to år 7
+tom drog 7
+tom kom 7
+tom om 7
+tom snakker 7
+tom snakket 7
+treffe deg 7
+trodde at 7
+trodde jeg 7
+tvunget til 7
+uansett hvor 7
+var full 7
+var ganske 7
+var ingen 7
+vel ikke 7
+veldig interessant 7
+veldig mye 7
+vet hvem 7
+vet hvorfor 7
+vil få 7
+vil gå 7
+vil se 7
+vil vite 7
+vis meg 7
+vite hva 7
+vårt er 7
+vær snill 7
+være hjemme 7
+vært her 7
+å begynne 7
+å drepe 7
+å legge 7
+å like 7
+å oppnå 7
+å slå 7
+å tjene 7
+å treffe 7
+å unngå 7
+å vinne 7
+øynene mine 7
+alle ser 6
+alt du 6
+andre i 6
+andre siden 6
+ansvarlig for 6
+at noe 6
+av alle 6
+av henne 6
+av livet 6
+av noe 6
+av sitt 6
+av tom 6
+ba meg 6
+bare si 6
+bestefaren min 6
+bestemt meg 6
+ble du 6
+ble en 6
+bor du 6
+bor ikke 6
+boston i 6
+bør jeg 6
+dag skal 6
+datamaskinen min 6
+de sier 6
+de tre 6
+de trenger 6
+de vet 6
+deg at 6
+deg igjen 6
+deg som 6
+den butikken 6
+den ene 6
+den europeiske 6
+denne artikkelen 6
+denne romanen 6
+der før 6
+der i 6
+dere har 6
+dere må 6
+det bare 6
+det blåser 6
+det ene 6
+det gjelder 6
+det nye 6
+det nødvendig 6
+det sant 6
+dette bare 6
+dette huset 6
+dette ikke 6
+dette stedet 6
+din mor 6
+dra dit 6
+drar til 6
+drepe meg 6
+du bli 6
+du ferdig 6
+du fortsatt 6
+du her 6
+du høre 6
+du også 6
+du tenkt 6
+du tilbake 6
+du vanligvis 6
+egen teori 6
+ei jente 6
+eller en 6
+elsker å 6
+en by 6
+en datamaskin 6
+en fantastisk 6
+en flott 6
+en interessant 6
+en kan 6
+en rik 6
+en slik 6
+en snobb 6
+en svart 6
+en så 6
+en verdifull 6
+en vits 6
+ender opp 6
+enn du 6
+er bekymret 6
+er blå 6
+er denne 6
+er eldre 6
+er fremdeles 6
+er godt 6
+er jo 6
+er langt 6
+er ofte 6
+er sant 6
+er snart 6
+er syk 6
+er tilbake 6
+er venner 6
+er åpenbart 6
+er ødelagt 6
+et halvt 6
+et liv 6
+et menneske 6
+et spøkelse 6
+et spørsmål 6
+et tegn 6
+et tre 6
+et viktig 6
+etter skolen 6
+finne et 6
+finner ikke 6
+finnes ikke 6
+for alltid 6
+for fort 6
+for ham 6
+for helsen 6
+for langt 6
+for sin 6
+for to 6
+fordi du 6
+forelsket seg 6
+foretrekker du 6
+fortsatt på 6
+fra en 6
+fra meg 6
+fra tid 6
+fransk og 6
+få det 6
+før de 6
+ga tom 6
+gammel er 6
+gammel nok 6
+gang en 6
+gang til 6
+ganske bra 6
+gav meg 6
+gikk på 6
+gikk til 6
+gjennom vinduet 6
+gjør dette 6
+gjør vondt 6
+gjøre er 6
+glass vann 6
+god idé 6
+god til 6
+greit om 6
+grunn til 6
+grådig person 6
+gå med 6
+går bra 6
+går du 6
+går i 6
+ha gått 6
+ha mer 6
+ha snakket 6
+hadde gjort 6
+ham at 6
+ham på 6
+han blir 6
+han gjør 6
+han må 6
+han seg 6
+han sitter 6
+han trengte 6
+har de 6
+har endret 6
+har i 6
+har jobbet 6
+har lært 6
+har snakket 6
+har store 6
+hele verden 6
+heller ikke 6
+hendene sine 6
+henne med 6
+hjelpe dem 6
+hold kjeft 6
+hun gjør 6
+hun går 6
+hun kan 6
+hun kunne 6
+hun sa 6
+hun trenger 6
+hunden er 6
+huset sitt 6
+hva betyr 6
+hva i 6
+hva sier 6
+hva tror 6
+hva vet 6
+hva vi 6
+hver forsker 6
+hvis han 6
+hvor langt 6
+hvor tom 6
+hvor vi 6
+hvorfor hører 6
+hvorfor vil 6
+hørt på 6
+i afrika 6
+i engelsk 6
+i fire 6
+i forrige 6
+i gang 6
+i kjøleskapet 6
+i klasserommet 6
+i live 6
+i mørket 6
+i natt 6
+i parken 6
+i roma 6
+i skapet 6
+i sveits 6
+i året 6
+i øynene 6
+igjen i 6
+igjen og 6
+ikke bra 6
+ikke du 6
+ikke engelsk 6
+ikke ferdig 6
+ikke flink 6
+ikke gjorde 6
+ikke gjort 6
+ikke hvem 6
+ikke mer 6
+ikke sikker 6
+ikke som 6
+ikke spis 6
+ikke sulten 6
+ikke svare 6
+ikke ut 6
+ingen andre 6
+ingen vet 6
+jeg alltid 6
+jeg dro 6
+jeg elsket 6
+jeg forventet 6
+jeg ha 6
+jeg kjøpe 6
+jeg kjøper 6
+jeg leter 6
+jeg låne 6
+jeg reiste 6
+jeg skrev 6
+jeg som 6
+jeg sov 6
+jeg sto 6
+jobben min 6
+jobber på 6
+kan bare 6
+kan det 6
+kan en 6
+kan hjelpe 6
+kan lese 6
+kan si 6
+kjeder meg 6
+kjent med 6
+kjøre bil 6
+komme seg 6
+komme til 6
+kommer for 6
+kommer hit 6
+kunne se 6
+kunne snakke 6
+la merke 6
+langt ut 6
+lese denne 6
+lever i 6
+ligner på 6
+likte ikke 6
+lære meg 6
+lære seg 6
+læreren min 6
+løse problemet 6
+man må 6
+mann som 6
+maria føler 6
+med arbeidet 6
+med han 6
+med hverandre 6
+med sin 6
+meg forklare 6
+meg igjen 6
+meg når 6
+mellom de 6
+mener at 6
+mer og 6
+mer om 6
+min kone 6
+mine er 6
+mye for 6
+mye som 6
+må bli 6
+måten å 6
+navnet ditt 6
+neste år 6
+noe fra 6
+noen dager 6
+ny bil 6
+når tom 6
+nødvendig å 6
+og han 6
+og har 6
+også en 6
+om vi 6
+om vinteren 6
+opp en 6
+opp for 6
+opp til 6
+oss en 6
+oss å 6
+over til 6
+overrasket over 6
+person som 6
+på dem 6
+på fransk 6
+på himmelen 6
+på hvor 6
+på pulten 6
+på side 6
+på sine 6
+på skrivebordet 6
+på sofaen 6
+raskere enn 6
+reiste til 6
+rett i 6
+ringer deg 6
+rommet mitt 6
+sant at 6
+se en 6
+seg av 6
+selv i 6
+ser en 6
+ser jeg 6
+sier til 6
+sine egne 6
+sitt liv 6
+sitter ved 6
+skjedde med 6
+skjer i 6
+skriv så 6
+skulle komme 6
+skulle skje 6
+skulle vært 6
+slik som 6
+snakker fransk 6
+snill å 6
+som blir 6
+som snakker 6
+spille gitar 6
+spiser ikke 6
+spiste du 6
+språk snakker 6
+spurte meg 6
+svar på 6
+svømme i 6
+så bra 6
+så han 6
+teori for 6
+ti minutter 6
+ti år 6
+tide å 6
+til annen 6
+til denne 6
+til engelsk 6
+til europa 6
+til festen 6
+til ham 6
+til han 6
+til london 6
+til lunsj 6
+til tannlegen 6
+til usa 6
+tilbake i 6
+tok med 6
+tom dro 6
+tom føler 6
+tom går 6
+tom på 6
+tom trengte 6
+tom viste 6
+tre av 6
+trenger hjelp 6
+trenger litt 6
+tro på 6
+trodde det 6
+tror vi 6
+umulig å 6
+ut med 6
+var alltid 6
+var gravid 6
+var jo 6
+var med 6
+var redd 6
+var til 6
+var tom 6
+varmt i 6
+ved et 6
+veien hjem 6
+veldig bra 6
+veldig vanskelig 6
+vente på 6
+verdt å 6
+vet hvordan 6
+vi liker 6
+vi så 6
+vi ønsker 6
+vil drepe 6
+vil fortelle 6
+vil lære 6
+vil si 6
+ville bli 6
+virkelig det 6
+virker ikke 6
+vite det 6
+vær stille 6
+være sammen 6
+være veldig 6
+være ærlig 6
+å hvile 6
+å leke 6
+å lyve 6
+å sette 6
+å velge 6
+åpnet døren 6
+år i 6
+ønske det 6
+aldri hatt 5
+aldri hørt 5
+alene i 5
+algerie er 5
+all verden 5
+alle de 5
+alle i 5
+alle pengene 5
+alle var 5
+allerede gått 5
+allerede har 5
+an på 5
+andre mennesker 5
+aner ikke 5
+annen måte 5
+ansvar for 5
+arbeid og 5
+at dere 5
+at folk 5
+av byen 5
+av elevene 5
+av kreft 5
+av sin 5
+av tre 5
+avhenger av 5
+bare når 5
+bare på 5
+basert på 5
+be om 5
+bedre i 5
+begge hendene 5
+begynnelsen av 5
+bekymre deg 5
+bilen sin 5
+ble gitt 5
+ble invitert 5
+blek ut 5
+bli ferdig 5
+bli lærer 5
+blir en 5
+blir jeg 5
+blitt hjemme 5
+bo alene 5
+bo på 5
+bodd her 5
+borte er 5
+borte i 5
+boston for 5
+bra for 5
+bra ut 5
+burde ha 5
+de bor 5
+de i 5
+de kommer 5
+de samme 5
+de snakker 5
+de så 5
+de viktigste 5
+de visste 5
+deg hva 5
+deg ned 5
+deg når 5
+deg så 5
+deg vekk 5
+delta i 5
+dem i 5
+den bilen 5
+den boken 5
+den der 5
+den fyren 5
+den måten 5
+denne maskinen 5
+denne medisinen 5
+denne måten 5
+denne pennen 5
+denne saken 5
+denne tiden 5
+denne typen 5
+dere burde 5
+dere en 5
+dere til 5
+deres er 5
+det aldri 5
+det alltid 5
+det andre 5
+det faktum 5
+det føles 5
+det hjelper 5
+det minste 5
+det neste 5
+det nå 5
+det også 5
+det selv 5
+det skjer 5
+det skulle 5
+det snødde 5
+det spiller 5
+det store 5
+det vet 5
+det viktigste 5
+dette brevet 5
+dette med 5
+dine er 5
+ditt hjerte 5
+dra på 5
+drikker vann 5
+du etter 5
+du fikk 5
+du for 5
+du funnet 5
+du holde 5
+du kom 5
+du komme 5
+du legger 5
+du leter 5
+du se 5
+du sett 5
+du spiser 5
+du ta 5
+du vinner 5
+dårlige været 5
+døde for 5
+eier en 5
+eller annet 5
+eller noe 5
+elske deg 5
+elsker norsk 5
+elsket ham 5
+elsket henne 5
+en enkel 5
+en film 5
+en japansk 5
+en jobb 5
+en krone 5
+en lege 5
+en sønn 5
+en søster 5
+en tjeneste 5
+en ulv 5
+en ulykke 5
+en vanlig 5
+en viktig 5
+en viss 5
+en øl 5
+enn alle 5
+enn min 5
+enn vanlig 5
+ennå ikke 5
+er altfor 5
+er ansvarlig 5
+er besatt 5
+er både 5
+er døv 5
+er fint 5
+er forskjellen 5
+er fullt 5
+er greit 5
+er hans 5
+er høyere 5
+er japaner 5
+er kald 5
+er kaldt 5
+er lege 5
+er likevel 5
+er lærer 5
+er med 5
+er mine 5
+er mulig 5
+er noen 5
+er nok 5
+er nødt 5
+er overbevist 5
+er overrasket 5
+er redde 5
+er røde 5
+er synd 5
+er trist 5
+er vakker 5
+er verdt 5
+er vår 5
+et eller 5
+et eneste 5
+et hull 5
+et hus 5
+et lite 5
+et slikt 5
+et øyeblikk 5
+etter deg 5
+etter den 5
+etter meg 5
+etter noen 5
+familien min 5
+faren din 5
+faren sin 5
+fem minutter 5
+fem år 5
+fikk du 5
+fikk en 5
+finne noen 5
+fleste andre 5
+flyttet til 5
+folk begynner 5
+folk til 5
+for denne 5
+for hva 5
+for tiden 5
+for øyeblikket 5
+fordi da 5
+fordi den 5
+forsøkte å 5
+fortalt oss 5
+fortalte oss 5
+fortelle ham 5
+fortelle sannheten 5
+fortsatt er 5
+forventer at 5
+fra andre 5
+fra det 5
+fra skolen 5
+fyren er 5
+få låne 5
+får en 5
+fått en 5
+galt med 5
+gammel mann 5
+gammel og 5
+ganger er 5
+ganger i 5
+ganger så 5
+ganske sta 5
+gi tom 5
+gikk ut 5
+gjort noe 5
+gjør en 5
+gjør er 5
+gjør ikke 5
+gjør jeg 5
+gleder meg 5
+glemt å 5
+glipp av 5
+gode venner 5
+grenser til 5
+grunnen til 5
+gud velsigne 5
+gutten som 5
+gå dit 5
+gå tilbake 5
+går for 5
+går ut 5
+går var 5
+gått ned 5
+ha litt 5
+hadde absolutt 5
+hadde blitt 5
+hadde et 5
+han aldri 5
+han elsker 5
+han fortalte 5
+han ga 5
+han holdt 5
+han kjøpte 5
+han og 5
+han på 5
+han skrev 5
+han snakket 5
+han sover 5
+han spurte 5
+han tenker 5
+han til 5
+han trodde 5
+hans ble 5
+har den 5
+har kjent 5
+har ofte 5
+har også 5
+har oppnådd 5
+har sagt 5
+har samme 5
+har sine 5
+har tenkt 5
+har vokst 5
+hater å 5
+hele veien 5
+hjelp meg 5
+hjelper ikke 5
+hjem igjen 5
+holdt meg 5
+hun kom 5
+hun sang 5
+hun skrev 5
+hun skulle 5
+hun smilte 5
+hun spurte 5
+hun visste 5
+huset er 5
+husk å 5
+hva hun 5
+hva liker 5
+hva mer 5
+hva sa 5
+hva skjedde 5
+hvem av 5
+hvem det 5
+hvem jeg 5
+hvert år 5
+hvor bor 5
+hvor det 5
+hvor har 5
+hvor kan 5
+hvor kommer 5
+hvordan kommer 5
+hvorfor kom 5
+hvorfor mary 5
+hvorfor spiser 5
+hvorfor var 5
+høres ikke 5
+hørt fra 5
+hørte at 5
+hørte en 5
+i banken 5
+i begynnelsen 5
+i butikken 5
+i dusjen 5
+i ettermiddag 5
+i frankrike 5
+i fremtiden 5
+i godt 5
+i halsen 5
+i india 5
+i istanbul 5
+i kina 5
+i landet 5
+i new 5
+i osaka 5
+i oslo 5
+i russland 5
+i sommer 5
+i tillegg 5
+i veien 5
+ikke an 5
+ikke bruke 5
+ikke dette 5
+ikke dra 5
+ikke drikk 5
+ikke fornøyd 5
+ikke fortalt 5
+ikke forteller 5
+ikke god 5
+ikke grådig 5
+ikke høre 5
+ikke interessert 5
+ikke kom 5
+ikke lov 5
+ikke meg 5
+ikke når 5
+ikke skal 5
+ikke spist 5
+ikke vant 5
+ikke vil 5
+ikke virkelig 5
+ikke visste 5
+ingen tvil 5
+ingenting er 5
+jeg antar 5
+jeg at 5
+jeg begynner 5
+jeg besøke 5
+jeg bruke 5
+jeg bør 5
+jeg følte 5
+jeg hjelper 5
+jeg i 5
+jeg kjeder 5
+jeg lager 5
+jeg lever 5
+jeg nesten 5
+jeg på 5
+jeg respekterer 5
+jeg skjøt 5
+jeg syntes 5
+jeg til 5
+jeg tilbrakte 5
+jeg ønsket 5
+jo mer 5
+jobbe med 5
+kaldt i 5
+kan låne 5
+kanskje jeg 5
+kjærlighet er 5
+kjøpe den 5
+kjøpte to 5
+klarer å 5
+klart å 5
+klarte å 5
+klokken syv 5
+klokken åtte 5
+kom hit 5
+kom ikke 5
+kom inn 5
+kom med 5
+komme på 5
+kommer det 5
+kommer i 5
+kommer sannsynligvis 5
+kommet til 5
+krever mye 5
+kunne være 5
+la ham 5
+la han 5
+lage en 5
+latet som 5
+legger meg 5
+leker med 5
+lenge siden 5
+lenger enn 5
+leser du 5
+lette etter 5
+leve i 5
+like det 5
+like godt 5
+like mye 5
+liker deg 5
+liker dere 5
+liker virkelig 5
+livet i 5
+livet mitt 5
+livet sitt 5
+london i 5
+lyst på 5
+lønner seg 5
+man skal 5
+mange venner 5
+mangel på 5
+mannen min 5
+med alle 5
+med andre 5
+med dere 5
+med livet 5
+meg fra 5
+meg gjøre 5
+meg lenger 5
+meg over 5
+meg så 5
+meg tilbake 5
+meg være 5
+men nå 5
+men på 5
+merket at 5
+min bestemor 5
+min onkel 5
+min søster 5
+mindre enn 5
+mitt liv 5
+moren din 5
+mye tid 5
+mye yngre 5
+mye å 5
+må tenke 5
+møtt ham 5
+navnet mitt 5
+nektet å 5
+neste måned 5
+nesten hver 5
+noe galt 5
+nok tid 5
+når ble 5
+når folk 5
+når kan 5
+nære venner 5
+og at 5
+og engelsk 5
+og for 5
+og hun 5
+og meg 5
+og noen 5
+og sa 5
+og slett 5
+om de 5
+om hjelp 5
+om i 5
+opp klokken 5
+oppfører seg 5
+oppførte seg 5
+oss fra 5
+oss gjøre 5
+oss hva 5
+oss se 5
+over en 5
+overens med 5
+penger til 5
+på arbeiderpartiet 5
+på bilen 5
+på din 5
+på gulvet 5
+på jakt 5
+på kjøkkenet 5
+på kvelden 5
+på lenge 5
+på mars 5
+på musikk 5
+på rommet 5
+på toget 5
+rett og 5
+rik mann 5
+rundt meg 5
+sa ikke 5
+sami er 5
+sami var 5
+samme som 5
+sannsynligvis ikke 5
+se hva 5
+seg ut 5
+sent for 5
+sett ham 5
+siden i 5
+sin kone 5
+sine foreldre 5
+skal prøve 5
+skiller mellom 5
+skrev en 5
+skru ned 5
+skulle jeg 5
+snakke engelsk 5
+snakker i 5
+som allerede 5
+som bor 5
+som din 5
+som gjør 5
+som sier 5
+sov godt 5
+sove på 5
+spiller ingen 5
+språk er 5
+sted for 5
+sted å 5
+stemme på 5
+sto på 5
+stol på 5
+stor hjelp 5
+stort problem 5
+står det 5
+største by 5
+sunn fornuft 5
+så et 5
+så hun 5
+så snart 5
+så stor 5
+sørg for 5
+søster er 5
+ta ansvar 5
+ta deg 5
+ta det 5
+til dem 5
+til dette 5
+til frokost 5
+til hverandre 5
+til høyre 5
+til japan 5
+til noen 5
+til sin 5
+til stranden 5
+til tokyo 5
+til utlandet 5
+til venstre 5
+tilgi meg 5
+tillegg til 5
+time siden 5
+timer på 5
+to flasker 5
+to timer 5
+tok det 5
+tom ankom 5
+tom begynte 5
+tom bestemte 5
+tom burde 5
+tom glemte 5
+tom holdt 5
+tom likte 5
+tom måtte 5
+tom sin 5
+tom virker 5
+trenger vi 5
+trodde ikke 5
+tror på 5
+tvil om 5
+ut at 5
+ut for 5
+vannet i 5
+var borte 5
+var dårlig 5
+var forelsket 5
+var han 5
+var interessert 5
+var jeg 5
+var liten 5
+var min 5
+var noe 5
+var rik 5
+var tomt 5
+var trist 5
+var ung 5
+ved bordet 5
+ved første 5
+vei hjem 5
+veldig lei 5
+veldig sta 5
+veldig søt 5
+veldig trøtt 5
+veldig varmt 5
+vennen min 5
+vennene mine 5
+vet det 5
+vet om 5
+vet tom 5
+vet veldig 5
+vi gjør 5
+vi gå 5
+vi går 5
+vi lever 5
+vi lærer 5
+vi sees 5
+vi skiller 5
+vi snakket 5
+vi spiser 5
+vi tror 5
+vidt jeg 5
+vil høre 5
+vil ta 5
+ville komme 5
+ville skje 5
+vinteren er 5
+virkelig at 5
+virkelig en 5
+virker som 5
+visste du 5
+vokste opp 5
+vår er 5
+vær forsiktig 5
+yngre enn 5
+å be 5
+å gråte 5
+å klage 5
+å la 5
+å løpe 5
+å overtale 5
+å realisere 5
+å ringe 5
+å selge 5
+å sende 5
+å skape 5
+å slutte 5
+å trekke 5
+å tro 5
+å uttrykke 5
+å vaske 5
+ønsker du 5
+ønsker ikke 5
+akkurat det 4
+aldri at 4
+aldri i 4
+aldri om 4
+alle barna 4
+alle bøkene 4
+alle elsket 4
+alle slags 4
+allerede gjort 4
+allerede skrevet 4
+allergisk mot 4
+alltid har 4
+alltid på 4
+alltid vært 4
+alt det 4
+an å 4
+andre enn 4
+andre er 4
+at denne 4
+av hans 4
+av livets 4
+av mennesker 4
+av mine 4
+av toms 4
+av været 4
+avhengig av 4
+ba ham 4
+balanse mellom 4
+bare ett 4
+bare i 4
+bare være 4
+barn er 4
+begge to 4
+begynne med 4
+besatt av 4
+beste venn 4
+bestemt deg 4
+betale for 4
+bilder av 4
+blant annet 4
+ble arrestert 4
+ble funnet 4
+ble jeg 4
+bli her 4
+bli konge 4
+bli kvitt 4
+bli til 4
+blir ofte 4
+blir stor 4
+blir til 4
+blitt utsatt 4
+bluse og 4
+blå øyne 4
+bodde der 4
+bok i 4
+boka til 4
+boken vil 4
+bor sammen 4
+borte fra 4
+bortkastet tid 4
+boston neste 4
+bra at 4
+brevet ditt 4
+bry seg 4
+burde være 4
+bøkene hennes 4
+bøker enn 4
+bøker som 4
+bør roe 4
+bør være 4
+da de 4
+da får 4
+da vi 4
+dagen i 4
+dagen på 4
+datteren min 4
+de eneste 4
+de fikk 4
+de gode 4
+de kunne 4
+de mest 4
+de skal 4
+de spiser 4
+deg hvis 4
+deg mer 4
+deg skoene 4
+deg stemme 4
+deg ut 4
+deg uten 4
+deg veldig 4
+delen av 4
+dem for 4
+dem til 4
+den filmen 4
+den i 4
+den mannen 4
+denne stolen 4
+dere skulle 4
+dere som 4
+dere var 4
+dere vil 4
+dessverre ikke 4
+det alene 4
+det at 4
+det av 4
+det betyr 4
+det dårlige 4
+det fortsatt 4
+det gikk 4
+det gir 4
+det her 4
+det hvis 4
+det kunne 4
+det lange 4
+det lukter 4
+det mye 4
+det når 4
+det ordet 4
+det riktige 4
+det sammen 4
+det spørsmålet 4
+det tom 4
+det travelt 4
+det vanskelig 4
+det vært 4
+dette din 4
+dette for 4
+dette vil 4
+din har 4
+din venn 4
+disse to 4
+ditt beste 4
+ditt har 4
+dobbelt så 4
+drar du 4
+drar ofte 4
+drepe oss 4
+du aldri 4
+du av 4
+du bare 4
+du bestemt 4
+du bor 4
+du dem 4
+du finne 4
+du forventer 4
+du fra 4
+du gå 4
+du henne 4
+du hvem 4
+du jobber 4
+du kjent 4
+du lære 4
+du løy 4
+du opp 4
+du skriver 4
+du som 4
+du synes 4
+du tenker 4
+du tok 4
+du vite 4
+døde nesten 4
+egne øyne 4
+eller har 4
+eller i 4
+eller kanskje 4
+ellers kommer 4
+elsker du 4
+elsker henne 4
+en beskjed 4
+en billett 4
+en bursdagsgave 4
+en datter 4
+en ekte 4
+en elefant 4
+en flaske 4
+en genser 4
+en halvtime 4
+en hemmelighet 4
+en kake 4
+en kort 4
+en linje 4
+en lærer 4
+en løsning 4
+en meget 4
+en million 4
+en mørk 4
+en omelett 4
+en regjering 4
+en riktig 4
+en roman 4
+en rød 4
+en sang 4
+en slektning 4
+en sterk 4
+en tilfeldighet 4
+en ting 4
+en tyv 4
+en vei 4
+endret seg 4
+eneste måten 4
+enig i 4
+enn den 4
+enn det 4
+enn tom 4
+enn vann 4
+er absolutt 4
+er annerledes 4
+er atten 4
+er begge 4
+er begrenset 4
+er berømt 4
+er blitt 4
+er boken 4
+er bortkastet 4
+er dekket 4
+er der 4
+er derfor 4
+er ditt 4
+er dyr 4
+er dårlig 4
+er ekstremt 4
+er ekte 4
+er evakuert 4
+er fantastisk 4
+er faren 4
+er foreldrene 4
+er fornøyd 4
+er galt 4
+er gammelt 4
+er gjort 4
+er gravid 4
+er hjemme 4
+er hovedstaden 4
+er hundre 4
+er høy 4
+er irriterende 4
+er kjent 4
+er klart 4
+er kort 4
+er lenge 4
+er lite 4
+er meg 4
+er naken 4
+er ny 4
+er nøkkelen 4
+er over 4
+er overraskende 4
+er rik 4
+er russer 4
+er sann 4
+er sikkert 4
+er sint 4
+er sjelden 4
+er smart 4
+er stygg 4
+er sunt 4
+er tingene 4
+er trygg 4
+er uskyldig 4
+er vanligvis 4
+et amerikansk 4
+et eple 4
+et fengsel 4
+et fint 4
+et kamera 4
+et rom 4
+et skip 4
+et smil 4
+et vakkert 4
+et vanskelig 4
+etter denne 4
+etter min 4
+etter noe 4
+europeiske union 4
+evakuert til 4
+fant det 4
+fant et 4
+fast i 4
+feil i 4
+fikk ikke 4
+fikk jeg 4
+filmen var 4
+finne noe 4
+finnes ingen 4
+fint ut 4
+fire dager 4
+flere bøker 4
+flink i 4
+flink med 4
+for andre 4
+for eksempel 4
+for gammel 4
+for godt 4
+for han 4
+for mange 4
+for noe 4
+for sine 4
+foran oss 4
+foregår i 4
+foreldrene sine 4
+forestille meg 4
+foretrekker å 4
+forhold til 4
+forklare deg 4
+forrige måned 4
+forskjell mellom 4
+forskjellen mellom 4
+forstår du 4
+fort kan 4
+fortalt at 4
+fortalte deg 4
+fortalte ham 4
+forvekslet med 4
+fra den 4
+fra et 4
+fra gresk 4
+fra ham 4
+fra hverandre 4
+fra latin 4
+fra norge 4
+fransk i 4
+få den 4
+få et 4
+få noe 4
+få noen 4
+få tak 4
+få vite 4
+får den 4
+får det 4
+får jeg 4
+føle deg 4
+følelse av 4
+føler ikke 4
+følte jeg 4
+før det 4
+fører til 4
+første kjærlighet 4
+ga en 4
+ga ham 4
+ga seg 4
+gal etter 4
+gang sett 4
+gangen jeg 4
+ganger om 4
+gi oss 4
+gift med 4
+gikk og 4
+gir ikke 4
+gjennom en 4
+gjenta det 4
+gjorde så 4
+gjort for 4
+glad ut 4
+glade for 4
+god hukommelse 4
+godt i 4
+gratulerer med 4
+grunner som 4
+grådig mann 4
+grønnsaker og 4
+gull er 4
+gå alene 4
+gå tom 4
+går meg 4
+går som 4
+gått ut 4
+ha deg 4
+ha kommet 4
+ha på 4
+ha til 4
+hadde aldri 4
+hadde kommet 4
+hadde lyst 4
+hadde noe 4
+halvt år 4
+ham for 4
+ham med 4
+ham ut 4
+han det 4
+han drikker 4
+han følte 4
+han gav 4
+han kjenner 4
+han løftet 4
+han løper 4
+han med 4
+han prøvde 4
+han reiste 4
+han spiller 4
+han spiser 4
+han å 4
+handler om 4
+hans var 4
+har alle 4
+har flere 4
+har hørt 4
+har lange 4
+har langt 4
+har lite 4
+har mer 4
+har mye 4
+har nesten 4
+har nok 4
+har opplevd 4
+har prøvd 4
+har spist 4
+har stor 4
+har tid 4
+har tolv 4
+har valgt 4
+har vanligvis 4
+har villet 4
+har vondt 4
+hardt arbeid 4
+hatt det 4
+hatt nok 4
+hatten sin 4
+hendene dine 4
+henger på 4
+henne ikke 4
+her inne 4
+her med 4
+her og 4
+heter tom 4
+hit for 4
+hit og 4
+hjelp av 4
+hjemme nå 4
+hjertet har 4
+hjertet mitt 4
+hodet mitt 4
+holde en 4
+holde tritt 4
+holder alltid 4
+holdt en 4
+hos meg 4
+hun avviste 4
+hun bestemte 4
+hun besøkte 4
+hun blir 4
+hun bøyde 4
+hun elsker 4
+hun holdt 4
+hun levde 4
+hun må 4
+hun pleide 4
+hun prøvde 4
+hun slo 4
+hun tar 4
+hun tenkte 4
+hun vet 4
+hunden sin 4
+hundre og 4
+hundre år 4
+husene er 4
+huset vårt 4
+hva denne 4
+hva faen 4
+hva folk 4
+hva kommer 4
+hva om 4
+hva skulle 4
+hva spiser 4
+hva tenker 4
+hvem du 4
+hvem skrev 4
+hvem tror 4
+hvilken er 4
+hvilken som 4
+hvis de 4
+hvor hun 4
+hvor i 4
+hvor la 4
+hvordan går 4
+hvordan klarte 4
+hvordan kunne 4
+hvorfor du 4
+hvorfor kan 4
+hvorfor trenger 4
+høre hva 4
+hørte du 4
+høsten er 4
+høsten kommer 4
+i algerie 4
+i alt 4
+i dagens 4
+i dårlig 4
+i elva 4
+i england 4
+i helvete 4
+i henne 4
+i hånden 4
+i mer 4
+i naturen 4
+i noen 4
+i norsk 4
+i sin 4
+i slutten 4
+i små 4
+i sport 4
+i store 4
+i timen 4
+i uka 4
+i vann 4
+ikke alt 4
+ikke annet 4
+ikke bekymre 4
+ikke betale 4
+ikke betalt 4
+ikke ender 4
+ikke enig 4
+ikke fordra 4
+ikke glemme 4
+ikke godt 4
+ikke hans 4
+ikke hørt 4
+ikke jobbe 4
+ikke kjøre 4
+ikke klar 4
+ikke lenge 4
+ikke liker 4
+ikke skjule 4
+ikke snakket 4
+ikke sove 4
+ikke stoppe 4
+ikke tenke 4
+ikke tilbake 4
+ikke viktig 4
+ingen bryr 4
+ingen grunn 4
+ingen har 4
+ingen kan 4
+ingenting i 4
+innen en 4
+innså at 4
+japan i 4
+jeg ankom 4
+jeg begynte 4
+jeg besøkte 4
+jeg beundrer 4
+jeg bli 4
+jeg bruker 4
+jeg deg 4
+jeg finner 4
+jeg forventer 4
+jeg gjort 4
+jeg greier 4
+jeg gå 4
+jeg heller 4
+jeg hjalp 4
+jeg hjelpe 4
+jeg holdt 4
+jeg inviterte 4
+jeg klandrer 4
+jeg la 4
+jeg lo 4
+jeg lånte 4
+jeg løp 4
+jeg opp 4
+jeg oppdaget 4
+jeg reiser 4
+jeg sendte 4
+jeg sitter 4
+jeg solgte 4
+jeg svømmer 4
+jeg tjener 4
+jeg være 4
+jobbe hardt 4
+jobbe overtid 4
+kampen mot 4
+kan beskytte 4
+kan brukes 4
+kan de 4
+kan dra 4
+kan gi 4
+kan komme 4
+kan leve 4
+kan lære 4
+kan skje 4
+kan stole 4
+kan vinne 4
+kanskje ikke 4
+katt og 4
+kjenner deg 4
+kjenner du 4
+kjenner til 4
+kjøpe deg 4
+kjøpe noe 4
+kjøpte det 4
+kjøtt og 4
+klare meg 4
+klart det 4
+klassisk musikk 4
+klatret opp 4
+klokka seks 4
+klokken min 4
+klærne sine 4
+kom igjen 4
+kommer an 4
+kommer og 4
+kommer på 4
+kommet for 4
+kommet hit 4
+kontakt med 4
+kopp te 4
+kopper kaffe 4
+kvinne som 4
+la begge 4
+la dem 4
+lage mat 4
+lager en 4
+landet sitt 4
+langt til 4
+late som 4
+lav selvfølelse 4
+legge meg 4
+legger deg 4
+leke med 4
+leksene dine 4
+leser ikke 4
+lest alle 4
+leste om 4
+levde et 4
+lever ikke 4
+ligge i 4
+liker henne 4
+liker jeg 4
+liker meg 4
+lillebroren min 4
+lillesøsteren min 4
+lite om 4
+liv er 4
+livene våre 4
+lot meg 4
+lov å 4
+lære et 4
+lære latin 4
+lære språk 4
+læreren vår 4
+man blir 4
+mange barn 4
+mange gamle 4
+mange ting 4
+mange varianter 4
+mannen er 4
+maria vil 4
+mat til 4
+med barna 4
+med dukker 4
+med faren 4
+med god 4
+med hendene 4
+med mine 4
+med skjegg 4
+med vilje 4
+medlem av 4
+meg den 4
+meg hvis 4
+meg hvordan 4
+meg inn 4
+meg rundt 4
+meg saltet 4
+meg se 4
+meg veldig 4
+mellom to 4
+men dette 4
+men hvordan 4
+men i 4
+meningen du 4
+mennesker er 4
+mennesker i 4
+mer kan 4
+midt i 4
+min egen 4
+min går 4
+min i 4
+min jobber 4
+min mann 4
+min mening 4
+min skyld 4
+mistet jobben 4
+mitt har 4
+mot det 4
+muligheten til 4
+mye av 4
+mye du 4
+mye jeg 4
+mye kostet 4
+mye om 4
+må komme 4
+må studere 4
+narr av 4
+natt og 4
+nekter å 4
+nesten alltid 4
+nesten ferdig 4
+nesten ingen 4
+noe nytt 4
+noe på 4
+noe slikt 4
+noe spesielt 4
+noe sted 4
+noe vi 4
+noen spørsmål 4
+norge er 4
+norge har 4
+norsk og 4
+ny dag 4
+nå det 4
+nå kan 4
+nå som 4
+når begynner 4
+når begynte 4
+når drar 4
+når høsten 4
+når reiser 4
+når skal 4
+når tror 4
+ofte at 4
+og andre 4
+og bare 4
+og du 4
+og gjøre 4
+og går 4
+og hva 4
+og i 4
+og igjen 4
+og nå 4
+og ser 4
+og skal 4
+og slo 4
+og spiser 4
+og spurte 4
+og ta 4
+og tysk 4
+og vår 4
+også et 4
+om den 4
+om kvelden 4
+om oss 4
+omringet av 4
+omtrent tre 4
+opp klokka 4
+oppdaget at 4
+ord som 4
+oss gå 4
+oss snakke 4
+oss ta 4
+over det 4
+over å 4
+overbevist om 4
+overnatte hos 4
+par dager 4
+paraplyen min 4
+penger enn 4
+penger fra 4
+plaget av 4
+pleier å 4
+politiet arresterte 4
+positiv tenkning 4
+pris på 4
+problemet er 4
+puss tennene 4
+pusser tennene 4
+på alt 4
+på badet 4
+på bildet 4
+på bussen 4
+på fjellet 4
+på flyplassen 4
+på gata 4
+på hotellet 4
+på huset 4
+på hvorfor 4
+på jobb 4
+på lyset 4
+på mange 4
+på middag 4
+på natt 4
+på natta 4
+på nervene 4
+på neste 4
+på radio 4
+på skole 4
+på stasjonen 4
+på søndag 4
+på tysk 4
+på veggen 4
+på venstre 4
+raper mye 4
+redde for 4
+regjering som 4
+regner i 4
+regnet varte 4
+reiser du 4
+reiste seg 4
+respekt for 4
+sa jeg 4
+samme dag 4
+satt i 4
+satt på 4
+se dere 4
+se noe 4
+se ut 4
+seg inn 4
+seg mye 4
+seg over 4
+seg på 4
+seg som 4
+sengen min 4
+ser etter 4
+setning med 4
+sett et 4
+sett henne 4
+sett nok 4
+sett tom 4
+si deg 4
+siden han 4
+sier ikke 4
+sier ofte 4
+sin i 4
+sin på 4
+sine grunner 4
+sine på 4
+sist gang 4
+sitt til 4
+sitter på 4
+skal det 4
+skal jobbe 4
+skal kjøpe 4
+skal møte 4
+skal trøste 4
+skjønner hva 4
+skjønner ikke 4
+skrevet på 4
+skrevet til 4
+skriker bare 4
+skrive med 4
+skrive til 4
+skriver til 4
+skynde deg 4
+slappe av 4
+slett ikke 4
+slette denne 4
+slå av 4
+slå opp 4
+snakk med 4
+snakke på 4
+snakker de 4
+snudde seg 4
+snø i 4
+som at 4
+som barn 4
+som jobber 4
+som krever 4
+som spiller 4
+som tror 4
+sover i 4
+spise den 4
+spise det 4
+spise i 4
+spiser brød 4
+spiste middag 4
+spurte om 4
+spørre ham 4
+spørsmålet ditt 4
+sta person 4
+sted i 4
+stedet for 4
+stolen er 4
+stoler ikke 4
+stoler på 4
+stor og 4
+studere i 4
+studerer du 4
+stå på 4
+står der 4
+står på 4
+større enn 4
+sukker og 4
+svømmer i 4
+synd på 4
+synes at 4
+synes ikke 4
+så fint 4
+så gavene 4
+så henne 4
+så ikke 4
+så tidlig 4
+ta meg 4
+ta over 4
+tak i 4
+tar av 4
+tar et 4
+tar etter 4
+tar ikke 4
+telefonen din 4
+tenkning er 4
+tenkt på 4
+ti dollar 4
+ti på 4
+tid tar 4
+tidlig på 4
+til amerika 4
+til hjelp 4
+til paris 4
+til stede 4
+til stor 4
+til ti 4
+til tross 4
+timer i 4
+ting om 4
+to er 4
+tok et 4
+tok feil 4
+tok meg 4
+tok på 4
+tok seg 4
+tom ba 4
+tom det 4
+tom drakk 4
+tom fortsatt 4
+tom får 4
+tom la 4
+tom lot 4
+tom med 4
+tom planlegger 4
+tom satt 4
+tom slo 4
+tom som 4
+tom sparken 4
+tom trodde 4
+tom å 4
+tre tusen 4
+trenger trøst 4
+trengte det 4
+tretten år 4
+tretti år 4
+tritt med 4
+tror denne 4
+tror hun 4
+tross for 4
+truffet av 4
+trøtt ut 4
+tusen takk 4
+ulv i 4
+ulykken skjedde 4
+unngå å 4
+usa for 4
+usikker på 4
+ut enn 4
+ut hva 4
+uten deg 4
+utstyrt med 4
+vann og 4
+vann på 4
+var bedre 4
+var din 4
+var flere 4
+var litt 4
+var nesten 4
+var også 4
+var opptatt 4
+var sta 4
+varte i 4
+ved en 4
+ved vinduet 4
+veien er 4
+veldig fin 4
+veldig grådig 4
+veldig høyt 4
+veldig intelligent 4
+veldig opptatt 4
+veldig smart 4
+veldig utadvendt 4
+venn i 4
+venn på 4
+vennen din 4
+vennene dine 4
+vennene sine 4
+venner med 4
+vent her 4
+vet dere 4
+vi burde 4
+vi drar 4
+vi fikk 4
+vi får 4
+vi gjøre 4
+vi i 4
+vi måtte 4
+vi ser 4
+vi snakker 4
+vi spise 4
+vi tilbrakte 4
+vi ville 4
+vi visste 4
+viktig for 4
+viktigere enn 4
+vil han 4
+vil kjøpe 4
+vil komme 4
+vil koste 4
+vil vi 4
+ville at 4
+ville gjøre 4
+ville snakke 4
+ville vite 4
+vinden blåser 4
+vinner eller 4
+visste hvor 4
+viste oss 4
+vondt å 4
+vurderer å 4
+vær redd 4
+være mer 4
+være sant 4
+være til 4
+været var 4
+å bekymre 4
+å bestille 4
+å bygge 4
+å delta 4
+å elske 4
+å endre 4
+å fikse 4
+å forbedre 4
+å forberede 4
+å følge 4
+å glemme 4
+å lykkes 4
+å låse 4
+å mestre 4
+å måtte 4
+å sammenligne 4
+å tegne 4
+å trene 4
+å unnslippe 4
+åpenbart at 4
+åpenhet er 4
+én feil 4
+én ting 4
+øynene dine 4
+afrika er 3
+akkurat som 3
+alder av 3
+aldri det 3
+aldri hadde 3
+aldri har 3
+aldri på 3
+aldri sagt 3
+aldri vil 3
+aldri å 3
+alle brevene 3
+alle disse 3
+alle kan 3
+alle lo 3
+alle sine 3
+alle studentene 3
+alle vet 3
+allerede fortalt 3
+alltid en 3
+alltid for 3
+alltid håpet 3
+alltid i 3
+alltid sine 3
+alltid være 3
+alt hun 3
+alt til 3
+alt vi 3
+alvorlig problem 3
+andre folks 3
+andre her 3
+andre som 3
+andre språk 3
+annen grunn 3
+annet sted 3
+annet valg 3
+antar du 3
+ante ikke 3
+arbeidet som 3
+at i 3
+at min 3
+at været 3
+atten år 3
+av babyen 3
+av bussen 3
+av for 3
+av gaten 3
+av lyset 3
+av min 3
+av penger 3
+av sine 3
+av smerte 3
+av spørsmålene 3
+av tysk 3
+av vann 3
+av vennene 3
+av vinduet 3
+av våre 3
+ba han 3
+babyen sin 3
+bagasjen min 3
+bare fordi 3
+bare med 3
+bare snakke 3
+barn har 3
+barna dine 3
+barna mine 3
+barna trenger 3
+bedre å 3
+begynne å 3
+begynte det 3
+behov for 3
+beklager at 3
+bekymrer meg 3
+benekter alt 3
+berømt for 3
+beskytte ham 3
+beskytte henne 3
+best om 3
+beste for 3
+besteforeldrene dine 3
+bestemme meg 3
+bestemte jeg 3
+besøke graven 3
+betydning for 3
+betyr ikke 3
+bevise det 3
+bil foran 3
+bilen er 3
+blant oss 3
+ble drept 3
+ble holdt 3
+ble mer 3
+ble nesten 3
+ble sagt 3
+ble skutt 3
+ble stjålet 3
+ble tatt 3
+ble til 3
+ble åpnet 3
+bli bedre 3
+bli hjemme 3
+blir aldri 3
+blir glad 3
+blir hjemme 3
+blir hun 3
+blir i 3
+blir med 3
+blir snart 3
+blir stadig 3
+blir vi 3
+blir voksen 3
+blomsten er 3
+blødde neseblod 3
+bodde her 3
+boken din 3
+boken min 3
+boken på 3
+boken skal 3
+bor her 3
+bortsett fra 3
+brev fra 3
+brillene mine 3
+bruk av 3
+bruker en 3
+brød og 3
+brød uten 3
+brøt ut 3
+burde dra 3
+burde gjøre 3
+burde jeg 3
+burde ringe 3
+byen har 3
+byene i 3
+både tom 3
+bør følge 3
+bør vite 3
+central park 3
+dag etter 3
+dag i 3
+dager og 3
+dager siden 3
+dager til 3
+danse med 3
+datter har 3
+datteren sin 3
+de ble 3
+de bøkene 3
+de en 3
+de fattige 3
+de forente 3
+de forstår 3
+de får 3
+de gamle 3
+de giftet 3
+de kom 3
+de lager 3
+de neste 3
+de nye 3
+de på 3
+de sårede 3
+deg det 3
+deg her 3
+deg hjem 3
+deg inn 3
+deg mye 3
+dem en 3
+dem ikke 3
+den amerikanske 3
+den blå 3
+den boka 3
+den eldste 3
+den evige 3
+den for 3
+den gode 3
+den her 3
+den høyeste 3
+den jenta 3
+den med 3
+den menneskelige 3
+den minste 3
+den natten 3
+den nest 3
+den personen 3
+den rette 3
+den store 3
+den tredje 3
+den tyske 3
+den var 3
+den yngste 3
+denne amuletten 3
+denne bilen 3
+denne blomsten 3
+denne dagen 3
+denne elven 3
+denne er 3
+denne gaven 3
+denne hatten 3
+denne læreboken 3
+denne måneden 3
+denne sangen 3
+denne skjorten 3
+denne skuffelsen 3
+denne uken 3
+der det 3
+der inne 3
+der var 3
+dere dem 3
+dere funnet 3
+dere i 3
+dere om 3
+dere på 3
+dersom du 3
+dessverre er 3
+det allerede 3
+det amerikanske 3
+det bedre 3
+det bli 3
+det deg 3
+det dere 3
+det egentlig 3
+det enda 3
+det fredag 3
+det før 3
+det gode 3
+det heller 3
+det hemmelig 3
+det holder 3
+det hun 3
+det japanske 3
+det jo 3
+det koster 3
+det lønner 3
+det meg 3
+det mens 3
+det mer 3
+det mot 3
+det motsatte 3
+det norske 3
+det nærmeste 3
+det slik 3
+det snør 3
+det stemmer 3
+det står 3
+det svært 3
+det ta 3
+det ut 3
+det uten 3
+det viktig 3
+dette betyr 3
+dette en 3
+dette har 3
+dette hotellet 3
+dette igjen 3
+dette kameraet 3
+dette må 3
+dette området 3
+dette ordet 3
+dette rommet 3
+dette skrivebordet 3
+dette skulle 3
+dette spørsmålet 3
+dette til 3
+din egen 3
+din kone 3
+din nye 3
+din til 3
+din var 3
+disse bøkene 3
+disse dager 3
+disse er 3
+disse husene 3
+ditt i 3
+ditt og 3
+dra nå 3
+dratt til 3
+dret på 3
+drikker du 3
+drikker kaffe 3
+drikker øl 3
+driver med 3
+dro du 3
+dro på 3
+du anbefale 3
+du best 3
+du drikker 3
+du egentlig 3
+du elsker 3
+du engelsk 3
+du finner 3
+du flink 3
+du fortjener 3
+du ga 3
+du ham 3
+du hater 3
+du hvorfor 3
+du hører 3
+du hørt 3
+du jeg 3
+du kanskje 3
+du kjøre 3
+du kjører 3
+du klarer 3
+du ledig 3
+du leser 3
+du lest 3
+du levert 3
+du mistet 3
+du møtt 3
+du ofte 3
+du opptatt 3
+du prøve 3
+du prøver 3
+du rett 3
+du sende 3
+du sist 3
+du skjønner 3
+du skrev 3
+du sover 3
+du spille 3
+du spise 3
+du spist 3
+du står 3
+du tuller 3
+du vasket 3
+dumt spørsmål 3
+dyr er 3
+dårlig humør 3
+dårlig samvittighet 3
+dårlig til 3
+dø for 3
+døde på 3
+dømt til 3
+døren og 3
+effekt i 3
+egentlig er 3
+egentlig ikke 3
+egentlig mener 3
+eller hva 3
+elsker denne 3
+elsker det 3
+elsker ham 3
+elsker meg 3
+elva er 3
+en alder 3
+en alvorlig 3
+en amerikansk 3
+en artikkel 3
+en balanse 3
+en bank 3
+en blå 3
+en buss 3
+en båt 3
+en demokrat 3
+en demon 3
+en dusj 3
+en e-post 3
+en ekstremt 3
+en familie 3
+en farlig 3
+en forbrytelse 3
+en forferdelig 3
+en fremmed 3
+en frukt 3
+en fugl 3
+en følelse 3
+en halv 3
+en hammer 3
+en haug 3
+en høy 3
+en klem 3
+en klokke 3
+en kunde 3
+en løgn 3
+en misforståelse 3
+en morsom 3
+en mulighet 3
+en mygg 3
+en negativ 3
+en nær 3
+en ordbok 3
+en overraskelse 3
+en pakke 3
+en paraply 3
+en rar 3
+en sjanse 3
+en skje 3
+en skole 3
+en sky 3
+en slange 3
+en snarvei 3
+en sterkt 3
+en stjerne 3
+en stradivarius 3
+en student 3
+en suksess 3
+en svært 3
+en tabbe 3
+en taxi 3
+en tid 3
+en trafikkulykke 3
+en tur 3
+en uavhengig 3
+en valp 3
+en vanskelig 3
+en vidunderlig 3
+en ærlig 3
+energi er 3
+engelsk og 3
+enklere å 3
+enn dem 3
+enn et 3
+enn fem 3
+enn i 3
+enn ti 3
+enn tusen 3
+eplene er 3
+er adressen 3
+er algerie 3
+er av 3
+er bestevenner 3
+er blind 3
+er broren 3
+er deilig 3
+er deprimert 3
+er dessverre 3
+er disse 3
+er dobbelt 3
+er dum 3
+er døde 3
+er ei 3
+er fem 3
+er fjorten 3
+er flau 3
+er forferdelig 3
+er forskjellige 3
+er frisk 3
+er første 3
+er gode 3
+er grunnen 3
+er grådige 3
+er heldig 3
+er hesten 3
+er hester 3
+er huset 3
+er imot 3
+er interessant 3
+er kanskje 3
+er kartet 3
+er katten 3
+er klokken 3
+er lang 3
+er liten 3
+er livet 3
+er lukket 3
+er lykkelig 3
+er mannen 3
+er morsomt 3
+er mot 3
+er nysgjerrig 3
+er nær 3
+er nødvendig 3
+er omringet 3
+er omtrent 3
+er opplagt 3
+er pålitelig 3
+er rent 3
+er rike 3
+er riktig 3
+er rund 3
+er rundt 3
+er skyldig 3
+er slik 3
+er stengt 3
+er sterk 3
+er sterkere 3
+er store 3
+er svart 3
+er ti 3
+er tretti 3
+er truet 3
+er tykk 3
+er tørst 3
+er ulovlig 3
+er under 3
+er ung 3
+er utslitt 3
+er utstyrt 3
+er velkommen 3
+er vellykket 3
+er verdens 3
+er viktigere 3
+er våre 3
+er åtte 3
+et bra 3
+et dobbeltrom 3
+et dumt 3
+et egg 3
+et flott 3
+et forferdelig 3
+et frimerke 3
+et gammelt 3
+et geni 3
+et hvitt 3
+et interessant 3
+et kart 3
+et mareritt 3
+et slags 3
+et slott 3
+et sterkt 3
+et strekk 3
+et stykke 3
+et ulykkestilfelle 3
+et øye 3
+ett og 3
+etter det 3
+etter dette 3
+etter oss 3
+etter sin 3
+evnen til 3
+faktisk ikke 3
+faktum at 3
+familien sin 3
+fant du 3
+fant en 3
+fant hunden 3
+fant sted 3
+faren deres 3
+faren hans 3
+faren til 3
+farge har 3
+fem personer 3
+ferdig å 3
+fiender i 3
+film på 3
+fin helg 3
+finne arbeid 3
+finne det 3
+finne på 3
+finner ut 3
+fint at 3
+fire er 3
+flere språk 3
+flytte til 3
+folk er 3
+folk flest 3
+folk fra 3
+folk sier 3
+folk vil 3
+for alt 3
+for barn 3
+for dere 3
+for din 3
+for dyrt 3
+for forskjellige 3
+for hunder 3
+for hvor 3
+for hånd 3
+for i 3
+for kort 3
+for lang 3
+for lenge 3
+for liten 3
+for nå 3
+for sen 3
+for sterk 3
+for store 3
+for tidlig 3
+for virkeligheten 3
+foran bygningen 3
+forandret deg 3
+fordi man 3
+forelsket meg 3
+forrige gang 3
+forskjell på 3
+forskjellig fra 3
+forstanden ikke 3
+forstå hva 3
+fort du 3
+fortalte du 3
+fortalte en 3
+fortalte tom 3
+forteller meg 3
+fortsatt har 3
+fortsatt i 3
+fortsatt ikke 3
+fortsatt med 3
+fortsatt singel 3
+fortsatt tom 3
+fortsetter å 3
+forutse fremtiden 3
+forventer ikke 3
+fra mange 3
+fra nord 3
+fra seg 3
+fra venner 3
+fram til 3
+fransk på 3
+frie radikaler 3
+frisk igjen 3
+frukt og 3
+fullføre dette 3
+funnet ham 3
+funnet henne 3
+funnet ut 3
+fylt av 3
+få barn 3
+få mennesker 3
+få se 3
+få studenter 3
+får deg 3
+får tid 3
+fått sparken 3
+født på 3
+føler du 3
+føles som 3
+følte at 3
+før eller 3
+før klokka 3
+først av 3
+første blikk 3
+første gangen 3
+første toget 3
+ga du 3
+ga opp 3
+ga oss 3
+gamle mannen 3
+gammel som 3
+gang han 3
+gang på 3
+gang vært 3
+ganger blir 3
+ganske god 3
+gav ham 3
+gi en 3
+gifte meg 3
+gikk av 3
+gikk forbi 3
+gikk gjennom 3
+gikk ikke 3
+gikk med 3
+gikk rett 3
+gikk rundt 3
+gir deg 3
+gir henne 3
+gir meg 3
+gir oss 3
+gitt oss 3
+gjemte meg 3
+gjennom mye 3
+gjett hva 3
+gjorde du 3
+gjorde et 3
+gjorde meg 3
+gjorde narr 3
+gjorde noe 3
+gjorde som 3
+gjort leksene 3
+gjort nok 3
+gjør alt 3
+gjør at 3
+gjør ditt 3
+gjør feil 3
+gjør noe 3
+gjøre deg 3
+gjøre en 3
+gjøre for 3
+gjøre leksene 3
+gjøre opp 3
+gjøre på 3
+gjøre seg 3
+glede seg 3
+glem at 3
+glem det 3
+god i 3
+god kvalitet 3
+god og 3
+god sjanse 3
+god venn 3
+gode og 3
+godt for 3
+godt hva 3
+godt overens 3
+godt som 3
+godt å 3
+graven til 3
+greier ikke 3
+greit for 3
+grunnlaget for 3
+gråt i 3
+gråter du 3
+grønne skoger 3
+guttene er 3
+gå av 3
+gå der 3
+gå en 3
+gå gjennom 3
+gå i 3
+gå inn 3
+gå ned 3
+gå så 3
+går jeg 3
+går natt 3
+går ned 3
+går ofte 3
+går og 3
+går så 3
+gått dit 3
+gått opp 3
+ha besøkt 3
+ha den 3
+ha din 3
+ha dratt 3
+ha fortalt 3
+ha hjulpet 3
+ha hørt 3
+ha mot 3
+ha sett 3
+ha spist 3
+ha to 3
+hadde bare 3
+hadde det 3
+hadde forventet 3
+hadde han 3
+hadde hatt 3
+hadde hjemlengsel 3
+hadde jo 3
+hadde rett 3
+hadde skjedd 3
+hadde tenkt 3
+hadde visst 3
+ham det 3
+han ba 3
+han burde 3
+han bøyde 3
+han eier 3
+han for 3
+han forelsket 3
+han forsvant 3
+han fortsatte 3
+han giftet 3
+han gir 3
+han hører 3
+han innså 3
+han løp 3
+han malte 3
+han meg 3
+han mente 3
+han måtte 3
+han oppdaget 3
+han reiser 3
+han selger 3
+han sluttet 3
+han som 3
+han sov 3
+han svarte 3
+han tar 3
+han vant 3
+han ønsker 3
+hans og 3
+har absolutt 3
+har akkurat 3
+har bedt 3
+har blå 3
+har brukt 3
+har drukket 3
+har ei 3
+har enda 3
+har forbedret 3
+har fortsatt 3
+har fri 3
+har helt 3
+har holdt 3
+har litt 3
+har med 3
+har møtt 3
+har nå 3
+har planer 3
+har plukket 3
+har problemer 3
+har skapt 3
+har sluttet 3
+har så 3
+har visst 3
+har vist 3
+har vunnet 3
+har å 3
+hater edderkopper 3
+haug med 3
+hele kroppen 3
+hele natt 3
+helst for 3
+helt alene 3
+helt enig 3
+helt klart 3
+helt sikker 3
+helt vanlig 3
+henne et 3
+henne før 3
+henne når 3
+henne om 3
+henne til 3
+henne ved 3
+her om 3
+her siden 3
+her til 3
+herr smith 3
+heter ricardo 3
+hjelpe ham 3
+hjelpe henne 3
+hjem fra 3
+hjemme på 3
+hjulpet deg 3
+hjulpet oss 3
+holde det 3
+holde et 3
+holde kjeft 3
+holdt pusten 3
+hoppet ut 3
+horoskopet mitt 3
+hotellet i 3
+hun bare 3
+hun begynte 3
+hun en 3
+hun fortalte 3
+hun gav 3
+hun giftet 3
+hun gråt 3
+hun hater 3
+hun hjalp 3
+hun i 3
+hun kjente 3
+hun kjøpte 3
+hun om 3
+hun prøver 3
+hun skal 3
+hun skriker 3
+hun snakket 3
+hun snudde 3
+hun sover 3
+hun spiller 3
+hun til 3
+hun tjener 3
+hun vant 3
+hun ventet 3
+hund er 3
+hunden til 3
+hunden vår 3
+hundre prosent 3
+hus er 3
+huset hans 3
+huset med 3
+huset var 3
+huske å 3
+husker ikke 3
+hva en 3
+hva enn 3
+hva holder 3
+hva mary 3
+hva mener 3
+hva ser 3
+hva skylder 3
+hva snakker 3
+hva ønsker 3
+hvem snakker 3
+hvem vet 3
+hver kveld 3
+hvilken bok 3
+hvilken klasse 3
+hvis hun 3
+hvor kjøpte 3
+hvor leste 3
+hvor lærte 3
+hvor viktig 3
+hvordan han 3
+hvordan ser 3
+hvorfor ble 3
+hvorfor dro 3
+hvorfor gråter 3
+hvorfor i 3
+hvorfor ikke 3
+hvorfor må 3
+hvorfor trodde 3
+hånd om 3
+håper du 3
+håper tom 3
+håpet at 3
+håret ditt 3
+håret mitt 3
+hør på 3
+hører dere 3
+hører ikke 3
+hørt om 3
+hørte deg 3
+hørte på 3
+høy grad 3
+høy som 3
+i ansiktet 3
+i beinet 3
+i dammen 3
+i disse 3
+i elven 3
+i europa 3
+i familien 3
+i finland 3
+i flere 3
+i forhold 3
+i gåter 3
+i ham 3
+i hans 3
+i havet 3
+i hemmelighet 3
+i hendene 3
+i himmelen 3
+i hjertet 3
+i hva 3
+i høy 3
+i italia 3
+i kobe 3
+i koppen 3
+i kyoto 3
+i lomma 3
+i luften 3
+i maria 3
+i matematikk 3
+i mexico 3
+i midten 3
+i mosen 3
+i måneden 3
+i naborommet 3
+i neste 3
+i nuet 3
+i orden 3
+i over 3
+i seks 3
+i senga 3
+i siste 3
+i sitt 3
+i sjøen 3
+i skogen 3
+i skyggen 3
+i spania 3
+i svart 3
+i sverige 3
+i tiden 3
+i tilfelle 3
+i tredje 3
+i vårt 3
+i årevis 3
+i økonomien 3
+idet han 3
+igjen til 3
+ikke alene 3
+ikke beskjed 3
+ikke bo 3
+ikke denne 3
+ikke din 3
+ikke forestille 3
+ikke fra 3
+ikke gjenta 3
+ikke gjør 3
+ikke gull 3
+ikke går 3
+ikke heller 3
+ikke hørte 3
+ikke kjenner 3
+ikke kjøpe 3
+ikke legg 3
+ikke lest 3
+ikke løp 3
+ikke maria 3
+ikke maten 3
+ikke mindre 3
+ikke møtt 3
+ikke norsk 3
+ikke nødvendigvis 3
+ikke og 3
+ikke peiling 3
+ikke poenget 3
+ikke røyke 3
+ikke sannheten 3
+ikke skulle 3
+ikke skynde 3
+ikke skyt 3
+ikke snakk 3
+ikke spille 3
+ikke spørsmålet 3
+ikke stå 3
+ikke svar 3
+ikke toms 3
+ikke trøtt 3
+ikke uvanlig 3
+ikke vente 3
+ikke øl 3
+imponert over 3
+ingen av 3
+ingen er 3
+ingen her 3
+ingen i 3
+ingen mann 3
+ingen penger 3
+ingen problemer 3
+ingen ser 3
+ingen venner 3
+ingen vil 3
+ingen ville 3
+inn gjennom 3
+innerst inne 3
+innrømme at 3
+innrømmet at 3
+inntrykk av 3
+interessant bok 3
+interessant spørsmål 3
+italia er 3
+japan har 3
+japansk film 3
+jeg aner 3
+jeg beklager 3
+jeg blitt 3
+jeg bodde 3
+jeg det 3
+jeg drakk 3
+jeg dusjer 3
+jeg eier 3
+jeg ennå 3
+jeg for 3
+jeg forelsket 3
+jeg forstod 3
+jeg fortelle 3
+jeg gjemte 3
+jeg gleder 3
+jeg godt 3
+jeg gråt 3
+jeg gråter 3
+jeg hatet 3
+jeg husket 3
+jeg innrømmer 3
+jeg kastet 3
+jeg kjører 3
+jeg klør 3
+jeg komme 3
+jeg kysset 3
+jeg lot 3
+jeg lover 3
+jeg lærer 3
+jeg lærte 3
+jeg løper 3
+jeg møter 3
+jeg noe 3
+jeg noen 3
+jeg noensinne 3
+jeg nå 3
+jeg og 3
+jeg orker 3
+jeg pusser 3
+jeg satt 3
+jeg satte 3
+jeg savnet 3
+jeg skylder 3
+jeg sovnet 3
+jeg spør 3
+jeg stilte 3
+jeg studerte 3
+jeg støtter 3
+jeg sulter 3
+jeg trengte 3
+jeg utsetter 3
+jeg vant 3
+jeg vite 3
+jeg åpnet 3
+jente i 3
+jente som 3
+jo at 3
+jo flere 3
+jo ikke 3
+jobb er 3
+jobbe hardere 3
+jobben din 3
+jobben sin 3
+jobber ikke 3
+jobbet hardt 3
+john er 3
+jorden er 3
+kaffen er 3
+kaldt vann 3
+kaldt å 3
+kaller en 3
+kaller meg 3
+kalte meg 3
+kan aldri 3
+kan et 3
+kan fly 3
+kan forstå 3
+kan fortelle 3
+kan han 3
+kan kjøpe 3
+kan klare 3
+kanskje det 3
+kanskje du 3
+kanskje hun 3
+katten ligger 3
+kilometer i 3
+kino i 3
+kjenner det 3
+kjenner ikke 3
+kjent for 3
+kjent hverandre 3
+kjæresten din 3
+kjøpe det 3
+kjøpe nye 3
+kjøper du 3
+kjøpte meg 3
+kjørte inn 3
+klarte du 3
+klasse går 3
+klatre opp 3
+klokken er 3
+klør i 3
+koblet til 3
+kom deg 3
+kom i 3
+kom løpende 3
+kom sent 3
+komme hit 3
+komme overens 3
+kommer dere 3
+kommer etter 3
+kommer snart 3
+kommet enda 3
+kommunisere med 3
+kona hans 3
+konen min 3
+kopp kaffe 3
+kort til 3
+koster den 3
+koster denne 3
+kranglet alltid 3
+kun på 3
+kunne bli 3
+kunne hjelpe 3
+kunne svømme 3
+kvinne i 3
+kysset henne 3
+kødder du 3
+la det 3
+la hun 3
+la ikke 3
+landet for 3
+landet i 3
+landet jeg 3
+langt borte 3
+langt er 3
+langt på 3
+langt unna 3
+later som 3
+legge til 3
+leke på 3
+lekene sine 3
+leksene mine 3
+leksene sine 3
+lenge du 3
+lenge vil 3
+lese en 3
+leser avisen 3
+leser denne 3
+leste en 3
+leste i 3
+leter du 3
+lett som 3
+lettere å 3
+leve et 3
+lever jeg 3
+levere inn 3
+levert til 3
+lider av 3
+like gamle 3
+like gammel 3
+like høy 3
+liker best 3
+liker både 3
+liker bønner 3
+liker den 3
+liker tom 3
+likte den 3
+lille av 3
+lille trille 3
+lite land 3
+litt for 3
+litt fransk 3
+litt hjelp 3
+litt kaffe 3
+litt over 3
+litt sliten 3
+litt til 3
+litt vann 3
+livet ditt 3
+livet for 3
+livet på 3
+lokket av 3
+lommeboken min 3
+lot ham 3
+lovet å 3
+lukk døren 3
+lukke øynene 3
+lukket døren 3
+lukten av 3
+lukter dritt 3
+lunsj med 3
+lure meg 3
+lyden av 3
+lyset av 3
+lyst å 3
+lyver aldri 3
+lære mer 3
+lære mye 3
+lært meg 3
+lærte meg 3
+løftet lokket 3
+løp etter 3
+løpe fort 3
+løy til 3
+magasiner og 3
+mamma er 3
+man bruker 3
+man elsker 3
+man har 3
+man lager 3
+mange har 3
+mange hester 3
+mange kopper 3
+mange land 3
+mange personer 3
+mange setninger 3
+mange språk 3
+mange takk 3
+mange tenker 3
+mangelen på 3
+mannen sin 3
+maria liker 3
+maria var 3
+mary at 3
+mary en 3
+mary liker 3
+mat er 3
+mat i 3
+matematikk er 3
+med at 3
+med bare 3
+med dagen 3
+med fly 3
+med jobben 3
+med lav 3
+med mindre 3
+med resultatet 3
+med sine 3
+med snø 3
+med språket 3
+med til 3
+med vennene 3
+med venner 3
+med øynene 3
+meg bedre 3
+meg er 3
+meg her 3
+meg norsk 3
+meg ofte 3
+meg spise 3
+meg tenke 3
+meg tre 3
+meg veien 3
+melk i 3
+mellom frankrike 3
+mellom oss 3
+men ei 3
+men hans 3
+men når 3
+men også 3
+men å 3
+mennesker har 3
+mennesker på 3
+mennesker tror 3
+mente at 3
+mer på 3
+merket ikke 3
+min beste 3
+min bor 3
+min drøm 3
+min døde 3
+min elsker 3
+min en 3
+min fra 3
+min første 3
+min høyre 3
+min kjøpte 3
+min sa 3
+min snakker 3
+min så 3
+min sønn 3
+mine for 3
+mine foreldre 3
+mine kommer 3
+minst en 3
+minutter før 3
+minutter siden 3
+mistet alle 3
+mistet livet 3
+mitt hver 3
+mor er 3
+mor har 3
+mor kjøpte 3
+mor sa 3
+mora mi 3
+moren hans 3
+moren sin 3
+morgen er 3
+morgen ettermiddag 3
+mot ham 3
+mot til 3
+motsatte av 3
+mulig at 3
+mulighet for 3
+mye det 3
+mye er 3
+mye i 3
+mye snø 3
+mye tålmodighet 3
+må alle 3
+må følge 3
+må si 3
+må tilbringe 3
+må vente 3
+måten vi 3
+måtte beskytte 3
+måtte gå 3
+måtte ha 3
+måtte jobbe 3
+møte noen 3
+møtet i 3
+møtte tom 3
+naboen min 3
+ned volumet 3
+nei til 3
+neste helg 3
+nesten ingenting 3
+nesten klar 3
+nettopp ferdig 3
+nevne en 3
+noe av 3
+noe dumt 3
+noe for 3
+noe kaldt 3
+noe man 3
+noe mer 3
+noen barn 3
+noen bilder 3
+noen feil 3
+noen folk 3
+noen få 3
+noen gode 3
+noen har 3
+noen i 3
+noen kan 3
+noen penger 3
+noen veldig 3
+nok ikke 3
+nok å 3
+norske setninger 3
+ny her 3
+ny jobb 3
+ny sykkel 3
+nye ideer 3
+nå du 3
+nå frykter 3
+nå jeg 3
+nå må 3
+nå skal 3
+nå til 3
+når alt 3
+når som 3
+når var 3
+nær huset 3
+nær venn 3
+nærmet seg 3
+nødvendig for 3
+nøkkelen til 3
+ofte ikke 3
+ofte om 3
+og aviser 3
+og barn 3
+og begynte 3
+og blir 3
+og da 3
+og deretter 3
+og fisk 3
+og hjelpe 3
+og holdt 3
+og hører 3
+og ingen 3
+og kan 3
+og la 3
+og løsninger 3
+og min 3
+og neppe 3
+og rødt 3
+og sett 3
+og slå 3
+og smilte 3
+og som 3
+og spise 3
+og to 3
+og tre 3
+og trenger 3
+og tyskland 3
+om denne 3
+om golf 3
+om min 3
+om nettene 3
+om penger 3
+om råd 3
+om saken 3
+om ting 3
+om unnskyldning 3
+omkring meg 3
+opp før 3
+opp om 3
+oppe langt 3
+ord på 3
+oslo er 3
+oss et 3
+oss for 3
+oss hvorfor 3
+oss kjøpe 3
+oss med 3
+oss noen 3
+oss nå 3
+oss og 3
+oss prøve 3
+oss på 3
+oss selv 3
+oss sette 3
+oss spise 3
+oss tenke 3
+over den 3
+over elven 3
+over hele 3
+overrasker meg 3
+overrasket meg 3
+peiling på 3
+penger med 3
+penger som 3
+pennen er 3
+per dag 3
+personen jeg 3
+planen din 3
+planer om 3
+plukket opp 3
+prate med 3
+problemer og 3
+prøvd å 3
+prøve noe 3
+pusten din 3
+på alvor 3
+på andre 3
+på arbeidsplassen 3
+på bakken 3
+på biblioteket 3
+på dere 3
+på ditt 3
+på døren 3
+på eksamen 3
+på flyet 3
+på forhånd 3
+på fredag 3
+på hvem 3
+på hvilken 3
+på hvordan 3
+på i 3
+på internett 3
+på kjærlighet 3
+på kroken 3
+på latin 3
+på mandag 3
+på min 3
+på morgenen 3
+på månen 3
+på nettet 3
+på norsk 3
+på radioen 3
+på rett 3
+på ryggen 3
+på sitt 3
+på skipet 3
+på stranda 3
+på sykehuset 3
+på taket 3
+på telefonen 3
+på teppet 3
+på toppen 3
+på universitetet 3
+på videregående 3
+på vår 3
+på åpenhet 3
+realisere min 3
+redd du 3
+redde vennens 3
+reiser ofte 3
+reiste du 3
+rekker du 3
+reparere den 3
+rett for 3
+rett foran 3
+rett på 3
+rev i 3
+ringe etter 3
+ringe politiet 3
+ringte meg 3
+ringte og 3
+rom for 3
+rommet ditt 3
+rommet sitt 3
+rommet var 3
+rundt på 3
+rør den 3
+rør noe 3
+røyke på 3
+røyking er 3
+sa noe 3
+sagt det 3
+sami har 3
+sami sendte 3
+sami spilte 3
+samme feilen 3
+sammen i 3
+sammenligne seg 3
+sammenlignet med 3
+san francisco 3
+sannsynligvis hver 3
+satte seg 3
+savner deg 3
+se at 3
+se ham 3
+se her 3
+se meg 3
+se opp 3
+se tom 3
+seg at 3
+seg bak 3
+seg bort 3
+seg fra 3
+seg frakken 3
+seg fremover 3
+seg merkelig 3
+seg svært 3
+seg ved 3
+seg veldig 3
+selge bilen 3
+selv er 3
+sen til 3
+sendte meg 3
+sent til 3
+sent å 3
+ser et 3
+ser vi 3
+sett dere 3
+sett det 3
+sette oss 3
+si fra 3
+si om 3
+side av 3
+siden det 3
+siden vi 3
+sier det 3
+sier jeg 3
+sin tid 3
+sin til 3
+sin vei 3
+sine i 3
+sint og 3
+sint på 3
+siste gang 3
+siste toget 3
+siste verk 3
+sitt eget 3
+sitte på 3
+sjanse for 3
+skade på 3
+skal besøke 3
+skal de 3
+skal dra 3
+skal fortelle 3
+skal få 3
+skal gifte 3
+skal man 3
+skal på 3
+skal si 3
+skammet seg 3
+skape en 3
+ski med 3
+skjedde det 3
+skjedde i 3
+skjer det 3
+skjer med 3
+skjønner du 3
+skjønte ikke 3
+sko er 3
+skoene dine 3
+skoene mine 3
+skolen vår 3
+skrev til 3
+skriker veldig 3
+skriv med 3
+skrive en 3
+skrivebordet er 3
+skulle få 3
+skulle gjerne 3
+skulle gå 3
+skulle være 3
+skyggen av 3
+skylden for 3
+slags mat 3
+slags spørsmål 3
+slapp av 3
+slik en 3
+slike ting 3
+sliten ut 3
+slo av 3
+slå på 3
+smartere enn 3
+snakke litt 3
+snakke så 3
+snakker med 3
+snakker norsk 3
+snakker ofte 3
+snill ikke 3
+snø hele 3
+som bruker 3
+som denne 3
+som dere 3
+som feiler 3
+som finnes 3
+som forstanden 3
+som gikk 3
+som går 3
+som heter 3
+som i 3
+som john 3
+som kjører 3
+som leder 3
+som mary 3
+som med 3
+som morsmål 3
+som ser 3
+som spiser 3
+som står 3
+sommeren er 3
+sov i 3
+sov ikke 3
+sover ikke 3
+spille fotball 3
+spille golf 3
+spille piano 3
+spiller du 3
+spiller gitar 3
+spiller ikke 3
+spiller sjakk 3
+spilte tennis 3
+spise noe 3
+spise på 3
+spise så 3
+spiser alltid 3
+spiser en 3
+spiser kjøtt 3
+spiser mye 3
+spist middag 3
+spiste en 3
+spiste frokost 3
+språk på 3
+spurte etter 3
+spurte ham 3
+spurte tom 3
+spør om 3
+spørre henne 3
+spørre meg 3
+spørre tom 3
+spørsmål om 3
+spørsmålet hans 3
+sta jente 3
+stadig mer 3
+stammer fra 3
+sterkere enn 3
+stille et 3
+stod i 3
+stod opp 3
+stor familie 3
+stor for 3
+stor suksess 3
+stort hus 3
+stort som 3
+studenter kan 3
+studert fransk 3
+stukket av 3
+stund til 3
+støtte på 3
+sulten som 3
+sur på 3
+svar meg 3
+svaret ditt 3
+svaret er 3
+svært komplekst 3
+svømme her 3
+synd at 3
+synes å 3
+så de 3
+så den 3
+så dere 3
+så enkelt 3
+så gjerne 3
+så ofte 3
+så skal 3
+så trøtt 3
+så viktig 3
+sånn er 3
+sønn er 3
+sønnen din 3
+sønnen sin 3
+ta bilde 3
+ta denne 3
+ta et 3
+ta imot 3
+ta oppvasken 3
+ta til 3
+takknemlig for 3
+takler ikke 3
+tanken på 3
+tar en 3
+tar hånd 3
+tatt av 3
+tatt en 3
+tegn en 3
+telefonnummeret ditt 3
+telefonnummeret mitt 3
+tenk på 3
+tennis hver 3
+tennis i 3
+teorien er 3
+teppet mitt 3
+tid er 3
+tid for 3
+tid med 3
+tide at 3
+tiden da 3
+tiden på 3
+tiden var 3
+tidlig for 3
+tidlig i 3
+tidligere i 3
+tidligere var 3
+til alle 3
+til alt 3
+til byen 3
+til canada 3
+til dags 3
+til england 3
+til historien 3
+til jul 3
+til kona 3
+til oslo 3
+til parken 3
+til rette 3
+til side 3
+til sitt 3
+til sykehuset 3
+til toget 3
+til tre 3
+tilbrakte hele 3
+tilbringe mer 3
+timer om 3
+ting jeg 3
+ting til 3
+to barn 3
+to katter 3
+to og 3
+toget går 3
+toget vårt 3
+tok bilder 3
+tok ham 3
+tok han 3
+tok ikke 3
+tok oss 3
+tokyo er 3
+tokyo i 3
+tokyo nå 3
+tokyo og 3
+tom bare 3
+tom bodde 3
+tom bor 3
+tom den 3
+tom drikker 3
+tom elsket 3
+tom forstår 3
+tom følte 3
+tom gjøre 3
+tom hater 3
+tom holder 3
+tom hva 3
+tom jackson 3
+tom kjører 3
+tom klarte 3
+tom merket 3
+tom noe 3
+tom nå 3
+tom ringer 3
+tom siden 3
+tom sitt 3
+tom skrev 3
+tom sov 3
+tom spiller 3
+tom spiser 3
+tom syntes 3
+tom trenger 3
+tom vanligvis 3
+toms firma 3
+toms foreldre 3
+toms mor 3
+toms råd 3
+toppen av 3
+tre barn 3
+tre minutter 3
+tre måneder 3
+tre personer 3
+tre uker 3
+trenger bare 3
+trenger denne 3
+trenger dette 3
+trenger din 3
+trenger meg 3
+trengte ikke 3
+tretti dollar 3
+tretti minutter 3
+trodde han 3
+trodde hun 3
+trodde tom 3
+trodde vi 3
+tror dere 3
+trykk på 3
+tusen ord 3
+tusenvis av 3
+tv i 3
+tyngre enn 3
+tyskland er 3
+ugler i 3
+umulig for 3
+under sengen 3
+ut fra 3
+ut herfra 3
+ut over 3
+ut ved 3
+utdanningssystemet vårt 3
+uten din 3
+uten vann 3
+utsatt for 3
+utsetter turen 3
+utviklingen av 3
+vakre ting 3
+valg enn 3
+vandret rundt 3
+vannet er 3
+vanskelig for 3
+vant kampen 3
+var alt 3
+var altfor 3
+var barn 3
+var blind 3
+var de 3
+var dette 3
+var død 3
+var ment 3
+var mørkt 3
+var rett 3
+var sjuk 3
+var svært 3
+var triste 3
+var usikker 3
+var ute 3
+var utrolig 3
+var vanskelig 3
+var varmt 3
+var vi 3
+var virkelig 3
+varianter av 3
+vask hendene 3
+vaske opp 3
+vekk nå 3
+veldig flink 3
+veldig fort 3
+veldig interessert 3
+veldig kaldt 3
+veldig lett 3
+veldig pen 3
+veldig på 3
+veldig redd 3
+veldig stort 3
+veldig vakker 3
+velsigne landet 3
+venn med 3
+venn som 3
+vennens liv 3
+venner har 3
+venner som 3
+vennlig og 3
+vente her 3
+vente til 3
+venter du 3
+venter her 3
+ventet lenge 3
+verdifull mat 3
+vet alt 3
+vet godt 3
+vet nesten 3
+vet noen 3
+vi alle 3
+vi begynne 3
+vi beskytte 3
+vi dro 3
+vi fant 3
+vi finne 3
+vi fortsatt 3
+vi ha 3
+vi kaller 3
+vi kjenner 3
+vi lager 3
+vi lo 3
+vi og 3
+vi spiste 3
+vi starter 3
+vi tar 3
+vi tenker 3
+vil beholde 3
+vil dø 3
+vil fortsette 3
+vil følge 3
+vil gi 3
+vil hjelpe 3
+vil hun 3
+vil lese 3
+vil man 3
+vil møte 3
+vil nok 3
+vil også 3
+vil snart 3
+vil utvikle 3
+ville det 3
+ville overnatte 3
+ville vi 3
+villig til 3
+vinduet og 3
+virkelig et 3
+virket ikke 3
+viser seg 3
+visst om 3
+visste aldri 3
+visste det 3
+visste hvorfor 3
+viste seg 3
+vite hvem 3
+vite hvorfor 3
+våren best 3
+være den 3
+være din 3
+være forberedt 3
+være litt 3
+være lykkelig 3
+være venner 3
+været er 3
+vært borte 3
+vært gift 3
+vært gjennom 3
+vært mye 3
+vært opptatt 3
+vært på 3
+vært sammen 3
+vært syk 3
+yngre ut 3
+yokohama er 3
+å arbeide 3
+å beskytte 3
+å bry 3
+å bære 3
+å danse 3
+å feile 3
+å flytte 3
+å forstyrre 3
+å fortsette 3
+å gjette 3
+å handle 3
+å hate 3
+å huske 3
+å kalle 3
+å kommunisere 3
+å kysse 3
+å lukke 3
+å lure 3
+å lyge 3
+å nei 3
+å overbevise 3
+å rekke 3
+å sikre 3
+å skuffe 3
+å sovne 3
+å starte 3
+å stemme 3
+å stjele 3
+å stoppe 3
+å søke 3
+å vanne 3
+å virke 3
+å ødelegge 3
+åpne vinduet 3
+åpnet du 3
+år er 3
+år yngre 3
+åtte timer 3
+ærlig mann 3
+ærlig talt 3
+ærlighet er 3
+ønske han 3
+ønsker at 3
+ønsker dere 3
+ønsker meg 3
+ønsket ikke 3
+østerrike og 3
+øye med 3
+øynene for 3
+absolutt mulig 2
+adressen hennes 2
+advare dem 2
+afrika som 2
+akkurat når 2
+akkurat spist 2
+akkurat tidsnok 2
+akkurat til 2
+albert einstein 2
+albumet sitt 2
+aldeles ikke 2
+aldri engang 2
+aldri for 2
+aldri før 2
+aldri gjort 2
+aldri hendt 2
+aldri lære 2
+aldri mary 2
+aldri med 2
+aldri møtt 2
+aldri noe 2
+aldri opp 2
+aldri sa 2
+aldri se 2
+aldri ser 2
+aldri spurt 2
+aldri studert 2
+alene med 2
+algerie fortjener 2
+alle barn 2
+alle bruker 2
+alle detaljene 2
+alle drømmer 2
+alle fakta 2
+alle fall 2
+alle forstår 2
+alle gjør 2
+alle guttene 2
+alle jeg 2
+alle leksene 2
+alle liker 2
+alle likte 2
+alle medlemmene 2
+alle medlemmer 2
+alle på 2
+alle retninger 2
+alle sider 2
+alle snakker 2
+alle som 2
+alle sover 2
+alle språk 2
+alle vil 2
+alle være 2
+allerede begynt 2
+allerede er 2
+allerede fullført 2
+allerede gitt 2
+allerede hatt 2
+allerede vært 2
+alltid bra 2
+alltid elske 2
+alltid finnes 2
+alltid kåt 2
+alltid min 2
+alltid noen 2
+alltid opp 2
+alltid rundt 2
+alltid til 2
+alltid ønsket 2
+alt de 2
+alt har 2
+alt i 2
+alt på 2
+alt smaker 2
+alt smakte 2
+alt vil 2
+altfor forskjellige 2
+alvorlig krise 2
+alvorlig skadet 2
+amerika for 2
+amerikanske ambassaden 2
+amuletten beskytter 2
+analytiske teknikker 2
+anbefale en 2
+anbefalte meg 2
+andre jentene 2
+andre land 2
+andre menneskers 2
+andre verdenskrig 2
+andre ville 2
+angrep mot 2
+angrer på 2
+anklager du 2
+ankom på 2
+ankom tre 2
+ankommer i 2
+ann er 2
+annen har 2
+annenhver dag 2
+annet i 2
+annet om 2
+annet å 2
+ansette tom 2
+ansiktet ditt 2
+ansiktet hennes 2
+antall ord 2
+arbeid er 2
+arbeidet mitt 2
+arbeidsmarkedet er 2
+argumentet er 2
+artikkelen inneholder 2
+artiklene dine 2
+at alt 2
+at andre 2
+at esperanto 2
+at et 2
+at hennes 2
+at internett 2
+at kvinner 2
+at leserne 2
+at mannen 2
+at noen 2
+at når 2
+at tid 2
+at vann 2
+at verden 2
+australia med 2
+av alt 2
+av andre 2
+av bordet 2
+av buret 2
+av dammen 2
+av deres 2
+av din 2
+av dørene 2
+av entusiasme 2
+av erter 2
+av faren 2
+av fengsel 2
+av flere 2
+av frykt 2
+av få 2
+av gårde 2
+av han 2
+av hemmeligheter 2
+av hodet 2
+av hva 2
+av hver 2
+av hvordan 2
+av hånda 2
+av juni 2
+av kjedsomhet 2
+av landet 2
+av latter 2
+av lav 2
+av moren 2
+av mote 2
+av norske 2
+av nostalgi 2
+av papir 2
+av problemet 2
+av prosjektet 2
+av på 2
+av radioen 2
+av rommet 2
+av selskapene 2
+av snø 2
+av snøen 2
+av støv 2
+av sunn 2
+av sykdom 2
+av sønnen 2
+av ti 2
+av ting 2
+av to 2
+av veien 2
+av vind 2
+av yrke 2
+av ånden 2
+av året 2
+av én 2
+avisen er 2
+avviste forslaget 2
+ba deg 2
+ba om 2
+babyen min 2
+badet i 2
+baggen sin 2
+bak gardinen 2
+bak huset 2
+bak lås 2
+bakte en 2
+banker på 2
+banket på 2
+barack obama 2
+bare at 2
+bare bli 2
+bare bruke 2
+bare dårlig 2
+bare gjør 2
+bare gå 2
+bare hvis 2
+bare ikke 2
+bare kaffe 2
+bare kødda 2
+bare later 2
+bare noe 2
+bare noen 2
+bare om 2
+bare se 2
+bare ved 2
+bare å 2
+baren var 2
+barn enn 2
+barn på 2
+barn tilbringer 2
+barna er 2
+barna får 2
+barna leker 2
+barna på 2
+barna vakre 2
+barna var 2
+barna våre 2
+barnet som 2
+bedre engelsk 2
+bedre ordbok 2
+bedre sted 2
+bedre ut 2
+bedt ham 2
+bedt tom 2
+begravet i 2
+begreper og 2
+begynner det 2
+begynner jeg 2
+begynner når 2
+begynte du 2
+begynte han 2
+begynte jeg 2
+behøver å 2
+bekker små 2
+bekymre seg 2
+ber meg 2
+beredt på 2
+bergen er 2
+beskytte dem 2
+beskytte oss 2
+beskytter meg 2
+besluttet å 2
+best av 2
+best for 2
+beste er 2
+beste måten 2
+beste spilleren 2
+beste ut 2
+besteforeldrene deres 2
+bestemoren min 2
+bestilte en 2
+består i 2
+besøke oss 2
+besøkt av 2
+besøkt besteforeldrene 2
+besøkt roma 2
+besøkte henne 2
+betale med 2
+betale regningene 2
+betaling for 2
+betalt for 2
+betydningen av 2
+betyr at 2
+betyr det 2
+betyr for 2
+beundrer deg 2
+beundrer motet 2
+bevisst på 2
+bidra til 2
+bil som 2
+bildet av 2
+bildet henger 2
+bildet jeg 2
+bildet var 2
+bilen i 2
+bilen til 2
+bill er 2
+bill gråt 2
+bill stod 2
+bill var 2
+bite i 2
+biter ikke 2
+blant de 2
+blant studenter 2
+ble angrepet 2
+ble bedt 2
+ble begravet 2
+ble boken 2
+ble bygd 2
+ble bygget 2
+ble de 2
+ble dere 2
+ble direktesendt 2
+ble fanget 2
+ble forelsket 2
+ble fortalt 2
+ble fraktet 2
+ble full 2
+ble han 2
+ble helt 2
+ble kjent 2
+ble med 2
+ble mistenkt 2
+ble plutselig 2
+ble på 2
+ble revet 2
+ble sendt 2
+ble sittende 2
+ble skrevet 2
+ble solgt 2
+ble stukket 2
+ble stående 2
+ble truffet 2
+ble ved 2
+bli brukt 2
+bli der 2
+bli kjent 2
+bli litt 2
+bli når 2
+bli påkjørt 2
+bli sykepleier 2
+bli vant 2
+bli venner 2
+bli værende 2
+blir betalt 2
+blir eldre 2
+blir finere 2
+blir forfremmet 2
+blir fort 2
+blir kald 2
+blir lett 2
+blir mer 2
+blir nok 2
+blir regn 2
+blir sliten 2
+blir større 2
+blir varmere 2
+blitt av 2
+blitt drept 2
+blitt dyrere 2
+blitt funnet 2
+blitt med 2
+blitt mye 2
+blitt reparert 2
+blitt til 2
+blitt veldig 2
+blodtrykket ditt 2
+blomst til 2
+blomstene har 2
+blotte øye 2
+blyant og 2
+blyanten din 2
+blåser i 2
+blåste det 2
+bob er 2
+bok på 2
+boka di 2
+boka er 2
+boka si 2
+boken hans 2
+boken jeg 2
+boken sin 2
+boksen er 2
+boksen var 2
+bor alene 2
+bor for 2
+bor hos 2
+bor langt 2
+bor nær 2
+bor tom 2
+bordet er 2
+bort fra 2
+bort hit 2
+bort til 2
+bra engelsk 2
+bra her 2
+bra når 2
+brant ned 2
+brasil er 2
+bred erfaring 2
+brevene du 2
+brevet ut 2
+bror fant 2
+bror har 2
+broren til 2
+bruk et 2
+bruke bilen 2
+bruke telefonen 2
+bruker denne 2
+bruker mer 2
+bruker mye 2
+brukes i 2
+brukes til 2
+brydde seg 2
+bryr deg 2
+bryte løftet 2
+brød med 2
+brøt reglene 2
+bunn og 2
+burde sove 2
+bursdagsgave til 2
+buss til 2
+bussen var 2
+butikken selger 2
+by i 2
+byen min 2
+byen var 2
+byen vår 2
+byens lange 2
+byens mest 2
+bygd for 2
+bygge en 2
+bygge opp 2
+bygget av 2
+bygget på 2
+bygning er 2
+bytte olje 2
+både fransk 2
+både viktig 2
+bøkene er 2
+bøkene hans 2
+bøker fra 2
+bøker på 2
+bølge av 2
+bør bruke 2
+bør dra 2
+bør gjøre 2
+bør gå 2
+bør lære 2
+bør prøve 2
+bør respektere 2
+bør skynde 2
+bør slutte 2
+bør spise 2
+bør spørre 2
+bør ta 2
+bøy deg 2
+columbus en 2
+da en 2
+da er 2
+da flyet 2
+da har 2
+da kan 2
+da nordmannen 2
+da tom 2
+dag bli 2
+dag føler 2
+dag går 2
+dag til 2
+dagen lang 2
+dagen min 2
+dagens avis 2
+dagens verden 2
+dager i 2
+dager å 2
+daglige brød 2
+damen gikk 2
+dammen er 2
+damp å 2
+danmarks nest 2
+danser musene 2
+danset med 2
+dansk er 2
+dansk til 2
+datter døde 2
+datteren din 2
+de alle 2
+de bare 2
+de beste 2
+de bodde 2
+de bryr 2
+de diskuterte 2
+de drikker 2
+de dro 2
+de dumme 2
+de elsker 2
+de fem 2
+de flyttet 2
+de få 2
+de første 2
+de ga 2
+de gav 2
+de gikk 2
+de gjør 2
+de glemte 2
+de han 2
+de hjemløse 2
+de kranglet 2
+de lange 2
+de lette 2
+de ligger 2
+de liker 2
+de løper 2
+de meg 2
+de mye 2
+de mørke 2
+de møtte 2
+de oppdagelsesreisende 2
+de satt 2
+de selger 2
+de sendte 2
+de ser 2
+de skjønner 2
+de skulle 2
+de snakket 2
+de stoppet 2
+de store 2
+de syv 2
+de tar 2
+de til 2
+de tildelte 2
+de tok 2
+de tror 2
+de vakreste 2
+de ventet 2
+de ville 2
+de vise 2
+de å 2
+definitivt forbi 2
+deg aldri 2
+deg alene 2
+deg av 2
+deg bra 2
+deg fordi 2
+deg fra 2
+deg gjerne 2
+deg hvordan 2
+deg lenge 2
+deg noen 2
+deg opp 2
+deg over 2
+deg sannheten 2
+deg senere 2
+deg sokkene 2
+deg tilbake 2
+deg uansett 2
+deg unna 2
+deg var 2
+deg veien 2
+deg vill 2
+deg våken 2
+dekket med 2
+dekorerte rommet 2
+del i 2
+deltatt i 2
+dem igjen 2
+dem nå 2
+dem når 2
+dem være 2
+den brune 2
+den bryteren 2
+den fjerde 2
+den gutten 2
+den har 2
+den hesten 2
+den historien 2
+den hunden 2
+den hvite 2
+den informasjonen 2
+den italienske 2
+den kjolen 2
+den lange 2
+den lengste 2
+den lyden 2
+den neste 2
+den nåværende 2
+den pleide 2
+den polske 2
+den på 2
+den riktige 2
+den russiske 2
+den røde 2
+den savnede 2
+den smarteste 2
+den stille 2
+den tapte 2
+den til 2
+den tilhører 2
+den unge 2
+den varme 2
+den ødelagte 2
+den økonomiske 2
+den østlige 2
+den øyen 2
+denne boksen 2
+denne butikken 2
+denne delen 2
+denne dressen 2
+denne elva 2
+denne gamle 2
+denne gangen 2
+denne genseren 2
+denne gitaren 2
+denne hamburgeren 2
+denne heisen 2
+denne jenta 2
+denne katten 2
+denne kjolen 2
+denne klokken 2
+denne knappen 2
+denne kofferten 2
+denne kvinnen 2
+denne med 2
+denne musikken 2
+denne oppgaven 2
+denne ordboken 2
+denne programvaren 2
+denne regelen 2
+denne stien 2
+denne sykkelen 2
+denne t-skjorten 2
+denne teksten 2
+denne vanskelige 2
+denne vaskemaskinen 2
+denne verden 2
+der alene 2
+der bortsett 2
+der du 2
+der ekornet 2
+der finner 2
+der har 2
+der hvor 2
+der innen 2
+der må 2
+der nå 2
+der og 2
+dere allerede 2
+dere at 2
+dere begge 2
+dere bør 2
+dere det 2
+dere egentlig 2
+dere et 2
+dere gjorde 2
+dere ha 2
+dere kommer 2
+dere ned 2
+dere trenger 2
+dere uten 2
+dermed ikke 2
+dessverre jeg 2
+det alt 2
+det avhenger 2
+det begynte 2
+det blitt 2
+det blotte 2
+det brevet 2
+det burde 2
+det ennå 2
+det farlig 2
+det ferdig 2
+det fint 2
+det flere 2
+det fordi 2
+det fortsatte 2
+det franske 2
+det gamle 2
+det ganske 2
+det gjenstår 2
+det gjorde 2
+det gjort 2
+det gå 2
+det helt 2
+det hender 2
+det henger 2
+det høyeste 2
+det kanskje 2
+det kom 2
+det landets 2
+det langt 2
+det lenger 2
+det lever 2
+det ligger 2
+det like 2
+det likevel 2
+det lokale 2
+det lyver 2
+det lå 2
+det mangler 2
+det mannlige 2
+det middag 2
+det nok 2
+det oppe 2
+det oppstår 2
+det over 2
+det overrasker 2
+det passer 2
+det pleide 2
+det raskere 2
+det rene 2
+det rette 2
+det russiske 2
+det røde 2
+det senere 2
+det skjeve 2
+det slutter 2
+det snakkes 2
+det snart 2
+det største 2
+det sure 2
+det sånn 2
+det torsdag 2
+det trengs 2
+det umulige 2
+det uttrykket 2
+det veldig 2
+det verdt 2
+det viser 2
+det vondt 2
+det ytre 2
+dette albumet 2
+dette argumentet 2
+dette blir 2
+dette bråket 2
+dette diktet 2
+dette emnet 2
+dette et 2
+dette firmaet 2
+dette før 2
+dette først 2
+dette her 2
+dette høres 2
+dette jeg 2
+dette kan 2
+dette klarer 2
+dette kommer 2
+dette mer 2
+dette produktet 2
+dette sammen 2
+dette skipet 2
+dette spillet 2
+dette språket 2
+dette valget 2
+dette virkelig 2
+dette året 2
+di er 2
+din anbefaling 2
+din ankomst 2
+din del 2
+din favoritt 2
+din i 2
+din idiot 2
+din konstant 2
+din kunnskap 2
+din med 2
+din mening 2
+din måte 2
+din ætt 2
+dine da 2
+dine i 2
+dine prinsipper 2
+dine på 2
+dine som 2
+disse billettene 2
+disse eplene 2
+disse parasittene 2
+disse problemene 2
+disse setningene 2
+disse skoene 2
+disse spørsmålene 2
+dit alene 2
+dit i 2
+dit minst 2
+dmitri vandret 2
+dollar hver 2
+dollar i 2
+dollar på 2
+dra med 2
+drakk en 2
+drar hjem 2
+drar ikke 2
+drar nå 2
+drar på 2
+drar vi 2
+dratt allerede 2
+drepe dyr 2
+drepte ham 2
+drevet med 2
+drikk vannet 2
+drikke den 2
+drikker bare 2
+drikker en 2
+drikker for 2
+drikker mye 2
+drikker tom 2
+dritt om 2
+dro for 2
+dro fra 2
+dro med 2
+dro tilbake 2
+dronningen spurte 2
+drømmer er 2
+drømmer og 2
+drømmer om 2
+drømte om 2
+du allerede 2
+du alltid 2
+du aner 2
+du ber 2
+du besøkt 2
+du betale 2
+du ble 2
+du brakk 2
+du bruke 2
+du brøt 2
+du dagbok 2
+du de 2
+du denne 2
+du der 2
+du dette 2
+du dit 2
+du drar 2
+du drikke 2
+du driver 2
+du dør 2
+du døv 2
+du eller 2
+du ferien 2
+du forberedt 2
+du forlater 2
+du forstår 2
+du forsøker 2
+du fortalte 2
+du fortelle 2
+du fortsetter 2
+du fremdeles 2
+du født 2
+du gikk 2
+du gitt 2
+du gjenta 2
+du gjerne 2
+du gått 2
+du han 2
+du hatt 2
+du hen 2
+du hjemme 2
+du husker 2
+du høste 2
+du kjenner 2
+du kjøpt 2
+du kjøpte 2
+du kjørte 2
+du klager 2
+du klare 2
+du klokken 2
+du kommet 2
+du lage 2
+du latin 2
+du legge 2
+du lese 2
+du ligner 2
+du likte 2
+du lukket 2
+du løper 2
+du mest 2
+du nok 2
+du ny 2
+du nå 2
+du når 2
+du nøklene 2
+du oppfører 2
+du prøvde 2
+du pønsker 2
+du ri 2
+du ringe 2
+du ris 2
+du sammen 2
+du skille 2
+du skrudd 2
+du sliten 2
+du sovet 2
+du spiller 2
+du svarte 2
+du tatt 2
+du tennene 2
+du trengte 2
+du trøtt 2
+du under 2
+du ut 2
+du uten 2
+du vasker 2
+du vise 2
+du åpne 2
+dukke opp 2
+dukket opp 2
+dum feil 2
+dumme spørsmål 2
+dusjer hver 2
+dypt inn 2
+dyr kinesisk 2
+dyr sykkel 2
+dårlig engelsk 2
+dårlig fantasi 2
+dårlig helse 2
+dårlig i 2
+dårlig skuespiller 2
+dårlig vær 2
+dårlige mennesker 2
+dårlige nyhetene 2
+dø av 2
+dø enn 2
+dø er 2
+døde da 2
+døde før 2
+døde ved 2
+døra etter 2
+døra til 2
+døren som 2
+døren stå 2
+døv og 2
+døv på 2
+effekt mot 2
+egen hånd 2
+egentlig vil 2
+egg i 2
+egg på 2
+egne meninger 2
+ei bok 2
+ei god 2
+ei kråke 2
+ei ordbok 2
+einstein ble 2
+ekornet har 2
+eksempel med 2
+eksempel på 2
+eksempler på 2
+ekstremt pen 2
+eldre ut 2
+eldste av 2
+elefant fly 2
+elevene er 2
+elever som 2
+eller den 2
+eller drikker 2
+eller ei 2
+eller fattig 2
+eller går 2
+eller mer 2
+eller mindre 2
+eller på 2
+eller så 2
+eller til 2
+elske dette 2
+elsker dette 2
+elsker fortsatt 2
+elsker hunden 2
+elsker ikke 2
+elsker katter 2
+elsker lukten 2
+elsker sin 2
+elven er 2
+en allianse 2
+en anelse 2
+en anerkjent 2
+en atombombe 2
+en avskyelig 2
+en avtale 2
+en bilulykke 2
+en bjørn 2
+en blindvei 2
+en blir 2
+en blomst 2
+en blund 2
+en bombe 2
+en bra 2
+en bror 2
+en bursdagskake 2
+en bølge 2
+en desiliter 2
+en dollar 2
+en dritt 2
+en drittsekk 2
+en drosje 2
+en dum 2
+en dvd 2
+en dyd 2
+en dyp 2
+en dyr 2
+en dyrehage 2
+en edderkopp 2
+en effektiv 2
+en eksempel 2
+en ekspert 2
+en elendig 2
+en engel 2
+en enorm 2
+en fan 2
+en fei 2
+en feig 2
+en fest 2
+en fiolinist 2
+en fisk 2
+en flue 2
+en flygende 2
+en fløyte 2
+en fordel 2
+en forklaring 2
+en fyr 2
+en galning 2
+en ganske 2
+en gift 2
+en glede 2
+en godt 2
+en gruppe 2
+en grusom 2
+en har 2
+en hel 2
+en hest 2
+en historie 2
+en hytte 2
+en håndfull 2
+en høflig 2
+en idé 2
+en ikke 2
+en interesse 2
+en internasjonal 2
+en jakke 2
+en journalist 2
+en kamp 2
+en kanadisk 2
+en kanin 2
+en kjendis 2
+en kjent 2
+en kjole 2
+en kjæreste 2
+en kjøkkenkniv 2
+en klype 2
+en ku 2
+en lastebil 2
+en lav 2
+en leppestift 2
+en liste 2
+en litt 2
+en livlig 2
+en lyd 2
+en lyseblå 2
+en løgner 2
+en maske 2
+en masse 2
+en medalje 2
+en melding 2
+en mening 2
+en mental 2
+en merkelig 2
+en midlertidig 2
+en mus 2
+en naturlig 2
+en nydelig 2
+en omfattende 2
+en ond 2
+en parlamentarisk 2
+en penn 2
+en perle 2
+en pinlig 2
+en pistol 2
+en pizza 2
+en planet 2
+en presang 2
+en prest 2
+en profesjonell 2
+en reise 2
+en rettferdig 2
+en rev 2
+en revolusjon 2
+en risiko 2
+en rose 2
+en russisk 2
+en sammenligning 2
+en selv 2
+en selvfølge 2
+en sko 2
+en snill 2
+en sommerfugl 2
+en sosial 2
+en spade 2
+en spasertur 2
+en spion 2
+en stein 2
+en stille 2
+en strøm 2
+en stygg 2
+en sunn 2
+en svømmetur 2
+en taco 2
+en tale 2
+en tanke 2
+en til 2
+en to 2
+en total 2
+en travel 2
+en tung 2
+en tur-retur 2
+en tøff 2
+en ufo 2
+en utfordring 2
+en utmerket 2
+en varm 2
+en varulv 2
+en vellykket 2
+en virkelig 2
+en visjon 2
+en voksen 2
+en voldelig 2
+en åpen 2
+enda bedre 2
+enda en 2
+enda flere 2
+enda ikke 2
+enda lengre 2
+endelig har 2
+endres over 2
+endret situasjonen 2
+ene hånden 2
+eneste i 2
+eneste jeg 2
+eneste menneske 2
+eneste ord 2
+eneste språket 2
+engang at 2
+engang begynt 2
+engelsk enn 2
+engelsk er 2
+engelsk som 2
+engelske ord 2
+england er 2
+enhver kan 2
+enige med 2
+enkel mann 2
+enkel og 2
+enkelhet er 2
+enkelt språk 2
+enkelt ut 2
+enn andre 2
+enn dette 2
+enn gjort 2
+enn halvparten 2
+enn hundre 2
+enn john 2
+enn maria 2
+enn mary 2
+enn med 2
+enn menn 2
+enn noe 2
+enn noen 2
+enn nok 2
+enn når 2
+enn oss 2
+enn to 2
+enn vi 2
+ensomhet er 2
+ensomheten er 2
+epler enn 2
+er allergisk 2
+er amerikansk 2
+er arbeidsløs 2
+er barn 2
+er basert 2
+er beste 2
+er billig 2
+er blant 2
+er brasilianer 2
+er bred 2
+er butikkene 2
+er da 2
+er datamaskinen 2
+er desperat 2
+er dyrt 2
+er elsket 2
+er ennå 2
+er ett 2
+er fargeblind 2
+er fascinerende 2
+er favorittsangen 2
+er feil 2
+er ferdige 2
+er fienden 2
+er finsk 2
+er fordi 2
+er forent 2
+er forgjengelig 2
+er forkjølet 2
+er forlovet 2
+er formålet 2
+er forskjellig 2
+er forvirret 2
+er få 2
+er fæl 2
+er født 2
+er gladest 2
+er gul 2
+er gull 2
+er gutten 2
+er hardt 2
+er hendene 2
+er herlig 2
+er himmelen 2
+er hunden 2
+er hva 2
+er hvit 2
+er hvite 2
+er hyggelig 2
+er ihvertfall 2
+er importert 2
+er innlagt 2
+er intelligent 2
+er invitert 2
+er japansk 2
+er kastet 2
+er kjempeflink 2
+er kjærlighet 2
+er klare 2
+er klokka 2
+er kommet 2
+er komplisert 2
+er kroppens 2
+er kun 2
+er kåt 2
+er lettere 2
+er levende 2
+er lik 2
+er læring 2
+er mary 2
+er meget 2
+er meningsløst 2
+er menneskehetens 2
+er menneskelig 2
+er morfaren 2
+er morsom 2
+er naboer 2
+er nettopp 2
+er ni 2
+er norges 2
+er normalt 2
+er norsk 2
+er nye 2
+er nyttig 2
+er nærmere 2
+er oddetall 2
+er og 2
+er ok 2
+er om 2
+er oppe 2
+er oppstanden 2
+er oppvokst 2
+er passende 2
+er pen 2
+er pene 2
+er penger 2
+er plaget 2
+er problemet 2
+er rar 2
+er realistisk 2
+er reglene 2
+er ren 2
+er romanen 2
+er råtne 2
+er sagt 2
+er sannheten 2
+er sannsynligvis 2
+er sen 2
+er simpelthen 2
+er sinnsykt 2
+er siste 2
+er sjalu 2
+er sjarmerende 2
+er sjenert 2
+er skitne 2
+er skitten 2
+er slett 2
+er slike 2
+er sliten 2
+er smarte 2
+er smartere 2
+er smittsomt 2
+er små 2
+er sokkene 2
+er sprø 2
+er stille 2
+er stort 2
+er straks 2
+er strukturert 2
+er større 2
+er suksessrik 2
+er svaret 2
+er sveitser 2
+er sånn 2
+er særlig 2
+er sønn 2
+er søsteren 2
+er takket 2
+er tid 2
+er tretten 2
+er triste 2
+er tvilsomt 2
+er uendelige 2
+er uenig 2
+er ulike 2
+er utallige 2
+er utenkelig 2
+er utro 2
+er uunnværlig 2
+er vakre 2
+er vann 2
+er vegetarianer 2
+er vennen 2
+er vi 2
+er én 2
+er øynene 2
+erfaring med 2
+erfaringer med 2
+esperanto er 2
+esperanto snakkes 2
+et alvorlig 2
+et angrep 2
+et av 2
+et bad 2
+et band 2
+et bedre 2
+et bestemt 2
+et brød 2
+et demokrati 2
+et dikt 2
+et dypt 2
+et dyr 2
+et enormt 2
+et esel 2
+et fantastisk 2
+et forhold 2
+et forsøk 2
+et fremmed 2
+et fremmedspråk 2
+et glimt 2
+et hotell 2
+et hvert 2
+et kurs 2
+et kyss 2
+et land 2
+et lykkelig 2
+et medlem 2
+et merkelig 2
+et mesterstykke 2
+et mirakel 2
+et musikkinstrument 2
+et møte 2
+et nett 2
+et rikelig 2
+et rundt 2
+et rødt 2
+et selvmord 2
+et sirkus 2
+et slips 2
+et smørbrød 2
+et snev 2
+et speil 2
+et spill 2
+et stygt 2
+et svar 2
+et sykehus 2
+et så 2
+et såkalt 2
+et tog 2
+et tydelig 2
+et uendelig 2
+et ulykkelig 2
+et vidunderbarn 2
+et øyeblikks 2
+ett språk 2
+etter dine 2
+etter et 2
+etter fem 2
+etter henne 2
+etter hjelp 2
+etter jeg 2
+etter katten 2
+etter lang 2
+etter nøye 2
+etter reglene 2
+etter skoletid 2
+etter tennis 2
+etter tre 2
+europa neste 2
+faen er 2
+faktisk ganske 2
+falafel er 2
+faller fra 2
+falt av 2
+falt ned 2
+familie på 2
+familien din 2
+fan av 2
+fanget av 2
+fant ham 2
+fant løsningen 2
+fant ut 2
+fare for 2
+farlig for 2
+farlig å 2
+favorittsangen din 2
+feil enn 2
+feil han 2
+feil når 2
+feil og 2
+feil på 2
+feil ved 2
+feilen igjen 2
+fem dager 2
+fem er 2
+fem hundre 2
+femte etasje 2
+femten år 2
+ferdig dette 2
+ferdig før 2
+ferien din 2
+festen ble 2
+festen hans 2
+fikk et 2
+fikk ham 2
+fikk håret 2
+fikk lov 2
+fikk maskinen 2
+fikk meg 2
+fikk sønnen 2
+fikse den 2
+filmer å 2
+fin dag 2
+fin farge 2
+fin sand 2
+finere enn 2
+finne din 2
+finne ham 2
+finne veien 2
+finner du 2
+finner man 2
+finnes en 2
+finnes i 2
+finnes mange 2
+finnes noen 2
+fint hus 2
+fint om 2
+fint sted 2
+fiolinist jeg 2
+fire år 2
+firma importerer 2
+fisk i 2
+fjellet er 2
+fjor leste 2
+fjor var 2
+flasker appelsinjuice 2
+flasker med 2
+flere dager 2
+flere epler 2
+flere hull 2
+flere timer 2
+flere år 2
+flest tror 2
+fleste av 2
+fleste datamaskiner 2
+fleste som 2
+fleste tilfeller 2
+flinkere enn 2
+flis i 2
+fluer i 2
+fly som 2
+flyet var 2
+flyet vårt 2
+flygende tallerken 2
+flyplassen er 2
+flyr sørover 2
+flyter i 2
+flytter bilen 2
+flyttet hit 2
+fokuserer på 2
+folk finner 2
+folk i 2
+folk på 2
+folk skal 2
+folk var 2
+folks problemer 2
+for aldri 2
+for all 2
+for bare 2
+for bensin 2
+for dine 2
+for feit 2
+for fem 2
+for folk 2
+for full 2
+for gitt 2
+for god 2
+for hans 2
+for hardt 2
+for hjelpen 2
+for katter 2
+for landet 2
+for landets 2
+for livet 2
+for mary 2
+for melk 2
+for minnene 2
+for norge 2
+for nybegynnere 2
+for og 2
+for penger 2
+for resten 2
+for rundt 2
+for ryggen 2
+for seint 2
+for slanger 2
+for tapt 2
+for tvil 2
+for undervisning 2
+for ung 2
+for unge 2
+for vanskelig 2
+for varm 2
+for vår 2
+for våre 2
+for øvrig 2
+foran en 2
+foran tven 2
+forandret seg 2
+forberedt på 2
+forberedt til 2
+forbi meg 2
+forbindelse med 2
+forbindelser til 2
+forbløffet over 2
+fordeler og 2
+fordi de 2
+fordi vi 2
+foreldre er 2
+foreldre var 2
+foreldrene er 2
+foreldrene til 2
+forelske seg 2
+forent med 2
+forente stater 2
+foreslo at 2
+foreslår at 2
+forfatteren av 2
+forhindring med 2
+forklare hvorfor 2
+forklare vitsen 2
+forklaring på 2
+forlate skipet 2
+forlater japan 2
+formerer seg 2
+fornuft er 2
+fornybar energi 2
+forsikre deg 2
+forsiktig på 2
+forsinket med 2
+forsker vil 2
+forskere har 2
+forskeren vil 2
+forskjellen på 2
+forsov seg 2
+forsto ikke 2
+forstyrre deg 2
+forstår at 2
+forstår dere 2
+forstår det 2
+forstår dette 2
+forstår hva 2
+forstått på 2
+forsøker å 2
+fort som 2
+fortalt deg 2
+fortalt tom 2
+fortalte maria 2
+fortell ham 2
+fortell oss 2
+fortelle foreldrene 2
+fortelle henne 2
+fortelle tom 2
+forteller oss 2
+forteller sannheten 2
+fortest mulig 2
+fortjener det 2
+fortjener tillit 2
+fortjener å 2
+fortsatt en 2
+fortsatt etter 2
+fortsetter med 2
+forventet aldri 2
+forventet ikke 2
+forventet å 2
+forårsaket av 2
+fotavtrykk i 2
+fra amerika 2
+fra biblioteket 2
+fra boston 2
+fra brønnen 2
+fra dansk 2
+fra dem 2
+fra fødselen 2
+fra først 2
+fra hans 2
+fra havet 2
+fra henne 2
+fra her 2
+fra historie 2
+fra høyre 2
+fra india 2
+fra japan 2
+fra kina 2
+fra london 2
+fra norsk 2
+fra når 2
+fra oslo 2
+fra oss 2
+fra russland 2
+fra tokyo 2
+fra vest 2
+fra øst 2
+frakk på 2
+frakken på 2
+frakken sin 2
+fram i 2
+framfor kaffe 2
+frankrike har 2
+frankrike og 2
+fransk med 2
+fransk oftere 2
+fransk snakker 2
+fred og 2
+frem en 2
+frem og 2
+frem på 2
+fremdeles ikke 2
+fremmed kom 2
+fremmed språk 2
+fremmede språk 2
+fremtiden er 2
+fri i 2
+fri som 2
+frisk luft 2
+friske grønnsaker 2
+fristet til 2
+frokost klokken 2
+frykt er 2
+frédéric chopin 2
+fuji to 2
+fulgte etter 2
+fullført denne 2
+fullstendig ødelagt 2
+fungerer som 2
+funnet at 2
+funnet en 2
+funnet i 2
+funnet morderen 2
+funnet på 2
+fy faen 2
+fyll ut 2
+fylt med 2
+få bilen 2
+få deg 2
+få dem 2
+få denne 2
+få disse 2
+få muligheten 2
+få på 2
+få snakke 2
+få store 2
+få telefonnummeret 2
+få til 2
+få ting 2
+få vannkopper 2
+får et 2
+får gå 2
+får meg 2
+får mye 2
+får ofte 2
+får se 2
+får tom 2
+får være 2
+fødselen av 2
+født og 2
+følelsen av 2
+føler at 2
+føler en 2
+følg ditt 2
+følg meg 2
+følge din 2
+følte meg 2
+før den 2
+før en 2
+før hun 2
+før kl 2
+før tom 2
+førerkortet ditt 2
+først og 2
+først til 2
+første juledag 2
+første kjæreste 2
+første og 2
+første som 2
+føttene mine 2
+ga broren 2
+ga etter 2
+ga henne 2
+ga mary 2
+gamle damen 2
+gamle folk 2
+gamle nok 2
+gamle skyggefulle 2
+gamle templer 2
+gamle var 2
+gammel fotballspiller 2
+gammel japansk 2
+gammel til 2
+gang at 2
+gang med 2
+gang var 2
+gang vi 2
+ganger med 2
+ganger må 2
+ganger på 2
+ganger synes 2
+ganger to 2
+ganske annerledes 2
+ganske glad 2
+ganske interessant 2
+ganske langt 2
+ganske mye 2
+ganske sikker 2
+ganske sint 2
+ganske strenge 2
+ganske trygg 2
+gatene i 2
+gav opp 2
+gav oss 2
+gave til 2
+gaven er 2
+gavene dere 2
+gavene du 2
+genser til 2
+genseren krymper 2
+genève er 2
+gi boka 2
+gi han 2
+gi henne 2
+gift i 2
+gifte deg 2
+giftet meg 2
+giftet oss 2
+gikk du 2
+gikk en 2
+gikk galt 2
+gikk glipp 2
+gikk langs 2
+gikk mye 2
+gikk over 2
+gikk sakte 2
+gir du 2
+gir en 2
+gir ham 2
+gitarer har 2
+gitt et 2
+gitt henne 2
+gitt mary 2
+gitt opp 2
+gjem deg 2
+gjemmer seg 2
+gjemte seg 2
+gjenlyd av 2
+gjenopplive tom 2
+gjerne bli 2
+gjerne hatt 2
+gjerne stille 2
+gjett hvem 2
+gjorde at 2
+gjorde den 2
+gjorde dette 2
+gjorde i 2
+gjorde jeg 2
+gjorde seg 2
+gjorde sin 2
+gjorde stor 2
+gjorde vondt 2
+gjort av 2
+gjort ham 2
+gjort hva 2
+gjort i 2
+gjort mange 2
+gjort meg 2
+gjort store 2
+gjort til 2
+gjør deg 2
+gjør dem 2
+gjør godt 2
+gjør han 2
+gjør hun 2
+gjør mester 2
+gjør mye 2
+gjør nesten 2
+gjør som 2
+gjør vi 2
+gjøre arbeidet 2
+gjøre bedre 2
+gjøre enda 2
+gjøre hva 2
+gjøre lenger 2
+gjøre om 2
+gjøre som 2
+glad du 2
+glad tom 2
+gladest når 2
+glass med 2
+glem ikke 2
+glemt noe 2
+glemte det 2
+glemte jeg 2
+glemte paraplyen 2
+glimt av 2
+god bok 2
+god dag 2
+god erfaring 2
+god ettermiddag 2
+god helse 2
+god jobb 2
+god jul 2
+god kommunikasjon 2
+god mann 2
+god morgen 2
+god nok 2
+god pris 2
+god skole 2
+god som 2
+god tur 2
+gode erfaringer 2
+gode filmer 2
+gode liv 2
+gode nyheter 2
+gode råd 2
+godt humør 2
+godt liv 2
+godt nok 2
+godt på 2
+godt selskap 2
+godt spørsmål 2
+godt til 2
+gradvis å 2
+greide ikke 2
+greier det 2
+greit å 2
+gren av 2
+gresk til 2
+grupper hvor 2
+grusom bilulykke 2
+grusomme ting 2
+grådig og 2
+gråt aldri 2
+gråter aldri 2
+gråter ikke 2
+gråter meg 2
+gudene vet 2
+gull alt 2
+gull og 2
+gulrøtter er 2
+gulvet er 2
+gutta er 2
+gutten ble 2
+gutten i 2
+gutter som 2
+gå fra 2
+gå først 2
+gå galt 2
+gå litt 2
+gå rett 2
+gå rundt 2
+gå vekk 2
+går av 2
+går blåste 2
+går deg 2
+går dit 2
+går en 2
+går fint 2
+går forbi 2
+går fort 2
+går hun 2
+går med 2
+går nå 2
+går vi 2
+gåtens løsning 2
+gått bort 2
+gått for 2
+gått inn 2
+gått så 2
+gått tom 2
+ha bevis 2
+ha bodd 2
+ha denne 2
+ha flere 2
+ha forutsett 2
+ha fått 2
+ha gitt 2
+ha henne 2
+ha hjelp 2
+ha holdt 2
+ha i 2
+ha klart 2
+ha latt 2
+ha mange 2
+ha mislyktes 2
+ha mistet 2
+ha oss 2
+ha penger 2
+ha sagt 2
+ha visst 2
+hadde bedre 2
+hadde begått 2
+hadde brukt 2
+hadde dratt 2
+hadde du 2
+hadde fortalt 2
+hadde gitt 2
+hadde gått 2
+hadde hørt 2
+hadde mange 2
+hadde mistet 2
+hadde møtt 2
+hadde nok 2
+hadde penger 2
+hadde problemer 2
+hadde snødd 2
+hadde spart 2
+hadde stjålet 2
+hadde å 2
+hagen sin 2
+halv tre 2
+ham ennå 2
+ham et 2
+ham før 2
+ham hvis 2
+ham løpe 2
+ham noe 2
+ham noen 2
+ham når 2
+ham rett 2
+ham som 2
+hamburg er 2
+han allikevel 2
+han bestemte 2
+han besøkte 2
+han blitt 2
+han bodde 2
+han bygde 2
+han deg 2
+han den 2
+han der 2
+han eide 2
+han en 2
+han et 2
+han finner 2
+han foreslo 2
+han gjøre 2
+han grov 2
+han ha 2
+han hater 2
+han hørte 2
+han i 2
+han innrømmet 2
+han kastet 2
+han kjente 2
+han kler 2
+han kuttet 2
+han lever 2
+han leverte 2
+han ligger 2
+han likte 2
+han lo 2
+han lot 2
+han lurer 2
+han lurte 2
+han nektet 2
+han nevnte 2
+han om 2
+han opp 2
+han oppfører 2
+han oppførte 2
+han planlegger 2
+han prøver 2
+han ringer 2
+han ringte 2
+han satte 2
+han sendte 2
+han sint 2
+han skjøt 2
+han skriker 2
+han skriver 2
+han slo 2
+han snorket 2
+han spilte 2
+han sto 2
+han står 2
+han synes 2
+han tenkte 2
+han tror 2
+han uttrykte 2
+han veier 2
+han veldig 2
+han venter 2
+han ventet 2
+han viet 2
+han være 2
+han vært 2
+han åpnet 2
+han ødela 2
+han ønsket 2
+handen din 2
+handler på 2
+hans foreldre 2
+hans har 2
+hans hjelp 2
+hans kone 2
+hans lønn 2
+hans navn 2
+hans på 2
+hans taktikk 2
+hans teori 2
+har alt 2
+har arbeidet 2
+har arr 2
+har besøkt 2
+har deltatt 2
+har diskutert 2
+har dratt 2
+har drept 2
+har drevet 2
+har dødd 2
+har ennå 2
+har er 2
+har faktisk 2
+har falt 2
+har fire 2
+har fjernet 2
+har for 2
+har forandret 2
+har forstått 2
+har fortalt 2
+har ført 2
+har hodepine 2
+har huset 2
+har høy 2
+har igjen 2
+har invitert 2
+har jo 2
+har jobb 2
+har kanskje 2
+har klatret 2
+har kunnskap 2
+har lang 2
+har lav 2
+har like 2
+har lov 2
+har løyet 2
+har man 2
+har minst 2
+har misforstått 2
+har nylig 2
+har nådd 2
+har overrasket 2
+har regnet 2
+har råd 2
+har satt 2
+har selv 2
+har sendt 2
+har sikkert 2
+har små 2
+har solgt 2
+har sovet 2
+har spilt 2
+har spørsmål 2
+har studert 2
+har svarte 2
+har til 2
+har valget 2
+har veldig 2
+har venner 2
+har virkelig 2
+har ødelagt 2
+hardere enn 2
+hardkokte egg 2
+hardt for 2
+hater deg 2
+hater den 2
+hater dere 2
+hater ham 2
+hater mary 2
+hater meg 2
+hater tom 2
+hatet henne 2
+hatt et 2
+hatten er 2
+havre er 2
+havregryn er 2
+heavy metal 2
+hekser gråter 2
+heldig som 2
+heldigvis er 2
+heldigvis var 2
+hele byen 2
+hele dag 2
+hele ettermiddagen 2
+hele området 2
+hele året 2
+heller dø 2
+heller enn 2
+heller gå 2
+helse og 2
+helsen din 2
+helsen hans 2
+helst forhindring 2
+helst kan 2
+helt annen 2
+helt i 2
+helt med 2
+helt naken 2
+helt og 2
+helt til 2
+helte melk 2
+hemmelighet ønsker 2
+hendene før 2
+hendene i 2
+hendene mine 2
+henne bøkene 2
+henne ennå 2
+henne for 2
+henne fordi 2
+henne hjem 2
+henne krysse 2
+henne mye 2
+henne og 2
+henne opp 2
+henne på 2
+henne sjelden 2
+henne én 2
+hennes første 2
+hennes var 2
+hensyn til 2
+hente et 2
+her alene 2
+her eller 2
+her har 2
+her hele 2
+her innen 2
+her kommer 2
+her liker 2
+her på 2
+her som 2
+her vil 2
+hest er 2
+hesten min 2
+hester er 2
+hester i 2
+het mary 2
+heter den 2
+heter denne 2
+heter du 2
+himmelen er 2
+himmelen har 2
+himmelen var 2
+hinder på 2
+hindre det 2
+historie er 2
+historien hans 2
+historien på 2
+historien til 2
+hit fra 2
+hit igjen 2
+hjalp ikke 2
+hjalp meg 2
+hjelp for 2
+hjelp i 2
+hjelp med 2
+hjelp til 2
+hjelpe hverandre 2
+hjelpe til 2
+hjelpen din 2
+hjelper henne 2
+hjelper meg 2
+hjelper mot 2
+hjelper ofte 2
+hjem for 2
+hjem med 2
+hjem nå 2
+hjem snart 2
+hjem tidlig 2
+hjemme er 2
+hjemme fordi 2
+hobbyen min 2
+hodet på 2
+hold deg 2
+holde deg 2
+holde pusten 2
+holde på 2
+holder du 2
+holder en 2
+holder ikke 2
+holder seg 2
+homer fra 2
+hopp over 2
+hoppet over 2
+hos henne 2
+hos legen 2
+hos onkelen 2
+hotell nær 2
+hovedkontoret vårt 2
+hun alltid 2
+hun ba 2
+hun blitt 2
+hun bodde 2
+hun bør 2
+hun døde 2
+hun fant 2
+hun for 2
+hun forlot 2
+hun fortsatte 2
+hun gråter 2
+hun hjem 2
+hun jobber 2
+hun leker 2
+hun likte 2
+hun lot 2
+hun lurte 2
+hun meg 2
+hun mener 2
+hun nektet 2
+hun plukket 2
+hun reddet 2
+hun ringte 2
+hun røyker 2
+hun satte 2
+hun savner 2
+hun sendte 2
+hun skalv 2
+hun som 2
+hun synger 2
+hun tror 2
+hun ut 2
+hun viste 2
+hun å 2
+hund beit 2
+hund dret 2
+hund og 2
+hunden din 2
+hunden sover 2
+hunder lukter 2
+hundre bøker 2
+hus han 2
+husene har 2
+huset har 2
+huset til 2
+huset tilhører 2
+huske denne 2
+huske første 2
+husker det 2
+husker meg 2
+hva dere 2
+hva dette 2
+hva får 2
+hva gjorde 2
+hva hvis 2
+hva hørte 2
+hva kaller 2
+hva lager 2
+hva leser 2
+hva skjer 2
+hva spiste 2
+hva står 2
+hva så 2
+hva søren 2
+hvem bestilte 2
+hvem blant 2
+hvem de 2
+hvem den 2
+hvem eier 2
+hvem han 2
+hvem tom 2
+hvem venter 2
+hvem ville 2
+hver mandag 2
+hver måned 2
+hver uke 2
+hverandre gjennom 2
+hverandre hele 2
+hverandre i 2
+hverandre lenge 2
+hverandre på 2
+hverken høre 2
+hvert barn 2
+hvert fall 2
+hvile litt 2
+hvilke språk 2
+hvilken farge 2
+hvilken gate 2
+hvilken skostørrelse 2
+hvilken tid 2
+hvilken vei 2
+hvis alle 2
+hvis en 2
+hvis mine 2
+hvis og 2
+hvis tom 2
+hvis vi 2
+hvis været 2
+hvisket han 2
+hvit hund 2
+hvit og 2
+hvite kaninen 2
+hvitt pulver 2
+hvor ble 2
+hvor den 2
+hvor druknet 2
+hvor enn 2
+hvor gamle 2
+hvor høy 2
+hvor kaldt 2
+hvor kjøper 2
+hvor som 2
+hvor stor 2
+hvor så 2
+hvor vil 2
+hvordan ble 2
+hvordan en 2
+hvordan foregår 2
+hvordan fungerer 2
+hvordan gikk 2
+hvordan gjør 2
+hvordan kom 2
+hvordan lager 2
+hvordan påvirker 2
+hvordan sier 2
+hvordan skal 2
+hvordan står 2
+hvordan vi 2
+hvorfor blir 2
+hvorfor det 2
+hvorfor flytter 2
+hvorfor gjorde 2
+hvorfor gjør 2
+hvorfor hun 2
+hvorfor kunne 2
+hvorfor lar 2
+hvorfor lider 2
+hvorfor lånte 2
+hvorfor plager 2
+hvorfor ringte 2
+hvorfor sier 2
+hvorfor skjer 2
+hvorfor skjærer 2
+hvorfor stakk 2
+hvorfor stoler 2
+hvorfor tror 2
+hånd i 2
+hånd med 2
+hånd når 2
+hånda mi 2
+håndflatene dine 2
+håpe på 2
+håper de 2
+hår i 2
+håret hennes 2
+håret sitt 2
+høre at 2
+høre de 2
+høre meg 2
+hører jeg 2
+høres det 2
+høres ut 2
+høres veldig 2
+hørt noe 2
+hørte den 2
+hørte meg 2
+hørte til 2
+høy er 2
+høy og 2
+høye lyder 2
+høyre arm 2
+høyt og 2
+i april 2
+i asia 2
+i avisa 2
+i avisen 2
+i barndommen 2
+i bassenget 2
+i beijing 2
+i bilen 2
+i blant 2
+i boksen 2
+i brann 2
+i brasil 2
+i deg 2
+i detalj 2
+i din 2
+i dyrehagen 2
+i egypt 2
+i ei 2
+i endring 2
+i eska 2
+i fem 2
+i femte 2
+i ferien 2
+i fingeren 2
+i fjellet 2
+i forbindelse 2
+i forslaget 2
+i fransk 2
+i fåreklær 2
+i gatene 2
+i gjennomsnitt 2
+i god 2
+i granskauen 2
+i gruppen 2
+i halen 2
+i havnen 2
+i helgen 2
+i hellas 2
+i hennes 2
+i historien 2
+i hjel 2
+i horisonten 2
+i hver 2
+i hvert 2
+i hånd 2
+i indonesia 2
+i jobben 2
+i kairo 2
+i kirken 2
+i klubben 2
+i koma 2
+i korthet 2
+i kroppen 2
+i kø 2
+i latin 2
+i lufta 2
+i magen 2
+i meg 2
+i mellommenneskelige 2
+i mellomtiden 2
+i mine 2
+i moskva 2
+i munnen 2
+i nesa 2
+i nesten 2
+i nord 2
+i oppfyllelse 2
+i overmorgen 2
+i ovnen 2
+i pisa 2
+i praksis 2
+i rekkefølge 2
+i san 2
+i sanden 2
+i seg 2
+i seng 2
+i skam 2
+i skuffen 2
+i slike 2
+i snøen 2
+i sofaen 2
+i solen 2
+i sommerferien 2
+i stadig 2
+i storbritannia 2
+i stykker 2
+i svarten 2
+i svømming 2
+i søtsaker 2
+i søvn 2
+i tennis 2
+i teorien 2
+i tidlig 2
+i toget 2
+i tom 2
+i trafikken 2
+i trøbbel 2
+i ulm 2
+i vask 2
+i vater 2
+i virkeligheten 2
+i været 2
+i én 2
+i øya 2
+idé å 2
+idéen er 2
+igjen døra 2
+igjen en 2
+igjen et 2
+igjen senere 2
+igjen soveromsdøren 2
+ikke akkurat 2
+ikke av 2
+ikke be 2
+ikke bedt 2
+ikke bestemme 2
+ikke blitt 2
+ikke bort 2
+ikke brenner 2
+ikke bryr 2
+ikke bygge 2
+ikke bør 2
+ikke de 2
+ikke deg 2
+ikke delta 2
+ikke der 2
+ikke drepe 2
+ikke dum 2
+ikke døv 2
+ikke ei 2
+ikke eksisterer 2
+ikke etter 2
+ikke fantes 2
+ikke finnes 2
+ikke flere 2
+ikke forklare 2
+ikke forklart 2
+ikke forskjellen 2
+ikke forstyrr 2
+ikke forstått 2
+ikke fortell 2
+ikke funnet 2
+ikke fått 2
+ikke første 2
+ikke gikk 2
+ikke glipp 2
+ikke gråte 2
+ikke gått 2
+ikke hanskene 2
+ikke hatt 2
+ikke hele 2
+ikke imponert 2
+ikke inn 2
+ikke invitert 2
+ikke japansk 2
+ikke kast 2
+ikke kaste 2
+ikke kjent 2
+ikke klarer 2
+ikke klatre 2
+ikke kontrollere 2
+ikke lagt 2
+ikke le 2
+ikke lese 2
+ikke løfte 2
+ikke løse 2
+ikke løses 2
+ikke mat 2
+ikke melde 2
+ikke meningen 2
+ikke merke 2
+ikke mine 2
+ikke mitt 2
+ikke morsomt 2
+ikke motstå 2
+ikke må 2
+ikke nå 2
+ikke nødvendig 2
+ikke nøl 2
+ikke opptatt 2
+ikke ord 2
+ikke orker 2
+ikke overbevist 2
+ikke penger 2
+ikke prøv 2
+ikke puste 2
+ikke rik 2
+ikke risikere 2
+ikke røyk 2
+ikke sammen 2
+ikke sin 2
+ikke sint 2
+ikke skader 2
+ikke skjer 2
+ikke skjønner 2
+ikke skrive 2
+ikke skuff 2
+ikke slutte 2
+ikke slå 2
+ikke spøk 2
+ikke spørre 2
+ikke sta 2
+ikke stigen 2
+ikke stole 2
+ikke stolt 2
+ikke stor 2
+ikke svensk 2
+ikke synes 2
+ikke sånn 2
+ikke tape 2
+ikke tar 2
+ikke te 2
+ikke tenk 2
+ikke tilfeldigvis 2
+ikke tillatt 2
+ikke trenge 2
+ikke trist 2
+ikke trodd 2
+ikke tull 2
+ikke tulle 2
+ikke vann 2
+ikke vanskelig 2
+ikke vekk 2
+ikke vekke 2
+ikke verdt 2
+ikke vite 2
+ikke vitsen 2
+ikke vondt 2
+ikke våg 2
+imot dem 2
+importerer te 2
+importert fra 2
+india er 2
+informasjon om 2
+informasjon på 2
+informasjonen de 2
+ingen allergier 2
+ingen byrde 2
+ingen effekt 2
+ingen fartsgrense 2
+ingen forstår 2
+ingen får 2
+ingen hjemme 2
+ingen kjenner 2
+ingen kom 2
+ingen måte 2
+ingen naboer 2
+ingen nære 2
+ingen skam 2
+ingen spurte 2
+ingen vits 2
+ingen ære 2
+ingenting jeg 2
+ingenting som 2
+ingenting vi 2
+inn den 2
+inn oppgaven 2
+inn stilen 2
+inneholder mye 2
+inneholder noen 2
+innlagt på 2
+innrøm det 2
+innrømmer at 2
+innsjøen er 2
+innså ikke 2
+innså jeg 2
+intelligens er 2
+interessant historie 2
+interesse for 2
+interesse han 2
+interesserer meg 2
+internasjonal karakter 2
+intet gjøre 2
+intet nytt 2
+inviterte meg 2
+inviterte naboene 2
+involvert i 2
+irriterende å 2
+is er 2
+isen smelter 2
+italienske sangen 2
+ja eller 2
+jakt etter 2
+januar er 2
+japan for 2
+japan var 2
+japansk bil 2
+jeg allerede 2
+jeg anbefaler 2
+jeg angrer 2
+jeg anklager 2
+jeg ansatte 2
+jeg ante 2
+jeg behøver 2
+jeg bestilte 2
+jeg besvimte 2
+jeg betaler 2
+jeg brente 2
+jeg drikke 2
+jeg enda 2
+jeg finne 2
+jeg flytter 2
+jeg foran 2
+jeg foreslår 2
+jeg foretok 2
+jeg forsto 2
+jeg forsøkte 2
+jeg fortjener 2
+jeg fortsatt 2
+jeg fra 2
+jeg fulgte 2
+jeg fått 2
+jeg først 2
+jeg gav 2
+jeg giftet 2
+jeg ham 2
+jeg hjemme 2
+jeg holde 2
+jeg hoppet 2
+jeg hverken 2
+jeg inn 2
+jeg innså 2
+jeg kaller 2
+jeg kalte 2
+jeg kjøpt 2
+jeg klatret 2
+jeg krever 2
+jeg lar 2
+jeg lette 2
+jeg lovte 2
+jeg lært 2
+jeg med 2
+jeg merket 2
+jeg mistenker 2
+jeg nok 2
+jeg ofte 2
+jeg oppførte 2
+jeg overtalte 2
+jeg pleier 2
+jeg regnet 2
+jeg ropte 2
+jeg rydder 2
+jeg simpelthen 2
+jeg skammer 2
+jeg skrive 2
+jeg slette 2
+jeg slo 2
+jeg smilte 2
+jeg spise 2
+jeg stemte 2
+jeg stille 2
+jeg stjal 2
+jeg støtte 2
+jeg sverger 2
+jeg synger 2
+jeg takler 2
+jeg trakk 2
+jeg treffer 2
+jeg trykket 2
+jeg tør 2
+jeg underviser 2
+jeg vasker 2
+jeg vedder 2
+jeg velge 2
+jeg ventet 2
+jeg verdsetter 2
+jeg virkelig 2
+jeg vokste 2
+jeg vurderer 2
+jeg åpner 2
+jenta hadde 2
+jenta som 2
+jenta svømme 2
+jentene er 2
+jenter på 2
+jo alltid 2
+jo her 2
+jo mere 2
+jo mindre 2
+jobbe i 2
+jobbe mye 2
+jobbe på 2
+jobben er 2
+jobben går 2
+jobben i 2
+jobber du 2
+jobber fra 2
+jobber til 2
+jobber tregt 2
+jobbet her 2
+jobbet i 2
+jobbet på 2
+john kom 2
+kaffe drikker 2
+kaffe eller 2
+kaffe og 2
+kaffe om 2
+kake til 2
+kald på 2
+kaldt til 2
+kalle det 2
+kaller datamaskinen 2
+kaller de 2
+kaller du 2
+kalles det 2
+kalte katten 2
+kan deles 2
+kan dessverre 2
+kan forklare 2
+kan forutse 2
+kan godt 2
+kan hun 2
+kan hverken 2
+kan høre 2
+kan ingen 2
+kan knapt 2
+kan la 2
+kan lett 2
+kan like 2
+kan løpe 2
+kan nesten 2
+kan også 2
+kan ramme 2
+kan spise 2
+kan svare 2
+kan variere 2
+kan velge 2
+kan vise 2
+kanskje et 2
+kanskje har 2
+karakter og 2
+kart over 2
+kartet på 2
+kasserollen og 2
+kastet bort 2
+katrine og 2
+katten sitter 2
+kina er 2
+kinesisk mat 2
+kinnene mine 2
+kjedet seg 2
+kjempeflink til 2
+kjemper mot 2
+kjempet en 2
+kjenner ingen 2
+kjenner mange 2
+kjennskap til 2
+kjent som 2
+kjent tom 2
+kjent ut 2
+kjente du 2
+kjente igjen 2
+kjente pusten 2
+kjente til 2
+kjole til 2
+kjolen din 2
+kjolen sin 2
+kjæreste som 2
+kjøleskapet er 2
+kjøp en 2
+kjøpe epler 2
+kjøpe et 2
+kjøpe ris 2
+kjøper dere 2
+kjøper tom 2
+kjøpt bøker 2
+kjøpt det 2
+kjøpt meg 2
+kjøpte den 2
+kjøpte dette 2
+kjøpte han 2
+kjøpte jeg 2
+kjøpte like 2
+kjør over 2
+kjøre meg 2
+kjøre på 2
+kjører bil 2
+kjører deg 2
+kjører moped 2
+kjørte bil 2
+kjørte bilen 2
+kjørte på 2
+kjøttet var 2
+klare og 2
+klare til 2
+klare å 2
+klarer du 2
+klarer jeg 2
+klart at 2
+klart som 2
+klarte de 2
+klarte jeg 2
+klasserommet vårt 2
+kler deg 2
+klimaet er 2
+klokka halv 2
+klokka åtte 2
+klokken din 2
+klokken fem 2
+klokken ti 2
+klype salt 2
+kniv i 2
+knivene og 2
+kniver og 2
+knuste vinduet 2
+knyttet til 2
+kofferten er 2
+kofferten min 2
+kollega før 2
+kom aldri 2
+kom flere 2
+kom fort 2
+kom fra 2
+kom hun 2
+kom jeg 2
+kom snart 2
+kom så 2
+komme for 2
+komme frem 2
+komme hjem 2
+komme oss 2
+komme så 2
+komme tilbake 2
+kommer alltid 2
+kommer av 2
+kommer folk 2
+kommer han 2
+kommer hun 2
+kommer kanskje 2
+kommer også 2
+kommer vi 2
+kommet ennå 2
+kommet fram 2
+kommet hjem 2
+kommet på 2
+kommet tilbake 2
+kommunikasjon med 2
+komplekst og 2
+kone er 2
+kone og 2
+kone sier 2
+kongen har 2
+konstant vilje 2
+kontanter på 2
+kontoret mitt 2
+kort tid 2
+korte setninger 2
+koselig å 2
+koster det 2
+koster en 2
+krangel med 2
+krever at 2
+krig mot 2
+kristus er 2
+krone spart 2
+krone tjent 2
+kropp og 2
+krysse elven 2
+krysse veien 2
+kunne blitt 2
+kunne bo 2
+kunne dra 2
+kunne fortelle 2
+kunne gi 2
+kunne kjøre 2
+kunne klart 2
+kunne si 2
+kunne skje 2
+kunne stole 2
+kunne svare 2
+kunne synge 2
+kunne vært 2
+kurs for 2
+kuttet den 2
+kveld og 2
+kysten av 2
+københavn er 2
+la den 2
+la igjen 2
+la litt 2
+la tom 2
+lagde en 2
+lagde kristoffer 2
+lage deg 2
+lage kjøttboller 2
+lage litt 2
+lage noe 2
+lager du 2
+lager frokost 2
+lager mat 2
+laget en 2
+laget i 2
+lagt brillene 2
+land er 2
+land i 2
+land på 2
+land som 2
+landet ditt 2
+landets økonomi 2
+landskapet man 2
+lang dag 2
+lang historie 2
+lang og 2
+lang rekke 2
+lange bein 2
+lange håret 2
+lange reiser 2
+lange ører 2
+langt har 2
+langt mer 2
+lasagne i 2
+laste ned 2
+lav rente 2
+lav stemme 2
+lavere enn 2
+leder til 2
+ledig i 2
+legen gjorde 2
+legen sin 2
+legg merke 2
+legg til 2
+legger merke 2
+legger til 2
+lei seg 2
+leilighet er 2
+leiligheten hennes 2
+leiligheten min 2
+lekte med 2
+lenge der 2
+lenge for 2
+lenge før 2
+lenge kommer 2
+lenge som 2
+lengre tid 2
+leppene hans 2
+ler av 2
+les dette 2
+lese det 2
+lese latin 2
+lese mye 2
+leser boka 2
+leser ei 2
+leser under 2
+leserne får 2
+lest boken 2
+lest brevet 2
+lest den 2
+lest ferdig 2
+leste alle 2
+leste jeg 2
+lett bli 2
+lett ut 2
+lettere sagt 2
+leve etter 2
+leve evig 2
+leve lenger 2
+leve med 2
+leve på 2
+lever bare 2
+lever et 2
+levert inn 2
+leverte inn 2
+lider så 2
+ligger en 2
+ligger hun 2
+ligger og 2
+ligger til 2
+ligger ved 2
+ligner veldig 2
+like høye 2
+like mange 2
+like ved 2
+like viktig 2
+liker bilen 2
+liker de 2
+liker dyr 2
+liker høsten 2
+liker katter 2
+liker klassisk 2
+liker musikk 2
+liker musikken 2
+liker og 2
+liker oss 2
+liker søtsaker 2
+liker våren 2
+likt det 2
+likte aldri 2
+likte det 2
+likte du 2
+likte henne 2
+likte tom 2
+likte å 2
+lily fordi 2
+linje fra 2
+linje på 2
+lite kunnskap 2
+lite og 2
+lite veltalende 2
+liten boks 2
+liten for 2
+liter vann 2
+litt før 2
+litt høyere 2
+litt med 2
+litt melk 2
+litt ned 2
+litt på 2
+litt saktere 2
+litt salt 2
+litt søvn 2
+litt te 2
+litt tidligere 2
+liv som 2
+liv uten 2
+livet av 2
+livet hans 2
+livet sammen 2
+livets opphold 2
+livets største 2
+lopper fra 2
+los angeles 2
+lot døren 2
+lot oss 2
+lot vannet 2
+luigi er 2
+lukk døra 2
+lukk igjen 2
+lukte ugler 2
+lunsj i 2
+lurte på 2
+lykkelig liv 2
+lykkelige dager 2
+lytte til 2
+lyve til 2
+lå et 2
+lå i 2
+lå på 2
+låne bilen 2
+låne meg 2
+låne ordboken 2
+låne penger 2
+låne telefonen 2
+låner deg 2
+lås og 2
+låse døren 2
+lær deg 2
+lære deg 2
+lære det 2
+lære engelsk 2
+lære tysk 2
+lærer fransk 2
+lærer meg 2
+læreren gav 2
+læreren var 2
+læring i 2
+lært å 2
+lærte han 2
+løftet sitt 2
+løk kan 2
+lønn kan 2
+lønnen hans 2
+løp ned 2
+løp ut 2
+løse dette 2
+løsningen på 2
+makten i 2
+man bli 2
+man burde 2
+man bør 2
+man knytter 2
+man spiller 2
+man synes 2
+man tar 2
+man til 2
+man vet 2
+man virkelig 2
+mandag i 2
+mandlene mine 2
+mange bekker 2
+mange engelske 2
+mange fiender 2
+mange kanadiere 2
+mange kunder 2
+mange kvinner 2
+mange måter 2
+mange ord 2
+mange pistoler 2
+mange prosjekter 2
+mange spådommer 2
+mange stjerner 2
+mange studenter 2
+mangler en 2
+mann drikker 2
+mann i 2
+mann og 2
+mann sier 2
+mann stjeler 2
+mannen drikker 2
+mannen for 2
+mannen før 2
+mannen jeg 2
+maria ble 2
+maria bodde 2
+maria hadde 2
+maria hva 2
+maria kommer 2
+maria lenger 2
+maria om 2
+maria sa 2
+maria snakker 2
+maria tar 2
+maria trenger 2
+mars er 2
+martine er 2
+mary ba 2
+mary drepte 2
+mary fortalte 2
+mary hadde 2
+mary i 2
+mary kommer 2
+mary kranglet 2
+mary la 2
+mary og 2
+mary om 2
+mary skulle 2
+mary slo 2
+mary til 2
+mat på 2
+maten blir 2
+maten de 2
+maten i 2
+maten som 2
+maten var 2
+med alt 2
+med babyen 2
+med barn 2
+med bilen 2
+med bill 2
+med blyant 2
+med din 2
+med dine 2
+med disse 2
+med du 2
+med elevene 2
+med folk 2
+med foreldrene 2
+med gamle 2
+med glede 2
+med halen 2
+med hit 2
+med hånden 2
+med inflasjonen 2
+med italia 2
+med jeg 2
+med kaldt 2
+med katten 2
+med kjæresten 2
+med kniven 2
+med kåpen 2
+med lekene 2
+med leksene 2
+med litt 2
+med læreren 2
+med mange 2
+med mer 2
+med måte 2
+med noe 2
+med nye 2
+med nød 2
+med oppvasken 2
+med ord 2
+med paraply 2
+med spisepinner 2
+med stor 2
+med store 2
+med sønnen 2
+med to 2
+med vakre 2
+med vann 2
+med veldig 2
+med venstre 2
+meg albumet 2
+meg aldri 2
+meg alene 2
+meg alt 2
+meg av 2
+meg beskjed 2
+meg bildene 2
+meg boken 2
+meg denne 2
+meg dette 2
+meg din 2
+meg dårlig 2
+meg enig 2
+meg fransk 2
+meg få 2
+meg gal 2
+meg ganske 2
+meg glad 2
+meg gå 2
+meg hjelpe 2
+meg hjem 2
+meg hver 2
+meg hvorfor 2
+meg ingenting 2
+meg lykkelig 2
+meg mange 2
+meg mens 2
+meg mer 2
+meg ned 2
+meg nesten 2
+meg noen 2
+meg nå 2
+meg opp 2
+meg sannheten 2
+meg skylden 2
+meg syk 2
+meg ta 2
+meg to 2
+meg ut 2
+meg uten 2
+meg virkelig 2
+meget god 2
+melde meg 2
+melk fra 2
+melk hver 2
+mellom dem 2
+mellom disse 2
+mellom gode 2
+mellom problemer 2
+mellom seg 2
+mellommenneskelige relasjoner 2
+men aldri 2
+men der 2
+men dessverre 2
+men er 2
+men et 2
+men for 2
+men har 2
+men hva 2
+men hvem 2
+men hvor 2
+men kan 2
+men snart 2
+men som 2
+mener de 2
+mening om 2
+meningen at 2
+meningen med 2
+meninger har 2
+meningsløst å 2
+menn i 2
+menneskelig å 2
+mennesker av 2
+mennesker fra 2
+mennesker lever 2
+mennesker liker 2
+mennesker med 2
+mennesker og 2
+mens de 2
+ment å 2
+mental holdning 2
+mente det 2
+mer av 2
+mer eller 2
+mer er 2
+mer grønnsaker 2
+mer i 2
+mer informasjon 2
+mer med 2
+mer mellom 2
+mer populær 2
+mere ost 2
+merke noen 2
+mest populære 2
+mest vanlige 2
+meste ut 2
+mesterstykke og 2
+mestre engelsk 2
+metode er 2
+metode for 2
+metodene for 2
+mette marit 2
+middag med 2
+midt på 2
+mike er 2
+min adresse 2
+min bok 2
+min da 2
+min datter 2
+min drar 2
+min familie 2
+min fars 2
+min feil 2
+min ga 2
+min gjorde 2
+min gjør 2
+min greie 2
+min hater 2
+min kjører 2
+min kollega 2
+min ligger 2
+min liker 2
+min metode 2
+min sjel 2
+min skriker 2
+min slutter 2
+min store 2
+min tante 2
+min tror 2
+min verden 2
+mindre du 2
+mindre ost 2
+mine ble 2
+mine elsker 2
+mine hender 2
+mine i 2
+mine setninger 2
+mine tanker 2
+mine til 2
+minner meg 2
+minnes jeg 2
+minst seksti 2
+minst tre 2
+minutter for 2
+minutter senere 2
+misfornøyd med 2
+misforstått meg 2
+miste deg 2
+miste innflytelse 2
+mistenker at 2
+mistenkt for 2
+mistet alt 2
+mistet blyanten 2
+mistet en 2
+mistet lommeboken 2
+mistet noe 2
+mistet nøkkelen 2
+mistet nøklene 2
+mitt beste 2
+mitt hjerte 2
+mitt land 2
+mitt livs 2
+mitt navn 2
+mitt tredje 2
+moderne kunst 2
+mor og 2
+mor strikket 2
+morgen når 2
+morgen tidlig 2
+morsom dag 2
+mosen når 2
+mot den 2
+mot dette 2
+mot en 2
+mot havet 2
+mot henne 2
+mot kreft 2
+mot lag 2
+mot noe 2
+mot tom 2
+motstå fristelsen 2
+mulig jeg 2
+mulighet til 2
+musene på 2
+musikken med 2
+mye arbeid 2
+mye at 2
+mye flinkere 2
+mye hjelp 2
+mye kaffe 2
+mye kjøtt 2
+mye melk 2
+mye morsommere 2
+mye pizza 2
+mye på 2
+mye ris 2
+mye stress 2
+mye støy 2
+mye tyngre 2
+mye vind 2
+mye øl 2
+må advare 2
+må alltid 2
+må arbeide 2
+må bestemme 2
+må fortelle 2
+må holde 2
+må huske 2
+må inkludere 2
+må jobbe 2
+må kjøpe 2
+må lese 2
+må lære 2
+må man 2
+må reagere 2
+må rengjøre 2
+må slutte 2
+må tro 2
+mål for 2
+målet ditt 2
+målet er 2
+måned er 2
+måneden i 2
+måten du 2
+måtte forklare 2
+måtte få 2
+mørkere og 2
+mørkt under 2
+møte ham 2
+møter de 2
+møtes på 2
+møtt deg 2
+møtt henne 2
+møtte henne 2
+natt for 2
+natten er 2
+naturen er 2
+navn er 2
+ned for 2
+ned fra 2
+ned litt 2
+ned og 2
+ned radioen 2
+ned skråningen 2
+ned trappene 2
+nederland er 2
+negativ virkning 2
+nei takk 2
+nesen din 2
+neste morgen 2
+neste søndag 2
+nesten hele 2
+nesten påkjørt 2
+nesten som 2
+nettbrett og 2
+nettopp lest 2
+nettopp spist 2
+nevnte at 2
+ni hundre 2
+ni timer 2
+noe bedre 2
+noe godt 2
+noe interessant 2
+noe kommer 2
+noe mat 2
+noe mindre 2
+noe noen 2
+noe rart 2
+noe skjer 2
+noe svar 2
+noe tom 2
+noe valg 2
+noen annen 2
+noen bøker 2
+noen demonstranter 2
+noen egg 2
+noen er 2
+noen forskjell 2
+noen her 2
+noen hvor 2
+noen kunne 2
+noen minutter 2
+noen på 2
+noen seg 2
+noen sjanse 2
+noen tilfeller 2
+noen timer 2
+noen tror 2
+noen virkelig 2
+noen år 2
+noen ærend 2
+noensinne har 2
+nok for 2
+nok gå 2
+nok vært 2
+nordiske landene 2
+nordmann er 2
+nordmannen var 2
+nordmenn har 2
+norge for 2
+norge med 2
+norges hovedstad 2
+norsk språk 2
+nummer av 2
+ny kjæreste 2
+ny kontrakt 2
+nye bilen 2
+nye bukser 2
+nye her 2
+nye kjæreste 2
+nye læreren 2
+nye paven 2
+nye setninger 2
+nytt språk 2
+nå i 2
+nå ligger 2
+nå snakker 2
+nå toget 2
+nå var 2
+når alle 2
+når dere 2
+når går 2
+når har 2
+når katten 2
+når mary 2
+når min 2
+når reiste 2
+når selgeren 2
+når starter 2
+når står 2
+når åpnet 2
+nær museene 2
+nærmer seg 2
+nød og 2
+nødt å 2
+nøkkelen i 2
+nøkkelen min 2
+nøklene mine 2
+nøl med 2
+nøyaktig hvor 2
+nøyaktig som 2
+nøye med 2
+ofte bør 2
+ofte drar 2
+ofte forvekslet 2
+ofte hjelper 2
+ofte med 2
+ofte mellom 2
+ofte oppe 2
+ofte på 2
+ofte tennis 2
+ofte ting 2
+oftere nå 2
+og alltid 2
+og alt 2
+og bilder 2
+og ble 2
+og bli 2
+og busker 2
+og dag 2
+og danset 2
+og datt 2
+og der 2
+og dere 2
+og dette 2
+og enkelt 2
+og ensom 2
+og fem 2
+og femti 2
+og fikk 2
+og flere 2
+og fordomsfri 2
+og fransk 2
+og fremst 2
+og frukt 2
+og fysisk 2
+og føler 2
+og gaflene 2
+og gir 2
+og gjorde 2
+og god 2
+og grådig 2
+og grønne 2
+og grønnsaker 2
+og handler 2
+og hans 2
+og helt 2
+og hent 2
+og henter 2
+og hoppet 2
+og hvem 2
+og hvor 2
+og høre 2
+og inn 2
+og inviterte 2
+og kjøper 2
+og kom 2
+og komme 2
+og leke 2
+og leker 2
+og lære 2
+og læring 2
+og makrell 2
+og makt 2
+og martine 2
+og menneskets 2
+og mor 2
+og mot 2
+og mørkere 2
+og ned 2
+og nekter 2
+og nærhet 2
+og onde 2
+og orden 2
+og overdrive 2
+og positive 2
+og poteter 2
+og praktisk 2
+og privatliv 2
+og på 2
+og rikdom 2
+og rima 2
+og ris 2
+og ro 2
+og rydde 2
+og salt 2
+og samtidig 2
+og selv 2
+og siste 2
+og skriver 2
+og smiler 2
+og sov 2
+og støtte 2
+og sur 2
+og svensk 2
+og svømme 2
+og syk 2
+og tar 2
+og tenkte 2
+og tilbake 2
+og tilgi 2
+og tillit 2
+og trakk 2
+og tørr 2
+og ulemper 2
+og var 2
+og vent 2
+og ventet 2
+og vis 2
+også at 2
+også deg 2
+også i 2
+også å 2
+ok for 2
+olje på 2
+om alle 2
+om andre 2
+om bare 2
+om boston 2
+om brannen 2
+om broren 2
+om dem 2
+om dere 2
+om et 2
+om familien 2
+om feminisme 2
+om fremtiden 2
+om gangen 2
+om hans 2
+om hvor 2
+om hvorfor 2
+om høsten 2
+om krig 2
+om mange 2
+om natta 2
+om sin 2
+om så 2
+om veien 2
+ombord på 2
+omtrent ti 2
+onkel er 2
+opp av 2
+opp huset 2
+opp håpet 2
+opp igjen 2
+opp kjøttet 2
+opp litt 2
+opp mot 2
+opp sent 2
+opp tom 2
+opp å 2
+oppe hele 2
+oppføre seg 2
+oppfører deg 2
+oppførselen din 2
+oppførte meg 2
+oppgave er 2
+oppgave å 2
+oppgaven min 2
+oppgaver til 2
+opplagt at 2
+opplevelser i 2
+oppmerksom på 2
+oppnådd en 2
+oppskrift på 2
+opptatt akkurat 2
+opptatt hele 2
+opptatt med 2
+oppvokst på 2
+ord jeg 2
+ordboken din 2
+orden i 2
+ordene på 2
+ordet sex 2
+ordner seg 2
+ordspråk som 2
+orker ikke 2
+oslo og 2
+oss at 2
+oss bak 2
+oss begge 2
+oss er 2
+oss hele 2
+oss hjemme 2
+oss håpe 2
+oss lage 2
+oss liker 2
+oss opp 2
+oss ringe 2
+oss tilbake 2
+oss vente 2
+oss vår 2
+oss være 2
+over alle 2
+over datteren 2
+over et 2
+over grøfta 2
+over hvilken 2
+over meg 2
+over oppførselen 2
+over resultatene 2
+over tid 2
+over ting 2
+over veien 2
+overdrive sine 2
+overflaten på 2
+overgangen fra 2
+overhodet ikke 2
+overraskende enkel 2
+overrasket ut 2
+oversett denne 2
+oversette denne 2
+oversette fra 2
+oversettelsen er 2
+oversetter mine 2
+overtale tom 2
+overtalte tom 2
+ovnen til 2
+pablo og 2
+pappa jobber 2
+par jeans 2
+par spørsmål 2
+par timer 2
+paraply i 2
+parasittene formerer 2
+paris for 2
+parkere bilen 2
+pasienten ble 2
+passer det 2
+passer ikke 2
+peke på 2
+pengene fra 2
+pengene mine 2
+penger du 2
+penger er 2
+penger for 2
+penger jeg 2
+penger ved 2
+pennen din 2
+personer i 2
+personer om 2
+personer på 2
+plager meg 2
+planen hans 2
+planen i 2
+planen min 2
+plass i 2
+plass til 2
+pluss en 2
+pluss fire 2
+plutselig rødt 2
+politiet tok 2
+politiets jobb 2
+polske ambassadøren 2
+populær i 2
+portugal er 2
+potetene veldig 2
+praksis er 2
+presentere gåtens 2
+presidenten er 2
+press på 2
+prinsen forelsket 2
+problem i 2
+problem med 2
+problem som 2
+problemer som 2
+problemet kom 2
+problemet på 2
+produktet før 2
+prosent enig 2
+prøv og 2
+prøve i 2
+prøver frakken 2
+prøver på 2
+pulver kan 2
+pusser du 2
+på arbeid 2
+på barn 2
+på barneskolen 2
+på begge 2
+på brevet 2
+på bøker 2
+på dansk 2
+på disse 2
+på døra 2
+på egen 2
+på egenhånd 2
+på ett 2
+på etter 2
+på facebook 2
+på feil 2
+på folk 2
+på fritiden 2
+på gresset 2
+på gud 2
+på går 2
+på han 2
+på hendene 2
+på hest 2
+på historien 2
+på hunden 2
+på hytta 2
+på høyskolen 2
+på ingen 2
+på innsiden 2
+på jobben 2
+på julenissen 2
+på kartet 2
+på kinnene 2
+på kinoen 2
+på kjøpesenteret 2
+på komfyren 2
+på konferansen 2
+på konserten 2
+på kysten 2
+på landsbygda 2
+på lily 2
+på listen 2
+på lørdag 2
+på mandager 2
+på maria 2
+på mitt 2
+på moten 2
+på mt 2
+på målet 2
+på noen 2
+på nye 2
+på nytt 2
+på plass 2
+på problemet 2
+på på 2
+på rekke 2
+på restaurant 2
+på saksofon 2
+på scenen 2
+på sengen 2
+på sin 2
+på sjøen 2
+på skulderen 2
+på skuldrene 2
+på sparebluss 2
+på stolen 2
+på to 2
+på tur 2
+på tvers 2
+på vakre 2
+på været 2
+på youtube 2
+på én 2
+på øynene 2
+påkjørt av 2
+påvirker det 2
+pølser med 2
+pønsker på 2
+radikaler er 2
+rakk såvidt 2
+rar lyd 2
+rart at 2
+realisere sin 2
+redd ut 2
+reddet meg 2
+redsel for 2
+reglene var 2
+regne i 2
+regne ut 2
+regner det 2
+regnet med 2
+regnet siden 2
+reiste han 2
+rekke gutta 2
+relativt lite 2
+rente og 2
+reparere bilen 2
+respektere hverandres 2
+respekterer deg 2
+restaurant i 2
+resultatet av 2
+rett ved 2
+rette opp 2
+retten til 2
+ri på 2
+riktig god 2
+riktige svaret 2
+rima var 2
+ringe deg 2
+ringe ham 2
+ringe igjen 2
+ringe legen 2
+ringer dem 2
+ringte du 2
+ringte min 2
+ringte psykiateren 2
+ris som 2
+risikere å 2
+roe deg 2
+roe dere 2
+rolle om 2
+rom er 2
+rom som 2
+romanen er 2
+romanen var 2
+rommet er 2
+rose i 2
+rundt hjørnet 2
+rundt med 2
+rundt om 2
+rundt oss 2
+rundt ti 2
+rundt tre 2
+rydde søppel 2
+ryggen å 2
+rådet mitt 2
+rød bluse 2
+rød i 2
+rødt lys 2
+rødt skjørt 2
+røyker eller 2
+røyker ikke 2
+sa den 2
+sa hun 2
+sa nei 2
+sa opp 2
+sa tom 2
+sagt enn 2
+salt i 2
+sami fant 2
+sami hadde 2
+sami leste 2
+sami snakket 2
+sami så 2
+samme etternavn 2
+samme for 2
+samme klasse 2
+samme klærne 2
+samme situasjon 2
+samme sted 2
+sammen en 2
+sammen igjen 2
+sammenligning mellom 2
+samvittigheten din 2
+san marino 2
+sang bedre 2
+sang i 2
+sang med 2
+sang mens 2
+sangen er 2
+sannheten er 2
+sannsynligvis gjøre 2
+sannsynligvis ha 2
+sannsynligvis skal 2
+satt en 2
+satt ved 2
+savne deg 2
+savnede gutten 2
+savner boston 2
+savner familien 2
+savnet deg 2
+se dem 2
+se den 2
+se denne 2
+se det 2
+se et 2
+se forskjell 2
+se og 2
+se om 2
+seg dårlig 2
+seg fordi 2
+seg forstått 2
+seg fri 2
+seg hele 2
+seg hjem 2
+seg litt 2
+seg når 2
+seg rundt 2
+seg solbriller 2
+seint i 2
+sekretær er 2
+seks er 2
+seks nesten 2
+seks timer 2
+seks uker 2
+seksti år 2
+selger kjøtt 2
+selgeren ikke 2
+selskapene sine 2
+selv en 2
+selv har 2
+selv jeg 2
+selv til 2
+selvfølgelig ikke 2
+sen på 2
+send dette 2
+send meg 2
+sende meg 2
+sendt til 2
+sendte ham 2
+sendte inn 2
+sendte layla 2
+senest klokken 2
+sengen hele 2
+sent hjem 2
+sent i 2
+ser bedre 2
+ser blek 2
+ser deg 2
+ser dette 2
+ser fortsatt 2
+ser frem 2
+ser henne 2
+ser lett 2
+ser mer 2
+ser mye 2
+ser noe 2
+ser sliten 2
+ser sunn 2
+ser trøtt 2
+setningen betyr 2
+setninger enn 2
+setninger om 2
+sett den 2
+sett lista 2
+sett listen 2
+sett på 2
+setter meg 2
+setter nøkkelen 2
+setter seg 2
+si du 2
+si farvel 2
+si grusomme 2
+si hva 2
+si i 2
+si nei 2
+si opp 2
+si sannheten 2
+si takk 2
+siden isen 2
+siden juli 2
+siden var 2
+sider til 2
+sier de 2
+sier er 2
+sier maria 2
+sier med 2
+siktet for 2
+simpelthen at 2
+sin bror 2
+sin drøm 2
+sin er 2
+sin far 2
+sin for 2
+sin første 2
+sin mening 2
+sin nye 2
+sin og 2
+sin skyld 2
+sin sykkel 2
+sin ungdom 2
+sine feil 2
+sine klager 2
+sine klær 2
+sine lange 2
+sine løfter 2
+sine og 2
+sine sko 2
+sist jeg 2
+sist sommer 2
+siste gangen 2
+siste hundre 2
+siste personen 2
+siste sjanse 2
+siste vinter 2
+sitt deg 2
+sitt i 2
+sitt og 2
+sitt på 2
+sitte her 2
+sitte i 2
+sitte oppe 2
+sitter i 2
+sitter oppe 2
+sittet i 2
+situasjon som 2
+situasjonen er 2
+sjakk med 2
+sjanse til 2
+sjefen min 2
+sjekke inn 2
+sjekke ut 2
+sjelden lenger 2
+sjenert jente 2
+sjokolade med 2
+skadet seg 2
+skal aldri 2
+skal alle 2
+skal begynne 2
+skal bygge 2
+skal dere 2
+skal dø 2
+skal feire 2
+skal gå 2
+skal hjelpe 2
+skal hun 2
+skal hver 2
+skal i 2
+skal komme 2
+skal møtes 2
+skal oversette 2
+skal selge 2
+skal sende 2
+skal snart 2
+skal spille 2
+skal tolke 2
+skal tom 2
+skal vise 2
+skalv av 2
+skamme deg 2
+skammer meg 2
+skille sannhet 2
+skip eller 2
+skip og 2
+skipet går 2
+skje i 2
+skje igjen 2
+skjebnen er 2
+skjebnen skal 2
+skjedd før 2
+skjedd med 2
+skjedde en 2
+skjedde plutselig 2
+skjer fyllest 2
+skjer igjen 2
+skjeve tårn 2
+skjorten er 2
+skjule følelsene 2
+skjønner det 2
+skjøt hesten 2
+skoene er 2
+skogen var 2
+skole for 2
+skolen din 2
+skremmer meg 2
+skrev denne 2
+skrev han 2
+skrev meg 2
+skriv klare 2
+skrive den 2
+skrive det 2
+skrive effektivt 2
+skrive et 2
+skrive for 2
+skrive hva 2
+skrive om 2
+skriver det 2
+skriver du 2
+skriver et 2
+skriver i 2
+skru av 2
+skru opp 2
+skrudd ned 2
+skrudde på 2
+skuff han 2
+skuffe deg 2
+skuffelsen jeg 2
+skuffet over 2
+skulle aldri 2
+skulle bli 2
+skulle dø 2
+skulle forelske 2
+skulle holdt 2
+skulle si 2
+skutt i 2
+skylder jeg 2
+skylder meg 2
+skyldig i 2
+skynde oss 2
+slags mirakel 2
+slik du 2
+slik er 2
+slik vi 2
+slit og 2
+slo feil 2
+slo henne 2
+slo hodet 2
+slo ikke 2
+slo mary 2
+slutter å 2
+slå deg 2
+slå fortere 2
+smaker det 2
+smaker godt 2
+smakte godt 2
+smarte nok 2
+smiler ikke 2
+små grupper 2
+små hender 2
+snakke et 2
+snakke fritt 2
+snakker alltid 2
+snakker bedre 2
+snakker flytende 2
+snakker for 2
+snakker italiensk 2
+snakker japansk 2
+snakker jeg 2
+snakker litt 2
+snakker også 2
+snakker polsk 2
+snakker som 2
+snakker spansk 2
+snakker til 2
+snakker tom 2
+snakker veldig 2
+snakker vi 2
+snakkes i 2
+snakket aldri 2
+snakket for 2
+snakket på 2
+snakket sammen 2
+snakket uten 2
+snart du 2
+snart igjen 2
+snart over 2
+snart vil 2
+snev av 2
+snill mot 2
+snødd i 2
+snøen var 2
+sofaen i 2
+sola er 2
+soldaten ofret 2
+solen skinner 2
+solgte bilen 2
+solidaritet er 2
+som aldri 2
+som alltid 2
+som bare 2
+som dette 2
+som døde 2
+som elsker 2
+som faen 2
+som fikk 2
+som foregikk 2
+som foregår 2
+som fortsatt 2
+som fuglen 2
+som gir 2
+som gjorde 2
+som hater 2
+som hjelper 2
+som kjenner 2
+som kjørte 2
+som leser 2
+som ligger 2
+som lærer 2
+som man 2
+som moren 2
+som måtte 2
+som natt 2
+som noen 2
+som oppfant 2
+som passer 2
+som skal 2
+som svømmer 2
+som synger 2
+som teller 2
+som trenger 2
+som ung 2
+som vanlig 2
+som vant 2
+som venter 2
+som vet 2
+som ville 2
+sov på 2
+sover her 2
+sover naken 2
+sover på 2
+soveromsdøren sin 2
+sovet godt 2
+sovet på 2
+spennende å 2
+spesielt i 2
+spill og 2
+spiller fotball 2
+spiller piano 2
+spillet er 2
+spilte gitar 2
+spilte ofte 2
+spis meg 2
+spise dette 2
+spise lunsj 2
+spise mer 2
+spiser aldri 2
+spiser er 2
+spiser han 2
+spiser hun 2
+spiser i 2
+spiser med 2
+spist ferdig 2
+spist nok 2
+spist på 2
+spiste dere 2
+spiste for 2
+språk i 2
+språk og 2
+språket ikke 2
+språket kan 2
+spurte aldri 2
+spurte hun 2
+spøk med 2
+spør du 2
+spør ham 2
+spør meg 2
+spørre om 2
+spørsmål som 2
+spørsmål til 2
+spørsmålene og 2
+spørsmålet mitt 2
+sta gutt 2
+sta kvinne 2
+sta mann 2
+sta som 2
+starte så 2
+starter så 2
+startet å 2
+stasjonen er 2
+stasjonen klokken 2
+sted du 2
+stede på 2
+steder i 2
+stedet hvor 2
+stedet i 2
+stedet var 2
+stemningen i 2
+stille i 2
+stille og 2
+stiller meg 2
+stjålet igjen 2
+stjålet sykkelen 2
+sto i 2
+stod på 2
+stod åpen 2
+stolen din 2
+stopp ham 2
+stoppe dem 2
+stor betydning 2
+stor dam 2
+stor forskjell 2
+stor respekt 2
+stor skade 2
+stor som 2
+stor tabbe 2
+stor tålmodighet 2
+stor å 2
+store framsteg 2
+store intet 2
+store mengder 2
+store problemer 2
+stormen gjorde 2
+stort nummer 2
+stort sett 2
+strategier for 2
+strebe etter 2
+strekker seg 2
+stress kan 2
+strikket en 2
+strukturert etter 2
+student fra 2
+studere engelsk 2
+studere hardt 2
+studere medisin 2
+studere til 2
+studerer engelsk 2
+studerer i 2
+studerer ikke 2
+stykke pai 2
+stå i 2
+stå åpen 2
+stå åpent 2
+står alltid 2
+står du 2
+står for 2
+står i 2
+står ikke 2
+står jeg 2
+står ved 2
+største landet 2
+suksessrik nok 2
+svakheter er 2
+svaret på 2
+svart hatt 2
+svarte katter 2
+svarte på 2
+svarte øyne 2
+sveits er 2
+svensk er 2
+svensk og 2
+sverige er 2
+svært mange 2
+svært naturlig 2
+svært stor 2
+svært vanskelig 2
+svømme over 2
+svømte i 2
+syk i 2
+syk og 2
+sykkelen din 2
+synd jeg 2
+synes de 2
+synes er 2
+synes han 2
+synes hun 2
+synes jeg 2
+synes synd 2
+synet av 2
+synger ikke 2
+syntes at 2
+syntes synd 2
+systemet er 2
+syv i 2
+så billig 2
+så bussen 2
+så da 2
+så der 2
+så dum 2
+så dyr 2
+så faren 2
+så frekke 2
+så gammel 2
+så grådig 2
+så har 2
+så hardt 2
+så jenta 2
+så katten 2
+så kjedelig 2
+så klart 2
+så kort 2
+så kåt 2
+så langsomt 2
+så lyst 2
+så mannen 2
+så med 2
+så opptatt 2
+så overrasket 2
+så pent 2
+så redd 2
+så rekker 2
+så romantisk 2
+så seg 2
+så sen 2
+så sent 2
+så stolt 2
+så stort 2
+så sur 2
+så til 2
+så vakker 2
+så variert 2
+så varm 2
+så varmt 2
+så veldig 2
+så vær 2
+sånn som 2
+sårede ble 2
+såvidt toget 2
+særlig om 2
+sølte kaffe 2
+sønn av 2
+sønn døde 2
+sønn eller 2
+sønn som 2
+sønnen hennes 2
+søren mener 2
+sørger for 2
+søstrene dine 2
+søstrene mine 2
+ta betalt 2
+ta bilder 2
+ta boka 2
+ta boken 2
+ta bort 2
+ta bøkene 2
+ta kontakt 2
+ta noen 2
+ta oss 2
+ta slutt 2
+ta telefonen 2
+ta vanskelige 2
+ta veien 2
+tabbe å 2
+taco er 2
+taket er 2
+takk skal 2
+takke deg 2
+takket være 2
+talent for 2
+tallerken ertesuppe 2
+tankeløst av 2
+tanker om 2
+tapt tid 2
+tar buss 2
+tar jeg 2
+tar mye 2
+tatt for 2
+tatt i 2
+tatt opp 2
+te fra 2
+teksten er 2
+tenke litt 2
+tenke over 2
+tenke seg 2
+tenker de 2
+tenker han 2
+tenker kun 2
+tenkte at 2
+tenkte du 2
+tennene dine 2
+tennene etter 2
+tennene før 2
+tennis da 2
+tennis etter 2
+teori om 2
+teorien hans 2
+teste produktet 2
+ti bøker 2
+tid alene 2
+tid da 2
+tid det 2
+tid etter 2
+tid før 2
+tid i 2
+tid innendørs 2
+tid og 2
+tid på 2
+tid vil 2
+tiden av 2
+tiden er 2
+tiden flyr 2
+til afrika 2
+til algerie 2
+til arbeidet 2
+til berlin 2
+til biblioteket 2
+til bursdagen 2
+til bussholdeplassen 2
+til danmark 2
+til disse 2
+til ditt 2
+til doktoren 2
+til dr 2
+til du 2
+til døden 2
+til far 2
+til fem 2
+til flere 2
+til for 2
+til foreldrene 2
+til fots 2
+til frankrike 2
+til fransk 2
+til hans 2
+til helvete 2
+til hjemme 2
+til hva 2
+til italia 2
+til jeg 2
+til katten 2
+til klasserommet 2
+til kupeen 2
+til langt 2
+til legen 2
+til leiligheten 2
+til livets 2
+til maria 2
+til mexico 2
+til moren 2
+til morgen 2
+til new 2
+til noe 2
+til norsk 2
+til nytte 2
+til nå 2
+til politistasjonen 2
+til restaurantvogna 2
+til salgs 2
+til sami 2
+til sent 2
+til smith 2
+til syne 2
+til to 2
+til togstasjonen 2
+til toms 2
+til tyskland 2
+til utdanning 2
+til øya 2
+tilbake etter 2
+tilbake fra 2
+tilbake før 2
+tilbake hit 2
+tilbake innen 2
+tilbake neste 2
+tilbake og 2
+tilbrakte sammen 2
+tilbringer mer 2
+tilbudet hans 2
+tilfeldigvis på 2
+tilfelle det 2
+tilgang til 2
+tilgi deg 2
+tilgi ham 2
+tilgi oss 2
+tilgir deg 2
+tilgjengelig for 2
+tilkall politiet 2
+tillate damp 2
+tillit og 2
+tilsett litt 2
+tiltrukket av 2
+time hos 2
+timer til 2
+ting du 2
+ting er 2
+ting man 2
+ting og 2
+tingene som 2
+tirsdag kveld 2
+tjener ingen 2
+tjener mer 2
+tjener til 2
+tjue euro 2
+tjue år 2
+to alternativer 2
+to bøker 2
+to dager 2
+to døtre 2
+to epler 2
+to fluer 2
+to hundre 2
+to landene 2
+to meter 2
+to om 2
+to sønner 2
+to ting 2
+to uker 2
+toget har 2
+tok bilen 2
+tok frem 2
+tok i 2
+tok makten 2
+tok slutt 2
+tok to 2
+tok ut 2
+tolv bind 2
+tolv timer 2
+tolv år 2
+tom alltid 2
+tom ante 2
+tom av 2
+tom bakte 2
+tom begynner 2
+tom bet 2
+tom bøyde 2
+tom der 2
+tom drepte 2
+tom elsker 2
+tom engelsk 2
+tom falt 2
+tom forsto 2
+tom gav 2
+tom hoppet 2
+tom igjen 2
+tom innså 2
+tom jobbet 2
+tom kaster 2
+tom kastet 2
+tom kjente 2
+tom klarer 2
+tom kysset 2
+tom leker 2
+tom ler 2
+tom leter 2
+tom lever 2
+tom lukket 2
+tom lyver 2
+tom lærte 2
+tom løy 2
+tom meg 2
+tom mistet 2
+tom naken 2
+tom nektet 2
+tom noen 2
+tom også 2
+tom oppførte 2
+tom reiser 2
+tom sang 2
+tom seg 2
+tom sine 2
+tom sluttet 2
+tom smilte 2
+tom solgte 2
+tom sover 2
+tom spiste 2
+tom spurte 2
+tom startet 2
+tom sto 2
+tom stod 2
+tom studerer 2
+tom svarte 2
+tom valgte 2
+tom vasker 2
+tom veldig 2
+tom ventet 2
+tom virkelig 2
+tom være 2
+tom ønsker 2
+toms ansikt 2
+toms første 2
+toms hus 2
+toms kone 2
+toms leilighet 2
+toms sinn 2
+torsdag morgen 2
+traff en 2
+traff henne 2
+trafikk fra 2
+trakk på 2
+tre adoptivbarn 2
+tre hundre 2
+tre kilometer 2
+tre og 2
+tre timer 2
+tre tonn 2
+tredje største 2
+treet har 2
+treffer henne 2
+trekke en 2
+trekke meg 2
+trenge å 2
+trenger dere 2
+trenger det 2
+trenger er 2
+trenger flere 2
+trenger for 2
+trenger jeg 2
+trenger mer 2
+trenger noen 2
+trenger pengene 2
+trenger penger 2
+trenger tørr 2
+trengs mye 2
+trengte dette 2
+trengte hjelp 2
+trengte håp 2
+trengte mat 2
+trengte penger 2
+trengte tid 2
+tro det 2
+tro meg 2
+tro mine 2
+tro og 2
+trodd at 2
+tror fortsatt 2
+tror ham 2
+troverdigheten til 2
+trygg her 2
+trygg på 2
+trygge arbeidsplassene 2
+trykket på 2
+trær og 2
+trærne for 2
+trøste deg 2
+trøste dem 2
+trøste ham 2
+trøste henne 2
+trøste meg 2
+trøstet deg 2
+trøtt i 2
+tull deg 2
+tulle deg 2
+tuller aldri 2
+tur-retur billett 2
+turen min 2
+tusen dollar 2
+tvers av 2
+tvert imot 2
+tvilsomt om 2
+tydelige tekster 2
+tydelighet i 2
+typisk nordmann 2
+tysk er 2
+tysk opprinnelse 2
+tyskland for 2
+tyskland grenser 2
+tålmodighet og 2
+tårn i 2
+tørr bleie 2
+uavhengig presse 2
+uendelig antall 2
+uke siden 2
+uker siden 2
+ulike som 2
+ulm i 2
+ulykkelig liv 2
+under alle 2
+under broen 2
+under dette 2
+under en 2
+under føttene 2
+under krigen 2
+under stolen 2
+under treet 2
+undersøke faktaene 2
+ung til 2
+unge dame 2
+unge mannen 2
+ungene sine 2
+universet og 2
+unnskyld at 2
+unntatt meg 2
+urettferdig behandlet 2
+usa er 2
+usa til 2
+ut denne 2
+ut dette 2
+ut en 2
+ut etter 2
+ut gjennom 2
+ut mer 2
+ut og 2
+ut sammen 2
+ut vinduet 2
+utadvendt person 2
+utarbeide sin 2
+ute i 2
+uten at 2
+uten briller 2
+uten et 2
+uten ham 2
+uten luft 2
+uten mat 2
+uten meg 2
+uten oksygen 2
+uten sukker 2
+uten tvil 2
+uten videre 2
+uten ærlighet 2
+utenfor byen 2
+utkanten av 2
+utrolig godt 2
+utslitte etter 2
+uttrykket er 2
+utvikle analytiske 2
+utvikle sin 2
+vakker natur 2
+vakkert og 2
+valget mellom 2
+vanlig å 2
+vanligvis alene 2
+vanligvis til 2
+vanligvis veldig 2
+vann består 2
+vann fra 2
+vann til 2
+vannkopper som 2
+vanskelig situasjon 2
+vanskelig språk 2
+vanskelig spørsmål 2
+vanskeligheter med 2
+vansker med 2
+vant en 2
+vant veddemålet 2
+var alene 2
+var alle 2
+var allerede 2
+var barna 2
+var bekymret 2
+var besteforeldrene 2
+var blitt 2
+var dekket 2
+var denne 2
+var egoistisk 2
+var fantastisk 2
+var fattig 2
+var ferdig 2
+var forsiktig 2
+var fortsatt 2
+var fryktelig 2
+var få 2
+var født 2
+var før 2
+var gal 2
+var galt 2
+var gamle 2
+var gift 2
+var gode 2
+var grådig 2
+var helten 2
+var hennes 2
+var hjemme 2
+var hos 2
+var hun 2
+var ingenting 2
+var kjærlighet 2
+var klar 2
+var lett 2
+var lærere 2
+var mange 2
+var meg 2
+var meningen 2
+var mitt 2
+var nær 2
+var nødt 2
+var omtrent 2
+var populær 2
+var rent 2
+var sant 2
+var sen 2
+var sikkert 2
+var sint 2
+var sliten 2
+var spesiell 2
+var stolt 2
+var student 2
+var tilstede 2
+var tre 2
+var tretti 2
+var tykk 2
+var ulykkelig 2
+var umulig 2
+var venner 2
+var å 2
+variert som 2
+varm at 2
+varme sengen 2
+varmt om 2
+vaske hendene 2
+vasker bilen 2
+vasker hendene 2
+vasker klærne 2
+vasker potetene 2
+vasket hendene 2
+ved det 2
+ved feiltak 2
+ved føttene 2
+ved hjelp 2
+ved porten 2
+ved sjøen 2
+ved utkanten 2
+vedder på 2
+veggene er 2
+veide tre 2
+veien og 2
+vekk fra 2
+vekk meg 2
+vekket deg 2
+veldig bekymret 2
+veldig billig 2
+veldig deprimert 2
+veldig dyr 2
+veldig dårlig 2
+veldig enkel 2
+veldig ensom 2
+veldig fint 2
+veldig forsiktig 2
+veldig gammel 2
+veldig glade 2
+veldig gøy 2
+veldig hardt 2
+veldig hyggelig 2
+veldig irritert 2
+veldig klok 2
+veldig koselig 2
+veldig mange 2
+veldig merkelig 2
+veldig overbevisende 2
+veldig sjenert 2
+veldig stolt 2
+veldig sulten 2
+veldig syk 2
+veldig takknemlig 2
+veldig tynn 2
+veldig tålmodig 2
+veldig ut 2
+veldig viktig 2
+veldig vis 2
+velge hvilken 2
+velkommen her 2
+velkommen ombord 2
+venn ringte 2
+vennen hennes 2
+vennen sin 2
+venner i 2
+vennligst ikke 2
+vennligst kom 2
+vennligst send 2
+vennligst ta 2
+vennligst vent 2
+venstre hånd 2
+venstre side 2
+venstre ved 2
+vent et 2
+vent litt 2
+vent på 2
+vente i 2
+ventet en 2
+ventet i 2
+verden med 2
+verden over 2
+verden som 2
+verden til 2
+verden var 2
+verden vil 2
+verdsetter vårt 2
+verdt mer 2
+verken røyker 2
+verne om 2
+verste de 2
+verste du 2
+vet begge 2
+vet dette 2
+vet er 2
+vet fortsatt 2
+vet har 2
+vet sannsynligvis 2
+vet vi 2
+vi allerede 2
+vi bare 2
+vi begynner 2
+vi bodde 2
+vi drikker 2
+vi drog 2
+vi et 2
+vi fanger 2
+vi fokuserer 2
+vi forstår 2
+vi giftet 2
+vi gir 2
+vi gjorde 2
+vi hatt 2
+vi her 2
+vi hjelper 2
+vi holder 2
+vi holdt 2
+vi kjøpte 2
+vi kjørte 2
+vi kom 2
+vi la 2
+vi løp 2
+vi mangler 2
+vi møtes 2
+vi nok 2
+vi om 2
+vi pratet 2
+vi prøvde 2
+vi prøver 2
+vi sa 2
+vi snakkes 2
+vi sto 2
+vi står 2
+vi tilbyr 2
+vi tilgir 2
+vi tok 2
+vi trengte 2
+vi valgte 2
+vi venter 2
+vi ventet 2
+vi vinne 2
+vi virkelig 2
+viet livet 2
+viktig at 2
+viktig det 2
+viktig og 2
+viktigste i 2
+vil dere 2
+vil dra 2
+vil egentlig 2
+vil elske 2
+vil gifte 2
+vil i 2
+vil klare 2
+vil leve 2
+vil ligge 2
+vil passe 2
+vil reise 2
+vil ringe 2
+vil sannsynligvis 2
+vil savne 2
+vil skje 2
+vil skrive 2
+vil sove 2
+vil spise 2
+vil spørre 2
+vil så 2
+vil takke 2
+vil tom 2
+vil vise 2
+vilje til 2
+ville bare 2
+ville dra 2
+ville gi 2
+ville gjerne 2
+ville gå 2
+ville holde 2
+ville la 2
+ville sannsynligvis 2
+ville se 2
+ville stige 2
+ville tatt 2
+ville vært 2
+vinduet stå 2
+vinner sjelden 2
+virkelig bra 2
+virkelig fra 2
+virkelig glad 2
+virkelig være 2
+virker ganske 2
+virket å 2
+virkning på 2
+vis at 2
+vis kortene 2
+vis mann 2
+vise meg 2
+viser at 2
+viss grad 2
+visst det 2
+visst ikke 2
+visst sannheten 2
+visste allerede 2
+visste han 2
+visste hva 2
+visste om 2
+vite at 2
+vite bedre 2
+vite dette 2
+vite hvor 2
+vite hvordan 2
+vite noe 2
+vite når 2
+vite om 2
+vite sannheten 2
+vits i 2
+vitsen til 2
+voksen mann 2
+vokst opp 2
+volumet på 2
+våg å 2
+våget å 2
+våken om 2
+vår avgjørelse 2
+vår far 2
+vår har 2
+vår kunnskap 2
+våre er 2
+våre mål 2
+våre regler 2
+våre verdier 2
+våren har 2
+vårt beste 2
+vårt lag 2
+vårt vennskap 2
+vær dum 2
+vær glad 2
+vær vennlig 2
+være akkurat 2
+være bedre 2
+være berømt 2
+være borte 2
+være enig 2
+være for 2
+være forskjellig 2
+være glad 2
+være helt 2
+være hyggelig 2
+være igjen 2
+være medlem 2
+være moren 2
+være mulig 2
+være nok 2
+være på 2
+være sint 2
+være trygg 2
+være ung 2
+være vanskelig 2
+være våken 2
+været vil 2
+vært fiender 2
+vært fint 2
+vært for 2
+vært greit 2
+vært noe 2
+vært noen 2
+vært sta 2
+vært så 2
+vært til 2
+vært tre 2
+vært ute 2
+vært uten 2
+vært veldig 2
+vært våken 2
+yanni og 2
+yanni var 2
+yanni ville 2
+ynket seg 2
+å akseptere 2
+å ansette 2
+å beskrive 2
+å bestemme 2
+å bety 2
+å bevise 2
+å bryte 2
+å bytte 2
+å danne 2
+å diskutere 2
+å dusje 2
+å erobre 2
+å falle 2
+å fiske 2
+å fjerne 2
+å forbli 2
+å fordrive 2
+å fordømme 2
+å forgifte 2
+å forlate 2
+å formørke 2
+å forsvinne 2
+å fullføre 2
+å føles 2
+å gjemme 2
+å grine 2
+å hindre 2
+å imponere 2
+å intet 2
+å kaste 2
+å kommentere 2
+å krangle 2
+å krysse 2
+å lade 2
+å late 2
+å le 2
+å lukte 2
+å låne 2
+å male 2
+å merke 2
+å minnes 2
+å nevne 2
+å oppføre 2
+å oppmuntre 2
+å overgi 2
+å overleve 2
+å passe 2
+å presse 2
+å påvirke 2
+å regelmessig 2
+å renne 2
+å rette 2
+å ri 2
+å rømme 2
+å savne 2
+å sjekke 2
+å skille 2
+å skremme 2
+å slukke 2
+å stikke 2
+å stole 2
+å stryke 2
+å styre 2
+å styrke 2
+å støtte 2
+å sykle 2
+å såre 2
+å telle 2
+å tilby 2
+å tilgi 2
+å tillate 2
+å tilpasse 2
+å undervise 2
+å utforske 2
+å utvikle 2
+å vise 2
+å vokse 2
+ånden til 2
+åpen og 2
+åpen på 2
+år av 2
+år etter 2
+år før 2
+år gå 2
+år senere 2
+årsaken til 2
+åtte år 2
+ætt skal 2
+én eneste 2
+én uke 2
+ødelagte radioen 2
+økning av 2
+økonomiske krisen 2
+øl til 2
+ønske hun 2
+ønske tom 2
+ønsket ditt 2
+øynene hennes 2
+øynene til 2

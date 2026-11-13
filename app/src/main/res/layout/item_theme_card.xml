@@ -29,6 +29,19 @@
             android:src="@drawable/bg_theme_check"
             android:importantForAccessibility="no"
             android:visibility="gone" />
+
+        <!-- Forme des touches réservée au pass premium (sans pass) : cadenas en haut à gauche. -->
+        <ImageView
+            android:id="@+id/theme_lock"
+            android:layout_width="@dimen/taipo_theme_check_size"
+            android:layout_height="@dimen/taipo_theme_check_size"
+            android:layout_gravity="top|start"
+            android:layout_margin="@dimen/taipo_theme_check_margin"
+            android:padding="@dimen/taipo_theme_lock_padding"
+            android:background="@drawable/bg_theme_lock"
+            android:src="@drawable/ic_lock"
+            android:importantForAccessibility="no"
+            android:visibility="gone" />
     </FrameLayout>
 
     <TextView

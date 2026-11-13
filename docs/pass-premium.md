@@ -10,6 +10,10 @@ Achat unique, à vie, **2,99 €** (produit `pass_premium` de type « achat uniq
 | Prompts système (correction, chat, transcription) | Prompts par défaut | Prompts personnalisés |
 | Historique du presse-papiers | 12 h | 7 jours |
 | Éléments épinglés | 5 | 50 |
+| Fond du clavier (page Apparence) | Uni | + 6 fonds animés : Rubans, Bulles, Cristal, Ondes, Cœurs, Fleurs (`KeyboardBackdrop`) |
+| Forme des touches | 4 formes simples | + 5 formes (`KeyShape`) |
+| Police du clavier | Open Sans | + 9 polices, dont OpenDyslexic (`KeyboardFont`) |
+| Style d'animation | Ressort, Vif | + Gelée (`MotionStyle`) |
 
 Restent gratuits : frappe, autocorrection, langues et multilingue, mode une main, accessibilité, dictionnaire personnel,
 sauvegarde, les 4 modèles IA.
@@ -34,7 +38,7 @@ Règles de passage gratuit ↔ premium :
 
 ## Mise en avant
 
-- Écran **Pass premium** (`PremiumActivity`) : prix, les trois avantages, rappel de ce qui reste gratuit, Acheter, Restaurer.
+- Écran **Pass premium** (`PremiumActivity`) : prix, les quatre avantages (couleurs, prompts, presse-papiers, apparence ; textes mis à jour le 13/11/2026), rappel de ce qui reste gratuit, Acheter, Restaurer.
 - **Accueil** : carte d'offre une fois les 3 étapes faites, masquable (elle ne revient pas) ; ligne « Pass premium » dans
   sa propre carte encadrée de violet, en tête de « À propos ».
 - **Thème** : cadenas sur les 8 couleurs ; en toucher une l'essaie sur les aperçus, avec « Débloquer avec le pass » ; au retour

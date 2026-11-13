@@ -128,8 +128,11 @@ internal object SpanishConfusions {
             add(ConfusionRule(plain, accented, "$plain > $accented juste après « ¿ », en fin de question", self = OPENS_QUESTION, punctAfter = true))
             add(
                 ConfusionRule(
-                    plain, accented, "$plain > $accented après « ¿ » et une préposition, en fin de question",
-                    previous = AFTER_OPENING_QUESTION, punctAfter = true,
+                    plain,
+                    accented,
+                    "$plain > $accented après « ¿ » et une préposition, en fin de question",
+                    previous = AFTER_OPENING_QUESTION,
+                    punctAfter = true,
                 ),
             )
         }
@@ -144,25 +147,42 @@ internal object SpanishConfusions {
         add(ConfusionRule("estas", "estás", "estas > estás après « ¿cómo »", previous = anyAfterQuestion("como", "cómo", "que", "qué", "donde", "dónde")))
         add(
             ConfusionRule(
-                "estas", "estás", "estas > estás après « ¿cómo », en fin de question",
-                previous = anyAfterQuestion("como", "cómo", "que", "qué", "donde", "dónde"), punctAfter = true,
+                "estas",
+                "estás",
+                "estas > estás après « ¿cómo », en fin de question",
+                previous = anyAfterQuestion("como", "cómo", "que", "qué", "donde", "dónde"),
+                punctAfter = true,
             ),
         )
         add(ConfusionRule("estas", "estás", "estas > estás après « cómo » ou « dónde »", previous = oneOf("cómo", "dónde")))
-        add(ConfusionRule("estas", "estás", "estas > estás après « cómo » ou « dónde », en fin de question", previous = oneOf("cómo", "dónde"), punctAfter = true))
+        add(
+            ConfusionRule(
+                "estas",
+                "estás",
+                "estas > estás après « cómo » ou « dónde », en fin de question",
+                previous = oneOf("cómo", "dónde"),
+                punctAfter = true,
+            ),
+        )
         add(ConfusionRule("esta", "está", "esta > está après « dónde » ou « cómo »", previous = oneOf("dónde", "cómo")))
         add(ConfusionRule("esta", "está", "esta > está après « dónde » ou « cómo », en fin de question", previous = oneOf("dónde", "cómo"), punctAfter = true))
         add(ConfusionRule("esta", "está", "esta > está après « ¿dónde » ou « ¿cómo »", previous = anyAfterQuestion("donde", "dónde", "como", "cómo")))
         add(
             ConfusionRule(
-                "esta", "está", "esta > está après « ¿dónde » ou « ¿cómo », en fin de question",
-                previous = anyAfterQuestion("donde", "dónde", "como", "cómo"), punctAfter = true,
+                "esta",
+                "está",
+                "esta > está après « ¿dónde » ou « ¿cómo », en fin de question",
+                previous = anyAfterQuestion("donde", "dónde", "como", "cómo"),
+                punctAfter = true,
             ),
         )
         add(
             ConfusionRule(
-                "esta", "está", "esta > está après « ¿qué » devant un gérondif",
-                previous = anyAfterQuestion("que", "qué"), next = oneOf("pasando", "haciendo", "diciendo", "buscando", "mirando"),
+                "esta",
+                "está",
+                "esta > está après « ¿qué » devant un gérondif",
+                previous = anyAfterQuestion("que", "qué"),
+                next = oneOf("pasando", "haciendo", "diciendo", "buscando", "mirando"),
             ),
         )
 
@@ -187,8 +207,11 @@ internal object SpanishConfusions {
         add(ConfusionRule("mi", "mí", "mi > mí en fin de groupe après une préposition", previous = oneOf(*PREPOSITIONS), punctAfter = true))
         add(
             ConfusionRule(
-                "mi", "mí", "mi > mí après « a » ou « para » devant un mot qui ne suit pas un possessif",
-                previous = oneOf("a", "para"), next = oneOf("me", "no", "también", "tambien", "tampoco", "nada", "siempre"),
+                "mi",
+                "mí",
+                "mi > mí après « a » ou « para » devant un mot qui ne suit pas un possessif",
+                previous = oneOf("a", "para"),
+                next = oneOf("me", "no", "también", "tambien", "tampoco", "nada", "siempre"),
             ),
         )
         add(ConfusionRule("mí", "mi", "mí > mi devant un nom de possession", next = oneOf(*POSSESSED_NOUNS)))
@@ -198,15 +221,20 @@ internal object SpanishConfusions {
         add(ConfusionRule("si", "sí", "si > sí après « que », en fin de groupe", previous = oneOf("que"), punctAfter = true))
         add(
             ConfusionRule(
-                "si", "sí", "si > sí devant « mismo »",
-                previous = oneOf("a", "por", "en", "de", "para", "entre", "sobre"), next = oneOf("mismo", "misma", "mismos", "mismas"),
+                "si",
+                "sí",
+                "si > sí devant « mismo »",
+                previous = oneOf("a", "por", "en", "de", "para", "entre", "sobre"),
+                next = oneOf("mismo", "misma", "mismos", "mismas"),
             ),
         )
 
         // --- se / sé ---
         add(
             ConfusionRule(
-                "se", "sé", "se > sé après « no » ou « yo » devant un interrogatif, « que » ou « nada »",
+                "se",
+                "sé",
+                "se > sé après « no » ou « yo » devant un interrogatif, « que » ou « nada »",
                 previous = oneOf("no", "yo"),
                 next = oneOf(
                     "si", "qué", "que", "nada", "mucho", "cómo", "como", "cuándo", "cuando", "dónde", "donde", "quién", "quien",
@@ -216,12 +244,22 @@ internal object SpanishConfusions {
         )
 
         // --- de / dé ---
-        add(ConfusionRule("de", "dé", "de > dé après « que » et un pronom complément", previous = oneOf("me", "te", "le", "les", "nos"), previous2 = oneOf("que")))
+        add(
+            ConfusionRule(
+                "de",
+                "dé",
+                "de > dé après « que » et un pronom complément",
+                previous = oneOf("me", "te", "le", "les", "nos"),
+                previous2 = oneOf("que"),
+            ),
+        )
 
         // --- aun / aún ---
         add(
             ConfusionRule(
-                "aun", "aún", "aun > aún devant « no » ou un verbe d'état",
+                "aun",
+                "aún",
+                "aun > aún devant « no » ou un verbe d'état",
                 next = oneOf(
                     "no", "está", "estoy", "estás", "estamos", "están", "hay", "tengo", "tiene", "sigue", "queda", "quedan", "falta",
                     "faltan", "existe", "es", "son",
@@ -232,7 +270,9 @@ internal object SpanishConfusions {
         // --- a / ha ---
         add(
             ConfusionRule(
-                "a", "ha", "a > ha entre un sujet ou une négation et un participe",
+                "a",
+                "ha",
+                "a > ha entre un sujet ou une négation et un participe",
                 previous = oneOf(
                     "él", "ella", "usted", "ya", "no", "nunca", "siempre", "también", "tambien", "que", "se", "lo", "le", "me", "te", "nos",
                     "quien",
@@ -242,7 +282,9 @@ internal object SpanishConfusions {
         )
         add(
             ConfusionRule(
-                "ha", "a", "ha > a après « ir » devant un infinitif",
+                "ha",
+                "a",
+                "ha > a après « ir » devant un infinitif",
                 previous = oneOf("voy", "vas", "va", "vamos", "vais", "van", "iba", "ibas", "íbamos", "ibamos", "iban"),
                 next = INFINITIVE_LIKE,
             ),
@@ -252,7 +294,9 @@ internal object SpanishConfusions {
         add(ConfusionRule("haber", "a ver", "haber > a ver devant « si »", next = oneOf("si")))
         add(
             ConfusionRule(
-                "aver", "a ver", "aver > a ver devant un interrogatif ou « si »",
+                "aver",
+                "a ver",
+                "aver > a ver devant un interrogatif ou « si »",
                 next = oneOf("si", "que", "qué", "como", "cómo", "quien", "quién", "cuando", "cuándo", "donde", "dónde", "cual", "cuál"),
             ),
         )

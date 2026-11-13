@@ -6,10 +6,10 @@ import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import fr.junade.taipo.VoiceModelDownloadActivity
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.BuildConfig
 import fr.junade.taipo.R
+import fr.junade.taipo.VoiceModelDownloadActivity
 import fr.junade.taipo.ai.VoiceEngine
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
@@ -66,6 +66,7 @@ class VoiceModelDownloadWorker(
             is ModelFileFetcher.Outcome.Done -> {
                 DownloadTracker.updateVoice(DownloadState.Idle)
                 Analytics.track(applicationContext, AnalyticsEvents.MODEL_DOWNLOAD_DONE, "model" to VOICE_MODEL_ID)
+                notifyFinished(success = true)
                 Result.success()
             }
             is ModelFileFetcher.Outcome.Cancelled -> {
@@ -80,6 +81,7 @@ class VoiceModelDownloadWorker(
                     "model" to VOICE_MODEL_ID,
                     "reason" to outcome.reason.name.lowercase(),
                 )
+                notifyFinished(success = false)
                 Result.failure()
             }
         }
@@ -171,6 +173,16 @@ class VoiceModelDownloadWorker(
 
     private fun foregroundInfo(percent: Int?): ForegroundInfo =
         DownloadNotification.foregroundInfo(applicationContext, NOTIFICATION_ID, title(), percent, cancelIntent(), VoiceModelDownloadActivity::class.java)
+
+    private fun notifyFinished(success: Boolean) {
+        DownloadNotification.notifyFinished(
+            applicationContext,
+            NOTIFICATION_ID,
+            success,
+            applicationContext.getString(R.string.model_download_voice_section_title),
+            VoiceModelDownloadActivity::class.java,
+        )
+    }
 
     private fun notifyProgress(percent: Int) {
         DownloadNotification.notifyProgress(applicationContext, NOTIFICATION_ID, title(), percent, cancelIntent(), VoiceModelDownloadActivity::class.java)

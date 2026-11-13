@@ -1,0 +1,872 @@
+# Phrases Tatoeba (CC BY 2.0 FR) jamais comptées dans dictionaries/bigrams/da.txt : voir tools/build_ngrams.py.
+Hvorfor stod du så tidligt op?
+Vi har meget, vi skal igennem.
+Hun fortalte mig en interessant historie.
+Linje tolv standser i nærheden af operahuset.
+Pigen, han taler med, er Nancy.
+Jeg har været i supermarkedet.
+Der er ingen tvivl om hvem der bliver valgt.
+Jeg kan slet ikke noget fransk.
+Én svale gør ingen sommer.
+Jeg ramte to mål med en sten.
+Hun græd hele natten lang.
+I mit værelse er der ingen ure.
+Oversæt nogle ordsprog til esperanto om spisning og/eller fedme.
+Jim gled på den glatte vej og slog sig.
+"Kender du mig?" "Nej, jeg kender dig ikke."
+Har du købt en julegave til hende?
+Min bror er to år ældre end mig, men han er tre centimeter lavere.
+Må man fotografere i dette hus?
+Jeg lytter ofte til radioen i min fritid.
+Hele byen stod i flammer.
+Jeg har brug for et frimærke.
+Hvis ikke jeg dumper, kan jeg tage kørekortet i år.
+Dette er den bedste måde at løse problemet på.
+Jeg tror Delbert er gal.
+Jeg ville ønske jeg kunne svømme.
+Hun er meget stolt over sin frimærkesamling.
+Jeg har mistet min pung.
+Vi har boet her siden juli.
+Det er virkelig et problem.
+Dit arbejde er langt fra tilfredsstillende.
+Vores høner lagde mange æg i går.
+Dette brev kom mens du var ude.
+Jeg er meget glad for at se dig igen.
+Man så ham gå ud af huset.
+Du har lavet den samme fejl.
+Hendes stemme er meget smuk.
+George, hvis du ikke lytter til radioen, så sluk den.
+Fagforeningen kræver en lønforhøjelse på ti procent.
+Stationen ligger mellem disse to byer.
+De biler tilhører vores lærere.
+Ifølge psykologer er de, der ikke kan nyde ensomhed, ikke raske.
+Jeg skal købe nogle frimærker.
+"Den kære Gud ved alt!" "Den kære hustru ved alt bedre!"
+Den ny tunnel er dobbelt så lang som den gamle.
+Jeg tog hjemmefra klokken syv.
+I en sund krop er der en sund sjæl.
+Prisen er det dobbelte af hvad den var sidste år.
+Forstod du hvad han sagde?
+Den butik lukker klokken enogtyve.
+Man tog ham på fersk gerning.
+Luk vinduet før du går i seng.
+Børn behøver mange ting, men mest af alt kærlighed.
+Den ene side af en mønt kaldes »krone«, og den anden side kaldes »plat«.
+Det er et dejligt vejr i dag.
+Ikke alle børn kan lide æbler.
+Jeg har købt tre flasker vin.
+Pilen ramte ved siden af sit mål.
+Djævelen gemte sig i klasseværelset.
+Vær så venlig at finde en løsning på problemet.
+Jeg har en ven, hvis far er en kendt pianist.
+Han udnyttede enhver mulighed for at øve det engelske sprog.
+Vil du købe en ordbog?
+Er det mig du mener?
+Mennesket er det eneste dyr der kan le.
+Lyn er et elektrisk fænomen.
+Søndag er ikke en almindelig dag for mig.
+Vores familie er temmelig stor. Til min fars fødselsdag kom der flere end 80 personer.
+Gid jeg kunne køre bil!
+Jeg har sagt at du er god.
+John har en bil der er fremstillet i Japan.
+Vi kan endnu ikke oversætte fra esperanto til dansk.
+Jeg gik op ad bakken til fods.
+Jeg ville gerne have batterier til dette apparat.
+Vær sød at række mig salt og peber.
+Helsingfors er hovedstaden i Finland.
+Har I nogen i blå?
+Kylie Minogue er den bedste sangerinde jeg nogensinde har set!
+Jeg kan ikke huske, hvad du hedder.
+Min mor er på diæt.
+Som sædvanligt faldt han i søvn foran fjernsynet.
+Er der bøger på bordet?
+Også jeg er en turist.
+Hun tænker på noget helt andet.
+Han ser på verden gennem lyserøde briller.
+Han er en stor spasmager.
+Hun gav ham en lussing.
+Tak til enhver som har været en del af mit liv her i Storbritannien.
+Til jul sender vi julekort til vore venner.
+Jeg skrev hendes adresse ned for ikke at glemme den.
+Lad os gå ud og spise middag sammen fra tid til anden.
+Broen mellem Danmark og Sverige er næsten otte kilometer lang.
+Jeg ønsker hverken kød eller fisk.
+Jeg har drømt en mærkelig drøm.
+Jeg interesserer mig meget for amerikansk fodbold.
+Jeg vil have et sværd som dette!
+Jeg vil gerne veksle penge.
+De kan forhøje din leje.
+Pigen han taler til er Nancy.
+Vil du have en kop kaffe mere?
+Vi stod på stiger for at samle æbler fra træerne.
+Man siger at forskellen mellem kunst og pornografi drejer sig kun om lyssætningen.
+Min venstre hæl er betændt.
+Har jeres bil et reservehjul?
+Katolske ledere opfordrer os alle til at forene os i kirken.
+I begyndelsen smilte hun; lidt efter lo hun og til sidst grinte hun.
+Han døde inden ambulancen kom.
+De sætter vand over til te.
+De betragter det som selvfølgeligt at mænd og kvinder er ligeværdige.
+Det er min anden tyske sætning.
+Tom og Mary har været gift i tre år.
+Han spiste bananer og æbler.
+Jeg går inde i butikscenteret.
+Tøv ikke med at kæmpe for din sandhed!
+Alt hvad jeg har fundet, er en saks.
+Jeg ønsker også at komme!
+Han vil komme til festen.
+Kender du den ældre kvinde der bor på tredje etage?
+Der findes forskellige udtryk til at indikere at noget er et rygte.
+Det var en middag med alt tilbehør.
+Det er ikke godt at vide.
+I min barndom elskede jeg passioneret det russiske sprog og hele det russiske rige.
+Enhvers ven er ingens ven.
+Vi arbejder aldrig om søndagen.
+Du har en fjer i håret.
+Jeg kiggede rundt, men så ingen.
+Bedstemor tog til markedet for at købe mad til familien.
+Tom vil mødes med jer alle kl. 2:30.
+Tom mente at amuletten ville beskytte ham mod hekse.
+Vi var nødt til at lukke vinduet på grund af myggene.
+Det er ikke koldt i dag.
+Hun siger at hun ikke gjorde noget forkert.
+Hvor tog du dine sko af?
+Tom hørte et bilhorn dytte.
+Hold venligst op med at fløjte.
+Og glem ikke at vande planterne.
+Nordlyset i nat var fantastisk.
+Du er ikke min type.
+Må jeg tænde for fjernsynet?
+Sæt dig ind i bilen!
+Toms hus ligger kun tre blokke herfra.
+Disse fjer er særdeles gode.
+Denne pen er den bedste.
+De gjorde det nogle få gange.
+Hun er kort og fed.
+Hun er for gammel til ham.
+Stop. Det er rødt lys.
+Jeg har færdiggjort min hjemmeopgave.
+Både hendes morfar og farfar er døde.
+Et godt navn er den bedste medgift.
+Han bestemte sig endelig for at blive gift.
+Han kom fra Canada for at træffe mig.
+Hvis mennesket rejste med lysets hastighed, ville det sandsynligvis blive omdannet til ren energi.
+Tom fik ikke noget lavet i dag.
+Jeg vil ringe i morgen tidlig.
+Selv om han er min nabo, kendte jeg ham ikke så godt.
+Skynd jer at få et værelse!
+Oversættelserne skal kun underskrives med et pseudonym.
+Denne ordbog er meget dyr, men den er værd at købe.
+Hvor gammel er din kone?
+Jeg tror at folk har en tendens til at fokusere på de forkerte ting.
+Jeg spørger mig om det her er kærlighed.
+Uden esperanto mangler du noget.
+Medier har fokuseret på kongressen.
+Her til morgen stod jeg senere op end sædvanligt.
+Hun forstår sandelig at lave mad.
+En mand der taler sandt, har brug for en hurtig hest.
+Månen drejer sig om Jorden.
+Ikke enhver, som bliver friet til, bliver forlovet.
+Det var en sandfærdig historie.
+Fra tid til anden er det nødvendigt at reflektere over sit fremtidige liv.
+Astronauterne tog op til månen i en raket.
+I Mexico taler man spansk.
+Hvornår er det Toms fødselsdag?
+Hvorfor har du brug for en ny paraply?
+"Hvorfor?" — "Jeg ved ikke hvorfor."
+Kongen fortalte mig: "Jeg bor i et slot."
+Jeg tror vi skal ringe 991.
+Jeg vil gøre alt hvad du siger!
+Jeg bliver vred når min kæreste taler med andre piger.
+Hvordan siger man det på fransk?
+Denne bog er skrevet på fransk.
+Tom er overraskende god til fransk.
+Det er aldrig for sent.
+Syv minus fire er tre.
+Hvor vil du hen til sommer?
+Åbn ikke de der vinduer.
+Han tog til New York med fly.
+Jeg vil vædde min sidste skilling på at han er uskyldig.
+Hvad er din yndlingssang på dette album?
+Hun ønsker at være en stjerne.
+Hunden har bidt hul i mit ærme.
+Jeg sendte Tom et brev.
+Man har beskyldt mig for at have spist chefens frokost.
+Hvad er det du har i din hånd?
+Internettets infrastruktur er i øjeblikket næsten udelukkende amerikansk.
+Tom havde ikke noget imod at Mary havde små bryster.
+Jeg tror alt her er under kontrol.
+Vil ny teknologi være til meget stor nytte for menneskeheden?
+Det skader ikke at spørge.
+Der er så mange selvretfærdige mennesker.
+Dette træ har en omkreds på tre meter.
+Hun græd sig i søvn.
+Usain Bolt løber meget hurtigt.
+Dette er min tusinde sætning på esperanto.
+Jeg tænker hele dagen på Tom.
+Tom er stadig lige så fattig som han plejede at være.
+Paven har været med til sit første 'selfie'.
+Jeg har nu arbejdet her i flere år.
+Hvor mange gange om dagen fodrer du din hund?
+Sejr er usandsynligt, men ikke umuligt.
+Man kan ikke erstatte kommaet med et punktum i denne sætning.
+Det nytter ikke at true mig, jeg siger ikke noget.
+Vi vil få uundgåelige følger.
+Byen blev forsvaret af en stor hær.
+Mor, kan du læse mig en godnathistorie?
+Jeg ønsker at tjekke noget.
+Hun har gjort store fremskridt på det sidste.
+Alle i landsbyen kender ham.
+Jeg håber I ikke er alene.
+Har I set bedstefars rullestol?
+Jeg håber du har haft en god weekend.
+Marie spiste som en fugl.
+Sam er en filosof, ikke sandt?
+Tom er en ægte kunstner.
+Der undervises i engelsk i de fleste lande.
+Hvem af jer er den ældste?
+Du har selv tit sagt sådan.
+Hver har betalt tusind dollar.
+Hans mor lever helt alene på landet.
+Hvad kan vi byde gæsterne?
+Hun kørte til lufthavnen for at sige farvel til ham.
+Hun har efter brylluppet taget 23 kg på.
+Skoleåret begynder den tiende april.
+Kunne jeg få lov til at se dit kørekort?
+Jeg vidste ikke at du var digter.
+Har du nogensinde redet på et muldyr?
+Tom omskrev sit essay og afleverede det en dag for sent.
+Der var ingen på stranden.
+Hjertet har sine grunde som forstanden ikke forstår.
+Han går med briller med tykke glas.
+Jeg har sejt tøj og seje solbriller på.
+At lege er nemmere end at arbejde.
+Hvorfor vil regeringen læse mine mails?
+Hvem, tror du, gjorde dette?
+Var der en anden i værelset?
+Tom bød Mary og John nogle chips.
+En kirke er et sted til bøn.
+Hun ved ikke hvem der er faderen.
+Tom rakte ud efter hammeren.
+Tom må have fortalt Mary det.
+Tom må være gået ud.
+I ethvert teater er der en garderobe.
+Dette er min mors computer.
+Har du brug for en kørelejlighed?
+Min hund ligger ofte på græsplænen.
+Han kom selv om vejret var dårligt.
+Har du ikke tabt dig? Spiser du ordentligt?
+Hun er fattig, men hun er lykkelig.
+Lad os se hvad Tom har at tilbyde.
+Skal jeg ringe efter en ambulance?
+Det er det jeg elskede ved Tom.
+Apple er et amerikansk firma.
+Hvor mange æbler vil du have?
+Hvor mange æbler har du?
+Hvad kan du bedst lide, æbler eller bananer?
+Måske skulle vi have skrællet æblerne før vi spiste dem.
+Efter to uger uden svar, har jeg foretaget den foreslåede korrektion.
+Du må invitere hvilken som helst person som ønsker at komme.
+Tom prikkede Maria i bagdelen med en kaktus.
+Er Tom endnu ikke ankommet?
+Tom var ikke i stand til at holde op med at ryge.
+Tom sagde at du taler fransk.
+Jeg så naboens hund løbe i min have.
+Tom arbejder på Wall Street.
+Gør det på denne måde.
+Den galoperende inflation har nu varet i tre år. Menneskene er frustrerede og vrede.
+Vær venlig at gå ind.
+Hvileløst går hun frem og tilbage.
+Vær venlig at sende en ambulance.
+Har hun glemt sine penge?
+Tom gav Mary 1000 dollar i en brun papirpose.
+Tom var stadig i Boston på dette tidspunkt sidste år.
+Vi kan alle lide at cykle.
+Hun serverede kaffe til mig.
+Kom herhen. Jeg skal fortælle dig noget.
+At leje en bil var det billigste alternativ.
+Hans svar var ikke korrekt.
+Han er bange for at flyve i flyvemaskine.
+Jeg ved ikke hvornår han kommer.
+Jeg har ondt i skulderen.
+Hvad skete der i bussen?
+Hurtigt er det modsatte af langsomt.
+Efter at jeg havde lavet lektier, så jeg fjernsyn.
+Har du købt dine julegaver?
+Det koster ikke alverden at redde verden.
+Tom er virkelig jaloux, og han bliver sur, når andre fyre taler til mig.
+Du er nødt til at tage tyren ved hornene!
+Tom har en bankkonto på Caymanøerne.
+Himlen fyldes med sorte skyer.
+Jeg ønskede ikke at de skulle tage afsted.
+Hun gør ikke andet end at græde.
+Måske skulle jeg tage en paraply med for en sikkerheds skyld.
+Han sagde, at hvis han havde kendt hendes adresse, ville han have skrevet til hende.
+Er du hundemenneske eller kattemenneske?
+Tom forsøgte at drukne sig selv i sit badekar.
+Hvad mener du med at jeg er for gammel til jobbet?
+Tom sagde til mig at jeg ikke skulle gå med en lyserød skjorte.
+Jeg har haft to hunde.
+Jeg har en stor, sort hund.
+Vi har tre hunde; én der er hvid og to der er sorte.
+Vi har to hunde; den ene er sort og den anden er hvid.
+Vore pas var alt hvad vi havde brug for.
+Du må være meget stolt af din søn.
+Dette er en offentlig gade, ikke en væddeløbsbane!
+Tom mistænker Mary og mig for at pønse på noget.
+Vær ikke misundelig på andre menneskers succes.
+De købte en ny bil.
+Mennesker der har taget crystal meth, føler sig ofte kæphøje og usårlige.
+Min mor har købt to flasker appelsinjuice.
+Jeg er nødt til at vide hvorfor.
+Jeg spekulerer på hvor det skib er på vej hen.
+Put æggene i det kogende vand.
+Du har stadigvæk ikke nok erfaring.
+Jeg ville heller ikke have stolet på Tom.
+Der var et voldsomt regnvejr.
+Jeg har netop modtaget jeres brev.
+Jeg dyrker sport for at være sund.
+Hun oversatte det ord for ord.
+Jeg afskyr at dræbe dyr.
+Min far købte en motorcykel til mig.
+Tom overtalte Mary til at sælge sin motorcykel.
+Så snart jeg har den, vil jeg sende den til jer.
+Kun få er værd at sige imod.
+I dag er det min bedstemors fødselsdag.
+Fra starten indså jeg at du ikke var en engel.
+Da min far gik ud af værelset, gav min lillesøster mig fingeren!
+Mange mennesker tror at vort lands politikere er korrupte.
+Maria har gode kontakter til skoleinspektøren.
+Strengt taget er en tomat ikke en grøntsag. Den er en frugt.
+Der er også katte på Mars.
+Tom og Mary offentliggjorde deres forlovelse i dag.
+Det han siger, er ikke sandt.
+Og træet var ofte alene.
+Sauron vil have hver en hobbit til at frygte ham.
+Håndgranaten eksploderede fem meter fra soldaten.
+Du burde gå til din læge.
+Vil du ikke hellere gå til fods?
+Det er et område hvor der er vindstød på over femogtredive meter pr. sekund.
+Prøv det i det mindste.
+Han har ikke hjulpet de fattige.
+Hans bedstefar sagde igen og igen til ham: "Tom, du er en døgenigt!"
+Jeg har set lyn på himlen.
+Der var engang et stykke træ.
+Dit navn er Tom, ikke sandt?
+Vi vil give ham navnet Tom.
+Pludselig gik alle lysene i byen ud.
+Jeg er træt af dit vås.
+Hvor har du fundet den tegnebog?
+Tom havde ret, havde han ikke?
+Hvornår agter du at begynde?
+Du er ligeglad med mig.
+Tom har tre stykker baggage.
+Hvad skal man synes om det?
+Jeg vil gerne se din billet, tak.
+Hvorfor stiller du spørgsmål som du allerede kender svaret på?
+Moren giver sine sønner et æble.
+Mary slog kaninen ihjel med de bare næver.
+Det er OK med mig.
+Han er virkelig en særling.
+Du er ude på tynd is.
+Er det det du var ude efter?
+En stor mand er død.
+Tom ved at vi tror på ham.
+Tom er studerende på universitetet.
+Vær forsigtig med hvad du siger offentligt. Det kan få konsekvenser.
+Jeg har desperat brug for hjælp.
+Hvilket metrotog kører til centrum?
+Kender du et godt motel i nærheden?
+Jeg kan ikke få nok af det.
+I skolen lærer vi ét fremmedsprog.
+Vil du have en småkage?
+Tycho Brahe brugte kun et kompas og en sekstant til at betragte stjernerne.
+Tom er den eneste person, jeg kender, der drikker importerede øl.
+Jeg bliver her indtil han kommer.
+Den mistænkte har endelig tilstået.
+Tom er den eneste der er mistænkt.
+Han kender New York ud og ind.
+Tom har købt en renoveret telefon.
+Jeg var på badeværelset da telefonen ringede.
+Lad os håbe det virker.
+Du er en meget heldig kvinde.
+Hvor er din datter nu?
+Kunne du venligst fortælle mig hvad klokken er?
+Hvorfor skulle jeg ikke gøre det?
+Nu falder vandstanden i hele landet.
+Jeg vil være hjemme senest halv tre.
+Børnene hedder Tom og Mary.
+Tom har læst tre bøger siden i morges.
+Denne meddelelse er til ham.
+Mary har givet Tom en ordentlig overhaling.
+Hvor mange mennesker med navnet Tom kender du?
+Hun har engang været lærer.
+Tal ikke med den fyr derovre.
+Solen skinner og himlen er blå.
+Jeg har en masse bøger på min bogreol.
+Jeg bad Tom om at gå.
+Jeg bad slagteren om at fjerne fedtet fra kødet.
+Der er en hund under bordet.
+Hold dig fra taxier uden tilladelse.
+Lægefejl er den tredje hyppigste dødsårsag i USA, efter hjertesygdomme og kræft.
+Hvem ønskede du at danse med?
+Vi udfører 80 procent af vores handlinger ubevidst.
+Jeg sidder i toget sammen med Tom.
+Tom siger, at han er sulten, fordi Mary ikke har lavet mad til ham.
+Alle i Boston står uden strøm.
+Hun kan også godt lide bøger.
+Nu begynder du at mærke din varme.
+Jeg bed mig i tungen.
+Alle klappede ved slutningen af koncerten.
+Jeg kan forsikre dig om, at jeg har overvejet den mulighed.
+Solen ler – kom ud af fjerene!
+Jeg kan ikke komme ind i den her bygning.
+Hun har giftet sig med en ubetydelighed.
+I 1783 opdagede Caroline Herschel tre nye stjernetåger.
+Jeg tænker tit på det.
+Er der nogen der kan lappe et fladt dæk?
+Tom kommer ikke til at være glad.
+"Hvad skulle det være?" "To kilo kartofler, tak."
+Du har en høj stjerne hos mig.
+Dit blodtryk er lidt højt.
+Tom mener at dansk er det smukkeste sprog i verden.
+Tom kom til at tage min skjorte på.
+Hvad tid lukker dette museum?
+Jeg har kun et eneste ønske.
+Hvorfor opholder Tom sig i Boston?
+Jeg har set masser af koncerter.
+Har nogen lyst til at køre en tur?
+Prisen på ris steg 3 procent.
+Tom vil gøre det på sin egen måde.
+Har du vasket dit hår?
+Han syede en kjole til mig.
+Han er doven som en hund.
+Tom gik ombord i skibet.
+Hver morgen smilede solen gennem vinduet.
+Tom har ikke set Mary i ugevis.
+Tom giver koncert i slutningen af denne måned.
+Drengen benægtede kraftigt at han havde stjålet cyklen.
+Hun var meget genert indtil hun tog sin eksamen.
+Jeg ved ikke hvorfor han græder.
+Han er en rastløs person.
+Tom vil have mig ned med nakken, ikke sandt?
+Her hjælper ingen kære mor.
+Mødet begyndte præcis klokken ni.
+Jeg har et krav til.
+Han blev tæsket på gaden.
+I dag har vi haft gæster.
+Tom smækkede med døren på vej ud.
+Jeg havde en fremragende lærer.
+Jeg troede du ikke kunne køre bil.
+Mary og Alice er søstre.
+Tom ser utrolig godt ud.
+Hvornår gik solen ned i går?
+Jeg vil sørge for at Tom har alt han har brug for.
+Hundehvalpen blev født uden en hale.
+Han var barfodet med nøgen overkrop.
+Jeg vil beholde menuen som en souvenir.
+Tysk er et germansk sprog.
+Sami mødte datteren af en læge.
+Lad være at glo på mig.
+Jeg er ikke bange for at flyve.
+Jeg har ikke bedt Tom om at gøre noget.
+Jeg vil ikke være læge.
+Jeg spurgte ham om han kendte hende godt.
+Jeg lytter ofte til trist musik.
+Der er ingen pyramider i Europa.
+Hvem har været på mit værelse?
+"Lad mig sove en time mere, mor!" "En time? Du kommer for sent i skole!"
+Vi er alle nybegyndere her.
+Kaffen han drak, var ret dyr.
+Mary parkerede sin bil ud for en brandhane.
+Vil du overnatte hjemme hos mig?
+Der er en hund der følger efter os.
+Hun taler ikke kun engelsk, men også tysk.
+Hans roman vil blive en bestseller.
+Tom var offer for identitetstyveri.
+Sami så Layla i et indkøbscenter.
+Tom vidste ikke hvor det var.
+Kunne jeg få en mørk øl?
+"Den tapre skrædder" er et eventyr af brødrene Grimm.
+"Har du din billet?" "Jeg kan ikke finde min."
+Tom elsker at se Mary danse.
+I toget sad der en meget sød pige.
+Jeg har glemt hvor jeg har lagt mit pas.
+Tom har sovet på sofaen.
+Har du set denne mand?
+Hvad gør jeg i mellemtiden?
+Jeg klippede teksten ud af tidsskriftet.
+Han fik sin tand trukket ud.
+Intet er vigtigere end helbredet.
+Hvor er forældrene til denne dreng?
+Mary sagde at hun var meget træt og ville gå i seng.
+Jeg læser langsomt; derfor lykkes det mig ikke at følge underteksterne.
+Han har en stor lastvogn.
+Jeg er sikker på at Tom vil hjælpe dig.
+Tom vil nok få hjemve.
+Alle mine patienter er over femoghalvfjerds år.
+Jeg gad vide om Tom vil underskrive kontrakten eller ej.
+I morges vækkede telefonen mig.
+Hvornår tager du til Japan?
+Tom har en høj IK.
+Jeg ville aldrig gøre noget så farligt.
+Ville det hjælpe hvis jeg tændte lyset?
+Jeg vil fortælle damen hvad jeg ved.
+I dag er det torsdag.
+Det var nemt at finde Toms hus.
+Ville du kunne genkende Tom?
+Mon vejret bliver godt i morgen.
+Jeg tror det regner i morgen.
+Vi har set hendes dans.
+Mit ur vinder 5 sekunder i døgnet.
+Tom kan godt lide heste.
+Har du givet dine heste noget at drikke?
+De stjal hestene og kvæget.
+Er der meget sne i dit land?
+Hvorfor er det så svært at mestre det franske sprog?
+Tom ønsker at tage til stranden.
+Om foråret pløjer og sår man.
+Lad være med at lade som om du ikke hørte spørgsmålet.
+Jeg ser hen til at høre fra dig.
+Hver morgen, mens han spiser morgenmad, kigger hans hund på ham.
+Tom luftede sin hund hver dag.
+Jeg er for fattig til at blive gift.
+Dette site indeholder seksuelt eksplicit materiale og er kun beregnet for voksne.
+Det er et fremmedsprog for mig og ikke et af de fremmedsprog jeg kender.
+Algeriet ligger ikke i Mellemøsten.
+Der er rene lagner under sengen.
+Hvis jeg dog bare kunne købe en motorcykel!
+Vi søgte ly for stormen.
+Jeg har brug for et køretøj.
+Tom ramte en hjort og totalskadede sin bil.
+Uden dig er det ikke det samme.
+Jeg ønsker ikke at se ham.
+Hvorfor har du lært fransk?
+Tom stod med ansigtet mod muren.
+Tom blev taget at snige sig ind i en biograf.
+Tom sagde at du ville komme.
+Hun havde en hvid nederdel på.
+Tom arbejder kun på deltid.
+Jeg kan bare google det.
+Hvorfor ringede han til mig?
+Hæld dette ned i vasken.
+Har du vundet en masse penge?
+Har du noget imod at stryge denne skjorte for mig?
+Vi går normalt i seng ved midnat.
+Jeg vil gerne låne cirka tre hundrede dollars.
+Har du set videoen hvor præsident Obama slår en flue ihjel med sine bare hænder?
+Tom kommer fra Skotland men taler ikke skotsk.
+Mary gik i en genbrugsbutik.
+Tom er ikke et morgenmenneske.
+Hun vendte tilbage til Japan.
+Lakrids siges at være godt for maven.
+Der var ingen penge tilbage i min tegnebog.
+Jeg har intet at frygte.
+Hvor kan jeg finde trøst?
+Jeg har lige talt i telefon med min advokat.
+Oregon ligger lige syd for Washington.
+Julius Cæsar var en romersk kejser.
+Vi har ikke set ret mange duer her omkring på det sidste.
+Hvad har du at læse?
+Tom ryger, drikker og spiller.
+De efterlod deres børn i Algeriet.
+Sami skjulte sig bag et fyrretræ.
+Denne ideologi er irrelevant for Algeriet.
+Hvor tit kommer der bus?
+Bliver Trump stillet for en rigsret?
+Jeg kender ikke denne dame.
+Forklar mig, hvad det betyder.
+Jeg kan ikke se noget. Du står i vejen.
+Jeg ser hende ikke tit.
+Til mig kaffe med fløde.
+Solen skjuler sig bag skyerne.
+Sig ikke, at jeg ikke er punktlig.
+Vil I to gerne være alene?
+Haven var fuld af smukke blomster.
+Marina er fra Rusland og Clarissa er fra Sverige.
+Han har arbejdet hårdt for at understøtte sin familie.
+Jeg satser ti dollars på den hest.
+En lille kop kaffe koster 2 euro.
+Det regner, og jeg har ikke en paraply.
+"Din fritte er en tyv." "Det er forståeligt."
+"Bør jeg tage til Algeriet eller Australien for at lære fransk?" "Hvad med Frankrig?"
+Dette er kun en af de ting, vi fandt.
+Dette er kun én af de ting, vi fandt.
+En lille kop kaffe koster 2 €.
+Algeriet har et ineffektivt sundhedssystem.
+Alle lo af min ide.
+Det du laver, er ulovligt.
+Mødet i eftermiddag er blevet udsat til i morgen.
+Betragt det som en nødsituation.
+Jeg er lige bag Tom.
+Tom skød indbrudstyven i benet.
+Det tog nøjagtigt en time.
+Jeg er meget bekymret for min svoger.
+Mange lande træffer foranstaltninger for bedre at beskytte sig mod miltbrand og kopper.
+Jeg har ikke en rød reje.
+Ved du, hvis bil den her er?
+Hvad vil du gøre ved det?
+Jeg er skideligeglad med det.
+Hvornår begyndte du at få mistanke om at selvmordet var iscenesat?
+Hvornår tog du brusebad sidst?
+"Tak." "Det var så lidt."
+Min computer er gået i stykker.
+Jeg så hans bil dreje til højre.
+Min bedstefar samlede på bøger.
+Vi har kendt hinanden i evigheder.
+Tom smittede mig med skoldkopper.
+Tyren brød ud af indhegningen.
+Jeg var der i morges.
+Tom stillede sin lærer et par dumme spørgsmål.
+Vi er ude på vandet.
+Alain er en fransk jøde.
+Jeg vil købe en fiskekutter.
+Vand består af hydrogen og oxygen.
+Tom blev spist af en krokodille.
+Min far har givet mig en ny fyldepen.
+Ingen af mine forældre lever.
+Min far gav mig et lille lån på tre millioner dollars.
+Det gør ondt lige her.
+De her ege er over hundred år.
+Tom viste sig at være spion.
+Hvad skal du lave i dag?
+Jeg har tilbragt min ungdom der.
+Tom bor på den anden side af floden.
+Tom vil købe en sportsvogn.
+Der er ingen hund i haven.
+Det her bord har en glat overflade.
+Kan du skrive med venstre hånd?
+Det holder snart op med at regne.
+Blandt de skandinaviske lande har jeg kun besøgt Sverige og Norge.
+Det er for sent at bekymre sig om det nu.
+Kongens rige blev terroriseret af en drage.
+Er det sandt at Nilen er den længste flod i verden?
+Denne nye skærm er meget lysere.
+Vi skal alle være meget forsigtige.
+Kom ikke før klokken seks!
+En mus er mindre end en rotte.
+Mary blev mor i tyve tretten.
+Mange af fangerne overlevede ikke.
+Tom har tre børn der er læger.
+Mammografi kan betyde forskellen mellem liv og død for millioner af kvinder.
+Tom er stadig ikke gift.
+Forveksl aldrig meninger med fakta.
+Tom spiste et æble, og Mary spiste en banan.
+Filmens slutning var for banal.
+De er bange for jer.
+Tom har brede skuldre og smalle hofter.
+Tom flytter tilbage til Boston i oktober.
+Hvordan virker låsen på fordøren?
+Vi bor endnu ikke i Skotland.
+Det er ikke så nemt som du tror.
+Jeg er ikke længere syg.
+Han fortryder ikke sin beslutning.
+Det var bare en spøg.
+Jeg er i gang med at læse den bog, du gav mig.
+Har du set Marys nye pigekæreste?
+Jeg kan ikke se uden briller.
+Det er mine penge. Jeg kan gøre med dem hvad jeg vil.
+Tom siger at han gjorde det på opfordring fra John.
+Han fodrer sin hund to gange om dagen.
+Der er kaffe i koppen.
+Hvad sker der i det land?
+Mange hjemløse har ikke råd til sund mad.
+Jeg har to brødre, en halvbror og en stedbror.
+Det var vi nødt til at sætte en stopper for.
+Tom var til stor hjælp.
+Jeg kan ikke holde den larm ud længere.
+Hun har et smukt ansigt.
+Jeg har brug for tid.
+Vi begynder at lære esperanto.
+De øjne kan man ikke glemme.
+I 2013 boede Tom i Boston.
+Sami har smidt sin mor under bussen.
+Tag pengene og stik af.
+Der er knækket en eger på min cykel.
+Du gør altid en myg til en elefant!
+Jeg er en uhelbredelig romantiker.
+Det er normalt at være lidt bange.
+Han taler langsomt og tydeligt.
+De søgte ly under et egetræ.
+Sami bestilte pomfritter, vinger og østers.
+Bed Tom om at rede sit hår.
+Har I den her i en anden farve?
+Huset, hvor I sover, er stort.
+Marys forældre var meget strenge.
+Hvis det lyder for godt til at være sandt, så er det det nok.
+Jeg bor i New York, og min familie bor i Boston.
+Jeg har allergi overfor hunde.
+Jeg er allergisk over for nødder.
+Han er kun tre år gammel.
+Tom åbnede munden for at tale, men sagde ikke et eneste ord.
+Kunne du tænke dig at tage derhen igen?
+En kladde til en tegning hedder en skitse.
+Kunne vi snakke over en kop kaffe?
+Hun sagde, hun var desorienteret.
+Jeg skulle aldrig have giftet mig med Tom.
+Leanne har forsøgt at ordne computeren.
+Vi må se, hvordan situationen udvikler sig.
+Til sommer besøger jeg Athen.
+Jeg gav ham et knus.
+Hvad tid står du op i morgen?
+Hun er ikke min søster.
+Eleverne har adgang til disse computere.
+Hun må have fortalt ham det.
+Han mestrede hurtigt det russiske sprog.
+Tom går tur med hunden hver dag.
+Tom ville gå tidligt, og det ville jeg også.
+Jeg har brug for at du kommer til Boston.
+Jeg går ikke i supermarkedet efter ferskner, men efter chokolade.
+Ingen af os kan svømme.
+Hun gav ham en på siden af hovedet.
+Der er ikke mange møbler i mit værelse.
+Det kostede en masse penge at få bilen repareret.
+Jeg foretrækker te frem for kaffe.
+Supermarkedet ligger inden for gåafstand.
+Jeg spiser morgenmad lige efter at jeg er stået op.
+Jeg har en drøm om at åbne et tehus.
+Jeg lytter til mine beskeder.
+Jeg kan virkelig godt lide dette hus.
+Melanie dødede en edderkop med hånden.
+Tom ønsker at bo på landet når han går på pension.
+Tom smed en kartoffel i mikrobølgeovnen.
+Tom fortalte mig at han studerede fransk.
+Ziri var bevæbnet med en kniv.
+John kan godt lide sygeplejersken.
+Det er det dummeste, jeg nogensinde har sagt.
+Kvinder lyver mere end mænd.
+Tom var glad for at Mary kom forbi.
+Niger er et godt land. Jeg har engang boet der.
+Drengen har læst en bog på esperanto.
+Er det svært at malke en ged?
+Her er, hvad jeg tror, der er sket.
+Tom passede Mary i tre år.
+Du er heldig at have sådanne venner.
+Mor vækker mig hver dag, når jeg skal i skole.
+Jimmy Carter var den første amerikanske præsident, der blev født på et hospital.
+Tom svarede ikke på Marys brev.
+Fiskene i fjorden er ikke sunde og raske.
+Han lever i en anden virkelighed.
+De mennesker, du efterligner, hader også muslimer.
+"Hvor er mine småkager?" "Undskyld, jeg har spist dem allesammen."
+Er du ansvarlig for madlavningen?
+Hun har bygget et skur.
+Vi fik at vide, at vi aldrig skulle gøre det igen.
+De her blåbær var for dyre.
+Jeg synes, at det er virkelig klogt.
+Tom spiser mere bacon end Mary.
+Der var der en rebstige.
+Har du allerede fået noget at spise?
+Jeg har hørt at Tom og Mary er gået hver til sit.
+Han skyndte sig tilbage til sit værelse.
+Hvorfor går du med bare tæer?
+Tom gav os nogle æg.
+Jeg vil gå en tur.
+Det er godt at drikke en masse vand.
+Toms vittighed havde for længst overskredet sidste salgsdato.
+Vi vil gerne leve frit.
+Jeg stod tidligt op for at nå det første tog.
+Jeg er mildest talt skuffet.
+Børnene kunne ikke lide deres lærer.
+Han har ikke ret mange penge.
+Byen har i årevis ikke formået at løse dette problem.
+Hun skrev en besked til sin kæreste.
+Vidste du, at myren er en af de mest fotograferede skabninger?
+De stod i kø til bussen.
+Tom blev døbt den tyvende oktober tyve tretten.
+Jeg skal vise dig, hvor jeg arbejder.
+Hvorfor er du i live?
+Du er ikke længere velkommen i mit hjem.
+Rygning er ikke tilladt i toget.
+Jeg har ikke bestilt ris.
+Forskellen mellem Jorden og de andre planeter er at Jorden har vand.
+Tom har uforvarende bidraget til et højreorienteret projekt.
+Jeg kommer og besøger dig i fængslet.
+Hun har fingeren på pulsen.
+Tom hævdede at han havde set en ufo.
+Hvorfor deler vi ikke regningen fifty-fifty?
+Jeg hældte olie på ilden.
+Mary ammede alle sine børn.
+I fjorten tooghalvfems blev jøderne fordrevet fra Spanien.
+Tom fortalte mig at du er blevet gift.
+Jeg har hørt at det var Tom, der gjorde det.
+Hestene er nervøse for at der kan komme et tordenvejr i aften.
+Min plan er at tage toget.
+I går var det skuddag.
+Jeg købte det i butikken ved siden af huset.
+Tom har sat sit hus til salg.
+Efterlader jeres forældre jer alene hjemme?
+Giv Mary alt, hvad hun beder om.
+Hverken Finland eller Sverige havde tilsluttet sig NATO, hvis ikke Rusland havde invaderet Ukraine.
+Rengør askebægeret, for det er fuld af cigaretskodder.
+Tom ved hverken ud eller ind.
+Hvem som helst kan gøre det her.
+Blåhvalen bliver over 30 meter lang.
+Han er stædig som et asen.
+Tom og Mary har indflytningsfest fredag aften.
+Tom er perfekt eller hvad?
+Blusen er lavet af bomuld.
+Hvem ellers kunne have gjort det?
+Du vil beskytte mig, ikke sandt?
+Red et menneske. Spis en kannibal.
+Da Tom gik, begyndte alle børnene at græde.
+Jeg troede at Tom aldrig ville holde op med at tale.
+Det ringede ud, og eleverne begyndte at strømme ud af skolen.
+Vores samtale varede i timevis.
+Jeg glæder mig til at møde dig i Boston.
+Hvor lang er den bro?
+Er 3,8 et lige tal eller et ulige tal?
+Har I kigget på billederne?
+Mary var meget overbevisende, var hun ikke?
+Vi har ikke set hinanden i tre uger.
+Han har stjålet en cykel.
+Ingen ønsker at høre dig synge.
+Det var en bitter pille at sluge.
+Hvad der skete med Tom, vil blive forklaret senere.
+Den russiske hær har intet at gøre i Ukraine.
+Yanni kan beholde de penge, han har tjent.
+Skal vi mødes i morgen kl. 9?
+Euroen er den europæiske valuta.
+En runde varer cirka fem minutter.
+Du havde ret som sædvanlig.
+Der er altid plads til forbedringer.
+Jeg har ikke set en kat.
+Jeg var allerede som barn mørkeræd.
+Tom har en cykel med ti gear.
+Peter fik en ny kælk i julegave.
+Peter har fået en ny kælk i julegave.
+Hvorfor kan en struds ikke flyve?
+Jeg kan ikke presse denne appelsin. Den er tør.
+Han har altid en cigar i mundvigen.
+Nogen har stjålet forhjulet på min cykel.
+Det er hans job at redde liv.
+Hvem har sat den gamle mand til at lede?
+Den nye bro bliver én og en halv kilometer lang.
+Allerede formulerede sætninger tilhører ikke længere deres forfattere.
+Har du en vandslange, jeg kan låne?
+Vi ved ikke rigtig noget om døden.
+Din hund er ret god til at svømme.
+Min mor kan ikke lide at se tv.
+Den falske konge spiller golf, mens den virkelige konge konsoliderer sin magt.
+Er det ikke dig, der har skrevet det?
+Hvornår plejer du at tage dig en lur?
+Hun sagde: "Jeg har en smuk have."
+Tom fik et fødselsdagskort fra Mary.
+Drej håndtaget for at åbne døren.
+Vi tager til stranden. Kommer du med?
+Ti russiske geværer og et tyrkisk gevær blev fundet på husets loft.
+Jeg troede jeg kendte ham.
+I morgen kommer før både i overmorgen og dagen efter i overmorgen.
+Jeg tilbringer hele dagen foran computeren.
+Takket være vaccinen er mæslinger så godt som udryddet.
+Jeg tvivler på om vi kan bevise det.
+Hvornår begynder hanukkah i år?
+Hotellet vender ud mod havet.
+Kan jeg komme på jeres hotspot?
+Det er en dum hund.
+Hvem er den smilende mand derovre?
+Det har regnet uafbrudt i syv dage.
+Kartoflerne ligger i den skuffe.
+Vand og olie er væsker.
+Tom gik ud på altanen for at slå en prut.
+I morges stod jeg tidligt op.

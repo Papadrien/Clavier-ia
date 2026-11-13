@@ -54,6 +54,17 @@ class LicenseNoticesTest {
     }
 
     @Test
+    fun `chaque police du clavier a sa mention et le texte complet de sa licence`() {
+        val fonts = LicenseNotices.all.filter { it.id.startsWith("font-") }
+        assertEquals(8, fonts.size)
+        fonts.forEach { notice ->
+            val asset = notice.fullTextAsset ?: fail("Texte de licence manquant : ${notice.id}")
+            val text = File(mainDir, "assets/$asset").readText()
+            assertTrue(text.contains("SIL OPEN FONT LICENSE Version 1.1"), "Licence OFL attendue : ${notice.id}")
+        }
+    }
+
+    @Test
     fun `les textes de l ecran existent en anglais et en francais`() {
         fun keys(dir: String) = Regex("""<string name="(licenses_[a-z0-9_]+)"""")
             .findAll(File(mainDir, "res/$dir/strings.xml").readText()).map { it.groupValues[1] }.toSet()

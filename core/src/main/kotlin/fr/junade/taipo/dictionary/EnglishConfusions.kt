@@ -58,7 +58,12 @@ internal object EnglishConfusions {
         if (c in SILENT_H) {
             true
         } else {
-            c.length >= 3 && '\'' !in c && '-' !in c && c[0] in "aeiou" && c !in A_BEFORE_VOWEL_LETTER && !c.startsWith("eu") &&
+            c.length >= 3 &&
+                '\'' !in c &&
+                '-' !in c &&
+                c[0] in "aeiou" &&
+                c !in A_BEFORE_VOWEL_LETTER &&
+                !c.startsWith("eu") &&
                 !(c[0] == 'u' && U_AS_YOU_PREFIXES.any { c.startsWith(it) }) &&
                 c !in setOf("and", "are", "all", "any", "also", "ill", "off", "old", "one", "our", "out", "own", "are", "ago", "act")
         }
@@ -84,77 +89,120 @@ internal object EnglishConfusions {
 
         // --- its / it's ---
         ConfusionRule(
-            "its", "it's", "its > it's devant un mot qui ne suit pas un possessif",
+            "its",
+            "it's",
+            "its > it's devant un mot qui ne suit pas un possessif",
             next = oneOf("a", "an", "the", "been", "not", "going", "just", "very", "so", "too", "really", "still", "because", "what", "ok", "okay", "getting", "gonna"),
         ),
         ConfusionRule("it's", "its", "it's > its devant « own »", next = oneOf("own")),
         ConfusionRule(
-            "it's", "its", "it's > its après une préposition",
+            "it's",
+            "its",
+            "it's > its après une préposition",
             previous = oneOf("of", "in", "on", "at", "by", "from", "with", "into", "despite", "during"),
             next = noneOf("a", "an", "the", "not", "been", "going", "just", "very", "so", "too", "really", "still", "because", "what", "ok", "okay", "getting", "gonna", "all", "time", "like", "my", "your", "our", "his", "her", "their", "i", "you", "he", "she", "we", "they", "it", "that", "this", "me", "us"),
         ),
 
         // --- your / you're ---
         ConfusionRule(
-            "your", "you're", "your > you're devant un mot qui n'est pas un nom",
+            "your",
+            "you're",
+            "your > you're devant un mot qui n'est pas un nom",
             next = oneOf("welcome", "going", "gonna", "not", "being", "doing", "getting", "so", "very", "too", "really", "always", "never", "just", "still", "a", "an", "the", "such", "quite", "coming"),
         ),
         ConfusionRule(
-            "you're", "your", "you're > your devant un nom de possession",
+            "you're",
+            "your",
+            "you're > your devant un nom de possession",
             next = oneOf("own", "mom", "dad", "mother", "father", "family", "phone", "car", "name", "email", "account", "mind", "life", "job"),
         ),
 
         // --- their / there / they're ---
         ConfusionRule("there", "their", "there > their devant un nom possédé", next = oneOf(*THEIR_NOUNS)),
-        ConfusionRule("they're", "their", "they're > their devant un nom possédé", next = oneOf("own", "mom", "dad", "mother", "father", "car", "house", "phone")),
+        ConfusionRule(
+            "they're",
+            "their",
+            "they're > their devant un nom possédé",
+            next = oneOf("own", "mom", "dad", "mother", "father", "car", "house", "phone"),
+        ),
         ConfusionRule("their", "there", "their > there devant un verbe d'existence", next = oneOf(*THERE_VERBS)),
         ConfusionRule("they're", "there", "they're > there devant un verbe d'existence", next = oneOf("is", "are", "was", "were", "isn't", "aren't")),
         ConfusionRule(
-            "there", "they're", "there > they're en début de proposition devant un gérondif",
-            sentenceStart = true, next = oneOf("going", "gonna", "doing", "getting", "coming"),
+            "there",
+            "they're",
+            "there > they're en début de proposition devant un gérondif",
+            sentenceStart = true,
+            next = oneOf("going", "gonna", "doing", "getting", "coming"),
         ),
         ConfusionRule(
-            "there", "they're", "there > they're après une conjonction devant un gérondif",
-            previous = oneOf(*CLAUSE_OPENERS), next = oneOf("going", "gonna", "not", "doing", "getting", "coming"),
+            "there",
+            "they're",
+            "there > they're après une conjonction devant un gérondif",
+            previous = oneOf(*CLAUSE_OPENERS),
+            next = oneOf("going", "gonna", "not", "doing", "getting", "coming"),
         ),
         ConfusionRule(
-            "their", "they're", "their > they're après une conjonction devant un gérondif",
-            previous = oneOf(*CLAUSE_OPENERS), next = oneOf("going", "gonna", "not", "doing", "getting", "coming"),
+            "their",
+            "they're",
+            "their > they're après une conjonction devant un gérondif",
+            previous = oneOf(*CLAUSE_OPENERS),
+            next = oneOf("going", "gonna", "not", "doing", "getting", "coming"),
         ),
         ConfusionRule("their", "they're", "their > they're devant « gonna »", next = oneOf("gonna")),
-        ConfusionRule("their", "there", "their > there devant un mot de temps (« over their yesterday »)", next = oneOf("yesterday", "today", "tonight", "tomorrow", "later")),
         ConfusionRule(
-            "their", "there", "their > there en fin de groupe après un verbe de lieu",
+            "their",
+            "there",
+            "their > there devant un mot de temps (« over their yesterday »)",
+            next = oneOf("yesterday", "today", "tonight", "tomorrow", "later"),
+        ),
+        ConfusionRule(
+            "their",
+            "there",
+            "their > there en fin de groupe après un verbe de lieu",
             previous = oneOf("over", "out", "back", "from", "go", "went", "been", "going", "get", "got", "stay", "stayed", "live", "lived"),
             punctAfter = true,
         ),
 
         // --- grate / great ---
         ConfusionRule(
-            "grate", "great", "grate > great devant un nom d'éloge, après « a », « was » ou « so »",
+            "grate",
+            "great",
+            "grate > great devant un nom d'éloge, après « a », « was » ou « so »",
             previous = oneOf("a", "was", "is", "so", "very", "really", "such", "what", "have", "had", "been"),
             next = oneOf("movie", "day", "job", "idea", "time", "thing", "work", "game", "news", "guy", "one", "film", "show", "place", "friend", "person", "man", "woman", "team", "song", "book", "party", "weekend", "night", "morning", "year", "life", "story", "answer", "question", "view", "deal", "help", "thanks"),
         ),
 
         // --- to / too ---
-        ConfusionRule("to", "too", "to > too devant un adjectif ou adverbe de degré", next = oneOf("much", "many", "late", "early", "soon", "tired", "busy", "expensive")),
         ConfusionRule(
-            "too", "to", "too > to devant un verbe à l'infinitif",
+            "to",
+            "too",
+            "to > too devant un adjectif ou adverbe de degré",
+            next = oneOf("much", "many", "late", "early", "soon", "tired", "busy", "expensive"),
+        ),
+        ConfusionRule(
+            "too",
+            "to",
+            "too > to devant un verbe à l'infinitif",
             previous = oneOf("want", "wants", "wanted", "going", "need", "needs", "needed", "have", "has", "had", "how", "way", "able", "trying", "try", "tried", "used", "supposed", "ready", "time", "like", "love", "hope", "plan", "decided", "forget", "forgot", "remember", "wish"),
             next = oneOf("be", "do", "go", "have", "make", "get", "see", "say", "take", "find", "help", "give", "use", "know", "try", "keep", "let", "come", "buy", "work", "play", "eat", "send", "call", "tell", "start", "stop", "leave", "stay", "read", "write", "learn", "ask", "talk", "watch", "change", "move", "check", "meet"),
         ),
 
         // --- then / than ---
         ConfusionRule(
-            "then", "than", "then > than après un comparatif",
-            previous = oneOf(*COMPARATIVES), next = oneOf(*SUBJECT_PRONOUNS_AND_DETERMINERS),
+            "then",
+            "than",
+            "then > than après un comparatif",
+            previous = oneOf(*COMPARATIVES),
+            next = oneOf(*SUBJECT_PRONOUNS_AND_DETERMINERS),
         ),
         ConfusionRule("than", "then", "than > then après « and » ou « but »", previous = oneOf("and", "but")),
         ConfusionRule("than", "then", "than > then en début de phrase", sentenceStart = true),
 
         // --- lose / loose ---
         ConfusionRule(
-            "loose", "lose", "loose > lose après un auxiliaire",
+            "loose",
+            "lose",
+            "loose > lose après un auxiliaire",
             previous = oneOf("to", "will", "would", "can", "could", "might", "may", "don't", "didn't", "won't", "wouldn't", "can't", "couldn't", "shouldn't", "gonna", "should", "never"),
             next = noneOf("fitting", "clothes", "clothing", "ends", "end", "fit", "jeans", "pants", "shirt", "change", "cannon", "tea", "leaf", "lips"),
         ),
@@ -162,17 +210,23 @@ internal object EnglishConfusions {
 
         // --- whose / who's ---
         ConfusionRule(
-            "whose", "who's", "whose > who's devant un verbe ou un article",
+            "whose",
+            "who's",
+            "whose > who's devant un verbe ou un article",
             next = oneOf("going", "gonna", "coming", "been", "not", "the", "a", "an", "there", "ready", "here", "next", "first"),
         ),
         ConfusionRule(
-            "who's", "whose", "who's > whose devant un nom possédé",
+            "who's",
+            "whose",
+            "who's > whose devant un nom possédé",
             next = oneOf("own", "idea", "turn", "fault", "car", "phone", "book", "name", "house", "mom", "dad", "side", "responsibility", "job", "bag", "coat", "keys", "shoes", "dog", "cat", "kid", "kids", "child", "parents", "birthday"),
         ),
 
         // --- should of ---
         ConfusionRule(
-            "of", "have", "of > have après un modal",
+            "of",
+            "have",
+            "of > have après un modal",
             previous = oneOf("should", "could", "would", "must", "might", "shouldn't", "couldn't", "wouldn't", "mustn't"),
         ),
 

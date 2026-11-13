@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.ViewCompat
@@ -20,6 +19,7 @@ import java.util.Locale
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,7 +32,7 @@ import kotlinx.coroutines.withContext
  */
 class BackupActivity : ComponentActivity() {
 
-    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
+    // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }
@@ -88,13 +88,15 @@ class BackupActivity : ComponentActivity() {
         setBusy(true)
         scope.launch {
             try {
-                val data = withContext(Dispatchers.IO) {
-                    val collected = BackupService.collect(this@BackupActivity)
+                // Audit BUG-09 : le travail tourne dans la portée du processus ; une rotation pendant l'export ne l'interrompt pas.
+                val appContext = applicationContext
+                val data = ProcessScope.async(Dispatchers.IO) {
+                    val collected = BackupService.collect(appContext)
                     val bytes = BackupCodec.encode(collected).toByteArray(Charsets.UTF_8)
-                    val output = contentResolver.openOutputStream(uri, "wt") ?: error("Flux de sortie indisponible")
+                    val output = appContext.contentResolver.openOutputStream(uri, "wt") ?: error("Flux de sortie indisponible")
                     output.use { it.write(bytes) }
                     collected
-                }
+                }.await()
                 AlertDialog.Builder(this@BackupActivity)
                     .setTitle(R.string.backup_export_done_title)
                     .setMessage(
@@ -110,7 +112,7 @@ class BackupActivity : ComponentActivity() {
                 throw e
             } catch (e: Exception) {
                 AppLog.e(TAG, "export de la sauvegarde en échec", e)
-                Toast.makeText(this@BackupActivity, R.string.backup_export_failed, Toast.LENGTH_LONG).show()
+                showScreenMessage(R.string.backup_export_failed)
             } finally {
                 setBusy(false)
             }
@@ -128,12 +130,12 @@ class BackupActivity : ComponentActivity() {
                 throw e
             } catch (e: BackupCodec.InvalidBackupException) {
                 val message = if (e.reason == BackupCodec.Reason.TOO_NEW) R.string.backup_error_too_new else R.string.backup_error_not_a_backup
-                Toast.makeText(this@BackupActivity, message, Toast.LENGTH_LONG).show()
+                showScreenMessage(message)
             } catch (e: FileTooLargeException) {
-                Toast.makeText(this@BackupActivity, R.string.backup_error_too_large, Toast.LENGTH_LONG).show()
+                showScreenMessage(R.string.backup_error_too_large)
             } catch (e: Exception) {
                 AppLog.e(TAG, "lecture de la sauvegarde en échec", e)
-                Toast.makeText(this@BackupActivity, R.string.backup_error_read, Toast.LENGTH_LONG).show()
+                showScreenMessage(R.string.backup_error_read)
             } finally {
                 setBusy(false)
             }
@@ -159,7 +161,10 @@ class BackupActivity : ComponentActivity() {
         setBusy(true)
         scope.launch {
             try {
-                val report = withContext(Dispatchers.IO) { BackupService.restore(this@BackupActivity, data) }
+                // Audit BUG-09 : la restauration va à son terme même si l'écran est recréé (rotation, thème) ; seul le compte rendu
+                // est perdu dans ce cas.
+                val appContext = applicationContext
+                val report = ProcessScope.async(Dispatchers.IO) { BackupService.restore(appContext, data) }.await()
                 AlertDialog.Builder(this@BackupActivity)
                     .setTitle(R.string.backup_restore_done_title)
                     .setMessage(restoreSummary(report))
@@ -169,7 +174,7 @@ class BackupActivity : ComponentActivity() {
                 throw e
             } catch (e: Exception) {
                 AppLog.e(TAG, "restauration de la sauvegarde en échec", e)
-                Toast.makeText(this@BackupActivity, R.string.backup_restore_failed, Toast.LENGTH_LONG).show()
+                showScreenMessage(R.string.backup_restore_failed)
             } finally {
                 setBusy(false)
             }

@@ -23,13 +23,15 @@ internal class KeyPopup(private val view: View) {
         textAlign = Paint.Align.CENTER
         useTaipoFont(view.context, TaipoType.Weight.BOLD)
     }
+
     // Lot T6 : le symbole de la cellule sélectionnée (fond violet) est blanc dans les deux thèmes.
     private val popupSelectedTextPaint = Paint(popupTextPaint).apply {
         color = view.context.themeColor(FaceContent.colorOn(R.color.key_popup_selection))
     }
     private val globeColor = view.context.themeColor(R.color.text_primary)
-    private var globeOnSelection = false
-    private var oneHandedOnSelection = false
+
+    /** Icônes de la bulle d'Entrée actuellement teintées pour la cellule sélectionnée (violette). */
+    private val iconsTintedOnSelection = mutableSetOf<Char>()
     private val popupRect = RectF()
     private val charBuffer = CharArray(1)
 
@@ -66,6 +68,13 @@ internal class KeyPopup(private val view: View) {
 
     /** Symbole de la cellule sélectionnée, ou null si le doigt est hors de la bulle. */
     fun selectedSymbol(): Char? = popupGrid.getOrNull(popupSelectedRow)?.getOrNull(popupSelectedCol)
+
+    /**
+     * Vrai si (x, y) est resté sur la touche d'origine d'une bulle sans choix présélectionné (bulle du point) : relâcher
+     * là saisit la touche elle-même, comme un appui simple, au lieu de ne rien saisir.
+     */
+    fun isOnHomeWithoutDefault(x: Float, y: Float): Boolean =
+        key != null && popupDefaultRow < 0 && !popupRect.contains(x, y) && popupHomeRect.contains(x, y)
 
     /**
      * Ouvre la bulle de [pressed] au-dessus de sa position [bounds]. [headroom] : place disponible au-dessus de la vue ;
@@ -124,7 +133,10 @@ internal class KeyPopup(private val view: View) {
         popupPaddingV = paddingV
         // Zone de départ : la touche et l'espace jusqu'à la bulle, avec une petite tolérance.
         popupHomeRect.set(
-            bounds.left - clipMargin, popupRect.bottom, bounds.right + clipMargin, bounds.bottom + clipMargin,
+            bounds.left - clipMargin,
+            popupRect.bottom,
+            bounds.right + clipMargin,
+            bounds.bottom + clipMargin,
         )
         val touchMargin = view.dimen(R.dimen.taipo_popup_touch_margin)
         popupTouchRect.set(popupRect)
@@ -139,8 +151,14 @@ internal class KeyPopup(private val view: View) {
         pivotX = bounds.centerX().coerceIn(popupRect.left, popupRect.right)
         pivotY = bounds.top
         openMaxScale = PopupOpenPose.maxScale(
-            pivotX, pivotY, popupRect.left, popupRect.right, popupRect.top,
-            content.leftPx + margin / 2f, content.rightPx - margin / 2f, -headroom,
+            pivotX,
+            pivotY,
+            popupRect.left,
+            popupRect.right,
+            popupRect.top,
+            content.leftPx + margin / 2f,
+            content.rightPx - margin / 2f,
+            -headroom,
         )
         openLastFrameNanos = 0L
         openSpring.snap(if (ValueAnimator.areAnimatorsEnabled()) PopupOpenPose.START_SCALE else 1f)
@@ -209,13 +227,16 @@ internal class KeyPopup(private val view: View) {
         iconSize: Float,
         iconMaxRatio: Float,
         shifted: Boolean,
-        globeIcon: Drawable,
-        oneHandedIcon: Drawable,
+        icons: Map<Char, Drawable>,
     ) {
         if (key == null) return
         val openScale = advanceOpening()
         canvas.save()
-        canvas.scale(openScale, openScale, pivotX, pivotY)
+        // Gelée ([MotionStyle.JELLY]) : la bulle s'étire en sortant de la touche, s'aplatit en dépassant sa taille.
+        val style = MotionStyle.current
+        val scaleX = (openScale * style.stretchX(openScale)).coerceAtMost(openMaxScale)
+        val scaleY = (openScale * style.stretchY(openScale)).coerceAtMost(openMaxScale)
+        canvas.scale(scaleX, scaleY, pivotX, pivotY)
         val alpha = (255 * PopupOpenPose.alpha(openScale)).roundToInt()
         if (alpha < 255) canvas.saveLayerAlpha(popupRect, alpha)
         canvas.drawRoundRect(popupRect, cornerRadius, cornerRadius, popupPaint)
@@ -235,18 +256,19 @@ internal class KeyPopup(private val view: View) {
                     val selectionRadius = minOf(popupCellWidth, popupCellHeight) / 2f - selectionInset
                     canvas.drawCircle(cx, cy, selectionRadius, popupSelectionPaint)
                 }
-                if (symbol == GLOBE_SYMBOL || symbol == ONE_HANDED_SYMBOL) {
-                    val isGlobe = symbol == GLOBE_SYMBOL
-                    val icon = if (isGlobe) globeIcon else oneHandedIcon
+                val icon = icons[symbol]
+                if (icon != null) {
                     val half = minOf(iconSize, popupCellHeight * iconMaxRatio) / 2f
-                    val tintedOnSelection = if (isGlobe) globeOnSelection else oneHandedOnSelection
-                    if (tintedOnSelection != selected) {
+                    if ((symbol in iconsTintedOnSelection) != selected) {
                         // Lot T6 : l'icône posée sur la cellule violette est blanche ; la teinte ne change qu'avec la sélection.
-                        if (isGlobe) globeOnSelection = selected else oneHandedOnSelection = selected
+                        if (selected) iconsTintedOnSelection += symbol else iconsTintedOnSelection -= symbol
                         icon.setTint(if (selected) popupSelectedTextPaint.color else globeColor)
                     }
                     icon.setBounds(
-                        (cx - half).roundToInt(), (cy - half).roundToInt(), (cx + half).roundToInt(), (cy + half).roundToInt(),
+                        (cx - half).roundToInt(),
+                        (cy - half).roundToInt(),
+                        (cx + half).roundToInt(),
+                        (cy + half).roundToInt(),
                     )
                     icon.draw(canvas)
                     return@forEachIndexed
@@ -280,6 +302,9 @@ internal class KeyPopup(private val view: View) {
 
         /** Caractère fictif qui représente la touche mode une main dans la bulle d'Entrée ; jamais saisi. */
         const val ONE_HANDED_SYMBOL = EnterBubbleGrid.ONE_HANDED
+
+        /** Caractère fictif qui représente la touche clavier flottant dans la bulle d'Entrée ; jamais saisi. */
+        const val FLOATING_SYMBOL = EnterBubbleGrid.FLOATING
 
         private const val NANOS_PER_SECOND = 1_000_000_000f
         private const val FIRST_FRAME_S = 1f / 60f

@@ -12,6 +12,7 @@ class EmojiSuggesterTest {
     private val suggester = EmojiSuggester(
         french = EmojiSuggester.parse("🍕 pizza\n🐱 chat chaton\n☕ café\n😍 adore"),
         english = EmojiSuggester.parse("🍕 pizza\n🐱 cat\n❤️ love"),
+        others = mapOf(KeyboardLanguage.CS to EmojiSuggester.parse("🐶 pes psa\n🍕 pizza")),
     )
 
     private fun fr(text: String) = suggester.suggest(text, KeyboardLanguage.FR)
@@ -72,6 +73,16 @@ class EmojiSuggesterTest {
     }
 
     @Test
+    fun `les autres langues ont leur liste, sans regle de pluriel en s`() {
+        fun cs(text: String) = suggester.suggest(text, KeyboardLanguage.CS)
+        assertEquals("🐶", cs("můj pes"))
+        assertEquals("🐶", cs("vidím psa"))
+        assertNull(cs("pizzas"), "pas de pluriel en s hors français et anglais")
+        assertNull(cs("chat"), "la liste française ne sert pas en tchèque")
+        assertNull(suggester.suggest("pizza", KeyboardLanguage.PL), "langue sans liste : rien")
+    }
+
+    @Test
     fun `texte vide, espace seul, mot inconnu ou trop long`() {
         assertNull(fr(""))
         assertNull(fr(" "))
@@ -113,10 +124,22 @@ class EmojiSuggesterTest {
             .filter { it.isNotEmpty() && it != "#" && !it.startsWith("# ") }
     }
 
+    /** Toutes les listes de mots-clés livrées (français, anglais et langues ajoutées le 12/11/2026). */
+    private fun realListNames(): List<String> =
+        File("src/main/assets/emoji").list().orEmpty().filter { it.startsWith("suggestions-") }.sorted()
+
+    @Test
+    fun `chaque langue ajoutee a sa liste de mots-cles`() {
+        val names = realListNames()
+        for (code in listOf("fr", "en", "pl", "ro", "cs", "hu", "sv", "da", "nb", "fi")) {
+            assertTrue("suggestions-$code.txt" in names, "suggestions-$code.txt manquant")
+        }
+    }
+
     @Test
     fun `les fichiers reels ne proposent que des emojis du catalogue du panneau`() {
         val catalog = realCatalogEmojis()
-        listOf("suggestions-fr.txt", "suggestions-en.txt").forEach { name ->
+        realListNames().forEach { name ->
             realLines(name).forEach { line ->
                 val emoji = line.split(Regex("\\s+")).first()
                 assertTrue(emoji in catalog, "$name : $emoji absent du catalogue emoji.txt")
@@ -126,7 +149,7 @@ class EmojiSuggesterTest {
 
     @Test
     fun `les fichiers reels n ont aucun mot en double ni de ligne sans mot`() {
-        listOf("suggestions-fr.txt", "suggestions-en.txt").forEach { name ->
+        realListNames().forEach { name ->
             val seen = HashSet<String>()
             realLines(name).forEach { line ->
                 val tokens = line.split(Regex("\\s+"))
@@ -135,7 +158,9 @@ class EmojiSuggesterTest {
                     assertTrue(seen.add(key), "$name : mot en double « $key »")
                 }
             }
-            assertTrue(seen.size > 150, "$name : liste trop courte (${seen.size} mots)")
+            // Listes historiques (français, anglais) : plus de 150 mots ; listes ajoutées le 12/11/2026 : plus de 100.
+            val minimum = if (name == "suggestions-fr.txt" || name == "suggestions-en.txt") 150 else 100
+            assertTrue(seen.size > minimum, "$name : liste trop courte (${seen.size} mots)")
         }
     }
 

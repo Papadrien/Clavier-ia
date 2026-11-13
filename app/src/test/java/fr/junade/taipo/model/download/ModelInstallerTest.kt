@@ -1,14 +1,14 @@
 package fr.junade.taipo.model.download
 
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.security.MessageDigest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
-import java.io.IOException
-import java.io.InputStream
-import java.security.MessageDigest
 
 class ModelInstallerTest {
 

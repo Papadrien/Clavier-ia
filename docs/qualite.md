@@ -43,8 +43,9 @@ les versions (`ktlint-cli` 1.5.0, `detekt-cli` 1.23.8, dans `gradle/quality.grad
 
 - [x] `./gradlew ktlintBaseline detektBaseline`, committer `quality/` (08/11/2026, revue de code : `.editorconfig` ajouté, il
   manquait ; ktlint 1 112 écarts figés au lieu de 10 519 sans lui (règles class-signature et function-signature désactivées : elles contredisent la convention du projet), detekt 326 ; `qualityCheck` lancé par la CI).
-- [ ] `./gradlew qualityCheck` vert.
-- [ ] Étape CI.
+- [x] `./gradlew qualityCheck` vert (11/11/2026, après `ktlintFormat` sur tout le projet : 1 106 écarts ktlint figés → 9 ;
+  detekt 326 → 277).
+- [x] Étape CI (`qualityCheck` dans `.github/workflows/android.yml`).
 
 ## Découpage des gros fichiers (audit 2.1), par étapes
 Audit du 14/10/2026 : `TaipoIme` (~1 840 lignes), `Dictionary`, `KeyboardView`, `CorrectionAiController`, `SuggestionController`,
@@ -100,3 +101,17 @@ s'appuyant sur `ImeHostContext` comme les contrôleurs existants :
 
 Restent dans `TaipoIme` : le cycle de vie du service, la frappe dans le champ (touches, autocorrection, mots suggérés) et le
 câblage des contrôleurs. Prochaine étape possible : la frappe dans le champ (`onKeyPressed`, `onWordSuggestionTapped`).
+
+## Tests Robolectric (audit TEST-01, 11/11/2026)
+
+- Les classes qui manipulent le framework Android (contrôleurs du clavier, `InputConnection`, `EditorInfo`, presse-papiers) se testent
+  sur la JVM avec **Robolectric** (`app/src/test`, annotation `@RunWith(RobolectricTestRunner::class)`, JUnit 4, lancé par le moteur
+  Vintage à côté des tests JUnit 5). Ils tournent avec `./gradlew testDebugUnitTest`, donc aussi en CI, sans émulateur.
+- Réglages : `app/src/test/resources/robolectric.properties` (SDK simulé 36, application Android nue). Outillage commun :
+  `testing/RobolectricFakes.kt` (`fake` pour les interfaces d'hôte, `TestField` pour un vrai champ `EditText`).
+- Hors de portée de Robolectric : code natif (LiteRT-LM, sherpa-onnx, SQLCipher) et Keystore : tests instrumentés (`app/src/androidTest`).
+- Premier lancement : Robolectric télécharge une image d'Android (environ 150 Mo, dans `~/.m2`, mise en cache par la CI). Si Maven
+  Central est inaccessible, la propriété Gradle `taipo.robolectricRepo` (par exemple dans `~/.gradle/gradle.properties`) donne un
+  autre dépôt. Les tests Robolectric demandent un JDK 21 :
+  Robolectric 4.17 exige Java 21 pour l'API 36 (sous JDK 17, ils échouent à l'initialisation), d'où `java-version: '21'` dans
+  `.github/workflows/android.yml` ; le code reste compilé pour Java 17. `--add-exports` / `--add-opens` : `app/build.gradle.kts`.

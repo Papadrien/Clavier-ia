@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
+import android.os.SystemClock
 import com.k2fsa.sherpa.onnx.OnlineStream
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.VoiceLevel
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /** Raison pour laquelle la capture s'est arrêtée d'elle-même, hors silence prolongé. */
 enum class CaptureError {
@@ -169,7 +171,7 @@ class VoiceRecorder(context: Context, private val engine: VoiceEngine, private v
                     break
                 }
 
-                val now = System.currentTimeMillis()
+                val now = SystemClock.elapsedRealtime() // horloge monotone (audit BUG-07)
                 val amplitude = rms(buffer, read)
                 onLevel?.invoke(VoiceLevel.fromRms(amplitude))
                 if (amplitude < SILENCE_RMS_THRESHOLD) {
@@ -188,7 +190,7 @@ class VoiceRecorder(context: Context, private val engine: VoiceEngine, private v
 
         decodeJob = scope.launch(Dispatchers.Default) {
             for (samples in channel) {
-                voiceStream.acceptWaveform(samples, SAMPLE_RATE)
+                engine.accept(voiceStream, samples, SAMPLE_RATE)
                 engine.decodeAvailable(voiceStream)
                 _partialText.value = engine.currentText(voiceStream)
             }
@@ -225,9 +227,17 @@ class VoiceRecorder(context: Context, private val engine: VoiceEngine, private v
         stream = null
         if (finalStream == null) return ""
 
-        finalStream.inputFinished()
-        engine.decodeAvailable(finalStream)
-        val finalText = engine.currentText(finalStream)
+        // Audit BUG-07 : le décodage final (natif, parfois long) se fait hors du fil principal, et le flux est libéré
+        // explicitement (avant le moteur : un flux finalisé après la libération du moteur plante le code natif).
+        val finalText = withContext(Dispatchers.Default) {
+            try {
+                engine.finishInput(finalStream)
+                engine.decodeAvailable(finalStream)
+                engine.currentText(finalStream)
+            } finally {
+                engine.releaseStream(finalStream)
+            }
+        }
         _partialText.value = finalText
         return finalText
     }
@@ -236,7 +246,7 @@ class VoiceRecorder(context: Context, private val engine: VoiceEngine, private v
     private fun abortStart(record: AudioRecord, voiceStream: OnlineStream) {
         audioFocus.release()
         record.release()
-        voiceStream.release()
+        engine.releaseStream(voiceStream)
     }
 
     private fun rms(buffer: ShortArray, length: Int): Double {

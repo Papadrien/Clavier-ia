@@ -83,7 +83,13 @@ internal class ConfusionRule(
     val needsNextWord: Boolean = next != null || punctAfter
 
     /** Nombre de mots que la règle attend après le mot qu'elle remplace : 0 (le dernier mot), 1 ([next], [punctAfter]) ou 2 ([next2]). */
-    val lookahead: Int = if (next2 != null) 2 else if (needsNextWord) 1 else 0
+    val lookahead: Int = if (next2 != null) {
+        2
+    } else if (needsNextWord) {
+        1
+    } else {
+        0
+    }
 }
 
 /**
@@ -363,6 +369,10 @@ internal object FrenchConfusions {
         "facile", "difficile", "simple", "impossible", "prêt", "prête", "prêts", "lent", "long", "dur", "bon", "beau",
     )
 
+    /** Jours qu'un participe suivi de « à » annonce (« reporté à demain »). */
+    private val dayAfterA: WordTest =
+        oneOf("demain", "après-demain", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche")
+
     private val NOUNS_BEFORE_A_INFINITIVE = arrayOf("travail", "temps", "courses", "devoirs", "linge", "vaisselle", "ménage", "boulot", "trucs", "truc")
 
     private val BE_FORMS_FOR_LA = arrayOf("suis", "es", "est", "sommes", "êtes", "sont", "était", "étais", "sera", "serai")
@@ -380,8 +390,11 @@ internal object FrenchConfusions {
     internal val RULES: List<ConfusionRule> = listOf(
         // ce / se : « il ce lève » (un pronom sujet n'est jamais suivi de « ce »), « se livre est » (« se » ne commence pas une phrase).
         ConfusionRule(
-            "ce", "se", "ce > se après un sujet",
-            previous = oneOf(*SUBJECTS_PLURAL, *SUBJECTS_SINGULAR), skip = setOf("ne"),
+            "ce",
+            "se",
+            "ce > se après un sujet",
+            previous = oneOf(*SUBJECTS_PLURAL, *SUBJECTS_SINGULAR),
+            skip = setOf("ne"),
             next = noneOf(
                 "soir", "soir-là", "matin", "matin-là", "jour-là", "midi", "weekend", "week-end", "jour", "mois", "an", "après-midi",
                 "que", "qui", "dont",
@@ -389,30 +402,43 @@ internal object FrenchConfusions {
         ),
         ConfusionRule("se", "ce", "se > ce en début de phrase", sentenceStart = true, next = oneOf(*DEMONSTRATIVE_NOUNS)),
         ConfusionRule(
-            "se", "ce", "se > ce après une préposition",
-            previous = oneOf(*PREPOSITIONS_BEFORE_SE_NOUN), next = oneOf(*DEMONSTRATIVE_NOUNS.filter { it != "livre" }.toTypedArray()),
+            "se",
+            "ce",
+            "se > ce après une préposition",
+            previous = oneOf(*PREPOSITIONS_BEFORE_SE_NOUN),
+            next = oneOf(*DEMONSTRATIVE_NOUNS.filter { it != "livre" }.toTypedArray()),
         ),
         // on / ont
         ConfusionRule("on", "ont", "on > ont après ils / elles", previous = oneOf(*SUBJECTS_PLURAL)),
         ConfusionRule(
-            "on", "ont", "on > ont après un nom pluriel",
+            "on",
+            "ont",
+            "on > ont après un nom pluriel",
             previous = pluralWord,
             next = anyOf(participleLike, oneOf("faim", "soif", "peur", "froid", "chaud", "mal", "raison", "tort", "besoin", "envie", "honte", "sommeil")),
         ),
         ConfusionRule(
-            "ont", "on", "ont > on devant un verbe au singulier",
+            "ont",
+            "on",
+            "ont > on devant un verbe au singulier",
             next = oneOf("y", "se", "ne", "va", "vient", "peut", "doit", "sait", "voit", "part", "verra", "pourra", "dira", "fera", "ira", "aura", "sera"),
         ),
         // son / sont
         ConfusionRule("son", "sont", "son > sont après ils / elles", previous = oneOf(*SUBJECTS_PLURAL), skip = setOf("ne")),
         ConfusionRule("sont", "son", "sont > son en début de phrase", sentenceStart = true, next = oneOf(*OBJECT_NOUNS, *KIN_NOUNS)),
         ConfusionRule(
-            "sont", "son", "sont > son devant un objet",
-            previous = allOf(noneOf("ce", "qui", "ils", "elles", "ceux", "celles"), negate(pluralWord)), next = oneOf(*OBJECT_NOUNS),
+            "sont",
+            "son",
+            "sont > son devant un objet",
+            previous = allOf(noneOf("ce", "qui", "ils", "elles", "ceux", "celles"), negate(pluralWord)),
+            next = oneOf(*OBJECT_NOUNS),
         ),
         ConfusionRule(
-            "sont", "son", "sont > son devant un parent",
-            previous = allOf(noneOf("ce", "qui", "ils", "elles", "ceux", "celles"), participleLike), next = oneOf(*KIN_NOUNS),
+            "sont",
+            "son",
+            "sont > son devant un parent",
+            previous = allOf(noneOf("ce", "qui", "ils", "elles", "ceux", "celles"), participleLike),
+            next = oneOf(*KIN_NOUNS),
         ),
         // ces / c'est / s'est
         ConfusionRule("ces", "c'est", "ces > c'est", next = oneOf("un", "une", "mon", "ma", "ton", "ta", "vrai", "faux", "à")),
@@ -421,7 +447,9 @@ internal object FrenchConfusions {
         // leur / leurs
         ConfusionRule("leur", "leurs", "leur > leurs", previous = noneOf(*BEFORE_PRONOUN_LEUR), next = pluralNoun),
         ConfusionRule(
-            "leurs", "leur", "leurs > leur après un sujet",
+            "leurs",
+            "leur",
+            "leurs > leur après un sujet",
             previous = oneOf("je", "tu", "il", "elle", "on", "nous", "vous", "ils", "elles"),
         ),
         // ça / sa
@@ -430,13 +458,20 @@ internal object FrenchConfusions {
         // et / est
         ConfusionRule("et", "est", "et > est après un sujet", previous = oneOf(*SUBJECTS_SINGULAR), next = anyOf(coreIn(ADJECTIVES), eAcute)),
         ConfusionRule(
-            "et", "est", "et > est après un nom",
+            "et",
+            "est",
+            "et > est après un nom",
             previous = allOf(negate(coreIn(ADJECTIVES)), negate(coreIn(PRENOMINAL_ADJECTIVES))),
-            previous2 = oneOf(*DETERMINERS_SINGULAR), next = coreIn(ADJECTIVES),
+            previous2 = oneOf(*DETERMINERS_SINGULAR),
+            next = coreIn(ADJECTIVES),
         ),
         ConfusionRule(
-            "est", "et", "est > et entre deux adjectifs",
-            previous = coreIn(ADJECTIVES), previous2 = oneOf("fait", "très"), next = coreIn(ADJECTIVES),
+            "est",
+            "et",
+            "est > et entre deux adjectifs",
+            previous = coreIn(ADJECTIVES),
+            previous2 = oneOf("fait", "très"),
+            next = coreIn(ADJECTIVES),
         ),
         // peu / peut
         ConfusionRule("peu", "peut", "peu > peut après un sujet", previous = oneOf(*SUBJECTS_SINGULAR, "ça"), skip = setOf("ne")),
@@ -445,19 +480,29 @@ internal object FrenchConfusions {
         // la / là
         ConfusionRule("la", "là", "la > là avant une ponctuation", previous = oneOf(*VERBS_BEFORE_LA_PUNCT), punctAfter = true),
         ConfusionRule(
-            "la", "là", "la > là après « n'est pas »",
-            previous = oneOf(*BE_FORMS_FOR_LA), skip = setOf("pas", "plus", "jamais"),
+            "la",
+            "là",
+            "la > là après « n'est pas »",
+            previous = oneOf(*BE_FORMS_FOR_LA),
+            skip = setOf("pas", "plus", "jamais"),
             next = oneOf("aujourd'hui", "hier", "demain", "depuis", "pour", "avec", "ce", "ça"),
         ),
         // d'où : « d'ou » n'existe pas.
         ConfusionRule("d'ou", "d'où", "d'ou > d'où", always = true),
         // a / à
         ConfusionRule("a", "à", "a > à devant midi", next = oneOf("midi", "minuit")),
+        // « mangé a demain », « reporté a lundi » : après un participe, « a » + jour ne peut pas être le verbe avoir. Pas
+        // « bientôt » ni « plus » (« le projet lancé a bientôt dix ans », « le prix fixé a plus que doublé »).
+        ConfusionRule("a", "à", "a > à après un participe, devant un jour", previous = participleLike, next = dayAfterA),
         ConfusionRule("a", "à", "a > à après un adjectif", previous = oneOf(*ADJECTIVES_BEFORE_A_INFINITIVE), next = infinitiveLike),
         ConfusionRule("a", "à", "a > à après rien", previous = oneOf("rien"), next = oneOf(*PRONOUNS_AFTER_VERB)),
         ConfusionRule(
-            "a", "à", "a > à après quelque chose",
-            previous = oneOf("chose"), previous2 = oneOf("quelque", "autre"), next = oneOf(*PRONOUNS_AFTER_VERB),
+            "a",
+            "à",
+            "a > à après quelque chose",
+            previous = oneOf("chose"),
+            previous2 = oneOf("quelque", "autre"),
+            next = oneOf(*PRONOUNS_AFTER_VERB),
         ),
         ConfusionRule("a", "à", "a > à après un nom de tâche", previous = oneOf(*NOUNS_BEFORE_A_INFINITIVE), next = infinitiveLike),
         ConfusionRule("a", "à", "a > à après dire, donner...", previous = oneOf(*SPEECH_PARTICIPLES), next = oneOf(*POSSESSIVES_AND_PRONOUNS_AFTER_DIT)),

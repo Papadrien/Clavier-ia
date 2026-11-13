@@ -32,10 +32,20 @@ object SuggestionPolicy {
             inputType and InputType.TYPE_MASK_VARIATION == InputType.TYPE_TEXT_VARIATION_URI
 
     /**
-     * Apprentissage des mots et des habitudes (prédiction du mot suivant, départage des corrections) : jamais dans une
-     * adresse web, où l'on tape des adresses et des recherches qui n'ont pas à être retenues.
+     * Audit SEC-02 : champ d'une ligne où l'application refuse les suggestions (identifiant, code, numéro de commande…).
+     * Les suggestions y restent proposées (voir plus haut : Google Keep pose l'indicateur), mais rien n'y est appris : ce
+     * qu'on y tape n'est pas du langage courant. Une note multiligne (Keep) n'est pas concernée.
      */
-    fun allowsLearning(inputType: Int): Boolean = allowsSuggestions(inputType) && !isWebAddress(inputType)
+    private fun refusesSuggestionsOnOneLine(inputType: Int): Boolean =
+        inputType and InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS != 0 && inputType and InputType.TYPE_TEXT_FLAG_MULTI_LINE == 0
+
+    /**
+     * Apprentissage des mots et des habitudes (prédiction du mot suivant, départage des corrections) : jamais dans une
+     * adresse web, où l'on tape des adresses et des recherches qui n'ont pas à être retenues, ni dans un champ d'une ligne
+     * qui refuse les suggestions ([refusesSuggestionsOnOneLine]).
+     */
+    fun allowsLearning(inputType: Int): Boolean =
+        allowsSuggestions(inputType) && !isWebAddress(inputType) && !refusesSuggestionsOnOneLine(inputType)
 
     /** Emoji suggérés d'après le mot tapé : pas dans une adresse web, où ils n'ont aucun sens. */
     fun allowsEmojiSuggestions(inputType: Int): Boolean = allowsSuggestions(inputType) && !isWebAddress(inputType)

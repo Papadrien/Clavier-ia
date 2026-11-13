@@ -138,11 +138,11 @@ internal class SendIconDrawable(private val sizePx: Int, private val faceRadiusP
         time += dt
         if (enterDelay > 0f && mode != SendIconMode.LOADING) enterDelay = (enterDelay - dt).coerceAtLeast(0f)
         if (ringTime >= 0f) {
-            ringTime += dt
+            ringTime += dt * MotionStyle.current.speed // anneau d'envoi : même transposition que le décollage
             if (ringTime > SendIconPose.RING_DELAY_S + SendIconPose.RING_S) ringTime = -1f
         }
         if (launching) {
-            launchTime += dt
+            launchTime += dt * MotionStyle.current.speed // décollage réglé pour le style Ressort, transposé dans le style choisi
             if (launchTime >= SendIconPose.LAUNCH_S) {
                 launching = false
                 // La flèche repart de zéro : si on est encore en mode envoi, elle remonte d'en bas avec un ressort.
@@ -153,8 +153,13 @@ internal class SendIconDrawable(private val sizePx: Int, private val faceRadiusP
         arrowSpring.step(arrowTarget(), dt)
         stopSpring.step(stopTarget(), dt)
         invalidateSelf()
-        val calm = mode != SendIconMode.LOADING && !launching && ringTime < 0f && enterDelay <= 0f &&
-            orbit.value <= 0f && arrowSpring.isSettled(arrowTarget()) && stopSpring.isSettled(stopTarget())
+        val calm = mode != SendIconMode.LOADING &&
+            !launching &&
+            ringTime < 0f &&
+            enterDelay <= 0f &&
+            orbit.value <= 0f &&
+            arrowSpring.isSettled(arrowTarget()) &&
+            stopSpring.isSettled(stopTarget())
         if (calm) cancel()
     }
 

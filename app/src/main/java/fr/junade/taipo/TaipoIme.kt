@@ -10,9 +10,9 @@ import android.os.SystemClock
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InlineSuggestionsRequest
 import android.view.inputmethod.InlineSuggestionsResponse
+import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputMethodSubtype
 import androidx.annotation.RequiresApi
 import androidx.core.view.inputmethod.EditorInfoCompat
@@ -23,29 +23,30 @@ import fr.junade.taipo.ai.ProtectedWords
 import fr.junade.taipo.ai.TranscriptionPromptPreferences
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
+import fr.junade.taipo.dictionary.PersonalDictionaryProvider
+import fr.junade.taipo.dictionary.SystemDictionaryWords
+import fr.junade.taipo.dictionary.SystemUserDictionary
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.emoji.EmojiCatalog
 import fr.junade.taipo.emoji.MessagingFieldPolicy
+import fr.junade.taipo.model.AiModel
+import fr.junade.taipo.model.ModelAvailability
+import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.suggestion.EmailText
 import fr.junade.taipo.suggestion.NextWordRepository
 import fr.junade.taipo.suggestion.SuggestionPolicy
 import fr.junade.taipo.suggestion.WordText
-import fr.junade.taipo.dictionary.PersonalDictionaryProvider
-import fr.junade.taipo.dictionary.SystemDictionaryWords
-import fr.junade.taipo.dictionary.SystemUserDictionary
-import fr.junade.taipo.model.AiModel
-import fr.junade.taipo.model.ModelAvailability
-import fr.junade.taipo.model.ModelPreferences
+import kotlin.math.abs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.abs
 
 class TaipoIme : InputMethodService() {
 
     private val controller = KeyboardController()
+
     // Vues du clavier : créées par ImeViewComposer (lot 2.3 de la revue), lues ici à travers lui.
     private val keyboardView: KeyboardView get() = viewComposer.keyboardView
     private val correctionBar: CorrectionBarView get() = viewComposer.correctionBar
@@ -86,6 +87,7 @@ class TaipoIme : InputMethodService() {
         override fun protectedWordsIn(text: String): List<String> = this@TaipoIme.protectedWordsIn(text)
 
         override fun haptic() = this@TaipoIme.hapticFeedback.perform(this@TaipoIme.hapticIntensity)
+        override fun applyFloatingKeyboard(via: String) = this@TaipoIme.floatingWindow.apply(animate = true, via = via)
         override fun playBarButtonSound() {
             if (this@TaipoIme.barSoundEnabled) this@TaipoIme.keySounds.play(KeySound.BAR_BUTTON)
         }
@@ -137,6 +139,7 @@ class TaipoIme : InputMethodService() {
         override fun onGlobeSelected() = this@TaipoIme.languages.onGlobeSelected()
         override fun onOneHandedToggled() = this@TaipoIme.oneHanded.toggle()
         override fun onOneHandedSideSwitched() = this@TaipoIme.oneHanded.switchSide()
+        override fun onFloatingToggled() = this@TaipoIme.oneHanded.toggleFloating(OneHandedSwitcher.VIA_BUBBLE)
         override fun openAppHome() = this@TaipoIme.openAppHome()
     }
 
@@ -204,13 +207,31 @@ class TaipoIme : InputMethodService() {
     private val mainHandler = Handler(Looper.getMainLooper())
 
     // Moteur LiteRT-LM unique, partagé par la correction et (épopée 5) la génération par prompt.
-    private val llmHost by lazy { LlmEngineHost(applicationContext) }
+    private val llmHostLazy = lazy { LlmEngineHost(applicationContext) }
+    private val llmHost by llmHostLazy
     private val correctionEngine by lazy { CorrectionEngine(applicationContext, llmHost) }
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
     private val keyboardPreferences by lazy { KeyboardPreferences(applicationContext) }
 
     /** Revue UX : astuces de gestes, une fois chacune, dans la barre du haut (GestureTipPillView). */
     private val gestureTips by lazy { GestureTips(applicationContext) }
+
+    /** Nouveautés de la version : pilule dans la barre du haut, les premières ouvertures du clavier après la mise à jour. */
+    private val whatsNew by lazy { WhatsNewPreferences(applicationContext) }
+
+    /**
+     * Pilule « Nouveautés » ([WhatsNew]) à l'ouverture du clavier : pas dans un champ de mot de passe, ni par-dessus une astuce.
+     * Comptée seulement si elle a vraiment été affichée. Un toucher ouvre la page dans l'application.
+     */
+    private fun showWhatsNew() {
+        if (!viewComposer.isComposed || sensitiveField) return
+        if (correctionBar.gestureTip.visibility == View.VISIBLE || !whatsNew.shouldShowNow()) return
+        val pill = GestureTipPillView.Content(R.drawable.ic_whats_new, getString(R.string.whats_new_pill_description)) {
+            whatsNew.markOpened()
+            startActivity(Intent(this, WhatsNewActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        }
+        if (correctionBar.showGestureTip(getString(R.string.whats_new_pill), WHATS_NEW_PILL_MS, pill)) whatsNew.markShown()
+    }
 
     /** Dernier déplacement du curseur par la barre d'espace (ms) : ce n'est pas un déplacement « à la main » dans le champ. */
     private var lastSpaceCursorMoveAt = 0L
@@ -238,6 +259,9 @@ class TaipoIme : InputMethodService() {
     private val fieldEditor by lazy { FieldEditor(imeContext) { keyCode -> sendDownUpKeyEvents(keyCode) } }
     private val languages by lazy { ImeLanguages(this, imeContext, controller, gestureTips) }
     private val oneHanded by lazy { OneHandedSwitcher(imeContext) }
+    private val floatingWindow by lazy {
+        FloatingKeyboardWindow(this, { window?.window }, viewComposer, { keyboardPreferences }) { oneHanded.toggleFloating(OneHandedSwitcher.VIA_HANDLE) }
+    }
     private val memory by lazy { ImeMemoryManager(serviceScope, { voice }, { llmHost }, { isInputViewShown }) }
 
     // Story 1.11 : niveau de retour haptique, relu de la même façon.
@@ -306,7 +330,8 @@ class TaipoIme : InputMethodService() {
         AiTranscriptionController(
             this,
             serviceScope,
-            AiTranscriptionEngine(llmHost, TranscriptionPromptPreferences(applicationContext)),
+            // Gemma 3 passe par la dictée : même moteur vocal que le bouton Vocal (un seul modèle vocal en mémoire).
+            AiTranscriptionEngine(llmHost, TranscriptionPromptPreferences(applicationContext), voiceEngine = { voice.engine() }),
             AiTranscriptionHost(imeContext),
         )
     }
@@ -351,7 +376,6 @@ class TaipoIme : InputMethodService() {
             InlineSuggestionsHost(imeContext),
         )
     }
-
 
     /**
      * Revue de code (performance) : lectures du champ mises en cache ([InputTextCache]). Toute la saisie passe par
@@ -409,11 +433,26 @@ class TaipoIme : InputMethodService() {
      */
     override fun onEvaluateFullscreenMode(): Boolean = false
 
+    // Clavier flottant : la fenêtre est remise à la bonne hauteur après chaque réévaluation du mode plein écran.
+    override fun updateFullscreenMode() {
+        super.updateFullscreenMode()
+        floatingWindow.applyWindowLayout()
+    }
+
+    override fun onComputeInsets(outInsets: Insets) {
+        super.onComputeInsets(outInsets)
+        floatingWindow.computeInsets(outInsets)
+    }
+
     /** Thème avec lequel les vues du clavier ont été créées pour la dernière fois (voir [recomposeIfThemeChanged]). */
     private var composedThemeLook: KeyboardTheme.Look? = null
 
+    /** Police avec laquelle les vues du clavier ont été créées (elles la lisent à leur création, comme les couleurs). */
+    private var composedFont: KeyboardFont? = null
+
     override fun onCreateInputView(): View {
         composedThemeLook = KeyboardTheme.look
+        composedFont = TaipoType.keyboardFont
         return viewComposer.compose()
     }
 
@@ -422,7 +461,7 @@ class TaipoIme : InputMethodService() {
      * masqué), on les recrée comme à une rotation. Sans changement, rien n'est refait.
      */
     private fun recomposeIfThemeChanged() {
-        if (!viewComposer.isComposed || composedThemeLook == KeyboardTheme.look) return
+        if (!viewComposer.isComposed || (composedThemeLook == KeyboardTheme.look && composedFont == TaipoType.keyboardFont)) return
         messagePopup.dismiss()
         setInputView(onCreateInputView())
     }
@@ -434,6 +473,9 @@ class TaipoIme : InputMethodService() {
         // Même champ relancé par l'application (restarting) : l'annulation reste possible, le texte est retrouvé par son contenu.
         if (!restarting) undoController.clear(notify = false)
         traced(Sections.START_INPUT_VIEW) { startInputView(info) }
+        // Nouveautés : à chaque ouverture du clavier (pas quand l'application relance le même champ), après l'astuce de langue
+        // éventuelle pour ne pas la recouvrir.
+        if (!restarting && viewComposer.isComposed) keyboardView.postDelayed({ showWhatsNew() }, WHATS_NEW_DELAY_MS)
     }
 
     private fun startInputView(info: EditorInfo?) {
@@ -449,6 +491,14 @@ class TaipoIme : InputMethodService() {
         keyboardHeight = keyboardPreferences.keyboardHeight
         keyboardView.heightScale = keyboardHeight.scale
         keyboardView.bottomMarginDp = keyboardPreferences.bottomMarginDp
+        floatingWindow.apply() // en flottant, remet la marge du bas à zéro (la poignée en tient lieu)
+        viewComposer.applyBackdrop(
+            fr.junade.taipo.backdrop.KeyboardBackdrop.effective(keyboardPreferences.keyboardBackdrop, PremiumPass.isActive),
+            keyboardPreferences.backdropSeed,
+            keyboardPreferences.isBackdropAnimated,
+            themeColor(R.color.accent),
+            KeyboardTheme.mode == KeyboardTheme.Mode.DARK,
+        )
         oneHanded.apply()
         keyboardView.showTouchZones = keyboardPreferences.showTouchZones
         emojiController.hidePanel(resync = false)
@@ -475,13 +525,16 @@ class TaipoIme : InputMethodService() {
         sensitiveField = SensitiveFieldPolicy.isSensitive(info?.inputType ?: 0)
         Analytics.sensitiveFieldActive = sensitiveField // mesure d'usage coupée tant qu'un champ de mot de passe est affiché
         // Zones de frappe adaptatives : jamais dans un champ sensible, d'adresse e-mail ou web (lettres hors langage courant).
-        suggestions.nextLettersAllowed = keyboardPreferences.isAdaptiveTouchEnabled && suggestions.suggestionsAllowed &&
-            !sensitiveField && fieldType != FieldType.URL
+        suggestions.nextLettersAllowed = keyboardPreferences.isAdaptiveTouchEnabled &&
+            suggestions.suggestionsAllowed &&
+            !sensitiveField &&
+            fieldType != FieldType.URL
         keyboardView.setNextLetterPrediction(null) // le nouveau champ repart sans prédiction, la suivante vient du texte du champ
         correctionBar.aiActionsAllowed = !sensitiveField
-        // Story 14.5 : le bouton Transcription IA n'existe que si le modèle actif (installé) a une entrée audio.
+        // Story 14.5, élargie le 13/11/2026 : le bouton Transcription IA existe dès qu'un modèle est installé et actif (Gemma 4 :
+        // audio natif ; Gemma 3 : dictée puis reformulation).
         correctionBar.aiTranscriptionAvailable =
-            ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled)?.hasAudioInput == true
+            ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled) != null
         suggestions.isEmailAddressField = fieldType == FieldType.EMAIL
         messagingField = MessagingFieldPolicy.isMessagingField(info?.packageName, info?.inputType ?: 0)
         controller.setAutoCapitalization(
@@ -573,6 +626,7 @@ class TaipoIme : InputMethodService() {
     override fun onWindowShown() {
         super.onWindowShown()
         memory.onWindowShown()
+        floatingWindow.onWindowShown()
     }
 
     /** Android manque de mémoire : les gros moteurs sont libérés selon [MemoryRelease.shouldRelease]. */
@@ -619,8 +673,13 @@ class TaipoIme : InputMethodService() {
         correction.onSelectionUpdated(newSelStart, newSelEnd)
         forgetTypedWordIfCursorPlaced(selectionMoved)
         // Astuce : le curseur posé à la main dans le champ (pas par la frappe, la dictée, l'IA ni la barre d'espace).
-        val manualMove = viewComposer.isComposed && newSelStart == newSelEnd && newSelStart != oldSelStart &&
-            !prompt.active && !isRecording && !correctionInProgress && !correction.isSelfEditEcho() &&
+        val manualMove = viewComposer.isComposed &&
+            newSelStart == newSelEnd &&
+            newSelStart != oldSelStart &&
+            !prompt.active &&
+            !isRecording &&
+            !correctionInProgress &&
+            !correction.isSelfEditEcho() &&
             !suggestions.typedRecently() &&
             android.os.SystemClock.uptimeMillis() - lastSpaceCursorMoveAt > SPACE_MOVE_ECHO_MS
         if (manualMove) showGestureTip(gestureTips.onManualCursorMove())
@@ -646,18 +705,27 @@ class TaipoIme : InputMethodService() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        // Audit BUG-04 : les tâches en cours (correction, génération) sont arrêtées avant de libérer leurs moteurs.
+        if (llmHostLazy.isInitialized()) {
+            correctionEngine.cancel()
+            prompt.stopGeneration()
+        }
+        serviceJob.cancel()
         // Écriture terminée avant de rendre la main (lot 2.6 de la revue) : pas de launch asynchrone ici.
         nextWords.flushBlocking()
         suggestions.correctionHabits.flushBlocking()
         suggestions.release()
         messagePopup.dismiss()
         aiTranscription.release()
-        llmHost.close()
+        // Le moteur est fermé hors du fil principal, une fois l'inférence en cours terminée (verrou d'inférence).
+        if (llmHostLazy.isInitialized()) {
+            val host = llmHost
+            ProcessScope.launch { host.closeLocked() }
+        }
         voice.release()
         clipboard.release()
         keySounds.release()
-        serviceJob.cancel()
+        super.onDestroy()
     }
 
     /** Relit les réglages du son du clavier et des sons de la barre supérieure ; prépare les sons (une seule fois) si l'un est activé. */
@@ -676,8 +744,10 @@ class TaipoIme : InputMethodService() {
         clearHighlightIfNeeded()
         // Astuces : ⌫ appuyé plusieurs fois de suite (effacer des mots en glissant), chiffre tapé depuis les symboles.
         val action = key.action
-        val digitFromSymbols = action is KeyAction.TypeChar && action.char.isDigit() &&
-            controller.state.activeLayout != LayoutId.LETTERS && !layoutApplier.numberRowEnabled
+        val digitFromSymbols = action is KeyAction.TypeChar &&
+            action.char.isDigit() &&
+            controller.state.activeLayout != LayoutId.LETTERS &&
+            !layoutApplier.numberRowEnabled
         showGestureTip(gestureTips.onKey(backspace = action == KeyAction.Backspace, digitFromSymbols = digitFromSymbols))
 
         // Story 5.1 : en mode prompt, tout passe par le tampon du prompt, avec les mêmes traitements que
@@ -698,9 +768,7 @@ class TaipoIme : InputMethodService() {
         // Suppression juste après une autocorrection : on annule la correction au lieu d'effacer un caractère.
         if (key.action == KeyAction.Backspace && undoLastAutocorrection()) {
             onUserTyped()
-            syncAutoCapitalization()
-            layoutApplier.apply()
-            updateCorrectionBarVisibility()
+            afterFieldEdit()
             return
         }
         autocorrections.pending = null
@@ -708,9 +776,7 @@ class TaipoIme : InputMethodService() {
         // Suppression avec une sélection : on efface la sélection, pas le caractère avant son début.
         if (key.action == KeyAction.Backspace && fieldEditor.deleteSelectedText()) {
             onUserTyped()
-            syncAutoCapitalization()
-            layoutApplier.apply()
-            updateCorrectionBarVisibility()
+            afterFieldEdit()
             return
         }
 
@@ -722,11 +788,15 @@ class TaipoIme : InputMethodService() {
         val autocorrection = if (endsTypedWord && autocorrectionAllowed()) applyDictionaryAutocorrection() else null
 
         // Double espace : l'espace précédent est remplacé par ". " (pas de sélection active).
-        val doubleSpaceContext = if (key.action == KeyAction.Space && autocorrection == null && !fieldEditor.hasSelection() &&
+        val doubleSpaceContext = if (key.action == KeyAction.Space &&
+            autocorrection == null &&
+            !fieldEditor.hasSelection() &&
             fieldType.doubleSpacePeriod
         ) {
             currentInputConnection?.getTextBeforeCursor(2, 0)?.toString()
-        } else null
+        } else {
+            null
+        }
 
         val result = controller.onKey(key, doubleSpaceContext, SystemClock.uptimeMillis())
 
@@ -912,6 +982,7 @@ class TaipoIme : InputMethodService() {
         val wordAfter = WordText.leadingWord(textAfter)
         val typed = typedBefore + wordAfter
         if (typed.isEmpty()) return
+        if (!confirmBeforeOrResync(ic, typedBefore)) return
         // Une espace suit déjà le mot : elle est remplacée par celle qu'on ajoute, jamais doublée.
         val spaceAfter = textAfter.getOrNull(wordAfter.length) == ' '
         // Une virgule suit le mot : aucune espace n'est ajoutée (« mot, » et non « mot , »).
@@ -946,9 +1017,7 @@ class TaipoIme : InputMethodService() {
             null
         }
         learnFromTyping() // le mot choisi (complété ou corrigé) est celui qui compte pour la prédiction
-        syncAutoCapitalization()
-        layoutApplier.apply()
-        updateCorrectionBarVisibility()
+        afterFieldEdit()
     }
 
     /**
@@ -969,9 +1038,7 @@ class TaipoIme : InputMethodService() {
         ic.endBatchEdit()
         recordUndoEdit(inserted = insertedEmail, original = typed)
         learnFromTyping() // l'adresse choisie compte comme une adresse tapée
-        syncAutoCapitalization()
-        layoutApplier.apply()
-        updateCorrectionBarVisibility()
+        afterFieldEdit()
     }
 
     /**
@@ -994,9 +1061,7 @@ class TaipoIme : InputMethodService() {
         ic.endBatchEdit()
         recordUndoEdit(inserted = "$compound ", original = original)
         learnFromTyping() // le composé choisi compte comme un mot tapé
-        syncAutoCapitalization()
-        layoutApplier.apply()
-        updateCorrectionBarVisibility()
+        afterFieldEdit()
     }
 
     /** Touche sur un mot prédit : il s'ajoute au curseur (après l'espace déjà tapée), suivi d'une espace. */
@@ -1008,6 +1073,11 @@ class TaipoIme : InputMethodService() {
         ic.commitText("$word ", 1)
         recordUndoEdit(inserted = "$word ", original = "")
         learnFromTyping()
+        afterFieldEdit()
+    }
+
+    /** Après une modification du champ par le clavier : majuscule, suggestions, disposition et barre resynchronisées. */
+    private fun afterFieldEdit() {
         syncAutoCapitalization()
         layoutApplier.apply()
         updateCorrectionBarVisibility()
@@ -1020,6 +1090,14 @@ class TaipoIme : InputMethodService() {
     /** Dernier "mot" avant le curseur : lettres/apostrophes/traits d'union contigus en fin de texte. */
     private fun trailingWord(textBeforeCursor: String): String = WordText.trailingWord(textBeforeCursor)
 
+    /** Comme [confirmBefore] ; en cas d'écart (cache périmé, audit BUG-05), les suggestions sont recalculées sur le vrai texte. */
+    private fun confirmBeforeOrResync(ic: InputConnection, expected: String): Boolean =
+        confirmBefore(ic, expected).also { confirmed -> if (!confirmed) syncAutoCapitalization() }
+
+    /** Vrai si [expected] précède vraiment le curseur (lecture sans cache, voir [CachingInputConnection.confirmBefore]). */
+    private fun confirmBefore(ic: InputConnection, expected: String): Boolean =
+        (ic as? CachingInputConnection)?.confirmBefore(expected) ?: true
+
     /**
      * Story 1.18 : pas d'autocorrection dans les champs e-mail, URL, mot de passe et numériques, ni
      * quand l'application demande de ne rien suggérer (même règle que les suggestions de mots).
@@ -1030,6 +1108,7 @@ class TaipoIme : InputMethodService() {
         val ic = currentInputConnection ?: return null
         val before = ic.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty()
         val edit = suggestions.autocorrectionFor(before, autocorrections.allowContextualRetro(before)) ?: return null
+        if (!confirmBefore(ic, before.takeLast(edit.deleteCount))) return null // audit BUG-05 : le cache ne reflétait pas le champ
 
         ic.beginBatchEdit()
         ic.deleteSurroundingText(edit.deleteCount, 0)
@@ -1054,6 +1133,7 @@ class TaipoIme : InputMethodService() {
         val expected = pending.corrected + pending.boundary
         val before = ic.getTextBeforeCursor(expected.length, 0)?.toString() ?: return false
         if (before != expected) return false // le texte ou le curseur a changé entre-temps
+        if (!confirmBefore(ic, expected)) return false // audit BUG-05
 
         ic.beginBatchEdit()
         ic.deleteSurroundingText(expected.length, 0)
@@ -1103,7 +1183,6 @@ class TaipoIme : InputMethodService() {
         if (!sensitiveField) undoController.record(undo)
     }
 
-
     /** Décision 3.3 : le bouton Corriger n'est visible que si le champ contient du texte. */
     private fun updateCorrectionBarVisibility() {
         clipboard.refreshPasteSuggestion() // story 2.2 : la puce suit l'état courant (dictée, correction, frappe, expiration…)
@@ -1128,6 +1207,10 @@ class TaipoIme : InputMethodService() {
 
         /** Astuces : délai avant celle de la langue (le clavier finit d'apparaître), écho d'un déplacement par l'espace. */
         private const val LANGUAGE_TIP_DELAY_MS = 800L
+
+        /** Délai avant la pilule des nouveautés (après l'astuce de langue) et durée d'affichage. */
+        private const val WHATS_NEW_DELAY_MS = 1_000L
+        private const val WHATS_NEW_PILL_MS = 8_000L
         private const val SPACE_MOVE_ECHO_MS = 600L
     }
 }

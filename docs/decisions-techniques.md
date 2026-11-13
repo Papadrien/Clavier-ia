@@ -6,7 +6,7 @@ document `ai-keyboard.md` qui n'était pas dans le dépôt (lot 4.3 de la revue 
 le backlog produit : seulement ce qui explique des choix visibles dans le code.
 
 ## Moteur d'inférence texte
-- **LiteRT-LM** (`com.google.ai.edge.litertlm:litertlm-android`, figé à 0.17.1 dans `gradle/libs.versions.toml`). L'API
+- **LiteRT-LM** (`com.google.ai.edge.litertlm:litertlm-android`, version figée dans `gradle/libs.versions.toml`). L'API
   MediaPipe LLM Inference est en maintenance seule ; Google recommande la migration vers LiteRT-LM.
 - Accélération matérielle (CPU / GPU) choisie automatiquement ; modèles quantifiés int8.
 - Un seul modèle chargé à la fois ; RAM observée d'environ 4 Go pour un modèle chargé (voir `LlmEngineHost`).
@@ -19,12 +19,21 @@ Gemma 4 ; WorkManager + service au premier plan, SHA-256 embarqué par modèle).
 `docs/telechargement-modeles.md`.
 
 ## Transcription vocale
-- **Nemotron 3.5 ASR Streaming** via **sherpa-onnx** (`OnlineRecognizer` / `OnlineStream`), export ONNX multilingue
-  français / anglais (sherpa-onnx v1.13.5 ou plus récent, PR #3732 et #3734). Langue alignée sur la langue active du clavier.
-- **Nombres en chiffres** (09/11/2026) : chaque hypothèse de la dictée passe par `SpokenNumbers` (core) avant d'être insérée.
+- **Nemotron 3.5 ASR Streaming** via **sherpa-onnx** (`OnlineRecognizer` / `OnlineStream`), export ONNX du modèle multilingue
+  (sherpa-onnx v1.13.5 ou plus récent, PR #3732 et #3734). Le modèle couvre 35 langues, dont les 15 du clavier (fiche Hugging Face
+  `nvidia/nemotron-3.5-asr-streaming-0.6b` ; le `tokens.txt` hébergé contient leurs lettres et 39 étiquettes de langue comme
+  `<pl-PL>`). Aucune langue n'est imposée au modèle : il la détecte seul. Vérifié sur appareil en français et en anglais
+  seulement (12/11/2026) ; les autres langues sont à tester (`docs/langues.md`).
+- **Nombres en chiffres** (09/11/2026, 15 langues depuis le 12/11/2026) : chaque hypothèse de la dictée passe par `SpokenNumbers`
+  (core) avant d'être insérée, avec la langue active du clavier.
   Français et anglais : « vingt-trois » -> « 23 », « deux mille vingt-six » -> « 2026 », « trois virgule cinq » -> « 3,5 »,
   « vingt pour cent » -> « 20 % », « fifty thousand » -> « 50,000 ». Restent en lettres quand ils sont seuls : « un », « une »,
   « one » (articles) et « neuf » adjectif (« un vélo neuf »). La Dictée IA reçoit la même consigne dans son prompt par défaut.
+  Les 13 autres langues passent par un moteur commun (`CompoundNumberRules`, lexiques dans `NumberLexicons`) qui découpe les
+  nombres soudés (« dreiundzwanzig », « tjugotre », « kaksikymmentäkolme », « huszonhárom ») : « zwanzig Prozent » -> « 20 % »,
+  « dwa tysiące dwadzieścia sześć » -> « 2026 », « treogtyve » -> « 23 ». Restent en lettres seuls les articles et homonymes
+  (« ein », « un », « en », « et », « egy », « hét », « kuusi »...). Séparateur des milliers et espace avant « % » selon l'usage de
+  chaque langue. Tests : `SpokenNumbersOtherLanguagesTest`.
 - Intégration : les `.so` natifs dans `app/src/main/jniLibs/<abi>/` et 5 sources Kotlin du binding JNI dans
   `app/src/main/java/com/k2fsa/sherpa/onnx/` (pas de coordonnée Maven simple, pas de `.aar` utilisé). Voir les README de ces dossiers.
 - Les `.so` fournis ciblent **arm64-v8a** (Pixel 9) ; l'émulateur x86_64 est possible en debug (voir `app/src/debug/jniLibs/README.md`).

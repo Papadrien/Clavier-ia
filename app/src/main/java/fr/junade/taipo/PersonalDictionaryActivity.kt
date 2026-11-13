@@ -1,7 +1,7 @@
 package fr.junade.taipo
 
-import android.content.Context
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.Gravity
 import android.view.inputmethod.EditorInfo
@@ -9,17 +9,16 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import fr.junade.taipo.dictionary.PersonalDictionary
 import fr.junade.taipo.dictionary.PersonalDictionaryProvider
 import fr.junade.taipo.dictionary.PersonalDictionaryRepository
 import fr.junade.taipo.dictionary.SystemUserDictionary
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Écran de gestion du dictionnaire personnel (story 1.4) : ajout manuel d'un
@@ -29,7 +28,7 @@ import kotlinx.coroutines.launch
  */
 class PersonalDictionaryActivity : Activity() {
 
-    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
+    // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }
@@ -184,7 +183,7 @@ class PersonalDictionaryActivity : Activity() {
         return row
     }
 
-    private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun toast(message: String) = showScreenMessage(message)
 
     private companion object {
         const val REQUEST_SYSTEM_DICTIONARY = 1

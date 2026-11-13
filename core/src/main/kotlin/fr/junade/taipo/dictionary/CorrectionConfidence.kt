@@ -212,6 +212,12 @@ class CorrectionConfidence(
         val DUTCH = latinQwerty(restoresElisions = false)
 
         /**
+         * Langues ajoutées le 11/11/2026 (polonais, roumain, tchèque, hongrois, suédois, danois, norvégien, finnois) : les seuils du
+         * portugais et du néerlandais, sans élision. Valeurs de DÉPART, pas encore mesurées sur un banc propre à chaque langue.
+         */
+        val LATIN = latinQwerty(restoresElisions = false)
+
+        /**
          * Seuils de l'espagnol (clavier QWERTY avec Ñ). Valeurs de DÉPART, celles de l'anglais : elles n'ont pas été mesurées (le banc
          * `--lang=es` existe mais n'a pas pu être lancé là où ce code a été écrit : docs/autocorrection-bench.md, section Espagnol).
          * L'espagnol conjugue beaucoup (hablo / hable / habla, une lettre d'écart) : les quasi-égalités entre formes d'un même verbe

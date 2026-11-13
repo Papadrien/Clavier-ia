@@ -1,9 +1,6 @@
 package fr.junade.taipo
 
 import android.content.Context
-import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
@@ -14,7 +11,9 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.model.ModelFileResolver
@@ -34,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class ModelSettingsActivity : ComponentActivity() {
 
-    // Écrans de l'application : toujours sombres, quel que soit le thème du clavier (voir KeyboardTheme.wrap).
+    // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(KeyboardTheme.wrap(newBase))
     }
@@ -148,11 +147,7 @@ class ModelSettingsActivity : ComponentActivity() {
                 buttonForgetFile.isEnabled = true
                 refreshInfo()
                 if (freed > 0) {
-                    Toast.makeText(
-                        this,
-                        getString(R.string.model_settings_space_freed, Formatter.formatFileSize(appContext, freed)),
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    showScreenMessage(getString(R.string.model_settings_space_freed, Formatter.formatFileSize(appContext, freed)))
                 }
             }
         }, "taipo-model-forget").start()
@@ -178,7 +173,7 @@ class ModelSettingsActivity : ComponentActivity() {
                 if (model == displayedModel) {
                     refreshInfo()
                 }
-                Toast.makeText(this, getString(R.string.model_settings_file_saved, model.displayName(this)), Toast.LENGTH_SHORT).show()
+                showScreenMessage(getString(R.string.model_settings_file_saved, model.displayName(this)))
                 startChecksum(model, uri, fileSize)
             }
         }, "taipo-model-replace").start()

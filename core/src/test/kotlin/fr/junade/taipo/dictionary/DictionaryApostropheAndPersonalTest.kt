@@ -44,7 +44,17 @@ class DictionaryApostropheAndPersonalTest {
     @Test
     fun `un mot personnel exact n est jamais corrige`() {
         assertNull(dictionary.correctionFor("Naé", personalWords = listOf("Naé")))
-        assertNull(dictionary.correctionFor("naé", personalWords = listOf("Naé")))
+        assertNull(dictionary.correctionFor("NAÉ", personalWords = listOf("Naé")))
+    }
+
+    @Test
+    fun `un mot personnel tape en minuscules prend la majuscule enregistree`() {
+        assertEquals("Naé", dictionary.correctionFor("naé", personalWords = listOf("Naé")))
+        assertEquals("Brice", dictionary.correctionFor("brice", personalWords = listOf("Brice")))
+        assertEquals("iPhone", dictionary.correctionFor("iphone", personalWords = listOf("iPhone")))
+        // Enregistré en minuscules : rien à changer.
+        assertNull(dictionary.correctionFor("taipo", personalWords = listOf("taipo")))
+        assertNull(dictionary.correctionFor("Taipo", personalWords = listOf("taipo")))
     }
 
     @Test

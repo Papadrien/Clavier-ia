@@ -10,11 +10,18 @@ class AnalyticsPreferences(context: Context) {
 
     private val prefs = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
+    /**
+     * Audit PRIV-01 : la mesure d'usage demande un accord explicite. Tant que l'utilisateur n'a pas répondu à la carte de
+     * l'accueil (ou touché l'interrupteur), elle est désactivée et rien n'est envoyé, pas même la première ouverture.
+     */
     var isEnabled: Boolean
         get() = prefs.getBoolean(KEY_ENABLED, DEFAULT_ENABLED)
         set(value) {
             prefs.edit().putBoolean(KEY_ENABLED, value).apply()
         }
+
+    /** Vrai une fois que l'utilisateur a choisi (carte de l'accueil ou interrupteur). */
+    val consentAnswered: Boolean get() = prefs.contains(KEY_ENABLED)
 
     /**
      * Vrai une fois la première ouverture traitée ([FirstOpenPolicy]) : événement envoyé, ou ignoré parce que l'application
@@ -49,6 +56,6 @@ class AnalyticsPreferences(context: Context) {
         private const val KEY_FIRST_OPEN_HANDLED = "first_open_handled"
         private const val KEY_ACTIVE_DAYS = "active_days"
         private const val KEY_LAST_ACTIVE_DAY = "last_active_day"
-        const val DEFAULT_ENABLED = true
+        const val DEFAULT_ENABLED = false
     }
 }

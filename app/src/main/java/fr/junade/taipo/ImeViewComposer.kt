@@ -5,6 +5,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import fr.junade.taipo.backdrop.KeyboardBackdrop
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.emoji.EmojiPanelView
 import fr.junade.taipo.emoji.RecentEmojiBarView
@@ -42,6 +43,9 @@ class ImeViewComposer(
 
         /** Bouton « changer de côté » de la zone libre relâché : le mode une main passe à l'autre bord. */
         fun onOneHandedSideSwitched()
+
+        /** Touche clavier flottant de la bulle d'Entrée relâchée : détache le clavier ou le recolle en bas. */
+        fun onFloatingToggled()
 
         /** Chiffre d'une touche du haut saisi par appui long : le tip « Swipe vers le bas » peut s'afficher. */
         fun onDigitLongPressed()
@@ -120,6 +124,31 @@ class ImeViewComposer(
     lateinit var keyboardStack: KeyboardStackLayout
         private set
 
+    /** Racine de la vue : porte tout le clavier, ancré en bas ou flottant (voir [FloatingKeyboardFrame]). */
+    lateinit var floatingFrame: FloatingKeyboardFrame
+        private set
+
+    /** La carte du clavier, qui porte le fond commun ([KeyboardBackgroundDrawable]). */
+    private lateinit var card: LinearLayout
+    private val cardLocation = IntArray(2)
+    private val keysLocation = IntArray(2)
+
+    private val background: KeyboardBackgroundDrawable? get() = if (::card.isInitialized) card.background as? KeyboardBackgroundDrawable else null
+
+    /**
+     * Fond du clavier (page « Thème ») : motif, tirage de sa disposition, animation pendant la frappe, couleur d'accent et thème.
+     * Un motif rend les touches translucides. Relu à chaque ouverture de champ ; sans effet si rien ne change.
+     */
+    @Suppress("LongParameterList")
+    fun applyBackdrop(backdrop: KeyboardBackdrop, seed: Long, animated: Boolean, accent: Int, dark: Boolean) {
+        if (!isComposed) return
+        background?.apply {
+            setBackdrop(backdrop, seed, accent, dark)
+            this.animated = animated
+        }
+        keyboardView.translucentKeys = backdrop.isPattern
+    }
+
     lateinit var correctionBar: CorrectionBarView
         private set
 
@@ -150,6 +179,7 @@ class ImeViewComposer(
         keyboardView.setOnCursorMoveListener { steps -> host.onCursorMoved(steps) }
         keyboardView.setOnGlobeSelectedListener { host.onGlobeSelected() }
         keyboardView.setOnOneHandedToggleListener { host.onOneHandedToggled() }
+        keyboardView.setOnFloatingToggleListener { host.onFloatingToggled() }
         keyboardView.setOnOneHandedSwitchSideListener { host.onOneHandedSideSwitched() }
         keyboardView.setOnDigitHintListener(object : KeyboardView.OnDigitHintListener {
             override fun onLongPressDigit() = host.onDigitLongPressed()
@@ -173,7 +203,8 @@ class ImeViewComposer(
             host.playAiButtonSound()
             host.onCorrectClicked()
         }
-        correctionBar.setOnActionsMenuClickListener { // robot (menu de gauche) : même vibration qu'une touche
+        correctionBar.setOnActionsMenuClickListener {
+            // robot (menu de gauche) : même vibration qu'une touche
             host.haptic()
             host.playAiButtonSound()
         }
@@ -325,9 +356,24 @@ class ImeViewComposer(
         // Le plafond de la zone de chat (moitié de la hauteur du clavier) se mesure sur la pile
         // clavier + panneaux, dernier enfant de la racine.
         prompt.chatZone.heightReference = root.getChildAt(root.childCount - 1)
+        // Clavier flottant : la carte (tout le clavier) est portée par une racine qui la place ; la poignée de déplacement,
+        // masquée quand le clavier est ancré, vient sous les touches.
+        card = root
+        // Fond animé : chaque doigt posé sur les touches fait réagir le fond, en coordonnées de la carte.
+        keyboardView.touchDownListener = { x, y ->
+            card.getLocationInWindow(cardLocation)
+            keyboardView.getLocationInWindow(keysLocation)
+            background?.onKeyPress(x + keysLocation[0] - cardLocation[0], y + keysLocation[1] - cardLocation[1])
+        }
+        val frame = FloatingKeyboardFrame(context, root)
+        root.addView(
+            frame.handle,
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
+        )
+        floatingFrame = frame
         isComposed = true
         prompt.applyViews() // la vue est recréée (rotation...) alors que le mode prompt peut être actif
         host.onViewsCreated()
-        return root
+        return frame
     }
 }

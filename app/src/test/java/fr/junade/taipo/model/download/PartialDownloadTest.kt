@@ -1,5 +1,6 @@
 package fr.junade.taipo.model.download
 
+import java.io.File
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -7,7 +8,6 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
 
 class PartialDownloadTest {
 
@@ -120,5 +120,17 @@ class PartialDownloadTest {
         assertTrue(destination.exists())
         assertFalse(ModelInstaller.temporaryFileFor(destination).exists())
         assertFalse(ModelInstaller.resumeMarkerFor(destination).exists())
+    }
+
+    @Test
+    fun `reprise refusee quand le serveur annonce un autre ETag`() {
+        assertFalse(PartialDownload.sameFile("\"ancien\"", "\"nouveau\""))
+    }
+
+    @Test
+    fun `reprise acceptee avec le meme ETag ou sans validateur`() {
+        assertTrue(PartialDownload.sameFile("\"abc\"", "\"abc\""))
+        assertTrue(PartialDownload.sameFile(null, "\"abc\""))
+        assertTrue(PartialDownload.sameFile("\"abc\"", null))
     }
 }

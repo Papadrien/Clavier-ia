@@ -38,7 +38,8 @@ enum class AiModel(
     val sha256: String? = null,
     /**
      * Épopée 8 (8.8) : URL de téléchargement HTTPS, ou null si le modèle n'est pas (encore) téléchargeable
-     * dans l'app (aucun pour l'instant : les 4 en ont une). Gemma 4 : source provisoire Hugging Face (`litert-community`) ; Gemma 3 :
+     * dans l'app (aucun pour l'instant : les 4 en ont une). Gemma 4 : source provisoire Hugging Face (`litert-community`), figée sur
+     * une révision (audit REL-01 : `resolve/main` changerait de fichier sans prévenir et [sha256] le refuserait) ; Gemma 3 :
      * serveur d'Adrien (Worker Cloudflare devant R2). Avant la publication, tout passe sur son serveur (URL versionnée et immuable).
      */
     val downloadUrl: String? = null,
@@ -81,7 +82,8 @@ enum class AiModel(
         approxSizeBytesMax = 2_800_000_000L,
         fileHintRes = R.string.model_hint_equilibre,
         sha256 = "181938105e0eefd105961417e8da75903eacda102c4fce9ce90f50b97139a63c",
-        downloadUrl = "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm",
+        downloadUrl = "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/" +
+            "5b472bf479ec0e944b01c214b46fec082b3e8c01/gemma-4-E2B-it.litertlm",
         approxDownloadBytes = 2_600_000_000L,
     ),
     PERFORMANT(
@@ -94,9 +96,27 @@ enum class AiModel(
         approxSizeBytesMax = 3_900_000_000L,
         fileHintRes = R.string.model_hint_performant,
         sha256 = "0b2a8980ce155fd97673d8e820b4d29d9c7d99b8fa6806f425d969b145bd52e0",
-        downloadUrl = "https://huggingface.co/litert-community/gemma-4-E4B-it-litert-lm/resolve/main/gemma-4-E4B-it.litertlm",
+        downloadUrl = "https://huggingface.co/litert-community/gemma-4-E4B-it-litert-lm/resolve/" +
+            "e75b1386809cda8e0fda1ef93a39f75b70d400b9/gemma-4-E4B-it.litertlm",
         approxDownloadBytes = 3_650_000_000L,
-    );
+    ),
+
+    /**
+     * Modèle personnalisé : un fichier `.litertlm` choisi par l'utilisateur (pack premium, ou build debug : voir
+     * `CustomModelAccess`), compatible avec la version de LiteRT-LM intégrée. Hors catalogue ([entriesOrdered]) : pas de
+     * téléchargement, pas d'empreinte ni de taille de référence, entrée audio selon le réglage de sa page ([ModelPreferences.acceptsAudio]).
+     */
+    CUSTOM(
+        id = "personnalise",
+        displayNameRes = R.string.model_name_custom,
+        subtitleRes = R.string.model_subtitle_custom,
+        technicalName = "LiteRT-LM",
+        huggingFaceRepo = "",
+        approxSizeBytesMin = 1L,
+        approxSizeBytesMax = Long.MAX_VALUE,
+        fileHintRes = R.string.model_hint_custom,
+    ),
+    ;
 
     fun displayName(context: Context): String = context.getString(displayNameRes)
 
@@ -119,8 +139,8 @@ enum class AiModel(
 
         fun byId(id: String?): AiModel? = values().firstOrNull { it.id == id }
 
-        /** Liste ordonnée des 4 modèles, dans l'ordre Ultra-léger → Performant. */
-        fun entriesOrdered(): List<AiModel> = values().toList()
+        /** Catalogue : les 4 modèles de Taipo, dans l'ordre Ultra-léger → Performant (sans le modèle personnalisé [CUSTOM]). */
+        fun entriesOrdered(): List<AiModel> = values().filter { it != CUSTOM }
 
         /** Ordre des listes des paramètres (sélecteur et écran « Modèle IA ») : Performant → Ultra-léger, l'inverse de [entriesOrdered]. */
         fun entriesForDisplay(): List<AiModel> = entriesOrdered().reversed()

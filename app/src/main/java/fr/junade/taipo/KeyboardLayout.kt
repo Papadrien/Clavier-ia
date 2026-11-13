@@ -83,6 +83,7 @@ object Keyboards {
      */
     private val toPageTwo = Key("symbol_page", "?123", KeyAction.SymbolPage, 1.4f)
     private val toPageOne = Key("symbol_page", "=\\<", KeyAction.SymbolPage, 1.4f)
+
     /**
      * Largeur des touches Maj/Effacer : elle est choisie pour que la largeur d'une lettre reste la
      * même sur toutes les rangées (10 unités par rangée). Sur l'AZERTY, la rangée du bas contient
@@ -94,6 +95,9 @@ object Keyboards {
 
     /** Effacer des dispositions QWERTY/QWERTZ (rangée du bas : Maj 1,5 + 7 lettres + Effacer 1,5 = 10 unités). */
     private val backspaceQwerty = backspace.copy(weight = 1.5f)
+
+    /** Maj et Effacer des QWERTY nordiques (Maj 2 + 7 lettres + Effacer 2 = 11 unités, comme les rangées de 11 touches). */
+    private const val NORDIC_EDGE_UNITS = 2f
 
     /** Touche apostrophe, uniquement sur le clavier français (entre N et Effacer). */
     private val apostrophe = Key("apostrophe", "'", KeyAction.TypeChar('\''))
@@ -186,6 +190,36 @@ object Keyboards {
         'c' to "ç",
         'n' to "ñ",
     )
+
+    // Langues ajoutées le 11/11/2026 : les lettres propres à la langue d'abord, dans l'ordre de fréquence. Les lettres nordiques
+    // (å ä ö, æ ø) ont leur touche sur les dispositions QWERTY nordiques ; elles restent en appui long sur les autres.
+    private val accentsPl: Map<Char, String> = mapOf(
+        'a' to "ą",
+        'c' to "ć",
+        'e' to "ę",
+        'l' to "ł",
+        'n' to "ń",
+        'o' to "ó",
+        's' to "ś",
+        'z' to "żź",
+    )
+
+    private val accentsRo: Map<Char, String> = mapOf('a' to "ăâ", 'i' to "î", 's' to "ș", 't' to "ț")
+
+    private val accentsCs: Map<Char, String> = mapOf(
+        'a' to "á", 'c' to "č", 'd' to "ď", 'e' to "ěé", 'i' to "í", 'n' to "ň", 'o' to "ó", 'r' to "ř", 's' to "š", 't' to "ť",
+        'u' to "ůú", 'y' to "ý", 'z' to "ž",
+    )
+
+    private val accentsHu: Map<Char, String> = mapOf('a' to "á", 'e' to "é", 'i' to "í", 'o' to "óöő", 'u' to "úüű")
+
+    private val accentsSv: Map<Char, String> = mapOf('a' to "åäàá", 'e' to "éè", 'o' to "öøó", 'u' to "ü")
+
+    private val accentsFi: Map<Char, String> = mapOf('a' to "äåà", 'o' to "ö", 'e' to "é", 's' to "š", 'z' to "ž", 'u' to "ü")
+
+    private val accentsDa: Map<Char, String> = mapOf('a' to "åæäá", 'e' to "é", 'o' to "øöó", 'u' to "ü")
+
+    private val accentsNb: Map<Char, String> = mapOf('a' to "åæàä", 'e' to "éèê", 'o' to "øóòôö", 'u' to "ü")
 
     /** Nombre maximal de caractères par rangée de la bulle (au-delà, la bulle passe sur 2 rangées). */
     private const val POPUP_MAX_COLUMNS = 5
@@ -292,7 +326,8 @@ object Keyboards {
     private fun KeyboardLayout.withTopRowLongPressDigits() = copy(
         rows = listOf(
             rows.first().mapIndexed { i, key ->
-                val digit = NUMBER_ROW_CHARS[i]
+                // Rangée de 11 touches (QWERTY nordiques) : la 11e (å) n'a pas de chiffre, comme sur Gboard.
+                val digit = NUMBER_ROW_CHARS.getOrNull(i) ?: return@mapIndexed key
                 key.copy(
                     longPressChar = digit,
                     popup = popupGrid(listOf(digit) + popupItems(key.popup)),
@@ -360,13 +395,30 @@ object Keyboards {
         val numbered: KeyboardLayout = withNumberRow(base)
     }
 
-    private val otherLetterSets: Map<KeyboardLanguage, LetterSet> = mapOf(
-        KeyboardLanguage.ES to lettersEsBase,
-        KeyboardLanguage.DE to lettersDeBase,
-        KeyboardLanguage.IT to qwertyBase(accentsIt),
-        KeyboardLanguage.PT to qwertyBase(accentsPt),
-        KeyboardLanguage.NL to qwertyBase(accentsNl),
-    ).mapValues { (_, base) -> LetterSet(base, { it.withTopRowLongPressDigits() }, { it.withNumberRow() }) }
+    /**
+     * Langues ajoutées le 11/11/2026 : leur disposition d'origine est construite comme une disposition choisie ([lettersBaseFor]),
+     * avec leurs accents. Déclarée avant [otherLetterSets], qui s'en sert à l'initialisation.
+     */
+    private val ADDED_LANGUAGES = listOf(
+        KeyboardLanguage.PL,
+        KeyboardLanguage.RO,
+        KeyboardLanguage.CS,
+        KeyboardLanguage.HU,
+        KeyboardLanguage.SV,
+        KeyboardLanguage.DA,
+        KeyboardLanguage.NB,
+        KeyboardLanguage.FI,
+    )
+
+    private val otherLetterSets: Map<KeyboardLanguage, LetterSet> = (
+        mapOf(
+            KeyboardLanguage.ES to lettersEsBase,
+            KeyboardLanguage.DE to lettersDeBase,
+            KeyboardLanguage.IT to qwertyBase(accentsIt),
+            KeyboardLanguage.PT to qwertyBase(accentsPt),
+            KeyboardLanguage.NL to qwertyBase(accentsNl),
+        ) + ADDED_LANGUAGES.associateWith { lettersBaseFor(it, LetterArrangement.defaultFor(it)) }
+        ).mapValues { (_, base) -> LetterSet(base, { it.withTopRowLongPressDigits() }, { it.withNumberRow() }) }
 
     /** Disposition d'origine des lettres de [language] ([LetterArrangement.defaultFor]), avec ou sans rangée de chiffres. */
     private fun defaultLettersOf(language: KeyboardLanguage, numberRow: Boolean): KeyboardLayout = when (language) {
@@ -387,6 +439,14 @@ object Keyboards {
         KeyboardLanguage.IT -> accentsIt
         KeyboardLanguage.PT -> accentsPt
         KeyboardLanguage.NL -> accentsNl
+        KeyboardLanguage.PL -> accentsPl
+        KeyboardLanguage.RO -> accentsRo
+        KeyboardLanguage.CS -> accentsCs
+        KeyboardLanguage.HU -> accentsHu
+        KeyboardLanguage.SV -> accentsSv
+        KeyboardLanguage.FI -> accentsFi
+        KeyboardLanguage.DA -> accentsDa
+        KeyboardLanguage.NB -> accentsNb
     }
 
     /**
@@ -423,8 +483,16 @@ object Keyboards {
                 row("arstdhneio"),
                 listOf(shiftKey()) + row("zxcvbkm") + listOf(backspaceQwerty),
             )
+            LetterArrangement.QWERTY_SV, LetterArrangement.QWERTY_DA, LetterArrangement.QWERTY_NO -> {
+                val (top, middle, bottom) = arrangement.previewRows
+                // 11 unités : Maj et Effacer élargis, pour que la rangée du bas des lettres tienne toute la largeur.
+                listOf(row(top), row(middle), listOf(shiftKey(NORDIC_EDGE_UNITS)) + row(bottom) + listOf(backspace.copy(weight = NORDIC_EDGE_UNITS)))
+            }
         }
-        val bottom = listOf(toggleLetters) + if (language == KeyboardLanguage.ES) punctuationRowEs else punctuationRow
+        var bottom = listOf(toggleLetters) + if (language == KeyboardLanguage.ES) punctuationRowEs else punctuationRow
+        // Rangées de 11 touches : l'espace prend l'unité de plus, la rangée du bas reste pleine largeur au lieu d'être centrée.
+        val extra = rows.maxOf { rowUnits(it) } - rowUnits(bottom)
+        if (extra > 0f) bottom = bottom.map { if (it.action == KeyAction.Space) it.copy(weight = it.weight + extra) else it }
         return KeyboardLayout(id = LayoutId.LETTERS, rows = rows + listOf(bottom))
     }
 

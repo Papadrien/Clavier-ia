@@ -606,3 +606,28 @@ Le banc lit `dictionaries/bigrams/<code>.txt` s'il existe ; les références fr 
 
 **Italien, portugais, néerlandais (07/11/2026)** : profils `--lang=it`, `--lang=pt`, `--lang=nl` (et `-legacy` pour l'état d'avant), jeux
 `tools/autocorrect-bench/{it,pt,nl}/` (phrases justes, cas de contexte, références). Détail dans `docs/autocorrection-roadmap.md`.
+
+## Polonais, roumain, tchèque, hongrois, suédois, danois, norvégien, finnois (12/11/2026)
+Profils `--lang=pl|ro|cs|hu|sv|da|nb|fi` (`AutocorrectBench.ADDED`) : clavier de la langue (QWERTY, QWERTZ ou QWERTY nordique à 11 touches),
+seuil de proposition de `DictionaryLoader`, politique d'accents de la langue, aucune règle de contexte ni de flexion. Jeux : phrases justes
+écrites pour le banc (`tools/autocorrect-bench/<code>/sentences-ok.txt`, 25 par langue, à faire relire), aucun cas de contexte, phrases
+Tatoeba mises de côté (`heldout/<code>.txt`).
+
+Choix du réglage de décision (comparaison `AutocorrectBench.withConfidence`) : `LATIN` (celui du portugais et du néerlandais) donne partout
+le moins de mauvaises corrections sur les phrases réelles, à 0,5 point près des réglages plus agressifs pour les bonnes corrections ;
+`ENGLISH` donne les mêmes chiffres, `STANDARD` (français) et `NONE` corrigent un peu plus mais se trompent plus. Gardé : `LATIN`.
+
+| | fautes courantes ok / mal corrigées | phrases réelles ok / mal corrigées | mots justes changés |
+|---|---|---|---|
+| pl | 95,83 / 2,47 | 97,33 / 1,76 | 0 |
+| ro | 92,13 / 5,00 | 96,61 / 1,90 | 0 |
+| cs | 93,68 / 4,00 | 94,95 / 3,38 | 0 |
+| hu | 95,70 / 2,67 | 95,99 / 2,80 | 0,03 % |
+| sv | 93,27 / 4,20 | 93,82 / 4,73 | 0 |
+| da | 93,27 / 3,88 | 95,91 / 2,63 | 0 |
+| nb | 92,63 / 4,03 | 94,68 / 3,44 | 0 |
+| fi | 95,23 / 2,75 | 97,03 / 2,01 | 0,05 % |
+
+Références écrites (`tools/autocorrect-bench/<code>/baseline.txt`) et vérifiées par `AutocorrectBaselineTest`. Piste suivante : règles de
+contexte par langue (à écrire avec des locuteurs natifs), en commençant par le roumain (le plus de mauvaises corrections).
+

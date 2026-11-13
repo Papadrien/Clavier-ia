@@ -2,10 +2,10 @@ package fr.junade.taipo.dictionary
 
 import android.content.Context
 import fr.junade.taipo.AppLog
+import fr.junade.taipo.KeyboardLanguage
 import fr.junade.taipo.KeyboardPreferences
 import fr.junade.taipo.Sections
 import fr.junade.taipo.traced
-import fr.junade.taipo.KeyboardLanguage
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
@@ -53,6 +53,15 @@ object DictionaryLoader {
         KeyboardLanguage.IT -> 102L
         KeyboardLanguage.PT -> 91L
         KeyboardLanguage.NL -> 77L
+        // 11/11/2026 : listes FrequencyWords alignées sur AOSP et LibreOffice (finnois : FrequencyWords seule), 50 000e mot.
+        KeyboardLanguage.PL -> 219L
+        KeyboardLanguage.RO -> 149L
+        KeyboardLanguage.CS -> 194L
+        KeyboardLanguage.HU -> 213L
+        KeyboardLanguage.SV -> 41L
+        KeyboardLanguage.DA -> 28L
+        KeyboardLanguage.NB -> 18L
+        KeyboardLanguage.FI -> 134L
     }
 
     /** Fichier et seuils de fréquence d'une liste. */
@@ -60,8 +69,55 @@ object DictionaryLoader {
 
     private val cache = ConcurrentHashMap<KeyboardLanguage, Dictionary>()
 
+    /**
+     * Audit UX-01 : liste de démarrage embarquée (les 40 000 mots les plus fréquents, `assets/dictionaries/starter/`), pour le
+     * français, l'anglais et les huit langues ajoutées le 11/11/2026 ([STARTER_LANGUAGES]). Elle sert tant que la liste complète
+     * n'est pas téléchargée (installation hors connexion) : le clavier corrige et propose dès la première frappe. Jamais mise
+     * dans [cache], pour que la liste complète la remplace.
+     */
+    private val starters = ConcurrentHashMap<KeyboardLanguage, Dictionary>()
+
+    /** Langues qui ont une liste de démarrage embarquée. */
+    val STARTER_LANGUAGES: Set<KeyboardLanguage> = setOf(
+        KeyboardLanguage.FR, KeyboardLanguage.EN,
+        // 12/11/2026 : les huit langues ajoutées le 11/11 corrigent aussi dès l'installation, avant le téléchargement.
+        KeyboardLanguage.PL, KeyboardLanguage.RO, KeyboardLanguage.CS, KeyboardLanguage.HU,
+        KeyboardLanguage.SV, KeyboardLanguage.DA, KeyboardLanguage.NB, KeyboardLanguage.FI,
+    )
+
+    /** Chemin de la liste de démarrage dans les assets. */
+    fun starterAssetPath(language: KeyboardLanguage): String = "dictionaries/starter/${language.tag}.txt"
+
     /** Dictionnaire déjà chargé pour [language], ou null. Ne bloque jamais et ne charge rien. */
-    fun peek(language: KeyboardLanguage): Dictionary? = cache[language]
+    fun peek(language: KeyboardLanguage): Dictionary? = cache[language] ?: starters[language]
+
+    /** La liste complète est chargée (pas seulement la liste de démarrage). */
+    fun isFullyLoaded(language: KeyboardLanguage): Boolean = cache.containsKey(language)
+
+    /**
+     * Charge la liste de démarrage de [language] si la liste complète manque (hors du thread principal). Renvoie vrai si un
+     * dictionnaire (de démarrage) est désormais disponible.
+     */
+    fun loadStarter(context: Context, language: KeyboardLanguage): Boolean {
+        if (cache.containsKey(language) || starters.containsKey(language)) return true
+        if (language !in STARTER_LANGUAGES) return false
+        val dictionary = try {
+            val bytes = context.assets.open(starterAssetPath(language)).use { it.readBytes() }
+            Dictionary.withFrequencies(
+                Dictionary.parseFrequencyBytes(bytes, MIN_FREQUENCY, expectedEntries = STARTER_ENTRIES),
+                inflectionsFor(language),
+                candidateMinFrequency(language),
+                proximityOf(context, language),
+                confidence = confidenceOf(language),
+                accentPolicy = accentPolicyOf(language),
+            )
+        } catch (e: java.io.IOException) {
+            AppLog.w(TAG, "liste de démarrage $language illisible", e)
+            return false
+        }
+        starters.putIfAbsent(language, dictionary)
+        return true
+    }
 
     /**
      * Oublie le dictionnaire chargé de [language] : il est relu au prochain préchargement (ouverture d'un champ). Appelé
@@ -78,10 +134,13 @@ object DictionaryLoader {
             cache[language]?.let { return it }
             // Fichiers pas (encore) téléchargés : on tape sans autocorrection ni suggestions (dictionnaire vide), sans le
             // mettre en cache.
-            if (!DictionaryFiles.isInstalled(context.filesDir, language)) return emptyDictionary(context, language)
+            if (!DictionaryFiles.isInstalled(context.filesDir, language)) {
+                return if (loadStarter(context, language)) starters.getValue(language) else emptyDictionary(context, language)
+            }
             DictionaryFiles.deleteObsoleteBackup(context.filesDir, language)
             val dictionary = traced(Sections.DICTIONARY_LOAD) { loadWithReducedFallback(context, language) }
             cache[language] = dictionary
+            starters.remove(language) // la liste complète remplace la liste de démarrage
             return dictionary
         }
     }
@@ -217,6 +276,9 @@ object DictionaryLoader {
         KeyboardLanguage.IT -> CorrectionConfidence.ITALIAN
         KeyboardLanguage.PT -> CorrectionConfidence.PORTUGUESE
         KeyboardLanguage.NL -> CorrectionConfidence.DUTCH
+        KeyboardLanguage.PL, KeyboardLanguage.RO, KeyboardLanguage.CS, KeyboardLanguage.HU,
+        KeyboardLanguage.SV, KeyboardLanguage.DA, KeyboardLanguage.NB, KeyboardLanguage.FI,
+        -> CorrectionConfidence.LATIN
     }
 
     /** Seuil des oublis d'accent de chaque langue (voir [AccentPolicy]) : l'accent distingue souvent deux mots justes (esta / está, e / è). */
@@ -227,6 +289,11 @@ object DictionaryLoader {
             KeyboardLanguage.IT -> AccentPolicy.ITALIAN
             KeyboardLanguage.PT -> AccentPolicy.PORTUGUESE
             KeyboardLanguage.NL -> AccentPolicy.DUTCH
+            KeyboardLanguage.PL -> AccentPolicy.POLISH
+            KeyboardLanguage.RO -> AccentPolicy.ROMANIAN
+            KeyboardLanguage.CS -> AccentPolicy.CZECH
+            KeyboardLanguage.HU -> AccentPolicy.HUNGARIAN
+            KeyboardLanguage.SV, KeyboardLanguage.DA, KeyboardLanguage.NB, KeyboardLanguage.FI -> AccentPolicy.NORDIC
             KeyboardLanguage.FR, KeyboardLanguage.EN -> AccentPolicy.FRENCH
         }
 
@@ -249,6 +316,10 @@ object DictionaryLoader {
         // Néerlandais : « foto's » et mots composés (voir InflectionRules.DUTCH) ; italien : les formes fléchies sont dans la liste.
         KeyboardLanguage.NL -> InflectionRules.DUTCH
         KeyboardLanguage.IT -> InflectionRules.NONE
+        // Langues ajoutées le 11/11/2026 : langues à déclinaisons, les formes fléchies courantes sont dans la liste.
+        KeyboardLanguage.PL, KeyboardLanguage.RO, KeyboardLanguage.CS, KeyboardLanguage.HU,
+        KeyboardLanguage.SV, KeyboardLanguage.DA, KeyboardLanguage.NB, KeyboardLanguage.FI,
+        -> InflectionRules.NONE
     }
 
     /**
@@ -260,4 +331,5 @@ object DictionaryLoader {
 
     /** Estimation de la taille de la table : environ 35 octets de fichier par mot gardé (liste française, seuil 5). */
     private const val BYTES_PER_KEPT_ENTRY = 35L
+    private const val STARTER_ENTRIES = 40_000
 }

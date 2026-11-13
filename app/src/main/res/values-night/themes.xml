@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Thèmes Android de base, version sombre (voir values/themes.xml : AppTheme, EditDialogTheme et MessageDialogTheme en héritent). -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Platform.AppTheme" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+    </style>
+    <style name="Platform.EditDialogTheme" parent="android:Theme.Material.Dialog.NoActionBar" />
+    <style name="Platform.MessageDialogTheme" parent="android:Theme.Material.Dialog.Alert" />
+</resources>

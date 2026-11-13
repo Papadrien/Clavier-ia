@@ -20,7 +20,11 @@ class GermanAutocorrectionTest {
     )
 
     private val dictionary = Dictionary.withFrequencies(
-        frequencies, InflectionRules.NONE, 41L, KeyProximity.NONE, accentPolicy = AccentPolicy.GERMAN,
+        frequencies,
+        InflectionRules.NONE,
+        41L,
+        KeyProximity.NONE,
+        accentPolicy = AccentPolicy.GERMAN,
     )
 
     private fun fix(word: String, dictionary: Dictionary = this.dictionary): String? =
@@ -54,7 +58,11 @@ class GermanAutocorrectionTest {
     @Test
     fun `ss pour eszett est retabli meme quand la forme en ss est listee mais tres rare`() {
         val withSwissForms = Dictionary.withFrequencies(
-            frequencies + ("heiss" to 1_000L) + ("weiss" to 3_000L), InflectionRules.NONE, 41L, KeyProximity.NONE, accentPolicy = AccentPolicy.GERMAN,
+            frequencies + ("heiss" to 1_000L) + ("weiss" to 3_000L),
+            InflectionRules.NONE,
+            41L,
+            KeyProximity.NONE,
+            accentPolicy = AccentPolicy.GERMAN,
         )
         assertEquals("heiß", fix("heiss", withSwissForms))
         assertEquals("weiß", fix("weiss", withSwissForms))
@@ -80,7 +88,11 @@ class GermanAutocorrectionTest {
         // 7 900 contre 300 : 26 fois, sous le seuil de 50 : le mot reste ; à 79 000 contre 300 (263 fois) il est rétabli.
         assertNull(fix("wunsche"))
         val dominant = Dictionary.withFrequencies(
-            frequencies + ("wünsche" to 79_000L), InflectionRules.NONE, 41L, KeyProximity.NONE, accentPolicy = AccentPolicy.GERMAN,
+            frequencies + ("wünsche" to 79_000L),
+            InflectionRules.NONE,
+            41L,
+            KeyProximity.NONE,
+            accentPolicy = AccentPolicy.GERMAN,
         )
         assertEquals("wünsche", fix("wunsche", dominant))
     }
@@ -88,7 +100,11 @@ class GermanAutocorrectionTest {
     @Test
     fun `une transcription presente dans la liste mais tres rare est retablie`() {
         val withTranscriptions = Dictionary.withFrequencies(
-            frequencies + ("ueber" to 156L) + ("buero" to 11L), InflectionRules.NONE, 41L, KeyProximity.NONE, accentPolicy = AccentPolicy.GERMAN,
+            frequencies + ("ueber" to 156L) + ("buero" to 11L),
+            InflectionRules.NONE,
+            41L,
+            KeyProximity.NONE,
+            accentPolicy = AccentPolicy.GERMAN,
         )
         assertEquals("über", fix("ueber", withTranscriptions))
         assertEquals("Büro", fix("Buero", withTranscriptions))

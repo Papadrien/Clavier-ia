@@ -22,12 +22,14 @@ class BottomRowKeysTest {
 
     @Test
     fun `tout afficher renvoie la disposition d'origine`() {
-        for (language in languages) for (numberRow in booleans) {
-            assertSame(
-                Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow),
-                layout(LayoutId.LETTERS, language, BottomRowKeys.ALL, numberRow = numberRow),
-                "$language numberRow=$numberRow",
-            )
+        for (language in languages) {
+            for (numberRow in booleans) {
+                assertSame(
+                    Keyboards.layoutOf(LayoutId.LETTERS, language, numberRow),
+                    layout(LayoutId.LETTERS, language, BottomRowKeys.ALL, numberRow = numberRow),
+                    "$language numberRow=$numberRow",
+                )
+            }
         }
     }
 
@@ -38,12 +40,14 @@ class BottomRowKeysTest {
             BottomRowKeys(comma = false) to "comma",
             BottomRowKeys(period = false) to "period",
         )
-        for ((keys, hiddenId) in cases) for (language in languages) {
-            val row = layout(LayoutId.LETTERS, language, keys).bottomRow()
-            assertFalse(row.any { it.id == hiddenId }, "$language sans $hiddenId")
-            val expected = listOf("comma", "emoji", "period").filter { it != hiddenId }
-            expected.forEach { id -> assertTrue(row.any { it.id == id }, "$language garde $id") }
-            assertTrue(row.any { it.action == KeyAction.Enter } && row.any { it.action == KeyAction.Space })
+        for ((keys, hiddenId) in cases) {
+            for (language in languages) {
+                val row = layout(LayoutId.LETTERS, language, keys).bottomRow()
+                assertFalse(row.any { it.id == hiddenId }, "$language sans $hiddenId")
+                val expected = listOf("comma", "emoji", "period").filter { it != hiddenId }
+                expected.forEach { id -> assertTrue(row.any { it.id == id }, "$language garde $id") }
+                assertTrue(row.any { it.action == KeyAction.Enter } && row.any { it.action == KeyAction.Space })
+            }
         }
     }
 
@@ -56,17 +60,21 @@ class BottomRowKeysTest {
             BottomRowKeys(emoji = false, comma = false),
             BottomRowKeys(emoji = false, comma = false, period = false),
         )
-        for (keys in everything) for (language in languages) for (id in pages) {
-            val base = layout(id, language, BottomRowKeys.ALL)
-            val changed = layout(id, language, keys)
-            val hiddenCount = listOf(keys.emoji, keys.comma, keys.period).count { !it }
-            // Sur la page des symboles (SYMBOLS), « < » et « > » remplacent virgule et point : seule la touche emoji est concernée.
-            val concerned = if (id == LayoutId.SYMBOLS) (if (!keys.emoji) 1 else 0) else hiddenCount
-            val baseSpace = base.bottomRow().first { it.action == KeyAction.Space }
-            val space = changed.bottomRow().first { it.action == KeyAction.Space }
-            assertEquals(baseSpace.weight + concerned, space.weight, 0.0001f, "$keys $language $id")
-            assertEquals(rowUnits(base.bottomRow()), rowUnits(changed.bottomRow()), 0.0001f, "$keys $language $id")
-            assertEquals(base.referenceUnits, changed.referenceUnits, 0.0001f)
+        for (keys in everything) {
+            for (language in languages) {
+                for (id in pages) {
+                    val base = layout(id, language, BottomRowKeys.ALL)
+                    val changed = layout(id, language, keys)
+                    val hiddenCount = listOf(keys.emoji, keys.comma, keys.period).count { !it }
+                    // Sur la page des symboles (SYMBOLS), « < » et « > » remplacent virgule et point : seule la touche emoji est concernée.
+                    val concerned = if (id == LayoutId.SYMBOLS) (if (!keys.emoji) 1 else 0) else hiddenCount
+                    val baseSpace = base.bottomRow().first { it.action == KeyAction.Space }
+                    val space = changed.bottomRow().first { it.action == KeyAction.Space }
+                    assertEquals(baseSpace.weight + concerned, space.weight, 0.0001f, "$keys $language $id")
+                    assertEquals(rowUnits(base.bottomRow()), rowUnits(changed.bottomRow()), 0.0001f, "$keys $language $id")
+                    assertEquals(base.referenceUnits, changed.referenceUnits, 0.0001f)
+                }
+            }
         }
     }
 

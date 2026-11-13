@@ -16,7 +16,10 @@ déclaré dans `settings.gradle.kts` et limité à son groupe). Le SDK est initi
   événement.
 - **Champs de mot de passe** : `Analytics.sensitiveFieldActive` (tenu par `TaipoIme`) coupe tout événement tant qu'un champ
   sensible est affiché.
-- **Désactivable** : Paramètres du clavier > Données d'utilisation (« Partager les données d'utilisation »). Activée par défaut. Désactivée, `Analytics.track` ne rappelle plus le SDK.
+- **Accord explicite** (audit PRIV-01, 11/11/2026) : désactivée tant que l'utilisateur n'a pas répondu à la carte « Aider à améliorer
+  Taipo ? » de l'accueil (`AnalyticsPreferences.consentAnswered`). Modifiable ensuite dans Mes données > « Partager les données
+  d'utilisation ». Désactivée, `Analytics.track` ne rappelle plus le SDK. Les utilisateurs existants qui n'avaient jamais touché
+  l'interrupteur voient la carte et sont considérés comme non consentants jusqu'à leur réponse.
 - **Jamais bloquant** : d'après la doc du SDK, les envois se font sur un pool de fils d'arrière-plan, jamais sur le fil principal.
 - **Types** : le SDK n'accepte que des `String` et des `Int` ; `AnalyticsProps.forSdk()` convertit les booléens en `"true"` / `"false"`
   (mots-clés) et les `Long` en `Int`.
@@ -53,7 +56,8 @@ de l'appareil** (la doc du SDK le cite ; l'ancien client maison ne l'envoyait pa
 | `clipboard_used` | `action` (`paste`, `pin`) | `ClipboardController` |
 | `undo_used` | aucune | `UndoController` |
 | `keyboard_language` | `lang`, `layout` (disposition choisie pour la langue : `azerty`, `qwerty`, `qwertz`, `qwerty_n`, `colemak`), `auto` | `TaipoIme.startInputView`, une fois par changement de langue |
-| `setting_changed` | `key`, `value` (`true` / `false` ou mot-clé) | `KeyboardSettingsActivity`, `LanguagesActivity` (`language_added`), `LanguageDetailActivity` (`language_removed`, `letter_arrangement` = `<langue>_<disposition>`), `ThemeActivity` (`theme_choice` = `system` / `light` / `dark` / `dynamic` ; `accent_palette` = `violet` / `indigo` / `blue` / `lagoon` / `emerald` / `amber` / `raspberry` / `magenta` / `graphite`) |
+| `keyboard_mode` | `mode` (`floating`, `docked`), `via` (`bubble` : bulle d'Entrée, `handle` : poignée glissée en bas ou TalkBack, `one_handed` : passage en mode une main) | `FloatingKeyboardWindow.apply`, à chaque détachement ou recollage depuis le clavier |
+| `setting_changed` | `key`, `value` (`true` / `false` ou mot-clé) | `KeyboardSettingsActivity`, `LanguagesActivity` (`language_added`), `LanguageDetailActivity` (`language_removed`, `letter_arrangement` = `<langue>_<disposition>`), `ThemeActivity` (`theme_choice` = `system` / `light` / `dark` / `dynamic` ; `accent_palette` = `violet` / `indigo` / `blue` / `lagoon` / `emerald` / `amber` / `raspberry` / `magenta` / `graphite` ; `keyboard_backdrop` = `plain` / `ribbons` / `bubbles` / `crystal` / `waves` ; `keyboard_backdrop_animated` = `true` / `false` ; `keyboard_font` = `open_sans` / `system` / `inter` / `atkinson` / `lexend` / `nunito` / `manrope` / `ibm_plex_sans` / `literata` / `opendyslexic`) |
 | `first_open` | aucune | `MainActivity.onCreate` via `Analytics.firstOpen`, une fois par installation |
 | `premium_paywall_shown` | `source` (`home`, `about`, `theme`, `prompts`, `clipboard_pin`) | `PremiumActivity.onCreate` |
 | `premium_purchased` | `source` (idem) | `PremiumBilling`, achat confirmé par Google Play |
@@ -68,7 +72,7 @@ Le mode chat est la génération par prompt : il compte sous `type = generate`.
 Aptabase n'a pas d'identifiant d'appareil : le nombre d'événements `first_open` du tableau de bord EST le nombre de nouvelles
 installations ouvertes (filtrer par période, version de l'app, langue ou pays du tableau de bord pour le détail).
 
-- Envoyé à la première ouverture de l'application (écran d'accueil), une seule fois : le réglage `first_open_handled`
+- Envoyé à la première ouverture de l'application (écran d'accueil) **après l'accord**, ou au moment de l'accord, une seule fois : le réglage `first_open_handled`
   (`AnalyticsPreferences`) est mémorisé après l'envoi. Règles pures dans `FirstOpenPolicy` (`:core`, testées).
 - **Mise à jour** : si l'écart entre la date d'installation et la dernière mise à jour dépasse 60 s, l'application est
   considérée comme déjà installée avant l'événement : rien n'est envoyé (sinon tous les utilisateurs existants seraient comptés
@@ -113,3 +117,18 @@ un utilisateur très actif pèse plus qu'un utilisateur occasionnel.
 5. (first_open) Désinstaller le debug, le réinstaller, l'ouvrir : un événement `first_open` dans le tableau de bord debug ; le
    fermer et le rouvrir : aucun second événement.
 6. Mode avion, faire des actions, rétablir le réseau, faire une action : les événements en attente partent.
+
+## Journaux de Google Play Billing
+
+En plus d'Aptabase, la bibliothèque **Google Play Billing** (`com.android.billingclient:billing-ktx`, pass premium) envoie ses
+propres journaux techniques à Google, sur `firebaselogging.googleapis.com` (vu dans logcat le 10/11/2026 :
+`TRuntime.CctTransportBackend`, réponse 200). Ils passent par `com.google.android.datatransport` (`transport-runtime`,
+`transport-backend-cct`), dépendances de la bibliothèque, et ne sont pas réglés par Taipo :
+
+- Taipo ne leur donne aucun texte saisi ni aucune donnée de l'application : seule la bibliothèque décide de leur contenu
+  (connexion au service de facturation, appels d'achat).
+- Le réglage « Partager les données d'utilisation » ne les coupe pas : Google n'offre pas d'option pour les désactiver.
+- Retirer `transport-backend-cct` des dépendances les supprimerait peut-être, mais n'a pas été essayé : la facturation pourrait
+  ne plus fonctionner. À tester sur appareil avant de le faire.
+
+À déclarer dans la fiche « Sécurité des données » du Play Store comme données collectées par un SDK tiers.

@@ -2,8 +2,13 @@ package fr.junade.taipo
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
+import android.view.ContextThemeWrapper
 import androidx.core.app.ActivityCompat
 
 /**
@@ -30,7 +35,30 @@ class VoicePermissionActivity : Activity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        finish()
+        val granted = grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED
+        // Audit UX-03 : refus définitif (Android n'affiche plus la demande) : on explique et on propose les réglages de l'app.
+        if (!granted && !ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)) {
+            showOpenSettings()
+        } else {
+            finish()
+        }
+    }
+
+    private fun showOpenSettings() {
+        AlertDialog.Builder(ContextThemeWrapper(KeyboardTheme.themed(this), R.style.MessageDialogTheme))
+            .setTitle(R.string.voice_permission_settings_title)
+            .setMessage(R.string.voice_permission_settings_message)
+            .setPositiveButton(R.string.voice_permission_settings_open) { _, _ ->
+                runCatching {
+                    startActivity(
+                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null))
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                    )
+                }
+            }
+            .setNegativeButton(R.string.voice_permission_settings_cancel, null)
+            .setOnDismissListener { finish() }
+            .show()
     }
 
     companion object {

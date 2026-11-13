@@ -62,6 +62,7 @@ class BackupRulesTest {
             ClipboardDatabase.KEY_PREFS_NAME,
             NextWordRepository.KEY_PREFS_NAME,
             CorrectionHabitsRepository.KEY_PREFS_NAME,
+            PremiumPass.PREFS_NAME,
         ).map { Exclusion("sharedpref", "$it.xml") }
         val files = listOf(
             Exclusion("file", NextWordRepository.FILE_NAME),

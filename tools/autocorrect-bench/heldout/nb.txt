@@ -1,0 +1,234 @@
+# Phrases Tatoeba (CC BY 2.0 FR) jamais comptées dans dictionaries/bigrams/nb.txt : voir tools/build_ngrams.py.
+Jeg har vondt i hodet.
+Hun ble gift i en alder av søtten.
+Vil du ha noe å spise?
+Han er omtrent på din alder.
+Jeg glemte å spørre ham.
+Du burde ikke spise her.
+Skriv til meg når du kommer fram.
+Han mistet nesten livet i den ulykken.
+Det ser ut til å bli regn.
+Det fjellet har en høyde på 3000 meter over havet.
+I min erfaring, kommer sykdom ofte av søvnløshet.
+Han gav livet sitt og reddet babyen.
+Det er umulig for ham å bli ferdig med det på en time.
+Dette hytten står i fare for å kollapse.
+Jeg snakket med skuespillerinnen i egen person.
+Det kan være en fordel for meg å gjøre ting på denne måten.
+Den som ler sist, ler best.
+Hvem vil ha varm sjokolade?
+Hun selger dop på konserter.
+Hun er en dyktig tennisspiller.
+Hvor ble det av alt brødet?
+Jeg har lyst til å gå en tur nå.
+Dette toget går til New York.
+Slutt å bite neglene dine.
+På grensen ble jeg bedt om å vise pass.
+Det er nok for nå.
+Jeg skulle ønske jeg kunne komme på noe å si.
+La oss gi henne ansvaret for det.
+Har jeg ikke sett deg før?
+Hun lurte på hvor Sam var og hva han holdt på med.
+Broren min gjorde det på mine vegne.
+Kumelk smaker bedre enn soyamelk
+Det står vanligvis drosjer foran jernbanestasjonen.
+Tenkte du ikke på å stenge vinduene?
+Hun liker å lese, mer enn noe annet.
+Har du spist japansk mat noen gang?
+Jeg lurer på hva jeg skal lage til middag.
+Regner det mye i Tyskland?
+Jeg vet ingenting om kvinner.
+Hva mener du med ordet talent?
+Hun hadde en bil og kunne kjøre meg dit jeg skulle overnatte.
+For Gud er alle mennesker like.
+Hent meg litt kaldt vann.
+Denne boken er om stjernene.
+Tom tar et bad minst tre ganger i uken.
+Tom jobbet for et byggefirma i Boston.
+Tom gikk ut for å se etter noe å spise.
+Han er intelligent, men likevel liker jeg ham ikke.
+Vi kan ikke garantere noe som helst.
+En hund løper raskere enn et menneske.
+Det var hans idé, ikke min. Ikke gi meg skylden!
+Disse parasittene formerer seg svært raskt.
+Jeg er kanskje gal, men ikke dum.
+I morges følte jeg en bølge av nye ideer og friske krefter.
+Noen folk sier: "Å lære et fremmedspråk krever pugging av gloser og grammatikk."
+Tilgi meg! Mitt hjerte tilhører en annen.
+Vi gikk til parken for å leke.
+Det kommer an på situasjonen.
+Broren min er liten, men har vokst mye i det siste.
+Konflikten mellom Israel og Syria eskalerer.
+Jeg er forelsket i en gift mann.
+Siden jeg ikke vet hva jeg skal si, er jeg taus.
+Tom kunne ikke tro at Maria virkelig hadde kysset ham.
+Håret vokser ut igjen etter avsluttet behandling.
+Maria vet de kinesiske klassiske tekster utenat.
+Det er lett å se at dette ikke er mulig i øyeblikket.
+I dag mange mennesker tror at konseptet med de syv dødssyndene er håpløst utdatert.
+Fire øyne er bedre enn to.
+Livet er mer enn det vi ser.
+Faren min har en bra jobb.
+Jeg blir borte i morgen.
+Jeg takker deg for dine oppmuntrende ord.
+Vi har hatt samtaler om dette i det uendelige uten å komme noen vei.
+Tenk om mora hennes er streng!
+Jeg prøvde mange ganger å ta livet av meg.
+Han har absolutt ingenting felles med oss.
+Jeg følte jeg ikke hadde noe felles med dem i det hele tatt.
+Dessverre kan jeg ikke finne større bilder.
+Det er så mange falske mennesker.
+Hvem skal trøste oss når vi er triste?
+Hun har ikke kommet ennå.
+Er du allergisk mot denne medisinen?
+De skal emigrere til USA.
+Du får tre forsøk på å gjette hvor jeg var i går.
+Han fortalte meg at maria var blitt gravid.
+Hvem var på festen utenom Jack og Mary?
+Hun hadde langt hår i fjor.
+Hva er det du driver med din tulling!
+Du har mitt ord på det.
+Har ikke vi møttes før?
+Historien har en tendens til å gjenta seg selv.
+Han vil at du skal komme.
+Det er lite rom for tvil.
+Hvorfor ble han drept på en slik måte?
+Jeg vet ikke noe om henne.
+Din kone er sint på deg.
+Alle tror nok jeg er gal.
+Det er mye lettere enn jeg trodde.
+Hvor ofte kommer Tom her?
+Ikke alt som er viktig kan telles, og ikke alt som kan telles er viktig!
+Er du klar til å spille?
+Din svarte sjel, rotten tvers gjennom.
+Ikke behandle meg på samme måten som du ville behandlet et barn.
+Tom ville ikke ha et dyrt kamera.
+Uten det kartet, ville han nok ha gått seg vill.
+Å spise er en av livets store gleder.
+Det er veldig snilt av deg.
+For en raring du er.
+Du skulle ha studert mer.
+Hun gjorde en rekke medisinske oppdagelser.
+Hvor er alle de andre?
+Hvor vil du ha disse koffertene?
+Ikke tenk mer på det.
+Kredittkort gir en falsk følelse av økonomisk trygghet.
+De må jobbe i morgen.
+Han tok frem pennen sin.
+Jeg takler ikke rå fisk.
+Jeg ble bitt av mygg.
+Han tok over styringen av familiebedriften etter hans far døde.
+Hun strevet med å reise seg.
+I begynnelsen engstet jeg meg over feilene mine.
+Jeg er en ensom mann.
+Hva er det du vil vite?
+Da var knapt noen som trodde at vi kunne vinne valget.
+Livet er for kort til å lære seg tysk.
+Du må passe på så du ikke overanstrenger deg.
+Hvordan går det med dattera di?
+Sikringene i det gamle huset mitt røk hele tiden.
+Tom koker potetene for å lage potetsalat.
+Det er veldig vanskelig, nesten umulig, å få tak i en leilighet i Oslo.
+Rommet var fullt med folk.
+Mennesket har formet og endret landets ansikt, på godt og vondt.
+I en lang periode har husdyrene vært menneskenes beste forbundsfeller.
+Du kan formatere og tilpasse regneark, sette inn og bruke tabeller, diagrammer, formler og funksjoner.
+Han kom i går for å se til deg.
+Tom datt av lastebilen mens han foret reinsdyrene.
+Jeg synes det er morsomt og underholdende.
+Tom varsler nå at farens vilje nok vil skje fyllest.
+Hvorfor skjedde alt på én gang?
+Skjønner de hva jeg mener?
+Du kan bruke Posten til forsendelse av alle varer til privatpersoner og bedrifter.
+La oss vente og se.
+Temaet fortjener å bli diskutert.
+Du har akkurat blitt skutt.
+Jeg vet ikke om jeg fortsatt har den.
+Jeg vet hvordan dette fungerer.
+Spøkelser er virkelige for de som tror på dem.
+Tom mistet sin elskende sønn.
+Hvorfor vil du ikke anerkjenne at du tar feil?
+Moren var fæl mot hennes adoptivsønn.
+Kan man drikke vann fra springen i Australia?
+Hun flyttet til Paris i 1966.
+Hun er en person jeg ikke kan leve uten.
+Det skjer bare av og til.
+Tallet 4 er sett på som et uheldig tall i Japan.
+Tom måtte gå tilbake samme veien som han kom fra.
+Tom inviterte Mary på date, men hun sa nei. Ett år senere var de gift.
+Jeg er ikke en pute.
+Det er jeg som betaler.
+Jeg liker det faktisk veldig godt.
+Vær så snill å straff ham.
+Øyne er vinduer til hjertet.
+For å si det som det er hater jeg ham.
+Tom sa at det er greit at jeg ikke deltar på møtet i kveld.
+Hvor mange av ordene på denne listen kjenner du ikke?
+Tom har ikke vært her.
+Jeg skal spørre Tom om han ikke kan gi meg litt penger.
+Vi har vært gift tre år nå.
+Jeg ville alltid gjøre dette.
+Jeg skulle ønske dette var over.
+Jeg sa at Tom skulle roe seg ned.
+Det er et storslagent rom, ikke sant?
+Når reiste du til Boston?
+Den stakkars jenta ble blind.
+Er det sant at du vil bli muslim?
+Det tar ikke lang tid før vinterferien er over.
+Det synes jeg var veldig koselig, Tom.
+Han ble ranet idet han kom hjem sent om natta.
+Profeten Muhammed døde i Medina i 632.
+Går du til skolen eller tar du bussen?
+Jeg så aldri Tom engang.
+Jeg teller dem hver dag.
+Du kan komme du også, om du vil.
+Er dere de eneste som er igjen?
+Mange politikere er dessverre uhederlige.
+Kanskje du har oversett dette fordi det er skrevet med liten skrift.
+Han har veldig mye fregner.
+Ingen ønsket å jobbe i landet mitt.
+Tom er imot homofilt ekteskap.
+Jeg gidder ikke å gå ut idag.
+Sami tok med vin og noe snacks.
+Jeg sa jeg ville hjelpe deg.
+Tom sier at han vil kjøpe en ny bil.
+Jeg vet at Tom ikke snakker fransk.
+Jeg håper at dette er nok.
+Han er ikke så høy som deg.
+Jeg håper jeg synger bedre neste gang.
+Mary satt på senga si.
+Hun sa aldri noe om det.
+Det er grunnen til at jeg alltid taper.
+Jeg hater å vaske og å ta klesvasken.
+Tom må gjøre det, enten han vil eller ikke.
+Jeg vil ikke bo i Australia lenger.
+Er du flink til å skrive?
+Det var ikke jeg som sang.
+Jeg tror du kan vinne.
+Det er et marked i byen.
+Hvis dere følger meg, skyter jeg.
+Jeg liker ikke å lese aviser.
+Hvem spiser du vanligvis med?
+Forelsker du deg i Tom?
+Tom er ikke vant til å gå barfot.
+Han har oppført seg rart i det siste.
+Er du sikker på at dette er enkelt?
+Tom fortalte alt til politiet.
+Jeg kan ikke huske å ha slukket lysene.
+Barnebarnet mitt kommer på besøk i morgen.
+Jeg drar til New York neste uke.
+Ville det ikke vært bedre å gjøre dette i morgen?
+Du og jeg tjener omtrent likt.
+Jeg er veldig lei meg for det som skjedde.
+Tom fikk heldigvis ikke sparken.
+De merkelige bevegelsene til mannen er mistenkelige.
+Dere må tilbringe mer tid med barna deres.
+Hva er den korteste fullstendige setningen på engelsk?
+Jeg er alltid stolt av familien min.
+Jeg gikk en tur i parken.
+Jeg tror han kommer til å lykkes.
+Tegn en linje på arket.
+Han ble arrestert for fyllekjøring.
+Ta av deg jakken, fordi det er veldig varmt.
+Jeg elsker is med smak av mynte.
+La folk leve i fred!

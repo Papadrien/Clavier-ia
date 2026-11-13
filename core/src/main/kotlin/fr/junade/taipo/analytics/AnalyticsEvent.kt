@@ -1,6 +1,7 @@
 package fr.junade.taipo.analytics
 
 import fr.junade.taipo.KeyboardLanguage
+import fr.junade.taipo.LetterArrangement
 
 /**
  * Catalogue des événements de mesure d'usage envoyés à Aptabase (via son SDK, voir `Analytics` dans `:app`), et règles qui garantissent qu'aucun texte de
@@ -21,6 +22,9 @@ object AnalyticsEvents {
     const val CLIPBOARD_USED = "clipboard_used"
     const val UNDO_USED = "undo_used"
     const val KEYBOARD_LANGUAGE = "keyboard_language"
+
+    /** Clavier détaché ou recollé depuis le clavier : `mode` (`floating`, `docked`), `via` (`bubble`, `handle`, `one_handed`). */
+    const val KEYBOARD_MODE = "keyboard_mode"
     const val SETTING_CHANGED = "setting_changed"
     const val FIRST_OPEN = "first_open"
 
@@ -38,12 +42,8 @@ object AnalyticsEvents {
         const val CHAT = "chat"
     }
 
-    /** Disposition des lettres d'une langue : AZERTY pour le français, QWERTZ pour l'allemand, QWERTY sinon. */
-    fun layoutOf(language: KeyboardLanguage): String = when (language) {
-        KeyboardLanguage.FR -> "azerty"
-        KeyboardLanguage.DE -> "qwertz"
-        else -> "qwerty"
-    }
+    /** Disposition d'origine des lettres d'une langue ([LetterArrangement.defaultFor]) : « azerty », « qwertz », « qwerty_sv »… */
+    fun layoutOf(language: KeyboardLanguage): String = LetterArrangement.defaultFor(language).tag
 
     /** Durée d'une action en tranche (jamais la valeur exacte). */
     fun durationBucket(millis: Long): String = when {

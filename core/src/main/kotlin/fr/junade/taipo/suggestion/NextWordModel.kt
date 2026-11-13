@@ -196,10 +196,12 @@ class NextWordModel(private val maxEntries: Int = DEFAULT_MAX_ENTRIES) {
         if (first == BARRIER) return null
         val second: String? = if (first == SENTENCE_START) {
             null
-        } else when {
-            index >= 2 -> tokens[index - 2].takeIf { it != BARRIER }
-            index == 1 && !truncated -> SENTENCE_START
-            else -> null
+        } else {
+            when {
+                index >= 2 -> tokens[index - 2].takeIf { it != BARRIER }
+                index == 1 && !truncated -> SENTENCE_START
+                else -> null
+            }
         }
         return first to second
     }
@@ -289,8 +291,18 @@ class NextWordModel(private val maxEntries: Int = DEFAULT_MAX_ENTRIES) {
         fun isEmoji(token: String): Boolean = token.isNotEmpty() && isEmojiBase(token.codePointAt(0))
 
         private fun isEmojiBase(cp: Int): Boolean =
-            cp >= 0x1F000 || cp in 0x2190..0x2BFF || cp == 0xA9 || cp == 0xAE || cp == 0x203C || cp == 0x2049 ||
-                cp == 0x2122 || cp == 0x2139 || cp == 0x3030 || cp == 0x303D || cp == 0x3297 || cp == 0x3299
+            cp >= 0x1F000 ||
+                cp in 0x2190..0x2BFF ||
+                cp == 0xA9 ||
+                cp == 0xAE ||
+                cp == 0x203C ||
+                cp == 0x2049 ||
+                cp == 0x2122 ||
+                cp == 0x2139 ||
+                cp == 0x3030 ||
+                cp == 0x303D ||
+                cp == 0x3297 ||
+                cp == 0x3299
 
         private fun isEmojiSuffix(cp: Int): Boolean =
             cp == VS15 || cp == VS16 || cp == KEYCAP || cp in 0x1F3FB..0x1F3FF
@@ -350,7 +362,8 @@ class NextWordModel(private val maxEntries: Int = DEFAULT_MAX_ENTRIES) {
                             val nextWidth = Character.charCount(next)
                             when {
                                 isEmojiSuffix(next) -> end += nextWidth
-                                next == ZWJ && end + nextWidth < text.length &&
+                                next == ZWJ &&
+                                    end + nextWidth < text.length &&
                                     isEmojiBase(text.codePointAt(end + nextWidth)) -> {
                                     end += nextWidth + Character.charCount(text.codePointAt(end + nextWidth))
                                 }

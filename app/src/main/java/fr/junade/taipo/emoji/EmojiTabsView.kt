@@ -1,8 +1,5 @@
 package fr.junade.taipo.emoji
 
-import fr.junade.taipo.R
-import fr.junade.taipo.dimen
-import fr.junade.taipo.themeColor
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
@@ -16,6 +13,9 @@ import android.view.accessibility.AccessibilityEvent
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.customview.widget.ExploreByTouchHelper
+import fr.junade.taipo.R
+import fr.junade.taipo.dimen
+import fr.junade.taipo.themeColor
 
 /**
  * Story 1.15 : rangée d'onglets des catégories d'emojis (un emoji par catégorie). Touche brève sur un

@@ -253,7 +253,10 @@ class KeyboardViewRegressionTest {
             val slots = slots()
             assertEquals("$name : une zone par touche", layout.rows.sumOf { it.size }, slots.size)
             for (s in slots) {
-                assertTrue("$name : ${s.key.id} hors de la vue", s.bounds.left >= 0 && s.bounds.right <= view.width && s.bounds.top >= 0 && s.bounds.bottom <= view.height)
+                assertTrue(
+                    "$name : ${s.key.id} hors de la vue",
+                    s.bounds.left >= 0 && s.bounds.right <= view.width && s.bounds.top >= 0 && s.bounds.bottom <= view.height,
+                )
                 assertTrue("$name : ${s.key.id} sans surface", s.bounds.width() > 0 && s.bounds.height() > 0)
             }
             slots.groupBy { it.bounds.top }.values.forEach { row ->
@@ -359,24 +362,58 @@ class KeyboardViewRegressionTest {
     }
 
     @Test
+    fun unAppuiLongSurLePointRelacheSansBougerSaisitLePoint() {
+        val period = slot("period")
+        val t = SystemClock.uptimeMillis()
+        send(MotionEvent.ACTION_DOWN, period.bounds.exactCenterX(), period.bounds.exactCenterY(), t)
+        Thread.sleep(ViewConfiguration.getLongPressTimeout() + LONG_PRESS_MARGIN_MS)
+        instrumentation.waitForIdleSync()
+        send(MotionEvent.ACTION_UP, period.bounds.exactCenterX(), period.bounds.exactCenterY(), t)
+        val symbol = (typed.singleOrNull()?.action as? KeyAction.TypeChar)?.char
+        assertEquals("relâcher la bulle du point sur la touche saisit le point", '.', symbol)
+    }
+
+    @Test
     fun deuxDoigtsSaisissentLesDeuxTouchesDansLOrdre() {
         val a = slot("letter_a")
         val z = slot("letter_z")
         val t = SystemClock.uptimeMillis()
         onMain {
-            val props = arrayOf(MotionEvent.PointerProperties().apply { id = 0; toolType = MotionEvent.TOOL_TYPE_FINGER })
-            val coords = arrayOf(MotionEvent.PointerCoords().apply { x = a.bounds.exactCenterX(); y = a.bounds.exactCenterY() })
+            val props = arrayOf(
+                MotionEvent.PointerProperties().apply {
+                    id = 0
+                    toolType = MotionEvent.TOOL_TYPE_FINGER
+                },
+            )
+            val coords = arrayOf(
+                MotionEvent.PointerCoords().apply {
+                    x = a.bounds.exactCenterX()
+                    y = a.bounds.exactCenterY()
+                },
+            )
             val down = MotionEvent.obtain(t, t, MotionEvent.ACTION_DOWN, 1, props, coords, 0, 0, 1f, 1f, 0, 0, 0, 0)
             view.dispatchTouchEvent(down)
             down.recycle()
 
             val props2 = arrayOf(
-                MotionEvent.PointerProperties().apply { id = 0; toolType = MotionEvent.TOOL_TYPE_FINGER },
-                MotionEvent.PointerProperties().apply { id = 1; toolType = MotionEvent.TOOL_TYPE_FINGER },
+                MotionEvent.PointerProperties().apply {
+                    id = 0
+                    toolType = MotionEvent.TOOL_TYPE_FINGER
+                },
+                MotionEvent.PointerProperties().apply {
+                    id = 1
+                    toolType = MotionEvent.TOOL_TYPE_FINGER
+                },
             )
             val coords2 = arrayOf(
-                MotionEvent.PointerCoords().apply { x = a.bounds.exactCenterX(); y = a.bounds.exactCenterY() },
-                MotionEvent.PointerCoords().apply { x = z.bounds.exactCenterX(); y = z.bounds.exactCenterY() },
+                MotionEvent.PointerCoords().apply {
+                    x = a.bounds.exactCenterX()
+                    y = a.bounds.exactCenterY()
+                },
+                MotionEvent.PointerCoords().apply {
+                    x = z.bounds.exactCenterX()
+                    y = z.bounds.exactCenterY()
+                },
             )
             val action = MotionEvent.ACTION_POINTER_DOWN or (1 shl MotionEvent.ACTION_POINTER_INDEX_SHIFT)
             val second = MotionEvent.obtain(t, t + 1, action, 2, props2, coords2, 0, 0, 1f, 1f, 0, 0, 0, 0)
@@ -384,8 +421,18 @@ class KeyboardViewRegressionTest {
             second.recycle()
         }
         onMain {
-            val props = arrayOf(MotionEvent.PointerProperties().apply { id = 1; toolType = MotionEvent.TOOL_TYPE_FINGER })
-            val coords = arrayOf(MotionEvent.PointerCoords().apply { x = z.bounds.exactCenterX(); y = z.bounds.exactCenterY() })
+            val props = arrayOf(
+                MotionEvent.PointerProperties().apply {
+                    id = 1
+                    toolType = MotionEvent.TOOL_TYPE_FINGER
+                },
+            )
+            val coords = arrayOf(
+                MotionEvent.PointerCoords().apply {
+                    x = z.bounds.exactCenterX()
+                    y = z.bounds.exactCenterY()
+                },
+            )
             val up = MotionEvent.obtain(t, t + 2, MotionEvent.ACTION_UP, 1, props, coords, 0, 0, 1f, 1f, 0, 0, 0, 0)
             view.dispatchTouchEvent(up)
             up.recycle()

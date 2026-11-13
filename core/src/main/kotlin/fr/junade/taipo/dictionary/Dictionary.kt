@@ -168,6 +168,11 @@ class Dictionary private constructor(
     // (l'utilisateur les a ajoutés volontairement, ils priment sur un mot du dictionnaire à distance égale).
     internal val personalFrequency: Long = (candidateFrequencies.maxOrNull() ?: 0L) + 1L
 
+    // Fréquence au-delà de laquelle un mot de la liste est courant : un mot personnel qui n'en diffère que par ses accents ne le
+    // remplace pas (« Côme » ne remplace pas l'anglais « come »). En dessous, la forme sans accent est un mot rare ou un nom écrit
+    // sans ses accents (« nae », « chloe ») : le mot personnel s'applique (voir [correctionWithoutNames]).
+    private val commonWordFrequency: Long = (personalFrequency - 1L) / PERSONAL_ACCENT_COMMON_SHARE
+
     // Mots accentués indexés par leur forme sans accent (« annee » -> [« année »]) : oublier un
     // accent est la faute la plus courante en français. Seuls les mots qui contiennent un accent
     // sont indexés (~12 000 sur 50 000).
@@ -294,8 +299,12 @@ class Dictionary private constructor(
         var result = properNameForm(word, correction, personalWords) ?: correction
         // Point 4 : « … avec Kubernets » : un mot inconnu à majuscule juste après un autre mot est sans doute un nom propre ; il n'est
         // remplacé que par un nom connu (« Adrein » -> « Adrien »), jamais par un mot courant.
-        if (result != null && confidence.protectsMidSentenceCapitals && previousWord != null && isCapitalized(word) &&
-            word.lowercase() !in frequencies && result.lowercase() !in exactNames
+        if (result != null &&
+            confidence.protectsMidSentenceCapitals &&
+            previousWord != null &&
+            isCapitalized(word) &&
+            word.lowercase() !in frequencies &&
+            result.lowercase() !in exactNames
         ) {
             result = null
         }
@@ -368,13 +377,18 @@ class Dictionary private constructor(
         // minuscule -> forme enregistrée par l'utilisateur
         val personal = HashMap<String, String>(personalWords.size)
         personalWords.forEach { personal[it.lowercase()] = it }
-        if (lower in personal) return null
+        // Mot personnel tapé en minuscules alors qu'il a été enregistré avec une majuscule (« brice » pour « Brice », « iphone »
+        // pour « iPhone ») : la forme enregistrée s'applique, comme pour un prénom de la liste (« adrien » -> « Adrien »).
+        personal[lower]?.let { stored -> return stored.takeIf { word == lower && it != lower } }
         // Point 4 : un mot inconnu que l'utilisateur a déjà gardé deux fois est un mot à lui (nom, argot, sigle) : plus de correction.
         if (habits != null && lower !in frequencies && habits.isLearnedWord(lower)) return null
         // « l'Taipo », « d'Adrien », « Taipo's » : le clavier voit un seul mot avec apostrophe.
         if (isPersonalWithApostrophe(lower, personal)) return null
 
         if (lower in frequencies) {
+            // Accent oublié sur un mot personnel dont la forme sans accent est un mot rare de la liste (« nae », mot écossais de la
+            // liste anglaise, pour « Naé ») : le mot ajouté volontairement par l'utilisateur l'emporte.
+            if (frequencies.getValue(lower) < commonWordFrequency) personalAccentRestoration(word, lower, personal)?.let { return it }
             // « coeur » -> « cœur » : la liste contient les deux écritures, seule celle avec la ligature est juste.
             ligatureForms[lower]?.let { return applyOriginalCasing(word, it) }
             // Mot présent dans les listes : corrigé seulement si c'est une faute du corpus dont la
@@ -808,7 +822,10 @@ class Dictionary private constructor(
                     current[k] = value
                     if (value < rowMin) rowMin = value
                 }
-                if (j >= n - 1 && current[n] <= 1) { found = true; break }
+                if (j >= n - 1 && current[n] <= 1) {
+                    found = true
+                    break
+                }
                 if (rowMin > 1) break
                 val recycled = before
                 before = previous
@@ -885,7 +902,9 @@ class Dictionary private constructor(
     private fun isInflectedForm(lower: String): Boolean = inflections.rules.any { rule ->
         // Une base qui est une faute du corpus (« duree ») ne valide pas sa forme fléchie (« durees »).
         rule.baseOf(lower)?.let {
-            it in frequencies && it !in dominatedByAccented && frequencies.getValue(it) >= inflections.minBaseFrequency &&
+            it in frequencies &&
+                it !in dominatedByAccented &&
+                frequencies.getValue(it) >= inflections.minBaseFrequency &&
                 !isUndoubledConsonant(it, rule)
         } == true
     }
@@ -994,6 +1013,9 @@ class Dictionary private constructor(
     companion object {
         private const val MIN_WORD_LENGTH_FOR_CORRECTION = 2
 
+        /** Part de la fréquence du mot le plus courant au-delà de laquelle un mot est courant (voir [commonWordFrequency]). */
+        private const val PERSONAL_ACCENT_COMMON_SHARE = 1_000L
+
         private const val DIGIT_SLIP_MIN_LENGTH = 4
 
         /** Élisions françaises (partie avant l'apostrophe, minuscules) : « l'ami », « qu'il », « jusqu'à ». */
@@ -1084,7 +1106,12 @@ class Dictionary private constructor(
         ): Dictionary {
             // Liste déjà en minuscules (cas des listes de l'application) : pas de copie, ce qui évite de
             // doubler la mémoire avec une liste complète de plusieurs centaines de milliers de mots.
-            if (entries.keys.all { it == it.lowercase() }) return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence, accentPolicy, ngrams)
+            if (entries.keys.all {
+                    it == it.lowercase()
+                }
+            ) {
+                return Dictionary(entries, inflections, candidateMinFrequency, proximity, letterPrefilter, properNames, confidence, accentPolicy, ngrams)
+            }
             val merged = HashMap<String, Long>(entries.size)
             entries.forEach { (word, count) ->
                 val key = word.lowercase()

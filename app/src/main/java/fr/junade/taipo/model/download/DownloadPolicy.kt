@@ -125,6 +125,12 @@ object DownloadPolicy {
     private const val RETRY_MAX_DELAY_MS = 60_000L
 
     /** Faut-il relancer tout seul après [failuresWithoutProgress] échecs d'affilée sans progrès ? */
+    /** Réponse HTTP passagère (trop de requêtes, erreur du serveur) : le téléchargement est retenté (audit REL-02). */
+    fun isRetryableHttpStatus(code: Int): Boolean = code == HTTP_TOO_MANY_REQUESTS || code in HTTP_SERVER_ERRORS
+
+    private const val HTTP_TOO_MANY_REQUESTS = 429
+    private val HTTP_SERVER_ERRORS = 500..599
+
     fun canAutoRetry(failuresWithoutProgress: Int): Boolean = failuresWithoutProgress < MAX_FAILURES_WITHOUT_PROGRESS
 
     /** Attente avant la relance : 2 s, 6 s, 18 s… (x3 à chaque échec sans progrès), plafonnée à 60 s. */

@@ -35,11 +35,13 @@ class ThemePreviewGeometryTest {
 
     @Test
     fun `deux touches ne se superposent jamais`() {
-        for (i in keys.indices) for (j in i + 1 until keys.size) {
-            val a = keys[i]
-            val b = keys[j]
-            val overlap = a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom
-            assertTrue(!overlap, "superposition : $a et $b")
+        for (i in keys.indices) {
+            for (j in i + 1 until keys.size) {
+                val a = keys[i]
+                val b = keys[j]
+                val overlap = a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom
+                assertTrue(!overlap, "superposition : $a et $b")
+            }
         }
     }
 

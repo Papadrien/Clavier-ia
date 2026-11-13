@@ -7,15 +7,15 @@ import com.google.ai.edge.litertlm.EngineConfig
 import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.model.ModelFileResolver
 import fr.junade.taipo.model.ModelLoadException
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Collections
 import java.util.WeakHashMap
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 /**
  * Détient l'unique moteur LiteRT-LM du clavier, partagé par la correction ([CorrectionEngine]) et la
@@ -41,9 +41,12 @@ class LlmEngineHost(private val appContext: Context) {
     /** Verrou d'inférence, à tenir pendant toute utilisation du moteur (chargement compris). */
     val inferenceLock = Mutex()
 
-    private var engine: Engine? = null
-    private var loadedModel: AiModel? = null
-    private var loadedFile: File? = null
+    // Audit QUAL-04 : lus hors du verrou (isLoaded, releaseIfIdle) depuis plusieurs fils.
+    @Volatile private var engine: Engine? = null
+
+    @Volatile private var loadedModel: AiModel? = null
+
+    @Volatile private var loadedFile: File? = null
 
     /** Le moteur chargé tourne sur GPU (choix de l'utilisateur) : un échec de réponse peut alors venir du GPU. */
     private var loadedOnGpu = false
@@ -92,7 +95,8 @@ class LlmEngineHost(private val appContext: Context) {
         }
 
         onLoading()
-        close()
+        // Audit PERF-01 : la fermeture de l'ancien moteur et la construction du nouveau se font hors du fil principal (appelant).
+        withContext(Dispatchers.Default) { closeEngine() }
 
         isLoading = true
         loadingListener?.invoke(true)
@@ -134,15 +138,15 @@ class LlmEngineHost(private val appContext: Context) {
     )
 
     /** Moteur créé puis initialisé (lecture du modèle) hors du thread principal ; refermé s'il ne s'initialise pas. */
-    private suspend fun loadEngine(file: File, withAudio: Boolean, backend: Backend): Engine {
+    private suspend fun loadEngine(file: File, withAudio: Boolean, backend: Backend): Engine = withContext(Dispatchers.Default) {
         val engine = buildEngine(file, withAudio, backend)
         try {
-            withContext(Dispatchers.Default) { engine.initialize() }
+            engine.initialize()
         } catch (e: Throwable) {
             runCatching { engine.close() }
             throw e
         }
-        return engine
+        engine
     }
 
     /** Moteur sur GPU ; s'il refuse de s'initialiser, GPU marqué en échec et moteur sur le processeur central. */
@@ -178,7 +182,7 @@ class LlmEngineHost(private val appContext: Context) {
         if (InferenceFailureClassifier.classify(failure) != InferenceFailureCause.UNEXPECTED) return false
         fr.junade.taipo.AppLog.w(TAG, "GPU en échec pendant une réponse : repli sur le processeur central", failure)
         acceleration.markGpuFailed()
-        withContext(Dispatchers.Default) { close() }
+        withContext(Dispatchers.Default) { closeEngine() }
         return true
     }
 
@@ -194,7 +198,7 @@ class LlmEngineHost(private val appContext: Context) {
         if (engine == null || !inferenceLock.tryLock()) return false
         try {
             if (engine == null) return false
-            close()
+            closeEngine()
             return true
         } finally {
             inferenceLock.unlock()
@@ -223,13 +227,21 @@ class LlmEngineHost(private val appContext: Context) {
     fun releaseModel(model: AiModel) {
         runBlocking {
             inferenceLock.withLock {
-                if (loadedModel == model) close()
+                if (loadedModel == model) closeEngine()
             }
         }
     }
 
-    /** Libère le moteur chargé (et la conversation de génération ouverte). À appeler quand l'IME est détruit. */
-    fun close() {
+    /**
+     * Libère le moteur chargé (et la conversation de génération ouverte), en attendant la fin d'une inférence en cours (audit
+     * BUG-04 : fermer le moteur pendant qu'une réponse tourne le ferait utiliser après sa libération). Hors du fil principal.
+     */
+    suspend fun closeLocked() {
+        inferenceLock.withLock { withContext(Dispatchers.Default) { closeEngine() } }
+    }
+
+    /** Ferme le moteur. À n'appeler qu'avec [inferenceLock] tenu (ou depuis [ensureLoaded], qui le tient). */
+    private fun closeEngine() {
         releaseOpenConversation()
         engine?.close()
         engine = null
@@ -245,7 +257,7 @@ class LlmEngineHost(private val appContext: Context) {
         /** Ferme tous les moteurs du processus (changement d'accélération dans l'écran « Modèle IA »). Hors du thread principal. */
         fun closeEverywhere() {
             val hosts = synchronized(liveHosts) { liveHosts.toList() }
-            hosts.forEach { host -> runBlocking { host.inferenceLock.withLock { host.close() } } }
+            hosts.forEach { host -> runBlocking { host.closeLocked() } }
         }
 
         /** Hôtes vivants du processus (en pratique celui de l'IME) : l'écran de réglages peut ainsi fermer le moteur. */

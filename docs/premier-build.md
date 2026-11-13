@@ -7,8 +7,9 @@ et la dictée (sherpa-onnx) ont tourné et ont été vérifiés sur appareil. Le
 Reste à faire à la main (impossible depuis l'environnement de revue, sans build) :
 
 - [ ] Committer `app/schemas/*.json` exportés par Room (voir `room { schemaDirectory(...) }`).
-- [x] `litertlm-android` figé à **0.17.1** dans `gradle/libs.versions.toml` (lot 1.2, 03/10/2026). Vérifier après un
-      build propre : `./gradlew :app:dependencies --configuration debugRuntimeClasspath` doit afficher `0.17.1`.
+- [x] `litertlm-android` figé dans `gradle/libs.versions.toml` (lot 1.2, 03/10/2026, alors en 0.17.1 ; 0.19.1 le 13/11/2026).
+      Vérifier après un build propre : `./gradlew :app:dependencies --configuration debugRuntimeClasspath` doit afficher la
+      version de la clé `litertlm` du catalogue (la CI l'affiche à chaque build).
 
 ## Purge sherpa-onnx (lot 2.2, 03/10/2026)
 

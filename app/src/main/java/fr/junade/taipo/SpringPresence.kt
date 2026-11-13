@@ -19,6 +19,9 @@ internal object SpringPresencePose {
     /** Garde-fou : une disparition ne dure jamais plus que cela (secondes), même si les images tardent. */
     const val EXIT_MAX_S = 0.6f
 
+    /** Écrasement / étirement en Gelée : faible, ce sont des barres sur toute la largeur. */
+    const val JELLY_STRENGTH = 0.25f
+
     fun translationY(progress: Float, distancePx: Float): Float = (1f - progress) * distancePx
 
     fun alpha(progress: Float): Float = (progress * FADE_GAIN).coerceIn(0f, 1f)
@@ -52,7 +55,9 @@ internal class SpringPresence(private val view: View, private val distancePx: ()
                 override fun onViewAttachedToWindow(v: View) = Unit
 
                 override fun onViewDetachedFromWindow(v: View) {
-                    if (exiting) finishHide() else {
+                    if (exiting) {
+                        finishHide()
+                    } else {
                         stopTicker()
                         apply(1f)
                     }
@@ -154,6 +159,11 @@ internal class SpringPresence(private val view: View, private val distancePx: ()
     private fun apply(progress: Float) {
         view.translationY = SpringPresencePose.translationY(progress, distancePx())
         view.alpha = SpringPresencePose.alpha(progress)
+        // Gelée ([MotionStyle.JELLY]) : la barre s'étire en montant et s'aplatit en dépassant sa place, posée sur son bas.
+        val style = MotionStyle.current
+        view.pivotY = view.height.toFloat()
+        view.scaleX = style.stretchX(progress, SpringPresencePose.JELLY_STRENGTH)
+        view.scaleY = style.stretchY(progress, SpringPresencePose.JELLY_STRENGTH)
     }
 
     private companion object {
