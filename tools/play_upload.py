@@ -11,7 +11,12 @@ lisible par le seul utilisateur, supprimé aussitôt.
 Étapes de l'API : créer une modification (edit), y envoyer le bundle, puis le mapping, placer la version dans le canal,
 valider (commit). En cas d'erreur, la modification n'est pas validée : rien ne change sur Play.
 
-Usage : play_upload.py --package fr.junade.taipo --track alpha --aab app-release.aab [--mapping mapping.txt] [--status completed]
+Notes de version (--release-notes DOSSIER) : un fichier <langue>.txt par langue de l'application (en.txt, fr.txt, pt.txt, nb.txt…).
+Chaque langue de la fiche Play Store reçoit le fichier de sa langue (fr-FR → fr.txt, pt-BR → pt.txt, no-NO → nb.txt), sinon en.txt.
+Play limite une note à 500 caractères : vérifié avant d'ouvrir la modification.
+
+Usage : play_upload.py --package fr.junade.taipo --track alpha --aab app-release.aab [--mapping mapping.txt]
+        [--release-notes distribution/release-notes] [--status completed]
 """
 
 import argparse
@@ -29,6 +34,8 @@ import urllib.request
 API = "https://androidpublisher.googleapis.com/androidpublisher/v3/applications"
 UPLOAD_API = "https://androidpublisher.googleapis.com/upload/androidpublisher/v3/applications"
 SCOPE = "https://www.googleapis.com/auth/androidpublisher"
+MAX_NOTES_LENGTH = 500  # limite de Play pour les notes de version, par langue
+FALLBACK_LANGUAGE = "en"
 
 
 def b64url(data: bytes) -> str:
@@ -78,14 +85,45 @@ def request(method: str, url: str, body: bytes | None = None, headers: dict | No
     return json.loads(payload) if payload else {}
 
 
+def load_release_notes(directory: str) -> dict[str, str]:
+    """Notes par code de langue (nom du fichier sans .txt). Échec franc si une note est vide ou trop longue pour Play."""
+    notes = {}
+    for name in sorted(os.listdir(directory)):
+        if not name.endswith(".txt"):
+            continue
+        with open(os.path.join(directory, name), encoding="utf-8") as notes_file:
+            text = notes_file.read().strip()
+        if not text or len(text) > MAX_NOTES_LENGTH:
+            sys.exit(f"::error::{name} : {len(text)} caractères, Play accepte de 1 à {MAX_NOTES_LENGTH}")
+        notes[name[:-4]] = text
+    if FALLBACK_LANGUAGE not in notes:
+        sys.exit(f"::error::{FALLBACK_LANGUAGE}.txt absent de {directory} (note de repli)")
+    return notes
+
+
+def notes_for(language: str, notes: dict[str, str]) -> str:
+    """Note d'une langue de la fiche Play (fr-FR, pt-BR, no-NO…) : langue exacte, puis langue sans région, puis anglais."""
+    primary = language.split("-")[0]
+    if primary == "no":  # Play écrit le norvégien « no-NO », l'application « nb »
+        primary = "nb"
+    for code in (language, primary):
+        if code in notes:
+            return notes[code]
+    print(f"::warning::pas de note de version pour {language} : texte anglais utilisé")
+    return notes[FALLBACK_LANGUAGE]
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--package", required=True)
     parser.add_argument("--track", required=True)
     parser.add_argument("--aab", required=True)
     parser.add_argument("--mapping")
+    parser.add_argument("--release-notes", help="dossier des notes de version, un <langue>.txt par langue")
     parser.add_argument("--status", default="completed", choices=["completed", "draft"])
     args = parser.parse_args()
+
+    notes = load_release_notes(args.release_notes) if args.release_notes else None
 
     raw = os.environ.get("PLAY_SERVICE_ACCOUNT_JSON", "")
     if not raw.strip():
@@ -115,7 +153,14 @@ def main() -> None:
             )
         print("Mapping R8 envoyé")
 
-    track = {"track": args.track, "releases": [{"versionCodes": [str(version_code)], "status": args.status}]}
+    release = {"versionCodes": [str(version_code)], "status": args.status}
+    if notes:
+        # Langues de la fiche Play Store : Play refuse une note dans une langue que la fiche n'a pas.
+        listings = request("GET", f"{app}/edits/{edit_id}/listings", None, auth).get("listings", [])
+        languages = [listing["language"] for listing in listings] or ["en-US"]
+        release["releaseNotes"] = [{"language": language, "text": notes_for(language, notes)} for language in languages]
+        print(f"Notes de version : {', '.join(languages)}")
+    track = {"track": args.track, "releases": [release]}
     request("PUT", f"{app}/edits/{edit_id}/tracks/{args.track}", json.dumps(track).encode(),
             {**auth, "Content-Type": "application/json"})
     request("POST", f"{app}/edits/{edit_id}:commit", b"", auth)

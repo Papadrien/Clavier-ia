@@ -146,7 +146,8 @@ jobs:
           AAB=$(find play -name '*.aab' | head -n1)
           MAPPING=$(find play -name 'mapping.txt' | head -n1)
           test -n "$AAB" || { echo "::error::AAB introuvable dans l'artefact aab-release"; exit 1; }
-          python3 tools/play_upload.py --package fr.junade.taipo --track alpha --aab "$AAB" ${MAPPING:+--mapping "$MAPPING"}
+          python3 tools/play_upload.py --package fr.junade.taipo --track alpha --aab "$AAB" ${MAPPING:+--mapping "$MAPPING"} \
+            --release-notes distribution/release-notes
 
   # Audit CI-04 : tests instrumentés (Room + SQLCipher + Keystore réels) sur émulateur, sur main et à la demande : ils sont
   # longs et ne doivent pas ralentir chaque pull request.

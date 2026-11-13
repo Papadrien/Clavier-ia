@@ -22,17 +22,15 @@ object WhatsNew {
     /** Nombre d'ouvertures du clavier où la pilule est montrée, au plus. */
     const val MAX_SHOWS = 3
 
-    /** Une nouveauté : titre et texte. */
-    data class Item(@StringRes val title: Int, @StringRes val body: Int)
+    /** Une nouveauté : titre, et texte facultatif (sans texte, la carte ne montre que le titre). */
+    data class Item(@StringRes val title: Int, @StringRes val body: Int? = null)
 
     /** Nouveautés de [RELEASE], dans l'ordre de la page. */
     val items: List<Item> = listOf(
-        Item(R.string.whats_new_floating_title, R.string.whats_new_floating_body),
+        Item(R.string.whats_new_floating_title),
         Item(R.string.whats_new_languages_title, R.string.whats_new_languages_body),
         Item(R.string.whats_new_appearance_title, R.string.whats_new_appearance_body),
-        Item(R.string.whats_new_dictation_title, R.string.whats_new_dictation_body),
-        Item(R.string.whats_new_digits_title, R.string.whats_new_digits_body),
-        Item(R.string.whats_new_enter_title, R.string.whats_new_enter_body),
+        Item(R.string.whats_new_dictation_title),
         Item(R.string.whats_new_privacy_title, R.string.whats_new_privacy_body),
     )
 

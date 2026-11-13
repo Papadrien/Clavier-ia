@@ -35,8 +35,13 @@ class WhatsNewActivity : Activity() {
             title.setText(news.title)
             ViewCompat.setAccessibilityHeading(title, true)
             item.findViewById<TextView>(R.id.terms_section_body).apply {
-                setText(news.body)
-                setTextIsSelectable(false)
+                val body = news.body
+                if (body == null) {
+                    visibility = View.GONE
+                } else {
+                    setText(body)
+                    setTextIsSelectable(false)
+                }
             }
             container.addView(item)
         }
