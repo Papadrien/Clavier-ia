@@ -38,14 +38,9 @@ internal class HeartsPainter : BackdropPainter() {
 
     override fun prepare(w: Float, h: Float, random: Random) {
         balloons.clear()
-        BALLOONS.forEach { (x, y, size, c1, c2) ->
-            balloons += Balloon(
-                x = x + (random.nextFloat() - 0.5f) * 0.04f,
-                y = y + (random.nextFloat() - 0.5f) * 0.04f,
-                size = size,
-                curve1 = c1,
-                curve2 = c2,
-            )
+        BALLOONS.forEach { b ->
+            // Léger décalage tiré au hasard : chaque nouveau tirage (« Nouveau tirage ») déplace un peu le bouquet.
+            balloons += Balloon(b.x + (random.nextFloat() - 0.5f) * 0.04f, b.y + (random.nextFloat() - 0.5f) * 0.04f, b.size, b.curve1, b.curve2)
         }
         dust.clear()
         repeat(DUST) {
@@ -123,10 +118,10 @@ internal class HeartsPainter : BackdropPainter() {
     private companion object {
         /** Bouquet : position (fractions du fond), taille (fraction du petit côté), courbure des tiges. */
         val BALLOONS = listOf(
-            listOf(0.66f, 0.36f, 0.20f, -0.10f, 0.06f),
-            listOf(0.88f, 0.43f, 0.17f, 0.10f, -0.04f),
-            listOf(0.55f, 0.55f, 0.14f, -0.16f, 0.04f),
-            listOf(0.79f, 0.66f, 0.11f, 0.02f, 0.03f),
+            Balloon(0.66f, 0.36f, 0.20f, -0.10f, 0.06f),
+            Balloon(0.88f, 0.43f, 0.17f, 0.10f, -0.04f),
+            Balloon(0.55f, 0.55f, 0.14f, -0.16f, 0.04f),
+            Balloon(0.79f, 0.66f, 0.11f, 0.02f, 0.03f),
         )
         const val DUST = 8
         const val DUST_DRIFT = 0.02f
