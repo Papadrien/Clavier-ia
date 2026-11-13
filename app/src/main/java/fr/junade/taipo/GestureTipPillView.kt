@@ -60,10 +60,14 @@ internal class GestureTipPillView(context: Context) : LinearLayout(context) {
         accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
     }
 
-    /** Affiche [message] ; il défile une fois s'il ne tient pas (animations actives), sinon il est coupé. */
-    fun setMessage(message: String) {
+    /**
+     * Affiche [message] avec l'icône [iconRes] (ampoule des astuces, étincelles des nouveautés) ; [description] : texte lu par
+     * TalkBack (par défaut « Astuce : … »). Le message défile une fois s'il ne tient pas (animations actives), sinon il est coupé.
+     */
+    fun setMessage(message: String, iconRes: Int = R.drawable.ic_tip_bulb, description: String? = null) {
         text.text = message
-        contentDescription = context.getString(R.string.gesture_tip_description, message)
+        icon.setImageDrawable(ContextCompat.getDrawable(context, iconRes))
+        contentDescription = description ?: context.getString(R.string.gesture_tip_description, message)
         if (ValueAnimator.areAnimatorsEnabled()) {
             text.ellipsize = TextUtils.TruncateAt.MARQUEE
             text.marqueeRepeatLimit = 1

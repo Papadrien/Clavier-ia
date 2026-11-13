@@ -173,6 +173,7 @@ class MainActivity : Activity() {
             startActivity(target)
         }
         bindRow(R.id.button_backup, R.string.button_backup, R.string.home_row_backup_subtitle, BackupActivity::class.java)
+        bindRow(R.id.button_whats_new, R.string.whats_new_title, R.string.home_row_whats_new_subtitle, WhatsNewActivity::class.java)
         bindRow(R.id.button_terms, R.string.button_terms, R.string.home_row_terms_subtitle, TermsActivity::class.java)
         bindRow(R.id.button_licenses, R.string.button_licenses, R.string.home_row_licenses_subtitle, LicensesActivity::class.java)
         bindRow(R.id.button_privacy, R.string.button_privacy, R.string.home_row_privacy_subtitle, PrivacyActivity::class.java)
@@ -248,6 +249,7 @@ class MainActivity : Activity() {
         }
         findViewById<View>(R.id.button_debug_reset_tips).setOnClickListener {
             GestureTips.resetAll(this)
+            WhatsNewPreferences.reset(this) // la pilule « Nouveautés » revient aussi, comme après une mise à jour
             showScreenMessage(R.string.home_debug_reset_tips_done)
         }
         findViewById<View>(R.id.button_debug_premium).setOnClickListener {

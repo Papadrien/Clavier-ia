@@ -726,4 +726,25 @@
     <string name="floating_a11y_dock">Docka tangentbordet längst ned</string>
     <string name="floating_a11y_floating">Flytande tangentbord</string>
     <string name="floating_a11y_docked">Tangentbordet är dockat längst ned</string>
+    <!-- Nouveautés de la version (WhatsNew) -->
+    <string name="whats_new_title">Nyheter</string>
+    <string name="whats_new_heading">Nyheter i Taipo 3</string>
+    <string name="whats_new_intro">Det här ändras med den här versionen.</string>
+    <string name="whats_new_pill">Nyheter i Taipo 3: tryck för att upptäcka</string>
+    <string name="whats_new_pill_description">Nyheter i Taipo 3. Tryck för att upptäcka dem i appen.</string>
+    <string name="home_row_whats_new_subtitle">Det här ändras i Taipo 3</string>
+    <string name="whats_new_floating_title">Flytande tangentbord</string>
+    <string name="whats_new_floating_body">Lossa tangentbordet och placera det var du vill på skärmen: håll in Retur och välj det flytande tangentbordet. Dra handtaget ända ner för att docka det igen.</string>
+    <string name="whats_new_languages_title">15 språk</string>
+    <string name="whats_new_languages_body">Polska, rumänska, tjeckiska, ungerska, svenska, danska, norska och finska kommer till tangentbordet. Varje språks ordlista laddas ner av sig själv, och franska och engelska fungerar direkt efter installationen, även offline.</string>
+    <string name="whats_new_appearance_title">Ett utseende som passar dig</string>
+    <string name="whats_new_appearance_body">Nio tangentformer och tre animationsstilar (Fjäder, Kvick, Gelé) på sidan Utseende. Med premiumpaketet: tangentbordstypsnitt och animerad bakgrund när du skriver. Appens skärmar följer också det valda temat.</string>
+    <string name="whats_new_dictation_title">AI-diktering med alla modeller</string>
+    <string name="whats_new_dictation_body">Även Myra och Kolibri gör om det du säger till ett välskrivet meddelande, tack vare röstmodellen. Med dessa modeller kan en inspelning vara upp till 10 minuter.</string>
+    <string name="whats_new_digits_title">Siffror med en gest</string>
+    <string name="whats_new_digits_body">Svep nedåt på en tangent i översta raden för att skriva dess siffra, utan att byta sida.</string>
+    <string name="whats_new_enter_title">En smartare Retur-tangent</string>
+    <string name="whats_new_enter_body">Den utför fältets åtgärd (skicka, sök, nästa) och visar motsvarande ikon.</string>
+    <string name="whats_new_privacy_title">Ännu mer integritet</string>
+    <string name="whats_new_privacy_body">Känsliga kopior, som lösenord, sparas aldrig i urklipp, och den anonyma användningsmätningen startar bara med ditt samtycke.</string>
 </resources>

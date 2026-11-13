@@ -726,4 +726,25 @@
     <string name="floating_a11y_dock">Fest tastaturet nederst</string>
     <string name="floating_a11y_floating">Flytende tastatur</string>
     <string name="floating_a11y_docked">Tastaturet er festet nederst</string>
+    <!-- Nouveautés de la version (WhatsNew) -->
+    <string name="whats_new_title">Nyheter</string>
+    <string name="whats_new_heading">Nyheter i Taipo 3</string>
+    <string name="whats_new_intro">Dette endres med denne versjonen.</string>
+    <string name="whats_new_pill">Nyheter i Taipo 3: trykk for å se</string>
+    <string name="whats_new_pill_description">Nyheter i Taipo 3. Trykk for å se dem i appen.</string>
+    <string name="home_row_whats_new_subtitle">Dette endres i Taipo 3</string>
+    <string name="whats_new_floating_title">Flytende tastatur</string>
+    <string name="whats_new_floating_body">Løsne tastaturet og plasser det hvor du vil på skjermen: hold inne Enter og velg det flytende tastaturet. Dra håndtaket helt ned for å feste det igjen.</string>
+    <string name="whats_new_languages_title">15 språk</string>
+    <string name="whats_new_languages_body">Polsk, rumensk, tsjekkisk, ungarsk, svensk, dansk, norsk og finsk kommer til tastaturet. Ordboken for hvert språk lastes ned av seg selv, og fransk og engelsk fungerer rett etter installasjonen, også uten nett.</string>
+    <string name="whats_new_appearance_title">Et utseende du liker</string>
+    <string name="whats_new_appearance_body">Ni tasteformer og tre animasjonsstiler (Fjær, Kvikk, Gelé) på siden Utseende. Med premiumpakken: skrifttyper for tastaturet og animert bakgrunn mens du skriver. Appens skjermer følger også det valgte temaet.</string>
+    <string name="whats_new_dictation_title">AI-diktering med alle modeller</string>
+    <string name="whats_new_dictation_body">Også Maur og Kolibri gjør det du sier om til en velskrevet melding, takket være talemodellen. Med disse modellene kan et opptak vare i opptil 10 minutter.</string>
+    <string name="whats_new_digits_title">Tall med én bevegelse</string>
+    <string name="whats_new_digits_body">Sveip nedover på en tast i øverste rad for å skrive tallet, uten å bytte side.</string>
+    <string name="whats_new_enter_title">En nyttigere Enter-tast</string>
+    <string name="whats_new_enter_body">Den utfører feltets handling (send, søk, neste) og viser tilhørende ikon.</string>
+    <string name="whats_new_privacy_title">Enda mer personvern</string>
+    <string name="whats_new_privacy_body">Sensitive kopier, som passord, lagres aldri på utklippstavlen, og den anonyme bruksmålingen starter bare med ditt samtykke.</string>
 </resources>

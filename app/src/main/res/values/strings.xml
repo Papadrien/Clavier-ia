@@ -749,7 +749,7 @@
     <string name="diagnostic_done">Done.</string>
     <string name="diagnostic_copied">Results copied.</string>
     <string name="home_debug_diagnostic">Memory diagnostic</string>
-    <string name="home_debug_reset_tips">Reset tips</string>
+    <string name="home_debug_reset_tips">Reset tips and what\'s new</string>
     <string name="home_debug_reset_tips_done">Tips will show again</string>
     <string name="floating_handle_description">Handle: drag to move the keyboard</string>
     <string name="floating_dock_zone">Release to dock</string>
@@ -758,4 +758,25 @@
     <string name="floating_a11y_dock">Dock keyboard at the bottom</string>
     <string name="floating_a11y_floating">Floating keyboard</string>
     <string name="floating_a11y_docked">Keyboard docked at the bottom</string>
+    <!-- Nouveautés de la version (WhatsNew) -->
+    <string name="whats_new_title">What\'s new</string>
+    <string name="whats_new_heading">What\'s new in Taipo 3</string>
+    <string name="whats_new_intro">Here is what changes with this version.</string>
+    <string name="whats_new_pill">What\'s new in Taipo 3: tap to discover</string>
+    <string name="whats_new_pill_description">What\'s new in Taipo 3. Tap to discover it in the app.</string>
+    <string name="home_row_whats_new_subtitle">What changes in Taipo 3</string>
+    <string name="whats_new_floating_title">Floating keyboard</string>
+    <string name="whats_new_floating_body">Detach the keyboard and place it anywhere on the screen: long-press Enter, then choose the floating keyboard. Drag its handle all the way down to dock it again.</string>
+    <string name="whats_new_languages_title">15 languages</string>
+    <string name="whats_new_languages_body">Polish, Romanian, Czech, Hungarian, Swedish, Danish, Norwegian and Finnish join the keyboard. Each language\'s dictionary downloads on its own, and French and English work right after installation, even offline.</string>
+    <string name="whats_new_appearance_title">A look that suits you</string>
+    <string name="whats_new_appearance_body">Nine key shapes and three animation styles (Spring, Snappy, Jelly) on the Appearance page. With the premium pack: keyboard fonts and an animated background while you type. The app screens follow the chosen theme too.</string>
+    <string name="whats_new_dictation_title">AI dictation with every model</string>
+    <string name="whats_new_dictation_body">Ant and Hummingbird also turn what you say into a well-written message, thanks to the voice model. With these models, a recording can last up to 10 minutes.</string>
+    <string name="whats_new_digits_title">Digits in one gesture</string>
+    <string name="whats_new_digits_body">Swipe down on a top-row key to type its digit, without switching pages.</string>
+    <string name="whats_new_enter_title">A more useful Enter key</string>
+    <string name="whats_new_enter_body">It performs the field\'s action (send, search, next) and shows its icon.</string>
+    <string name="whats_new_privacy_title">Even more privacy</string>
+    <string name="whats_new_privacy_body">Sensitive copies, such as passwords, are never kept in the clipboard, and anonymous usage measurement only starts with your consent.</string>
 </resources>

@@ -112,6 +112,11 @@
             android:exported="false" />
 
         <activity
+            android:name=".WhatsNewActivity"
+            android:label="@string/whats_new_title"
+            android:exported="false" />
+
+        <activity
             android:name=".TermsActivity"
             android:label="@string/terms_title"
             android:exported="false" />

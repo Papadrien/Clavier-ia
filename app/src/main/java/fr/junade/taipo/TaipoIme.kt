@@ -216,6 +216,26 @@ class TaipoIme : InputMethodService() {
     /** Revue UX : astuces de gestes, une fois chacune, dans la barre du haut (GestureTipPillView). */
     private val gestureTips by lazy { GestureTips(applicationContext) }
 
+    /** Nouveautés de la version : pilule dans la barre du haut, les premières ouvertures du clavier après la mise à jour. */
+    private val whatsNew by lazy { WhatsNewPreferences(applicationContext) }
+
+    /**
+     * Pilule « Nouveautés » ([WhatsNew]) à l'ouverture du clavier : pas dans un champ de mot de passe, ni par-dessus une astuce.
+     * Comptée seulement si elle a vraiment été affichée. Un toucher ouvre la page dans l'application.
+     */
+    private fun showWhatsNew() {
+        if (!viewComposer.isComposed || sensitiveField || correctionBar.isGestureTipShown || !whatsNew.shouldShowNow()) return
+        val shown = correctionBar.showNewsPill(
+            getString(R.string.whats_new_pill),
+            getString(R.string.whats_new_pill_description),
+            WHATS_NEW_PILL_MS,
+        ) {
+            whatsNew.markOpened()
+            startActivity(Intent(this, WhatsNewActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        }
+        if (shown) whatsNew.markShown()
+    }
+
     /** Dernier déplacement du curseur par la barre d'espace (ms) : ce n'est pas un déplacement « à la main » dans le champ. */
     private var lastSpaceCursorMoveAt = 0L
 
@@ -456,6 +476,9 @@ class TaipoIme : InputMethodService() {
         // Même champ relancé par l'application (restarting) : l'annulation reste possible, le texte est retrouvé par son contenu.
         if (!restarting) undoController.clear(notify = false)
         traced(Sections.START_INPUT_VIEW) { startInputView(info) }
+        // Nouveautés : à chaque ouverture du clavier (pas quand l'application relance le même champ), après l'astuce de langue
+        // éventuelle pour ne pas la recouvrir.
+        if (!restarting && viewComposer.isComposed) keyboardView.postDelayed({ showWhatsNew() }, WHATS_NEW_DELAY_MS)
     }
 
     private fun startInputView(info: EditorInfo?) {
@@ -1187,6 +1210,10 @@ class TaipoIme : InputMethodService() {
 
         /** Astuces : délai avant celle de la langue (le clavier finit d'apparaître), écho d'un déplacement par l'espace. */
         private const val LANGUAGE_TIP_DELAY_MS = 800L
+
+        /** Délai avant la pilule des nouveautés (après l'astuce de langue) et durée d'affichage. */
+        private const val WHATS_NEW_DELAY_MS = 1_000L
+        private const val WHATS_NEW_PILL_MS = 8_000L
         private const val SPACE_MOVE_ECHO_MS = 600L
     }
 }
