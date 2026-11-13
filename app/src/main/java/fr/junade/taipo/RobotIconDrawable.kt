@@ -50,8 +50,9 @@ internal class RobotIconDrawable(private val sizePx: Int) : Drawable() {
             return
         }
         animator = ValueAnimator.ofFloat(progress, target).apply {
-            duration = DURATION_MS
-            interpolator = OvershootInterpolator(OVERSHOOT_TENSION)
+            // Réglés pour le style Ressort : transposés dans le style d'animation choisi.
+            duration = MotionStyle.current.tuneDurationMs(DURATION_MS)
+            interpolator = OvershootInterpolator(MotionStyle.current.tuneOvershootTension(OVERSHOOT_TENSION))
             addUpdateListener {
                 progress = it.animatedValue as Float
                 invalidateSelf()

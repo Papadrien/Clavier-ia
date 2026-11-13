@@ -627,7 +627,7 @@
     <string name="key_shape_outline">Omtrek</string>
     <string name="key_shape_bare">Zonder vorm</string>
     <string name="theme_section_motion">Animaties</string>
-    <string name="theme_motion_caption">Toetsballonnen, balkknoppen, chatbalken en geanimeerde pictogrammen.</string>
+    <string name="theme_motion_caption">Alle animaties van het toetsenbord: toetsballonnen, balken, pictogrammen, toetsen en gebaren.</string>
     <string name="motion_style_spring">Veer</string>
     <string name="motion_style_snappy">Vlot</string>
     <string name="motion_style_jelly">Gelei</string>

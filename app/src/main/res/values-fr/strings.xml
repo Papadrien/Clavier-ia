@@ -674,7 +674,7 @@
     <string name="key_shape_bare">Sans fond</string>
     <!-- Section « Animations » de la page Apparence (MotionStyle) -->
     <string name="theme_section_motion">Animations</string>
-    <string name="theme_motion_caption">Bulles des touches, boutons de la barre, barres du mode chat et icônes animées.</string>
+    <string name="theme_motion_caption">Toutes les animations du clavier : bulles des touches, barres, icônes, touches et gestes.</string>
     <string name="motion_style_spring">Ressort</string>
     <string name="motion_style_snappy">Vif</string>
     <string name="motion_style_jelly">Gelée</string>

@@ -635,7 +635,7 @@
     <string name="key_shape_outline">Obrys</string>
     <string name="key_shape_bare">Bez pozadí</string>
     <string name="theme_section_motion">Animace</string>
-    <string name="theme_motion_caption">Bubliny kláves, tlačítka lišty, lišty chatu a animované ikony.</string>
+    <string name="theme_motion_caption">Všechny animace klávesnice: bubliny kláves, lišty, ikony, klávesy a gesta.</string>
     <string name="motion_style_spring">Pružina</string>
     <string name="motion_style_snappy">Svižná</string>
     <string name="motion_style_jelly">Želé</string>

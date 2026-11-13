@@ -430,7 +430,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
             keyframes("scaleX", 1.08f, 0.96f, 1f),
             keyframes("scaleY", 0.88f, 1.05f, 1f),
         ).apply {
-            duration = SQUASH_MS
+            duration = MotionStyle.current.tuneDurationMs(SQUASH_MS) // réglé pour le style Ressort
             start()
         }
     }

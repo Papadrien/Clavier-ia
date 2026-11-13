@@ -635,7 +635,7 @@
     <string name="key_shape_outline">Kontur</string>
     <string name="key_shape_bare">Bez tła</string>
     <string name="theme_section_motion">Animacje</string>
-    <string name="theme_motion_caption">Dymki klawiszy, przyciski paska, paski czatu i animowane ikony.</string>
+    <string name="theme_motion_caption">Wszystkie animacje klawiatury: dymki klawiszy, paski, ikony, klawisze i gesty.</string>
     <string name="motion_style_spring">Sprężyna</string>
     <string name="motion_style_snappy">Żwawa</string>
     <string name="motion_style_jelly">Galaretka</string>

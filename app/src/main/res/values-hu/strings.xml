@@ -627,7 +627,7 @@
     <string name="key_shape_outline">Körvonal</string>
     <string name="key_shape_bare">Háttér nélkül</string>
     <string name="theme_section_motion">Animációk</string>
-    <string name="theme_motion_caption">Billentyűbuborékok, sávgombok, csevegősávok és animált ikonok.</string>
+    <string name="theme_motion_caption">A billentyűzet összes animációja: billentyűbuborékok, sávok, ikonok, billentyűk és mozdulatok.</string>
     <string name="motion_style_spring">Rugó</string>
     <string name="motion_style_snappy">Fürge</string>
     <string name="motion_style_jelly">Zselé</string>

@@ -627,7 +627,7 @@
     <string name="key_shape_outline">Omriss</string>
     <string name="key_shape_bare">Uten bakgrunn</string>
     <string name="theme_section_motion">Animasjoner</string>
-    <string name="theme_motion_caption">Tastebobler, knapper i linjen, chatlinjer og animerte ikoner.</string>
+    <string name="theme_motion_caption">Alle tastaturets animasjoner: tastebobler, felt, ikoner, taster og bevegelser.</string>
     <string name="motion_style_spring">Fjær</string>
     <string name="motion_style_snappy">Kvikk</string>
     <string name="motion_style_jelly">Gelé</string>

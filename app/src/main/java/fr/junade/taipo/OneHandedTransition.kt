@@ -24,7 +24,7 @@ internal class OneHandedSpringValue(
 
     fun retarget(newTarget: Float, delaySeconds: Float, newStiffness: Float, newDamping: Float) {
         target = newTarget
-        delayS = delaySeconds
+        delayS = MotionStyle.current.tuneSeconds(delaySeconds)
         stiffness = newStiffness
         damping = newDamping
     }
@@ -46,10 +46,14 @@ internal class OneHandedSpringValue(
             remaining -= delayS
             delayS = 0f
         }
+        // Réglages faits pour le style Ressort : transposés dans le style d'animation choisi.
+        val style = MotionStyle.current
+        val k = style.tuneStiffness(stiffness)
+        val c = style.tuneDamping(stiffness, damping)
         val n = ceil(remaining / SUBSTEP_S).toInt().coerceAtLeast(1)
         val h = remaining / n
         repeat(n) {
-            velocity += (stiffness * (target - value) - damping * velocity) * h
+            velocity += (k * (target - value) - c * velocity) * h
             value += velocity * h
         }
     }

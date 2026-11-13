@@ -627,7 +627,7 @@
     <string name="key_shape_outline">Kontur</string>
     <string name="key_shape_bare">Utan bakgrund</string>
     <string name="theme_section_motion">Animationer</string>
-    <string name="theme_motion_caption">Tangentbubblor, fältknappar, chattfält och animerade ikoner.</string>
+    <string name="theme_motion_caption">Alla tangentbordets animationer: tangentbubblor, fält, ikoner, tangenter och gester.</string>
     <string name="motion_style_spring">Fjäder</string>
     <string name="motion_style_snappy">Kvick</string>
     <string name="motion_style_jelly">Gelé</string>

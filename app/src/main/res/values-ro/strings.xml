@@ -631,7 +631,7 @@
     <string name="key_shape_outline">Contur</string>
     <string name="key_shape_bare">Fără fundal</string>
     <string name="theme_section_motion">Animații</string>
-    <string name="theme_motion_caption">Bulele tastelor, butoanele barei, barele de chat și pictogramele animate.</string>
+    <string name="theme_motion_caption">Toate animațiile tastaturii: bulele tastelor, barele, pictogramele, tastele și gesturile.</string>
     <string name="motion_style_spring">Arc</string>
     <string name="motion_style_snappy">Vioi</string>
     <string name="motion_style_jelly">Jeleu</string>

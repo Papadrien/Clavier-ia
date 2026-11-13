@@ -627,7 +627,7 @@
     <string name="key_shape_outline">Ääriviiva</string>
     <string name="key_shape_bare">Ilman taustaa</string>
     <string name="theme_section_motion">Animaatiot</string>
-    <string name="theme_motion_caption">Näppäinkuplat, palkin painikkeet, chat-palkit ja animoidut kuvakkeet.</string>
+    <string name="theme_motion_caption">Kaikki näppäimistön animaatiot: näppäinkuplat, palkit, kuvakkeet, näppäimet ja eleet.</string>
     <string name="motion_style_spring">Jousi</string>
     <string name="motion_style_snappy">Ripeä</string>
     <string name="motion_style_jelly">Hyytelö</string>

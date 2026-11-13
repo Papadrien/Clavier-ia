@@ -627,7 +627,7 @@
     <string name="key_shape_outline">Kontur</string>
     <string name="key_shape_bare">Ohne</string>
     <string name="theme_section_motion">Animationen</string>
-    <string name="theme_motion_caption">Tastenblasen, Leistenschaltflächen, Chat-Leisten und animierte Symbole.</string>
+    <string name="theme_motion_caption">Alle Animationen der Tastatur: Tastenblasen, Leisten, Symbole, Tasten und Gesten.</string>
     <string name="motion_style_spring">Feder</string>
     <string name="motion_style_snappy">Flink</string>
     <string name="motion_style_jelly">Gelee</string>

@@ -627,7 +627,7 @@
     <string name="key_shape_outline">Kontur</string>
     <string name="key_shape_bare">Uden baggrund</string>
     <string name="theme_section_motion">Animationer</string>
-    <string name="theme_motion_caption">Tastebobler, knapper i bjælken, chatbjælker og animerede ikoner.</string>
+    <string name="theme_motion_caption">Alle tastaturets animationer: tastebobler, bjælker, ikoner, taster og bevægelser.</string>
     <string name="motion_style_spring">Fjeder</string>
     <string name="motion_style_snappy">Kvik</string>
     <string name="motion_style_jelly">Gelé</string>

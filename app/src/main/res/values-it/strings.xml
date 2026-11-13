@@ -631,7 +631,7 @@
     <string name="key_shape_outline">Contorno</string>
     <string name="key_shape_bare">Senza forma</string>
     <string name="theme_section_motion">Animazioni</string>
-    <string name="theme_motion_caption">Bolle dei tasti, pulsanti della barra, barre della chat e icone animate.</string>
+    <string name="theme_motion_caption">Tutte le animazioni della tastiera: bolle dei tasti, barre, icone, tasti e gesti.</string>
     <string name="motion_style_spring">Molla</string>
     <string name="motion_style_snappy">Scattante</string>
     <string name="motion_style_jelly">Gelatina</string>

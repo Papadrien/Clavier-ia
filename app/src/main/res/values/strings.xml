@@ -655,7 +655,7 @@
     <string name="key_shape_bare">Bare</string>
     <!-- Section « Animations » de la page Apparence (MotionStyle) -->
     <string name="theme_section_motion">Animations</string>
-    <string name="theme_motion_caption">Key bubbles, bar buttons, chat bars and animated icons.</string>
+    <string name="theme_motion_caption">All keyboard animations: key bubbles, bars, icons, keys and gestures.</string>
     <string name="motion_style_spring">Spring</string>
     <string name="motion_style_snappy">Snappy</string>
     <string name="motion_style_jelly">Jelly</string>
