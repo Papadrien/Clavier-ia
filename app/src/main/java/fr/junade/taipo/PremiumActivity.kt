@@ -58,6 +58,11 @@ class PremiumActivity : Activity(), PremiumBilling.Listener {
             showStatus(R.string.premium_status_restoring)
             billing.refresh()
         }
+        // Page de remerciement (pack actif) : retour à l'accueil, quelle que soit la page d'où l'écran du pack a été ouvert.
+        findViewById<View>(R.id.button_premium_home).setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP))
+            finish()
+        }
 
         findViewById<View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
@@ -86,6 +91,7 @@ class PremiumActivity : Activity(), PremiumBilling.Listener {
         val active = PremiumPass.isActive
         buy.visibility = if (active) View.GONE else View.VISIBLE
         restore.visibility = if (active) View.GONE else View.VISIBLE
+        findViewById<View>(R.id.button_premium_home).visibility = if (active) View.VISIBLE else View.GONE
         findViewById<TextView>(R.id.premium_tagline).setText(if (active) R.string.premium_active_thanks else R.string.premium_tagline)
         if (active) price.setText(R.string.premium_active_title)
     }

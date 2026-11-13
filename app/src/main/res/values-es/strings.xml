@@ -334,7 +334,7 @@
     <string name="model_gpu_description">El procesador gráfico puede generar texto más rápido, pero no funciona en todos los teléfonos. Si falla o hace que el teclado se cierre, Taipo vuelve solo a la CPU. El modelo se recarga en la siguiente acción de IA.</string>
     <string name="model_gpu_failed">La GPU no ha funcionado en este dispositivo: Taipo usa la CPU. Vuelve a activar el interruptor para intentarlo de nuevo.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Algunas funciones no están disponibles con este modelo (dictado con IA).</string>
+    <string name="model_download_dictation_via_voice">Dictado con IA: usa el modelo de voz (se descarga aparte) y luego este modelo da forma al texto.</string>
     <string name="model_download_badge_active">Activo</string>
     <string name="model_download_badge_installed">Instalado</string>
     <string name="model_download_badge_recommended">Recomendado</string>
@@ -535,7 +535,7 @@
     <string name="ai_transcription_button_recording">Dictado con IA: detener la grabación y transcribir</string>
     <string name="ai_transcription_button_processing">Dictado con IA en curso: toca para cancelar</string>
     <string name="ai_transcription_button_cancelling">Cancelando el dictado con IA…</string>
-    <string name="ai_transcription_no_audio_model">El dictado con IA necesita el modelo Mono o Elefante (Gemma 4). Elige uno en la app.</string>
+    <string name="ai_transcription_no_audio_model">El dictado con IA necesita un modelo de IA. Elige uno en la app.</string>
     <string name="ai_transcription_busy">Hay un dictado, una corrección o una generación en curso.</string>
     <string name="ai_transcription_permission_denied">Se necesita el permiso del micrófono. Concédelo y vuelve a tocar.</string>
     <string name="ai_transcription_mic_unavailable">No se ha podido abrir el micrófono.</string>
@@ -604,6 +604,8 @@
     <string name="backdrop_bubbles">Burbujas</string>
     <string name="backdrop_crystal">Cristal</string>
     <string name="backdrop_waves">Ondas</string>
+    <string name="backdrop_hearts">Corazones</string>
+    <string name="backdrop_flowers">Flores</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Prémium</string>
     <string name="theme_section_font">Tipografía del teclado</string>
@@ -631,7 +633,7 @@
     <string name="key_shape_outline">Contorno</string>
     <string name="key_shape_bare">Sin forma</string>
     <string name="theme_section_motion">Animaciones</string>
-    <string name="theme_motion_caption">Burbujas de las teclas, botones de la barra, barras del chat e iconos animados.</string>
+    <string name="theme_motion_caption">Todas las animaciones del teclado: burbujas de teclas, barras, iconos, teclas y gestos.</string>
     <string name="motion_style_spring">Muelle</string>
     <string name="motion_style_snappy">Ágil</string>
     <string name="motion_style_jelly">Gelatina</string>
@@ -665,12 +667,16 @@
     <string name="premium_prompts_example">«Corrige los errores sin cambiar mi estilo ni mis expresiones.»</string>
     <string name="premium_clipboard_title">Portapapeles ampliado</string>
     <string name="premium_clipboard_text">Copias guardadas 7 días en lugar de 12 h. Hasta 50 elementos fijados en lugar de 5.</string>
+    <string name="premium_style_title">Un teclado a tu estilo</string>
+    <string name="premium_style_text">Seis fondos animados que se mueven al escribir, cinco formas de teclas más, nueve fuentes para el teclado (entre ellas OpenDyslexic) y el estilo de animación Gelatina.</string>
     <string name="premium_free_reminder">La escritura, los idiomas, la IA y la copia de seguridad siguen siendo gratis, con o sin el paquete.</string>
     <string name="premium_buy">Comprar el paquete</string>
     <string name="premium_buy_with_price">Comprar el paquete · %1$s</string>
     <string name="premium_restore">Restaurar mi compra</string>
+    <string name="premium_back_home">Volver al inicio</string>
+    <string name="back_arrow_description">Atrás</string>
     <string name="premium_active_title">Paquete activo</string>
-    <string name="premium_active_thanks">¡Gracias! Los colores, tus instrucciones de IA y el portapapeles ampliado están desbloqueados.</string>
+    <string name="premium_active_thanks">¡Gracias! Los colores, los fondos animados, las formas de teclas, las fuentes, tus instrucciones para la IA y el portapapeles ampliado están desbloqueados.</string>
     <string name="premium_status_pending">Pago pendiente: el paquete se activará en cuanto Google Play lo confirme.</string>
     <string name="premium_status_unavailable">Google Play no está disponible en este dispositivo o no se ha podido cargar el paquete. Comprueba tu conexión e inténtalo de nuevo.</string>
     <string name="premium_status_error">La compra no se ha completado. No se ha cobrado nada; puedes intentarlo de nuevo.</string>
@@ -683,10 +689,10 @@
     <string name="home_analytics_consent_refuse">No, gracias</string>
     <string name="home_analytics_consent_accept">Compartir</string>
     <string name="home_premium_card_title">Paquete prémium</string>
-    <string name="home_premium_card_text">Nueve colores de teclado, tus propias instrucciones de IA y un portapapeles que guarda tus copias 7 días.</string>
+    <string name="home_premium_card_text">Colores, fondos animados, formas de teclas y fuentes para el teclado, tus propias instrucciones para la IA y un portapapeles que guarda tus copias 7 días.</string>
     <string name="home_premium_card_button">Descubrir</string>
     <string name="home_premium_card_close">Ocultar</string>
-    <string name="home_row_premium_subtitle_offer">Colores, instrucciones de IA, portapapeles ampliado</string>
+    <string name="home_row_premium_subtitle_offer">Colores, fondos, fuentes, instrucciones de la IA, portapapeles</string>
     <string name="home_row_premium_subtitle_active">Activo, ¡gracias!</string>
     <string name="home_section_debug">Depuración</string>
     <string name="home_debug_premium">Paquete prémium: %1$s</string>
@@ -701,9 +707,13 @@
     <string name="onboarding_step3_title_done">Prueba hecha</string>
     <string name="onboarding_step4_title">Activar la IA</string>
     <string name="onboarding_step4_title_done">IA lista</string>
-    <string name="onboarding_step4_hint">Corregir, Chat y el dictado necesitan un modelo, descargado una vez y usado sin conexión. Recomendado para tu teléfono: %1$s.</string>
+    <string name="onboarding_step4_hint">Corregir y Chat necesitan un modelo, descargado una vez y usado sin conexión. Recomendado para tu teléfono: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Disponible cuando Taipo esté seleccionado.</string>
     <string name="onboarding_step4_button">Descargar %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Activar el dictado por voz</string>
+    <string name="onboarding_step5_title_done">Dictado listo</string>
+    <string name="onboarding_step5_hint">El dictado usa un modelo de voz, descargado una vez y usado sin conexión: tu voz nunca sale del teléfono.</string>
+    <string name="onboarding_step5_button">Descargar el modelo de voz (%1$s)</string>
     <string name="tip_delete_words">Desliza ← sobre ⌫ para borrar palabras enteras</string>
     <string name="tip_move_cursor">Desliza sobre Espacio para mover el cursor</string>
     <string name="tip_switch_language">Mantén pulsado Intro y luego el globo</string>
@@ -726,4 +736,25 @@
     <string name="floating_a11y_dock">Acoplar el teclado abajo</string>
     <string name="floating_a11y_floating">Teclado flotante</string>
     <string name="floating_a11y_docked">Teclado acoplado abajo</string>
+    <!-- Nouveautés de la version (WhatsNew) -->
+    <string name="whats_new_title">Novedades</string>
+    <string name="whats_new_heading">Novedades de Taipo 3</string>
+    <string name="whats_new_intro">Esto es lo que cambia con esta versión.</string>
+    <string name="whats_new_pill">Novedades</string>
+    <string name="whats_new_pill_description">Novedades de Taipo 3. Toca para descubrirlas en la app.</string>
+    <string name="home_row_whats_new_subtitle">Lo que cambia en Taipo 3</string>
+    <string name="whats_new_floating_title">Teclado flotante</string>
+    <string name="whats_new_floating_body">Separa el teclado y colócalo donde quieras en la pantalla: mantén pulsado Intro y elige el teclado flotante. Arrastra su asa hasta abajo para volver a fijarlo.</string>
+    <string name="whats_new_languages_title">15 idiomas</string>
+    <string name="whats_new_languages_body">El polaco, el rumano, el checo, el húngaro, el sueco, el danés, el noruego y el finés se suman al teclado. El diccionario de cada idioma se descarga solo, y el francés y el inglés funcionan nada más instalar, incluso sin conexión.</string>
+    <string name="whats_new_appearance_title">Un aspecto a tu gusto</string>
+    <string name="whats_new_appearance_body">Nueve formas de teclas y tres estilos de animación (Muelle, Ágil, Gelatina) en la página Apariencia. Con el paquete prémium: fuentes del teclado y fondo animado al escribir. Las pantallas de la app también siguen el tema elegido.</string>
+    <string name="whats_new_dictation_title">Transcripción con IA con todos los modelos</string>
+    <string name="whats_new_dictation_body">Hormiga y Colibrí también convierten lo que dices en un mensaje bien redactado, gracias al modelo de voz. Con estos modelos, una grabación puede durar hasta 10 minutos.</string>
+    <string name="whats_new_digits_title">Números con un gesto</string>
+    <string name="whats_new_digits_body">Desliza hacia abajo sobre una tecla de la fila superior para escribir su número, sin cambiar de página.</string>
+    <string name="whats_new_enter_title">Una tecla Intro más útil</string>
+    <string name="whats_new_enter_body">Realiza la acción del campo (enviar, buscar, siguiente) y muestra su icono.</string>
+    <string name="whats_new_privacy_title">Aún más privacidad</string>
+    <string name="whats_new_privacy_body">Las copias sensibles, como las contraseñas, nunca se guardan en el portapapeles, y la medición de uso anónima solo empieza con tu consentimiento.</string>
 </resources>

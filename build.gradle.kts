@@ -18,8 +18,8 @@ plugins {
 // Cf. https://kotl.in/gradle/agp-built-in-kotlin
 //
 // Le Kotlin intégré à AGP 9.4.0 est la 2.2.10, qui ne sait pas lire les
-// classes .kotlin_module de litertlm-android 0.17.1 (compilées avec Kotlin
-// 2.4.0). La doc Android documente ce cas précis : surclasser la version du
+// classes .kotlin_module de litertlm-android (0.17.1 et suivantes, compilées avec
+// Kotlin 2.4.0 ; version dans gradle/libs.versions.toml). La doc Android documente ce cas précis : surclasser la version du
 // Kotlin Gradle Plugin (KGP) utilisée par le Kotlin intégré via un
 // classpath buildscript, sans réappliquer le plugin kotlin.android.
 buildscript {

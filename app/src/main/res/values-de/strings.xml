@@ -334,7 +334,7 @@
     <string name="model_gpu_description">Der Grafikprozessor kann Text schneller erzeugen, funktioniert aber nicht auf jedem Telefon. Wenn er versagt oder die Tastatur abstürzen lässt, wechselt Taipo selbst zur CPU. Das Modell wird bei der nächsten KI-Aktion neu geladen.</string>
     <string name="model_gpu_failed">Die GPU hat auf diesem Gerät nicht funktioniert: Taipo nutzt die CPU. Schalten Sie den Schalter wieder ein, um es erneut zu versuchen.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Einige Funktionen sind mit diesem Modell nicht verfügbar (KI-Diktat).</string>
+    <string name="model_download_dictation_via_voice">KI-Diktat: nutzt das Sprachmodell (separat herunterzuladen), danach formuliert dieses Modell den Text.</string>
     <string name="model_download_badge_active">Aktiv</string>
     <string name="model_download_badge_installed">Installiert</string>
     <string name="model_download_badge_recommended">Empfohlen</string>
@@ -531,7 +531,7 @@
     <string name="ai_transcription_button_recording">KI-Diktat: Aufnahme beenden und transkribieren</string>
     <string name="ai_transcription_button_processing">KI-Diktat läuft: tippen zum Abbrechen</string>
     <string name="ai_transcription_button_cancelling">KI-Diktat wird abgebrochen…</string>
-    <string name="ai_transcription_no_audio_model">Das KI-Diktat benötigt das Modell Affe oder Elefant (Gemma 4). Wählen Sie eines in der App.</string>
+    <string name="ai_transcription_no_audio_model">Das KI-Diktat benötigt ein KI-Modell. Wählen Sie eines in der App.</string>
     <string name="ai_transcription_busy">Ein Diktat, eine Korrektur oder eine Erzeugung läuft bereits.</string>
     <string name="ai_transcription_permission_denied">Mikrofonberechtigung erforderlich. Erteilen Sie sie und tippen Sie dann erneut.</string>
     <string name="ai_transcription_mic_unavailable">Das Mikrofon konnte nicht geöffnet werden.</string>
@@ -600,6 +600,8 @@
     <string name="backdrop_bubbles">Blasen</string>
     <string name="backdrop_crystal">Kristall</string>
     <string name="backdrop_waves">Wellen</string>
+    <string name="backdrop_hearts">Herzen</string>
+    <string name="backdrop_flowers">Blumen</string>
     <string name="theme_backdrop_free">Kostenlos</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Tastaturschrift</string>
@@ -627,7 +629,7 @@
     <string name="key_shape_outline">Kontur</string>
     <string name="key_shape_bare">Ohne</string>
     <string name="theme_section_motion">Animationen</string>
-    <string name="theme_motion_caption">Tastenblasen, Leistenschaltflächen, Chat-Leisten und animierte Symbole.</string>
+    <string name="theme_motion_caption">Alle Animationen der Tastatur: Tastenblasen, Leisten, Symbole, Tasten und Gesten.</string>
     <string name="motion_style_spring">Feder</string>
     <string name="motion_style_snappy">Flink</string>
     <string name="motion_style_jelly">Gelee</string>
@@ -661,12 +663,16 @@
     <string name="premium_prompts_example">„Korrigiere die Fehler, ohne meinen Stil oder meine Formulierungen zu ändern.“</string>
     <string name="premium_clipboard_title">Erweiterte Zwischenablage</string>
     <string name="premium_clipboard_text">Kopien werden 7 Tage statt 12 Std. behalten. Bis zu 50 angeheftete Elemente statt 5.</string>
+    <string name="premium_style_title">Eine Tastatur in Ihrem Stil</string>
+    <string name="premium_style_text">Sechs animierte Hintergründe, die sich beim Tippen bewegen, fünf weitere Tastenformen, neun Tastaturschriften (darunter OpenDyslexic) und der Animationsstil Gelee.</string>
     <string name="premium_free_reminder">Tippen, Sprachen, KI und Sicherung bleiben kostenlos, mit oder ohne Paket.</string>
     <string name="premium_buy">Paket kaufen</string>
     <string name="premium_buy_with_price">Paket kaufen · %1$s</string>
     <string name="premium_restore">Meinen Kauf wiederherstellen</string>
+    <string name="premium_back_home">Zurück zur Startseite</string>
+    <string name="back_arrow_description">Zurück</string>
     <string name="premium_active_title">Paket aktiv</string>
-    <string name="premium_active_thanks">Danke! Farben, Ihre KI-Anweisungen und die erweiterte Zwischenablage sind freigeschaltet.</string>
+    <string name="premium_active_thanks">Danke! Farben, animierte Hintergründe, Tastenformen, Schriften, Ihre KI-Anweisungen und die erweiterte Zwischenablage sind freigeschaltet.</string>
     <string name="premium_status_pending">Zahlung ausstehend: Das Paket wird aktiviert, sobald Google Play sie bestätigt.</string>
     <string name="premium_status_unavailable">Google Play ist auf diesem Gerät nicht verfügbar, oder das Paket konnte nicht geladen werden. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.</string>
     <string name="premium_status_error">Der Kauf ist nicht zustande gekommen. Es wurde nichts belastet; Sie können es erneut versuchen.</string>
@@ -679,10 +685,10 @@
     <string name="home_analytics_consent_refuse">Nein danke</string>
     <string name="home_analytics_consent_accept">Teilen</string>
     <string name="home_premium_card_title">Premium-Paket</string>
-    <string name="home_premium_card_text">Neun Tastaturfarben, Ihre eigenen KI-Anweisungen und eine Zwischenablage, die Ihre Kopien 7 Tage behält.</string>
+    <string name="home_premium_card_text">Farben, animierte Hintergründe, Tastenformen und Schriften für die Tastatur, eigene Anweisungen für die KI und eine Zwischenablage, die Kopien 7 Tage behält.</string>
     <string name="home_premium_card_button">Entdecken</string>
     <string name="home_premium_card_close">Ausblenden</string>
-    <string name="home_row_premium_subtitle_offer">Farben, KI-Anweisungen, erweiterte Zwischenablage</string>
+    <string name="home_row_premium_subtitle_offer">Farben, Hintergründe, Schriften, KI-Anweisungen, Zwischenablage</string>
     <string name="home_row_premium_subtitle_active">Aktiv, danke!</string>
     <string name="home_section_debug">Debug</string>
     <string name="home_debug_premium">Premium-Paket: %1$s</string>
@@ -697,9 +703,13 @@
     <string name="onboarding_step3_title_done">Test abgeschlossen</string>
     <string name="onboarding_step4_title">KI aktivieren</string>
     <string name="onboarding_step4_title_done">KI bereit</string>
-    <string name="onboarding_step4_hint">Korrigieren, Chat und Diktat brauchen ein Modell, das einmal heruntergeladen und offline genutzt wird. Empfohlen für Ihr Telefon: %1$s.</string>
+    <string name="onboarding_step4_hint">Korrigieren und Chat brauchen ein Modell, das einmal heruntergeladen und offline genutzt wird. Empfohlen für Ihr Telefon: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Verfügbar, sobald Taipo ausgewählt ist.</string>
     <string name="onboarding_step4_button">%1$s herunterladen (%2$s)</string>
+    <string name="onboarding_step5_title">Sprachdiktat aktivieren</string>
+    <string name="onboarding_step5_title_done">Diktat bereit</string>
+    <string name="onboarding_step5_hint">Das Diktat nutzt ein Sprachmodell, das einmal heruntergeladen und offline verwendet wird: Ihre Stimme verlässt nie das Telefon.</string>
+    <string name="onboarding_step5_button">Sprachmodell herunterladen (%1$s)</string>
     <string name="tip_delete_words">Auf ⌫ nach ← wischen, um ganze Wörter zu löschen</string>
     <string name="tip_move_cursor">Auf der Leertaste wischen, um den Cursor zu bewegen</string>
     <string name="tip_switch_language">Eingabetaste lange drücken, dann der Globus</string>
@@ -722,4 +732,25 @@
     <string name="floating_a11y_dock">Tastatur unten andocken</string>
     <string name="floating_a11y_floating">Schwebende Tastatur</string>
     <string name="floating_a11y_docked">Tastatur unten angedockt</string>
+    <!-- Nouveautés de la version (WhatsNew) -->
+    <string name="whats_new_title">Neuigkeiten</string>
+    <string name="whats_new_heading">Neu in Taipo 3</string>
+    <string name="whats_new_intro">Das ändert sich mit dieser Version.</string>
+    <string name="whats_new_pill">Neuigkeiten</string>
+    <string name="whats_new_pill_description">Neuigkeiten in Taipo 3. Tippen, um sie in der App zu entdecken.</string>
+    <string name="home_row_whats_new_subtitle">Was sich in Taipo 3 ändert</string>
+    <string name="whats_new_floating_title">Schwebende Tastatur</string>
+    <string name="whats_new_floating_body">Lösen Sie die Tastatur und platzieren Sie sie beliebig auf dem Bildschirm: Eingabe lange drücken, dann die schwebende Tastatur wählen. Ziehen Sie den Griff ganz nach unten, um sie wieder anzudocken.</string>
+    <string name="whats_new_languages_title">15 Sprachen</string>
+    <string name="whats_new_languages_body">Polnisch, Rumänisch, Tschechisch, Ungarisch, Schwedisch, Dänisch, Norwegisch und Finnisch kommen hinzu. Das Wörterbuch jeder Sprache lädt sich selbst herunter, und Französisch und Englisch funktionieren direkt nach der Installation, auch offline.</string>
+    <string name="whats_new_appearance_title">Ein Aussehen nach Ihrem Geschmack</string>
+    <string name="whats_new_appearance_body">Neun Tastenformen und drei Animationsstile (Feder, Flink, Gelee) auf der Seite Erscheinungsbild. Mit dem Premium-Paket: Tastaturschriften und ein animierter Hintergrund beim Tippen. Auch die App-Bildschirme folgen dem gewählten Design.</string>
+    <string name="whats_new_dictation_title">KI-Transkription mit allen Modellen</string>
+    <string name="whats_new_dictation_body">Auch Ameise und Kolibri machen aus Gesprochenem eine gut formulierte Nachricht, dank des Sprachmodells. Mit diesen Modellen kann eine Aufnahme bis zu 10 Minuten dauern.</string>
+    <string name="whats_new_digits_title">Ziffern mit einer Geste</string>
+    <string name="whats_new_digits_body">Wischen Sie auf einer Taste der oberen Reihe nach unten, um ihre Ziffer einzugeben, ohne die Seite zu wechseln.</string>
+    <string name="whats_new_enter_title">Eine nützlichere Eingabetaste</string>
+    <string name="whats_new_enter_body">Sie führt die Aktion des Feldes aus (senden, suchen, weiter) und zeigt das passende Symbol.</string>
+    <string name="whats_new_privacy_title">Noch mehr Privatsphäre</string>
+    <string name="whats_new_privacy_body">Sensible Kopien wie Passwörter werden nie in der Zwischenablage gespeichert, und die anonyme Nutzungsmessung startet nur mit Ihrer Zustimmung.</string>
 </resources>

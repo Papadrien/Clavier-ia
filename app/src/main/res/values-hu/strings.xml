@@ -334,7 +334,7 @@
     <string name="model_gpu_description">A grafikus processzor gyorsabban hozhat létre szöveget, de nem minden telefonon működik. Ha hibát okoz vagy összeomlasztja a billentyűzetet, a Taipo magától visszavált a CPU-ra. A modell a következő MI-műveletnél újratöltődik.</string>
     <string name="model_gpu_failed">A GPU nem működött ezen az eszközön: a Taipo a CPU-t használja. Kapcsolja be újra a kapcsolót egy újabb próbához.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Egyes funkciók nem érhetők el ezzel a modellel (MI-diktálás).</string>
+    <string name="model_download_dictation_via_voice">MI-diktálás: a hangmodellt használja (külön kell letölteni), majd ez a modell formázza a szöveget.</string>
     <string name="model_download_badge_active">Aktív</string>
     <string name="model_download_badge_installed">Telepítve</string>
     <string name="model_download_badge_recommended">Ajánlott</string>
@@ -531,7 +531,7 @@
     <string name="ai_transcription_button_recording">MI-diktálás: felvétel leállítása és átírás</string>
     <string name="ai_transcription_button_processing">MI-diktálás folyamatban: koppintson a megszakításhoz</string>
     <string name="ai_transcription_button_cancelling">MI-diktálás megszakítása…</string>
-    <string name="ai_transcription_no_audio_model">Az MI-diktáláshoz a Majom vagy az Elefánt modell (Gemma 4) szükséges. Válasszon egyet az alkalmazásban.</string>
+    <string name="ai_transcription_no_audio_model">Az MI-diktáláshoz MI-modell szükséges. Válasszon egyet az alkalmazásban.</string>
     <string name="ai_transcription_busy">Diktálás, javítás vagy generálás van folyamatban.</string>
     <string name="ai_transcription_permission_denied">Mikrofonengedély szükséges. Adja meg, majd koppintson újra.</string>
     <string name="ai_transcription_mic_unavailable">Nem sikerült bekapcsolni a mikrofont.</string>
@@ -600,6 +600,8 @@
     <string name="backdrop_bubbles">Buborékok</string>
     <string name="backdrop_crystal">Kristály</string>
     <string name="backdrop_waves">Hullámok</string>
+    <string name="backdrop_hearts">Szívek</string>
+    <string name="backdrop_flowers">Virágok</string>
     <string name="theme_backdrop_free">Ingyenes</string>
     <string name="theme_backdrop_premium">Prémium</string>
     <string name="theme_section_font">Billentyűzet betűtípusa</string>
@@ -627,7 +629,7 @@
     <string name="key_shape_outline">Körvonal</string>
     <string name="key_shape_bare">Háttér nélkül</string>
     <string name="theme_section_motion">Animációk</string>
-    <string name="theme_motion_caption">Billentyűbuborékok, sávgombok, csevegősávok és animált ikonok.</string>
+    <string name="theme_motion_caption">A billentyűzet összes animációja: billentyűbuborékok, sávok, ikonok, billentyűk és mozdulatok.</string>
     <string name="motion_style_spring">Rugó</string>
     <string name="motion_style_snappy">Fürge</string>
     <string name="motion_style_jelly">Zselé</string>
@@ -661,12 +663,16 @@
     <string name="premium_prompts_example">„Javítsd a hibákat a stílusom és a megfogalmazásom megváltoztatása nélkül.”</string>
     <string name="premium_clipboard_title">Bővített vágólap</string>
     <string name="premium_clipboard_text">A másolatok 12 óra helyett 7 napig maradnak meg. 5 helyett legfeljebb 50 rögzített elem.</string>
+    <string name="premium_style_title">Billentyűzet az Ön stílusában</string>
+    <string name="premium_style_text">Hat animált háttér, amely gépelés közben mozog, öt további billentyűforma, kilenc billentyűzet-betűtípus (köztük az OpenDyslexic) és a Zselé animációs stílus.</string>
     <string name="premium_free_reminder">A gépelés, a nyelvek, az MI és a biztonsági mentés ingyenes marad, csomaggal vagy anélkül.</string>
     <string name="premium_buy">A csomag megvásárlása</string>
     <string name="premium_buy_with_price">A csomag megvásárlása · %1$s</string>
     <string name="premium_restore">Vásárlás visszaállítása</string>
+    <string name="premium_back_home">Vissza a kezdőlapra</string>
+    <string name="back_arrow_description">Vissza</string>
     <string name="premium_active_title">A csomag aktív</string>
-    <string name="premium_active_thanks">Köszönjük! A színek, az Ön MI-utasításai és a bővített vágólap feloldva.</string>
+    <string name="premium_active_thanks">Köszönjük! A színek, az animált hátterek, a billentyűformák, a betűtípusok, az MI-utasításai és a bővített vágólap feloldva.</string>
     <string name="premium_status_pending">Fizetés folyamatban: a csomag azonnal bekapcsol, amint a Google Play megerősíti.</string>
     <string name="premium_status_unavailable">A Google Play nem érhető el ezen az eszközön, vagy a csomagot nem sikerült betölteni. Ellenőrizze a kapcsolatot, és próbálja újra.</string>
     <string name="premium_status_error">A vásárlás nem ment végbe. Nem történt terhelés; újra megpróbálhatja.</string>
@@ -679,10 +685,10 @@
     <string name="home_analytics_consent_refuse">Nem, köszönöm</string>
     <string name="home_analytics_consent_accept">Megosztás</string>
     <string name="home_premium_card_title">Prémium csomag</string>
-    <string name="home_premium_card_text">Kilenc billentyűzetszín, saját MI-utasítások és egy vágólap, amely 7 napig megőrzi a másolatait.</string>
+    <string name="home_premium_card_text">Színek, animált hátterek, billentyűformák és betűtípusok a billentyűzethez, saját utasítások az MI-nek, és egy vágólap, amely 7 napig őrzi a másolatokat.</string>
     <string name="home_premium_card_button">Felfedezés</string>
     <string name="home_premium_card_close">Elrejtés</string>
-    <string name="home_row_premium_subtitle_offer">Színek, MI-utasítások, bővített vágólap</string>
+    <string name="home_row_premium_subtitle_offer">Színek, hátterek, betűtípusok, MI-utasítások, vágólap</string>
     <string name="home_row_premium_subtitle_active">Aktív, köszönjük!</string>
     <string name="home_section_debug">Debug</string>
     <string name="home_debug_premium">Prémium csomag: %1$s</string>
@@ -697,9 +703,13 @@
     <string name="onboarding_step3_title_done">Teszt kész</string>
     <string name="onboarding_step4_title">Az MI bekapcsolása</string>
     <string name="onboarding_step4_title_done">MI kész</string>
-    <string name="onboarding_step4_hint">A javításhoz, a csevegéshez és a diktáláshoz modell kell, amelyet egyszer kell letölteni, és internet nélkül használható. A telefonjához ajánlott: %1$s.</string>
+    <string name="onboarding_step4_hint">A javításhoz és a csevegéshez modell kell, amelyet egyszer kell letölteni, és internet nélkül használható. A telefonjához ajánlott: %1$s.</string>
     <string name="onboarding_step4_hint_locked">A Taipo kiválasztása után érhető el.</string>
     <string name="onboarding_step4_button">%1$s letöltése (%2$s)</string>
+    <string name="onboarding_step5_title">Hangalapú diktálás bekapcsolása</string>
+    <string name="onboarding_step5_title_done">A diktálás kész</string>
+    <string name="onboarding_step5_hint">A diktálás egy hangmodellt használ, amelyet egyszer kell letölteni, és offline működik: a hangja sosem hagyja el a telefont.</string>
+    <string name="onboarding_step5_button">Hangmodell letöltése (%1$s)</string>
     <string name="tip_delete_words">Húzza ← irányba a ⌫ billentyűn egész szavak törléséhez</string>
     <string name="tip_move_cursor">Húzza az ujját a szóközön a kurzor mozgatásához</string>
     <string name="tip_switch_language">Tartsa lenyomva az Entert, majd a földgömböt</string>
@@ -722,4 +732,25 @@
     <string name="floating_a11y_dock">Billentyűzet rögzítése alul</string>
     <string name="floating_a11y_floating">Lebegő billentyűzet</string>
     <string name="floating_a11y_docked">Billentyűzet alul rögzítve</string>
+    <!-- Nouveautés de la version (WhatsNew) -->
+    <string name="whats_new_title">Újdonságok</string>
+    <string name="whats_new_heading">A Taipo 3 újdonságai</string>
+    <string name="whats_new_intro">Ez változik ebben a verzióban.</string>
+    <string name="whats_new_pill">Újdonságok</string>
+    <string name="whats_new_pill_description">A Taipo 3 újdonságai. Koppintson, és fedezze fel őket az alkalmazásban.</string>
+    <string name="home_row_whats_new_subtitle">Ami változik a Taipo 3-ban</string>
+    <string name="whats_new_floating_title">Lebegő billentyűzet</string>
+    <string name="whats_new_floating_body">Válassza le a billentyűzetet, és helyezze bárhová a képernyőn: nyomja hosszan az Entert, majd válassza a lebegő billentyűzetet. A fogantyút egészen lehúzva újra rögzítheti.</string>
+    <string name="whats_new_languages_title">15 nyelv</string>
+    <string name="whats_new_languages_body">A lengyel, román, cseh, magyar, svéd, dán, norvég és finn nyelv is bekerül a billentyűzetbe. Minden nyelv szótára magától letöltődik, a francia és az angol pedig a telepítés után azonnal működik, internet nélkül is.</string>
+    <string name="whats_new_appearance_title">Az Ön ízlése szerinti megjelenés</string>
+    <string name="whats_new_appearance_body">Kilenc billentyűforma és három animációs stílus (Rugó, Fürge, Zselé) a Megjelenés oldalon. A prémium csomaggal: billentyűzet-betűtípusok és animált háttér gépelés közben. Az alkalmazás képernyői is a választott témát követik.</string>
+    <string name="whats_new_dictation_title">MI-átirat minden modellel</string>
+    <string name="whats_new_dictation_body">A Hangya és a Kolibri is jól megfogalmazott üzenetté alakítja, amit mond, a hangmodellnek köszönhetően. Ezekkel a modellekkel egy felvétel akár 10 percig tarthat.</string>
+    <string name="whats_new_digits_title">Számjegyek egy mozdulattal</string>
+    <string name="whats_new_digits_body">Húzza lefelé az ujját a felső sor egyik billentyűjén, és beírja a számjegyét oldalváltás nélkül.</string>
+    <string name="whats_new_enter_title">Hasznosabb Enter billentyű</string>
+    <string name="whats_new_enter_body">Végrehajtja a mező műveletét (küldés, keresés, tovább), és megjeleníti az ikonját.</string>
+    <string name="whats_new_privacy_title">Még több adatvédelem</string>
+    <string name="whats_new_privacy_body">Az érzékeny másolatok, például a jelszavak, soha nem maradnak a vágólapon, és a névtelen használatmérés csak az Ön hozzájárulásával indul.</string>
 </resources>

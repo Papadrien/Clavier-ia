@@ -13,6 +13,10 @@ enum class KeyboardBackdrop(val storageKey: String, @StringRes val labelRes: Int
     BUBBLES("bubbles", R.string.backdrop_bubbles),
     CRYSTAL("crystal", R.string.backdrop_crystal),
     WAVES("waves", R.string.backdrop_waves),
+
+    // 13/11/2026 : cœurs en néon et pâquerettes (maquettes validées le jour même).
+    HEARTS("hearts", R.string.backdrop_hearts),
+    FLOWERS("flowers", R.string.backdrop_flowers),
     ;
 
     /** Un motif (et non le fond uni) : touches translucides par-dessus. */

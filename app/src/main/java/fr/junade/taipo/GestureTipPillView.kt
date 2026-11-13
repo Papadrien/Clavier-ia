@@ -16,9 +16,10 @@ import androidx.core.graphics.ColorUtils
 
 /**
  * Astuce de geste ([GestureTips]) dans la barre du haut : pilule de la hauteur des boutons ronds (36 dp), teintée de l'accent,
- * posée entre le premier bouton (robot ou Paramètres) et Vocal ([CorrectionBarView.showGestureTip]). Ampoule + texte sur une
- * ligne ; un texte trop long pour la pilule défile une fois (marquee), sauf si les animations sont désactivées (il est alors
- * coupé par « … »). Le fond est opaque : la pilule masque la bande de mots ou les boutons qu'elle recouvre.
+ * centrée entre le premier bouton (robot ou Paramètres) et Vocal ([CorrectionBarView.showGestureTip]), à la largeur de
+ * son texte (13/11/2026 : plus de grand blanc pour un texte court comme « Nouveautés »). Ampoule + texte sur une ligne ; un
+ * texte trop long pour la place défile une fois (marquee), sauf si les animations sont désactivées (alors coupé par « … »).
+ * Le fond est opaque : la pilule masque la bande de mots ou les boutons qu'elle recouvre.
  */
 @SuppressLint("ViewConstructor")
 internal class GestureTipPillView(context: Context) : LinearLayout(context) {
@@ -54,16 +55,34 @@ internal class GestureTipPillView(context: Context) : LinearLayout(context) {
         addView(icon, LayoutParams(iconSize, iconSize))
         addView(
             text,
-            LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f).apply { marginStart = dimen(R.dimen.taipo_bar_gap).toInt() },
+            // À la largeur du texte (la pilule est centrée dans la barre) ; un texte trop long est borné par la place et défile.
+            LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply { marginStart = dimen(R.dimen.taipo_bar_gap).toInt() },
         )
         isClickable = true
+        setOnClickListener {
+            val pending = action
+            onClose?.invoke()
+            pending?.invoke()
+        }
         accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
     }
 
-    /** Affiche [message] ; il défile une fois s'il ne tient pas (animations actives), sinon il est coupé. */
-    fun setMessage(message: String) {
+    /**
+     * Habillage de la pilule : icône (ampoule des astuces, étincelles des nouveautés [WhatsNew]), texte lu par TalkBack (null :
+     * « Astuce : … ») et action d'un toucher (null pour une astuce, qui se ferme seulement ; ouverture de la page des nouveautés).
+     */
+    data class Content(val iconRes: Int = R.drawable.ic_tip_bulb, val description: String? = null, val action: (() -> Unit)? = null)
+
+    /** Fermeture demandée par un toucher (la barre retire la pilule) ; l'action de [Content] est lancée ensuite. */
+    var onClose: (() -> Unit)? = null
+    private var action: (() -> Unit)? = null
+
+    /** Affiche [message] habillé de [content] ; il défile une fois s'il ne tient pas (animations actives), sinon il est coupé. */
+    fun setMessage(message: String, content: Content = Content()) {
         text.text = message
-        contentDescription = context.getString(R.string.gesture_tip_description, message)
+        action = content.action
+        icon.setImageDrawable(ContextCompat.getDrawable(context, content.iconRes))
+        contentDescription = content.description ?: context.getString(R.string.gesture_tip_description, message)
         if (ValueAnimator.areAnimatorsEnabled()) {
             text.ellipsize = TextUtils.TruncateAt.MARQUEE
             text.marqueeRepeatLimit = 1

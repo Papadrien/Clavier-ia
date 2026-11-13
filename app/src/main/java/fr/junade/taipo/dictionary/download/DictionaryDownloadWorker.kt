@@ -5,7 +5,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.KeyboardLanguage
-import fr.junade.taipo.dictionary.DictionaryChecksums
 import fr.junade.taipo.dictionary.DictionaryFile
 import fr.junade.taipo.dictionary.DictionaryFiles
 import fr.junade.taipo.model.download.DownloadFailure
@@ -20,10 +19,10 @@ import kotlinx.coroutines.withContext
 
 /**
  * Télécharge les fichiers manquants du dictionnaire d'une langue (prénoms, liste complète), l'un après
- * l'autre, avec le mécanisme sûr des modèles ([ModelFileFetcher] : HTTPS, `.tmp`, reprise `Range`, relances après une
- * coupure, rename atomique). Pas d'empreinte de référence : les listes changent quand elles sont mises à jour sur le
- * serveur ; [DictionaryContentCheck] écarte seulement un contenu qui n'est pas une liste. Pas de service au premier plan :
- * quelques Mo à peine.
+ * l'autre, avec le mécanisme des modèles ([ModelFileFetcher] : HTTPS, `.tmp`, relances après une coupure, rename atomique),
+ * mais sans reprise `Range` : chaque tentative repart de zéro (quelques Mo), pour ne jamais recoller deux versions d'un fichier.
+ * Pas d'empreinte exacte (retirée le 13/11/2026) : une liste mise à jour sur le serveur doit s'installer ; [DictionaryContentCheck]
+ * écarte seulement ce qui n'est pas une liste de la langue. Pas de service au premier plan : quelques Mo à peine.
  */
 class DictionaryDownloadWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
 
@@ -93,12 +92,13 @@ class DictionaryDownloadWorker(context: Context, params: WorkerParameters) : Cor
                     context = applicationContext,
                     url = DictionaryFiles.remoteUrl(language, file),
                     destination = destination,
-                    expectedSha256 = DictionaryChecksums.of(language, file), // audit SEC-03
+                    expectedSha256 = null, // contrôle de forme et de taille à la place (beforeCommit)
                     acceptContentLength = { it in 1..MAX_FILE_BYTES },
                     // Quelques Mo : pas de confirmation en données mobiles.
                     allowMobileData = true,
                     isActive = { scope.isActive },
                     keepPartialOnStop = { !stoppedByApp() },
+                    allowResume = false,
                     onTotal = {
                         currentTotal = it
                         report(0L)
@@ -106,7 +106,15 @@ class DictionaryDownloadWorker(context: Context, params: WorkerParameters) : Cor
                     onProgress = { report(it) },
                     beforeCommit = {
                         try {
-                            DictionaryContentCheck.requireValid(ModelInstaller.temporaryFileFor(destination), file)
+                            val temp = ModelInstaller.temporaryFileFor(destination)
+                            when (file) {
+                                DictionaryFile.FULL -> DictionaryContentCheck.requireValid(
+                                    temp,
+                                    DictionaryContentCheck.Kind.WORDS,
+                                    DictionaryFiles.approxBytes(language, file),
+                                )
+                                DictionaryFile.NAMES -> DictionaryContentCheck.requireValid(temp, DictionaryContentCheck.Kind.NAMES)
+                            }
                         } catch (e: java.io.IOException) {
                             rejected = true
                             throw e

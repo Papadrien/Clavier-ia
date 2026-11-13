@@ -334,7 +334,7 @@
     <string name="model_gpu_description">Il processore grafico può generare il testo più velocemente, ma non funziona su tutti i telefoni. Se non funziona o fa chiudere la tastiera, Taipo torna da solo alla CPU. Il modello viene ricaricato alla prossima azione IA.</string>
     <string name="model_gpu_failed">La GPU non ha funzionato su questo dispositivo: Taipo usa la CPU. Riattiva l\'interruttore per riprovare.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Alcune funzioni non sono disponibili con questo modello (dettatura IA).</string>
+    <string name="model_download_dictation_via_voice">Dettatura IA: usa il modello vocale (da scaricare a parte), poi questo modello sistema il testo.</string>
     <string name="model_download_badge_active">Attivo</string>
     <string name="model_download_badge_installed">Installato</string>
     <string name="model_download_badge_recommended">Consigliato</string>
@@ -535,7 +535,7 @@
     <string name="ai_transcription_button_recording">Dettatura IA: interrompi la registrazione e trascrivi</string>
     <string name="ai_transcription_button_processing">Dettatura IA in corso: tocca per annullare</string>
     <string name="ai_transcription_button_cancelling">Annullamento della dettatura IA…</string>
-    <string name="ai_transcription_no_audio_model">La dettatura IA richiede il modello Scimmia o Elefante (Gemma 4). Scegline uno nell\'app.</string>
+    <string name="ai_transcription_no_audio_model">La dettatura IA richiede un modello IA. Scegline uno nell\'app.</string>
     <string name="ai_transcription_busy">È in corso una dettatura, una correzione o una generazione.</string>
     <string name="ai_transcription_permission_denied">Serve l\'autorizzazione al microfono. Concedila, poi tocca di nuovo.</string>
     <string name="ai_transcription_mic_unavailable">Impossibile aprire il microfono.</string>
@@ -604,6 +604,8 @@
     <string name="backdrop_bubbles">Bolle</string>
     <string name="backdrop_crystal">Cristallo</string>
     <string name="backdrop_waves">Onde</string>
+    <string name="backdrop_hearts">Cuori</string>
+    <string name="backdrop_flowers">Fiori</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Carattere della tastiera</string>
@@ -631,7 +633,7 @@
     <string name="key_shape_outline">Contorno</string>
     <string name="key_shape_bare">Senza forma</string>
     <string name="theme_section_motion">Animazioni</string>
-    <string name="theme_motion_caption">Bolle dei tasti, pulsanti della barra, barre della chat e icone animate.</string>
+    <string name="theme_motion_caption">Tutte le animazioni della tastiera: bolle dei tasti, barre, icone, tasti e gesti.</string>
     <string name="motion_style_spring">Molla</string>
     <string name="motion_style_snappy">Scattante</string>
     <string name="motion_style_jelly">Gelatina</string>
@@ -665,12 +667,16 @@
     <string name="premium_prompts_example">«Correggi gli errori senza cambiare il mio stile né le mie espressioni.»</string>
     <string name="premium_clipboard_title">Appunti estesi</string>
     <string name="premium_clipboard_text">Copie conservate 7 giorni invece di 12 h. Fino a 50 elementi fissati invece di 5.</string>
+    <string name="premium_style_title">Una tastiera nel tuo stile</string>
+    <string name="premium_style_text">Sei sfondi animati che si muovono mentre scrivi, cinque forme dei tasti in più, nove caratteri per la tastiera (tra cui OpenDyslexic) e lo stile di animazione Gelatina.</string>
     <string name="premium_free_reminder">Scrittura, lingue, IA e backup restano gratuiti, con o senza il pacchetto.</string>
     <string name="premium_buy">Acquista il pacchetto</string>
     <string name="premium_buy_with_price">Acquista il pacchetto · %1$s</string>
     <string name="premium_restore">Ripristina il mio acquisto</string>
+    <string name="premium_back_home">Torna alla home</string>
+    <string name="back_arrow_description">Indietro</string>
     <string name="premium_active_title">Pacchetto attivo</string>
-    <string name="premium_active_thanks">Grazie! I colori, le tue istruzioni per l\'IA e gli appunti estesi sono sbloccati.</string>
+    <string name="premium_active_thanks">Grazie! Colori, sfondi animati, forme dei tasti, caratteri, le tue istruzioni per l\'IA e gli appunti estesi sono sbloccati.</string>
     <string name="premium_status_pending">Pagamento in sospeso: il pacchetto si attiverà appena Google Play lo confermerà.</string>
     <string name="premium_status_unavailable">Google Play non è disponibile su questo dispositivo, oppure non è stato possibile caricare il pacchetto. Controlla la connessione e riprova.</string>
     <string name="premium_status_error">L\'acquisto non è andato a buon fine. Non è stato addebitato nulla; puoi riprovare.</string>
@@ -683,10 +689,10 @@
     <string name="home_analytics_consent_refuse">No, grazie</string>
     <string name="home_analytics_consent_accept">Condividi</string>
     <string name="home_premium_card_title">Pacchetto premium</string>
-    <string name="home_premium_card_text">Nove colori per la tastiera, le tue istruzioni per l\'IA e appunti che conservano le tue copie per 7 giorni.</string>
+    <string name="home_premium_card_text">Colori, sfondi animati, forme dei tasti e caratteri per la tastiera, le tue istruzioni per l\'IA e appunti che conservano le copie per 7 giorni.</string>
     <string name="home_premium_card_button">Scopri</string>
     <string name="home_premium_card_close">Nascondi</string>
-    <string name="home_row_premium_subtitle_offer">Colori, istruzioni per l\'IA, appunti estesi</string>
+    <string name="home_row_premium_subtitle_offer">Colori, sfondi, caratteri, istruzioni IA, appunti</string>
     <string name="home_row_premium_subtitle_active">Attivo, grazie!</string>
     <string name="home_section_debug">Debug</string>
     <string name="home_debug_premium">Pacchetto premium: %1$s</string>
@@ -701,9 +707,13 @@
     <string name="onboarding_step3_title_done">Prova fatta</string>
     <string name="onboarding_step4_title">Attiva l\'IA</string>
     <string name="onboarding_step4_title_done">IA pronta</string>
-    <string name="onboarding_step4_hint">Correggi, Chat e dettatura richiedono un modello, scaricato una volta e usato offline. Consigliato per il tuo telefono: %1$s.</string>
+    <string name="onboarding_step4_hint">Correggi e Chat richiedono un modello, scaricato una volta e usato offline. Consigliato per il tuo telefono: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Disponibile quando Taipo è selezionata.</string>
     <string name="onboarding_step4_button">Scarica %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Attiva la dettatura vocale</string>
+    <string name="onboarding_step5_title_done">Dettatura pronta</string>
+    <string name="onboarding_step5_hint">La dettatura usa un modello vocale, scaricato una volta e usato offline: la tua voce non lascia mai il telefono.</string>
+    <string name="onboarding_step5_button">Scarica il modello vocale (%1$s)</string>
     <string name="tip_delete_words">Scorri ← su ⌫ per cancellare parole intere</string>
     <string name="tip_move_cursor">Scorri sulla barra spaziatrice per spostare il cursore</string>
     <string name="tip_switch_language">Tieni premuto Invio, poi il globo</string>
@@ -726,4 +736,25 @@
     <string name="floating_a11y_dock">Aggancia la tastiera in basso</string>
     <string name="floating_a11y_floating">Tastiera mobile</string>
     <string name="floating_a11y_docked">Tastiera agganciata in basso</string>
+    <!-- Nouveautés de la version (WhatsNew) -->
+    <string name="whats_new_title">Novità</string>
+    <string name="whats_new_heading">Le novità di Taipo 3</string>
+    <string name="whats_new_intro">Ecco cosa cambia con questa versione.</string>
+    <string name="whats_new_pill">Novità</string>
+    <string name="whats_new_pill_description">Novità di Taipo 3. Tocca per scoprirle nell\'app.</string>
+    <string name="home_row_whats_new_subtitle">Cosa cambia in Taipo 3</string>
+    <string name="whats_new_floating_title">Tastiera mobile</string>
+    <string name="whats_new_floating_body">Stacca la tastiera e posizionala dove vuoi sullo schermo: tieni premuto Invio, poi scegli la tastiera mobile. Trascina la maniglia fino in fondo per riagganciarla.</string>
+    <string name="whats_new_languages_title">15 lingue</string>
+    <string name="whats_new_languages_body">Polacco, rumeno, ceco, ungherese, svedese, danese, norvegese e finlandese si aggiungono alla tastiera. Il dizionario di ogni lingua si scarica da solo, e francese e inglese funzionano subito dopo l\'installazione, anche offline.</string>
+    <string name="whats_new_appearance_title">Un aspetto su misura</string>
+    <string name="whats_new_appearance_body">Nove forme dei tasti e tre stili di animazione (Molla, Scattante, Gelatina) nella pagina Aspetto. Con il pacchetto premium: caratteri della tastiera e sfondo animato mentre scrivi. Anche le schermate dell\'app seguono il tema scelto.</string>
+    <string name="whats_new_dictation_title">Trascrizione IA con tutti i modelli</string>
+    <string name="whats_new_dictation_body">Anche Formica e Colibrì trasformano ciò che dici in un messaggio ben scritto, grazie al modello vocale. Con questi modelli una registrazione può durare fino a 10 minuti.</string>
+    <string name="whats_new_digits_title">Numeri con un gesto</string>
+    <string name="whats_new_digits_body">Scorri verso il basso su un tasto della riga superiore per inserirne il numero, senza cambiare pagina.</string>
+    <string name="whats_new_enter_title">Un tasto Invio più utile</string>
+    <string name="whats_new_enter_body">Esegue l\'azione del campo (invia, cerca, avanti) e ne mostra l\'icona.</string>
+    <string name="whats_new_privacy_title">Ancora più privacy</string>
+    <string name="whats_new_privacy_body">Le copie sensibili, come le password, non vengono mai conservate negli appunti, e la misurazione d\'uso anonima parte solo con il tuo consenso.</string>
 </resources>

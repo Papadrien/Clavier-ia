@@ -352,7 +352,7 @@
     <string name="model_gpu_description">Le processeur graphique peut générer le texte plus vite, mais il ne fonctionne pas sur tous les téléphones. S\'il échoue ou fait planter le clavier, Taipo repasse tout seul sur le processeur central. Le modèle est rechargé à la prochaine action IA.</string>
     <string name="model_gpu_failed">Le GPU n\'a pas fonctionné sur cet appareil : Taipo utilise le processeur central. Réactivez l\'interrupteur pour réessayer.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Certaines fonctions ne sont pas disponibles avec ce modèle (dictée IA).</string>
+    <string name="model_download_dictation_via_voice">Dictée IA : passe par le modèle vocal (à télécharger à part), puis ce modèle met le texte en forme.</string>
     <string name="model_download_badge_active">Actif</string>
     <string name="model_download_badge_installed">Installé</string>
     <string name="model_download_badge_recommended">Recommandé</string>
@@ -569,7 +569,7 @@
     <string name="ai_transcription_button_recording">Dictée IA : arrêter l\'enregistrement et transcrire</string>
     <string name="ai_transcription_button_processing">Dictée IA en cours : appuyer pour annuler</string>
     <string name="ai_transcription_button_cancelling">Annulation de la dictée IA…</string>
-    <string name="ai_transcription_no_audio_model">La dictée IA demande le modèle Singe ou Éléphant (Gemma 4). Choisissez-en un dans l\'application.</string>
+    <string name="ai_transcription_no_audio_model">La dictée IA demande un modèle IA. Choisissez-en un dans l\'application.</string>
     <string name="ai_transcription_busy">Une dictée, une correction ou une génération est en cours.</string>
     <string name="ai_transcription_permission_denied">Permission micro requise. Accordez-la puis appuyez à nouveau.</string>
     <string name="ai_transcription_mic_unavailable">Le micro n\'a pas pu être ouvert.</string>
@@ -646,6 +646,8 @@
     <string name="backdrop_bubbles">Bulles</string>
     <string name="backdrop_crystal">Cristal</string>
     <string name="backdrop_waves">Ondes</string>
+    <string name="backdrop_hearts">Cœurs</string>
+    <string name="backdrop_flowers">Fleurs</string>
     <string name="theme_backdrop_free">Gratuit</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Police du clavier</string>
@@ -674,7 +676,7 @@
     <string name="key_shape_bare">Sans fond</string>
     <!-- Section « Animations » de la page Apparence (MotionStyle) -->
     <string name="theme_section_motion">Animations</string>
-    <string name="theme_motion_caption">Bulles des touches, boutons de la barre, barres du mode chat et icônes animées.</string>
+    <string name="theme_motion_caption">Toutes les animations du clavier : bulles des touches, barres, icônes, touches et gestes.</string>
     <string name="motion_style_spring">Ressort</string>
     <string name="motion_style_snappy">Vif</string>
     <string name="motion_style_jelly">Gelée</string>
@@ -709,12 +711,16 @@
     <string name="premium_prompts_example">« Corrige les fautes sans changer mon style ni mes tournures. »</string>
     <string name="premium_clipboard_title">Presse-papiers étendu</string>
     <string name="premium_clipboard_text">Copies gardées 7 jours au lieu de 12 h. Jusqu\'à 50 éléments épinglés au lieu de 5.</string>
+    <string name="premium_style_title">Un clavier à votre style</string>
+    <string name="premium_style_text">Six fonds animés qui bougent pendant la frappe, cinq formes de touches en plus, neuf polices pour le clavier (dont OpenDyslexic) et le style d\'animation Gelée.</string>
     <string name="premium_free_reminder">La frappe, les langues, l\'IA et la sauvegarde restent gratuites, avec ou sans pack.</string>
     <string name="premium_buy">Acheter le pack</string>
     <string name="premium_buy_with_price">Acheter le pack · %1$s</string>
     <string name="premium_restore">Restaurer mon achat</string>
+    <string name="premium_back_home">Retour à l\'accueil</string>
+    <string name="back_arrow_description">Retour</string>
     <string name="premium_active_title">Pack actif</string>
-    <string name="premium_active_thanks">Merci ! Les couleurs, vos consignes pour l\'IA et le presse-papiers étendu sont débloqués.</string>
+    <string name="premium_active_thanks">Merci ! Les couleurs, les fonds animés, les formes de touches, les polices, vos consignes pour l\'IA et le presse-papiers étendu sont débloqués.</string>
     <string name="premium_status_pending">Paiement en attente : le pack s\'activera dès que Google Play l\'aura confirmé.</string>
     <string name="premium_status_unavailable">Google Play n\'est pas disponible sur cet appareil, ou le pack n\'a pas pu être chargé. Vérifiez votre connexion puis réessayez.</string>
     <string name="premium_status_error">L\'achat n\'a pas abouti. Aucun montant n\'a été débité ; vous pouvez réessayer.</string>
@@ -727,10 +733,10 @@
     <string name="home_analytics_consent_refuse">Non merci</string>
     <string name="home_analytics_consent_accept">Partager</string>
     <string name="home_premium_card_title">Pack premium</string>
-    <string name="home_premium_card_text">Neuf couleurs pour le clavier, vos propres consignes pour l\'IA et un presse-papiers qui garde vos copies 7 jours.</string>
+    <string name="home_premium_card_text">Couleurs, fonds animés, formes de touches et polices pour le clavier, vos propres consignes pour l\'IA et un presse-papiers qui garde vos copies 7 jours.</string>
     <string name="home_premium_card_button">Découvrir</string>
     <string name="home_premium_card_close">Masquer</string>
-    <string name="home_row_premium_subtitle_offer">Couleurs, consignes de l\'IA, presse-papiers étendu</string>
+    <string name="home_row_premium_subtitle_offer">Couleurs, fonds, polices, consignes de l\'IA, presse-papiers</string>
     <string name="home_row_premium_subtitle_active">Actif, merci !</string>
     <string name="home_section_debug">Debug</string>
     <string name="home_debug_premium">Pack premium : %1$s</string>
@@ -746,9 +752,13 @@
     <string name="onboarding_step3_title_done">Essai réussi</string>
     <string name="onboarding_step4_title">Activer l\'IA</string>
     <string name="onboarding_step4_title_done">IA prête</string>
-    <string name="onboarding_step4_hint">Corriger, Chat et la dictée ont besoin d\'un modèle, téléchargé une fois et utilisé hors ligne. Recommandé pour votre téléphone : %1$s.</string>
+    <string name="onboarding_step4_hint">Corriger et Chat ont besoin d\'un modèle, téléchargé une fois et utilisé hors ligne. Recommandé pour votre téléphone : %1$s.</string>
     <string name="onboarding_step4_hint_locked">Disponible une fois Taipo sélectionné.</string>
     <string name="onboarding_step4_button">Télécharger %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Activer la dictée vocale</string>
+    <string name="onboarding_step5_title_done">Dictée prête</string>
+    <string name="onboarding_step5_hint">La dictée utilise un modèle vocal, téléchargé une fois et utilisé hors ligne : votre voix ne quitte jamais le téléphone.</string>
+    <string name="onboarding_step5_button">Télécharger le modèle vocal (%1$s)</string>
     <!-- Astuces de gestes (une fois chacune) -->
     <string name="tip_delete_words">Glissez ← sur ⌫ pour effacer des mots</string>
     <string name="tip_move_cursor">Glissez sur Espace pour bouger le curseur</string>
@@ -764,8 +774,8 @@
     <string name="diagnostic_done">Terminé.</string>
     <string name="diagnostic_copied">Résultats copiés.</string>
     <string name="home_debug_diagnostic">Diagnostic mémoire</string>
-    <string name="home_debug_reset_tips">Réinitialiser les astuces</string>
-    <string name="home_debug_reset_tips_done">Les astuces s\'afficheront de nouveau</string>
+    <string name="home_debug_reset_tips">Réinitialiser les astuces et les nouveautés</string>
+    <string name="home_debug_reset_tips_done">Les astuces et la pilule Nouveautés s\'afficheront de nouveau</string>
     <string name="floating_handle_description">Poignée : faire glisser pour déplacer le clavier</string>
     <string name="floating_dock_zone">Relâcher pour ancrer</string>
     <string name="floating_a11y_move_up">Monter le clavier</string>
@@ -773,4 +783,25 @@
     <string name="floating_a11y_dock">Recoller le clavier en bas</string>
     <string name="floating_a11y_floating">Clavier flottant</string>
     <string name="floating_a11y_docked">Clavier ancré en bas</string>
+    <!-- Nouveautés de la version (WhatsNew) -->
+    <string name="whats_new_title">Nouveautés</string>
+    <string name="whats_new_heading">Les nouveautés de Taipo 3</string>
+    <string name="whats_new_intro">Voici ce qui change avec cette version.</string>
+    <string name="whats_new_pill">Nouveautés</string>
+    <string name="whats_new_pill_description">Nouveautés de Taipo 3. Touchez pour les découvrir dans l\'application.</string>
+    <string name="home_row_whats_new_subtitle">Ce qui change dans Taipo 3</string>
+    <string name="whats_new_floating_title">Clavier flottant</string>
+    <string name="whats_new_floating_body">Détachez le clavier et placez-le où vous voulez sur l\'écran : appui long sur Entrée, puis choisissez le clavier flottant. Glissez sa poignée tout en bas pour le recoller.</string>
+    <string name="whats_new_languages_title">15 langues</string>
+    <string name="whats_new_languages_body">Le polonais, le roumain, le tchèque, le hongrois, le suédois, le danois, le norvégien et le finnois rejoignent le clavier. Le dictionnaire de chaque langue se télécharge tout seul, et le français et l\'anglais fonctionnent dès l\'installation, même sans réseau.</string>
+    <string name="whats_new_appearance_title">Une apparence à votre goût</string>
+    <string name="whats_new_appearance_body">Neuf formes de touches et trois styles d\'animation (Ressort, Vif, Gelée) dans la page Apparence. Avec le pack premium : polices du clavier et fond animé pendant la frappe. Les écrans de l\'application suivent aussi le thème choisi.</string>
+    <string name="whats_new_dictation_title">Transcription IA avec tous les modèles</string>
+    <string name="whats_new_dictation_body">Fourmi et Colibri transforment aussi ce que vous dites en message bien rédigé, grâce au modèle vocal. Avec ces modèles, un enregistrement peut durer jusqu\'à 10 minutes.</string>
+    <string name="whats_new_digits_title">Chiffres en un geste</string>
+    <string name="whats_new_digits_body">Glissez vers le bas sur une touche de la rangée du haut pour saisir son chiffre, sans changer de page.</string>
+    <string name="whats_new_enter_title">Une touche Entrée plus utile</string>
+    <string name="whats_new_enter_body">Elle fait l\'action du champ (envoyer, rechercher, suivant) et en affiche l\'icône.</string>
+    <string name="whats_new_privacy_title">Encore plus de confidentialité</string>
+    <string name="whats_new_privacy_body">Les copies sensibles, comme les mots de passe, ne sont jamais gardées dans le presse-papiers, et la mesure d\'usage anonyme ne démarre qu\'avec votre accord.</string>
 </resources>

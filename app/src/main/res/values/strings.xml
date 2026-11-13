@@ -345,7 +345,7 @@
     <string name="model_gpu_description">The graphics processor can generate text faster, but it does not work on every phone. If it fails or crashes the keyboard, Taipo falls back to the CPU on its own. The model is reloaded at the next AI action.</string>
     <string name="model_gpu_failed">The GPU did not work on this device: Taipo uses the CPU. Turn the switch back on to try again.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Some features are not available with this model (AI dictation).</string>
+    <string name="model_download_dictation_via_voice">AI dictation: uses the voice model (downloaded separately), then this model rewrites the text.</string>
     <string name="model_download_badge_active">Active</string>
     <string name="model_download_badge_installed">Installed</string>
     <string name="model_download_badge_recommended">Recommended</string>
@@ -551,7 +551,7 @@
     <string name="ai_transcription_button_recording">AI dictation: stop recording and transcribe</string>
     <string name="ai_transcription_button_processing">AI dictation in progress: tap to cancel</string>
     <string name="ai_transcription_button_cancelling">Cancelling AI dictation…</string>
-    <string name="ai_transcription_no_audio_model">AI dictation requires the Monkey or Elephant model (Gemma 4). Choose one in the app.</string>
+    <string name="ai_transcription_no_audio_model">AI dictation requires an AI model. Choose one in the app.</string>
     <string name="ai_transcription_busy">A dictation, correction or generation is in progress.</string>
     <string name="ai_transcription_permission_denied">Microphone permission required. Grant it, then tap again.</string>
     <string name="ai_transcription_mic_unavailable">The microphone couldn\'t be opened.</string>
@@ -627,6 +627,8 @@
     <string name="backdrop_bubbles">Bubbles</string>
     <string name="backdrop_crystal">Crystal</string>
     <string name="backdrop_waves">Waves</string>
+    <string name="backdrop_hearts">Hearts</string>
+    <string name="backdrop_flowers">Flowers</string>
     <string name="theme_backdrop_free">Free</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Keyboard font</string>
@@ -655,7 +657,7 @@
     <string name="key_shape_bare">Bare</string>
     <!-- Section « Animations » de la page Apparence (MotionStyle) -->
     <string name="theme_section_motion">Animations</string>
-    <string name="theme_motion_caption">Key bubbles, bar buttons, chat bars and animated icons.</string>
+    <string name="theme_motion_caption">All keyboard animations: key bubbles, bars, icons, keys and gestures.</string>
     <string name="motion_style_spring">Spring</string>
     <string name="motion_style_snappy">Snappy</string>
     <string name="motion_style_jelly">Jelly</string>
@@ -690,12 +692,16 @@
     <string name="premium_prompts_example">“Fix the mistakes without changing my style or my wording.”</string>
     <string name="premium_clipboard_title">Extended clipboard</string>
     <string name="premium_clipboard_text">Copies kept 7 days instead of 12 h. Up to 50 pinned items instead of 5.</string>
+    <string name="premium_style_title">A keyboard in your style</string>
+    <string name="premium_style_text">Six animated backgrounds that move as you type, five more key shapes, nine keyboard fonts (including OpenDyslexic) and the Jelly animation style.</string>
     <string name="premium_free_reminder">Typing, languages, AI and backup stay free, with or without the pack.</string>
     <string name="premium_buy">Buy the pack</string>
     <string name="premium_buy_with_price">Buy the pack · %1$s</string>
     <string name="premium_restore">Restore my purchase</string>
+    <string name="premium_back_home">Back to home</string>
+    <string name="back_arrow_description">Back</string>
     <string name="premium_active_title">Pack active</string>
-    <string name="premium_active_thanks">Thank you! Colors, your AI instructions and the extended clipboard are unlocked.</string>
+    <string name="premium_active_thanks">Thank you! Colors, animated backgrounds, key shapes, fonts, your AI instructions and the extended clipboard are unlocked.</string>
     <string name="premium_status_pending">Payment pending: the pack will turn on as soon as Google Play confirms it.</string>
     <string name="premium_status_unavailable">Google Play is not available on this device, or the pack could not be loaded. Check your connection and try again.</string>
     <string name="premium_status_error">The purchase did not go through. Nothing was charged; you can try again.</string>
@@ -708,10 +714,10 @@
     <string name="home_analytics_consent_refuse">No thanks</string>
     <string name="home_analytics_consent_accept">Share</string>
     <string name="home_premium_card_title">Premium pack</string>
-    <string name="home_premium_card_text">Nine keyboard colors, your own AI instructions and a clipboard that keeps your copies for 7 days.</string>
+    <string name="home_premium_card_text">Colors, animated backgrounds, key shapes and fonts for the keyboard, your own instructions for the AI, and a clipboard that keeps your copies for 7 days.</string>
     <string name="home_premium_card_button">Discover</string>
     <string name="home_premium_card_close">Hide</string>
-    <string name="home_row_premium_subtitle_offer">Colors, AI instructions, extended clipboard</string>
+    <string name="home_row_premium_subtitle_offer">Colors, backgrounds, fonts, AI instructions, clipboard</string>
     <string name="home_row_premium_subtitle_active">Active, thank you!</string>
     <string name="home_section_debug">Debug</string>
     <string name="home_debug_premium">Premium pack: %1$s</string>
@@ -727,9 +733,13 @@
     <string name="onboarding_step3_title_done">Test done</string>
     <string name="onboarding_step4_title">Turn on AI</string>
     <string name="onboarding_step4_title_done">AI ready</string>
-    <string name="onboarding_step4_hint">Correct, Chat and dictation need a model, downloaded once and used offline. Recommended for your phone: %1$s.</string>
+    <string name="onboarding_step4_hint">Correct and Chat need a model, downloaded once and used offline. Recommended for your phone: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Available once Taipo is selected.</string>
     <string name="onboarding_step4_button">Download %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Turn on voice dictation</string>
+    <string name="onboarding_step5_title_done">Dictation ready</string>
+    <string name="onboarding_step5_hint">Dictation uses a voice model, downloaded once and used offline: your voice never leaves the phone.</string>
+    <string name="onboarding_step5_button">Download the voice model (%1$s)</string>
     <!-- Gesture tips (once each) -->
     <string name="tip_delete_words">Swipe ← on ⌫ to delete whole words</string>
     <string name="tip_move_cursor">Swipe on Space to move the cursor</string>
@@ -745,7 +755,7 @@
     <string name="diagnostic_done">Done.</string>
     <string name="diagnostic_copied">Results copied.</string>
     <string name="home_debug_diagnostic">Memory diagnostic</string>
-    <string name="home_debug_reset_tips">Reset tips</string>
+    <string name="home_debug_reset_tips">Reset tips and what\'s new</string>
     <string name="home_debug_reset_tips_done">Tips will show again</string>
     <string name="floating_handle_description">Handle: drag to move the keyboard</string>
     <string name="floating_dock_zone">Release to dock</string>
@@ -754,4 +764,25 @@
     <string name="floating_a11y_dock">Dock keyboard at the bottom</string>
     <string name="floating_a11y_floating">Floating keyboard</string>
     <string name="floating_a11y_docked">Keyboard docked at the bottom</string>
+    <!-- Nouveautés de la version (WhatsNew) -->
+    <string name="whats_new_title">What\'s new</string>
+    <string name="whats_new_heading">What\'s new in Taipo 3</string>
+    <string name="whats_new_intro">Here is what changes with this version.</string>
+    <string name="whats_new_pill">What\'s new</string>
+    <string name="whats_new_pill_description">What\'s new in Taipo 3. Tap to discover it in the app.</string>
+    <string name="home_row_whats_new_subtitle">What changes in Taipo 3</string>
+    <string name="whats_new_floating_title">Floating keyboard</string>
+    <string name="whats_new_floating_body">Detach the keyboard and place it anywhere on the screen: long-press Enter, then choose the floating keyboard. Drag its handle all the way down to dock it again.</string>
+    <string name="whats_new_languages_title">15 languages</string>
+    <string name="whats_new_languages_body">Polish, Romanian, Czech, Hungarian, Swedish, Danish, Norwegian and Finnish join the keyboard. Each language\'s dictionary downloads on its own, and French and English work right after installation, even offline.</string>
+    <string name="whats_new_appearance_title">A look that suits you</string>
+    <string name="whats_new_appearance_body">Nine key shapes and three animation styles (Spring, Snappy, Jelly) on the Appearance page. With the premium pack: keyboard fonts and an animated background while you type. The app screens follow the chosen theme too.</string>
+    <string name="whats_new_dictation_title">AI transcription with every model</string>
+    <string name="whats_new_dictation_body">Ant and Hummingbird also turn what you say into a well-written message, thanks to the voice model. With these models, a recording can last up to 10 minutes.</string>
+    <string name="whats_new_digits_title">Digits in one gesture</string>
+    <string name="whats_new_digits_body">Swipe down on a top-row key to type its digit, without switching pages.</string>
+    <string name="whats_new_enter_title">A more useful Enter key</string>
+    <string name="whats_new_enter_body">It performs the field\'s action (send, search, next) and shows its icon.</string>
+    <string name="whats_new_privacy_title">Even more privacy</string>
+    <string name="whats_new_privacy_body">Sensitive copies, such as passwords, are never kept in the clipboard, and anonymous usage measurement only starts with your consent.</string>
 </resources>

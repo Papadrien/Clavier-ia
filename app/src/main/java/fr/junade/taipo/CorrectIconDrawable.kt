@@ -102,7 +102,7 @@ internal class CorrectIconDrawable(private val sizePx: Int) : Drawable() {
         time += dt
         workSpring.step(if (working) 1f else 0f, dt)
         if (doneTime >= 0f) {
-            doneTime += dt
+            doneTime += dt * MotionStyle.current.speed // coche réglée pour le style Ressort : plus vive en Vif, plus lente en Gelée
             if (doneTime >= CorrectIconPose.DONE_DURATION_S) doneTime = NO_DONE
         }
         invalidateSelf()

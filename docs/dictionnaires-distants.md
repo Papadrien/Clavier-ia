@@ -24,9 +24,17 @@ sont présents et non vides (rename atomique : un fichier n'apparaît qu'une foi
 Sans connexion : le travail WorkManager attend (« En attente de connexion… »). Données mobiles : pas de confirmation (quelques Mo).
 
 ## Technique
-`DictionaryDownloadWorker` réutilise `ModelFileFetcher` (HTTPS, `.tmp`, reprise `Range`, relances). **Empreinte SHA-256 vérifiée**
-(audit SEC-03, 11/11/2026) : `DictionaryChecksums` fige celle de chaque liste et des bigrammes ; `DictionaryChecksumsTest` la relie aux
-fichiers de `dictionaries/`. `DictionaryContentCheck` vérifie en plus la forme (« mot fréquence »). `DictionaryLoader` lit les fichiers ;
+`DictionaryDownloadWorker` et `BigramDownloadWorker` réutilisent `ModelFileFetcher` (HTTPS, `.tmp`, relances, rename atomique), **sans
+reprise `Range`** : chaque tentative repart de zéro (quelques Mo), pour ne jamais recoller le début d'une ancienne version à la fin d'une
+nouvelle (le Worker ignore `If-Range`).
+
+**Pas d'empreinte exacte** (décision du 13/11/2026, revient sur SEC-03) : une empreinte figée rejetait toute liste mise à jour sur le
+serveur, et l'utilisateur restait alors sans dictionnaire. Un fichier un peu différent vaut mieux que pas de fichier ; le risque d'une liste
+de mots servie par un tiers est faible (HTTPS, bucket sous notre contrôle). `DictionaryContentCheck` écarte ce qui n'est pas une liste de la
+langue : UTF-8 valide, pas de HTML/JSON, au moins 95 % des lignes au bon format (« mot fréquence », un prénom par ligne, bigrammes
+« mot1 mot2 fréquence »), un nombre minimal de lignes, et pour la liste complète une taille entre le tiers et le triple de
+`DictionaryFiles.approxBytes`. `DictionaryContentCheckTest` vérifie que tous les fichiers de `dictionaries/` passent ce contrôle. Les
+modèles IA et vocal gardent leur empreinte SHA-256. `DictionaryLoader` lit les fichiers ;
 une langue non installée n'est pas mise en cache (dictionnaire vide, autocorrection absente) et se charge dès qu'elle est installée.
 États : `DictionaryDownloadTracker` (Queued / Downloading % / Failed / Installed). Écran : carte « Dictionnaire » du détail d'une langue
 (`LanguageDetailActivity`, `DictionaryStatusSection`) ; pastille « À télécharger » sur la ligne de la langue (`LanguagesActivity`).
@@ -36,18 +44,20 @@ une langue non installée n'est pas mise en cache (dictionnaire vide, autocorrec
 `ProperNamesAssetsTest`. `tools/fetch_dictionaries.py` y écrit désormais.
 
 ## Limites / à valider
-- Pas de mise à jour automatique d'une liste modifiée sur le serveur (fichier déjà installé = gardé).
+- Pas de mise à jour automatique d'une liste modifiée sur le serveur (fichier déjà installé = gardé) : seules les nouvelles installations
+  (ou une langue réinstallée) reçoivent la nouvelle version.
 - Texte de confidentialité mis à jour (section 2) ; mentionner ce téléchargement dans la fiche Play (sécurité des données) si besoin.
 - [ ] `./gradlew testDebugUnitTest assembleRelease` ; taille de l'APK avant/après.
 - [ ] Installation fraîche en Wi-Fi : choisir une langue, voir 0 → 100 %, puis correction active sans relancer.
 - [ ] Mode avion : « En attente de connexion… » puis reprise au retour du réseau ; URL erronée : échec + Réessayer.
 
-## Changer une liste sur le serveur (depuis l'audit du 11/11/2026)
-Les versions publiées refusent un fichier dont l'empreinte a changé. Pour publier une nouvelle liste :
-1. modifier `dictionaries/` et mettre à jour `DictionaryChecksums` (le test donne les nouvelles valeurs) ;
-2. envoyer **tout le dossier** dans un nouveau dossier du bucket (par exemple `dictionaries-2026-12-01/`, mêmes chemins) ;
-3. changer `DictionaryFiles.REMOTE_DIRECTORY`, publier la version ;
-4. garder l'ancien dossier tant que des versions anciennes sont en circulation.
+## Changer une liste sur le serveur
+Depuis le 13/11/2026, il suffit de remplacer le fichier dans le dossier `dictionaries/` du bucket (mêmes chemins). Garder une taille du même
+ordre que `DictionaryFiles.approxBytes` (entre le tiers et le triple), sinon mettre la valeur à jour dans l'app.
+
+Attention : les versions publiées **avant** ce changement (empreintes figées, `DictionaryChecksums`) refusent un fichier modifié. Tant
+qu'elles sont en circulation, une liste qui change pour elles doit aller dans un nouveau dossier (par exemple `dictionaries-2026-12-01/`)
+avec `DictionaryFiles.REMOTE_DIRECTORY` mis à jour, l'ancien dossier restant en place.
 
 ## Liste de démarrage embarquée (audit UX-01)
 Français et anglais : les 40 000 premiers mots de la liste complète sont dans l'APK (`assets/dictionaries/starter/`, ~220 Ko
@@ -72,5 +82,5 @@ ne connaissent pas ces langues et ne les demandent jamais). À envoyer depuis `d
 | finnois | `fi.txt` | `names/fi.txt` | `bigrams/fi.txt` |
 
 Tant qu'ils ne sont pas sur le serveur, ces langues s'affichent et se tapent (disposition, accents), mais sans correction ni suggestions
-(« Pas encore téléchargé » dans le détail de la langue). Leurs empreintes sont déjà dans `DictionaryChecksums`.
+(« Pas encore téléchargé » dans le détail de la langue). Ils passent le contrôle de forme (`DictionaryContentCheckTest`).
 

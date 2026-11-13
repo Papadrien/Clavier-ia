@@ -334,7 +334,7 @@
     <string name="model_gpu_description">Procesor graficzny może szybciej generować tekst, ale nie działa na każdym telefonie. Jeśli zawiedzie lub zawiesi klawiaturę, Taipo samo wróci do CPU. Model zostanie ponownie wczytany przy następnym działaniu AI.</string>
     <string name="model_gpu_failed">GPU nie zadziałał na tym urządzeniu: Taipo używa CPU. Włącz przełącznik ponownie, aby spróbować jeszcze raz.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Niektóre funkcje nie są dostępne z tym modelem (dyktowanie AI).</string>
+    <string name="model_download_dictation_via_voice">Dyktowanie AI: korzysta z modelu głosowego (pobieranego osobno), a potem ten model redaguje tekst.</string>
     <string name="model_download_badge_active">Aktywny</string>
     <string name="model_download_badge_installed">Zainstalowany</string>
     <string name="model_download_badge_recommended">Zalecany</string>
@@ -539,7 +539,7 @@
     <string name="ai_transcription_button_recording">Dyktowanie AI: zatrzymaj nagrywanie i przepisz</string>
     <string name="ai_transcription_button_processing">Trwa dyktowanie AI: dotknij, aby anulować</string>
     <string name="ai_transcription_button_cancelling">Anulowanie dyktowania AI…</string>
-    <string name="ai_transcription_no_audio_model">Dyktowanie AI wymaga modelu Małpa lub Słoń (Gemma 4). Wybierz jeden w aplikacji.</string>
+    <string name="ai_transcription_no_audio_model">Dyktowanie AI wymaga modelu AI. Wybierz go w aplikacji.</string>
     <string name="ai_transcription_busy">Trwa dyktowanie, korekta lub generowanie.</string>
     <string name="ai_transcription_permission_denied">Wymagane uprawnienie do mikrofonu. Przyznaj je, a potem dotknij ponownie.</string>
     <string name="ai_transcription_mic_unavailable">Nie udało się włączyć mikrofonu.</string>
@@ -608,6 +608,8 @@
     <string name="backdrop_bubbles">Bańki</string>
     <string name="backdrop_crystal">Kryształ</string>
     <string name="backdrop_waves">Fale</string>
+    <string name="backdrop_hearts">Serca</string>
+    <string name="backdrop_flowers">Kwiaty</string>
     <string name="theme_backdrop_free">Bezpłatne</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Czcionka klawiatury</string>
@@ -635,7 +637,7 @@
     <string name="key_shape_outline">Kontur</string>
     <string name="key_shape_bare">Bez tła</string>
     <string name="theme_section_motion">Animacje</string>
-    <string name="theme_motion_caption">Dymki klawiszy, przyciski paska, paski czatu i animowane ikony.</string>
+    <string name="theme_motion_caption">Wszystkie animacje klawiatury: dymki klawiszy, paski, ikony, klawisze i gesty.</string>
     <string name="motion_style_spring">Sprężyna</string>
     <string name="motion_style_snappy">Żwawa</string>
     <string name="motion_style_jelly">Galaretka</string>
@@ -669,12 +671,16 @@
     <string name="premium_prompts_example">„Popraw błędy, nie zmieniając mojego stylu ani sformułowań.”</string>
     <string name="premium_clipboard_title">Rozszerzony schowek</string>
     <string name="premium_clipboard_text">Kopie przechowywane przez 7 dni zamiast 12 godzin. Do 50 przypiętych elementów zamiast 5.</string>
+    <string name="premium_style_title">Klawiatura w Twoim stylu</string>
+    <string name="premium_style_text">Sześć animowanych teł, które poruszają się podczas pisania, pięć dodatkowych kształtów klawiszy, dziewięć czcionek klawiatury (w tym OpenDyslexic) i styl animacji Galaretka.</string>
     <string name="premium_free_reminder">Pisanie, języki, AI i kopia zapasowa pozostają bezpłatne, z pakietem lub bez.</string>
     <string name="premium_buy">Kup pakiet</string>
     <string name="premium_buy_with_price">Kup pakiet · %1$s</string>
     <string name="premium_restore">Przywróć zakup</string>
+    <string name="premium_back_home">Wróć do ekranu głównego</string>
+    <string name="back_arrow_description">Wstecz</string>
     <string name="premium_active_title">Pakiet aktywny</string>
-    <string name="premium_active_thanks">Dziękujemy! Kolory, Twoje instrukcje AI i rozszerzony schowek są odblokowane.</string>
+    <string name="premium_active_thanks">Dziękujemy! Kolory, animowane tła, kształty klawiszy, czcionki, Twoje instrukcje dla AI i rozszerzony schowek są odblokowane.</string>
     <string name="premium_status_pending">Płatność w toku: pakiet zostanie włączony, gdy tylko Google Play ją potwierdzi.</string>
     <string name="premium_status_unavailable">Google Play nie jest dostępne na tym urządzeniu lub nie udało się wczytać pakietu. Sprawdź połączenie i spróbuj ponownie.</string>
     <string name="premium_status_error">Zakup nie został zrealizowany. Nic nie pobrano; możesz spróbować ponownie.</string>
@@ -687,10 +693,10 @@
     <string name="home_analytics_consent_refuse">Nie, dziękuję</string>
     <string name="home_analytics_consent_accept">Udostępniaj</string>
     <string name="home_premium_card_title">Pakiet premium</string>
-    <string name="home_premium_card_text">Dziewięć kolorów klawiatury, własne instrukcje AI i schowek, który przechowuje kopie przez 7 dni.</string>
+    <string name="home_premium_card_text">Kolory, animowane tła, kształty klawiszy i czcionki klawiatury, własne instrukcje dla AI oraz schowek, który przechowuje kopie przez 7 dni.</string>
     <string name="home_premium_card_button">Odkryj</string>
     <string name="home_premium_card_close">Ukryj</string>
-    <string name="home_row_premium_subtitle_offer">Kolory, instrukcje AI, rozszerzony schowek</string>
+    <string name="home_row_premium_subtitle_offer">Kolory, tła, czcionki, instrukcje AI, schowek</string>
     <string name="home_row_premium_subtitle_active">Aktywny, dziękujemy!</string>
     <string name="home_section_debug">Debug</string>
     <string name="home_debug_premium">Pakiet premium: %1$s</string>
@@ -705,9 +711,13 @@
     <string name="onboarding_step3_title_done">Test wykonany</string>
     <string name="onboarding_step4_title">Włącz AI</string>
     <string name="onboarding_step4_title_done">AI gotowa</string>
-    <string name="onboarding_step4_hint">Korekta, czat i dyktowanie wymagają modelu, pobieranego raz i używanego bez internetu. Zalecany dla Twojego telefonu: %1$s.</string>
+    <string name="onboarding_step4_hint">Korekta i czat wymagają modelu, pobieranego raz i używanego bez internetu. Zalecany dla Twojego telefonu: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Dostępne po wybraniu Taipo.</string>
     <string name="onboarding_step4_button">Pobierz %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Włącz dyktowanie głosowe</string>
+    <string name="onboarding_step5_title_done">Dyktowanie gotowe</string>
+    <string name="onboarding_step5_hint">Dyktowanie korzysta z modelu głosowego pobieranego raz i działającego offline: Twój głos nigdy nie opuszcza telefonu.</string>
+    <string name="onboarding_step5_button">Pobierz model głosowy (%1$s)</string>
     <string name="tip_delete_words">Przesuń ← po ⌫, aby usuwać całe słowa</string>
     <string name="tip_move_cursor">Przesuń po spacji, aby przesunąć kursor</string>
     <string name="tip_switch_language">Przytrzymaj Enter, a potem globus</string>
@@ -730,4 +740,25 @@
     <string name="floating_a11y_dock">Zadokuj klawiaturę na dole</string>
     <string name="floating_a11y_floating">Klawiatura pływająca</string>
     <string name="floating_a11y_docked">Klawiatura zadokowana na dole</string>
+    <!-- Nouveautés de la version (WhatsNew) -->
+    <string name="whats_new_title">Nowości</string>
+    <string name="whats_new_heading">Nowości w Taipo 3</string>
+    <string name="whats_new_intro">Oto co zmienia się w tej wersji.</string>
+    <string name="whats_new_pill">Nowości</string>
+    <string name="whats_new_pill_description">Nowości w Taipo 3. Dotknij, aby poznać je w aplikacji.</string>
+    <string name="home_row_whats_new_subtitle">Co zmienia się w Taipo 3</string>
+    <string name="whats_new_floating_title">Pływająca klawiatura</string>
+    <string name="whats_new_floating_body">Odłącz klawiaturę i umieść ją w dowolnym miejscu ekranu: przytrzymaj Enter i wybierz pływającą klawiaturę. Przeciągnij uchwyt na sam dół, aby ją przypiąć.</string>
+    <string name="whats_new_languages_title">15 języków</string>
+    <string name="whats_new_languages_body">Polski, rumuński, czeski, węgierski, szwedzki, duński, norweski i fiński dołączają do klawiatury. Słownik każdego języka pobiera się sam, a francuski i angielski działają od razu po instalacji, nawet bez sieci.</string>
+    <string name="whats_new_appearance_title">Wygląd na Twoją miarę</string>
+    <string name="whats_new_appearance_body">Dziewięć kształtów klawiszy i trzy style animacji (Sprężyna, Żwawa, Galaretka) na stronie Wygląd. Z pakietem premium: czcionki klawiatury i animowane tło podczas pisania. Ekrany aplikacji także stosują wybrany motyw.</string>
+    <string name="whats_new_dictation_title">Transkrypcja AI ze wszystkimi modelami</string>
+    <string name="whats_new_dictation_body">Mrówka i Koliber też zamieniają to, co mówisz, w dobrze napisaną wiadomość dzięki modelowi głosowemu. Z tymi modelami nagranie może trwać do 10 minut.</string>
+    <string name="whats_new_digits_title">Cyfry jednym gestem</string>
+    <string name="whats_new_digits_body">Przesuń w dół po klawiszu z górnego rzędu, aby wpisać jego cyfrę bez zmiany strony.</string>
+    <string name="whats_new_enter_title">Bardziej przydatny Enter</string>
+    <string name="whats_new_enter_body">Wykonuje akcję pola (wyślij, szukaj, dalej) i pokazuje jej ikonę.</string>
+    <string name="whats_new_privacy_title">Jeszcze więcej prywatności</string>
+    <string name="whats_new_privacy_body">Poufne kopie, takie jak hasła, nigdy nie są przechowywane w schowku, a anonimowy pomiar użycia startuje tylko za Twoją zgodą.</string>
 </resources>

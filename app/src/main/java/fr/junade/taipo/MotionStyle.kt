@@ -2,6 +2,8 @@ package fr.junade.taipo
 
 import kotlin.math.cos
 import kotlin.math.exp
+import kotlin.math.max
+import kotlin.math.roundToLong
 import kotlin.math.sin
 import kotlin.math.sqrt
 
@@ -16,7 +18,11 @@ import kotlin.math.sqrt
  * - [JELLY] (Gelée, réservé au pack premium) : ressort plus souple, et la vue s'écrase puis s'étire en se posant ([stretchX],
  *   [stretchY]).
  *
- * Les gestes qui suivent le doigt (glissement des chiffres, clavier flottant, mode une main) gardent leur propre ressort.
+ * Les animations qui ont leur propre réglage (icône Maj, balancier d'Effacer, trait de la barre espace, glissement des chiffres,
+ * clavier flottant, mode une main, robot, envoi du chat, coche de Corriger) suivent aussi le style depuis le 13/11/2026 : leur
+ * réglage est celui du style Ressort, et [tuneStiffness], [tuneDampingRatio], [tuneDamping], [tuneSeconds], [tuneDurationMs] et
+ * [tuneOvershootTension] le transposent dans le style choisi (identique en Ressort ; deux fois plus vif et sans rebond en Vif ;
+ * plus lent et plus rebondi en Gelée). Les boucles continues (chargement, ondes, orbite) gardent leur rythme.
  * Animations coupées dans les réglages système : rien ne bouge, quel que soit le style. Logique pure, testée par `MotionStyleTest`.
  */
 enum class MotionStyle(
@@ -44,6 +50,41 @@ enum class MotionStyle(
     val damping: Float get() = 2f * zeta * omega
 
     fun isAvailable(premium: Boolean): Boolean = premium || !requiresPremium
+
+    /** Vitesse relative au style Ressort (rapport des pulsations) : 1 en Ressort, 2,1 en Vif, 0,85 en Gelée. */
+    val speed: Float get() = omega / SPRING_OMEGA
+
+    /** Raideur d'un ressort réglé pour Ressort, transposée dans ce style (pulsation multipliée par [speed]). */
+    fun tuneStiffness(stiffness: Float): Float = if (this == SPRING) stiffness else stiffness * speed * speed
+
+    /**
+     * Ratio d'amortissement d'un ressort réglé pour Ressort, transposé dans ce style : au moins 1 (aucun dépassement) en Vif,
+     * réduit dans le même rapport que [zeta] en Gelée (plus de rebonds), inchangé en Ressort.
+     */
+    fun tuneDampingRatio(ratio: Float): Float = when {
+        this == SPRING -> ratio
+        zeta >= 1f -> max(ratio, 1f)
+        else -> ratio * zeta / SPRING_ZETA
+    }
+
+    /** Amortissement absolu (masse 1) d'un ressort de raideur [stiffness] réglé pour Ressort, transposé dans ce style. */
+    fun tuneDamping(stiffness: Float, damping: Float): Float {
+        if (this == SPRING || stiffness <= 0f) return damping
+        return 2f * tuneDampingRatio(damping / (2f * sqrt(stiffness))) * sqrt(tuneStiffness(stiffness))
+    }
+
+    /** Durée (secondes) d'une animation réglée pour Ressort, dans ce style. */
+    fun tuneSeconds(seconds: Float): Float = if (this == SPRING) seconds else seconds / speed
+
+    /** Durée (millisecondes) d'une animation réglée pour Ressort, dans ce style. */
+    fun tuneDurationMs(durationMs: Long): Long = if (this == SPRING) durationMs else (durationMs / speed).roundToLong()
+
+    /** Tension d'un `OvershootInterpolator` réglé pour Ressort : aucun dépassement en Vif, un dépassement plus marqué en Gelée. */
+    fun tuneOvershootTension(tension: Float): Float = when {
+        this == SPRING -> tension
+        zeta >= 1f -> 0f
+        else -> tension * SPRING_ZETA / zeta
+    }
 
     /**
      * Largeur relative d'une vue dont le ressort vaut [value] (1 = posée) : plus large quand le ressort dépasse sa place, plus
@@ -74,6 +115,10 @@ enum class MotionStyle(
 
         /** Plus petite proportion qu'une vue peut prendre en s'étirant. */
         private const val MIN_STRETCH = 0.2f
+
+        /** Pulsation et amortissement du style Ressort, référence des réglages propres à chaque animation. */
+        private const val SPRING_OMEGA = 20f
+        private const val SPRING_ZETA = 0.456f
 
         /**
          * Style appliqué en ce moment, déjà ramené à Ressort s'il est réservé au pack et que celui-ci n'est pas actif

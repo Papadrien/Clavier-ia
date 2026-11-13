@@ -24,7 +24,12 @@ class UxReviewTest {
         val done = start.copy(tried = true, aiReady = true)
         assertEquals(StepStatus.DONE, done.tryIt)
         assertEquals(StepStatus.DONE, done.activateAi)
-        assertTrue(done.complete)
+        // Étape 5 : l'accueil n'est complet qu'une fois le modèle vocal (dictée) téléchargé.
+        assertEquals(StepStatus.CURRENT, done.activateVoice)
+        assertFalse(done.complete)
+        val withVoice = done.copy(voiceReady = true)
+        assertEquals(StepStatus.DONE, withVoice.activateVoice)
+        assertTrue(withVoice.complete)
     }
 
     @Test
