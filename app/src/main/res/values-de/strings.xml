@@ -697,9 +697,13 @@
     <string name="onboarding_step3_title_done">Test abgeschlossen</string>
     <string name="onboarding_step4_title">KI aktivieren</string>
     <string name="onboarding_step4_title_done">KI bereit</string>
-    <string name="onboarding_step4_hint">Korrigieren, Chat und Diktat brauchen ein Modell, das einmal heruntergeladen und offline genutzt wird. Empfohlen für Ihr Telefon: %1$s.</string>
+    <string name="onboarding_step4_hint">Korrigieren und Chat brauchen ein Modell, das einmal heruntergeladen und offline genutzt wird. Empfohlen für Ihr Telefon: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Verfügbar, sobald Taipo ausgewählt ist.</string>
     <string name="onboarding_step4_button">%1$s herunterladen (%2$s)</string>
+    <string name="onboarding_step5_title">Sprachdiktat aktivieren</string>
+    <string name="onboarding_step5_title_done">Diktat bereit</string>
+    <string name="onboarding_step5_hint">Das Diktat nutzt ein Sprachmodell, das einmal heruntergeladen und offline verwendet wird: Ihre Stimme verlässt nie das Telefon.</string>
+    <string name="onboarding_step5_button">Sprachmodell herunterladen (%1$s)</string>
     <string name="tip_delete_words">Auf ⌫ nach ← wischen, um ganze Wörter zu löschen</string>
     <string name="tip_move_cursor">Auf der Leertaste wischen, um den Cursor zu bewegen</string>
     <string name="tip_switch_language">Eingabetaste lange drücken, dann der Globus</string>

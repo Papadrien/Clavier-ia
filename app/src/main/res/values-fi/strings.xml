@@ -697,9 +697,13 @@
     <string name="onboarding_step3_title_done">Testi tehty</string>
     <string name="onboarding_step4_title">Ota tekoäly käyttöön</string>
     <string name="onboarding_step4_title_done">Tekoäly valmis</string>
-    <string name="onboarding_step4_hint">Korjaus, chat ja sanelu tarvitsevat mallin, joka ladataan kerran ja jota käytetään ilman verkkoyhteyttä. Suositus puhelimellesi: %1$s.</string>
+    <string name="onboarding_step4_hint">Korjaus ja chat tarvitsevat mallin, joka ladataan kerran ja jota käytetään ilman verkkoyhteyttä. Suositus puhelimellesi: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Käytettävissä, kun Taipo on valittu.</string>
     <string name="onboarding_step4_button">Lataa %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Ota puhesanelu käyttöön</string>
+    <string name="onboarding_step5_title_done">Sanelu valmis</string>
+    <string name="onboarding_step5_hint">Sanelu käyttää puhemallia, joka ladataan kerran ja toimii ilman verkkoa: äänesi ei koskaan poistu puhelimesta.</string>
+    <string name="onboarding_step5_button">Lataa puhemalli (%1$s)</string>
     <string name="tip_delete_words">Pyyhkäise ← näppäimellä ⌫ poistaaksesi kokonaisia sanoja</string>
     <string name="tip_move_cursor">Pyyhkäise välilyönnillä siirtääksesi kohdistinta</string>
     <string name="tip_switch_language">Paina Enteriä pitkään ja valitse sitten maapallo</string>

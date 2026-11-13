@@ -697,9 +697,13 @@
     <string name="onboarding_step3_title_done">Teszt kész</string>
     <string name="onboarding_step4_title">Az MI bekapcsolása</string>
     <string name="onboarding_step4_title_done">MI kész</string>
-    <string name="onboarding_step4_hint">A javításhoz, a csevegéshez és a diktáláshoz modell kell, amelyet egyszer kell letölteni, és internet nélkül használható. A telefonjához ajánlott: %1$s.</string>
+    <string name="onboarding_step4_hint">A javításhoz és a csevegéshez modell kell, amelyet egyszer kell letölteni, és internet nélkül használható. A telefonjához ajánlott: %1$s.</string>
     <string name="onboarding_step4_hint_locked">A Taipo kiválasztása után érhető el.</string>
     <string name="onboarding_step4_button">%1$s letöltése (%2$s)</string>
+    <string name="onboarding_step5_title">Hangalapú diktálás bekapcsolása</string>
+    <string name="onboarding_step5_title_done">A diktálás kész</string>
+    <string name="onboarding_step5_hint">A diktálás egy hangmodellt használ, amelyet egyszer kell letölteni, és offline működik: a hangja sosem hagyja el a telefont.</string>
+    <string name="onboarding_step5_button">Hangmodell letöltése (%1$s)</string>
     <string name="tip_delete_words">Húzza ← irányba a ⌫ billentyűn egész szavak törléséhez</string>
     <string name="tip_move_cursor">Húzza az ujját a szóközön a kurzor mozgatásához</string>
     <string name="tip_switch_language">Tartsa lenyomva az Entert, majd a földgömböt</string>

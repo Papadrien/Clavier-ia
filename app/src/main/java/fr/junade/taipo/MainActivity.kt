@@ -49,6 +49,7 @@ class MainActivity : Activity() {
     private lateinit var step2: StepViews
     private lateinit var step3: StepViews
     private lateinit var step4: StepViews
+    private lateinit var step5: StepViews
     private lateinit var tryInput: EditText
 
     /** Relit l'achat du pass chez Google Play à chaque retour sur l'accueil (achat fait ailleurs, remboursement). */
@@ -80,6 +81,7 @@ class MainActivity : Activity() {
         step2 = stepViews(2, R.id.step2_card, R.id.step2_badge, R.id.step2_title, R.id.step2_hint, R.id.button_select)
         step3 = stepViews(3, R.id.step3_card, R.id.step3_badge, R.id.step3_title, R.id.step3_hint, null)
         step4 = stepViews(4, R.id.step4_card, R.id.step4_badge, R.id.step4_title, R.id.step4_hint, R.id.button_activate_ai)
+        step5 = stepViews(5, R.id.step5_card, R.id.step5_badge, R.id.step5_title, R.id.step5_hint, R.id.button_activate_voice)
         tryInput = findViewById(R.id.onboarding_try_input)
         // Étape 3 : faite dès que quelques mots ont été tapés dans le champ d'essai (retenu, l'étape ne revient pas).
         tryInput.addTextChangedListener(object : TextWatcher {
@@ -93,6 +95,10 @@ class MainActivity : Activity() {
         })
         findViewById<View>(R.id.button_activate_ai).setOnClickListener {
             startActivity(Intent(this, ModelDownloadActivity::class.java))
+        }
+        // Étape 5 : le modèle vocal (dictée) se télécharge depuis son propre écran (story 8.15).
+        findViewById<View>(R.id.button_activate_voice).setOnClickListener {
+            startActivity(Intent(this, VoiceModelDownloadActivity::class.java))
         }
 
         findViewById<View>(R.id.button_enable).setOnClickListener {
@@ -410,7 +416,15 @@ class MainActivity : Activity() {
         val defaultId = Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
         val models = ModelPreferences(this)
         val aiReady = models.activeModel()?.let(models::isInstalled) == true
-        return OnboardingState.from(enabledPackages, defaultId, packageName, homePrefs().getBoolean(KEY_TRIED, false), aiReady)
+        val voiceReady = ModelStatus.forVoiceModel(VoiceModelPreferences(this).providedCount(), VoiceModelFile.all().size) == ModelStatus.READY
+        return OnboardingState.from(
+            enabledPackages,
+            defaultId,
+            packageName,
+            tried = homePrefs().getBoolean(KEY_TRIED, false),
+            aiReady = aiReady,
+            voiceReady = voiceReady,
+        )
     }
 
     /** Ligne de réglage de l'accueil (lot UX 3) : pose le titre et le sous-titre, ouvre [target] au toucher. */
@@ -476,6 +490,19 @@ class MainActivity : Activity() {
             val size = Formatter.formatShortFileSize(this, model.approxDownloadBytes ?: model.approxSizeBytesMax)
             step4.hint.text = getString(R.string.onboarding_step4_hint, name)
             (step4.action as? TextView)?.text = getString(R.string.onboarding_step4_button, name, size)
+        }
+        renderStep(
+            step5,
+            state.activateVoice,
+            R.string.onboarding_step5_title,
+            R.string.onboarding_step5_title_done,
+            R.string.onboarding_step5_hint,
+            R.string.onboarding_step4_hint_locked, // même condition que l'étape 4 : Taipo sélectionné
+        )
+        // Étape 5 : taille du modèle vocal (ses 4 fichiers) sur le bouton.
+        if (state.activateVoice == StepStatus.CURRENT) {
+            val size = Formatter.formatShortFileSize(this, VoiceModelFile.totalApproxBytes())
+            (step5.action as? TextView)?.text = getString(R.string.onboarding_step5_button, size)
         }
         // Le champ d'essai reste là tant que l'étape 3 est en cours, et juste après (pour finir sa phrase).
         tryInput.visibility = if (state.tryIt == StepStatus.CURRENT || (state.tryIt == StepStatus.DONE && tryInput.hasFocus())) View.VISIBLE else View.GONE

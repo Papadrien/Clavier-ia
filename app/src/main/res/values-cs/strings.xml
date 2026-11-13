@@ -705,9 +705,13 @@
     <string name="onboarding_step3_title_done">Test hotový</string>
     <string name="onboarding_step4_title">Zapněte AI</string>
     <string name="onboarding_step4_title_done">AI připravena</string>
-    <string name="onboarding_step4_hint">Oprava, chat a diktování potřebují model, který se stáhne jednou a používá se bez připojení. Doporučeno pro váš telefon: %1$s.</string>
+    <string name="onboarding_step4_hint">Oprava a chat potřebují model, který se stáhne jednou a používá se bez připojení. Doporučeno pro váš telefon: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Dostupné po zvolení Taipo.</string>
     <string name="onboarding_step4_button">Stáhnout %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Zapnout hlasové diktování</string>
+    <string name="onboarding_step5_title_done">Diktování připraveno</string>
+    <string name="onboarding_step5_hint">Diktování používá hlasový model, který se stáhne jednou a funguje offline: váš hlas nikdy neopustí telefon.</string>
+    <string name="onboarding_step5_button">Stáhnout hlasový model (%1$s)</string>
     <string name="tip_delete_words">Přejetím ← po ⌫ smažete celá slova</string>
     <string name="tip_move_cursor">Přejetím po mezerníku posunete kurzor</string>
     <string name="tip_switch_language">Podržte Enter, pak glóbus</string>

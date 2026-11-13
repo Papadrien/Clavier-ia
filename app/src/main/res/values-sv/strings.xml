@@ -697,9 +697,13 @@
     <string name="onboarding_step3_title_done">Testet är klart</string>
     <string name="onboarding_step4_title">Aktivera AI</string>
     <string name="onboarding_step4_title_done">AI klar</string>
-    <string name="onboarding_step4_hint">Korrigering, chatt och diktering kräver en modell som laddas ned en gång och används utan uppkoppling. Rekommenderad för din telefon: %1$s.</string>
+    <string name="onboarding_step4_hint">Korrigering och chatt kräver en modell som laddas ned en gång och används utan uppkoppling. Rekommenderad för din telefon: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Tillgängligt när Taipo är valt.</string>
     <string name="onboarding_step4_button">Ladda ned %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Aktivera röstdiktering</string>
+    <string name="onboarding_step5_title_done">Diktering klar</string>
+    <string name="onboarding_step5_hint">Dikteringen använder en röstmodell som laddas ner en gång och används offline: din röst lämnar aldrig telefonen.</string>
+    <string name="onboarding_step5_button">Ladda ner röstmodellen (%1$s)</string>
     <string name="tip_delete_words">Svep ← på ⌫ för att radera hela ord</string>
     <string name="tip_move_cursor">Svep på mellanslag för att flytta markören</string>
     <string name="tip_switch_language">Tryck länge på Retur och sedan på jordgloben</string>

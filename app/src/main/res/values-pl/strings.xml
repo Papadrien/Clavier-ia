@@ -705,9 +705,13 @@
     <string name="onboarding_step3_title_done">Test wykonany</string>
     <string name="onboarding_step4_title">Włącz AI</string>
     <string name="onboarding_step4_title_done">AI gotowa</string>
-    <string name="onboarding_step4_hint">Korekta, czat i dyktowanie wymagają modelu, pobieranego raz i używanego bez internetu. Zalecany dla Twojego telefonu: %1$s.</string>
+    <string name="onboarding_step4_hint">Korekta i czat wymagają modelu, pobieranego raz i używanego bez internetu. Zalecany dla Twojego telefonu: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Dostępne po wybraniu Taipo.</string>
     <string name="onboarding_step4_button">Pobierz %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Włącz dyktowanie głosowe</string>
+    <string name="onboarding_step5_title_done">Dyktowanie gotowe</string>
+    <string name="onboarding_step5_hint">Dyktowanie korzysta z modelu głosowego pobieranego raz i działającego offline: Twój głos nigdy nie opuszcza telefonu.</string>
+    <string name="onboarding_step5_button">Pobierz model głosowy (%1$s)</string>
     <string name="tip_delete_words">Przesuń ← po ⌫, aby usuwać całe słowa</string>
     <string name="tip_move_cursor">Przesuń po spacji, aby przesunąć kursor</string>
     <string name="tip_switch_language">Przytrzymaj Enter, a potem globus</string>

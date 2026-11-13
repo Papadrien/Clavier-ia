@@ -697,9 +697,13 @@
     <string name="onboarding_step3_title_done">Test gedaan</string>
     <string name="onboarding_step4_title">AI inschakelen</string>
     <string name="onboarding_step4_title_done">AI klaar</string>
-    <string name="onboarding_step4_hint">Corrigeren, Chat en dictee hebben een model nodig, één keer gedownload en offline gebruikt. Aanbevolen voor je telefoon: %1$s.</string>
+    <string name="onboarding_step4_hint">Corrigeren en Chat hebben een model nodig, één keer gedownload en offline gebruikt. Aanbevolen voor je telefoon: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Beschikbaar zodra Taipo is gekozen.</string>
     <string name="onboarding_step4_button">%1$s downloaden (%2$s)</string>
+    <string name="onboarding_step5_title">Spraakdicteren inschakelen</string>
+    <string name="onboarding_step5_title_done">Dicteren klaar</string>
+    <string name="onboarding_step5_hint">Dicteren gebruikt een spraakmodel dat één keer wordt gedownload en offline werkt: je stem verlaat de telefoon nooit.</string>
+    <string name="onboarding_step5_button">Spraakmodel downloaden (%1$s)</string>
     <string name="tip_delete_words">Veeg ← over ⌫ om hele woorden te wissen</string>
     <string name="tip_move_cursor">Veeg over de spatiebalk om de cursor te verplaatsen</string>
     <string name="tip_switch_language">Houd Enter ingedrukt, dan de wereldbol</string>

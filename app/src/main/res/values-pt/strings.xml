@@ -701,9 +701,13 @@
     <string name="onboarding_step3_title_done">Teste feito</string>
     <string name="onboarding_step4_title">Ativar a IA</string>
     <string name="onboarding_step4_title_done">IA pronta</string>
-    <string name="onboarding_step4_hint">Corrigir, Chat e o ditado precisam de um modelo, baixado uma vez e usado offline. Recomendado para o seu telefone: %1$s.</string>
+    <string name="onboarding_step4_hint">Corrigir e Chat precisam de um modelo, baixado uma vez e usado offline. Recomendado para o seu telefone: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Disponível quando o Taipo estiver selecionado.</string>
     <string name="onboarding_step4_button">Baixar %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Ativar o ditado por voz</string>
+    <string name="onboarding_step5_title_done">Ditado pronto</string>
+    <string name="onboarding_step5_hint">O ditado usa um modelo de voz, baixado uma vez e usado offline: sua voz nunca sai do telefone.</string>
+    <string name="onboarding_step5_button">Baixar o modelo de voz (%1$s)</string>
     <string name="tip_delete_words">Deslize ← em ⌫ para apagar palavras inteiras</string>
     <string name="tip_move_cursor">Deslize na barra de espaço para mover o cursor</string>
     <string name="tip_switch_language">Mantenha pressionado Enter e depois o globo</string>

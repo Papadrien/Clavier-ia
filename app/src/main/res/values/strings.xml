@@ -727,9 +727,13 @@
     <string name="onboarding_step3_title_done">Test done</string>
     <string name="onboarding_step4_title">Turn on AI</string>
     <string name="onboarding_step4_title_done">AI ready</string>
-    <string name="onboarding_step4_hint">Correct, Chat and dictation need a model, downloaded once and used offline. Recommended for your phone: %1$s.</string>
+    <string name="onboarding_step4_hint">Correct and Chat need a model, downloaded once and used offline. Recommended for your phone: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Available once Taipo is selected.</string>
     <string name="onboarding_step4_button">Download %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Turn on voice dictation</string>
+    <string name="onboarding_step5_title_done">Dictation ready</string>
+    <string name="onboarding_step5_hint">Dictation uses a voice model, downloaded once and used offline: your voice never leaves the phone.</string>
+    <string name="onboarding_step5_button">Download the voice model (%1$s)</string>
     <!-- Gesture tips (once each) -->
     <string name="tip_delete_words">Swipe ← on ⌫ to delete whole words</string>
     <string name="tip_move_cursor">Swipe on Space to move the cursor</string>

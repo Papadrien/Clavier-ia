@@ -50,4 +50,20 @@ class OnboardingStateTest {
         assertEquals(StepStatus.CURRENT, state.activate)
         assertEquals(StepStatus.LOCKED, state.choose)
     }
+
+    @Test
+    fun `etape dictee verrouillee tant que Taipo n'est pas choisi`() {
+        val state = OnboardingState.from(listOf(pkg), "com.google.android.inputmethod.latin/.LatinIME", pkg)
+        assertEquals(StepStatus.LOCKED, state.activateVoice)
+    }
+
+    @Test
+    fun `etape dictee a faire puis faite quand le modele vocal est complet`() {
+        val pending = OnboardingState.from(listOf(pkg), "$pkg/.TaipoIme", pkg, tried = true, aiReady = true)
+        assertEquals(StepStatus.CURRENT, pending.activateVoice)
+        assertEquals(false, pending.complete)
+        val done = OnboardingState.from(listOf(pkg), "$pkg/.TaipoIme", pkg, tried = true, aiReady = true, voiceReady = true)
+        assertEquals(StepStatus.DONE, done.activateVoice)
+        assertEquals(true, done.complete)
+    }
 }

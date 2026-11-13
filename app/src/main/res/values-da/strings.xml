@@ -697,9 +697,13 @@
     <string name="onboarding_step3_title_done">Testen er udført</string>
     <string name="onboarding_step4_title">Slå AI til</string>
     <string name="onboarding_step4_title_done">AI er klar</string>
-    <string name="onboarding_step4_hint">Rettelse, chat og diktering kræver en model, der downloades én gang og bruges uden internet. Anbefalet til din telefon: %1$s.</string>
+    <string name="onboarding_step4_hint">Rettelse og chat kræver en model, der downloades én gang og bruges uden internet. Anbefalet til din telefon: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Tilgængelig, når Taipo er valgt.</string>
     <string name="onboarding_step4_button">Download %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Slå stemmediktering til</string>
+    <string name="onboarding_step5_title_done">Diktering klar</string>
+    <string name="onboarding_step5_hint">Diktering bruger en stemmemodel, der hentes én gang og bruges offline: din stemme forlader aldrig telefonen.</string>
+    <string name="onboarding_step5_button">Hent stemmemodellen (%1$s)</string>
     <string name="tip_delete_words">Stryg ← på ⌫ for at slette hele ord</string>
     <string name="tip_move_cursor">Stryg på mellemrumstasten for at flytte markøren</string>
     <string name="tip_switch_language">Hold Enter nede, og vælg derefter globussen</string>

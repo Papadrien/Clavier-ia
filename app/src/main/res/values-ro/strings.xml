@@ -701,9 +701,13 @@
     <string name="onboarding_step3_title_done">Test făcut</string>
     <string name="onboarding_step4_title">Activează AI-ul</string>
     <string name="onboarding_step4_title_done">AI gata</string>
-    <string name="onboarding_step4_hint">Corectarea, chatul și dictarea au nevoie de un model, descărcat o dată și folosit fără internet. Recomandat pentru telefonul tău: %1$s.</string>
+    <string name="onboarding_step4_hint">Corectarea și chatul au nevoie de un model, descărcat o dată și folosit fără internet. Recomandat pentru telefonul tău: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Disponibil după ce Taipo este selectat.</string>
     <string name="onboarding_step4_button">Descarcă %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Activează dictarea vocală</string>
+    <string name="onboarding_step5_title_done">Dictare pregătită</string>
+    <string name="onboarding_step5_hint">Dictarea folosește un model vocal, descărcat o singură dată și folosit offline: vocea ta nu părăsește niciodată telefonul.</string>
+    <string name="onboarding_step5_button">Descarcă modelul vocal (%1$s)</string>
     <string name="tip_delete_words">Glisează ← pe ⌫ pentru a șterge cuvinte întregi</string>
     <string name="tip_move_cursor">Glisează pe Spațiu pentru a muta cursorul</string>
     <string name="tip_switch_language">Apasă lung Enter, apoi globul</string>

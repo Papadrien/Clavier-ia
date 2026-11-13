@@ -701,9 +701,13 @@
     <string name="onboarding_step3_title_done">Prova fatta</string>
     <string name="onboarding_step4_title">Attiva l\'IA</string>
     <string name="onboarding_step4_title_done">IA pronta</string>
-    <string name="onboarding_step4_hint">Correggi, Chat e dettatura richiedono un modello, scaricato una volta e usato offline. Consigliato per il tuo telefono: %1$s.</string>
+    <string name="onboarding_step4_hint">Correggi e Chat richiedono un modello, scaricato una volta e usato offline. Consigliato per il tuo telefono: %1$s.</string>
     <string name="onboarding_step4_hint_locked">Disponibile quando Taipo è selezionata.</string>
     <string name="onboarding_step4_button">Scarica %1$s (%2$s)</string>
+    <string name="onboarding_step5_title">Attiva la dettatura vocale</string>
+    <string name="onboarding_step5_title_done">Dettatura pronta</string>
+    <string name="onboarding_step5_hint">La dettatura usa un modello vocale, scaricato una volta e usato offline: la tua voce non lascia mai il telefono.</string>
+    <string name="onboarding_step5_button">Scarica il modello vocale (%1$s)</string>
     <string name="tip_delete_words">Scorri ← su ⌫ per cancellare parole intere</string>
     <string name="tip_move_cursor">Scorri sulla barra spaziatrice per spostare il cursore</string>
     <string name="tip_switch_language">Tieni premuto Invio, poi il globo</string>
