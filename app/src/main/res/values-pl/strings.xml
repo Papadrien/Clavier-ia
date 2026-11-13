@@ -608,6 +608,8 @@
     <string name="backdrop_bubbles">Bańki</string>
     <string name="backdrop_crystal">Kryształ</string>
     <string name="backdrop_waves">Fale</string>
+    <string name="backdrop_hearts">Serca</string>
+    <string name="backdrop_flowers">Kwiaty</string>
     <string name="theme_backdrop_free">Bezpłatne</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Czcionka klawiatury</string>

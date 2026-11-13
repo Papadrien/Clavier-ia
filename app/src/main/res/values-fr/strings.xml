@@ -646,6 +646,8 @@
     <string name="backdrop_bubbles">Bulles</string>
     <string name="backdrop_crystal">Cristal</string>
     <string name="backdrop_waves">Ondes</string>
+    <string name="backdrop_hearts">Cœurs</string>
+    <string name="backdrop_flowers">Fleurs</string>
     <string name="theme_backdrop_free">Gratuit</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Police du clavier</string>

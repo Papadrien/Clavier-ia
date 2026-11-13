@@ -600,6 +600,8 @@
     <string name="backdrop_bubbles">Blasen</string>
     <string name="backdrop_crystal">Kristall</string>
     <string name="backdrop_waves">Wellen</string>
+    <string name="backdrop_hearts">Herzen</string>
+    <string name="backdrop_flowers">Blumen</string>
     <string name="theme_backdrop_free">Kostenlos</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Tastaturschrift</string>

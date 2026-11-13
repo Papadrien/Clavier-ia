@@ -608,6 +608,8 @@
     <string name="backdrop_bubbles">Bubliny</string>
     <string name="backdrop_crystal">Krystal</string>
     <string name="backdrop_waves">Vlny</string>
+    <string name="backdrop_hearts">Srdce</string>
+    <string name="backdrop_flowers">Květiny</string>
     <string name="theme_backdrop_free">Zdarma</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Písmo klávesnice</string>

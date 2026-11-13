@@ -600,6 +600,8 @@
     <string name="backdrop_bubbles">Bubblor</string>
     <string name="backdrop_crystal">Kristall</string>
     <string name="backdrop_waves">Vågor</string>
+    <string name="backdrop_hearts">Hjärtan</string>
+    <string name="backdrop_flowers">Blommor</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Tangentbordets typsnitt</string>

@@ -604,6 +604,8 @@
     <string name="backdrop_bubbles">Bolhas</string>
     <string name="backdrop_crystal">Cristal</string>
     <string name="backdrop_waves">Ondas</string>
+    <string name="backdrop_hearts">Corações</string>
+    <string name="backdrop_flowers">Flores</string>
     <string name="theme_backdrop_free">Grátis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Fonte do teclado</string>

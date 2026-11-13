@@ -600,6 +600,8 @@
     <string name="backdrop_bubbles">Bellen</string>
     <string name="backdrop_crystal">Kristal</string>
     <string name="backdrop_waves">Golven</string>
+    <string name="backdrop_hearts">Hartjes</string>
+    <string name="backdrop_flowers">Bloemen</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Lettertype van het toetsenbord</string>

@@ -627,6 +627,8 @@
     <string name="backdrop_bubbles">Bubbles</string>
     <string name="backdrop_crystal">Crystal</string>
     <string name="backdrop_waves">Waves</string>
+    <string name="backdrop_hearts">Hearts</string>
+    <string name="backdrop_flowers">Flowers</string>
     <string name="theme_backdrop_free">Free</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Keyboard font</string>

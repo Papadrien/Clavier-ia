@@ -600,6 +600,8 @@
     <string name="backdrop_bubbles">Buborékok</string>
     <string name="backdrop_crystal">Kristály</string>
     <string name="backdrop_waves">Hullámok</string>
+    <string name="backdrop_hearts">Szívek</string>
+    <string name="backdrop_flowers">Virágok</string>
     <string name="theme_backdrop_free">Ingyenes</string>
     <string name="theme_backdrop_premium">Prémium</string>
     <string name="theme_section_font">Billentyűzet betűtípusa</string>
