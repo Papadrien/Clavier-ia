@@ -27,6 +27,9 @@ Developer v3, bibliothèque standard + `openssl`, sans action tierce).
   PR ne peut pas le lire. Sans lui, l'envoi est sauté avec un avertissement.
 - **versionCode** = numéro d'exécution GitHub (supérieur à 198, dernier code envoyé à la main le 13/11/2026). Un versionCode déjà
   utilisé est refusé par Play : en cas de besoin, fixer `VERSION_CODE`.
+- **Notes de version** : `distribution/release-notes/<langue>.txt` (un fichier par langue de l'application, 500 caractères au plus,
+  vérifié avant l'envoi). Chaque langue de la fiche Play Store reçoit le fichier de sa langue (`fr-FR` → `fr.txt`, `no-NO` → `nb.txt`),
+  sinon `en.txt`. À réécrire à chaque version, en accord avec la page « Nouveautés » de l'application (`WhatsNew.kt`).
 - En cas d'erreur, la modification Play n'est pas validée (rien ne change) ; le message de Google est dans le log du job.
 - Révoquer : supprimer la clé dans Google Cloud (Comptes de service > Clés) ou retirer le compte dans Play Console.
 
