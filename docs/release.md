@@ -17,6 +17,19 @@ L'étape « Setup Android signing » de `.github/workflows/android.yml` (variant
 `apk-release` et `aab-release`).
 Les variables `TAIPO_KEYSTORE_*` restent acceptées en repli pour un build local.
 
+## Envoi automatique sur Google Play (canal de test fermé « alpha »)
+À chaque push sur `main` (merge d'une PR), le job `play-upload` de `.github/workflows/android.yml` envoie l'AAB et `mapping.txt`
+du build release dans le canal **alpha**, publié aux testeurs (`status: completed`). Script : `tools/play_upload.py` (API Google Play
+Developer v3, bibliothèque standard + `openssl`, sans action tierce).
+- **Compte de service** Google Cloud (projet dédié, API « Google Play Android Developer » activée, aucun rôle Cloud), invité dans Play
+  Console avec le seul droit « Publier des applis dans des canaux de test » sur Taipo.
+- **Secret** `PLAY_SERVICE_ACCOUNT_JSON` (clé JSON complète) dans l'**environnement GitHub `play`**, limité à la branche `main` : une
+  PR ne peut pas le lire. Sans lui, l'envoi est sauté avec un avertissement.
+- **versionCode** = numéro d'exécution GitHub (supérieur à 198, dernier code envoyé à la main le 13/11/2026). Un versionCode déjà
+  utilisé est refusé par Play : en cas de besoin, fixer `VERSION_CODE`.
+- En cas d'erreur, la modification Play n'est pas validée (rien ne change) ; le message de Google est dans le log du job.
+- Révoquer : supprimer la clé dans Google Cloud (Comptes de service > Clés) ou retirer le compte dans Play Console.
+
 ## Checklist de validation d'un build release (à faire avant toute diffusion)
 Play exige un **AAB** : `./gradlew bundleRelease` (sortie `app/build/outputs/bundle/release/`). Pour tester sur appareil,
 `assembleRelease` (APK). Les deux utilisent les mêmes règles R8.
