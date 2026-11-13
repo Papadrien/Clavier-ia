@@ -57,17 +57,30 @@ internal class GestureTipPillView(context: Context) : LinearLayout(context) {
             LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f).apply { marginStart = dimen(R.dimen.taipo_bar_gap).toInt() },
         )
         isClickable = true
+        setOnClickListener {
+            val pending = action
+            onClose?.invoke()
+            pending?.invoke()
+        }
         accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
     }
 
     /**
-     * Affiche [message] avec l'icône [iconRes] (ampoule des astuces, étincelles des nouveautés) ; [description] : texte lu par
-     * TalkBack (par défaut « Astuce : … »). Le message défile une fois s'il ne tient pas (animations actives), sinon il est coupé.
+     * Habillage de la pilule : icône (ampoule des astuces, étincelles des nouveautés [WhatsNew]), texte lu par TalkBack (null :
+     * « Astuce : … ») et action d'un toucher (null pour une astuce, qui se ferme seulement ; ouverture de la page des nouveautés).
      */
-    fun setMessage(message: String, iconRes: Int = R.drawable.ic_tip_bulb, description: String? = null) {
+    data class Content(val iconRes: Int = R.drawable.ic_tip_bulb, val description: String? = null, val action: (() -> Unit)? = null)
+
+    /** Fermeture demandée par un toucher (la barre retire la pilule) ; l'action de [Content] est lancée ensuite. */
+    var onClose: (() -> Unit)? = null
+    private var action: (() -> Unit)? = null
+
+    /** Affiche [message] habillé de [content] ; il défile une fois s'il ne tient pas (animations actives), sinon il est coupé. */
+    fun setMessage(message: String, content: Content = Content()) {
         text.text = message
-        icon.setImageDrawable(ContextCompat.getDrawable(context, iconRes))
-        contentDescription = description ?: context.getString(R.string.gesture_tip_description, message)
+        action = content.action
+        icon.setImageDrawable(ContextCompat.getDrawable(context, content.iconRes))
+        contentDescription = content.description ?: context.getString(R.string.gesture_tip_description, message)
         if (ValueAnimator.areAnimatorsEnabled()) {
             text.ellipsize = TextUtils.TruncateAt.MARQUEE
             text.marqueeRepeatLimit = 1

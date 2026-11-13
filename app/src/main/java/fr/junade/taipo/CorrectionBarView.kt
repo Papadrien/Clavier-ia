@@ -90,15 +90,9 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     private val menuActions = AiActionButtons(context, style)
     val voiceButton = ImageButton(context)
 
-    /** Astuce de geste ([showGestureTip]) : pilule posée sur la rangée affichée, entre le premier bouton et Vocal. */
-    private val gestureTip = GestureTipPillView(context)
+    /** Astuce de geste ([showGestureTip]) ou pilule des nouveautés ([WhatsNew]), entre le premier bouton et Vocal ; lue par l'IME. */
+    internal val gestureTip = GestureTipPillView(context)
     private val hideGestureTipRunnable = Runnable { hideGestureTip() }
-
-    /** Action du toucher sur la pilule affichée (nouveautés), null pour une astuce. */
-    private var gestureTipAction: (() -> Unit)? = null
-
-    /** Une astuce ou la pilule des nouveautés est affichée. */
-    val isGestureTipShown: Boolean get() = gestureTip.visibility == View.VISIBLE
 
     private var listener: OnCorrectListener? = null
     private var cancelListener: (() -> Unit)? = null
@@ -257,11 +251,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
         // Astuce de geste : au-dessus des rangées (elle masque ce qu'elle recouvre), marges posées par onMeasure.
         gestureTip.visibility = View.GONE
-        gestureTip.setOnClickListener {
-            val action = gestureTipAction // la pilule des nouveautés ouvre sa page ; une astuce se ferme seulement
-            hideGestureTip()
-            action?.invoke()
-        }
+        gestureTip.onClose = { hideGestureTip() } // au toucher ; la pilule des nouveautés lance ensuite son action
         addView(gestureTip, LayoutParams(LayoutParams.MATCH_PARENT, barHeight, Gravity.TOP).apply { topMargin = paddingV })
 
         // Lot 20 : zone tactile des boutons étendue à 48 dp (36 dp dessinés), sans changer le rendu.
@@ -498,26 +488,10 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
      * Astuce de geste ([GestureTips]) dans la barre, pendant [durationMs] ou jusqu'à un toucher sur la pilule ; la frappe ne la
      * retire pas. Faux si la barre n'est pas affichée (l'astuce sera proposée plus tard).
      */
-    fun showGestureTip(message: String, durationMs: Long): Boolean = showPill(message, durationMs)
-
-    /**
-     * Pilule « Nouveautés » ([WhatsNew]) : même pilule que les astuces, avec des étincelles ; un toucher la ferme et lance
-     * [onClick] (ouverture de la page des nouveautés). Faux si la barre n'est pas affichée.
-     */
-    fun showNewsPill(message: String, description: String, durationMs: Long, onClick: () -> Unit): Boolean =
-        showPill(message, durationMs, R.drawable.ic_whats_new, description, onClick)
-
-    private fun showPill(
-        message: String,
-        durationMs: Long,
-        iconRes: Int = R.drawable.ic_tip_bulb,
-        description: String? = null,
-        action: (() -> Unit)? = null,
-    ): Boolean {
+    internal fun showGestureTip(message: String, durationMs: Long, pill: GestureTipPillView.Content = GestureTipPillView.Content()): Boolean {
         if (!isShown || !isLaidOut || width == 0) return false
         digitTipShown = false
-        gestureTipAction = action
-        gestureTip.setMessage(message, iconRes, description)
+        gestureTip.setMessage(message, pill)
         val wasVisible = gestureTip.visibility == View.VISIBLE
         gestureTip.visibility = View.VISIBLE
         if (!wasVisible) BarReveal.enter(gestureTip, fromEnd = false, full = false)
@@ -528,7 +502,6 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     fun hideGestureTip() {
         digitTipShown = false
-        gestureTipAction = null
         removeCallbacks(hideGestureTipRunnable)
         if (gestureTip.visibility != View.VISIBLE) return
         BarReveal.cancel(gestureTip)

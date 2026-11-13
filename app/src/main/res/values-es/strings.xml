@@ -734,7 +734,7 @@
     <string name="whats_new_title">Novedades</string>
     <string name="whats_new_heading">Novedades de Taipo 3</string>
     <string name="whats_new_intro">Esto es lo que cambia con esta versión.</string>
-    <string name="whats_new_pill">Novedades de Taipo 3: toca para descubrirlas</string>
+    <string name="whats_new_pill">Novedades</string>
     <string name="whats_new_pill_description">Novedades de Taipo 3. Toca para descubrirlas en la app.</string>
     <string name="home_row_whats_new_subtitle">Lo que cambia en Taipo 3</string>
     <string name="whats_new_floating_title">Teclado flotante</string>
@@ -743,7 +743,7 @@
     <string name="whats_new_languages_body">El polaco, el rumano, el checo, el húngaro, el sueco, el danés, el noruego y el finés se suman al teclado. El diccionario de cada idioma se descarga solo, y el francés y el inglés funcionan nada más instalar, incluso sin conexión.</string>
     <string name="whats_new_appearance_title">Un aspecto a tu gusto</string>
     <string name="whats_new_appearance_body">Nueve formas de teclas y tres estilos de animación (Muelle, Ágil, Gelatina) en la página Apariencia. Con el paquete prémium: fuentes del teclado y fondo animado al escribir. Las pantallas de la app también siguen el tema elegido.</string>
-    <string name="whats_new_dictation_title">Dictado con IA con todos los modelos</string>
+    <string name="whats_new_dictation_title">Transcripción con IA con todos los modelos</string>
     <string name="whats_new_dictation_body">Hormiga y Colibrí también convierten lo que dices en un mensaje bien redactado, gracias al modelo de voz. Con estos modelos, una grabación puede durar hasta 10 minutos.</string>
     <string name="whats_new_digits_title">Números con un gesto</string>
     <string name="whats_new_digits_body">Desliza hacia abajo sobre una tecla de la fila superior para escribir su número, sin cambiar de página.</string>

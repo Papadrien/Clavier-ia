@@ -730,7 +730,7 @@
     <string name="whats_new_title">Neuigkeiten</string>
     <string name="whats_new_heading">Neu in Taipo 3</string>
     <string name="whats_new_intro">Das ändert sich mit dieser Version.</string>
-    <string name="whats_new_pill">Neu in Taipo 3: zum Entdecken tippen</string>
+    <string name="whats_new_pill">Neuigkeiten</string>
     <string name="whats_new_pill_description">Neuigkeiten in Taipo 3. Tippen, um sie in der App zu entdecken.</string>
     <string name="home_row_whats_new_subtitle">Was sich in Taipo 3 ändert</string>
     <string name="whats_new_floating_title">Schwebende Tastatur</string>
@@ -739,7 +739,7 @@
     <string name="whats_new_languages_body">Polnisch, Rumänisch, Tschechisch, Ungarisch, Schwedisch, Dänisch, Norwegisch und Finnisch kommen hinzu. Das Wörterbuch jeder Sprache lädt sich selbst herunter, und Französisch und Englisch funktionieren direkt nach der Installation, auch offline.</string>
     <string name="whats_new_appearance_title">Ein Aussehen nach Ihrem Geschmack</string>
     <string name="whats_new_appearance_body">Neun Tastenformen und drei Animationsstile (Feder, Flink, Gelee) auf der Seite Erscheinungsbild. Mit dem Premium-Paket: Tastaturschriften und ein animierter Hintergrund beim Tippen. Auch die App-Bildschirme folgen dem gewählten Design.</string>
-    <string name="whats_new_dictation_title">KI-Diktat mit allen Modellen</string>
+    <string name="whats_new_dictation_title">KI-Transkription mit allen Modellen</string>
     <string name="whats_new_dictation_body">Auch Ameise und Kolibri machen aus Gesprochenem eine gut formulierte Nachricht, dank des Sprachmodells. Mit diesen Modellen kann eine Aufnahme bis zu 10 Minuten dauern.</string>
     <string name="whats_new_digits_title">Ziffern mit einer Geste</string>
     <string name="whats_new_digits_body">Wischen Sie auf einer Taste der oberen Reihe nach unten, um ihre Ziffer einzugeben, ohne die Seite zu wechseln.</string>

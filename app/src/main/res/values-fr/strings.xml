@@ -781,7 +781,7 @@
     <string name="whats_new_title">Nouveautés</string>
     <string name="whats_new_heading">Les nouveautés de Taipo 3</string>
     <string name="whats_new_intro">Voici ce qui change avec cette version.</string>
-    <string name="whats_new_pill">Nouveautés de Taipo 3 : touchez pour découvrir</string>
+    <string name="whats_new_pill">Nouveautés</string>
     <string name="whats_new_pill_description">Nouveautés de Taipo 3. Touchez pour les découvrir dans l\'application.</string>
     <string name="home_row_whats_new_subtitle">Ce qui change dans Taipo 3</string>
     <string name="whats_new_floating_title">Clavier flottant</string>
@@ -790,7 +790,7 @@
     <string name="whats_new_languages_body">Le polonais, le roumain, le tchèque, le hongrois, le suédois, le danois, le norvégien et le finnois rejoignent le clavier. Le dictionnaire de chaque langue se télécharge tout seul, et le français et l\'anglais fonctionnent dès l\'installation, même sans réseau.</string>
     <string name="whats_new_appearance_title">Une apparence à votre goût</string>
     <string name="whats_new_appearance_body">Neuf formes de touches et trois styles d\'animation (Ressort, Vif, Gelée) dans la page Apparence. Avec le pack premium : polices du clavier et fond animé pendant la frappe. Les écrans de l\'application suivent aussi le thème choisi.</string>
-    <string name="whats_new_dictation_title">Dictée IA avec tous les modèles</string>
+    <string name="whats_new_dictation_title">Transcription IA avec tous les modèles</string>
     <string name="whats_new_dictation_body">Fourmi et Colibri transforment aussi ce que vous dites en message bien rédigé, grâce au modèle vocal. Avec ces modèles, un enregistrement peut durer jusqu\'à 10 minutes.</string>
     <string name="whats_new_digits_title">Chiffres en un geste</string>
     <string name="whats_new_digits_body">Glissez vers le bas sur une touche de la rangée du haut pour saisir son chiffre, sans changer de page.</string>

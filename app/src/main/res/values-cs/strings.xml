@@ -738,7 +738,7 @@
     <string name="whats_new_title">Novinky</string>
     <string name="whats_new_heading">Novinky v Taipo 3</string>
     <string name="whats_new_intro">Tohle se mění v této verzi.</string>
-    <string name="whats_new_pill">Novinky v Taipo 3: klepnutím zobrazíte</string>
+    <string name="whats_new_pill">Novinky</string>
     <string name="whats_new_pill_description">Novinky v Taipo 3. Klepnutím je zobrazíte v aplikaci.</string>
     <string name="home_row_whats_new_subtitle">Co se mění v Taipo 3</string>
     <string name="whats_new_floating_title">Plovoucí klávesnice</string>
@@ -747,7 +747,7 @@
     <string name="whats_new_languages_body">Ke klávesnici přibývá polština, rumunština, čeština, maďarština, švédština, dánština, norština a finština. Slovník každého jazyka se stáhne sám a francouzština s angličtinou fungují hned po instalaci, i bez připojení.</string>
     <string name="whats_new_appearance_title">Vzhled podle vás</string>
     <string name="whats_new_appearance_body">Devět tvarů kláves a tři styly animace (Pružina, Svižná, Želé) na stránce Vzhled. S balíčkem premium: písma klávesnice a animované pozadí při psaní. Obrazovky aplikace se také řídí zvoleným motivem.</string>
-    <string name="whats_new_dictation_title">Diktování s AI se všemi modely</string>
+    <string name="whats_new_dictation_title">Přepis s AI se všemi modely</string>
     <string name="whats_new_dictation_body">I Mravenec a Kolibřík promění to, co řeknete, v dobře napsanou zprávu díky hlasovému modelu. S těmito modely může nahrávka trvat až 10 minut.</string>
     <string name="whats_new_digits_title">Číslice jedním gestem</string>
     <string name="whats_new_digits_body">Přejeďte dolů po klávese v horní řadě a napíšete její číslici bez přepínání stránky.</string>

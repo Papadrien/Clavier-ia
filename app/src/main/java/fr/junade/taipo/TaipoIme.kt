@@ -224,16 +224,13 @@ class TaipoIme : InputMethodService() {
      * Comptée seulement si elle a vraiment été affichée. Un toucher ouvre la page dans l'application.
      */
     private fun showWhatsNew() {
-        if (!viewComposer.isComposed || sensitiveField || correctionBar.isGestureTipShown || !whatsNew.shouldShowNow()) return
-        val shown = correctionBar.showNewsPill(
-            getString(R.string.whats_new_pill),
-            getString(R.string.whats_new_pill_description),
-            WHATS_NEW_PILL_MS,
-        ) {
+        if (!viewComposer.isComposed || sensitiveField) return
+        if (correctionBar.gestureTip.visibility == View.VISIBLE || !whatsNew.shouldShowNow()) return
+        val pill = GestureTipPillView.Content(R.drawable.ic_whats_new, getString(R.string.whats_new_pill_description)) {
             whatsNew.markOpened()
             startActivity(Intent(this, WhatsNewActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         }
-        if (shown) whatsNew.markShown()
+        if (correctionBar.showGestureTip(getString(R.string.whats_new_pill), WHATS_NEW_PILL_MS, pill)) whatsNew.markShown()
     }
 
     /** Dernier déplacement du curseur par la barre d'espace (ms) : ce n'est pas un déplacement « à la main » dans le champ. */

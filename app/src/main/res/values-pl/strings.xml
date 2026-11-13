@@ -738,7 +738,7 @@
     <string name="whats_new_title">Nowości</string>
     <string name="whats_new_heading">Nowości w Taipo 3</string>
     <string name="whats_new_intro">Oto co zmienia się w tej wersji.</string>
-    <string name="whats_new_pill">Nowości w Taipo 3: dotknij, aby poznać</string>
+    <string name="whats_new_pill">Nowości</string>
     <string name="whats_new_pill_description">Nowości w Taipo 3. Dotknij, aby poznać je w aplikacji.</string>
     <string name="home_row_whats_new_subtitle">Co zmienia się w Taipo 3</string>
     <string name="whats_new_floating_title">Pływająca klawiatura</string>
@@ -747,7 +747,7 @@
     <string name="whats_new_languages_body">Polski, rumuński, czeski, węgierski, szwedzki, duński, norweski i fiński dołączają do klawiatury. Słownik każdego języka pobiera się sam, a francuski i angielski działają od razu po instalacji, nawet bez sieci.</string>
     <string name="whats_new_appearance_title">Wygląd na Twoją miarę</string>
     <string name="whats_new_appearance_body">Dziewięć kształtów klawiszy i trzy style animacji (Sprężyna, Żwawa, Galaretka) na stronie Wygląd. Z pakietem premium: czcionki klawiatury i animowane tło podczas pisania. Ekrany aplikacji także stosują wybrany motyw.</string>
-    <string name="whats_new_dictation_title">Dyktowanie AI ze wszystkimi modelami</string>
+    <string name="whats_new_dictation_title">Transkrypcja AI ze wszystkimi modelami</string>
     <string name="whats_new_dictation_body">Mrówka i Koliber też zamieniają to, co mówisz, w dobrze napisaną wiadomość dzięki modelowi głosowemu. Z tymi modelami nagranie może trwać do 10 minut.</string>
     <string name="whats_new_digits_title">Cyfry jednym gestem</string>
     <string name="whats_new_digits_body">Przesuń w dół po klawiszu z górnego rzędu, aby wpisać jego cyfrę bez zmiany strony.</string>

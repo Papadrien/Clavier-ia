@@ -734,7 +734,7 @@
     <string name="whats_new_title">Novidades</string>
     <string name="whats_new_heading">Novidades do Taipo 3</string>
     <string name="whats_new_intro">Veja o que muda com esta versão.</string>
-    <string name="whats_new_pill">Novidades do Taipo 3: toque para conhecer</string>
+    <string name="whats_new_pill">Novidades</string>
     <string name="whats_new_pill_description">Novidades do Taipo 3. Toque para conhecê-las no app.</string>
     <string name="home_row_whats_new_subtitle">O que muda no Taipo 3</string>
     <string name="whats_new_floating_title">Teclado flutuante</string>
@@ -743,7 +743,7 @@
     <string name="whats_new_languages_body">Polonês, romeno, tcheco, húngaro, sueco, dinamarquês, norueguês e finlandês chegam ao teclado. O dicionário de cada idioma é baixado sozinho, e o francês e o inglês funcionam logo após a instalação, mesmo sem internet.</string>
     <string name="whats_new_appearance_title">Uma aparência do seu jeito</string>
     <string name="whats_new_appearance_body">Nove formatos de teclas e três estilos de animação (Mola, Ágil, Gelatina) na página Aparência. Com o pacote premium: fontes do teclado e fundo animado enquanto você digita. As telas do app também seguem o tema escolhido.</string>
-    <string name="whats_new_dictation_title">Ditado com IA em todos os modelos</string>
+    <string name="whats_new_dictation_title">Transcrição com IA em todos os modelos</string>
     <string name="whats_new_dictation_body">Formiga e Beija-flor também transformam o que você diz em uma mensagem bem escrita, graças ao modelo de voz. Com esses modelos, uma gravação pode durar até 10 minutos.</string>
     <string name="whats_new_digits_title">Números com um gesto</string>
     <string name="whats_new_digits_body">Deslize para baixo em uma tecla da fileira de cima para digitar o número dela, sem trocar de página.</string>

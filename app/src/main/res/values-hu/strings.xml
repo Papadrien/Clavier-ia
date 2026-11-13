@@ -730,7 +730,7 @@
     <string name="whats_new_title">Újdonságok</string>
     <string name="whats_new_heading">A Taipo 3 újdonságai</string>
     <string name="whats_new_intro">Ez változik ebben a verzióban.</string>
-    <string name="whats_new_pill">A Taipo 3 újdonságai: koppintson a felfedezéshez</string>
+    <string name="whats_new_pill">Újdonságok</string>
     <string name="whats_new_pill_description">A Taipo 3 újdonságai. Koppintson, és fedezze fel őket az alkalmazásban.</string>
     <string name="home_row_whats_new_subtitle">Ami változik a Taipo 3-ban</string>
     <string name="whats_new_floating_title">Lebegő billentyűzet</string>
@@ -739,7 +739,7 @@
     <string name="whats_new_languages_body">A lengyel, román, cseh, magyar, svéd, dán, norvég és finn nyelv is bekerül a billentyűzetbe. Minden nyelv szótára magától letöltődik, a francia és az angol pedig a telepítés után azonnal működik, internet nélkül is.</string>
     <string name="whats_new_appearance_title">Az Ön ízlése szerinti megjelenés</string>
     <string name="whats_new_appearance_body">Kilenc billentyűforma és három animációs stílus (Rugó, Fürge, Zselé) a Megjelenés oldalon. A prémium csomaggal: billentyűzet-betűtípusok és animált háttér gépelés közben. Az alkalmazás képernyői is a választott témát követik.</string>
-    <string name="whats_new_dictation_title">MI-diktálás minden modellel</string>
+    <string name="whats_new_dictation_title">MI-átirat minden modellel</string>
     <string name="whats_new_dictation_body">A Hangya és a Kolibri is jól megfogalmazott üzenetté alakítja, amit mond, a hangmodellnek köszönhetően. Ezekkel a modellekkel egy felvétel akár 10 percig tarthat.</string>
     <string name="whats_new_digits_title">Számjegyek egy mozdulattal</string>
     <string name="whats_new_digits_body">Húzza lefelé az ujját a felső sor egyik billentyűjén, és beírja a számjegyét oldalváltás nélkül.</string>
