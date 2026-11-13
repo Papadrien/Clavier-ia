@@ -16,9 +16,9 @@ import androidx.core.graphics.ColorUtils
 
 /**
  * Astuce de geste ([GestureTips]) dans la barre du haut : pilule de la hauteur des boutons ronds (36 dp), teintée de l'accent,
- * centrée entre le premier bouton (robot ou Paramètres) et Vocal ([CorrectionBarView.showGestureTip]), à la largeur de son texte
- * (13/11/2026 : plus de grand blanc pour un texte court comme « Nouveautés »). Ampoule + texte sur une ligne ; un texte trop long
- * pour la place défile une fois (marquee), sauf si les animations sont désactivées (il est alors coupé par « … »). Le fond est opaque : la pilule masque la bande de mots ou les boutons qu'elle recouvre.
+ * centrée entre le premier bouton (robot ou Paramètres) et Vocal ([CorrectionBarView.showGestureTip]), à la largeur de
+ * son texte (13/11/2026 : plus de grand blanc pour un texte court comme « Nouveautés »). Ampoule + texte sur une ligne ; un
+ * texte trop long pour la place défile une fois (marquee), sauf si les animations sont désactivées (alors coupé par « … »). Le fond est opaque : la pilule masque la bande de mots ou les boutons qu'elle recouvre.
  */
 @SuppressLint("ViewConstructor")
 internal class GestureTipPillView(context: Context) : LinearLayout(context) {
