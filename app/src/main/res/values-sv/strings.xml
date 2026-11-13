@@ -334,7 +334,7 @@
     <string name="model_gpu_description">Grafikprocessorn kan skapa text snabbare, men den fungerar inte på alla telefoner. Om den misslyckas eller kraschar tangentbordet går Taipo själv tillbaka till CPU:n. Modellen läses in igen vid nästa AI-åtgärd.</string>
     <string name="model_gpu_failed">GPU:n fungerade inte på den här enheten: Taipo använder CPU:n. Slå på reglaget igen för att försöka på nytt.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Vissa funktioner är inte tillgängliga med den här modellen (AI-diktering).</string>
+    <string name="model_download_dictation_via_voice">AI-diktering: använder röstmodellen (laddas ner separat), sedan skriver den här modellen om texten.</string>
     <string name="model_download_badge_active">Aktiv</string>
     <string name="model_download_badge_installed">Installerad</string>
     <string name="model_download_badge_recommended">Rekommenderad</string>
@@ -531,7 +531,7 @@
     <string name="ai_transcription_button_recording">AI-diktering: stoppa inspelningen och transkribera</string>
     <string name="ai_transcription_button_processing">AI-diktering pågår: tryck för att avbryta</string>
     <string name="ai_transcription_button_cancelling">Avbryter AI-dikteringen…</string>
-    <string name="ai_transcription_no_audio_model">AI-diktering kräver modellen Apa eller Elefant (Gemma 4). Välj en i appen.</string>
+    <string name="ai_transcription_no_audio_model">AI-diktering kräver en AI-modell. Välj en i appen.</string>
     <string name="ai_transcription_busy">En diktering, korrigering eller generering pågår.</string>
     <string name="ai_transcription_permission_denied">Mikrofonbehörighet krävs. Ge den och tryck sedan igen.</string>
     <string name="ai_transcription_mic_unavailable">Mikrofonen kunde inte öppnas.</string>

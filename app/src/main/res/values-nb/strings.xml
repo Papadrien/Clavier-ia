@@ -334,7 +334,7 @@
     <string name="model_gpu_description">Grafikkprosessoren kan lage tekst raskere, men den fungerer ikke på alle telefoner. Hvis den feiler eller får tastaturet til å krasje, går Taipo selv tilbake til CPU-en. Modellen lastes inn på nytt ved neste AI-handling.</string>
     <string name="model_gpu_failed">GPU-en fungerte ikke på denne enheten: Taipo bruker CPU-en. Slå på bryteren igjen for å prøve på nytt.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Noen funksjoner er ikke tilgjengelige med denne modellen (AI-diktering).</string>
+    <string name="model_download_dictation_via_voice">AI-diktering: bruker talemodellen (lastes ned separat), deretter skriver denne modellen om teksten.</string>
     <string name="model_download_badge_active">Aktiv</string>
     <string name="model_download_badge_installed">Installert</string>
     <string name="model_download_badge_recommended">Anbefalt</string>
@@ -531,7 +531,7 @@
     <string name="ai_transcription_button_recording">AI-diktering: stopp opptaket og transkriber</string>
     <string name="ai_transcription_button_processing">AI-diktering pågår: trykk for å avbryte</string>
     <string name="ai_transcription_button_cancelling">Avbryter AI-dikteringen …</string>
-    <string name="ai_transcription_no_audio_model">AI-diktering krever modellen Ape eller Elefant (Gemma 4). Velg en i appen.</string>
+    <string name="ai_transcription_no_audio_model">AI-diktering krever en AI-modell. Velg en i appen.</string>
     <string name="ai_transcription_busy">En diktering, retting eller generering pågår.</string>
     <string name="ai_transcription_permission_denied">Mikrofontillatelse kreves. Gi den, og trykk deretter på nytt.</string>
     <string name="ai_transcription_mic_unavailable">Mikrofonen kunne ikke åpnes.</string>

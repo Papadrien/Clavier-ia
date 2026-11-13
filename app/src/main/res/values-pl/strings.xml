@@ -334,7 +334,7 @@
     <string name="model_gpu_description">Procesor graficzny może szybciej generować tekst, ale nie działa na każdym telefonie. Jeśli zawiedzie lub zawiesi klawiaturę, Taipo samo wróci do CPU. Model zostanie ponownie wczytany przy następnym działaniu AI.</string>
     <string name="model_gpu_failed">GPU nie zadziałał na tym urządzeniu: Taipo używa CPU. Włącz przełącznik ponownie, aby spróbować jeszcze raz.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Niektóre funkcje nie są dostępne z tym modelem (dyktowanie AI).</string>
+    <string name="model_download_dictation_via_voice">Dyktowanie AI: korzysta z modelu głosowego (pobieranego osobno), a potem ten model redaguje tekst.</string>
     <string name="model_download_badge_active">Aktywny</string>
     <string name="model_download_badge_installed">Zainstalowany</string>
     <string name="model_download_badge_recommended">Zalecany</string>
@@ -539,7 +539,7 @@
     <string name="ai_transcription_button_recording">Dyktowanie AI: zatrzymaj nagrywanie i przepisz</string>
     <string name="ai_transcription_button_processing">Trwa dyktowanie AI: dotknij, aby anulować</string>
     <string name="ai_transcription_button_cancelling">Anulowanie dyktowania AI…</string>
-    <string name="ai_transcription_no_audio_model">Dyktowanie AI wymaga modelu Małpa lub Słoń (Gemma 4). Wybierz jeden w aplikacji.</string>
+    <string name="ai_transcription_no_audio_model">Dyktowanie AI wymaga modelu AI. Wybierz go w aplikacji.</string>
     <string name="ai_transcription_busy">Trwa dyktowanie, korekta lub generowanie.</string>
     <string name="ai_transcription_permission_denied">Wymagane uprawnienie do mikrofonu. Przyznaj je, a potem dotknij ponownie.</string>
     <string name="ai_transcription_mic_unavailable">Nie udało się włączyć mikrofonu.</string>

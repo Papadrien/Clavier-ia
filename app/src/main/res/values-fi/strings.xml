@@ -334,7 +334,7 @@
     <string name="model_gpu_description">Grafiikkaprosessori voi luoda tekstiä nopeammin, mutta se ei toimi kaikissa puhelimissa. Jos se epäonnistuu tai kaataa näppäimistön, Taipo palaa itse CPU:hun. Malli ladataan uudelleen seuraavassa tekoälytoiminnossa.</string>
     <string name="model_gpu_failed">GPU ei toiminut tällä laitteella: Taipo käyttää CPU:ta. Kokeile uudelleen kytkemällä valitsin takaisin päälle.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Kaikki toiminnot eivät ole käytettävissä tällä mallilla (tekoälysanelu).</string>
+    <string name="model_download_dictation_via_voice">Tekoälysanelu: käyttää puhemallia (ladataan erikseen), minkä jälkeen tämä malli muotoilee tekstin.</string>
     <string name="model_download_badge_active">Käytössä</string>
     <string name="model_download_badge_installed">Asennettu</string>
     <string name="model_download_badge_recommended">Suositeltu</string>
@@ -531,7 +531,7 @@
     <string name="ai_transcription_button_recording">Tekoälysanelu: lopeta tallennus ja litteroi</string>
     <string name="ai_transcription_button_processing">Tekoälysanelu käynnissä: peru napauttamalla</string>
     <string name="ai_transcription_button_cancelling">Perutaan tekoälysanelua…</string>
-    <string name="ai_transcription_no_audio_model">Tekoälysanelu vaatii mallin Apina tai Norsu (Gemma 4). Valitse jompikumpi sovelluksessa.</string>
+    <string name="ai_transcription_no_audio_model">Tekoälysanelu vaatii tekoälymallin. Valitse malli sovelluksessa.</string>
     <string name="ai_transcription_busy">Sanelu, korjaus tai tekstin luonti on käynnissä.</string>
     <string name="ai_transcription_permission_denied">Mikrofonin käyttöoikeus tarvitaan. Anna se ja napauta sitten uudelleen.</string>
     <string name="ai_transcription_mic_unavailable">Mikrofonia ei voitu avata.</string>

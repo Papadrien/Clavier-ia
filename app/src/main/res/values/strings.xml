@@ -345,7 +345,7 @@
     <string name="model_gpu_description">The graphics processor can generate text faster, but it does not work on every phone. If it fails or crashes the keyboard, Taipo falls back to the CPU on its own. The model is reloaded at the next AI action.</string>
     <string name="model_gpu_failed">The GPU did not work on this device: Taipo uses the CPU. Turn the switch back on to try again.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Some features are not available with this model (AI dictation).</string>
+    <string name="model_download_dictation_via_voice">AI dictation: uses the voice model (downloaded separately), then this model rewrites the text.</string>
     <string name="model_download_badge_active">Active</string>
     <string name="model_download_badge_installed">Installed</string>
     <string name="model_download_badge_recommended">Recommended</string>
@@ -551,7 +551,7 @@
     <string name="ai_transcription_button_recording">AI dictation: stop recording and transcribe</string>
     <string name="ai_transcription_button_processing">AI dictation in progress: tap to cancel</string>
     <string name="ai_transcription_button_cancelling">Cancelling AI dictation…</string>
-    <string name="ai_transcription_no_audio_model">AI dictation requires the Monkey or Elephant model (Gemma 4). Choose one in the app.</string>
+    <string name="ai_transcription_no_audio_model">AI dictation requires an AI model. Choose one in the app.</string>
     <string name="ai_transcription_busy">A dictation, correction or generation is in progress.</string>
     <string name="ai_transcription_permission_denied">Microphone permission required. Grant it, then tap again.</string>
     <string name="ai_transcription_mic_unavailable">The microphone couldn\'t be opened.</string>

@@ -18,7 +18,8 @@ import kotlinx.coroutines.launch
  * Enregistreur de la transcription IA (story 14.2) : capture le micro en PCM 16 bits, 16 kHz, mono (le format que la
  * documentation Google du modèle demande), tout en mémoire, jusqu'à [MAX_SECONDS] (limite décidée après le spike 14.1,
  * qui remplace le découpage de la story 14.3). Aucun fichier n'est écrit : l'audio n'existe que dans la mémoire du
- * processus, et [stop] comme [cancel] le jettent. Distinct de [VoiceRecorder], qui alimente le décodeur en continu et
+ * processus, et [stop] comme [cancel] le jettent. Gemma 3 passe par la dictée (13/11/2026) : sa limite est
+ * [DICTATION_MAX_SECONDS] (le tampon grandit au fur et à mesure). Distinct de [VoiceRecorder], qui alimente le décodeur en continu et
  * n'est donc pas réutilisable tel quel.
  *
  * L'appelant vérifie la permission RECORD_AUDIO avant [start]. Toutes les méthodes se rappellent depuis le thread principal.
@@ -44,8 +45,12 @@ class AiTranscriptionRecorder(context: Context, private val scope: CoroutineScop
 
     val isRecording: Boolean get() = record != null
 
+    /** Durée maximale de l'enregistrement en cours, en échantillons. */
+    private var maxSamples = MAX_SECONDS * SAMPLE_RATE
+
+    /** [maxSeconds] : durée maximale ([MAX_SECONDS] pour l'audio natif de Gemma 4, [DICTATION_MAX_SECONDS] pour la dictée). */
     @Suppress("MissingPermission") // Vérifié par l'appelant avant d'appeler start().
-    fun start() {
+    fun start(maxSeconds: Int = MAX_SECONDS) {
         val minBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT)
         val bufferSize = if (minBufferSize > 0) minBufferSize else SAMPLE_RATE
         val audioRecord = AudioRecord(
@@ -74,13 +79,14 @@ class AiTranscriptionRecorder(context: Context, private val scope: CoroutineScop
             throw MicUnavailableException("The microphone did not switch to recording")
         }
         record = audioRecord
-        samples = ShortArray(MAX_SECONDS * SAMPLE_RATE)
+        maxSamples = maxSeconds * SAMPLE_RATE
+        samples = ShortArray(minOf(maxSamples, INITIAL_SECONDS * SAMPLE_RATE))
         filled = 0
 
         captureJob = scope.launch(Dispatchers.IO) {
             val chunk = bufferSize.coerceAtLeast(MIN_CHUNK)
             while (isActive) {
-                val room = samples.size - filled
+                val room = roomLeft()
                 if (room <= 0) {
                     onLimitReached?.invoke()
                     break
@@ -100,6 +106,12 @@ class AiTranscriptionRecorder(context: Context, private val scope: CoroutineScop
                 }
             }
         }
+    }
+
+    /** Place libre dans le tampon ; un tampon plein est d'abord agrandi (doublé) tant que la durée maximale le permet. */
+    private fun roomLeft(): Int {
+        if (filled == samples.size && samples.size < maxSamples) samples = samples.copyOf(minOf(maxSamples, samples.size * 2))
+        return samples.size - filled
     }
 
     /** Arrête la capture, libère le micro et renvoie ce qui a été enregistré (vide si rien n'était en cours). */
@@ -151,6 +163,12 @@ class AiTranscriptionRecorder(context: Context, private val scope: CoroutineScop
 
         /** Durée maximale enregistrée : 2 minutes, validée au spike 14.1 (E2B : 120 s transcrites en 51 s, RAM stable). */
         const val MAX_SECONDS = 120
+
+        /** Gemma 3 (dictée puis reformulation) : 10 minutes, environ 19 Mo d'audio en mémoire au plus. */
+        const val DICTATION_MAX_SECONDS = 600
+
+        /** Taille de départ du tampon : 2 minutes, doublée au besoin jusqu'à la limite. */
+        private const val INITIAL_SECONDS = 120
         private const val MIN_CHUNK = 1_600
         private const val EMPTY_READ_DELAY_MS = 10L
     }

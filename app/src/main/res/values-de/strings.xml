@@ -334,7 +334,7 @@
     <string name="model_gpu_description">Der Grafikprozessor kann Text schneller erzeugen, funktioniert aber nicht auf jedem Telefon. Wenn er versagt oder die Tastatur abstürzen lässt, wechselt Taipo selbst zur CPU. Das Modell wird bei der nächsten KI-Aktion neu geladen.</string>
     <string name="model_gpu_failed">Die GPU hat auf diesem Gerät nicht funktioniert: Taipo nutzt die CPU. Schalten Sie den Schalter wieder ein, um es erneut zu versuchen.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Einige Funktionen sind mit diesem Modell nicht verfügbar (KI-Diktat).</string>
+    <string name="model_download_dictation_via_voice">KI-Diktat: nutzt das Sprachmodell (separat herunterzuladen), danach formuliert dieses Modell den Text.</string>
     <string name="model_download_badge_active">Aktiv</string>
     <string name="model_download_badge_installed">Installiert</string>
     <string name="model_download_badge_recommended">Empfohlen</string>
@@ -531,7 +531,7 @@
     <string name="ai_transcription_button_recording">KI-Diktat: Aufnahme beenden und transkribieren</string>
     <string name="ai_transcription_button_processing">KI-Diktat läuft: tippen zum Abbrechen</string>
     <string name="ai_transcription_button_cancelling">KI-Diktat wird abgebrochen…</string>
-    <string name="ai_transcription_no_audio_model">Das KI-Diktat benötigt das Modell Affe oder Elefant (Gemma 4). Wählen Sie eines in der App.</string>
+    <string name="ai_transcription_no_audio_model">Das KI-Diktat benötigt ein KI-Modell. Wählen Sie eines in der App.</string>
     <string name="ai_transcription_busy">Ein Diktat, eine Korrektur oder eine Erzeugung läuft bereits.</string>
     <string name="ai_transcription_permission_denied">Mikrofonberechtigung erforderlich. Erteilen Sie sie und tippen Sie dann erneut.</string>
     <string name="ai_transcription_mic_unavailable">Das Mikrofon konnte nicht geöffnet werden.</string>

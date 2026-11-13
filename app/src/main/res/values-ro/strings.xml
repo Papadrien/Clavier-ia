@@ -334,7 +334,7 @@
     <string name="model_gpu_description">Procesorul grafic poate genera textul mai repede, dar nu funcționează pe orice telefon. Dacă eșuează sau blochează tastatura, Taipo revine singur la CPU. Modelul este reîncărcat la următoarea acțiune AI.</string>
     <string name="model_gpu_failed">GPU-ul nu a funcționat pe acest dispozitiv: Taipo folosește CPU. Reactivează comutatorul pentru a încerca din nou.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Unele funcții nu sunt disponibile cu acest model (dictare AI).</string>
+    <string name="model_download_dictation_via_voice">Dictare AI: folosește modelul vocal (descărcat separat), apoi acest model formatează textul.</string>
     <string name="model_download_badge_active">Activ</string>
     <string name="model_download_badge_installed">Instalat</string>
     <string name="model_download_badge_recommended">Recomandat</string>
@@ -535,7 +535,7 @@
     <string name="ai_transcription_button_recording">Dictare AI: oprește înregistrarea și transcrie</string>
     <string name="ai_transcription_button_processing">Dictare AI în curs: atinge pentru a anula</string>
     <string name="ai_transcription_button_cancelling">Se anulează dictarea AI…</string>
-    <string name="ai_transcription_no_audio_model">Dictarea AI necesită modelul Maimuța sau Elefantul (Gemma 4). Alege unul în aplicație.</string>
+    <string name="ai_transcription_no_audio_model">Dictarea AI necesită un model AI. Alege unul în aplicație.</string>
     <string name="ai_transcription_busy">O dictare, o corectare sau o generare este în curs.</string>
     <string name="ai_transcription_permission_denied">Este necesară permisiunea pentru microfon. Acord-o, apoi atinge din nou.</string>
     <string name="ai_transcription_mic_unavailable">Microfonul nu a putut fi pornit.</string>

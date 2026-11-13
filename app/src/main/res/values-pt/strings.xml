@@ -334,7 +334,7 @@
     <string name="model_gpu_description">O processador gráfico pode gerar texto mais rápido, mas não funciona em todos os telefones. Se falhar ou fizer o teclado travar, o Taipo volta sozinho para a CPU. O modelo é recarregado na próxima ação de IA.</string>
     <string name="model_gpu_failed">A GPU não funcionou neste dispositivo: o Taipo usa a CPU. Ative o interruptor de novo para tentar outra vez.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Alguns recursos não estão disponíveis com este modelo (ditado com IA).</string>
+    <string name="model_download_dictation_via_voice">Ditado com IA: usa o modelo de voz (baixado à parte) e depois este modelo formata o texto.</string>
     <string name="model_download_badge_active">Ativo</string>
     <string name="model_download_badge_installed">Instalado</string>
     <string name="model_download_badge_recommended">Recomendado</string>
@@ -535,7 +535,7 @@
     <string name="ai_transcription_button_recording">Ditado com IA: parar a gravação e transcrever</string>
     <string name="ai_transcription_button_processing">Ditado com IA em andamento: toque para cancelar</string>
     <string name="ai_transcription_button_cancelling">Cancelando o ditado com IA…</string>
-    <string name="ai_transcription_no_audio_model">O ditado com IA requer o modelo Macaco ou Elefante (Gemma 4). Escolha um no app.</string>
+    <string name="ai_transcription_no_audio_model">O ditado com IA requer um modelo de IA. Escolha um no app.</string>
     <string name="ai_transcription_busy">Um ditado, uma correção ou uma geração está em andamento.</string>
     <string name="ai_transcription_permission_denied">Permissão do microfone necessária. Conceda-a e toque novamente.</string>
     <string name="ai_transcription_mic_unavailable">Não foi possível abrir o microfone.</string>

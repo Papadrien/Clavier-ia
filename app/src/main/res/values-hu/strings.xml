@@ -334,7 +334,7 @@
     <string name="model_gpu_description">A grafikus processzor gyorsabban hozhat létre szöveget, de nem minden telefonon működik. Ha hibát okoz vagy összeomlasztja a billentyűzetet, a Taipo magától visszavált a CPU-ra. A modell a következő MI-műveletnél újratöltődik.</string>
     <string name="model_gpu_failed">A GPU nem működött ezen az eszközön: a Taipo a CPU-t használja. Kapcsolja be újra a kapcsolót egy újabb próbához.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Egyes funkciók nem érhetők el ezzel a modellel (MI-diktálás).</string>
+    <string name="model_download_dictation_via_voice">MI-diktálás: a hangmodellt használja (külön kell letölteni), majd ez a modell formázza a szöveget.</string>
     <string name="model_download_badge_active">Aktív</string>
     <string name="model_download_badge_installed">Telepítve</string>
     <string name="model_download_badge_recommended">Ajánlott</string>
@@ -531,7 +531,7 @@
     <string name="ai_transcription_button_recording">MI-diktálás: felvétel leállítása és átírás</string>
     <string name="ai_transcription_button_processing">MI-diktálás folyamatban: koppintson a megszakításhoz</string>
     <string name="ai_transcription_button_cancelling">MI-diktálás megszakítása…</string>
-    <string name="ai_transcription_no_audio_model">Az MI-diktáláshoz a Majom vagy az Elefánt modell (Gemma 4) szükséges. Válasszon egyet az alkalmazásban.</string>
+    <string name="ai_transcription_no_audio_model">Az MI-diktáláshoz MI-modell szükséges. Válasszon egyet az alkalmazásban.</string>
     <string name="ai_transcription_busy">Diktálás, javítás vagy generálás van folyamatban.</string>
     <string name="ai_transcription_permission_denied">Mikrofonengedély szükséges. Adja meg, majd koppintson újra.</string>
     <string name="ai_transcription_mic_unavailable">Nem sikerült bekapcsolni a mikrofont.</string>

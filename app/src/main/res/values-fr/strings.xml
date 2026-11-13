@@ -352,7 +352,7 @@
     <string name="model_gpu_description">Le processeur graphique peut générer le texte plus vite, mais il ne fonctionne pas sur tous les téléphones. S\'il échoue ou fait planter le clavier, Taipo repasse tout seul sur le processeur central. Le modèle est rechargé à la prochaine action IA.</string>
     <string name="model_gpu_failed">Le GPU n\'a pas fonctionné sur cet appareil : Taipo utilise le processeur central. Réactivez l\'interrupteur pour réessayer.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Certaines fonctions ne sont pas disponibles avec ce modèle (dictée IA).</string>
+    <string name="model_download_dictation_via_voice">Dictée IA : passe par le modèle vocal (à télécharger à part), puis ce modèle met le texte en forme.</string>
     <string name="model_download_badge_active">Actif</string>
     <string name="model_download_badge_installed">Installé</string>
     <string name="model_download_badge_recommended">Recommandé</string>
@@ -569,7 +569,7 @@
     <string name="ai_transcription_button_recording">Dictée IA : arrêter l\'enregistrement et transcrire</string>
     <string name="ai_transcription_button_processing">Dictée IA en cours : appuyer pour annuler</string>
     <string name="ai_transcription_button_cancelling">Annulation de la dictée IA…</string>
-    <string name="ai_transcription_no_audio_model">La dictée IA demande le modèle Singe ou Éléphant (Gemma 4). Choisissez-en un dans l\'application.</string>
+    <string name="ai_transcription_no_audio_model">La dictée IA demande un modèle IA. Choisissez-en un dans l\'application.</string>
     <string name="ai_transcription_busy">Une dictée, une correction ou une génération est en cours.</string>
     <string name="ai_transcription_permission_denied">Permission micro requise. Accordez-la puis appuyez à nouveau.</string>
     <string name="ai_transcription_mic_unavailable">Le micro n\'a pas pu être ouvert.</string>

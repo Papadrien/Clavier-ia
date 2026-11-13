@@ -334,7 +334,7 @@
     <string name="model_gpu_description">Grafický procesor může vytvářet text rychleji, ale nefunguje v každém telefonu. Pokud selže nebo klávesnici shodí, Taipo se samo vrátí k CPU. Model se znovu načte při další akci AI.</string>
     <string name="model_gpu_failed">GPU v tomto zařízení nefungovalo: Taipo používá CPU. Pro nový pokus přepínač znovu zapněte.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Některé funkce nejsou s tímto modelem dostupné (diktování s AI).</string>
+    <string name="model_download_dictation_via_voice">Diktování s AI: používá hlasový model (stahuje se zvlášť), poté tento model text upraví.</string>
     <string name="model_download_badge_active">Aktivní</string>
     <string name="model_download_badge_installed">Nainstalováno</string>
     <string name="model_download_badge_recommended">Doporučeno</string>
@@ -539,7 +539,7 @@
     <string name="ai_transcription_button_recording">Diktování s AI: zastavit nahrávání a přepsat</string>
     <string name="ai_transcription_button_processing">Probíhá diktování s AI: klepnutím zrušíte</string>
     <string name="ai_transcription_button_cancelling">Rušení diktování s AI…</string>
-    <string name="ai_transcription_no_audio_model">Diktování s AI vyžaduje model Opice nebo Slon (Gemma 4). Zvolte jeden v aplikaci.</string>
+    <string name="ai_transcription_no_audio_model">Diktování s AI vyžaduje model AI. Zvolte ho v aplikaci.</string>
     <string name="ai_transcription_busy">Probíhá diktování, oprava nebo generování.</string>
     <string name="ai_transcription_permission_denied">Je potřeba oprávnění k mikrofonu. Udělte ho a klepněte znovu.</string>
     <string name="ai_transcription_mic_unavailable">Mikrofon se nepodařilo zapnout.</string>

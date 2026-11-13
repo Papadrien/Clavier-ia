@@ -313,7 +313,8 @@ class TaipoIme : InputMethodService() {
         AiTranscriptionController(
             this,
             serviceScope,
-            AiTranscriptionEngine(llmHost, TranscriptionPromptPreferences(applicationContext)),
+            // Gemma 3 passe par la dictée : même moteur vocal que le bouton Vocal (un seul modèle vocal en mémoire).
+            AiTranscriptionEngine(llmHost, TranscriptionPromptPreferences(applicationContext), voiceEngine = { voice.engine() }),
             AiTranscriptionHost(imeContext),
         )
     }
@@ -510,9 +511,10 @@ class TaipoIme : InputMethodService() {
             fieldType != FieldType.URL
         keyboardView.setNextLetterPrediction(null) // le nouveau champ repart sans prédiction, la suivante vient du texte du champ
         correctionBar.aiActionsAllowed = !sensitiveField
-        // Story 14.5 : le bouton Transcription IA n'existe que si le modèle actif (installé) a une entrée audio.
+        // Story 14.5, élargie le 13/11/2026 : le bouton Transcription IA existe dès qu'un modèle est installé et actif (Gemma 4 :
+        // audio natif ; Gemma 3 : dictée puis reformulation).
         correctionBar.aiTranscriptionAvailable =
-            ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled)?.hasAudioInput == true
+            ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled) != null
         suggestions.isEmailAddressField = fieldType == FieldType.EMAIL
         messagingField = MessagingFieldPolicy.isMessagingField(info?.packageName, info?.inputType ?: 0)
         controller.setAutoCapitalization(

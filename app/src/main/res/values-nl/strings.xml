@@ -334,7 +334,7 @@
     <string name="model_gpu_description">De grafische processor kan tekst sneller genereren, maar werkt niet op elke telefoon. Als hij faalt of het toetsenbord laat crashen, schakelt Taipo zelf terug naar de CPU. Het model wordt bij de volgende AI-actie opnieuw geladen.</string>
     <string name="model_gpu_failed">De GPU werkte niet op dit apparaat: Taipo gebruikt de CPU. Zet de schakelaar weer aan om het opnieuw te proberen.</string>
     <string name="model_download_technical_line">%1$s · %2$s</string>
-    <string name="model_download_limited_features">Sommige functies zijn niet beschikbaar met dit model (AI-dictee).</string>
+    <string name="model_download_dictation_via_voice">AI-dictee: gebruikt het spraakmodel (apart te downloaden), daarna herschrijft dit model de tekst.</string>
     <string name="model_download_badge_active">Actief</string>
     <string name="model_download_badge_installed">Geïnstalleerd</string>
     <string name="model_download_badge_recommended">Aanbevolen</string>
@@ -531,7 +531,7 @@
     <string name="ai_transcription_button_recording">AI-dictee: opname stoppen en uitschrijven</string>
     <string name="ai_transcription_button_processing">AI-dictee bezig: tik om te annuleren</string>
     <string name="ai_transcription_button_cancelling">AI-dictee wordt geannuleerd…</string>
-    <string name="ai_transcription_no_audio_model">AI-dictee vereist het model Aap of Olifant (Gemma 4). Kies er een in de app.</string>
+    <string name="ai_transcription_no_audio_model">AI-dictee vereist een AI-model. Kies er een in de app.</string>
     <string name="ai_transcription_busy">Er loopt al een dictee, correctie of generatie.</string>
     <string name="ai_transcription_permission_denied">Microfoonrecht nodig. Verleen het en tik dan opnieuw.</string>
     <string name="ai_transcription_mic_unavailable">De microfoon kon niet worden geopend.</string>
