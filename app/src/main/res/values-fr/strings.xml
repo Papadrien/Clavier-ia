@@ -717,6 +717,8 @@
     <string name="premium_buy">Acheter le pack</string>
     <string name="premium_buy_with_price">Acheter le pack · %1$s</string>
     <string name="premium_restore">Restaurer mon achat</string>
+    <string name="premium_back_home">Retour à l\'accueil</string>
+    <string name="back_arrow_description">Retour</string>
     <string name="premium_active_title">Pack actif</string>
     <string name="premium_active_thanks">Merci ! Les couleurs, les fonds animés, les formes de touches, les polices, vos consignes pour l\'IA et le presse-papiers étendu sont débloqués.</string>
     <string name="premium_status_pending">Paiement en attente : le pack s\'activera dès que Google Play l\'aura confirmé.</string>

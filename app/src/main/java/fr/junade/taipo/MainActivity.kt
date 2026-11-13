@@ -73,7 +73,7 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
-        applySystemBarInsets()
+        applySystemBarInsets(backArrow = false) // accueil : pas de flèche retour
         // Mesure du nombre de nouveaux utilisateurs : événement envoyé une seule fois par installation.
         Analytics.firstOpen(this) // sans effet tant que l'utilisateur n'a pas accepté la mesure d'usage (audit PRIV-01)
 

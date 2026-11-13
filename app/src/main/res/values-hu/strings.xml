@@ -669,6 +669,8 @@
     <string name="premium_buy">A csomag megvásárlása</string>
     <string name="premium_buy_with_price">A csomag megvásárlása · %1$s</string>
     <string name="premium_restore">Vásárlás visszaállítása</string>
+    <string name="premium_back_home">Vissza a kezdőlapra</string>
+    <string name="back_arrow_description">Vissza</string>
     <string name="premium_active_title">A csomag aktív</string>
     <string name="premium_active_thanks">Köszönjük! A színek, az animált hátterek, a billentyűformák, a betűtípusok, az MI-utasításai és a bővített vágólap feloldva.</string>
     <string name="premium_status_pending">Fizetés folyamatban: a csomag azonnal bekapcsol, amint a Google Play megerősíti.</string>

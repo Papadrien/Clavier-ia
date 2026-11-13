@@ -677,6 +677,8 @@
     <string name="premium_buy">Koupit balíček</string>
     <string name="premium_buy_with_price">Koupit balíček · %1$s</string>
     <string name="premium_restore">Obnovit nákup</string>
+    <string name="premium_back_home">Zpět na úvod</string>
+    <string name="back_arrow_description">Zpět</string>
     <string name="premium_active_title">Balíček aktivní</string>
     <string name="premium_active_thanks">Děkujeme! Barvy, animovaná pozadí, tvary kláves, písma, vaše pokyny pro AI a rozšířená schránka jsou odemčené.</string>
     <string name="premium_status_pending">Platba čeká na vyřízení: balíček se aktivuje, jakmile ji Google Play potvrdí.</string>

@@ -669,6 +669,8 @@
     <string name="premium_buy">Het pakket kopen</string>
     <string name="premium_buy_with_price">Het pakket kopen · %1$s</string>
     <string name="premium_restore">Mijn aankoop herstellen</string>
+    <string name="premium_back_home">Terug naar start</string>
+    <string name="back_arrow_description">Terug</string>
     <string name="premium_active_title">Pakket actief</string>
     <string name="premium_active_thanks">Bedankt! Kleuren, geanimeerde achtergronden, toetsvormen, lettertypen, je AI-instructies en het uitgebreide klembord zijn ontgrendeld.</string>
     <string name="premium_status_pending">Betaling in behandeling: het pakket wordt actief zodra Google Play die bevestigt.</string>

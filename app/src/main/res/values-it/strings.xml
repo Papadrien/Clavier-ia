@@ -673,6 +673,8 @@
     <string name="premium_buy">Acquista il pacchetto</string>
     <string name="premium_buy_with_price">Acquista il pacchetto · %1$s</string>
     <string name="premium_restore">Ripristina il mio acquisto</string>
+    <string name="premium_back_home">Torna alla home</string>
+    <string name="back_arrow_description">Indietro</string>
     <string name="premium_active_title">Pacchetto attivo</string>
     <string name="premium_active_thanks">Grazie! Colori, sfondi animati, forme dei tasti, caratteri, le tue istruzioni per l\'IA e gli appunti estesi sono sbloccati.</string>
     <string name="premium_status_pending">Pagamento in sospeso: il pacchetto si attiverà appena Google Play lo confermerà.</string>

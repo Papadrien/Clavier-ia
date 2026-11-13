@@ -669,6 +669,8 @@
     <string name="premium_buy">Osta paketti</string>
     <string name="premium_buy_with_price">Osta paketti · %1$s</string>
     <string name="premium_restore">Palauta ostokseni</string>
+    <string name="premium_back_home">Takaisin alkuun</string>
+    <string name="back_arrow_description">Takaisin</string>
     <string name="premium_active_title">Paketti käytössä</string>
     <string name="premium_active_thanks">Kiitos! Värit, animoidut taustat, näppäinmuodot, fontit, tekoälyohjeesi ja laajennettu leikepöytä ovat käytössä.</string>
     <string name="premium_status_pending">Maksu odottaa: paketti otetaan käyttöön heti, kun Google Play vahvistaa sen.</string>

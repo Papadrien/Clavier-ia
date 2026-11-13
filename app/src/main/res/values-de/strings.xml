@@ -669,6 +669,8 @@
     <string name="premium_buy">Paket kaufen</string>
     <string name="premium_buy_with_price">Paket kaufen · %1$s</string>
     <string name="premium_restore">Meinen Kauf wiederherstellen</string>
+    <string name="premium_back_home">Zurück zur Startseite</string>
+    <string name="back_arrow_description">Zurück</string>
     <string name="premium_active_title">Paket aktiv</string>
     <string name="premium_active_thanks">Danke! Farben, animierte Hintergründe, Tastenformen, Schriften, Ihre KI-Anweisungen und die erweiterte Zwischenablage sind freigeschaltet.</string>
     <string name="premium_status_pending">Zahlung ausstehend: Das Paket wird aktiviert, sobald Google Play sie bestätigt.</string>

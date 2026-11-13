@@ -4,6 +4,7 @@
     <item name="floating_action_move_up" type="id" />
     <item name="floating_action_move_down" type="id" />
     <item name="floating_action_dock" type="id" />
+    <item name="back_arrow" type="id" />
     <!-- Audit BUG-10 : champs des fenêtres du presse-papiers, avec un identifiant stable pour garder le texte à une recréation. -->
     <item name="clipboard_edit_input" type="id" />
     <item name="clipboard_label_input" type="id" />

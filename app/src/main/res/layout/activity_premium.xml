@@ -173,5 +173,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/taipo_settings_gap_sm"
             android:text="@string/premium_restore" />
+
+        <!-- Pack actif (page de remerciement) : retour direct à l'accueil, à la place des boutons d'achat. -->
+        <Button
+            style="@style/TaipoButton.Primary"
+            android:id="@+id/button_premium_home"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_lg"
+            android:visibility="gone"
+            android:text="@string/premium_back_home" />
     </LinearLayout>
 </ScrollView>

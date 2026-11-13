@@ -677,6 +677,8 @@
     <string name="premium_buy">Kup pakiet</string>
     <string name="premium_buy_with_price">Kup pakiet · %1$s</string>
     <string name="premium_restore">Przywróć zakup</string>
+    <string name="premium_back_home">Wróć do ekranu głównego</string>
+    <string name="back_arrow_description">Wstecz</string>
     <string name="premium_active_title">Pakiet aktywny</string>
     <string name="premium_active_thanks">Dziękujemy! Kolory, animowane tła, kształty klawiszy, czcionki, Twoje instrukcje dla AI i rozszerzony schowek są odblokowane.</string>
     <string name="premium_status_pending">Płatność w toku: pakiet zostanie włączony, gdy tylko Google Play ją potwierdzi.</string>

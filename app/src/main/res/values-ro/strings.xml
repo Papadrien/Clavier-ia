@@ -673,6 +673,8 @@
     <string name="premium_buy">Cumpără pachetul</string>
     <string name="premium_buy_with_price">Cumpără pachetul · %1$s</string>
     <string name="premium_restore">Restaurează achiziția</string>
+    <string name="premium_back_home">Înapoi la ecranul principal</string>
+    <string name="back_arrow_description">Înapoi</string>
     <string name="premium_active_title">Pachet activ</string>
     <string name="premium_active_thanks">Mulțumim! Culorile, fundalurile animate, formele de taste, fonturile, instrucțiunile tale pentru AI și clipboardul extins sunt deblocate.</string>
     <string name="premium_status_pending">Plată în așteptare: pachetul se va activa imediat ce Google Play o confirmă.</string>

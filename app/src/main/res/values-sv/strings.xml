@@ -669,6 +669,8 @@
     <string name="premium_buy">Köp paketet</string>
     <string name="premium_buy_with_price">Köp paketet · %1$s</string>
     <string name="premium_restore">Återställ mitt köp</string>
+    <string name="premium_back_home">Tillbaka till startsidan</string>
+    <string name="back_arrow_description">Tillbaka</string>
     <string name="premium_active_title">Paketet är aktivt</string>
     <string name="premium_active_thanks">Tack! Färger, animerade bakgrunder, tangentformer, typsnitt, dina AI-instruktioner och det utökade urklippet är upplåsta.</string>
     <string name="premium_status_pending">Betalningen väntar: paketet aktiveras så snart Google Play har bekräftat den.</string>
