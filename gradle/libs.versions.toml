@@ -3,7 +3,7 @@
 # des builds reproductibles. Les autres dépendances restent déclarées dans app/build.gradle.kts
 # et pourront migrer ici progressivement.
 [versions]
-room = "2.8.4"
+room = "2.8.5"
 # Activity Result API (lot 3.5) : ComponentActivity + registerForActivityResult.
 activity = "1.13.0"
 # Fragment : une dépendance transitive tire une version < 1.3.0 (lint InvalidFragmentVersionForActivityResult).
@@ -20,8 +20,8 @@ splashscreen = "1.2.0"
 # Module macrobenchmark (lot 3.6) : benchmark-macro-junit4, UI Automator.
 benchmark = "1.4.1"
 uiautomator = "2.3.0"
-# LiteRT-LM figé à 0.17.1 (compilé avec Kotlin 2.4.0, d'où le surclassement du KGP dans build.gradle.kts).
-litertlm = "0.17.1"
+# LiteRT-LM : version figée ci-dessous, seul endroit où elle est écrite (compilé avec Kotlin 2.4.0, d'où le surclassement du KGP dans build.gradle.kts).
+litertlm = "0.19.1"
 # Téléchargement des modèles (épopée 8) : WorkManager, travail au premier plan.
 work = "2.12.0"
 

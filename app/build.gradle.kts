@@ -23,6 +23,8 @@ android {
         // Mesure d'usage anonyme (SDK Aptabase, serveur UE). Une clé d'application Aptabase n'est pas un secret : elle ne permet
         // que d'envoyer des événements, et figure de toute façon dans l'APK. Voir docs/analytics.md.
         buildConfigField("String", "APTABASE_APP_KEY", "\"A-EU-8162668661\"")
+        // Version de LiteRT-LM intégrée (clé litertlm du catalogue) : affichée sur la page « Modèle personnalisé ».
+        buildConfigField("String", "LITERT_LM_VERSION", "\"${libs.versions.litertlm.get()}\"")
 
         // Lot 4.1 (B7, décision D7) : les bibliothèques natives de la dictée (sherpa-onnx) n'existent que pour
         // arm64-v8a. La release (et la variante benchmark) ne contient donc que cet ABI ; la variante debug
@@ -165,7 +167,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
 
     // Runtime d'inférence locale (décision du 23/09/2026 : docs/decisions-techniques.md).
-    // Version figée à 0.17.1 dans gradle/libs.versions.toml (lot 1.2 de la revue) : plus de
+    // Version figée dans gradle/libs.versions.toml (clé litertlm ; lot 1.2 de la revue) : plus de
     // "latest.release", pour des builds CI reproductibles. Pour monter de version, modifier
     // uniquement cette ligne du catalogue, puis rejouer correction, prompt et dictée sur appareil.
     implementation(libs.litertlm.android)
@@ -209,7 +211,7 @@ dependencies {
     // junit-jupiter embarque junit-jupiter-params (@ParameterizedTest, lot 3.3).
     testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
     // org.json réel pour les tests JVM du format de sauvegarde (story 10.3) : celui de android.jar y est « non simulé ».
-    testImplementation("org.json:json:20240303")
+    testImplementation("org.json:json:20260814")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
     // Audit TEST-01 : Robolectric (framework Android sur la JVM) ; ses tests JUnit 4 passent par le moteur Vintage.
     testImplementation(libs.robolectric)

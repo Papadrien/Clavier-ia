@@ -654,12 +654,11 @@ internal class KeyRenderer(private val context: Context) {
 
     companion object {
         /**
-         * Touches translucides sur un fond à motif : face à 78 %, ombre à 68 %. Revue du 10/11/2026 : transparence réduite de 30 %
-         * (maquettes : face à 62 %, ombre à 43 %, soit 38 % et 57 % de transparence, ramenées à 27 % et 40 %). Demande du
-         * 12/11/2026 : encore 20 % de moins (21,6 % et 32 % de transparence, soit 200 et 173 sur 255).
+         * Touches translucides sur un fond à motif : face à 81 %, ombre à 72 %. Transparence réduite deux fois de 30 % : revue du
+         * 10/11/2026 (maquettes : 38 % et 57 % de transparence, ramenées à 27 % et 40 %), puis le 13/11/2026 (19 % et 28 %).
          */
-        const val TRANSLUCENT_FACE_ALPHA = 200
-        const val TRANSLUCENT_SHADOW_ALPHA = 173
+        const val TRANSLUCENT_FACE_ALPHA = 207
+        const val TRANSLUCENT_SHADOW_ALPHA = 184
         private const val OPAQUE = 255
 
         /** Lot 21 : « pas de caractère » (voir [shiftedChar]). */

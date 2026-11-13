@@ -24,6 +24,7 @@ class CustomModelAccessTest {
         val toml = listOf(File("../gradle/libs.versions.toml"), File("gradle/libs.versions.toml")).first { it.isFile }.readText()
         val version = Regex("""(?m)^litertlm\s*=\s*"([^"]+)"""").find(toml)?.groupValues?.get(1)
         assertEquals(version, CustomModelAccess.LITERT_LM_VERSION)
+        assertTrue(CustomModelAccess.LITERT_LM_VERSION.matches(Regex("""\d+\.\d+\.\d+""")))
     }
 
     @Test

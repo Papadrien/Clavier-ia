@@ -231,8 +231,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Étape 5 : autorisations des fonctions (micro, notifications, captures, dictionnaire Android), demandées ensemble ;
-         la liste montre ce qui est accordé (MainActivity.renderPermissions). Chacune reste facultative. -->
+    <!-- Étape 5 : activer la dictée (télécharger le modèle vocal) ; le bouton ouvre l'écran « Modèle vocal ». -->
     <LinearLayout
         android:id="@+id/step5_card"
         android:layout_width="match_parent"
@@ -240,7 +239,7 @@
         android:orientation="horizontal"
         android:background="@drawable/bg_settings_card"
         android:padding="@dimen/taipo_settings_card_padding"
-        android:layout_marginBottom="@dimen/taipo_settings_gap_xl">
+        android:layout_marginBottom="@dimen/taipo_settings_gap_md">
 
         <TextView
             android:id="@+id/step5_badge"
@@ -272,6 +271,56 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
 
+            <Button
+                style="@style/TaipoButton.Primary"
+                android:id="@+id/button_activate_voice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_md" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Étape 6 : autorisations des fonctions (micro, notifications, dictionnaire Android), demandées ensemble ;
+         la liste montre ce qui est accordé (OnboardingPermissionsStep.render). Chacune reste facultative. -->
+    <LinearLayout
+        android:id="@+id/step6_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/bg_settings_card"
+        android:padding="@dimen/taipo_settings_card_padding"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_xl">
+
+        <TextView
+            android:id="@+id/step6_badge"
+            android:layout_width="@dimen/taipo_step_badge_size"
+            android:layout_height="@dimen/taipo_step_badge_size"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="@dimen/taipo_settings_text_caption"
+            android:textColor="@color/text_primary"
+            android:importantForAccessibility="no" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/taipo_settings_gap_md"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/TaipoText.Section"
+                android:id="@+id/step6_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:id="@+id/step6_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs" />
+
             <LinearLayout
                 android:id="@+id/permissions_list"
                 android:layout_width="match_parent"
@@ -285,7 +334,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/taipo_settings_gap_md"
-                android:text="@string/onboarding_step5_button" />
+                android:text="@string/onboarding_step6_button" />
         </LinearLayout>
     </LinearLayout>
 
@@ -595,6 +644,18 @@
         android:orientation="vertical"
         android:background="@drawable/bg_settings_card"
         android:clipToOutline="true">
+
+        <include
+            android:id="@+id/button_whats_new"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
 
         <include
             android:id="@+id/button_terms"

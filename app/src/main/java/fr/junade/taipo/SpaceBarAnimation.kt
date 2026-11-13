@@ -122,7 +122,10 @@ internal class SpaceBarAnimation(
         private var v = 0f
 
         fun step(target: Float, stiffness: Float, dampingRatio: Float, dt: Float) {
-            v += (stiffness * (target - x) - 2f * dampingRatio * sqrt(stiffness) * v) * dt
+            // Réglages faits pour le style Ressort : transposés dans le style d'animation choisi.
+            val style = MotionStyle.current
+            val k = style.tuneStiffness(stiffness)
+            v += (k * (target - x) - 2f * style.tuneDampingRatio(dampingRatio) * sqrt(k) * v) * dt
             x += v * dt
         }
 

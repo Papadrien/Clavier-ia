@@ -36,11 +36,24 @@ internal object BackspaceIconPose {
     const val DRAG_TILT_DEGREES = -12f
     const val DRAG_TILT_FULL_DP = 60f
 
-    /** Angle du balancier [timeSeconds] après son départ, d'amplitude [amplitude] ; 0 avant le départ et une fois terminé. */
-    fun swingAngle(timeSeconds: Float, amplitude: Float): Float {
-        if (timeSeconds < 0f || timeSeconds >= SWING_DURATION_S) return 0f
-        return amplitude * exp(-SWING_DECAY * timeSeconds) * cos(SWING_OMEGA * timeSeconds)
+    /**
+     * Angle du balancier [timeSeconds] après son départ, d'amplitude [amplitude] ; 0 avant le départ et une fois terminé
+     * ([swingDuration]). Réglé pour le style Ressort, transposé dans [style] : plus vif et presque sans oscillation en Vif,
+     * plus lent et plus balancé en Gelée.
+     */
+    fun swingAngle(timeSeconds: Float, amplitude: Float, style: MotionStyle = MotionStyle.current): Float {
+        if (timeSeconds < 0f || timeSeconds >= swingDuration(style)) return 0f
+        val t = if (style == MotionStyle.SPRING) timeSeconds else timeSeconds * style.speed
+        return amplitude * exp(-swingDecay(style) * t) * cos(SWING_OMEGA * t)
     }
+
+    /** Durée du balancier dans [style] : jusqu'à ce que l'amplitude restante soit la même qu'en Ressort après [SWING_DURATION_S]. */
+    fun swingDuration(style: MotionStyle = MotionStyle.current): Float =
+        if (style == MotionStyle.SPRING) SWING_DURATION_S else SWING_DURATION_S * SWING_DECAY / swingDecay(style) / style.speed
+
+    /** Amortissement du balancier (1/s, en temps du style Ressort) dans [style]. */
+    private fun swingDecay(style: MotionStyle): Float =
+        if (style == MotionStyle.SPRING) SWING_DECAY else style.tuneDampingRatio(SWING_DECAY / SWING_OMEGA) * SWING_OMEGA
 
     /** Inclinaison cible de l'icône pour un glissement de [distanceDp] vers la gauche (0 à [DRAG_TILT_DEGREES]). */
     fun dragTilt(distanceDp: Float): Float = DRAG_TILT_DEGREES * (distanceDp / DRAG_TILT_FULL_DP).coerceIn(0f, 1f)

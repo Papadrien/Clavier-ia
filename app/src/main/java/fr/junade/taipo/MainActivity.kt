@@ -50,6 +50,7 @@ class MainActivity : Activity() {
     private lateinit var step3: StepViews
     private lateinit var step4: StepViews
     private lateinit var step5: StepViews
+    private lateinit var step6: StepViews
     private lateinit var permissionsStep: OnboardingPermissionsStep
     private lateinit var tryInput: EditText
 
@@ -74,7 +75,7 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
-        applySystemBarInsets()
+        applySystemBarInsets(backArrow = false) // accueil : pas de flèche retour
         // Mesure du nombre de nouveaux utilisateurs : événement envoyé une seule fois par installation.
         Analytics.firstOpen(this) // sans effet tant que l'utilisateur n'a pas accepté la mesure d'usage (audit PRIV-01)
 
@@ -82,7 +83,8 @@ class MainActivity : Activity() {
         step2 = stepViews(2, R.id.step2_card, R.id.step2_badge, R.id.step2_title, R.id.step2_hint, R.id.button_select)
         step3 = stepViews(3, R.id.step3_card, R.id.step3_badge, R.id.step3_title, R.id.step3_hint, null)
         step4 = stepViews(4, R.id.step4_card, R.id.step4_badge, R.id.step4_title, R.id.step4_hint, R.id.button_activate_ai)
-        step5 = stepViews(5, R.id.step5_card, R.id.step5_badge, R.id.step5_title, R.id.step5_hint, R.id.button_allow_permissions)
+        step5 = stepViews(5, R.id.step5_card, R.id.step5_badge, R.id.step5_title, R.id.step5_hint, R.id.button_activate_voice)
+        step6 = stepViews(6, R.id.step6_card, R.id.step6_badge, R.id.step6_title, R.id.step6_hint, R.id.button_allow_permissions)
         val allowPermissions = findViewById<View>(R.id.button_allow_permissions)
         permissionsStep = OnboardingPermissionsStep(this, homePrefs(), findViewById(R.id.permissions_list), allowPermissions)
         allowPermissions.setOnClickListener { permissionsStep.request() }
@@ -99,6 +101,10 @@ class MainActivity : Activity() {
         })
         findViewById<View>(R.id.button_activate_ai).setOnClickListener {
             startActivity(Intent(this, ModelDownloadActivity::class.java))
+        }
+        // Étape 5 : le modèle vocal (dictée) se télécharge depuis son propre écran (story 8.15).
+        findViewById<View>(R.id.button_activate_voice).setOnClickListener {
+            startActivity(Intent(this, VoiceModelDownloadActivity::class.java))
         }
 
         findViewById<View>(R.id.button_enable).setOnClickListener {
@@ -180,6 +186,7 @@ class MainActivity : Activity() {
             startActivity(target)
         }
         bindRow(R.id.button_backup, R.string.button_backup, R.string.home_row_backup_subtitle, BackupActivity::class.java)
+        bindRow(R.id.button_whats_new, R.string.whats_new_title, R.string.home_row_whats_new_subtitle, WhatsNewActivity::class.java)
         bindRow(R.id.button_terms, R.string.button_terms, R.string.home_row_terms_subtitle, TermsActivity::class.java)
         bindRow(R.id.button_licenses, R.string.button_licenses, R.string.home_row_licenses_subtitle, LicensesActivity::class.java)
         bindRow(R.id.button_privacy, R.string.button_privacy, R.string.home_row_privacy_subtitle, PrivacyActivity::class.java)
@@ -255,6 +262,7 @@ class MainActivity : Activity() {
         }
         findViewById<View>(R.id.button_debug_reset_tips).setOnClickListener {
             GestureTips.resetAll(this)
+            WhatsNewPreferences.reset(this) // la pilule « Nouveautés » revient aussi, comme après une mise à jour
             showScreenMessage(R.string.home_debug_reset_tips_done)
         }
         findViewById<View>(R.id.button_debug_premium).setOnClickListener {
@@ -429,14 +437,15 @@ class MainActivity : Activity() {
         val defaultId = Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)
         val models = ModelPreferences(this)
         val aiReady = models.activeModel()?.let(models::isInstalled) == true
-        val permissionsDone = permissionsStep.isDone()
+        val voiceReady = ModelStatus.forVoiceModel(VoiceModelPreferences(this).providedCount(), VoiceModelFile.all().size) == ModelStatus.READY
         return OnboardingState.from(
             enabledPackages,
             defaultId,
             packageName,
             tried = homePrefs().getBoolean(KEY_TRIED, false),
             aiReady = aiReady,
-            permissionsDone = permissionsDone,
+            voiceReady = voiceReady,
+            permissionsDone = permissionsStep.isDone(),
         )
     }
 
@@ -499,15 +508,6 @@ class MainActivity : Activity() {
             R.string.onboarding_step4_hint,
             R.string.onboarding_step4_hint_locked,
         )
-        renderStep(
-            step5,
-            state.permissions,
-            R.string.onboarding_step5_title,
-            R.string.onboarding_step5_title_done,
-            R.string.onboarding_step5_hint,
-            R.string.onboarding_step5_hint_locked,
-        )
-        permissionsStep.render(state.permissions)
         // Étape 4 : le modèle recommandé selon la mémoire du téléphone, nommé dans l'explication et sur le bouton.
         if (state.activateAi == StepStatus.CURRENT) {
             val memory = ActivityManager.MemoryInfo()
@@ -518,6 +518,29 @@ class MainActivity : Activity() {
             step4.hint.text = getString(R.string.onboarding_step4_hint, name)
             (step4.action as? TextView)?.text = getString(R.string.onboarding_step4_button, name, size)
         }
+        renderStep(
+            step5,
+            state.activateVoice,
+            R.string.onboarding_step5_title,
+            R.string.onboarding_step5_title_done,
+            R.string.onboarding_step5_hint,
+            R.string.onboarding_step4_hint_locked, // même condition que l'étape 4 : Taipo sélectionné
+        )
+        // Étape 5 : taille du modèle vocal (ses 4 fichiers) sur le bouton.
+        if (state.activateVoice == StepStatus.CURRENT) {
+            val size = Formatter.formatShortFileSize(this, VoiceModelFile.totalApproxBytes())
+            (step5.action as? TextView)?.text = getString(R.string.onboarding_step5_button, size)
+        }
+        // Étape 6 : autorisations des fonctions (micro, notifications, dictionnaire).
+        renderStep(
+            step6,
+            state.permissions,
+            R.string.onboarding_step6_title,
+            R.string.onboarding_step6_title_done,
+            R.string.onboarding_step6_hint,
+            R.string.onboarding_step6_hint_locked,
+        )
+        permissionsStep.render(state.permissions)
         // Le champ d'essai reste là tant que l'étape 3 est en cours, et juste après (pour finir sa phrase).
         tryInput.visibility = if (state.tryIt == StepStatus.CURRENT || (state.tryIt == StepStatus.DONE && tryInput.hasFocus())) View.VISIBLE else View.GONE
     }

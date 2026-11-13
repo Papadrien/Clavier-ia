@@ -8,10 +8,10 @@ package fr.junade.taipo
 object CustomModelAccess {
 
     /**
-     * Version de LiteRT-LM intégrée à l'application (`litertlm` dans `gradle/libs.versions.toml`, vérifié par CustomModelAccessTest) :
-     * le modèle fourni doit pouvoir être chargé par cette version.
+     * Version de LiteRT-LM intégrée à l'application, lue dans `gradle/libs.versions.toml` (clé `litertlm`) à la compilation : jamais
+     * écrite à la main, elle suit les montées de version. Le modèle fourni doit pouvoir être chargé par cette version.
      */
-    const val LITERT_LM_VERSION = "0.17.1"
+    val LITERT_LM_VERSION: String get() = BuildConfig.LITERT_LM_VERSION
 
     /** Logique pure (testée en JVM) : pack premium actif, ou build debug. */
     fun isAllowed(premium: Boolean, debugBuild: Boolean): Boolean = premium || debugBuild

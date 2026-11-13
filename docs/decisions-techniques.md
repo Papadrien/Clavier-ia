@@ -6,7 +6,7 @@ document `ai-keyboard.md` qui n'était pas dans le dépôt (lot 4.3 de la revue 
 le backlog produit : seulement ce qui explique des choix visibles dans le code.
 
 ## Moteur d'inférence texte
-- **LiteRT-LM** (`com.google.ai.edge.litertlm:litertlm-android`, figé à 0.17.1 dans `gradle/libs.versions.toml`). L'API
+- **LiteRT-LM** (`com.google.ai.edge.litertlm:litertlm-android`, version figée dans `gradle/libs.versions.toml`). L'API
   MediaPipe LLM Inference est en maintenance seule ; Google recommande la migration vers LiteRT-LM.
 - Accélération matérielle (CPU / GPU) choisie automatiquement ; modèles quantifiés int8.
 - Un seul modèle chargé à la fois ; RAM observée d'environ 4 Go pour un modèle chargé (voir `LlmEngineHost`).

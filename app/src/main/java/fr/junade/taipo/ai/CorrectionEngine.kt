@@ -110,7 +110,7 @@ class CorrectionEngine(
                 runningConversation = conversation
                 try {
                     val response = conversation.sendMessage(userTurn)
-                    // `Message.text` n'existe pas encore dans litertlm-android 0.17.1 (build en
+                    // `Message.text` n'existe pas dans litertlm-android (0.17.1, et toujours pas en 0.19.1 : build en
                     // erreur : "Unresolved reference 'text'"). La doc officielle Kotlin
                     // (https://ai.google.dev/edge/litert-lm/android) montre `print(conversation
                     // .sendMessage(...))` et `println("Answer: $response")` : Message expose donc

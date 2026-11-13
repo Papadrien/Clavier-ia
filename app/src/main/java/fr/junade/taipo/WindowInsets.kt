@@ -12,8 +12,11 @@ import androidx.core.view.WindowInsetsCompat
  *
  * À appeler juste après `setContentView` : ajoute aux paddings existants du contenu
  * les insets des barres système, des encoches et du clavier à l'écran (IME).
+ *
+ * [backArrow] (13/11/2026) : flèche retour en haut à gauche ([addBackArrow]), sur toutes les pages sauf l'accueil.
  */
-fun Activity.applySystemBarInsets() {
+fun Activity.applySystemBarInsets(backArrow: Boolean = true) {
+    if (backArrow) addBackArrow()
     val content = findViewById<View>(android.R.id.content)
     val left = content.paddingLeft
     val top = content.paddingTop

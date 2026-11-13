@@ -99,6 +99,8 @@ abstract class BackdropPainter {
             KeyboardBackdrop.BUBBLES -> BubblesPainter()
             KeyboardBackdrop.CRYSTAL -> CrystalPainter()
             KeyboardBackdrop.WAVES -> WavesPainter()
+            KeyboardBackdrop.HEARTS -> HeartsPainter()
+            KeyboardBackdrop.FLOWERS -> FlowersPainter()
         }
     }
 }

@@ -90,10 +90,14 @@ internal class TunedSpring(var value: Float = 0f) {
     }
 
     fun step(dt: Float) {
+        // Réglages faits pour le style Ressort : transposés dans le style d'animation choisi.
+        val style = MotionStyle.current
+        val stiffness = style.tuneStiffness(k)
+        val damping = style.tuneDamping(k, c)
         val n = ceil(dt / SUBSTEP_S).toInt().coerceAtLeast(1)
         val h = dt / n
         repeat(n) {
-            velocity += (k * (target - value) - c * velocity) * h
+            velocity += (stiffness * (target - value) - damping * velocity) * h
             value += velocity * h
         }
         if (isSettled) jump(target)

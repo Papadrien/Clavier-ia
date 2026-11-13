@@ -5,8 +5,8 @@ Non compilé ni exécuté dans l'environnement de développement : à valider au
 ## Principe
 L'utilisateur fournit son propre fichier `.litertlm` depuis le système de fichiers (sélecteur Android, permission SAF persistante) et
 s'en sert à la place des modèles de Taipo pour Corriger, Chat et la transcription IA. Le fichier doit pouvoir être chargé par la version
-de LiteRT-LM intégrée (`CustomModelAccess.LITERT_LM_VERSION`, aujourd'hui 0.17.1, vérifiée contre `gradle/libs.versions.toml` par
-`CustomModelAccessTest` : à changer avec la dépendance).
+de LiteRT-LM intégrée (`CustomModelAccess.LITERT_LM_VERSION`, lue dans `gradle/libs.versions.toml` à la compilation par `BuildConfig` : elle
+suit les montées de version ; aujourd'hui 0.19.1).
 
 Accès (`CustomModelAccess.allowed`) : pack premium actif, ou build debug (pour essayer un modèle avant de l'ajouter au catalogue d'une
 version publiée, sans dépendre du forçage du pass). Sans le pack, la ligne de l'accueil porte un cadenas et ouvre l'écran du pack ; un

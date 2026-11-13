@@ -79,7 +79,7 @@ internal class BackspaceAnimation(
     fun step(dt: Float) {
         if (swingTime >= 0f) {
             swingTime += dt
-            if (swingTime >= BackspaceIconPose.SWING_DURATION_S) swingTime = -1f
+            if (swingTime >= BackspaceIconPose.swingDuration()) swingTime = -1f
         }
         tilt.step(tiltTarget, dt)
         if (tilt.isSettledAngle(tiltTarget)) tilt.snap(tiltTarget)

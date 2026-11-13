@@ -126,11 +126,12 @@ class ModelDownloadActivity : ModelScreenActivity() {
         views.subtitle.visibility = View.VISIBLE
         val size = Formatter.formatFileSize(this, model.approxDownloadBytes ?: model.approxSizeBytesMax)
         val technicalLine = getString(R.string.model_download_technical_line, model.technicalName, size)
-        // Gemma 3 (Ultra-léger, Léger) n'a pas d'entrée audio : on prévient que certaines fonctions manquent.
+        // Toutes les fonctions sont disponibles avec les 4 modèles (13/11/2026). Gemma 3 (Fourmi, Colibri) n'a pas d'entrée
+        // audio : sa dictée IA passe par le modèle vocal, à télécharger à part, ce que la fiche précise.
         views.technical.text = if (model.hasAudioInput) {
             technicalLine
         } else {
-            technicalLine + "\n" + getString(R.string.model_download_limited_features)
+            technicalLine + "\n" + getString(R.string.model_download_dictation_via_voice)
         }
 
         // Pastille : « Actif » pour le modèle choisi, « Installé » pour les autres modèles présents, sinon

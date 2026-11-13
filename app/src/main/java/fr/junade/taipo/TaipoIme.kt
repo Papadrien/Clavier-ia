@@ -216,6 +216,23 @@ class TaipoIme : InputMethodService() {
     /** Revue UX : astuces de gestes, une fois chacune, dans la barre du haut (GestureTipPillView). */
     private val gestureTips by lazy { GestureTips(applicationContext) }
 
+    /** Nouveautés de la version : pilule dans la barre du haut, les premières ouvertures du clavier après la mise à jour. */
+    private val whatsNew by lazy { WhatsNewPreferences(applicationContext) }
+
+    /**
+     * Pilule « Nouveautés » ([WhatsNew]) à l'ouverture du clavier : pas dans un champ de mot de passe, ni par-dessus une astuce.
+     * Comptée seulement si elle a vraiment été affichée. Un toucher ouvre la page dans l'application.
+     */
+    private fun showWhatsNew() {
+        if (!viewComposer.isComposed || sensitiveField) return
+        if (correctionBar.gestureTip.visibility == View.VISIBLE || !whatsNew.shouldShowNow()) return
+        val pill = GestureTipPillView.Content(R.drawable.ic_whats_new, getString(R.string.whats_new_pill_description)) {
+            whatsNew.markOpened()
+            startActivity(Intent(this, WhatsNewActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        }
+        if (correctionBar.showGestureTip(getString(R.string.whats_new_pill), WHATS_NEW_PILL_MS, pill)) whatsNew.markShown()
+    }
+
     /** Dernier déplacement du curseur par la barre d'espace (ms) : ce n'est pas un déplacement « à la main » dans le champ. */
     private var lastSpaceCursorMoveAt = 0L
 
@@ -313,7 +330,8 @@ class TaipoIme : InputMethodService() {
         AiTranscriptionController(
             this,
             serviceScope,
-            AiTranscriptionEngine(llmHost, TranscriptionPromptPreferences(applicationContext)),
+            // Gemma 3 passe par la dictée : même moteur vocal que le bouton Vocal (un seul modèle vocal en mémoire).
+            AiTranscriptionEngine(llmHost, TranscriptionPromptPreferences(applicationContext), voiceEngine = { voice.engine() }),
             AiTranscriptionHost(imeContext),
         )
     }
@@ -455,6 +473,9 @@ class TaipoIme : InputMethodService() {
         // Même champ relancé par l'application (restarting) : l'annulation reste possible, le texte est retrouvé par son contenu.
         if (!restarting) undoController.clear(notify = false)
         traced(Sections.START_INPUT_VIEW) { startInputView(info) }
+        // Nouveautés : à chaque ouverture du clavier (pas quand l'application relance le même champ), après l'astuce de langue
+        // éventuelle pour ne pas la recouvrir.
+        if (!restarting && viewComposer.isComposed) keyboardView.postDelayed({ showWhatsNew() }, WHATS_NEW_DELAY_MS)
     }
 
     private fun startInputView(info: EditorInfo?) {
@@ -510,9 +531,10 @@ class TaipoIme : InputMethodService() {
             fieldType != FieldType.URL
         keyboardView.setNextLetterPrediction(null) // le nouveau champ repart sans prédiction, la suivante vient du texte du champ
         correctionBar.aiActionsAllowed = !sensitiveField
-        // Story 14.5 : le bouton Transcription IA n'existe que si le modèle actif (installé) a une entrée audio.
+        // Story 14.5, élargie le 13/11/2026 : le bouton Transcription IA existe dès qu'un modèle est installé et actif (Gemma 4 :
+        // audio natif ; Gemma 3 : dictée puis reformulation).
         correctionBar.aiTranscriptionAvailable =
-            ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled)?.let(modelPreferences::acceptsAudio) == true
+            ModelAvailability.usable(modelPreferences.activeModel(), modelPreferences::isInstalled) != null
         suggestions.isEmailAddressField = fieldType == FieldType.EMAIL
         messagingField = MessagingFieldPolicy.isMessagingField(info?.packageName, info?.inputType ?: 0)
         controller.setAutoCapitalization(
@@ -1185,6 +1207,10 @@ class TaipoIme : InputMethodService() {
 
         /** Astuces : délai avant celle de la langue (le clavier finit d'apparaître), écho d'un déplacement par l'espace. */
         private const val LANGUAGE_TIP_DELAY_MS = 800L
+
+        /** Délai avant la pilule des nouveautés (après l'astuce de langue) et durée d'affichage. */
+        private const val WHATS_NEW_DELAY_MS = 1_000L
+        private const val WHATS_NEW_PILL_MS = 8_000L
         private const val SPACE_MOVE_ECHO_MS = 600L
     }
 }

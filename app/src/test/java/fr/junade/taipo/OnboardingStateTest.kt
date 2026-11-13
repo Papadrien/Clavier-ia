@@ -52,6 +52,21 @@ class OnboardingStateTest {
     }
 
     @Test
+    fun `etape dictee verrouillee tant que Taipo n'est pas choisi`() {
+        val state = OnboardingState.from(listOf(pkg), "com.google.android.inputmethod.latin/.LatinIME", pkg)
+        assertEquals(StepStatus.LOCKED, state.activateVoice)
+    }
+
+    @Test
+    fun `etape dictee a faire puis faite quand le modele vocal est complet`() {
+        val pending = OnboardingState.from(listOf(pkg), "$pkg/.TaipoIme", pkg, tried = true, aiReady = true)
+        assertEquals(StepStatus.CURRENT, pending.activateVoice)
+        assertEquals(false, pending.complete)
+        val done = OnboardingState.from(listOf(pkg), "$pkg/.TaipoIme", pkg, tried = true, aiReady = true, voiceReady = true)
+        assertEquals(StepStatus.DONE, done.activateVoice)
+    }
+
+    @Test
     fun `autorisations verrouillees tant que Taipo n'est pas choisi`() {
         val state = OnboardingState.from(listOf(pkg), null, pkg)
         assertEquals(StepStatus.LOCKED, state.permissions)
@@ -60,14 +75,15 @@ class OnboardingStateTest {
     @Test
     fun `autorisations a faire puis faites`() {
         assertEquals(StepStatus.CURRENT, OnboardingState.from(listOf(pkg), "$pkg/.TaipoIme", pkg).permissions)
-        val done = OnboardingState.from(listOf(pkg), "$pkg/.TaipoIme", pkg, tried = true, aiReady = true, permissionsDone = true)
+        val done = OnboardingState.from(listOf(pkg), "$pkg/.TaipoIme", pkg, permissionsDone = true)
         assertEquals(StepStatus.DONE, done.permissions)
-        assertEquals(true, done.complete)
     }
 
     @Test
-    fun `l'accueil n'est pas complet sans l'etape des autorisations`() {
-        val state = OnboardingState.from(listOf(pkg), "$pkg/.TaipoIme", pkg, tried = true, aiReady = true)
-        assertEquals(false, state.complete)
+    fun `l'accueil n'est complet qu'avec les six etapes`() {
+        val all = OnboardingState.from(listOf(pkg), "$pkg/.TaipoIme", pkg, tried = true, aiReady = true, voiceReady = true, permissionsDone = true)
+        assertEquals(true, all.complete)
+        assertEquals(false, all.copy(permissionsDone = false).complete)
+        assertEquals(false, all.copy(voiceReady = false).complete)
     }
 }

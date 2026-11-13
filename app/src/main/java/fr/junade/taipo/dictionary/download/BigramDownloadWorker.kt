@@ -11,8 +11,6 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.KeyboardLanguage
-import fr.junade.taipo.dictionary.DictionaryChecksums
-import fr.junade.taipo.dictionary.DictionaryFile
 import fr.junade.taipo.dictionary.DictionaryFiles
 import fr.junade.taipo.dictionary.DictionaryLoader
 import fr.junade.taipo.model.download.ModelFileFetcher
@@ -42,12 +40,14 @@ class BigramDownloadWorker(context: Context, params: WorkerParameters) : Corouti
                 context = applicationContext,
                 url = DictionaryFiles.bigramRemoteUrl(language),
                 destination = destination,
-                expectedSha256 = DictionaryChecksums.bigramsOf(language), // audit SEC-03
+                expectedSha256 = null, // contrôle de forme à la place (beforeCommit)
                 acceptContentLength = { it in 1..MAX_FILE_BYTES },
                 allowMobileData = true, // quelques Mo, comme les listes de mots
                 isActive = { scope.isActive },
-                // Les premières lignes sont « mot nombre », comme une liste de mots : même contrôle qu'une liste complète.
-                beforeCommit = { DictionaryContentCheck.requireValid(ModelInstaller.temporaryFileFor(destination), DictionaryFile.FULL) },
+                beforeCommit = {
+                    DictionaryContentCheck.requireValid(ModelInstaller.temporaryFileFor(destination), DictionaryContentCheck.Kind.BIGRAMS)
+                },
+                allowResume = false,
             )
         }
         if (outcome !is ModelFileFetcher.Outcome.Done) {

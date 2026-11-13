@@ -446,13 +446,15 @@ class KeyboardView(context: Context) : View(context) {
         deleteSwipeListener = listener
     }
 
-    // Story 1.7 : glissement horizontal sur la barre espace = déplacement du curseur.
-    private val spaceSwipe = SpaceSwipeTracker(activationPx = dp(16f), stepPx = dp(12f))
+    // Story 1.7 : glissement horizontal sur la barre espace = déplacement du curseur. Un caractère tous les 24 dp
+    // (12 dp jusqu'au 13/11/2026 : deux fois moins sensible, le curseur filait trop vite).
+    private val spaceSwipe = SpaceSwipeTracker(activationPx = dp(16f), stepPx = dp(24f))
 
     // Story 1.9 : glissement horizontal vers la gauche sur la touche retour arrière = suppression
     // de mots entiers. Seuils plus larges que ceux de la barre espace : le geste doit rester
-    // distinct d'un simple appui long sur la touche.
-    private val backspaceSwipe = BackspaceSwipeTracker(activationPx = dp(24f), stepPx = dp(40f))
+    // distinct d'un simple appui long sur la touche. Un mot de plus tous les 80 dp (40 dp jusqu'au 13/11/2026 : deux fois
+    // moins sensible, trop de mots partaient d'un coup).
+    private val backspaceSwipe = BackspaceSwipeTracker(activationPx = dp(24f), stepPx = dp(80f))
 
     // Animation de l'icône retour arrière (balancier, inclinaison) : seule l'icône bouge, pas la touche.
     private val backspaceAnimation = BackspaceAnimation(

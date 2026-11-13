@@ -90,8 +90,8 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     private val menuActions = AiActionButtons(context, style)
     val voiceButton = ImageButton(context)
 
-    /** Astuce de geste ([showGestureTip]) : pilule posée sur la rangée affichée, entre le premier bouton et Vocal. */
-    private val gestureTip = GestureTipPillView(context)
+    /** Astuce de geste ([showGestureTip]) ou pilule des nouveautés ([WhatsNew]), entre le premier bouton et Vocal ; lue par l'IME. */
+    internal val gestureTip = GestureTipPillView(context)
     private val hideGestureTipRunnable = Runnable { hideGestureTip() }
 
     private var listener: OnCorrectListener? = null
@@ -251,8 +251,8 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
         // Astuce de geste : au-dessus des rangées (elle masque ce qu'elle recouvre), marges posées par onMeasure.
         gestureTip.visibility = View.GONE
-        gestureTip.setOnClickListener { hideGestureTip() }
-        addView(gestureTip, LayoutParams(LayoutParams.MATCH_PARENT, barHeight, Gravity.TOP).apply { topMargin = paddingV })
+        gestureTip.onClose = { hideGestureTip() } // au toucher ; la pilule des nouveautés lance ensuite son action
+        addView(gestureTip, LayoutParams(LayoutParams.WRAP_CONTENT, barHeight, Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply { topMargin = paddingV })
 
         // Lot 20 : zone tactile des boutons étendue à 48 dp (36 dp dessinés), sans changer le rendu.
         expandChildTouchTargets(this::touchTargets)
@@ -265,7 +265,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     /**
      * Boutons que la zone tactile étendue peut viser : ceux des rangées affichées, et Vocal. Pendant une astuce de geste, la
-     * pilule remplace les boutons qu'elle recouvre.
+     * pilule (à la largeur de son texte, centrée) remplace les boutons qu'elle recouvre ; ceux d'à côté restent touchables.
      */
     private fun touchTargets(): List<View> {
         val targets = ArrayList<View>()
@@ -274,7 +274,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             if (row.visibility != View.VISIBLE) continue
             for (index in 0 until row.childCount) {
                 val child = row.getChildAt(index)
-                if (tipShown && row.left + child.right > gestureTip.left) continue
+                if (tipShown && row.left + child.right > gestureTip.left && row.left + child.left < gestureTip.right) continue
                 targets.add(child)
             }
         }
@@ -488,10 +488,10 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
      * Astuce de geste ([GestureTips]) dans la barre, pendant [durationMs] ou jusqu'à un toucher sur la pilule ; la frappe ne la
      * retire pas. Faux si la barre n'est pas affichée (l'astuce sera proposée plus tard).
      */
-    fun showGestureTip(message: String, durationMs: Long): Boolean {
+    internal fun showGestureTip(message: String, durationMs: Long, pill: GestureTipPillView.Content = GestureTipPillView.Content()): Boolean {
         if (!isShown || !isLaidOut || width == 0) return false
         digitTipShown = false
-        gestureTip.setMessage(message)
+        gestureTip.setMessage(message, pill)
         val wasVisible = gestureTip.visibility == View.VISIBLE
         gestureTip.visibility = View.VISIBLE
         if (!wasVisible) BarReveal.enter(gestureTip, fromEnd = false, full = false)

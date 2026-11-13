@@ -102,6 +102,9 @@ class VoiceController(
 
     private val voiceEngineHolder = lazy { VoiceEngine(context.applicationContext) }
     private val voiceEngine by voiceEngineHolder
+
+    /** Moteur de dictée, partagé avec la transcription IA de Gemma 3 (un seul modèle vocal en mémoire). */
+    fun engine(): VoiceEngine = voiceEngine
     private val voiceModelPreferences by lazy { VoiceModelPreferences(context.applicationContext) }
     private var voiceRecorder: VoiceRecorder? = null
 
