@@ -20,7 +20,7 @@ class ProperNamesAssetsTest {
     }
 
     @ParameterizedTest(name = "prenoms {0}")
-    @ValueSource(strings = ["fr", "en", "es", "de", "it", "nl", "pt"])
+    @ValueSource(strings = ["fr", "en", "es", "de", "it", "nl", "pt", "pl", "ro", "cs", "hu", "sv", "da", "nb", "fi"])
     fun `la liste de prenoms est complete et bien formee`(language: String) {
         val list = names(language)
         assertTrue(list.size >= 60, "$language : seulement ${list.size} prénoms")

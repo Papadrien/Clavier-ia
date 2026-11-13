@@ -15,6 +15,7 @@ import fr.junade.taipo.ai.WavEncoder
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
 import fr.junade.taipo.model.AiModel
+import fr.junade.taipo.model.ModelPreferences
 import fr.junade.taipo.model.VoiceModelPreferences
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -115,6 +116,12 @@ class AiTranscriptionController(
         job?.cancel()
     }
 
+    /**
+     * Le modèle traite l'audio lui-même (Gemma 4, ou modèle personnalisé réglé ainsi sur sa page) ; sinon dictée avec le modèle vocal
+     * puis reformulation du texte.
+     */
+    private fun nativeAudio(model: AiModel): Boolean = ModelPreferences(context).acceptsAudio(model)
+
     private fun start() {
         if (host.voiceRecording() || host.aiBusy()) {
             host.showMessage(context.getString(R.string.ai_transcription_busy))
@@ -125,7 +132,7 @@ class AiTranscriptionController(
             host.showMessage(context.getString(R.string.ai_transcription_no_audio_model))
             return
         }
-        if (!model.hasAudioInput && !voiceModelPreferences.isComplete()) {
+        if (!nativeAudio(model) && !voiceModelPreferences.isComplete()) {
             // Gemma 3 passe par la dictée : sans modèle vocal, on ouvre son écran, comme le bouton Vocal.
             ModelScreenRedirect.openVoice(context)
             return
@@ -136,7 +143,7 @@ class AiTranscriptionController(
             return
         }
         try {
-            recorder.start(if (model.hasAudioInput) AiTranscriptionRecorder.MAX_SECONDS else AiTranscriptionRecorder.DICTATION_MAX_SECONDS)
+            recorder.start(if (nativeAudio(model)) AiTranscriptionRecorder.MAX_SECONDS else AiTranscriptionRecorder.DICTATION_MAX_SECONDS)
         } catch (e: MicUnavailableException) {
             AppLog.w(TAG, "micro indisponible", e)
             host.showMessage(context.getString(R.string.ai_transcription_mic_unavailable))
@@ -177,7 +184,7 @@ class AiTranscriptionController(
                     host.showMessage(context.getString(R.string.ai_transcription_no_audio_model))
                     return@launch
                 }
-                val text = if (model.hasAudioInput) {
+                val text = if (nativeAudio(model)) {
                     val seconds = samples.size.toDouble() / AiTranscriptionRecorder.SAMPLE_RATE
                     val wav = withContext(Dispatchers.Default) { WavEncoder.pcm16Mono(samples, AiTranscriptionRecorder.SAMPLE_RATE) }
                     engine.transcribe(model, wav, seconds, isCancelled = { cancelled }, onLoading = { })

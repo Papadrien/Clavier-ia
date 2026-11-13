@@ -23,6 +23,8 @@ android {
         // Mesure d'usage anonyme (SDK Aptabase, serveur UE). Une clé d'application Aptabase n'est pas un secret : elle ne permet
         // que d'envoyer des événements, et figure de toute façon dans l'APK. Voir docs/analytics.md.
         buildConfigField("String", "APTABASE_APP_KEY", "\"A-EU-8162668661\"")
+        // Version de LiteRT-LM intégrée (clé litertlm du catalogue) : affichée sur la page « Modèle personnalisé ».
+        buildConfigField("String", "LITERT_LM_VERSION", "\"${libs.versions.litertlm.get()}\"")
 
         // Lot 4.1 (B7, décision D7) : les bibliothèques natives de la dictée (sherpa-onnx) n'existent que pour
         // arm64-v8a. La release (et la variante benchmark) ne contient donc que cet ABI ; la variante debug

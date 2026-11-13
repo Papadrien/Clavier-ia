@@ -50,6 +50,8 @@ class MainActivity : Activity() {
     private lateinit var step3: StepViews
     private lateinit var step4: StepViews
     private lateinit var step5: StepViews
+    private lateinit var step6: StepViews
+    private lateinit var permissionsStep: OnboardingPermissionsStep
     private lateinit var tryInput: EditText
 
     /** Relit l'achat du pass chez Google Play à chaque retour sur l'accueil (achat fait ailleurs, remboursement). */
@@ -82,6 +84,10 @@ class MainActivity : Activity() {
         step3 = stepViews(3, R.id.step3_card, R.id.step3_badge, R.id.step3_title, R.id.step3_hint, null)
         step4 = stepViews(4, R.id.step4_card, R.id.step4_badge, R.id.step4_title, R.id.step4_hint, R.id.button_activate_ai)
         step5 = stepViews(5, R.id.step5_card, R.id.step5_badge, R.id.step5_title, R.id.step5_hint, R.id.button_activate_voice)
+        step6 = stepViews(6, R.id.step6_card, R.id.step6_badge, R.id.step6_title, R.id.step6_hint, R.id.button_allow_permissions)
+        val allowPermissions = findViewById<View>(R.id.button_allow_permissions)
+        permissionsStep = OnboardingPermissionsStep(this, homePrefs(), findViewById(R.id.permissions_list), allowPermissions)
+        allowPermissions.setOnClickListener { permissionsStep.request() }
         tryInput = findViewById(R.id.onboarding_try_input)
         // Étape 3 : faite dès que quelques mots ont été tapés dans le champ d'essai (retenu, l'étape ne revient pas).
         tryInput.addTextChangedListener(object : TextWatcher {
@@ -142,10 +148,10 @@ class MainActivity : Activity() {
         )
         bindRow(R.id.button_model_download, R.string.button_model_download, R.string.home_row_model_download_subtitle, ModelDownloadActivity::class.java)
         bindRow(R.id.button_model_settings, R.string.button_model_settings, R.string.home_row_model_settings_subtitle, ModelSettingsActivity::class.java)
-        // Story 8.12 : le chargement d'un modèle à la main est réservé au debug (la variante benchmark n'est pas debug).
-        val localModelVisible = LocalModelAccess.isVisible(BuildConfig.DEBUG)
-        findViewById<View>(R.id.button_model_settings).visibility = if (localModelVisible) View.VISIBLE else View.GONE
-        findViewById<View>(R.id.divider_model_settings).visibility = if (localModelVisible) View.VISIBLE else View.GONE
+        // Stories 8.12 et 8.15 : le chargement des modèles à la main est réservé au debug (la variante benchmark n'est pas
+        // debug) ; ses deux lignes sont dans la section « Debug », en bas de l'accueil.
+        findViewById<View>(R.id.debug_local_models).visibility =
+            if (LocalModelAccess.isVisible(BuildConfig.DEBUG)) View.VISIBLE else View.GONE
         // Story 8.15 : le modèle vocal se télécharge depuis son propre écran « Modèle vocal », distinct de « Modèle IA ».
         bindRow(
             R.id.button_voice_model_settings,
@@ -153,15 +159,12 @@ class MainActivity : Activity() {
             R.string.home_row_voice_model_subtitle,
             VoiceModelDownloadActivity::class.java,
         )
-        // Le chargement des fichiers vocaux à la main est réservé au debug, comme celui du modèle de texte (8.12).
         bindRow(
             R.id.button_voice_model_local,
             R.string.button_voice_model_local,
             R.string.home_row_voice_model_local_subtitle,
             VoiceModelSettingsActivity::class.java,
         )
-        findViewById<View>(R.id.button_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE
-        findViewById<View>(R.id.divider_voice_model_local).visibility = if (localModelVisible) View.VISIBLE else View.GONE
         bindRow(R.id.button_system_prompts, R.string.button_system_prompts, R.string.home_row_system_prompts_subtitle, SystemPromptsActivity::class.java)
         // Pass premium : sans lui, la ligne porte un cadenas et ouvre l'écran du pass (lecture et modification des prompts réservées).
         findViewById<View>(R.id.button_system_prompts).setOnClickListener {
@@ -169,6 +172,16 @@ class MainActivity : Activity() {
                 Intent(this, SystemPromptsActivity::class.java)
             } else {
                 PremiumActivity.intent(this, PremiumActivity.SOURCE_PROMPTS)
+            }
+            startActivity(target)
+        }
+        bindRow(R.id.button_custom_model, R.string.custom_model_title, R.string.home_row_custom_model_subtitle, CustomModelActivity::class.java)
+        // Pack premium (toujours ouvert en debug) : sans lui, la ligne porte un cadenas et ouvre l'écran du pack.
+        findViewById<View>(R.id.button_custom_model).setOnClickListener {
+            val target = if (CustomModelAccess.allowed) {
+                Intent(this, CustomModelActivity::class.java)
+            } else {
+                PremiumActivity.intent(this, PremiumActivity.SOURCE_CUSTOM_MODEL)
             }
             startActivity(target)
         }
@@ -276,6 +289,12 @@ class MainActivity : Activity() {
         } else {
             getString(R.string.premium_locked_item, getString(R.string.button_system_prompts))
         }
+        // Ligne « Modèle personnalisé » : même cadenas que les prompts système.
+        val customModel = findViewById<View>(R.id.button_custom_model)
+        val customAllowed = CustomModelAccess.allowed
+        customModel.findViewById<ImageView>(R.id.row_chevron)
+            .setImageResource(if (customAllowed) R.drawable.ic_chevron_right else R.drawable.ic_lock)
+        customModel.contentDescription = if (customAllowed) null else getString(R.string.premium_locked_item, getString(R.string.custom_model_title))
         if (BuildConfig.DEBUG) {
             val bought = getString(if (PremiumPass.isPurchased) R.string.home_debug_premium_bought else R.string.home_debug_premium_not_bought)
             val state = when (PremiumPass.debugOverride) {
@@ -426,7 +445,13 @@ class MainActivity : Activity() {
             tried = homePrefs().getBoolean(KEY_TRIED, false),
             aiReady = aiReady,
             voiceReady = voiceReady,
+            permissionsDone = permissionsStep.isDone(),
         )
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (permissionsStep.onRequestResult(requestCode)) renderOnboarding(readOnboardingState())
     }
 
     /** Ligne de réglage de l'accueil (lot UX 3) : pose le titre et le sous-titre, ouvre [target] au toucher. */
@@ -506,8 +531,22 @@ class MainActivity : Activity() {
             val size = Formatter.formatShortFileSize(this, VoiceModelFile.totalApproxBytes())
             (step5.action as? TextView)?.text = getString(R.string.onboarding_step5_button, size)
         }
+        renderPermissionsStep(state)
         // Le champ d'essai reste là tant que l'étape 3 est en cours, et juste après (pour finir sa phrase).
         tryInput.visibility = if (state.tryIt == StepStatus.CURRENT || (state.tryIt == StepStatus.DONE && tryInput.hasFocus())) View.VISIBLE else View.GONE
+    }
+
+    /** Étape 6 : autorisations des fonctions (micro, notifications, dictionnaire). */
+    private fun renderPermissionsStep(state: OnboardingState) {
+        renderStep(
+            step6,
+            state.permissions,
+            R.string.onboarding_step6_title,
+            R.string.onboarding_step6_title_done,
+            R.string.onboarding_step6_hint,
+            R.string.onboarding_step6_hint_locked,
+        )
+        permissionsStep.render(state.permissions)
     }
 
     private fun renderStep(

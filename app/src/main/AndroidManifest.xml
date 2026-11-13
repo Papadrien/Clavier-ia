@@ -8,7 +8,7 @@
     <!--
         Dictionnaire utilisateur du système (mots ajoutés via le souligné rouge) : lecture seule, pour que
         l'autocorrection ne les corrige pas et les propose. Permission runtime demandée depuis l'écran du
-        dictionnaire personnel ; sans elle, rien ne change. Voir SystemUserDictionary.
+        dictionnaire personnel et l'étape « Autorisations » de l'accueil ; sans elle, rien ne change. Voir SystemUserDictionary.
     -->
     <uses-permission android:name="android.permission.READ_USER_DICTIONARY" />
 
@@ -144,6 +144,13 @@
         <activity
             android:name=".SystemPromptsActivity"
             android:label="@string/system_prompts_title"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false" />
+
+        <!-- Modèle IA personnalisé (pack premium, ou build debug) : fichier .litertlm fourni par l'utilisateur et ses prompts. -->
+        <activity
+            android:name=".CustomModelActivity"
+            android:label="@string/custom_model_title"
             android:windowSoftInputMode="adjustResize"
             android:exported="false" />
 

@@ -97,6 +97,29 @@
                 android:text="@string/premium_prompts_example" />
         </LinearLayout>
 
+        <!-- Avantage : modèle IA personnalisé (fichier .litertlm de l'utilisateur, avec ses prompts). -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_settings_card"
+            android:padding="@dimen/taipo_settings_card_padding"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md">
+
+            <TextView
+                style="@style/TaipoText.Section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/premium_custom_model_title" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+                android:text="@string/premium_custom_model_text" />
+        </LinearLayout>
+
         <!-- Avantage 3 : presse-papiers étendu. -->
         <LinearLayout
             android:layout_width="match_parent"

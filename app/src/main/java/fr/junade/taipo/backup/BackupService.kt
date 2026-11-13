@@ -228,11 +228,15 @@ object BackupService {
         return false
     }
 
-    private fun promptPreferences(context: Context): Map<String, SystemPromptPreferences> = mapOf(
-        BackupAiSettings.PROMPT_CORRECTION to CorrectionPromptPreferences(context),
-        BackupAiSettings.PROMPT_GENERATION to GenerationPromptPreferences(context),
-        BackupAiSettings.PROMPT_TRANSCRIPTION to TranscriptionPromptPreferences(context),
-    )
+    private fun promptPreferences(context: Context): Map<String, SystemPromptPreferences> {
+        val base = mapOf(
+            BackupAiSettings.PROMPT_CORRECTION to CorrectionPromptPreferences(context),
+            BackupAiSettings.PROMPT_GENERATION to GenerationPromptPreferences(context),
+            BackupAiSettings.PROMPT_TRANSCRIPTION to TranscriptionPromptPreferences(context),
+        )
+        // Prompts du modèle personnalisé : mêmes usages, préfixés (« custom_model_correction »...).
+        return base + base.map { (usage, preferences) -> BackupAiSettings.CUSTOM_MODEL_PREFIX + usage to preferences.forCustomModel() }
+    }
 
     /** Plafond d'un prompt lu dans un fichier : un prompt de travail fait quelques milliers de caractères. */
     private const val MAX_PROMPT_CHARS = 20_000

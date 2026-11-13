@@ -132,6 +132,7 @@ class PremiumActivity : Activity(), PremiumBilling.Listener {
         const val SOURCE_ABOUT = "about"
         const val SOURCE_THEME = "theme"
         const val SOURCE_PROMPTS = "prompts"
+        const val SOURCE_CUSTOM_MODEL = "custom_model"
         const val SOURCE_CLIPBOARD_PIN = "clipboard_pin"
 
         fun intent(context: Context, source: String): Intent =

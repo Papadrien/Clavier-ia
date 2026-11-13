@@ -362,7 +362,7 @@ internal class KeyRenderer(private val context: Context) {
         val upper = shiftedChar(key, layout, isShifted)
         val label = if (upper == NO_CHAR) displayLabel(key, layout, isShifted) else ""
         if (upper != NO_CHAR || label.isNotEmpty()) {
-            autoSizeTextPaint(key)
+            autoSizeTextPaint(key, label)
             val baseline = keyRect.centerY() - (textPaint.ascent() + textPaint.descent()) / 2f
             if (upper != NO_CHAR) {
                 drawChar(canvas, upper, keyRect.centerX(), baseline, textPaint)
@@ -602,16 +602,30 @@ internal class KeyRenderer(private val context: Context) {
         )
     }
 
-    private fun autoSizeTextPaint(key: Key) {
+    private fun autoSizeTextPaint(key: Key, label: String = "") {
         val base = when (key.id) {
-            // « ?123 » (page des lettres) : police réduite de 30 % ; « ABC » garde la taille large.
-            "toggle" -> if (layout.id == LayoutId.LETTERS) dims.keyTextSizeLarge * TOGGLE_123_TEXT_RATIO else dims.keyTextSizeLarge
+            // « ?123 » et « ABC » : même taille, réduite de 30 % (demande du 12/11/2026 : « ABC » paraissait trop gros à côté).
+            "toggle" -> toggleLabelTextSize(dims.keyTextSizeLarge)
             "symbol_page" -> dims.keyTextSize * SYMBOL_PAGE_TEXT_RATIO // « ?123 » et « =\< » : 4 signes sur une touche étroite
             else -> dims.keyTextSize
         }
         // Rangées basses (paysage, hauteur réduite) : le texte ne doit pas déborder de la touche.
         // Lot 21 : la taille n'est reposée sur le Paint que si elle change (la plupart des touches ont la même).
-        val size = base.coerceAtMost(keyRect.height() * 0.62f)
+        var size = base.coerceAtMost(keyRect.height() * 0.62f)
+        setKeyTextSize(size)
+        // Libellés de plusieurs signes (« ABC », « ?123 ») : une police large (OpenDyslexic, lettres très espacées) les ferait
+        // déborder de la touche ; ils sont réduits pour tenir dans [LABEL_MAX_WIDTH_RATIO] de sa largeur.
+        if (label.length > 1) {
+            val maxWidth = keyRect.width() * LABEL_MAX_WIDTH_RATIO
+            val width = textPaint.measureText(label)
+            if (width > maxWidth) {
+                size *= maxWidth / width
+                setKeyTextSize(size)
+            }
+        }
+    }
+
+    private fun setKeyTextSize(size: Float) {
         if (size != lastKeyTextSize) {
             lastKeyTextSize = size
             textPaint.textSize = size
@@ -653,6 +667,15 @@ internal class KeyRenderer(private val context: Context) {
         /** Taille du libellé des touches de bascule entre les pages de symboles, par rapport à une touche normale. */
         private const val SYMBOL_PAGE_TEXT_RATIO = 0.75f
         private const val TOGGLE_123_TEXT_RATIO = 0.7f
+
+        /** Libellé de plusieurs signes : jamais plus de cette part de la largeur de la touche. */
+        const val LABEL_MAX_WIDTH_RATIO = 0.8f
+
+        /**
+         * Taille du libellé « ?123 » / « ABC » (en pixels) à partir de `taipo_key_text_size_large` déjà convertie. Partagée
+         * avec la touche « ABC » du panneau emoji, pour que les deux panneaux aient la même.
+         */
+        fun toggleLabelTextSize(keyTextSizeLarge: Float): Float = keyTextSizeLarge * TOGGLE_123_TEXT_RATIO
 
         /**
          * Nom de la langue sur l'espace pendant le glissement : part de l'allongement du trait reprise en largeur par le mot

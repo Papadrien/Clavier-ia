@@ -239,3 +239,15 @@ Seuils de proposition (DictionaryLoader.candidateMinFrequency, fréquence du 50 
 nb 18, fi 134. Politique des accents (AccentPolicy) : polonais et tchèque 40, hongrois 50, langues nordiques 50, roumain 4 (avec les formes
 sans accent qui sont aussi des mots courants : sa, ca, cat, tine, peste, fata).
 
+
+=== Prénoms et noms de famille (names/<code>.txt) — 12/11/2026 ===
+Les 15 listes reçoivent des prénoms courants supplémentaires et les noms de famille les plus répandus de chaque langue (écrits à la
+main, pas de source externe) : fr 142 -> 368, en 101 -> 359, es 82 -> 175, it 85 -> 146, pt 76 -> 148, nl 84 -> 158, de 1 884 -> 1 972
+(aussi dans tools/de-names/vornamen.txt), pl 80 -> 164, ro 81 -> 146, cs 73 -> 139, hu 72 -> 129, sv 73 -> 161, da 69 -> 151,
+nb 76 -> 150, fi 66 -> 143. Même règle qu'avant : aucun nom qui est aussi un mot courant de la langue. Les candidats dont la forme en
+minuscules (ou sans accent) est un mot fréquent de <code>.txt ont été relus un par un ; retirés notamment : fr renard, rivière,
+boulanger, carré, manuel, paris ; en baker, cook, price, walker, max, amber ; es flores, blanco, torres, esperanza, peña (pena) ;
+it rossi, testa, guerra, chiara, massimo ; pt dias, santos, oliveira ; nl bakker, koning, groen ; de Klein, Schwarz, Weiß, Jung ;
+pl król, zając ; ro popa, marin ; cs malý, černý, dostál (dostal) ; hu nagy, kis, kovács ; sv bo, berg ; da hans, lund ;
+nb liv, strand ; fi niemi, laine, kari.
+Fichiers changés : nouvelles empreintes (DictionaryChecksums) et nouveau dossier du bucket « dictionaries-2026-11-12 ».

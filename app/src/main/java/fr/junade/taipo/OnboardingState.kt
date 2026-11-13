@@ -12,6 +12,8 @@ enum class StepStatus { DONE, CURRENT, LOCKED }
  * - Étape 3 (essai) accessible quand Taipo est sélectionné ; faite quand quelques mots ont été tapés dans le champ d'essai ([tried]).
  * - Étape 4 (activer l'IA) accessible quand Taipo est sélectionné ; faite quand un modèle IA est installé ([aiReady]).
  * - Étape 5 (activer la dictée) accessible quand Taipo est sélectionné ; faite quand le modèle vocal est complet ([voiceReady]).
+ * - Étape 6 (autorisations : micro, notifications, dictionnaire) accessible quand Taipo est sélectionné ; faite quand tout est accordé
+ *   ou que l'utilisateur a répondu à la demande ([permissionsDone], voir [AppPermission.stepDone]).
  */
 data class OnboardingState(
     val enabled: Boolean,
@@ -19,6 +21,7 @@ data class OnboardingState(
     val tried: Boolean = false,
     val aiReady: Boolean = false,
     val voiceReady: Boolean = false,
+    val permissionsDone: Boolean = false,
 ) {
 
     val activate: StepStatus = if (enabled) StepStatus.DONE else StepStatus.CURRENT
@@ -47,8 +50,14 @@ data class OnboardingState(
         else -> StepStatus.CURRENT
     }
 
-    /** Les cinq étapes sont faites. */
-    val complete: Boolean get() = enabled && selected && tried && aiReady && voiceReady
+    val permissions: StepStatus = when {
+        !(enabled && selected) -> StepStatus.LOCKED
+        permissionsDone -> StepStatus.DONE
+        else -> StepStatus.CURRENT
+    }
+
+    /** Les six étapes sont faites. */
+    val complete: Boolean get() = enabled && selected && tried && aiReady && voiceReady && permissionsDone
 
     companion object {
         /**
@@ -62,6 +71,7 @@ data class OnboardingState(
             tried: Boolean = false,
             aiReady: Boolean = false,
             voiceReady: Boolean = false,
+            permissionsDone: Boolean = false,
         ): OnboardingState {
             val enabled = packageName in enabledImePackages
             val selected = defaultImeId?.substringBefore('/') == packageName
@@ -71,6 +81,7 @@ data class OnboardingState(
                 tried = tried,
                 aiReady = aiReady,
                 voiceReady = voiceReady,
+                permissionsDone = permissionsDone,
             )
         }
 
