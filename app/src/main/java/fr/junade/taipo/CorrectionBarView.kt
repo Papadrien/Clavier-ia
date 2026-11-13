@@ -252,7 +252,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         // Astuce de geste : au-dessus des rangées (elle masque ce qu'elle recouvre), marges posées par onMeasure.
         gestureTip.visibility = View.GONE
         gestureTip.onClose = { hideGestureTip() } // au toucher ; la pilule des nouveautés lance ensuite son action
-        addView(gestureTip, LayoutParams(LayoutParams.MATCH_PARENT, barHeight, Gravity.TOP).apply { topMargin = paddingV })
+        addView(gestureTip, LayoutParams(LayoutParams.WRAP_CONTENT, barHeight, Gravity.TOP or Gravity.CENTER_HORIZONTAL).apply { topMargin = paddingV })
 
         // Lot 20 : zone tactile des boutons étendue à 48 dp (36 dp dessinés), sans changer le rendu.
         expandChildTouchTargets(this::touchTargets)
@@ -265,7 +265,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     /**
      * Boutons que la zone tactile étendue peut viser : ceux des rangées affichées, et Vocal. Pendant une astuce de geste, la
-     * pilule remplace les boutons qu'elle recouvre.
+     * pilule (à la largeur de son texte, centrée) remplace les boutons qu'elle recouvre ; ceux d'à côté restent touchables.
      */
     private fun touchTargets(): List<View> {
         val targets = ArrayList<View>()
@@ -274,7 +274,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             if (row.visibility != View.VISIBLE) continue
             for (index in 0 until row.childCount) {
                 val child = row.getChildAt(index)
-                if (tipShown && row.left + child.right > gestureTip.left) continue
+                if (tipShown && row.left + child.right > gestureTip.left && row.left + child.left < gestureTip.right) continue
                 targets.add(child)
             }
         }
