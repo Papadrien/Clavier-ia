@@ -531,7 +531,13 @@ class MainActivity : Activity() {
             val size = Formatter.formatShortFileSize(this, VoiceModelFile.totalApproxBytes())
             (step5.action as? TextView)?.text = getString(R.string.onboarding_step5_button, size)
         }
-        // Étape 6 : autorisations des fonctions (micro, notifications, dictionnaire).
+        renderPermissionsStep(state)
+        // Le champ d'essai reste là tant que l'étape 3 est en cours, et juste après (pour finir sa phrase).
+        tryInput.visibility = if (state.tryIt == StepStatus.CURRENT || (state.tryIt == StepStatus.DONE && tryInput.hasFocus())) View.VISIBLE else View.GONE
+    }
+
+    /** Étape 6 : autorisations des fonctions (micro, notifications, dictionnaire). */
+    private fun renderPermissionsStep(state: OnboardingState) {
         renderStep(
             step6,
             state.permissions,
@@ -541,8 +547,6 @@ class MainActivity : Activity() {
             R.string.onboarding_step6_hint_locked,
         )
         permissionsStep.render(state.permissions)
-        // Le champ d'essai reste là tant que l'étape 3 est en cours, et juste après (pour finir sa phrase).
-        tryInput.visibility = if (state.tryIt == StepStatus.CURRENT || (state.tryIt == StepStatus.DONE && tryInput.hasFocus())) View.VISIBLE else View.GONE
     }
 
     private fun renderStep(
