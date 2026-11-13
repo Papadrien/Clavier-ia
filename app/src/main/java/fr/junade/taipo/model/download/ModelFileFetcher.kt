@@ -262,6 +262,13 @@ object ModelFileFetcher {
                     PartialDownload.discard(destination)
                     return Plan.Stop(Outcome.Failed(DownloadFailure.CORRUPTED, retryable = true))
                 }
+                val served = PartialDownload.validatorOf(connection.getHeaderField("ETag"), connection.getHeaderField("Last-Modified"))
+                if (!PartialDownload.sameFile(savedMarker?.validator, served)) {
+                    // Le fichier du serveur a changé (même taille ou non) et le serveur a ignoré `If-Range` : on repart de zéro.
+                    AppLog.w(TAG, "Validateur différent de celui du partiel : reprise abandonnée")
+                    PartialDownload.discard(destination)
+                    return Plan.Stop(Outcome.Failed(DownloadFailure.CORRUPTED, retryable = true))
+                }
                 range.total
             }
             else -> {

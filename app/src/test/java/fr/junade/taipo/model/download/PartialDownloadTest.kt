@@ -121,4 +121,16 @@ class PartialDownloadTest {
         assertFalse(ModelInstaller.temporaryFileFor(destination).exists())
         assertFalse(ModelInstaller.resumeMarkerFor(destination).exists())
     }
+
+    @Test
+    fun `reprise refusee quand le serveur annonce un autre ETag`() {
+        assertFalse(PartialDownload.sameFile("\"ancien\"", "\"nouveau\""))
+    }
+
+    @Test
+    fun `reprise acceptee avec le meme ETag ou sans validateur`() {
+        assertTrue(PartialDownload.sameFile("\"abc\"", "\"abc\""))
+        assertTrue(PartialDownload.sameFile(null, "\"abc\""))
+        assertTrue(PartialDownload.sameFile("\"abc\"", null))
+    }
 }

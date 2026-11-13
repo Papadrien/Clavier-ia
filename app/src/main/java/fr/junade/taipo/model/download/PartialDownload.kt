@@ -63,6 +63,16 @@ object PartialDownload {
         else -> null
     }
 
+    /**
+     * Une réponse 206 prolonge-t-elle bien le partiel ? Non si le serveur annonce un autre validateur que celui enregistré au
+     * début du partiel : le fichier a changé entre-temps. Normalement le serveur s'en charge (`If-Range` : il répond 200 avec le
+     * fichier entier), mais le Worker Cloudflare devant R2 ignore `If-Range` et renvoie la suite du nouveau fichier, qui, collée
+     * à l'ancien début, donne un fichier refusé par l'empreinte (« Le serveur n'a pas renvoyé le fichier attendu »). Sans
+     * validateur d'un côté ou de l'autre, on ne peut pas conclure : la reprise est acceptée (l'empreinte reste le dernier mot).
+     */
+    fun sameFile(savedValidator: String?, servedValidator: String?): Boolean =
+        savedValidator == null || servedValidator == null || savedValidator == servedValidator
+
     /** Supprime le partiel et son marqueur ; ne touche jamais au fichier de destination. */
     fun discard(destination: File) {
         ModelInstaller.temporaryFileFor(destination).delete()
