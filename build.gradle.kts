@@ -7,7 +7,7 @@ plugins {
     // unique : gradle/libs.versions.toml (plugin et artefacts). KSP 2.3.x est indépendant de la
     // version de Kotlin ; 2.3.10+ corrige la compatibilité avec Kotlin 2.4.0
     // et avec le Kotlin intégré d'AGP 9.
-    id("com.google.devtools.ksp") version "2.3.11" apply false
+    id("com.google.devtools.ksp") version "2.3.13" apply false
     alias(libs.plugins.room) apply false
 }
 
