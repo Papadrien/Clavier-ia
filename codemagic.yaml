@@ -1,0 +1,191 @@
+# Codemagic : même CI que .github/workflows/android.yml (quota GitHub Actions épuisé, 16/11/2026). Voir docs/codemagic.md.
+#
+# Plan gratuit de Codemagic : 500 minutes par mois, seulement sur Mac M2 (mac_mini_m2). Les machines Linux sont payantes.
+#   - pr       : pull request vers main ou develop   → tests, lint, ktlint/detekt, APK + AAB debug
+#   - develop  : push sur develop                    → idem
+#   - release  : push sur main (merge d'une PR)      → idem en release signée, puis envoi sur Play (canal alpha)
+#   - instrumented-tests : à la main, sur Linux (payant) : l'émulateur Android ne tourne pas sur Mac M2.
+#
+# Groupes de variables à créer dans Codemagic (Team/App settings > Environment variables), cochés « Secure » :
+#   android_signing : ANDROID_KEYSTORE_BASE64, ANDROID_KEY_PROPERTIES (mêmes valeurs que les secrets GitHub)
+#   google_play     : PLAY_SERVICE_ACCOUNT_JSON (même valeur que le secret de l'environnement GitHub `play`)
+# Seul le workflow release importe ces groupes : une pull request ne peut pas les lire.
+
+definitions:
+  environment: &environment
+    java: 21 # Robolectric 4.17 exige Java 21 pour simuler Android 16 (API 36) ; le code reste compilé pour Java 17.
+    vars:
+      # versionCode = base + numéro de build Codemagic : au-dessus des numéros d'exécution GitHub déjà envoyés sur Play
+      # (243 au 16/11/2026). Play refuse un versionCode déjà utilisé.
+      VERSION_CODE_BASE: 1000
+
+  cache: &cache
+    cache_paths:
+      - ~/.gradle/caches
+      - ~/.gradle/wrapper
+      # Robolectric télécharge une image d'Android d'environ 150 Mo.
+      - ~/.m2/repository/org/robolectric
+
+  scripts:
+    - &version_code
+      name: versionCode
+      script: |
+        echo "VERSION_CODE=$((VERSION_CODE_BASE + BUILD_NUMBER))" >> "$CM_ENV"
+        echo "versionCode : $((VERSION_CODE_BASE + BUILD_NUMBER))"
+    - &litertlm
+      name: Version de LiteRT-LM
+      script: ./gradlew :app:dependencies --configuration debugRuntimeClasspath | grep litertlm
+    # Tests JVM : ceux de l'app (testDebugUnitTest) et ceux du module :core, qui n'a pas de tâche testDebugUnitTest.
+    - &unit_tests
+      name: Tests unitaires
+      script: ./gradlew testDebugUnitTest :core:test
+      test_report: "**/build/test-results/**/*.xml"
+    # Lint Android : une erreur (API trop récente sans garde, ressource manquante…) fait échouer le build.
+    - &lint
+      name: Android lint
+      script: ./gradlew :app:lintDebug
+    # ktlint (format) et detekt (analyse statique) : la dette existante est figée dans quality/ ; tout nouvel écart échoue.
+    - &quality
+      name: ktlint et detekt
+      script: ./gradlew qualityCheck
+    - &build_debug
+      name: APK + AAB debug
+      script: ./gradlew assembleDebug bundleDebug
+
+  debug_artifacts: &debug_artifacts
+    - app/build/outputs/apk/*/*.apk
+    - app/build/outputs/bundle/*/*.aab
+    - app/build/reports/lint-results-debug.html
+
+workflows:
+  pr:
+    name: Android CI (pull request)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment: *environment
+    cache: *cache
+    triggering:
+      events:
+        - pull_request
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: false # branche cible de la pull request
+        - pattern: develop
+          include: true
+          source: false
+      cancel_previous_builds: true
+    scripts:
+      - *version_code
+      - *litertlm
+      - *unit_tests
+      - *lint
+      - *quality
+      - *build_debug
+    artifacts: *debug_artifacts
+
+  develop:
+    name: Android CI (develop)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment: *environment
+    cache: *cache
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: develop
+          include: true
+      cancel_previous_builds: true
+    scripts:
+      - *version_code
+      - *litertlm
+      - *unit_tests
+      - *lint
+      - *quality
+      - *build_debug
+    artifacts: *debug_artifacts
+
+  release:
+    name: Android release (main → Play alpha)
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    environment:
+      java: 21
+      groups:
+        - android_signing
+        - google_play
+      vars:
+        VERSION_CODE_BASE: 1000
+    cache: *cache
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+    scripts:
+      - *version_code
+      - *litertlm
+      - *unit_tests
+      - *lint
+      - *quality
+      # Même mécanisme que la CI GitHub (audit CI-01) : sans les secrets, échec franc, jamais de clé générée à la volée.
+      - name: Signature Android
+        script: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ] || [ -z "$ANDROID_KEY_PROPERTIES" ]; then
+            echo "Groupe android_signing absent ou incomplet : build release impossible (voir docs/codemagic.md)."
+            exit 1
+          fi
+          echo "$ANDROID_KEY_PROPERTIES" > key.properties
+          STORE_FILE=$(grep -E '^storeFile=' key.properties | head -n1 | cut -d= -f2- | tr -d '\r' | xargs)
+          if [ -z "$STORE_FILE" ]; then
+            echo "storeFile absent de ANDROID_KEY_PROPERTIES"; exit 1
+          fi
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "app/$STORE_FILE"
+          test -s "app/$STORE_FILE" || { echo "keystore vide : app/$STORE_FILE"; exit 1; }
+          echo "Signature release prête"
+      # Audit CI-02 : l'AAB est ce que Play accepte ; l'APK reste pour les essais.
+      - name: APK + AAB release
+        script: ./gradlew assembleRelease bundleRelease
+      # Canal de test fermé « alpha », publié aux testeurs. Script maison, sans action tierce (voir docs/release.md).
+      - name: Envoi sur Google Play (alpha)
+        script: |
+          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then
+            echo "Groupe google_play absent : envoi sur Play sauté."
+            exit 0
+          fi
+          AAB=$(find app/build/outputs/bundle/release -name '*.aab' | head -n1)
+          MAPPING=app/build/outputs/mapping/release/mapping.txt
+          test -n "$AAB" || { echo "AAB introuvable"; exit 1; }
+          if [ -f "$MAPPING" ]; then MAPPING_ARG="--mapping $MAPPING"; else MAPPING_ARG=""; fi
+          python3 tools/play_upload.py --package fr.junade.taipo --track alpha --aab "$AAB" $MAPPING_ARG \
+            --release-notes distribution/release-notes
+    artifacts:
+      - app/build/outputs/apk/release/*.apk
+      - app/build/outputs/bundle/release/*.aab
+      - app/build/outputs/mapping/release/mapping.txt
+
+  # Audit CI-04 : tests instrumentés (Room + SQLCipher + Keystore réels) sur émulateur. Linux seulement (l'émulateur ne tourne pas
+  # sur Mac M2), donc facturé à la minute : lancé à la main depuis Codemagic, aucun déclencheur automatique.
+  instrumented-tests:
+    name: Tests instrumentés (émulateur, Linux payant)
+    instance_type: linux_x2
+    max_build_duration: 60
+    environment:
+      java: 17
+    cache: *cache
+    scripts:
+      - name: Démarrer l'émulateur
+        script: |
+          emulator -avd emulator -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect > /dev/null 2>&1 &
+          adb wait-for-device
+          until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do sleep 5; done
+          adb shell settings put global window_animation_scale 0
+          adb shell settings put global transition_animation_scale 0
+          adb shell settings put global animator_duration_scale 0
+      - name: Tests instrumentés
+        script: ./gradlew connectedDebugAndroidTest
+        test_report: app/build/outputs/androidTest-results/connected/**/*.xml
+    artifacts:
+      - app/build/reports/androidTests/connected/**
