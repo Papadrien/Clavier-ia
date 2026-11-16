@@ -50,12 +50,20 @@ class AnalyticsPreferences(context: Context) {
             prefs.edit().putLong(KEY_LAST_ACTIVE_DAY, value).apply()
         }
 
+    /** Dernier jour local où [AnalyticsEvents.KEYBOARD_USED] a été envoyé ([DailyKeyboardUse.NO_DAY] si jamais). */
+    var keyboardUsedDay: Long
+        get() = prefs.getLong(KEY_KEYBOARD_USED_DAY, DailyKeyboardUse.NO_DAY)
+        set(value) {
+            prefs.edit().putLong(KEY_KEYBOARD_USED_DAY, value).apply()
+        }
+
     companion object {
         private const val PREFS_NAME = "analytics_prefs"
         private const val KEY_ENABLED = "analytics_enabled"
         private const val KEY_FIRST_OPEN_HANDLED = "first_open_handled"
         private const val KEY_ACTIVE_DAYS = "active_days"
         private const val KEY_LAST_ACTIVE_DAY = "last_active_day"
+        private const val KEY_KEYBOARD_USED_DAY = "keyboard_used_day"
         const val DEFAULT_ENABLED = false
     }
 }

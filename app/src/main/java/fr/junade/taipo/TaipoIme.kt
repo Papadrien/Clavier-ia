@@ -738,6 +738,7 @@ class TaipoIme : InputMethodService() {
 
     private fun onKeyPressed(key: Key) {
         hapticFeedback.perform(hapticIntensity)
+        Analytics.keyboardUsed(this) // une fois par jour, à la première touche (rien dans un champ de mot de passe)
         messagePopup.dismissBannerOnKey() // un message d'information s'efface à la frappe suivante (une astuce reste)
         if (keySoundEnabled) keySounds.play(KeySound.forAction(key.action))
         suggestions.markTyping() // le curseur qui bouge ensuite suit la frappe (suggestions de complétion)
