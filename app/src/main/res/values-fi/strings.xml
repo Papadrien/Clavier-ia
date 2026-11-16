@@ -602,6 +602,7 @@
     <string name="backdrop_waves">Aallot</string>
     <string name="backdrop_hearts">Sydämet</string>
     <string name="backdrop_flowers">Kukat</string>
+    <string name="backdrop_processor">Prosessori</string>
     <string name="theme_backdrop_free">Ilmainen</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Näppäimistön fontti</string>

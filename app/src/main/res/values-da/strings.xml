@@ -602,6 +602,7 @@
     <string name="backdrop_waves">Bølger</string>
     <string name="backdrop_hearts">Hjerter</string>
     <string name="backdrop_flowers">Blomster</string>
+    <string name="backdrop_processor">Processor</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Tastaturets skrifttype</string>

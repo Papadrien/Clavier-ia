@@ -101,6 +101,7 @@ abstract class BackdropPainter {
             KeyboardBackdrop.WAVES -> WavesPainter()
             KeyboardBackdrop.HEARTS -> HeartsPainter()
             KeyboardBackdrop.FLOWERS -> FlowersPainter()
+            KeyboardBackdrop.PROCESSOR -> ProcessorPainter()
         }
     }
 }

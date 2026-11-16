@@ -606,6 +606,7 @@
     <string name="backdrop_waves">Valuri</string>
     <string name="backdrop_hearts">Inimi</string>
     <string name="backdrop_flowers">Flori</string>
+    <string name="backdrop_processor">Procesor</string>
     <string name="theme_backdrop_free">Gratuit</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Fontul tastaturii</string>

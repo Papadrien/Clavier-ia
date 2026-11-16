@@ -606,6 +606,7 @@
     <string name="backdrop_waves">Ondas</string>
     <string name="backdrop_hearts">Corazones</string>
     <string name="backdrop_flowers">Flores</string>
+    <string name="backdrop_processor">Procesador</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Prémium</string>
     <string name="theme_section_font">Tipografía del teclado</string>

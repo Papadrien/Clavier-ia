@@ -602,6 +602,7 @@
     <string name="backdrop_waves">Vågor</string>
     <string name="backdrop_hearts">Hjärtan</string>
     <string name="backdrop_flowers">Blommor</string>
+    <string name="backdrop_processor">Processor</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Tangentbordets typsnitt</string>

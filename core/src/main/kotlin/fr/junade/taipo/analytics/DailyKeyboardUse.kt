@@ -15,8 +15,12 @@ object DailyKeyboardUse {
     fun localDay(millis: Long, zoneOffsetMillis: Int): Long =
         Math.floorDiv(millis + zoneOffsetMillis, UsageBuckets.DAY_MILLIS)
 
-    /** Vrai si l'événement n'a pas encore été envoyé le jour [today] (un jour mémorisé au lendemain, après un changement de fuseau, compte comme déjà envoyé). */
-    fun shouldSend(lastSentDay: Long, today: Long): Boolean = lastSentDay == NO_DAY || today > lastSentDay ||
+    /**
+     * Vrai si l'événement n'a pas encore été envoyé le jour [today]. Un jour mémorisé au lendemain (changement de fuseau)
+     * compte comme déjà envoyé.
+     */
+    fun shouldSend(lastSentDay: Long, today: Long): Boolean = lastSentDay == NO_DAY ||
+        today > lastSentDay ||
         // Horloge reculée de plus d'un jour (réglage manuel, voyage) : on ne reste pas bloqué jusqu'à la date mémorisée.
         lastSentDay - today > 1
 }

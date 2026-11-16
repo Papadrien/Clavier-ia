@@ -610,6 +610,7 @@
     <string name="backdrop_waves">Fale</string>
     <string name="backdrop_hearts">Serca</string>
     <string name="backdrop_flowers">Kwiaty</string>
+    <string name="backdrop_processor">Procesor</string>
     <string name="theme_backdrop_free">Bezpłatne</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Czcionka klawiatury</string>
