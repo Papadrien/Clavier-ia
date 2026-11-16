@@ -34,10 +34,8 @@ data class BackupKeyboardSettings(
     val accentPalette: String? = null,
     /** Forme des touches : clé de stockage de [fr.junade.taipo.KeyShape] (`rounded`, `pill`…). */
     val keyShape: String? = null,
-    /** Style des animations : clé de stockage de [fr.junade.taipo.MotionStyle] (`spring`, `snappy`, `jelly`). Facultatif. */
+    /** Style des animations : clé de stockage de [fr.junade.taipo.MotionStyle] (`spring`, `snappy`, `jelly`, `flight`, `drop`, `glide`). Facultatif. */
     val motionStyle: String? = null,
-    /** Animation de la bulle des touches : clé de stockage de [fr.junade.taipo.KeyPreviewAnimation]. Facultatif (16/11/2026). */
-    val keyPreviewAnimation: String? = null,
     // Audit UX-06 : réglages ajoutés (facultatifs : un fichier plus ancien ne les a pas, ils restent alors inchangés).
     val keyboardFont: String? = null,
     val backdrop: String? = null,

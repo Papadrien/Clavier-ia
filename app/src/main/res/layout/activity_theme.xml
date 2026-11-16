@@ -169,8 +169,9 @@
             android:text="@string/premium_unlock"
             android:visibility="gone" />
 
-        <!-- Section « Animations » : une carte par style (MotionStyle), aperçu animé en boucle, posées par ThemeActivity par
-             rangées de trois. Gelée, réservée au pack, porte un cadenas ; touchée sans pack, ce bouton ouvre l'écran du pack. -->
+        <!-- Section « Animations » : une carte par style (MotionStyle), aperçu animé en boucle avec la bulle des touches, posées par
+             ThemeActivity par rangées de trois. Un style règle le clavier et la bulle. Gelée, réservée au pack, porte un cadenas ;
+             touchée sans pack, ce bouton ouvre l'écran du pack. -->
         <TextView
             style="@style/TaipoText.Section"
             android:id="@+id/theme_motion_heading"
@@ -190,8 +191,7 @@
             android:id="@+id/theme_motions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:baselineAligned="false" />
+            android:orientation="vertical" />
 
         <Button
             style="@style/TaipoButton.Primary"
@@ -201,28 +201,5 @@
             android:layout_marginTop="@dimen/taipo_settings_gap_md"
             android:text="@string/premium_unlock"
             android:visibility="gone" />
-
-        <!-- Rangée « Bulle des touches » (16/11/2026) : une carte par animation de la bulle (KeyPreviewAnimation), aperçu animé
-             en boucle, posées par ThemeActivity par rangées de trois. Toutes gratuites. -->
-        <TextView
-            style="@style/TaipoText.Label"
-            android:id="@+id/theme_key_preview_heading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_lg"
-            android:text="@string/theme_key_preview_heading" />
-
-        <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/taipo_settings_gap_sm"
-            android:text="@string/theme_key_preview_caption" />
-
-        <LinearLayout
-            android:id="@+id/theme_key_previews"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
     </LinearLayout>
 </ScrollView>

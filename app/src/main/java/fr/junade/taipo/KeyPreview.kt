@@ -17,10 +17,10 @@ import kotlin.math.roundToInt
  * retour arrière, entrée, bascule) ont déjà leur propre retour visuel (fond éclairci). Elle disparaît aussitôt ([dismiss]) dès
  * qu'une bulle d'accents (1.8) s'affiche par-dessus, ou à l'annulation.
  *
- * Animée depuis le 16/11/2026 ([KeyPreviewAnimation], pose calculée par [KeyPreviewPose]) : la bulle entre au lieu de surgir,
- * reste [KeyPreviewPose.HOLD_MS] après le relâchement ([release]), puis sort. Quand la touche suivante est appuyée, la bulle
- * précédente commence aussitôt sa sortie (sauf Glisse, où la même bulle passe à la touche suivante) : en frappe rapide, deux
- * bulles au plus se superposent.
+ * Animée depuis le 16/11/2026 (forme donnée par le style d'animation, [MotionStyle.bubble] ; pose calculée par
+ * [KeyPreviewPose]) : la bulle entre au lieu de surgir, et sort au relâchement ([release]), jamais moins de
+ * [KeyPreviewPose.MIN_SHOW_MS] après l'appui. Les bulles sont indépendantes : en frappe rapide, plusieurs s'affichent en même
+ * temps (sauf Glisse, où la même bulle passe d'une touche à la suivante).
  */
 internal class KeyPreview(private val view: View) {
 
@@ -42,13 +42,17 @@ internal class KeyPreview(private val view: View) {
         val keyInset: Float
     }
 
-    /** Animation imposée (aperçus de la page « Apparence ») ; null : celle du clavier ([KeyPreviewAnimation.current]). */
-    var animationOverride: KeyPreviewAnimation? = null
+    /** Style imposé (aperçus de la page « Apparence ») ; null : celui du clavier ([MotionStyle.current]). */
+    var styleOverride: MotionStyle? = null
 
-    private val animation: KeyPreviewAnimation get() = animationOverride ?: KeyPreviewAnimation.current
+    private val style: MotionStyle get() = styleOverride ?: MotionStyle.current
+    private val animation: KeyPreviewAnimation get() = style.bubble
 
     private class Bubble(var key: Key, val downAt: Long) {
         var exitAt = NOT_EXITING
+
+        /** Dernier appui montré par cette bulle (Glisse : celui de la touche qui l'a reprise) : point de départ de la durée minimale. */
+        var shownAt = downAt
         var fresh = true
 
         /**
@@ -108,6 +112,7 @@ internal class KeyPreview(private val view: View) {
                 last.fromLeft = last.lastLeft
                 last.fromTop = last.lastTop
                 last.exitAt = NOT_EXITING
+                last.shownAt = now
                 last.fresh = false
                 bubbles.retainAll { it === last }
                 active = last
@@ -115,8 +120,7 @@ internal class KeyPreview(private val view: View) {
             }
         }
         if (sliding) bubbles.clear()
-        // La bulle précédente, encore affichée pendant son maintien, laisse la place : elle commence sa sortie.
-        bubbles.forEach { if (it.exitAt > now) it.exitAt = now }
+        // Les bulles précédentes poursuivent leur affichage minimal et leur sortie, en parallèle.
         if (bubbles.size >= MAX_BUBBLES) bubbles.removeAt(0)
         Bubble(key, now).also {
             bubbles += it
@@ -124,9 +128,9 @@ internal class KeyPreview(private val view: View) {
         }
     }
 
-    /** Relâchement de la touche affichée : la bulle reste [KeyPreviewPose.HOLD_MS], puis sort. */
+    /** Relâchement de la touche affichée : la bulle sort, une fois affichée au moins [KeyPreviewPose.MIN_SHOW_MS] depuis l'appui. */
     fun release(now: Long) {
-        active?.exitAt = now + KeyPreviewPose.HOLD_MS
+        active?.let { it.exitAt = maxOf(now, it.shownAt + KeyPreviewPose.MIN_SHOW_MS) }
         active = null
     }
 
@@ -138,7 +142,7 @@ internal class KeyPreview(private val view: View) {
 
     /** Vrai tant qu'une bulle bouge (entrée, glissement, maintien ou sortie) : la vue doit demander l'image suivante. */
     fun isRunning(now: Long): Boolean {
-        val enter = KeyPreviewPose.enterDurationMs(MotionStyle.current)
+        val enter = KeyPreviewPose.enterDurationMs(style)
         return bubbles.any { it.exitAt != NOT_EXITING || now - it.downAt < enter || now - it.moveAt < GLIDE_MOVE_MS }
     }
 
@@ -146,12 +150,12 @@ internal class KeyPreview(private val view: View) {
     fun draw(canvas: Canvas, now: Long, g: Geometry) {
         if (bubbles.isEmpty()) return
         val animated = ValueAnimator.areAnimatorsEnabled()
-        val style = MotionStyle.current
+        val current = style
         val iterator = bubbles.iterator()
         while (iterator.hasNext()) {
             val b = iterator.next()
             val sinceExit = if (b.exitAt == NOT_EXITING) -1L else now - b.exitAt
-            val pose = KeyPreviewPose.pose(animation, style, now - b.downAt, sinceExit, animated, b.fresh)
+            val pose = KeyPreviewPose.pose(current.bubble, current, now - b.downAt, sinceExit, animated, b.fresh)
             if (pose == null) {
                 iterator.remove()
                 if (active === b) active = null
@@ -266,7 +270,7 @@ internal class KeyPreview(private val view: View) {
         // Taille de la bulle d'agrandissement (largeur, hauteur et texte) : 60 % de la taille d'origine (0,5 + 20 %).
         const val PREVIEW_SCALE = 0.6f
         const val NOT_EXITING = Long.MAX_VALUE
-        const val MAX_BUBBLES = 3
+        const val MAX_BUBBLES = 6
         const val GLIDE_MOVE_MS = 80L
         const val GLIDE_SWAP_MS = 70f
         const val DROP_START_HEIGHT = 0.9f

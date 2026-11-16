@@ -662,12 +662,9 @@
     <string name="motion_style_spring">Spring</string>
     <string name="motion_style_snappy">Snappy</string>
     <string name="motion_style_jelly">Jelly</string>
-    <string name="theme_key_preview_heading">Key bubble</string>
-    <string name="theme_key_preview_caption">The bubble above the key you press. It stays a moment after you lift your finger.</string>
-    <string name="key_preview_spring">Spring</string>
-    <string name="key_preview_flight">Fly away</string>
-    <string name="key_preview_drop">Drop</string>
-    <string name="key_preview_glide">Glide</string>
+    <string name="motion_style_flight">Fly away</string>
+    <string name="motion_style_drop">Drop</string>
+    <string name="motion_style_glide">Glide</string>
     <string name="home_row_languages_subtitle">Keyboard languages and layouts</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Appearance</string>

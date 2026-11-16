@@ -634,12 +634,9 @@
     <string name="motion_style_spring">Jousi</string>
     <string name="motion_style_snappy">Ripeä</string>
     <string name="motion_style_jelly">Hyytelö</string>
-    <string name="theme_key_preview_heading">Näppäinkupla</string>
-    <string name="theme_key_preview_caption">Kupla painetun näppäimen yllä. Se pysyy hetken, kun nostat sormen.</string>
-    <string name="key_preview_spring">Jousi</string>
-    <string name="key_preview_flight">Lento</string>
-    <string name="key_preview_drop">Pisara</string>
-    <string name="key_preview_glide">Liuku</string>
+    <string name="motion_style_flight">Lento</string>
+    <string name="motion_style_drop">Pisara</string>
+    <string name="motion_style_glide">Liuku</string>
     <string name="home_row_languages_subtitle">Näppäimistön kielet ja asettelut</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Ulkoasu</string>

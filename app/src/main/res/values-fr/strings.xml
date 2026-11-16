@@ -681,12 +681,9 @@
     <string name="motion_style_spring">Ressort</string>
     <string name="motion_style_snappy">Vif</string>
     <string name="motion_style_jelly">Gelée</string>
-    <string name="theme_key_preview_heading">Bulle des touches</string>
-    <string name="theme_key_preview_caption">La bulle au-dessus de la touche appuyée. Elle reste un instant après que vous levez le doigt.</string>
-    <string name="key_preview_spring">Ressort</string>
-    <string name="key_preview_flight">Envol</string>
-    <string name="key_preview_drop">Goutte</string>
-    <string name="key_preview_glide">Glisse</string>
+    <string name="motion_style_flight">Envol</string>
+    <string name="motion_style_drop">Goutte</string>
+    <string name="motion_style_glide">Glisse</string>
     <string name="home_row_languages_subtitle">Langues et dispositions du clavier</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Apparence</string>

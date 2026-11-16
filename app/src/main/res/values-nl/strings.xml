@@ -634,12 +634,9 @@
     <string name="motion_style_spring">Veer</string>
     <string name="motion_style_snappy">Vlot</string>
     <string name="motion_style_jelly">Gelei</string>
-    <string name="theme_key_preview_heading">Toetsballon</string>
-    <string name="theme_key_preview_caption">De ballon boven de ingedrukte toets. Hij blijft even staan nadat je je vinger optilt.</string>
-    <string name="key_preview_spring">Veer</string>
-    <string name="key_preview_flight">Wegvliegen</string>
-    <string name="key_preview_drop">Druppel</string>
-    <string name="key_preview_glide">Glijden</string>
+    <string name="motion_style_flight">Wegvliegen</string>
+    <string name="motion_style_drop">Druppel</string>
+    <string name="motion_style_glide">Glijden</string>
     <string name="home_row_languages_subtitle">Talen en indelingen van het toetsenbord</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Weergave</string>

@@ -4,47 +4,35 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Animation de la bulle d'agrandissement des touches (page « Apparence », section « Animations », rangée « Bulle des touches »),
- * choisie le 16/11/2026 parmi quatre maquettes. Ressort par défaut ; toutes gratuites. La bulle reste au moins [KeyPreviewPose.HOLD_MS]
- * après le relâchement, quelle que soit l'animation.
+ * Forme de l'animation de la bulle d'agrandissement des touches (maquettes du 16/11/2026). Elle n'a pas de réglage propre : elle
+ * vient du style d'animation choisi ([MotionStyle.bubble]). La bulle reste au moins [KeyPreviewPose.MIN_SHOW_MS] à l'écran.
  */
-enum class KeyPreviewAnimation(val storageKey: String) {
+enum class KeyPreviewAnimation {
     /** Sort de la touche en grandissant avec un rebond, y rentre en se réduisant. */
-    SPRING("spring"),
+    SPRING,
 
     /** Entrée discrète ; au relâchement, la lettre s'envole vers le texte en s'effaçant. */
-    FLIGHT("flight"),
+    FLIGHT,
 
     /** La touche s'étire vers le haut comme une goutte et devient la bulle, puis se rétracte. */
-    DROP("drop"),
+    DROP,
 
     /** Une seule bulle qui suit la frappe : elle glisse de touche en touche au lieu de s'éteindre et se rallumer. */
-    GLIDE("glide"),
-    ;
-
-    companion object {
-        val DEFAULT = SPRING
-
-        /** Animation appliquée en ce moment par le clavier. Posée au démarrage du processus et à chaque changement du réglage. */
-        @Volatile
-        var current: KeyPreviewAnimation = DEFAULT
-
-        fun fromStorageKey(key: String?): KeyPreviewAnimation = entries.firstOrNull { it.storageKey == key } ?: DEFAULT
-    }
+    GLIDE,
 }
 
 /**
  * Pose de la bulle d'agrandissement à un instant donné (logique pure, testée par `KeyPreviewPoseTest`). Le temps se compte depuis
  * l'appui ([sinceDownMs]) et depuis le début de la sortie ([sinceExitMs], négatif tant qu'elle n'a pas commencé). La sortie
- * commence [HOLD_MS] après le relâchement : la bulle reste affichée comme si la touche était encore appuyée.
+ * commence au relâchement, mais jamais moins de [MIN_SHOW_MS] après l'appui : même un appui très bref laisse voir la bulle.
  *
  * Les rebonds suivent le style d'animation du clavier ([MotionStyle.response] et l'étirement de Gelée), les durées aussi
  * ([MotionStyle.tuneDurationMs]) : plus vives en Vif, plus souples en Gelée.
  */
 internal object KeyPreviewPose {
 
-    /** Temps pendant lequel la bulle reste affichée après le relâchement, avant sa sortie (demande du 16/11/2026). */
-    const val HOLD_MS = 150L
+    /** Durée minimale d'affichage de la bulle, comptée depuis l'appui, avant sa sortie (demande du 16/11/2026). */
+    const val MIN_SHOW_MS = 150L
 
     /**
      * [scaleX], [scaleY] : taille autour du bas-centre de la bulle ; [offsetY] : décalage vertical en hauteurs de touche (positif
@@ -64,7 +52,7 @@ internal object KeyPreviewPose {
     /** Durée de l'entrée : au-delà, la bulle est posée et ne demande plus d'image tant que la touche reste appuyée. */
     fun enterDurationMs(style: MotionStyle): Long = style.tuneDurationMs(ENTER_MS)
 
-    /** Durée de la sortie de [animation] (après [HOLD_MS]). */
+    /** Durée de la sortie de [animation] (après le relâchement, ou [MIN_SHOW_MS] après l'appui). */
     fun exitDurationMs(animation: KeyPreviewAnimation, style: MotionStyle): Long = style.tuneDurationMs(
         when (animation) {
             KeyPreviewAnimation.SPRING -> SPRING_EXIT_MS
@@ -76,7 +64,7 @@ internal object KeyPreviewPose {
 
     /**
      * Pose de la bulle, ou null une fois sa sortie terminée. [animated] faux (animations coupées dans les réglages système) : la
-     * bulle est posée, immobile, et disparaît d'un coup à la fin de [HOLD_MS]. [fresh] faux (Glisse, bulle reprise par la touche
+     * bulle est posée, immobile, et disparaît d'un coup quand sa sortie commence. [fresh] faux (Glisse, bulle reprise par la touche
      * suivante) : pas de nouvelle entrée.
      */
     fun pose(

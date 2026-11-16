@@ -6,15 +6,15 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/** Bulle des touches animée (16/11/2026) : entrée, maintien de 150 ms après le relâchement, sortie, selon l'animation choisie. */
+/** Bulle des touches animée (16/11/2026) : entrée, affichage d'au moins 150 ms depuis l'appui, sortie, selon le style d'animation. */
 class KeyPreviewPoseTest {
 
     private val style = MotionStyle.SPRING
     private val settled = 2_000L
 
     @Test
-    fun `la bulle reste 150 ms apres le relachement`() {
-        assertEquals(150L, KeyPreviewPose.HOLD_MS)
+    fun `la bulle reste au moins 150 ms a l ecran depuis l appui`() {
+        assertEquals(150L, KeyPreviewPose.MIN_SHOW_MS)
     }
 
     @Test
@@ -89,9 +89,15 @@ class KeyPreviewPoseTest {
     }
 
     @Test
-    fun `chaque animation se relit depuis sa cle, ressort par defaut`() {
-        KeyPreviewAnimation.entries.forEach { assertEquals(it, KeyPreviewAnimation.fromStorageKey(it.storageKey)) }
-        assertEquals(KeyPreviewAnimation.SPRING, KeyPreviewAnimation.fromStorageKey(null))
-        assertEquals(KeyPreviewAnimation.SPRING, KeyPreviewAnimation.DEFAULT)
+    fun `chaque style d animation regle aussi la bulle des touches`() {
+        assertEquals(KeyPreviewAnimation.SPRING, MotionStyle.SPRING.bubble)
+        assertEquals(KeyPreviewAnimation.SPRING, MotionStyle.SNAPPY.bubble)
+        assertEquals(KeyPreviewAnimation.SPRING, MotionStyle.JELLY.bubble)
+        assertEquals(KeyPreviewAnimation.FLIGHT, MotionStyle.FLIGHT.bubble)
+        assertEquals(KeyPreviewAnimation.DROP, MotionStyle.DROP.bubble)
+        assertEquals(KeyPreviewAnimation.GLIDE, MotionStyle.GLIDE.bubble)
+        // Les trois nouveaux styles sont gratuits, et le style par défaut reste Ressort.
+        listOf(MotionStyle.FLIGHT, MotionStyle.DROP, MotionStyle.GLIDE).forEach { assertTrue(it.isAvailable(premium = false)) }
+        assertEquals(MotionStyle.SPRING, MotionStyle.DEFAULT)
     }
 }

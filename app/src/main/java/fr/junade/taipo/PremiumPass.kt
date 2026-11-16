@@ -76,7 +76,6 @@ object PremiumPass {
         KeyboardTheme.palette = AccentPalette.effective(preferences.accentPalette, isActive)
         KeyboardTheme.shape = KeyShape.effective(preferences.keyShape, isActive)
         MotionStyle.current = MotionStyle.effective(preferences.motionStyle, isActive)
-        KeyPreviewAnimation.current = preferences.keyPreviewAnimation // gratuite : posée ici avec les autres réglages du clavier
         TaipoType.keyboardFont = KeyboardFont.effective(preferences.keyboardFont, isActive)
         // Le fond du clavier est relu à chaque ouverture de champ (KeyboardBackdrop.effective), rien à poser ici.
     }

@@ -638,12 +638,9 @@
     <string name="motion_style_spring">Molla</string>
     <string name="motion_style_snappy">Scattante</string>
     <string name="motion_style_jelly">Gelatina</string>
-    <string name="theme_key_preview_heading">Bolla dei tasti</string>
-    <string name="theme_key_preview_caption">La bolla sopra il tasto premuto. Resta un attimo dopo che sollevi il dito.</string>
-    <string name="key_preview_spring">Molla</string>
-    <string name="key_preview_flight">Volo</string>
-    <string name="key_preview_drop">Goccia</string>
-    <string name="key_preview_glide">Scivola</string>
+    <string name="motion_style_flight">Volo</string>
+    <string name="motion_style_drop">Goccia</string>
+    <string name="motion_style_glide">Scivola</string>
     <string name="home_row_languages_subtitle">Lingue e layout della tastiera</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Aspetto</string>

@@ -634,12 +634,9 @@
     <string name="motion_style_spring">Rugó</string>
     <string name="motion_style_snappy">Fürge</string>
     <string name="motion_style_jelly">Zselé</string>
-    <string name="theme_key_preview_heading">Billentyűbuborék</string>
-    <string name="theme_key_preview_caption">A lenyomott billentyű feletti buborék. Egy pillanatig megmarad, miután felemeli az ujját.</string>
-    <string name="key_preview_spring">Rugó</string>
-    <string name="key_preview_flight">Elrepülés</string>
-    <string name="key_preview_drop">Csepp</string>
-    <string name="key_preview_glide">Csúszás</string>
+    <string name="motion_style_flight">Elrepülés</string>
+    <string name="motion_style_drop">Csepp</string>
+    <string name="motion_style_glide">Csúszás</string>
     <string name="home_row_languages_subtitle">Billentyűzetnyelvek és -kiosztások</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Megjelenés</string>
