@@ -71,8 +71,8 @@ object SuggestionPolicy {
      * Story 2.2 : la puce de collage est proposée dans tout champ de texte. Contrairement aux suggestions de mots, elle
      * accepte aussi les champs e-mail, URL ou filtre, où coller est justement utile, et les champs de mot de passe (texte
      * ou code PIN numérique) : on y colle souvent un mot de passe ou un code copié depuis un gestionnaire. Une copie signalée
-     * sensible (Bitwarden…) y reste masquée (« •••• »), comme ailleurs. Le panneau Smart Clipboard, lui, reste grisé dans
-     * ces champs (story 10.1, voir `SensitiveFieldPolicy`).
+     * sensible (Bitwarden…) y reste masquée (« •••• »), comme ailleurs. Le panneau Smart Clipboard s'y ouvre aussi
+     * (16/11/2026, voir `SensitiveFieldPolicy`).
      */
     fun allowsPasteSuggestion(inputType: Int): Boolean = when (inputType and InputType.TYPE_MASK_CLASS) {
         InputType.TYPE_CLASS_TEXT -> true

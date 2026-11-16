@@ -16,7 +16,15 @@ import kotlin.math.sqrt
  * - [SPRING] (Ressort, le style d'origine) : dépasse sa place d'environ 20 % puis rebondit avant de se poser ;
  * - [SNAPPY] (Vif) : amortissement critique, deux fois plus rapide, aucun dépassement ;
  * - [JELLY] (Gelée, réservé au pack premium) : ressort plus souple, et la vue s'écrase puis s'étire en se posant ([stretchX],
- *   [stretchY]).
+ *   [stretchY]) ;
+ * - [FLIGHT] (Envol), [DROP] (Goutte) et [GLIDE] (Glisse), ajoutés le 16/11/2026 : leur nom vient de la bulle des touches
+ *   ([bubble], voir [KeyPreviewAnimation]) ; le reste du clavier reprend pour l'instant le ressort de Vif (Envol) ou de Ressort
+ *   (Goutte, Glisse).
+ *
+ * Seul Ressort est gratuit (16/11/2026) : tous les autres styles sont réservés au pack premium ([requiresPremium]).
+ *
+ * Choisir un style règle à la fois le clavier et la bulle des touches ([bubble]) : Ressort, Vif et Gelée ont la bulle Ressort,
+ * chacune avec son propre ressort.
  *
  * Les animations qui ont leur propre réglage (icône Maj, balancier d'Effacer, trait de la barre espace, glissement des chiffres,
  * clavier flottant, mode une main, robot, envoi du chat, coche de Corriger) suivent aussi le style depuis le 13/11/2026 : leur
@@ -42,9 +50,21 @@ enum class MotionStyle(
     val curtainScale: Float,
 ) {
     SPRING("spring", false, omega = 20f, zeta = 0.456f, jelly = 0f, revealZeta = 0.5f, revealDurationMs = 620L, revealStaggerMs = 45L, curtainScale = 1f),
-    SNAPPY("snappy", false, omega = 42f, zeta = 1f, jelly = 0f, revealZeta = 1f, revealDurationMs = 220L, revealStaggerMs = 20L, curtainScale = 0.5f),
+    SNAPPY("snappy", true, omega = 42f, zeta = 1f, jelly = 0f, revealZeta = 1f, revealDurationMs = 220L, revealStaggerMs = 20L, curtainScale = 0.5f),
     JELLY("jelly", true, omega = 17f, zeta = 0.34f, jelly = 0.55f, revealZeta = 0.34f, revealDurationMs = 760L, revealStaggerMs = 50L, curtainScale = 1f),
+    FLIGHT("flight", true, omega = 42f, zeta = 1f, jelly = 0f, revealZeta = 1f, revealDurationMs = 220L, revealStaggerMs = 20L, curtainScale = 0.5f),
+    DROP("drop", true, omega = 20f, zeta = 0.456f, jelly = 0f, revealZeta = 0.5f, revealDurationMs = 620L, revealStaggerMs = 45L, curtainScale = 1f),
+    GLIDE("glide", true, omega = 20f, zeta = 0.456f, jelly = 0f, revealZeta = 0.5f, revealDurationMs = 620L, revealStaggerMs = 45L, curtainScale = 1f),
     ;
+
+    /** Animation de la bulle des touches ([KeyPreview]) dans ce style. */
+    val bubble: KeyPreviewAnimation
+        get() = when (this) {
+            FLIGHT -> KeyPreviewAnimation.FLIGHT
+            DROP -> KeyPreviewAnimation.DROP
+            GLIDE -> KeyPreviewAnimation.GLIDE
+            SPRING, SNAPPY, JELLY -> KeyPreviewAnimation.SPRING
+        }
 
     val stiffness: Float get() = omega * omega
     val damping: Float get() = 2f * zeta * omega

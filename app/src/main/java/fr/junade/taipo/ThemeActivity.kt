@@ -185,8 +185,9 @@ class ThemeActivity : Activity() {
     }
 
     /**
-     * Cartes des styles d'animation ([MotionStyle]) sur une rangée : chacune montre son style en boucle ([MotionPreviewView], à la
-     * place de l'aperçu de thème de la carte).
+     * Cartes des styles d'animation ([MotionStyle]), par rangées de [CARDS_PER_ROW] : chacune montre son style en boucle avec la
+     * vraie bulle des touches ([MotionPreviewView], à la place de l'aperçu de thème de la carte). Un style règle à la fois le
+     * clavier et la bulle (16/11/2026).
      */
     /** Section « Animations » : titre lu comme tel par TalkBack, cartes des styles. */
     private fun setUpMotions(inflater: LayoutInflater, gap: Int) {
@@ -195,18 +196,36 @@ class ThemeActivity : Activity() {
     }
 
     private fun buildMotions(container: LinearLayout, inflater: LayoutInflater, gap: Int) {
-        MotionStyle.entries.forEachIndexed { index, style ->
-            val card = inflater.inflate(R.layout.item_theme_card, container, false)
-            val themePreview = card.findViewById<View>(R.id.theme_preview)
-            val frame = themePreview.parent as ViewGroup
-            frame.removeView(themePreview)
-            frame.addView(MotionPreviewView(KeyboardTheme.themed(this), style), 0, themePreview.layoutParams)
-            card.findViewById<TextView>(R.id.theme_label).setCardLabel(getString(style.labelRes()))
-            card.setOnClickListener { selectMotion(style) }
-            (card.layoutParams as LinearLayout.LayoutParams).apply { if (index > 0) marginStart = gap }
-            container.addView(card)
-            motionCards += MotionCard(style, card, card.findViewById(R.id.theme_check), card.findViewById(R.id.theme_lock))
+        MotionStyle.entries.chunked(CARDS_PER_ROW).forEachIndexed { rowIndex, styles ->
+            val row = LinearLayout(this)
+            row.orientation = LinearLayout.HORIZONTAL
+            row.isBaselineAligned = false
+            repeat(CARDS_PER_ROW) { index ->
+                val style = styles.getOrNull(index)
+                val view = if (style != null) {
+                    motionCard(inflater, row, style)
+                } else {
+                    View(this).apply { layoutParams = LinearLayout.LayoutParams(0, 0, 1f) }
+                }
+                (view.layoutParams as LinearLayout.LayoutParams).apply { if (index > 0) marginStart = gap }
+                row.addView(view)
+            }
+            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            if (rowIndex > 0) params.topMargin = gap
+            container.addView(row, params)
         }
+    }
+
+    private fun motionCard(inflater: LayoutInflater, row: LinearLayout, style: MotionStyle): View {
+        val card = inflater.inflate(R.layout.item_theme_card, row, false)
+        val themePreview = card.findViewById<View>(R.id.theme_preview)
+        val frame = themePreview.parent as ViewGroup
+        frame.removeView(themePreview)
+        frame.addView(MotionPreviewView(KeyboardTheme.themed(this), style), 0, themePreview.layoutParams)
+        card.findViewById<TextView>(R.id.theme_label).setCardLabel(getString(style.labelRes()))
+        card.setOnClickListener { selectMotion(style) }
+        motionCards += MotionCard(style, card, card.findViewById(R.id.theme_check), card.findViewById(R.id.theme_lock))
+        return card
     }
 
     private fun selectMotion(style: MotionStyle) {
@@ -678,6 +697,9 @@ internal fun MotionStyle.labelRes(): Int = when (this) {
     MotionStyle.SPRING -> R.string.motion_style_spring
     MotionStyle.SNAPPY -> R.string.motion_style_snappy
     MotionStyle.JELLY -> R.string.motion_style_jelly
+    MotionStyle.FLIGHT -> R.string.motion_style_flight
+    MotionStyle.DROP -> R.string.motion_style_drop
+    MotionStyle.GLIDE -> R.string.motion_style_glide
 }
 
 /** Nom de la forme des touches (carte de la page « Apparence »). */

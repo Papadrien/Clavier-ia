@@ -17,6 +17,9 @@ enum class KeyboardBackdrop(val storageKey: String, @StringRes val labelRes: Int
     // 13/11/2026 : cœurs en néon et pâquerettes (maquettes validées le jour même).
     HEARTS("hearts", R.string.backdrop_hearts),
     FLOWERS("flowers", R.string.backdrop_flowers),
+
+    // 16/11/2026 : circuit imprimé et processeur (maquette « Processeur » retenue le jour même).
+    PROCESSOR("processor", R.string.backdrop_processor),
     ;
 
     /** Un motif (et non le fond uni) : touches translucides par-dessus. */

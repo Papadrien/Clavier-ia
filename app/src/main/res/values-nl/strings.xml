@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Emojitoets tonen</string>
     <string name="keyboard_settings_show_comma_key">Kommatoets tonen</string>
     <string name="keyboard_settings_show_period_key">Punttoets tonen</string>
+    <string name="keyboard_settings_key_preview">Ballon tonen boven de ingedrukte toets</string>
     <string name="keyboard_settings_clipboard_history_switch">Klembordgeschiedenis</string>
     <string name="keyboard_settings_clipboard_history_description">Bewaart je recente kopieën zodat je ze opnieuw kunt plakken (12 uur, 7 dagen met het premiumpakket). Wachtwoorden en kaartnummers worden nooit bewaard. Uitzetten wist de geschiedenis.</string>
     <string name="keyboard_settings_screenshots_switch">Recente screenshots voorstellen</string>
@@ -477,7 +478,7 @@
     <string name="privacy_section_3_title">3. Geen verzameling van persoonsgegevens</string>
     <string name="privacy_section_3_body">Taipo heeft geen account en geen advertenties. Het meet zijn gebruik anoniem met Aptabase: gebeurtenissen zoals ‘een AI-correctie is gelukt’, ‘een model is gedownload’ of ‘een instelling is gewijzigd’, samen met de versie van de app, de versie van Android, het model van het apparaat en de taal ervan, plus twee grove bereiken: hoelang de app is geïnstalleerd en op hoeveel dagen hij is gebruikt (bijvoorbeeld ‘8 tot 30 dagen’), nooit exacte waarden. Nooit je tekst, wat je kopieert of dicteert, geen enkele identificatie van het apparaat of de persoon en niets uit wachtwoordvelden. Zoals bij elke internetverbinding ontvangen de servers van Aptabase technisch het IP-adres van het verzoek; Taipo zelf ziet of bewaart het nooit (zie het privacybeleid van Aptabase voor de verwerking ervan). De meting staat uit tot je ermee instemt, en je kunt je keuze op elk moment wijzigen via Mijn gegevens > Gebruiksgegevens delen. Taipo zelf verzamelt geen persoonsgegevens over jou.</string>
     <string name="privacy_section_4_title">4. Wachtwoordvelden</string>
-    <string name="privacy_section_4_body">In een veld voor een wachtwoord of geheime code zijn de AI-acties (Corrigeren, Genereren, Dicteren, AI-dictee) en het Smart Clipboard-paneel uitgeschakeld: de inhoud van het veld wordt niet gelezen en de microfoon wordt niet geopend. De plakknop blijft, zodat je een wachtwoord kunt plakken dat je uit een wachtwoordbeheerder hebt gekopieerd; het blijft verborgen (••••). Kopieën die als vertrouwelijk zijn gemarkeerd (wachtwoorden) en kaartnummers worden nooit in de klembordgeschiedenis bewaard.</string>
+    <string name="privacy_section_4_body">In een veld voor een wachtwoord of geheime code zijn de AI-acties (Corrigeren, Genereren, Dicteren, AI-dictee) uitgeschakeld en wordt de microfoon niet geopend. Het toetsenbord leest de inhoud van het veld nooit. Plakken kan nog steeds: de plakknop en het Smart Clipboard-paneel blijven, zodat je een wachtwoord kunt plakken dat je uit een wachtwoordbeheerder hebt gekopieerd; kopieën die als vertrouwelijk zijn gemarkeerd, blijven verborgen (••••). Wat uit een wachtwoordveld wordt gekopieerd, kopieën die als vertrouwelijk zijn gemarkeerd (wachtwoorden) en kaartnummers worden nooit in de klembordgeschiedenis bewaard.</string>
     <string name="privacy_section_5_title">5. Wat op het apparaat wordt opgeslagen</string>
     <string name="privacy_section_5_body">Je persoonlijke woordenboek, de klemborditems en je instellingen blijven op je apparaat, in versleutelde databases. Als je de app verwijdert, worden deze gegevens gewist. Je kunt ze ook exporteren naar een onversleuteld bestand (Mijn gegevens > Back-up en herstel): dat bestand verlaat het apparaat alleen als je het zelf verplaatst. Taipo vraagt geen toegang tot je foto\'s.</string>
     <string name="privacy_section_6_title">6. Leren en typnauwkeurigheid</string>
@@ -526,7 +527,7 @@
     <string name="model_delete_voice_message">De bestanden (%1$s) worden van je apparaat verwijderd. Spraakdictee werkt pas weer als je het model opnieuw downloadt.</string>
     <string name="button_voice_model_local">Lokaal spraakmodel</string>
     <string name="home_row_voice_model_local_subtitle">Zelf de bestanden van het spraakmodel aanleveren</string>
-    <string name="sensitive_field_actions_disabled">Uitgeschakeld in wachtwoordvelden: er wordt niets gelezen of naar de AI of het klembord gestuurd.</string>
+    <string name="sensitive_field_actions_disabled">Uitgeschakeld in wachtwoordvelden: er wordt niets gelezen of naar de AI gestuurd.</string>
     <string name="ai_transcription_button_description">AI-dictee: opnemen en dan uitschrijven</string>
     <string name="ai_transcription_button_recording">AI-dictee: opname stoppen en uitschrijven</string>
     <string name="ai_transcription_button_processing">AI-dictee bezig: tik om te annuleren</string>
@@ -602,6 +603,7 @@
     <string name="backdrop_waves">Golven</string>
     <string name="backdrop_hearts">Hartjes</string>
     <string name="backdrop_flowers">Bloemen</string>
+    <string name="backdrop_processor">Processor</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Lettertype van het toetsenbord</string>
@@ -633,6 +635,9 @@
     <string name="motion_style_spring">Veer</string>
     <string name="motion_style_snappy">Vlot</string>
     <string name="motion_style_jelly">Gelei</string>
+    <string name="motion_style_flight">Wegvliegen</string>
+    <string name="motion_style_drop">Druppel</string>
+    <string name="motion_style_glide">Glijden</string>
     <string name="home_row_languages_subtitle">Talen en indelingen van het toetsenbord</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Weergave</string>
@@ -664,7 +669,7 @@
     <string name="premium_clipboard_title">Uitgebreid klembord</string>
     <string name="premium_clipboard_text">Kopieën 7 dagen bewaard in plaats van 12 uur. Tot 50 vastgezette items in plaats van 5.</string>
     <string name="premium_style_title">Een toetsenbord in jouw stijl</string>
-    <string name="premium_style_text">Zes geanimeerde achtergronden die bewegen tijdens het typen, vijf extra toetsvormen, negen lettertypen voor het toetsenbord (waaronder OpenDyslexic) en de animatiestijl Gelei.</string>
+    <string name="premium_style_text">Zeven geanimeerde achtergronden die bewegen tijdens het typen, vijf extra toetsvormen, negen lettertypen voor het toetsenbord (waaronder OpenDyslexic) en vijf animatiestijlen: Vlot, Gelei, Wegvliegen, Druppel en Glijden.</string>
     <string name="premium_free_reminder">Typen, talen, AI en back-up blijven gratis, met of zonder het pakket.</string>
     <string name="premium_buy">Het pakket kopen</string>
     <string name="premium_buy_with_price">Het pakket kopen · %1$s</string>

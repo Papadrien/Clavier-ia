@@ -3,11 +3,13 @@ package fr.junade.taipo
 import android.animation.ValueAnimator
 import android.graphics.Canvas
 import android.graphics.ColorFilter
+import android.graphics.LinearGradient
 import android.graphics.Outline
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PixelFormat
 import android.graphics.RectF
+import android.graphics.Shader
 import android.graphics.drawable.Drawable
 import android.view.Choreographer
 import fr.junade.taipo.backdrop.BackdropColors
@@ -26,6 +28,10 @@ import fr.junade.taipo.backdrop.KeyboardBackdrop
  * Fond du clavier (page « Thème ») : uni, ou un motif généré ([setBackdrop]) dans la couleur d'accent. Animé ([animated]), le
  * motif ne bouge que pendant la frappe ([onKeyPress]) : une image par trame tant que le mouvement dure ([BackdropMotion]),
  * rien à l'arrêt. Animations Android coupées : le motif reste fixe.
+ *
+ * Voile de la barre du haut (16/11/2026) : sur un motif, la zone au-dessus des touches ([setTopBar]) est recouverte d'un voile de
+ * la couleur unie du clavier, qui s'efface juste au-dessus de la première rangée. Les suggestions, en texte sans fond, restent
+ * lisibles quel que soit le motif qui passe derrière (un pétale blanc derrière un mot blanc, par exemple).
  */
 class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
 
@@ -33,6 +39,11 @@ class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
     private val baseColor = backgroundColor
     private val rect = RectF()
     private val clip = Path()
+
+    private val scrimPaint = Paint()
+    private var barBottom = 0f
+    private var scrimFade = 0f
+    private var scrimShaderFor = Float.NaN
 
     private var painter: BackdropPainter? = null
     private var backdrop = KeyboardBackdrop.PLAIN
@@ -64,6 +75,18 @@ class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
         backdrop = value
         this.seed = seed
         colors = newColors
+        invalidateSelf()
+    }
+
+    /**
+     * Zone de la barre du haut : [bottom] px depuis le haut du fond (0 : pas de barre, pas de voile), et hauteur [fade] du dégradé
+     * qui finit à [bottom]. Sans effet si rien ne change.
+     */
+    fun setTopBar(bottom: Float, fade: Float) {
+        if (bottom == barBottom && fade == scrimFade) return
+        barBottom = bottom
+        scrimFade = fade
+        scrimShaderFor = Float.NaN
         invalidateSelf()
     }
 
@@ -113,7 +136,27 @@ class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
         }
         canvas.translate(bounds.left.toFloat(), bounds.top.toFloat())
         currentPainter.drawFrame(canvas, bounds.width(), bounds.height(), seed, currentColors, motion)
+        drawTopBarScrim(canvas, bounds.width().toFloat())
         canvas.restore()
+    }
+
+    /** Voile au-dessus des touches : couvrant ([SCRIM_ALPHA]) jusqu'au début du dégradé, puis transparent au bas de la barre. */
+    private fun drawTopBarScrim(canvas: Canvas, width: Float) {
+        if (barBottom <= 0f) return
+        if (scrimShaderFor != barBottom) {
+            val start = (barBottom - scrimFade).coerceAtLeast(0f)
+            scrimPaint.shader = LinearGradient(
+                0f,
+                start,
+                0f,
+                barBottom,
+                BackdropColors.withAlpha(baseColor, SCRIM_ALPHA),
+                BackdropColors.withAlpha(baseColor, 0f),
+                Shader.TileMode.CLAMP,
+            )
+            scrimShaderFor = barBottom
+        }
+        canvas.drawRect(0f, 0f, width, barBottom, scrimPaint)
     }
 
     override fun getOutline(outline: Outline) {
@@ -134,6 +177,8 @@ class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
     override fun getOpacity(): Int = if (cornerRadius > 0f) PixelFormat.TRANSLUCENT else PixelFormat.OPAQUE
 
     private companion object {
+        /** Opacité du voile de la barre du haut : le motif s'y devine encore, sans gêner la lecture. */
+        const val SCRIM_ALPHA = 0.85f
         const val FIRST_FRAME_S = 1f / 60f
         const val MAX_FRAME_S = 0.033f
         const val NANOS_PER_SECOND = 1_000_000_000f

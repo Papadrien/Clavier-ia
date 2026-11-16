@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Visa emojitangenten</string>
     <string name="keyboard_settings_show_comma_key">Visa kommatangenten</string>
     <string name="keyboard_settings_show_period_key">Visa punkttangenten</string>
+    <string name="keyboard_settings_key_preview">Visa en bubbla ovanför tangenten du trycker på</string>
     <string name="keyboard_settings_clipboard_history_switch">Urklippshistorik</string>
     <string name="keyboard_settings_clipboard_history_description">Sparar det du nyligen kopierat så att du kan klistra in det igen (12 timmar, 7 dagar med premiumpaketet). Lösenord och kortnummer sparas aldrig. Om du stänger av den raderas historiken.</string>
     <string name="keyboard_settings_screenshots_switch">Föreslå senaste skärmbilder</string>
@@ -477,7 +478,7 @@
     <string name="privacy_section_3_title">3. Ingen insamling av personuppgifter</string>
     <string name="privacy_section_3_body">Taipo har inget konto och ingen reklam. Appen mäter sin användning anonymt med Aptabase: händelser som ”en AI-korrigering lyckades”, ”en modell laddades ned” eller ”en inställning ändrades”, tillsammans med appversion, Android-version, enhetsmodell och enhetens språk, samt två ungefärliga intervall: hur länge appen har varit installerad och hur många dagar den har använts (till exempel ”8 till 30 dagar”), aldrig exakta värden. Aldrig din text, det du kopierar eller dikterar, eller någon identifierare för enheten eller personen, och ingenting från lösenordsfält. Som vid alla internetanslutningar tar Aptabases servrar tekniskt emot begärans IP-adress; Taipo självt ser den aldrig och lagrar den aldrig (se Aptabases integritetspolicy för hur den hanteras). Funktionen är avstängd tills du godkänner den, och du kan när som helst ändra ditt val under Mina data > Dela användningsdata. Taipo självt samlar inte in några personuppgifter om dig.</string>
     <string name="privacy_section_4_title">4. Lösenordsfält</string>
-    <string name="privacy_section_4_body">I ett fält för lösenord eller hemlig kod är AI-åtgärderna (Korrigera, Skapa, Diktera, AI-diktering) och panelen Smart Clipboard inaktiverade: fältets innehåll läses inte och mikrofonen öppnas inte. Inklistringsknappen finns kvar så att du kan klistra in ett lösenord som kopierats från en lösenordshanterare; det förblir maskerat (••••). Kopior som markerats som känsliga (lösenord) och kortnummer sparas aldrig i urklippshistoriken.</string>
+    <string name="privacy_section_4_body">I ett fält för lösenord eller hemlig kod är AI-åtgärderna (Korrigera, Skapa, Diktera, AI-diktering) inaktiverade och mikrofonen öppnas inte. Tangentbordet läser aldrig fältets innehåll. Du kan fortfarande klistra in: inklistringsknappen och panelen Smart Clipboard finns kvar så att du kan klistra in ett lösenord som kopierats från en lösenordshanterare; kopior som markerats som känsliga förblir maskerade (••••). Det som kopieras från ett lösenordsfält, kopior som markerats som känsliga (lösenord) och kortnummer sparas aldrig i urklippshistoriken.</string>
     <string name="privacy_section_5_title">5. Vad som lagras på enheten</string>
     <string name="privacy_section_5_body">Din personliga ordlista, dina urklippsobjekt och inställningar stannar på din enhet, i krypterade databaser. Om du avinstallerar appen raderas dessa data. Du kan också exportera dem till en okrypterad fil (Mina data > Säkerhetskopiering och återställning): filen lämnar bara enheten om du själv flyttar den. Taipo ber inte om åtkomst till dina foton.</string>
     <string name="privacy_section_6_title">6. Inlärning och skrivprecision</string>
@@ -526,7 +527,7 @@
     <string name="model_delete_voice_message">Filerna (%1$s) raderas från din enhet. Röstdiktering fungerar inte förrän du laddar ned modellen igen.</string>
     <string name="button_voice_model_local">Lokal röstmodell</string>
     <string name="home_row_voice_model_local_subtitle">Ange röstmodellens filer själv</string>
-    <string name="sensitive_field_actions_disabled">Inaktiverat i lösenordsfält: ingenting läses eller skickas till AI:n eller urklipp.</string>
+    <string name="sensitive_field_actions_disabled">Inaktiverat i lösenordsfält: ingenting läses eller skickas till AI:n.</string>
     <string name="ai_transcription_button_description">AI-diktering: spela in och transkribera sedan</string>
     <string name="ai_transcription_button_recording">AI-diktering: stoppa inspelningen och transkribera</string>
     <string name="ai_transcription_button_processing">AI-diktering pågår: tryck för att avbryta</string>
@@ -602,6 +603,7 @@
     <string name="backdrop_waves">Vågor</string>
     <string name="backdrop_hearts">Hjärtan</string>
     <string name="backdrop_flowers">Blommor</string>
+    <string name="backdrop_processor">Processor</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Tangentbordets typsnitt</string>
@@ -633,6 +635,9 @@
     <string name="motion_style_spring">Fjäder</string>
     <string name="motion_style_snappy">Kvick</string>
     <string name="motion_style_jelly">Gelé</string>
+    <string name="motion_style_flight">Iväg</string>
+    <string name="motion_style_drop">Droppe</string>
+    <string name="motion_style_glide">Glid</string>
     <string name="home_row_languages_subtitle">Tangentbordets språk och layouter</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Utseende</string>
@@ -664,7 +669,7 @@
     <string name="premium_clipboard_title">Utökat urklipp</string>
     <string name="premium_clipboard_text">Kopior sparas i 7 dagar i stället för 12 timmar. Upp till 50 fästa objekt i stället för 5.</string>
     <string name="premium_style_title">Ett tangentbord i din stil</string>
-    <string name="premium_style_text">Sex animerade bakgrunder som rör sig när du skriver, fem fler tangentformer, nio typsnitt för tangentbordet (bland annat OpenDyslexic) och animationsstilen Gelé.</string>
+    <string name="premium_style_text">Sju animerade bakgrunder som rör sig när du skriver, fem fler tangentformer, nio typsnitt för tangentbordet (bland annat OpenDyslexic) och fem animationsstilar: Kvick, Gelé, Iväg, Droppe och Glid.</string>
     <string name="premium_free_reminder">Skrivande, språk, AI och säkerhetskopiering är fortsatt gratis, med eller utan paketet.</string>
     <string name="premium_buy">Köp paketet</string>
     <string name="premium_buy_with_price">Köp paketet · %1$s</string>

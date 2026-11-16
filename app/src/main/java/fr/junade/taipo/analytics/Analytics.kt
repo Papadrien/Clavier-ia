@@ -118,6 +118,34 @@ object Analytics {
         }
     }
 
+    /** Jour local déjà traité par [keyboardUsed] dans ce processus : évite de relire le réglage à chaque touche. */
+    @Volatile
+    private var keyboardUsedDayInMemory: Long = DailyKeyboardUse.NO_DAY
+
+    /**
+     * Touche tapée sur le clavier : envoie [AnalyticsEvents.KEYBOARD_USED] à la première touche de la journée (jour local),
+     * une seule fois par jour. À appeler à chaque touche : après l'envoi du jour, le coût est une simple comparaison.
+     * Si l'envoi est ignoré (champ de mot de passe, mesure désactivée, SDK absent), rien n'est mémorisé et la touche
+     * suivante réessaie.
+     */
+    fun keyboardUsed(context: Context) {
+        val now = System.currentTimeMillis()
+        val today = DailyKeyboardUse.localDay(now, java.util.TimeZone.getDefault().getOffset(now))
+        if (!DailyKeyboardUse.shouldSend(keyboardUsedDayInMemory, today)) return
+        if (!initialized || sensitiveFieldActive) return
+        val appContext = context.applicationContext
+        val preferences = AnalyticsPreferences(appContext)
+        val lastSent = preferences.keyboardUsedDay
+        if (!DailyKeyboardUse.shouldSend(lastSent, today)) {
+            keyboardUsedDayInMemory = lastSent
+            return
+        }
+        if (send(appContext, AnalyticsEvents.KEYBOARD_USED, AnalyticsProps.EMPTY)) {
+            preferences.keyboardUsedDay = today
+            keyboardUsedDayInMemory = today
+        }
+    }
+
     /** Raccourci : `track(context, name, "cle" to valeur, ...)`. */
     fun track(context: Context, name: String, vararg props: Pair<String, Any?>) =
         track(context, name, AnalyticsProps.of(*props))

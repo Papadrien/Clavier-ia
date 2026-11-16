@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/** Fonds du clavier : clés d'enregistrement, réservation au pack (Cœurs et Fleurs ajoutés le 13/11/2026). */
+/** Fonds du clavier : clés d'enregistrement, réservation au pack (Cœurs et Fleurs ajoutés le 13/11/2026, Processeur le 16/11/2026). */
 class KeyboardBackdropTest {
 
     @Test
@@ -15,8 +15,8 @@ class KeyboardBackdropTest {
     }
 
     @Test
-    fun `coeurs et fleurs sont des motifs du pack premium`() {
-        listOf(KeyboardBackdrop.HEARTS, KeyboardBackdrop.FLOWERS).forEach {
+    fun `coeurs, fleurs et processeur sont des motifs du pack premium`() {
+        listOf(KeyboardBackdrop.HEARTS, KeyboardBackdrop.FLOWERS, KeyboardBackdrop.PROCESSOR).forEach {
             assertTrue(it.isPattern)
             assertFalse(it.isAvailable(premium = false))
             assertEquals(KeyboardBackdrop.PLAIN, KeyboardBackdrop.effective(it, premium = false))

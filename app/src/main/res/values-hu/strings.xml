@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Emoji billentyű megjelenítése</string>
     <string name="keyboard_settings_show_comma_key">Vessző billentyű megjelenítése</string>
     <string name="keyboard_settings_show_period_key">Pont billentyű megjelenítése</string>
+    <string name="keyboard_settings_key_preview">Buborék megjelenítése a lenyomott billentyű felett</string>
     <string name="keyboard_settings_clipboard_history_switch">Vágólap-előzmények</string>
     <string name="keyboard_settings_clipboard_history_description">Megőrzi a legutóbbi másolatokat, hogy újra beilleszthesse őket (12 óra, prémium csomaggal 7 nap). Jelszavakat és kártyaszámokat soha nem őriz meg. Kikapcsolása törli az előzményeket.</string>
     <string name="keyboard_settings_screenshots_switch">Legutóbbi képernyőképek felajánlása</string>
@@ -477,7 +478,7 @@
     <string name="privacy_section_3_title">3. Nincs személyesadat-gyűjtés</string>
     <string name="privacy_section_3_body">A Taipónak nincs fiókja és nincsenek hirdetései. Használatát névtelenül méri az Aptabase segítségével: olyan események, mint „egy MI-javítás sikerült”, „egy modell letöltődött” vagy „egy beállítás megváltozott”, az alkalmazás verziójával, az Android verziójával, az eszköz típusával és nyelvével, valamint két durva tartománnyal együtt: mióta van telepítve az alkalmazás, és hány napon használták (például „8–30 nap”), soha nem pontos értékek. Soha nem a szövege, amit másol vagy diktál, sem az eszköz vagy a személy bármilyen azonosítója, és semmi a jelszómezőkből. Mint minden internetkapcsolatnál, az Aptabase szerverei technikailag megkapják a kérés IP-címét; maga a Taipo soha nem látja és nem tárolja (a kezeléséről az Aptabase adatvédelmi szabályzata tájékoztat). A funkció ki van kapcsolva, amíg nem járul hozzá, és döntését bármikor megváltoztathatja az Adataim > Használati adatok megosztása menüben. Maga a Taipo nem gyűjt Önről személyes adatot.</string>
     <string name="privacy_section_4_title">4. Jelszómezők</string>
-    <string name="privacy_section_4_body">Jelszó- vagy titkoskód-mezőben az MI-műveletek (Javítás, Generálás, Diktálás, MI-diktálás) és a Smart Clipboard panel le vannak tiltva: a mező tartalmát nem olvassa be, és a mikrofont nem kapcsolja be. A beillesztés gomb megmarad, így beilleszthet egy jelszókezelőből másolt jelszót; ez maszkolva marad (••••). Az érzékenyként megjelölt másolatokat (jelszavakat) és a kártyaszámokat soha nem őrzi meg a vágólap-előzmények között.</string>
+    <string name="privacy_section_4_body">Jelszó- vagy titkoskód-mezőben az MI-műveletek (Javítás, Generálás, Diktálás, MI-diktálás) le vannak tiltva, és a mikrofont nem kapcsolja be. A billentyűzet soha nem olvassa be a mező tartalmát. A beillesztés továbbra is működik: a beillesztés gomb és a Smart Clipboard panel megmarad, így beilleszthet egy jelszókezelőből másolt jelszót; az érzékenyként megjelölt másolatok maszkolva maradnak (••••). A jelszómezőből másolt tartalmat, az érzékenyként megjelölt másolatokat (jelszavakat) és a kártyaszámokat soha nem őrzi meg a vágólap-előzmények között.</string>
     <string name="privacy_section_5_title">5. Mit tárol az eszköz</string>
     <string name="privacy_section_5_body">A személyes szótára, a vágólap elemei és a beállításai az eszközén maradnak, titkosított adatbázisokban. Az alkalmazás eltávolítása törli ezeket az adatokat. Titkosítatlan fájlba is exportálhatja őket (Adataim > Biztonsági mentés és visszaállítás): ez a fájl csak akkor hagyja el az eszközt, ha Ön maga helyezi át. A Taipo nem kér hozzáférést a fotóihoz.</string>
     <string name="privacy_section_6_title">6. Tanulás és gépelési pontosság</string>
@@ -526,7 +527,7 @@
     <string name="model_delete_voice_message">A fájlok (%1$s) törlődnek az eszközéről. A hangdiktálás nem fog működni, amíg újra le nem tölti a modellt.</string>
     <string name="button_voice_model_local">Helyi hangmodell</string>
     <string name="home_row_voice_model_local_subtitle">A hangmodell fájljainak saját megadása</string>
-    <string name="sensitive_field_actions_disabled">Jelszómezőkben letiltva: semmi nem kerül beolvasásra, és semmi nem jut el az MI-hez vagy a vágólapra.</string>
+    <string name="sensitive_field_actions_disabled">Jelszómezőkben letiltva: semmi nem kerül beolvasásra, és semmi nem jut el az MI-hez.</string>
     <string name="ai_transcription_button_description">MI-diktálás: felvétel, majd átírás</string>
     <string name="ai_transcription_button_recording">MI-diktálás: felvétel leállítása és átírás</string>
     <string name="ai_transcription_button_processing">MI-diktálás folyamatban: koppintson a megszakításhoz</string>
@@ -602,6 +603,7 @@
     <string name="backdrop_waves">Hullámok</string>
     <string name="backdrop_hearts">Szívek</string>
     <string name="backdrop_flowers">Virágok</string>
+    <string name="backdrop_processor">Processzor</string>
     <string name="theme_backdrop_free">Ingyenes</string>
     <string name="theme_backdrop_premium">Prémium</string>
     <string name="theme_section_font">Billentyűzet betűtípusa</string>
@@ -633,6 +635,9 @@
     <string name="motion_style_spring">Rugó</string>
     <string name="motion_style_snappy">Fürge</string>
     <string name="motion_style_jelly">Zselé</string>
+    <string name="motion_style_flight">Elrepülés</string>
+    <string name="motion_style_drop">Csepp</string>
+    <string name="motion_style_glide">Csúszás</string>
     <string name="home_row_languages_subtitle">Billentyűzetnyelvek és -kiosztások</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Megjelenés</string>
@@ -664,7 +669,7 @@
     <string name="premium_clipboard_title">Bővített vágólap</string>
     <string name="premium_clipboard_text">A másolatok 12 óra helyett 7 napig maradnak meg. 5 helyett legfeljebb 50 rögzített elem.</string>
     <string name="premium_style_title">Billentyűzet az Ön stílusában</string>
-    <string name="premium_style_text">Hat animált háttér, amely gépelés közben mozog, öt további billentyűforma, kilenc billentyűzet-betűtípus (köztük az OpenDyslexic) és a Zselé animációs stílus.</string>
+    <string name="premium_style_text">Hét animált háttér, amely gépelés közben mozog, öt további billentyűforma, kilenc billentyűzet-betűtípus (köztük az OpenDyslexic) és öt animációs stílus: Fürge, Zselé, Elrepülés, Csepp és Csúszás.</string>
     <string name="premium_free_reminder">A gépelés, a nyelvek, az MI és a biztonsági mentés ingyenes marad, csomaggal vagy anélkül.</string>
     <string name="premium_buy">A csomag megvásárlása</string>
     <string name="premium_buy_with_price">A csomag megvásárlása · %1$s</string>

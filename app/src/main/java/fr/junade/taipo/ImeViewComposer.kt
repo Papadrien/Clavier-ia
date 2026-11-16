@@ -253,8 +253,8 @@ class ImeViewComposer(
             host.onEmojiSuggestionClicked()
         }
         // Le même bouton ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme.
+        // Le panneau s'ouvre aussi dans un champ de mot de passe (16/11/2026) : on y colle, rien n'est lu dans le champ.
         correctionBar.setOnClipboardClickListener {
-            if (blockedBySensitiveField()) return@setOnClipboardClickListener
             host.playBarButtonSound()
             clipboard.onPanelButtonClicked()
         }
@@ -359,6 +359,12 @@ class ImeViewComposer(
         // Clavier flottant : la carte (tout le clavier) est portée par une racine qui la place ; la poignée de déplacement,
         // masquée quand le clavier est ancré, vient sous les touches.
         card = root
+        // Voile du fond sous la barre du haut : tout ce qui est au-dessus des touches (barre, suggestions, zone de chat) ; suit la
+        // hauteur de cette zone, qui change avec la barre d'emojis récents ou le mode prompt.
+        val scrimFade = context.resources.displayMetrics.density * TOP_BAR_SCRIM_FADE_DP
+        keyboardStack.addOnLayoutChangeListener { view, _, _, _, _, _, _, _, _ ->
+            background?.setTopBar(view.top.toFloat(), scrimFade)
+        }
         // Fond animé : chaque doigt posé sur les touches fait réagir le fond, en coordonnées de la carte.
         keyboardView.touchDownListener = { x, y ->
             card.getLocationInWindow(cardLocation)
@@ -375,5 +381,10 @@ class ImeViewComposer(
         prompt.applyViews() // la vue est recréée (rotation...) alors que le mode prompt peut être actif
         host.onViewsCreated()
         return frame
+    }
+
+    private companion object {
+        /** Hauteur du dégradé par lequel le voile de la barre du haut s'efface, juste au-dessus des touches. */
+        const val TOP_BAR_SCRIM_FADE_DP = 14f
     }
 }

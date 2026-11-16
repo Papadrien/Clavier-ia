@@ -491,6 +491,7 @@ class TaipoIme : InputMethodService() {
         keyboardHeight = keyboardPreferences.keyboardHeight
         keyboardView.heightScale = keyboardHeight.scale
         keyboardView.bottomMarginDp = keyboardPreferences.bottomMarginDp
+        keyboardView.keyPreviewEnabled = keyboardPreferences.isKeyPreviewEnabled
         floatingWindow.apply() // en flottant, remet la marge du bas à zéro (la poignée en tient lieu)
         viewComposer.applyBackdrop(
             fr.junade.taipo.backdrop.KeyboardBackdrop.effective(keyboardPreferences.keyboardBackdrop, PremiumPass.isActive),
@@ -738,6 +739,7 @@ class TaipoIme : InputMethodService() {
 
     private fun onKeyPressed(key: Key) {
         hapticFeedback.perform(hapticIntensity)
+        Analytics.keyboardUsed(this) // une fois par jour, à la première touche (rien dans un champ de mot de passe)
         messagePopup.dismissBannerOnKey() // un message d'information s'efface à la frappe suivante (une astuce reste)
         if (keySoundEnabled) keySounds.play(KeySound.forAction(key.action))
         suggestions.markTyping() // le curseur qui bouge ensuite suit la frappe (suggestions de complétion)

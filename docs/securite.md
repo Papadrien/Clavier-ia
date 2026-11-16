@@ -84,11 +84,13 @@ l'hygiène (dérivation standard, séparation par usage, format versionné), pas
 
 - **Règle** : `SensitiveFieldPolicy.isSensitive` : champ de mot de passe texte (masqué, visible, web) ou champ numérique de type mot de passe
   (code PIN). Les autres champs (e-mail, URL, téléphone, terminal, texte libre) ne changent pas.
-- **Dans un champ sensible** : Corriger, Générer, Vocal, Transcription IA et le bouton Smart Clipboard sont grisés (opacité réduite) mais
-  restent touchables : un appui affiche « Désactivé dans les champs de mot de passe… » et n'exécute rien. Le texte du champ n'est pas lu.
-  Le micro n'est pas ouvert.
-- **Puce de collage** : volontairement proposée dans ces champs (coller un mot de passe copié depuis un gestionnaire) ; une copie
-  signalée sensible y reste masquée (« •••• »). Voir `SuggestionPolicy.allowsPasteSuggestion`.
+- **Dans un champ sensible** : Corriger, Générer, Vocal et Transcription IA sont grisés (opacité réduite) mais restent touchables : un
+  appui affiche « Désactivé dans les champs de mot de passe… » et n'exécute rien. Le texte du champ n'est pas lu. Le micro n'est pas ouvert.
+- **Coller** : la puce de collage et le panneau Smart Clipboard restent actifs dans ces champs (panneau autorisé le 16/11/2026), pour coller
+  un mot de passe copié depuis un gestionnaire ; une copie signalée sensible y reste masquée (« •••• »). Voir
+  `SuggestionPolicy.allowsPasteSuggestion`. Le collage ne lit pas la sélection du champ (`ClipboardController.selectionToReplace`).
+- **Copier depuis le champ** : une copie faite pendant qu'un champ sensible est affiché (mot de passe visible, par exemple) n'entre jamais
+  dans l'historique du presse-papiers, et elle est traitée comme sensible : son aperçu est masqué dans la puce et le panneau.
 - **Navigation privée** (`IME_FLAG_NO_PERSONALIZED_LEARNING`) : non traitée comme sensible, elle coupe seulement l'apprentissage.
 
 ## Menu « Confidentialité » (épopée 10, story 10.2)

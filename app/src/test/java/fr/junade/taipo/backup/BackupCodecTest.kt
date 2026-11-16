@@ -33,6 +33,7 @@ class BackupCodecTest {
             backdrop = "waves",
             backdropAnimated = false,
             keySound = true,
+            keyPreview = false,
             barSound = false,
             keySoundVolume = 40,
             bottomMarginDp = 12,

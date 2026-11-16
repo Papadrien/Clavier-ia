@@ -116,15 +116,14 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         }
 
     /**
-     * Story 10.1 : faux dans un champ sensible (mot de passe) : Corriger, Chat, Vocal, Transcription IA et le bouton Smart
-     * Clipboard sont grisés (opacité réduite) mais restent touchables : l'IME explique alors la raison.
+     * Story 10.1 : faux dans un champ sensible (mot de passe) : Corriger, Chat, Vocal et Transcription IA sont grisés (opacité
+     * réduite) mais restent touchables : l'IME explique alors la raison. Le bouton Smart Clipboard reste actif (16/11/2026 :
+     * coller un mot de passe depuis le panneau).
      */
     var aiActionsAllowed: Boolean = true
         set(value) {
             if (field == value) return
             field = value
-            normalButtons.setClipboardRestricted(!value)
-            menuButtons.setClipboardRestricted(!value)
             renderCorrect()
             renderVoice()
             renderAiTranscription()
@@ -554,7 +553,6 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             full = reveal,
             row = typingRow,
             spring = spring,
-            restingAlpha = menuButtons::clipboardRestingAlpha,
         )
         setRevealed(
             menuButtons.undoButton,

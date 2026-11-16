@@ -169,8 +169,9 @@
             android:text="@string/premium_unlock"
             android:visibility="gone" />
 
-        <!-- Section « Animations » : une carte par style (MotionStyle), aperçu animé en boucle, posées par ThemeActivity par
-             rangées de trois. Gelée, réservée au pack, porte un cadenas ; touchée sans pack, ce bouton ouvre l'écran du pack. -->
+        <!-- Section « Animations » : une carte par style (MotionStyle), aperçu animé en boucle avec la bulle des touches, posées par
+             ThemeActivity par rangées de trois. Un style règle le clavier et la bulle. Gelée, réservée au pack, porte un cadenas ;
+             touchée sans pack, ce bouton ouvre l'écran du pack. -->
         <TextView
             style="@style/TaipoText.Section"
             android:id="@+id/theme_motion_heading"
@@ -190,8 +191,7 @@
             android:id="@+id/theme_motions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:baselineAligned="false" />
+            android:orientation="vertical" />
 
         <Button
             style="@style/TaipoButton.Primary"
