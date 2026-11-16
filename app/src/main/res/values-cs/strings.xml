@@ -485,7 +485,7 @@
     <string name="privacy_section_3_title">3. Žádný sběr osobních údajů</string>
     <string name="privacy_section_3_body">Taipo nemá účet ani reklamy. Své používání měří anonymně pomocí Aptabase: události jako „oprava AI se zdařila“, „model byl stažen“ nebo „nastavení se změnilo“, spolu s verzí aplikace, verzí Androidu, modelem zařízení a jeho jazykem a dvěma hrubými rozsahy: jak dlouho je aplikace nainstalována a kolik dní byla používána (například „8 až 30 dní“), nikdy přesné hodnoty. Nikdy váš text, to, co kopírujete nebo diktujete, ani žádný identifikátor zařízení či osoby, a nic z polí pro hesla. Jako u každého připojení k internetu servery Aptabase technicky dostávají adresu IP požadavku; samo Taipo ji nikdy nevidí ani neukládá (jak s ní Aptabase nakládá, popisují jeho zásady ochrany soukromí). Funkce je vypnutá, dokud nesouhlasíte, a svou volbu můžete kdykoli změnit v Moje data > Sdílet údaje o používání. Samo Taipo o vás neshromažďuje žádné osobní údaje.</string>
     <string name="privacy_section_4_title">4. Pole pro hesla</string>
-    <string name="privacy_section_4_body">V poli pro heslo nebo tajný kód jsou akce AI (Opravit, Generovat, Diktovat, diktování s AI) a panel Smart Clipboard vypnuté: obsah pole se nečte a mikrofon se nezapíná. Tlačítko vložení zůstává, abyste mohli vložit heslo zkopírované ze správce hesel; zůstává maskované (••••). Kopie označené jako citlivé (hesla) a čísla karet se v historii schránky nikdy neuchovávají.</string>
+    <string name="privacy_section_4_body">V poli pro heslo nebo tajný kód jsou akce AI (Opravit, Generovat, Diktovat, diktování s AI) vypnuté a mikrofon se nezapíná. Klávesnice obsah pole nikdy nečte. Vkládat můžete dál: tlačítko vložení i panel Smart Clipboard zůstávají, abyste mohli vložit heslo zkopírované ze správce hesel; kopie označené jako citlivé zůstávají maskované (••••). Nic zkopírovaného z pole pro heslo, kopie označené jako citlivé (hesla) ani čísla karet se v historii schránky nikdy neuchovávají.</string>
     <string name="privacy_section_5_title">5. Co je uloženo v zařízení</string>
     <string name="privacy_section_5_body">Váš osobní slovník, položky schránky a nastavení zůstávají ve vašem zařízení, v šifrovaných databázích. Odinstalováním aplikace se tato data smažou. Můžete je také exportovat do nešifrovaného souboru (Moje data > Záloha a obnovení): tento soubor opustí zařízení, jen pokud ho přesunete sami. Taipo nežádá o přístup k vašim fotkám.</string>
     <string name="privacy_section_6_title">6. Učení a přesnost psaní</string>
@@ -534,7 +534,7 @@
     <string name="model_delete_voice_message">Soubory (%1$s) budou ze zařízení smazány. Hlasové diktování nebude fungovat, dokud model znovu nestáhnete.</string>
     <string name="button_voice_model_local">Místní hlasový model</string>
     <string name="home_row_voice_model_local_subtitle">Zadejte soubory hlasového modelu sami</string>
-    <string name="sensitive_field_actions_disabled">V polích pro hesla vypnuto: nic se nečte ani neodesílá AI či do schránky.</string>
+    <string name="sensitive_field_actions_disabled">V polích pro hesla vypnuto: nic se nečte ani neodesílá AI.</string>
     <string name="ai_transcription_button_description">Diktování s AI: nahrát, pak přepsat</string>
     <string name="ai_transcription_button_recording">Diktování s AI: zastavit nahrávání a přepsat</string>
     <string name="ai_transcription_button_processing">Probíhá diktování s AI: klepnutím zrušíte</string>

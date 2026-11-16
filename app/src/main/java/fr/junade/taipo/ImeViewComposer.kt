@@ -253,8 +253,8 @@ class ImeViewComposer(
             host.onEmojiSuggestionClicked()
         }
         // Le même bouton ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme.
+        // Le panneau s'ouvre aussi dans un champ de mot de passe (16/11/2026) : on y colle, rien n'est lu dans le champ.
         correctionBar.setOnClipboardClickListener {
-            if (blockedBySensitiveField()) return@setOnClipboardClickListener
             host.playBarButtonSound()
             clipboard.onPanelButtonClicked()
         }
