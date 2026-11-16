@@ -10,6 +10,7 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -154,7 +155,7 @@ class KeyboardView(context: Context) : View(context) {
     private fun onKeyZoneChanged() {
         contentCache = null
         slotCache = null
-        keyPreview.key = null
+        keyPreview.dismiss()
         dismissPopup()
         accessibility.invalidateRoot()
         invalidate()
@@ -362,7 +363,7 @@ class KeyboardView(context: Context) : View(context) {
             showPopup(key)
         } else if (digit != null) {
             longPressCommitted = true
-            keyPreview.key = null
+            keyPreview.dismiss()
             keyListener?.onKey(Key("longpress_$digit", digit.toString(), KeyAction.TypeChar(digit)))
             invalidate()
         }
@@ -519,7 +520,7 @@ class KeyboardView(context: Context) : View(context) {
         isLandscape = landscape
         slotCache = null
         // Une bulle ouverte pendant la rotation serait mal positionnée : on la ferme.
-        keyPreview.key = null
+        keyPreview.dismiss()
         dismissPopup()
         requestLayout()
         invalidate()
@@ -533,7 +534,7 @@ class KeyboardView(context: Context) : View(context) {
         // Story 1.14 : largeur modifiée (dépliage d'un pliable, multi-fenêtre) ; une bulle ouverte
         // serait mal positionnée, on la ferme.
         if (oldw != 0 && w != oldw) {
-            keyPreview.key = null
+            keyPreview.dismiss()
             dismissPopup()
         }
     }
@@ -645,16 +646,17 @@ class KeyboardView(context: Context) : View(context) {
         drawOneHandedControls(canvas)
         drawTouchZones(canvas)
         drawPopup(canvas)
-        drawPreview(canvas)
-        if (backspaceAnimation.isRunning ||
-            shiftAnimation.isRunning ||
-            spaceBarAnimation.isRunning ||
-            digitSwipeAnimation.isRunning ||
-            oneHandedTransition.isRunning
-        ) {
-            postInvalidateOnAnimation()
-        }
+        val nowMs = SystemClock.uptimeMillis()
+        drawPreview(canvas, nowMs)
+        if (keyAnimationsRunning() || keyPreview.isRunning(nowMs)) postInvalidateOnAnimation()
     }
+
+    /** Une animation des touches est en cours (Effacer, Maj, barre espace, chiffre, mode une main) : l'image suivante est due. */
+    private fun keyAnimationsRunning(): Boolean = backspaceAnimation.isRunning ||
+        shiftAnimation.isRunning ||
+        spaceBarAnimation.isRunning ||
+        digitSwipeAnimation.isRunning ||
+        oneHandedTransition.isRunning
 
     // Multi-touch : en frappe rapide, le doigt suivant se pose avant que le précédent soit levé.
     // Un seul doigt est « actif » à la fois (celui qui alimente appui long, bulles et glissements) ;
@@ -723,7 +725,7 @@ class KeyboardView(context: Context) : View(context) {
         digitSwipeKey = pressedKey?.takeIf { it.longPressChar != null }
         digitSwipeAnimation.cancel()
         pressedKey?.takeIf { it.longPressChar != null }?.let { digitSwipeAnimation.onPress(it) }
-        keyPreview.key = pressedKey.takeIf { showsPreview(it) }
+        keyPreview.press(pressedKey.takeIf { showsPreview(it) }, SystemClock.uptimeMillis())
         if (pressedKey?.action is KeyAction.Space) spaceSwipe.onDown(x)
         if (pressedKey?.action is KeyAction.Backspace) {
             backspaceSwipe.onDown(x)
@@ -775,7 +777,7 @@ class KeyboardView(context: Context) : View(context) {
             digitSwipeKey = null
             digitSwipeAnimation.cancel()
             pressedKey = current
-            keyPreview.key = current.takeIf { showsPreview(it) }
+            keyPreview.press(current.takeIf { showsPreview(it) }, SystemClock.uptimeMillis(), sliding = true)
             startRepeat(current)
             invalidate()
         }
@@ -792,7 +794,7 @@ class KeyboardView(context: Context) : View(context) {
         val slop = ViewConfiguration.get(context).scaledTouchSlop.toFloat()
         val progress = DigitSwipe.progress(x - downX, y - downY, DigitSwipe.threshold(keyHeight, slop))
         digitSwipeAnimation.onDrag(progress)
-        if (progress > PREVIEW_HIDE_PROGRESS) keyPreview.key = null
+        if (progress > PREVIEW_HIDE_PROGRESS) keyPreview.dismiss()
         invalidate()
     }
 
@@ -810,7 +812,7 @@ class KeyboardView(context: Context) : View(context) {
         cancelKeyLongPress()
         longPressCommitted = true
         digitSwipeKey = null
-        keyPreview.key = null
+        keyPreview.dismiss()
         digitSwipeAnimation.onCommit()
         keyListener?.onKey(Key("longpress_$digit", digit.toString(), KeyAction.TypeChar(digit)))
         digitHintListener?.onSwipeDigit()
@@ -861,7 +863,8 @@ class KeyboardView(context: Context) : View(context) {
         digitSwipeAnimation.onRelease()
         stopRepeat()
         cancelKeyLongPress()
-        keyPreview.key = null
+        // La bulle reste affichée un instant après le relâchement, puis sort (KeyPreview).
+        keyPreview.release(SystemClock.uptimeMillis())
         if (keyPopup.isShown) {
             releaseOnPopup(x, y)
             return
@@ -958,7 +961,7 @@ class KeyboardView(context: Context) : View(context) {
         stopRepeat()
         cancelKeyLongPress()
         dismissPopup()
-        keyPreview.key = null
+        keyPreview.dismiss()
         longPressCommitted = false
         spaceSwipe.reset()
         backspaceSwipe.reset()
@@ -1103,7 +1106,7 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     private fun showPopup(key: Key, grid: List<List<Char>> = key.popup) {
-        keyPreview.key = null
+        keyPreview.dismiss()
         val bounds = keyBounds(key) ?: return
         // Place disponible au-dessus de la vue : la bulle peut recouvrir la barre d'actions qui la
         // surmonte (le parent ne clippe pas ses enfants, voir TaipoIme), pas au-delà de la fenêtre.
@@ -1123,25 +1126,24 @@ class KeyboardView(context: Context) : View(context) {
         icons = bubbleIcons,
     )
 
-    /** Story 1.10 : bulle d'agrandissement affichée au-dessus de la touche de caractère pressée. */
-    private fun drawPreview(canvas: Canvas) {
-        val key = keyPreview.key ?: return
-        val bounds = keyBounds(key) ?: return
-        val upper = keyRenderer.shiftedChar(key, layout, isShifted)
-        val label = if (upper == NO_CHAR) keyRenderer.displayLabel(key, layout, isShifted) else ""
-        if (upper == NO_CHAR && label.isEmpty()) return
-        keyPreview.draw(
-            canvas,
-            bounds = bounds,
-            upper = upper.takeIf { it != NO_CHAR },
-            label = label,
-            headroom = headroomPx(),
-            content = keyboardWidth(),
-            maxWidth = dims.previewMaxWidth,
-            cornerRadius = dims.keyCornerRadius * bubbleRadiusScale,
-            gap = dims.previewGap,
-            textSize = dims.previewTextSize,
-        )
+    /** Story 1.10 : bulle d'agrandissement affichée au-dessus de la touche de caractère pressée (animée par [KeyPreview]). */
+    private fun drawPreview(canvas: Canvas, nowMs: Long) = keyPreview.draw(canvas, nowMs, previewGeometry)
+
+    /** Mesures de la bulle d'agrandissement, relues à chaque dessin (dimensions, Maj, zone des touches). */
+    private val previewGeometry = object : KeyPreview.Geometry {
+        override fun keyBounds(key: Key): RectF? = this@KeyboardView.keyBounds(key)
+        override fun text(key: Key): String? {
+            val upper = keyRenderer.shiftedChar(key, layout, isShifted)
+            if (upper != NO_CHAR) return upper.toString()
+            return keyRenderer.displayLabel(key, layout, isShifted).ifEmpty { null }
+        }
+        override val headroom: Float get() = headroomPx()
+        override val content: KeyboardWidth get() = keyboardWidth()
+        override val maxWidth: Float get() = dims.previewMaxWidth
+        override val cornerRadius: Float get() = dims.keyCornerRadius * bubbleRadiusScale
+        override val gap: Float get() = dims.previewGap
+        override val textSize: Float get() = dims.previewTextSize
+        override val keyInset: Float get() = dims.keyInset
     }
 
     private fun keyAt(x: Float, y: Float): Key? {

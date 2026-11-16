@@ -638,6 +638,12 @@
     <string name="motion_style_spring">Muelle</string>
     <string name="motion_style_snappy">Ágil</string>
     <string name="motion_style_jelly">Gelatina</string>
+    <string name="theme_key_preview_heading">Burbuja de las teclas</string>
+    <string name="theme_key_preview_caption">La burbuja sobre la tecla pulsada. Se queda un momento después de levantar el dedo.</string>
+    <string name="key_preview_spring">Muelle</string>
+    <string name="key_preview_flight">Vuelo</string>
+    <string name="key_preview_drop">Gota</string>
+    <string name="key_preview_glide">Deslizar</string>
     <string name="home_row_languages_subtitle">Idiomas y disposiciones del teclado</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Apariencia</string>

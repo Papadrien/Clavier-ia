@@ -145,6 +145,17 @@ class KeyboardPreferences(context: Context) {
         }
 
     /**
+     * Animation de la bulle des touches (section « Animations » de la page « Apparence »), Ressort par défaut, toutes gratuites.
+     * Écrire le réglage met aussi à jour [KeyPreviewAnimation.current].
+     */
+    var keyPreviewAnimation: KeyPreviewAnimation
+        get() = KeyPreviewAnimation.fromStorageKey(prefs.getString(KEY_KEY_PREVIEW_ANIMATION, null))
+        set(value) {
+            prefs.edit().putString(KEY_KEY_PREVIEW_ANIMATION, value.storageKey).apply()
+            KeyPreviewAnimation.current = value
+        }
+
+    /**
      * Police du clavier (page « Thème »), Open Sans par défaut. Les autres polices sont réservées au pass premium : sans lui, le
      * clavier reprend Open Sans ([KeyboardFont.effective]) mais le choix est gardé pour le retour du pass.
      */
@@ -422,6 +433,7 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_ACCENT_PALETTE = "accent_palette"
         private const val KEY_KEY_SHAPE = "key_shape"
         private const val KEY_MOTION_STYLE = "motion_style"
+        private const val KEY_KEY_PREVIEW_ANIMATION = "key_preview_animation"
         private const val KEY_ADAPTIVE_TOUCH = "adaptive_touch_enabled"
         private const val KEY_SHOW_TOUCH_ZONES = "show_touch_zones"
         private const val KEY_NUMBER_ROW = "number_row_enabled"

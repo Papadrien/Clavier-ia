@@ -634,6 +634,12 @@
     <string name="motion_style_spring">Fjeder</string>
     <string name="motion_style_snappy">Kvik</string>
     <string name="motion_style_jelly">Gelé</string>
+    <string name="theme_key_preview_heading">Tastboble</string>
+    <string name="theme_key_preview_caption">Boblen over den tast, du trykker på. Den bliver et øjeblik, efter du løfter fingeren.</string>
+    <string name="key_preview_spring">Fjeder</string>
+    <string name="key_preview_flight">Afgang</string>
+    <string name="key_preview_drop">Dråbe</string>
+    <string name="key_preview_glide">Glid</string>
     <string name="home_row_languages_subtitle">Tastaturets sprog og layouts</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Udseende</string>

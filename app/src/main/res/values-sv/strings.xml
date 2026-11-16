@@ -634,6 +634,12 @@
     <string name="motion_style_spring">Fjäder</string>
     <string name="motion_style_snappy">Kvick</string>
     <string name="motion_style_jelly">Gelé</string>
+    <string name="theme_key_preview_heading">Tangentbubbla</string>
+    <string name="theme_key_preview_caption">Bubblan ovanför tangenten du trycker på. Den stannar en stund efter att du lyft fingret.</string>
+    <string name="key_preview_spring">Fjäder</string>
+    <string name="key_preview_flight">Iväg</string>
+    <string name="key_preview_drop">Droppe</string>
+    <string name="key_preview_glide">Glid</string>
     <string name="home_row_languages_subtitle">Tangentbordets språk och layouter</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Utseende</string>

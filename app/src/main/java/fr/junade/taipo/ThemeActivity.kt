@@ -52,6 +52,7 @@ class ThemeActivity : Activity() {
 
     private class ShapeCard(val shape: KeyShape, val view: View, val check: View, val lock: View, val preview: ThemePreviewView)
     private class MotionCard(val style: MotionStyle, val view: View, val check: View, val lock: View)
+    private class KeyPreviewCard(val animation: KeyPreviewAnimation, val view: View, val check: View)
 
     private class FontRow(val font: KeyboardFont, val view: View, val mark: ImageView)
 
@@ -62,6 +63,7 @@ class ThemeActivity : Activity() {
     private val swatches = ArrayList<Swatch>()
     private val shapeCards = ArrayList<ShapeCard>()
     private val motionCards = ArrayList<MotionCard>()
+    private val keyPreviewCards = ArrayList<KeyPreviewCard>()
 
     /** Style réservé touché sans pack : mis en avant, avec le bouton qui ouvre l'écran du pack ; appliqué au retour si le pack est actif. */
     private var previewMotion: MotionStyle? = null
@@ -125,6 +127,7 @@ class ThemeActivity : Activity() {
         ViewCompat.setAccessibilityHeading(findViewById(R.id.theme_shape_heading), true)
         buildShapes(findViewById(R.id.theme_shapes), inflater, gap)
         setUpMotions(inflater, gap)
+        setUpKeyPreviews(inflater, gap)
         findViewById<View>(android.R.id.content).applyTaipoFontToTree()
         ViewCompat.setAccessibilityHeading(findViewById(R.id.theme_backdrop_heading), true)
         setUpBackdrops()
@@ -142,6 +145,7 @@ class ThemeActivity : Activity() {
         renderFonts(preferences.keyboardFont)
         renderBackdrops()
         renderMotions(preferences.motionStyle)
+        renderKeyPreviews(preferences.keyPreviewAnimation)
     }
 
     // Retour de l'écran du pass (ou pass forcé en debug) : la couleur essayée est appliquée, les cadenas disparaissent.
@@ -238,6 +242,64 @@ class ThemeActivity : Activity() {
             ViewCompat.setAccessibilityDelegate(card.view, radioDelegate(isSelected))
         }
         findViewById<View>(R.id.button_motion_unlock).visibility = if (previewMotion != null) View.VISIBLE else View.GONE
+    }
+
+    /**
+     * Rangée « Bulle des touches » de la section « Animations » (16/11/2026) : une carte par animation de la bulle
+     * ([KeyPreviewAnimation]), chacune la montre en boucle ([KeyPreviewAnimationView]), par rangées de [CARDS_PER_ROW]. Toutes gratuites.
+     */
+    private fun setUpKeyPreviews(inflater: LayoutInflater, gap: Int) {
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.theme_key_preview_heading), true)
+        val container = findViewById<LinearLayout>(R.id.theme_key_previews)
+        KeyPreviewAnimation.entries.chunked(CARDS_PER_ROW).forEachIndexed { rowIndex, animations ->
+            val row = LinearLayout(this)
+            row.orientation = LinearLayout.HORIZONTAL
+            row.isBaselineAligned = false
+            repeat(CARDS_PER_ROW) { index ->
+                val animation = animations.getOrNull(index)
+                val view = if (animation != null) {
+                    keyPreviewCard(inflater, row, animation)
+                } else {
+                    View(this).apply { layoutParams = LinearLayout.LayoutParams(0, 0, 1f) }
+                }
+                (view.layoutParams as LinearLayout.LayoutParams).apply { if (index > 0) marginStart = gap }
+                row.addView(view)
+            }
+            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            if (rowIndex > 0) params.topMargin = gap
+            container.addView(row, params)
+        }
+    }
+
+    private fun keyPreviewCard(inflater: LayoutInflater, row: LinearLayout, animation: KeyPreviewAnimation): View {
+        val card = inflater.inflate(R.layout.item_theme_card, row, false)
+        val themePreview = card.findViewById<View>(R.id.theme_preview)
+        val frame = themePreview.parent as ViewGroup
+        frame.removeView(themePreview)
+        frame.addView(KeyPreviewAnimationView(KeyboardTheme.themed(this), animation), 0, themePreview.layoutParams)
+        card.findViewById<TextView>(R.id.theme_label).setCardLabel(getString(animation.labelRes()))
+        card.setOnClickListener { selectKeyPreview(animation) }
+        keyPreviewCards += KeyPreviewCard(animation, card, card.findViewById(R.id.theme_check))
+        return card
+    }
+
+    private fun selectKeyPreview(animation: KeyPreviewAnimation) {
+        if (animation != preferences.keyPreviewAnimation) {
+            preferences.keyPreviewAnimation = animation
+            Analytics.setting(this, "key_preview_animation", animation.storageKey)
+        }
+        renderKeyPreviews(animation)
+    }
+
+    /** Carte de l'animation choisie : contour, coche, état radio lu par TalkBack. */
+    private fun renderKeyPreviews(selected: KeyPreviewAnimation) {
+        for (card in keyPreviewCards) {
+            val isSelected = card.animation == selected
+            card.view.isSelected = isSelected
+            card.check.visibility = if (isSelected) View.VISIBLE else View.GONE
+            card.view.contentDescription = getString(card.animation.labelRes())
+            ViewCompat.setAccessibilityDelegate(card.view, radioDelegate(isSelected))
+        }
     }
 
     /** Cartes des formes de touches, par rangées de [CARDS_PER_ROW] de même largeur (la dernière complétée par des vides). */
@@ -674,6 +736,13 @@ internal fun AccentPalette.labelRes(): Int = when (this) {
 
 /** Nom du style d'animation (carte de la page « Apparence »). */
 @StringRes
+internal fun KeyPreviewAnimation.labelRes(): Int = when (this) {
+    KeyPreviewAnimation.SPRING -> R.string.key_preview_spring
+    KeyPreviewAnimation.FLIGHT -> R.string.key_preview_flight
+    KeyPreviewAnimation.DROP -> R.string.key_preview_drop
+    KeyPreviewAnimation.GLIDE -> R.string.key_preview_glide
+}
+
 internal fun MotionStyle.labelRes(): Int = when (this) {
     MotionStyle.SPRING -> R.string.motion_style_spring
     MotionStyle.SNAPPY -> R.string.motion_style_snappy

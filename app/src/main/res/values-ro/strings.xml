@@ -638,6 +638,12 @@
     <string name="motion_style_spring">Arc</string>
     <string name="motion_style_snappy">Vioi</string>
     <string name="motion_style_jelly">Jeleu</string>
+    <string name="theme_key_preview_heading">Balonul tastelor</string>
+    <string name="theme_key_preview_caption">Balonul de deasupra tastei apăsate. Rămâne o clipă după ce ridici degetul.</string>
+    <string name="key_preview_spring">Arc</string>
+    <string name="key_preview_flight">Zbor</string>
+    <string name="key_preview_drop">Picătură</string>
+    <string name="key_preview_glide">Alunecare</string>
     <string name="home_row_languages_subtitle">Limbile și aranjările tastaturii</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Aspect</string>

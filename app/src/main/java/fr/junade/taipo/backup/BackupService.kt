@@ -3,6 +3,7 @@ package fr.junade.taipo.backup
 import android.content.Context
 import fr.junade.taipo.AccentPalette
 import fr.junade.taipo.HapticIntensity
+import fr.junade.taipo.KeyPreviewAnimation
 import fr.junade.taipo.KeyShape
 import fr.junade.taipo.KeyboardFont
 import fr.junade.taipo.KeyboardHeight
@@ -75,6 +76,7 @@ object BackupService {
                 accentPalette = keyboard.accentPalette.storageKey,
                 keyShape = keyboard.keyShape.storageKey,
                 motionStyle = keyboard.motionStyle.storageKey,
+                keyPreviewAnimation = keyboard.keyPreviewAnimation.storageKey,
                 keyboardFont = keyboard.keyboardFont.storageKey,
                 backdrop = keyboard.keyboardBackdrop.storageKey,
                 backdropAnimated = keyboard.isBackdropAnimated,
@@ -178,6 +180,8 @@ object BackupService {
         settings.accentPalette?.let { key -> AccentPalette.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.accentPalette = it }
         settings.keyShape?.let { key -> KeyShape.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.keyShape = it }
         settings.motionStyle?.let { key -> MotionStyle.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.motionStyle = it }
+        settings.keyPreviewAnimation?.let { key -> KeyPreviewAnimation.entries.firstOrNull { it.storageKey == key } }
+            ?.let { keyboard.keyPreviewAnimation = it }
         settings.keyboardFont?.let { key -> KeyboardFont.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.keyboardFont = it }
         settings.backdrop?.let { key -> KeyboardBackdrop.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.keyboardBackdrop = it }
         settings.backdropAnimated?.let { keyboard.isBackdropAnimated = it }
