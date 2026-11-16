@@ -72,8 +72,8 @@ effective. Le thème par défaut reste **sombre** tant que le passage en clair d
 
 ## CI (GitHub Actions et Codemagic)
 
-Depuis le 16/11/2026 (quota GitHub Actions épuisé), la même CI tourne aussi sur Codemagic : `codemagic.yaml`, voir
-`docs/codemagic.md`.
+Depuis le 16/11/2026 (quota GitHub Actions épuisé), les builds debug tournent aussi sur Codemagic : `codemagic.yaml`,
+voir `docs/codemagic.md`.
 
 `.github/workflows/android.yml` :
 
@@ -89,7 +89,7 @@ Depuis le 16/11/2026 (quota GitHub Actions épuisé), la même CI tourne aussi s
 | `docs/decisions-techniques.md` | Décisions techniques à l'origine des choix visibles dans le code (moteur IA, modèles, voix, ABI) |
 | `docs/premier-build.md` | Journal des lots de la revue de code et cases à cocher de validation sur appareil |
 | `docs/release.md` | Build release : R8, versionCode, signature, secrets CI, checklist avant diffusion |
-| `docs/codemagic.md` | CI sur Codemagic : workflows, minutes du plan gratuit, variables à créer, versionCode |
+| `docs/codemagic.md` | CI debug sur Codemagic : workflows, minutes du plan gratuit, mise en place |
 | `docs/securite.md` | Chiffrement des données, sauvegardes, direct boot |
 | `docs/performance.md` | Sections de trace, macrobenchmarks, profil de démarrage |
 | `docs/accessibilite.md` | Audit d'accessibilité (lot 20) : contrastes, zones tactiles, TalkBack, police |

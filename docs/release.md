@@ -3,8 +3,7 @@
 ## Ce qui est en place
 - **R8** (`isMinifyEnabled` + `isShrinkResources`) sur le build release, règles dans `app/proguard-rules.pro`
   (JNI sherpa-onnx, LiteRT-LM, SQLCipher conservés). Règles larges par prudence, non encore validées sur appareil.
-- **versionCode** : variable `VERSION_CODE`, sinon `GITHUB_RUN_NUMBER` (automatique sur GitHub Actions), sinon 1. Sur Codemagic,
-  `VERSION_CODE` = 1000 + numéro de build (voir `docs/codemagic.md`).
+- **versionCode** : variable `VERSION_CODE`, sinon `GITHUB_RUN_NUMBER` (automatique sur GitHub Actions), sinon 1.
 - **Signature** : seulement si `key.properties` (racine du dépôt) ou `TAIPO_KEYSTORE_PATH` est défini ; sinon l'APK release n'est pas signé.
 - **Gradle** : `org.gradle.caching=true`. Versions de Room (unique) et de `litertlm-android` (figée) dans `gradle/libs.versions.toml`.
 
