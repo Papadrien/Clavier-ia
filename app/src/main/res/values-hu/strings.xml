@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Emoji billentyű megjelenítése</string>
     <string name="keyboard_settings_show_comma_key">Vessző billentyű megjelenítése</string>
     <string name="keyboard_settings_show_period_key">Pont billentyű megjelenítése</string>
+    <string name="keyboard_settings_key_preview">Buborék megjelenítése a lenyomott billentyű felett</string>
     <string name="keyboard_settings_clipboard_history_switch">Vágólap-előzmények</string>
     <string name="keyboard_settings_clipboard_history_description">Megőrzi a legutóbbi másolatokat, hogy újra beilleszthesse őket (12 óra, prémium csomaggal 7 nap). Jelszavakat és kártyaszámokat soha nem őriz meg. Kikapcsolása törli az előzményeket.</string>
     <string name="keyboard_settings_screenshots_switch">Legutóbbi képernyőképek felajánlása</string>
@@ -668,7 +669,7 @@
     <string name="premium_clipboard_title">Bővített vágólap</string>
     <string name="premium_clipboard_text">A másolatok 12 óra helyett 7 napig maradnak meg. 5 helyett legfeljebb 50 rögzített elem.</string>
     <string name="premium_style_title">Billentyűzet az Ön stílusában</string>
-    <string name="premium_style_text">Hat animált háttér, amely gépelés közben mozog, öt további billentyűforma, kilenc billentyűzet-betűtípus (köztük az OpenDyslexic) és a Zselé animációs stílus.</string>
+    <string name="premium_style_text">Hét animált háttér, amely gépelés közben mozog, öt további billentyűforma, kilenc billentyűzet-betűtípus (köztük az OpenDyslexic) és öt animációs stílus: Fürge, Zselé, Elrepülés, Csepp és Csúszás.</string>
     <string name="premium_free_reminder">A gépelés, a nyelvek, az MI és a biztonsági mentés ingyenes marad, csomaggal vagy anélkül.</string>
     <string name="premium_buy">A csomag megvásárlása</string>
     <string name="premium_buy_with_price">A csomag megvásárlása · %1$s</string>

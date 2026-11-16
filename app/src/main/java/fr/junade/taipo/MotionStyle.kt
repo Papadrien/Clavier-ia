@@ -21,6 +21,8 @@ import kotlin.math.sqrt
  *   ([bubble], voir [KeyPreviewAnimation]) ; le reste du clavier reprend pour l'instant le ressort de Vif (Envol) ou de Ressort
  *   (Goutte, Glisse).
  *
+ * Seul Ressort est gratuit (16/11/2026) : tous les autres styles sont réservés au pack premium ([requiresPremium]).
+ *
  * Choisir un style règle à la fois le clavier et la bulle des touches ([bubble]) : Ressort, Vif et Gelée ont la bulle Ressort,
  * chacune avec son propre ressort.
  *
@@ -48,11 +50,11 @@ enum class MotionStyle(
     val curtainScale: Float,
 ) {
     SPRING("spring", false, omega = 20f, zeta = 0.456f, jelly = 0f, revealZeta = 0.5f, revealDurationMs = 620L, revealStaggerMs = 45L, curtainScale = 1f),
-    SNAPPY("snappy", false, omega = 42f, zeta = 1f, jelly = 0f, revealZeta = 1f, revealDurationMs = 220L, revealStaggerMs = 20L, curtainScale = 0.5f),
+    SNAPPY("snappy", true, omega = 42f, zeta = 1f, jelly = 0f, revealZeta = 1f, revealDurationMs = 220L, revealStaggerMs = 20L, curtainScale = 0.5f),
     JELLY("jelly", true, omega = 17f, zeta = 0.34f, jelly = 0.55f, revealZeta = 0.34f, revealDurationMs = 760L, revealStaggerMs = 50L, curtainScale = 1f),
-    FLIGHT("flight", false, omega = 42f, zeta = 1f, jelly = 0f, revealZeta = 1f, revealDurationMs = 220L, revealStaggerMs = 20L, curtainScale = 0.5f),
-    DROP("drop", false, omega = 20f, zeta = 0.456f, jelly = 0f, revealZeta = 0.5f, revealDurationMs = 620L, revealStaggerMs = 45L, curtainScale = 1f),
-    GLIDE("glide", false, omega = 20f, zeta = 0.456f, jelly = 0f, revealZeta = 0.5f, revealDurationMs = 620L, revealStaggerMs = 45L, curtainScale = 1f),
+    FLIGHT("flight", true, omega = 42f, zeta = 1f, jelly = 0f, revealZeta = 1f, revealDurationMs = 220L, revealStaggerMs = 20L, curtainScale = 0.5f),
+    DROP("drop", true, omega = 20f, zeta = 0.456f, jelly = 0f, revealZeta = 0.5f, revealDurationMs = 620L, revealStaggerMs = 45L, curtainScale = 1f),
+    GLIDE("glide", true, omega = 20f, zeta = 0.456f, jelly = 0f, revealZeta = 0.5f, revealDurationMs = 620L, revealStaggerMs = 45L, curtainScale = 1f),
     ;
 
     /** Animation de la bulle des touches ([KeyPreview]) dans ce style. */

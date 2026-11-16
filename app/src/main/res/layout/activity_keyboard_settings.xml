@@ -95,6 +95,15 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="@string/keyboard_settings_show_period_key" />
+
+            <View style="@style/TaipoSettingsCardDivider" />
+
+            <Switch
+                android:id="@+id/switch_key_preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/keyboard_settings_key_preview" />
         </LinearLayout>
 
         <TextView

@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Vis emojitasten</string>
     <string name="keyboard_settings_show_comma_key">Vis kommatasten</string>
     <string name="keyboard_settings_show_period_key">Vis punktumtasten</string>
+    <string name="keyboard_settings_key_preview">Vis en boble over tasten du trykker på</string>
     <string name="keyboard_settings_clipboard_history_switch">Utklippshistorikk</string>
     <string name="keyboard_settings_clipboard_history_description">Tar vare på det du nylig har kopiert, slik at du kan lime det inn igjen (12 timer, 7 dager med premiumpakken). Passord og kortnumre lagres aldri. Slår du den av, slettes historikken.</string>
     <string name="keyboard_settings_screenshots_switch">Foreslå nylige skjermbilder</string>
@@ -668,7 +669,7 @@
     <string name="premium_clipboard_title">Utvidet utklippstavle</string>
     <string name="premium_clipboard_text">Kopier lagres i 7 dager i stedet for 12 timer. Opptil 50 festede elementer i stedet for 5.</string>
     <string name="premium_style_title">Et tastatur i din stil</string>
-    <string name="premium_style_text">Seks animerte bakgrunner som beveger seg mens du skriver, fem ekstra tasteformer, ni skrifttyper for tastaturet (blant annet OpenDyslexic) og animasjonsstilen Gelé.</string>
+    <string name="premium_style_text">Sju animerte bakgrunner som beveger seg mens du skriver, fem ekstra tasteformer, ni skrifttyper for tastaturet (blant annet OpenDyslexic) og fem animasjonsstiler: Kvikk, Gelé, Avgang, Dråpe og Gli.</string>
     <string name="premium_free_reminder">Skriving, språk, AI og sikkerhetskopiering er fortsatt gratis, med eller uten pakken.</string>
     <string name="premium_buy">Kjøp pakken</string>
     <string name="premium_buy_with_price">Kjøp pakken · %1$s</string>

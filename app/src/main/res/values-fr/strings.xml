@@ -120,6 +120,7 @@
     <string name="keyboard_settings_show_emoji_key">Afficher la touche emoji</string>
     <string name="keyboard_settings_show_comma_key">Afficher la touche virgule</string>
     <string name="keyboard_settings_show_period_key">Afficher la touche point</string>
+    <string name="keyboard_settings_key_preview">Afficher une bulle au-dessus de la touche appuyée</string>
     <string name="keyboard_settings_clipboard_history_switch">Historique du presse-papiers</string>
     <string name="keyboard_settings_clipboard_history_description">Garde vos copies récentes pour les recoller (12 heures, 7 jours avec le pack premium). Les mots de passe et numéros de carte ne sont jamais gardés. Le désactiver efface l\'historique.</string>
     <string name="keyboard_settings_screenshots_switch">Proposer les captures d\'écran récentes</string>
@@ -716,7 +717,7 @@
     <string name="premium_clipboard_title">Presse-papiers étendu</string>
     <string name="premium_clipboard_text">Copies gardées 7 jours au lieu de 12 h. Jusqu\'à 50 éléments épinglés au lieu de 5.</string>
     <string name="premium_style_title">Un clavier à votre style</string>
-    <string name="premium_style_text">Six fonds animés qui bougent pendant la frappe, cinq formes de touches en plus, neuf polices pour le clavier (dont OpenDyslexic) et le style d\'animation Gelée.</string>
+    <string name="premium_style_text">Sept fonds animés qui bougent pendant la frappe, cinq formes de touches en plus, neuf polices pour le clavier (dont OpenDyslexic) et cinq styles d\'animation : Vif, Gelée, Envol, Goutte et Glisse.</string>
     <string name="premium_free_reminder">La frappe, les langues, l\'IA et la sauvegarde restent gratuites, avec ou sans pack.</string>
     <string name="premium_buy">Acheter le pack</string>
     <string name="premium_buy_with_price">Acheter le pack · %1$s</string>

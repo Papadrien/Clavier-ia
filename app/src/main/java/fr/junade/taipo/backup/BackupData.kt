@@ -41,6 +41,8 @@ data class BackupKeyboardSettings(
     val backdrop: String? = null,
     val backdropAnimated: Boolean? = null,
     val keySound: Boolean? = null,
+    /** Bulle au-dessus des touches (16/11/2026). Facultatif. */
+    val keyPreview: Boolean? = null,
     val barSound: Boolean? = null,
     val keySoundVolume: Int? = null,
     val bottomMarginDp: Int? = null,

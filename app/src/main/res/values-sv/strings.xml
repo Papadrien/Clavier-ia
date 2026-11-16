@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Visa emojitangenten</string>
     <string name="keyboard_settings_show_comma_key">Visa kommatangenten</string>
     <string name="keyboard_settings_show_period_key">Visa punkttangenten</string>
+    <string name="keyboard_settings_key_preview">Visa en bubbla ovanför tangenten du trycker på</string>
     <string name="keyboard_settings_clipboard_history_switch">Urklippshistorik</string>
     <string name="keyboard_settings_clipboard_history_description">Sparar det du nyligen kopierat så att du kan klistra in det igen (12 timmar, 7 dagar med premiumpaketet). Lösenord och kortnummer sparas aldrig. Om du stänger av den raderas historiken.</string>
     <string name="keyboard_settings_screenshots_switch">Föreslå senaste skärmbilder</string>
@@ -668,7 +669,7 @@
     <string name="premium_clipboard_title">Utökat urklipp</string>
     <string name="premium_clipboard_text">Kopior sparas i 7 dagar i stället för 12 timmar. Upp till 50 fästa objekt i stället för 5.</string>
     <string name="premium_style_title">Ett tangentbord i din stil</string>
-    <string name="premium_style_text">Sex animerade bakgrunder som rör sig när du skriver, fem fler tangentformer, nio typsnitt för tangentbordet (bland annat OpenDyslexic) och animationsstilen Gelé.</string>
+    <string name="premium_style_text">Sju animerade bakgrunder som rör sig när du skriver, fem fler tangentformer, nio typsnitt för tangentbordet (bland annat OpenDyslexic) och fem animationsstilar: Kvick, Gelé, Iväg, Droppe och Glid.</string>
     <string name="premium_free_reminder">Skrivande, språk, AI och säkerhetskopiering är fortsatt gratis, med eller utan paketet.</string>
     <string name="premium_buy">Köp paketet</string>
     <string name="premium_buy_with_price">Köp paketet · %1$s</string>

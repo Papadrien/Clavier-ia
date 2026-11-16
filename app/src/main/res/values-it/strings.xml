@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Mostra il tasto emoji</string>
     <string name="keyboard_settings_show_comma_key">Mostra il tasto virgola</string>
     <string name="keyboard_settings_show_period_key">Mostra il tasto punto</string>
+    <string name="keyboard_settings_key_preview">Mostra una bolla sopra il tasto premuto</string>
     <string name="keyboard_settings_clipboard_history_switch">Cronologia degli appunti</string>
     <string name="keyboard_settings_clipboard_history_description">Conserva le tue copie recenti per poterle incollare di nuovo (12 ore, 7 giorni con il pacchetto premium). Password e numeri di carta non vengono mai conservati. Disattivarla cancella la cronologia.</string>
     <string name="keyboard_settings_screenshots_switch">Suggerisci gli screenshot recenti</string>
@@ -672,7 +673,7 @@
     <string name="premium_clipboard_title">Appunti estesi</string>
     <string name="premium_clipboard_text">Copie conservate 7 giorni invece di 12 h. Fino a 50 elementi fissati invece di 5.</string>
     <string name="premium_style_title">Una tastiera nel tuo stile</string>
-    <string name="premium_style_text">Sei sfondi animati che si muovono mentre scrivi, cinque forme dei tasti in più, nove caratteri per la tastiera (tra cui OpenDyslexic) e lo stile di animazione Gelatina.</string>
+    <string name="premium_style_text">Sette sfondi animati che si muovono mentre scrivi, cinque forme dei tasti in più, nove caratteri per la tastiera (tra cui OpenDyslexic) e cinque stili di animazione: Scattante, Gelatina, Volo, Goccia e Scivola.</string>
     <string name="premium_free_reminder">Scrittura, lingue, IA e backup restano gratuiti, con o senza il pacchetto.</string>
     <string name="premium_buy">Acquista il pacchetto</string>
     <string name="premium_buy_with_price">Acquista il pacchetto · %1$s</string>

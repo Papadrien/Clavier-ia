@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Emoji-Taste anzeigen</string>
     <string name="keyboard_settings_show_comma_key">Komma-Taste anzeigen</string>
     <string name="keyboard_settings_show_period_key">Punkt-Taste anzeigen</string>
+    <string name="keyboard_settings_key_preview">Blase über der gedrückten Taste anzeigen</string>
     <string name="keyboard_settings_clipboard_history_switch">Zwischenablage-Verlauf</string>
     <string name="keyboard_settings_clipboard_history_description">Behält Ihre letzten Kopien, damit Sie sie erneut einfügen können (12 Stunden, 7 Tage mit dem Premium-Paket). Passwörter und Kartennummern werden nie behalten. Beim Ausschalten wird der Verlauf gelöscht.</string>
     <string name="keyboard_settings_screenshots_switch">Aktuelle Screenshots vorschlagen</string>
@@ -668,7 +669,7 @@
     <string name="premium_clipboard_title">Erweiterte Zwischenablage</string>
     <string name="premium_clipboard_text">Kopien werden 7 Tage statt 12 Std. behalten. Bis zu 50 angeheftete Elemente statt 5.</string>
     <string name="premium_style_title">Eine Tastatur in Ihrem Stil</string>
-    <string name="premium_style_text">Sechs animierte Hintergründe, die sich beim Tippen bewegen, fünf weitere Tastenformen, neun Tastaturschriften (darunter OpenDyslexic) und der Animationsstil Gelee.</string>
+    <string name="premium_style_text">Sieben animierte Hintergründe, die sich beim Tippen bewegen, fünf weitere Tastenformen, neun Tastaturschriften (darunter OpenDyslexic) und fünf Animationsstile: Flink, Gelee, Abflug, Tropfen und Gleiten.</string>
     <string name="premium_free_reminder">Tippen, Sprachen, KI und Sicherung bleiben kostenlos, mit oder ohne Paket.</string>
     <string name="premium_buy">Paket kaufen</string>
     <string name="premium_buy_with_price">Paket kaufen · %1$s</string>

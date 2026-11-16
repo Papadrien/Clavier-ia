@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Pokaż klawisz emoji</string>
     <string name="keyboard_settings_show_comma_key">Pokaż klawisz przecinka</string>
     <string name="keyboard_settings_show_period_key">Pokaż klawisz kropki</string>
+    <string name="keyboard_settings_key_preview">Pokazuj dymek nad naciśniętym klawiszem</string>
     <string name="keyboard_settings_clipboard_history_switch">Historia schowka</string>
     <string name="keyboard_settings_clipboard_history_description">Zachowuje ostatnio skopiowane elementy, aby można je było wkleić ponownie (12 godzin, 7 dni z pakietem premium). Hasła i numery kart nigdy nie są zachowywane. Wyłączenie usuwa historię.</string>
     <string name="keyboard_settings_screenshots_switch">Proponuj ostatnie zrzuty ekranu</string>
@@ -676,7 +677,7 @@
     <string name="premium_clipboard_title">Rozszerzony schowek</string>
     <string name="premium_clipboard_text">Kopie przechowywane przez 7 dni zamiast 12 godzin. Do 50 przypiętych elementów zamiast 5.</string>
     <string name="premium_style_title">Klawiatura w Twoim stylu</string>
-    <string name="premium_style_text">Sześć animowanych teł, które poruszają się podczas pisania, pięć dodatkowych kształtów klawiszy, dziewięć czcionek klawiatury (w tym OpenDyslexic) i styl animacji Galaretka.</string>
+    <string name="premium_style_text">Siedem animowanych teł, które poruszają się podczas pisania, pięć dodatkowych kształtów klawiszy, dziewięć czcionek klawiatury (w tym OpenDyslexic) i pięć stylów animacji: Żwawa, Galaretka, Odlot, Kropla i Ślizg.</string>
     <string name="premium_free_reminder">Pisanie, języki, AI i kopia zapasowa pozostają bezpłatne, z pakietem lub bez.</string>
     <string name="premium_buy">Kup pakiet</string>
     <string name="premium_buy_with_price">Kup pakiet · %1$s</string>

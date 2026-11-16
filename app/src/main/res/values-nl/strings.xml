@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Emojitoets tonen</string>
     <string name="keyboard_settings_show_comma_key">Kommatoets tonen</string>
     <string name="keyboard_settings_show_period_key">Punttoets tonen</string>
+    <string name="keyboard_settings_key_preview">Ballon tonen boven de ingedrukte toets</string>
     <string name="keyboard_settings_clipboard_history_switch">Klembordgeschiedenis</string>
     <string name="keyboard_settings_clipboard_history_description">Bewaart je recente kopieën zodat je ze opnieuw kunt plakken (12 uur, 7 dagen met het premiumpakket). Wachtwoorden en kaartnummers worden nooit bewaard. Uitzetten wist de geschiedenis.</string>
     <string name="keyboard_settings_screenshots_switch">Recente screenshots voorstellen</string>
@@ -668,7 +669,7 @@
     <string name="premium_clipboard_title">Uitgebreid klembord</string>
     <string name="premium_clipboard_text">Kopieën 7 dagen bewaard in plaats van 12 uur. Tot 50 vastgezette items in plaats van 5.</string>
     <string name="premium_style_title">Een toetsenbord in jouw stijl</string>
-    <string name="premium_style_text">Zes geanimeerde achtergronden die bewegen tijdens het typen, vijf extra toetsvormen, negen lettertypen voor het toetsenbord (waaronder OpenDyslexic) en de animatiestijl Gelei.</string>
+    <string name="premium_style_text">Zeven geanimeerde achtergronden die bewegen tijdens het typen, vijf extra toetsvormen, negen lettertypen voor het toetsenbord (waaronder OpenDyslexic) en vijf animatiestijlen: Vlot, Gelei, Wegvliegen, Druppel en Glijden.</string>
     <string name="premium_free_reminder">Typen, talen, AI en back-up blijven gratis, met of zonder het pakket.</string>
     <string name="premium_buy">Het pakket kopen</string>
     <string name="premium_buy_with_price">Het pakket kopen · %1$s</string>

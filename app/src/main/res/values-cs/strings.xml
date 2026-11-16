@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Zobrazit klávesu emoji</string>
     <string name="keyboard_settings_show_comma_key">Zobrazit klávesu čárky</string>
     <string name="keyboard_settings_show_period_key">Zobrazit klávesu tečky</string>
+    <string name="keyboard_settings_key_preview">Zobrazit bublinu nad stisknutou klávesou</string>
     <string name="keyboard_settings_clipboard_history_switch">Historie schránky</string>
     <string name="keyboard_settings_clipboard_history_description">Uchovává nedávno zkopírované položky, abyste je mohli znovu vložit (12 hodin, 7 dní s balíčkem premium). Hesla a čísla karet se nikdy neuchovávají. Vypnutím se historie smaže.</string>
     <string name="keyboard_settings_screenshots_switch">Navrhovat nedávné snímky obrazovky</string>
@@ -676,7 +677,7 @@
     <string name="premium_clipboard_title">Rozšířená schránka</string>
     <string name="premium_clipboard_text">Kopie uchované 7 dní místo 12 hodin. Až 50 připnutých položek místo 5.</string>
     <string name="premium_style_title">Klávesnice ve vašem stylu</string>
-    <string name="premium_style_text">Šest animovaných pozadí, která se hýbou při psaní, pět dalších tvarů kláves, devět písem klávesnice (včetně OpenDyslexic) a styl animace Želé.</string>
+    <string name="premium_style_text">Sedm animovaných pozadí, která se hýbou při psaní, pět dalších tvarů kláves, devět písem klávesnice (včetně OpenDyslexic) a pět stylů animace: Svižná, Želé, Odlet, Kapka a Klouzání.</string>
     <string name="premium_free_reminder">Psaní, jazyky, AI a záloha zůstávají zdarma, s balíčkem i bez něj.</string>
     <string name="premium_buy">Koupit balíček</string>
     <string name="premium_buy_with_price">Koupit balíček · %1$s</string>

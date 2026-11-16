@@ -182,6 +182,13 @@ class KeyboardPreferences(context: Context) {
         return seed
     }
 
+    /** Bulle d'agrandissement au-dessus de la touche de caractère appuyée ([KeyPreview]). Activée par défaut (réglage du 16/11/2026). */
+    var isKeyPreviewEnabled: Boolean
+        get() = prefs.getBoolean(KEY_KEY_PREVIEW, true)
+        set(value) {
+            prefs.edit().putBoolean(KEY_KEY_PREVIEW, value).apply()
+        }
+
     /** Son du clavier (tic doux à chaque frappe, plus aigu pour la barre d'espace). Activé par défaut. */
     var isKeySoundEnabled: Boolean
         get() = prefs.getBoolean(KEY_KEY_SOUND, DEFAULT_KEY_SOUND)
@@ -422,6 +429,7 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_ACCENT_PALETTE = "accent_palette"
         private const val KEY_KEY_SHAPE = "key_shape"
         private const val KEY_MOTION_STYLE = "motion_style"
+        private const val KEY_KEY_PREVIEW = "key_preview"
         private const val KEY_ADAPTIVE_TOUCH = "adaptive_touch_enabled"
         private const val KEY_SHOW_TOUCH_ZONES = "show_touch_zones"
         private const val KEY_NUMBER_ROW = "number_row_enabled"

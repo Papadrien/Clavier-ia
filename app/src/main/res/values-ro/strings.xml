@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Afișează tasta emoji</string>
     <string name="keyboard_settings_show_comma_key">Afișează tasta virgulă</string>
     <string name="keyboard_settings_show_period_key">Afișează tasta punct</string>
+    <string name="keyboard_settings_key_preview">Afișează un balon deasupra tastei apăsate</string>
     <string name="keyboard_settings_clipboard_history_switch">Istoric clipboard</string>
     <string name="keyboard_settings_clipboard_history_description">Păstrează copiile recente ca să le poți lipi din nou (12 ore, 7 zile cu pachetul premium). Parolele și numerele de card nu sunt păstrate niciodată. Dezactivarea șterge istoricul.</string>
     <string name="keyboard_settings_screenshots_switch">Sugerează capturile de ecran recente</string>
@@ -672,7 +673,7 @@
     <string name="premium_clipboard_title">Clipboard extins</string>
     <string name="premium_clipboard_text">Copii păstrate 7 zile în loc de 12 ore. Până la 50 de elemente fixate în loc de 5.</string>
     <string name="premium_style_title">O tastatură în stilul tău</string>
-    <string name="premium_style_text">Șase fundaluri animate care se mișcă în timp ce scrii, încă cinci forme de taste, nouă fonturi pentru tastatură (inclusiv OpenDyslexic) și stilul de animație Jeleu.</string>
+    <string name="premium_style_text">Șapte fundaluri animate care se mișcă în timp ce scrii, încă cinci forme de taste, nouă fonturi pentru tastatură (inclusiv OpenDyslexic) și cinci stiluri de animație: Vioi, Jeleu, Zbor, Picătură și Alunecare.</string>
     <string name="premium_free_reminder">Scrierea, limbile, AI-ul și backupul rămân gratuite, cu sau fără pachet.</string>
     <string name="premium_buy">Cumpără pachetul</string>
     <string name="premium_buy_with_price">Cumpără pachetul · %1$s</string>

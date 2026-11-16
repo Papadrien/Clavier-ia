@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Mostrar la tecla de emoji</string>
     <string name="keyboard_settings_show_comma_key">Mostrar la tecla de coma</string>
     <string name="keyboard_settings_show_period_key">Mostrar la tecla de punto</string>
+    <string name="keyboard_settings_key_preview">Mostrar una burbuja sobre la tecla pulsada</string>
     <string name="keyboard_settings_clipboard_history_switch">Historial del portapapeles</string>
     <string name="keyboard_settings_clipboard_history_description">Guarda tus copias recientes para que puedas volver a pegarlas (12 horas, 7 días con el paquete prémium). Las contraseñas y los números de tarjeta nunca se guardan. Al desactivarlo se borra el historial.</string>
     <string name="keyboard_settings_screenshots_switch">Sugerir capturas de pantalla recientes</string>
@@ -672,7 +673,7 @@
     <string name="premium_clipboard_title">Portapapeles ampliado</string>
     <string name="premium_clipboard_text">Copias guardadas 7 días en lugar de 12 h. Hasta 50 elementos fijados en lugar de 5.</string>
     <string name="premium_style_title">Un teclado a tu estilo</string>
-    <string name="premium_style_text">Seis fondos animados que se mueven al escribir, cinco formas de teclas más, nueve fuentes para el teclado (entre ellas OpenDyslexic) y el estilo de animación Gelatina.</string>
+    <string name="premium_style_text">Siete fondos animados que se mueven al escribir, cinco formas de teclas más, nueve fuentes para el teclado (entre ellas OpenDyslexic) y cinco estilos de animación: Ágil, Gelatina, Vuelo, Gota y Deslizar.</string>
     <string name="premium_free_reminder">La escritura, los idiomas, la IA y la copia de seguridad siguen siendo gratis, con o sin el paquete.</string>
     <string name="premium_buy">Comprar el paquete</string>
     <string name="premium_buy_with_price">Comprar el paquete · %1$s</string>

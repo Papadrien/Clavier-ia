@@ -120,6 +120,7 @@
     <string name="keyboard_settings_show_emoji_key">Show the emoji key</string>
     <string name="keyboard_settings_show_comma_key">Show the comma key</string>
     <string name="keyboard_settings_show_period_key">Show the period key</string>
+    <string name="keyboard_settings_key_preview">Show a bubble above the key you press</string>
     <string name="keyboard_settings_clipboard_history_switch">Clipboard history</string>
     <string name="keyboard_settings_clipboard_history_description">Keeps your recent copies so you can paste them again (12 hours, 7 days with the Premium pack). Passwords and card numbers are never kept. Turning it off deletes the history.</string>
     <string name="keyboard_settings_screenshots_switch">Suggest recent screenshots</string>
@@ -697,7 +698,7 @@
     <string name="premium_clipboard_title">Extended clipboard</string>
     <string name="premium_clipboard_text">Copies kept 7 days instead of 12 h. Up to 50 pinned items instead of 5.</string>
     <string name="premium_style_title">A keyboard in your style</string>
-    <string name="premium_style_text">Six animated backgrounds that move as you type, five more key shapes, nine keyboard fonts (including OpenDyslexic) and the Jelly animation style.</string>
+    <string name="premium_style_text">Seven animated backgrounds that move as you type, five more key shapes, nine keyboard fonts (including OpenDyslexic) and five animation styles: Snappy, Jelly, Fly away, Drop and Glide.</string>
     <string name="premium_free_reminder">Typing, languages, AI and backup stay free, with or without the pack.</string>
     <string name="premium_buy">Buy the pack</string>
     <string name="premium_buy_with_price">Buy the pack · %1$s</string>

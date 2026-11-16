@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Näytä emojinäppäin</string>
     <string name="keyboard_settings_show_comma_key">Näytä pilkkunäppäin</string>
     <string name="keyboard_settings_show_period_key">Näytä pistenäppäin</string>
+    <string name="keyboard_settings_key_preview">Näytä kupla painetun näppäimen yllä</string>
     <string name="keyboard_settings_clipboard_history_switch">Leikepöydän historia</string>
     <string name="keyboard_settings_clipboard_history_description">Säilyttää viimeksi kopioimasi, jotta voit liittää ne uudelleen (12 tuntia, premium-paketilla 7 päivää). Salasanoja ja korttinumeroita ei koskaan säilytetä. Poistaminen käytöstä tyhjentää historian.</string>
     <string name="keyboard_settings_screenshots_switch">Ehdota viimeisimpiä kuvakaappauksia</string>
@@ -668,7 +669,7 @@
     <string name="premium_clipboard_title">Laajennettu leikepöytä</string>
     <string name="premium_clipboard_text">Kopiot säilyvät 7 päivää 12 tunnin sijaan. Enintään 50 kiinnitettyä kohdetta 5:n sijaan.</string>
     <string name="premium_style_title">Näppäimistö sinun tyyliisi</string>
-    <string name="premium_style_text">Kuusi animoitua taustaa, jotka liikkuvat kirjoittaessa, viisi uutta näppäinmuotoa, yhdeksän näppäimistön fonttia (mukana OpenDyslexic) ja animaatiotyyli Hyytelö.</string>
+    <string name="premium_style_text">Seitsemän animoitua taustaa, jotka liikkuvat kirjoittaessa, viisi uutta näppäinmuotoa, yhdeksän näppäimistön fonttia (mukana OpenDyslexic) ja viisi animaatiotyyliä: Ripeä, Hyytelö, Lento, Pisara ja Liuku.</string>
     <string name="premium_free_reminder">Kirjoittaminen, kielet, tekoäly ja varmuuskopiointi ovat edelleen ilmaisia paketin kanssa tai ilman.</string>
     <string name="premium_buy">Osta paketti</string>
     <string name="premium_buy_with_price">Osta paketti · %1$s</string>

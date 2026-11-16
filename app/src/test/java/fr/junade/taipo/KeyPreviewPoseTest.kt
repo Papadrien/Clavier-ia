@@ -96,8 +96,8 @@ class KeyPreviewPoseTest {
         assertEquals(KeyPreviewAnimation.FLIGHT, MotionStyle.FLIGHT.bubble)
         assertEquals(KeyPreviewAnimation.DROP, MotionStyle.DROP.bubble)
         assertEquals(KeyPreviewAnimation.GLIDE, MotionStyle.GLIDE.bubble)
-        // Les trois nouveaux styles sont gratuits, et le style par défaut reste Ressort.
-        listOf(MotionStyle.FLIGHT, MotionStyle.DROP, MotionStyle.GLIDE).forEach { assertTrue(it.isAvailable(premium = false)) }
+        // Seul Ressort, le style par défaut, est gratuit.
         assertEquals(MotionStyle.SPRING, MotionStyle.DEFAULT)
+        assertEquals(listOf(MotionStyle.SPRING), MotionStyle.entries.filter { it.isAvailable(premium = false) })
     }
 }

@@ -281,7 +281,16 @@ class KeyboardView(context: Context) : View(context) {
     // bulle d'accents (1.8) s'affiche par-dessus, ou au relâchement/annulation.
     private val keyPreview = KeyPreview(this)
 
-    private fun showsPreview(key: Key?): Boolean = key?.action is KeyAction.TypeChar
+    /** Bulle d'agrandissement des touches (réglage « Bulle au-dessus des touches », Paramètres du clavier). */
+    var keyPreviewEnabled = true
+        set(value) {
+            if (field == value) return
+            field = value
+            if (!value) keyPreview.dismiss()
+            invalidate()
+        }
+
+    private fun showsPreview(key: Key?): Boolean = keyPreviewEnabled && key?.action is KeyAction.TypeChar
 
     /**
      * L'appui long sur Entrée ouvre toujours une bulle (sélection par glissement vers le haut, comme les accents) avec la
