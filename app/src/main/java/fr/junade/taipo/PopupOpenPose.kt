@@ -40,4 +40,32 @@ internal object PopupOpenPose {
         if (pivotY > top) max = minOf(max, (pivotY - minTop) / (pivotY - top))
         return max.coerceAtLeast(1f)
     }
+
+    /**
+     * Pose de la bulle ouverte à la taille de ressort [open] ([START_SCALE] au départ, 1 posée) : taille autour du pivot (haut de la
+     * touche), décalage vertical en part de la hauteur de la bulle (positif vers le bas) et opacité. Elle suit le style d'animation
+     * ([MotionStyle.bubble], 17/11/2026) :
+     * - Ressort, Vif, Gelée : la bulle grandit depuis la touche (étirement de Gelée compris) ;
+     * - Envol : elle monte en fondu, à peine plus petite au départ ;
+     * - Goutte : elle s'étire vers le haut depuis la touche, plus étroite au départ, avec le rebond du ressort ;
+     * - Glisse : simple fondu à peine grossissant (c'est la sélection qui glisse, voir [KeyPopup]).
+     */
+    data class Pose(val scaleX: Float, val scaleY: Float, val offsetY: Float, val alpha: Float)
+
+    fun styled(style: MotionStyle, open: Float): Pose {
+        val t = ((open - START_SCALE) / (1f - START_SCALE)).coerceIn(0f, 1f)
+        return when (style.bubble) {
+            KeyPreviewAnimation.SPRING -> Pose(open * style.stretchX(open), open * style.stretchY(open), 0f, alpha(open))
+            KeyPreviewAnimation.FLIGHT -> (FLIGHT_START_SCALE + (1f - FLIGHT_START_SCALE) * t).let { Pose(it, it, (1f - t) * FLIGHT_RISE, t) }
+            KeyPreviewAnimation.DROP -> Pose(DROP_START_WIDTH + (1f - DROP_START_WIDTH) * minOf(open, 1f), open, 0f, alpha(open))
+            KeyPreviewAnimation.GLIDE -> (GLIDE_START_SCALE + (1f - GLIDE_START_SCALE) * t).let { Pose(it, it, 0f, t) }
+        }
+    }
+
+    private const val FLIGHT_START_SCALE = 0.9f
+
+    /** Envol : la bulle part d'un tiers de sa hauteur plus bas. */
+    private const val FLIGHT_RISE = 0.35f
+    private const val DROP_START_WIDTH = 0.5f
+    private const val GLIDE_START_SCALE = 0.92f
 }

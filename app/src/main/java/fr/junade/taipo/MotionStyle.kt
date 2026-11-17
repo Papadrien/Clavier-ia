@@ -17,9 +17,10 @@ import kotlin.math.sqrt
  * - [SNAPPY] (Vif) : amortissement critique, deux fois plus rapide, aucun dépassement ;
  * - [JELLY] (Gelée, réservé au pack premium) : ressort plus souple, et la vue s'écrase puis s'étire en se posant ([stretchX],
  *   [stretchY]) ;
- * - [FLIGHT] (Envol), [DROP] (Goutte) et [GLIDE] (Glisse), ajoutés le 16/11/2026 : leur nom vient de la bulle des touches
- *   ([bubble], voir [KeyPreviewAnimation]) ; le reste du clavier reprend pour l'instant le ressort de Vif (Envol) ou de Ressort
- *   (Goutte, Glisse).
+ * - [FLIGHT] (Envol), [DROP] (Goutte) et [GLIDE] (Glisse), ajoutés le 16/11/2026 : leur forme ([bubble], voir
+ *   [KeyPreviewAnimation]) s'applique à la bulle des touches, aux boutons de la barre qui apparaissent ([BarReveal.springFrame],
+ *   rideau de [BarReveal.enter]) et à la bulle d'appui long ([PopupOpenPose.styled], sélection qui glisse en Glisse) depuis le
+ *   17/11/2026 ; les autres animations reprennent le ressort de Vif (Envol) ou de Ressort (Goutte, Glisse).
  *
  * Seul Ressort est gratuit (16/11/2026) : tous les autres styles sont réservés au pack premium ([requiresPremium]).
  *
