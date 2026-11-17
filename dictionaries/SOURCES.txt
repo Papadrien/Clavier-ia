@@ -251,3 +251,16 @@ it rossi, testa, guerra, chiara, massimo ; pt dias, santos, oliveira ; nl bakker
 pl król, zając ; ro popa, marin ; cs malý, černý, dostál (dostal) ; hu nagy, kis, kovács ; sv bo, berg ; da hans, lund ;
 nb liv, strand ; fi niemi, laine, kari.
 Fichiers changés : nouvelles empreintes (DictionaryChecksums) et nouveau dossier du bucket « dictionaries-2026-11-12 ».
+
+== fr.txt et names/fr.txt : vocabulaire d'aujourd'hui — 16/11/2026 (tools/enrich_modern_usage.py) ==
+Les sous-titres de 2018 ignoraient le vocabulaire écrit et récent (« télétravail » 21, « covid » 60 : valides mais jamais proposés ;
+« déconfinement », « cryptomonnaie », « tkt » absents). Sources : wordfreq (R. Speer, CC BY-SA 4.0 : fréquences modernes, alignées sur
+l'échelle de la liste par le rapport médian), validées par Hunspell (paquet hunspell-fr), Lexique 3.83 (CC BY-SA 4.0) et AOSP ; mots et
+noms écrits à la main dans tools/modern-words/ (abréviations de messagerie à fréquence fixe 60 : valides, jamais proposées).
+ - 6 229 mots ajoutés, 58 030 fréquences relevées (jamais baissées). Écartés : formes moins accentuées qu'un mot connu (« aout »),
+   mots anglais, élisions collées (« javais »), fautes de frappe probables, passés simples rares, préfixes.
+ - names/fr.txt : 368 -> 4 999 noms (pays, villes, prénoms, marques, sigles), chacun aussi présent dans fr.txt.
+ - Mots proposables : 49 035 -> 64 586 (seuil 100 inchangé). Liste de démarrage régénérée.
+Banc (courants / variés) : fautes bien corrigées 92,36 -> 93,34 % / 92,43 -> 93,07 % ; mal corrigées 4,67 -> 3,79 % / 5,59 -> 4,96 % ;
+phrases justes changées 0. Reculs : fautes en phrase mal corrigées 3,21 -> 3,57 %, complétion malgré une faute 88,4 -> 87,3 %.
+Le banc compte désormais la majuscule d'un nom comme juste dans toutes les langues. Bigrammes non reconstruits. Autres langues : non faites.

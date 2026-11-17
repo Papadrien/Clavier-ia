@@ -1,0 +1,258 @@
+# Abréviations de messagerie : valides, jamais proposées (fréquence fixe sous le seuil de 100).
+tkt 60
+jsp 60
+jpp 60
+bsr 60
+cdlt 60
+mdr 60
+ptdr 60
+bcp 60
+dsl 60
+slt 60
+bjr 60
+pcq 60
+psk 60
+tjs 60
+tjrs 60
+tjr 60
+dac 98
+mtn 60
+ajd 60
+auj 60
+qqn 60
+qqch 99
+mrc 60
+jtm 60
+tmtc 60
+osef 60
+balek 60
+askip 60
+oklm 60
+lmao 60
+omg 96
+wtf 60
+btw 60
+asap 60
+ptn 60
+wsh 60
+mdp 60
+déj 60
+aprem 71
+# Mots récents ou familiers (fréquence de wordfreq quand elle existe).
+aprèm
+déso
+seum
+sah
+miskine
+iel
+crush
+cringe
+malaisant
+malaisante
+gênance
+dinguerie
+banger
+masterclass
+spoil
+spoile
+spoilé
+spoilée
+story
+stories
+reel
+reels
+follow
+follower
+followers
+unfollow
+ghoster
+ghosté
+ghostée
+liker
+like
+likes
+liké
+likée
+likés
+scroller
+streamer
+streameur
+streameurs
+streameuse
+streameuses
+tiktokeur
+tiktokeurs
+tiktokeuse
+tiktokeuses
+youtubeur
+youtubeurs
+youtubeuse
+youtubeuses
+influenceur
+influenceurs
+influenceuse
+influenceuses
+podcasteur
+podcasteuse
+hater
+haters
+emoji
+emojis
+émoji
+émojis
+app
+apps
+gif
+gifs
+webinar
+webinaire
+webinaires
+visio
+visios
+logout
+chatbot
+chatbots
+deepfake
+deepfakes
+vegan
+vegans
+végan
+végane
+véganes
+veggie
+healthy
+flexitarien
+flexitarienne
+flexitariens
+locavore
+poké
+wrap
+wraps
+padel
+vapoteuse
+vapoter
+télétravail 600
+télétravailler 300
+télétravaille 200
+télétravailles
+télétravaillons
+télétravaillez
+télétravaillent 120
+télétravaillé 120
+télétravaillais
+télétravaillait
+télétravaillant
+télétravaillerai
+télétravailleur
+télétravailleurs
+télétravailleuse
+télétravailleuses
+confinement
+déconfinement 150
+reconfinement 120
+reconfiner
+déconfiner
+distanciel 150
+présentiel 150
+antivax 120
+vaccinodrome
+covid
+écoresponsable 120
+écoresponsables
+écogeste
+écogestes
+décarbonation 100
+décarboner
+cryptomonnaie 150
+cryptomonnaies 150
+blockchain
+métavers 100
+wokisme 100
+cyberharcèlement 100
+cyberattaque
+cyberattaques
+dropshipping
+onboarding
+marketplace
+coworking
+deadline
+deadlines
+burnout
+burn-out
+bore-out
+freelances
+brainstormer
+roadtrip
+road-trip
+staycation
+afterwork
+afterworks
+team-building
+click-and-collect
+sans-contact
+zéro-déchet
+autoentrepreneur
+autoentrepreneurs
+auto-entrepreneur
+auto-entrepreneurs
+microentreprise
+micro-entreprise
+genré
+genrée
+genrés
+genrées
+non-binaire
+non-binaires
+cisgenre
+transidentité
+mansplaining
+féminicide 100
+féminicides 100
+périscolaire
+covoiturer
+chronophage
+chronophages
+procrastiner
+# Mots familiers courts, déjà valides : fréquence de wordfreq (les mots de 5 lettres ou moins ne sont pas promus automatiquement).
+tuto
+tutos
+taff
+clim
+prod
+actu
+actus
+appli
+applis
+ordi
+ordis
+dispo
+dispos
+relou
+relous
+perso
+promo
+promos
+déco
+info
+infos
+expo
+expos
+démo
+compta
+conso
+récap
+coloc
+colocs
+appart
+apparts
+resto
+restos
+apéro
+apéros
+ciné
+anniv
+exam
+exams
+tweet
+tweets
+wifi
