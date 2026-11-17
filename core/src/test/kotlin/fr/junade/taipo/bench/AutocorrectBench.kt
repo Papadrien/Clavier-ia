@@ -309,11 +309,11 @@ object AutocorrectBench {
     }
 
     /**
-     * Le mot attendu est retrouvé. En allemand, la majuscule d'un nom (« haus » -> « Haus ») est voulue, pas une erreur :
-     * la liste de noms la pose, et les listes de fréquences sont en minuscules.
+     * Le mot attendu est retrouvé. La majuscule d'un nom (« haus » -> « Haus », « sarah » -> « Sarah ») est voulue, pas une erreur :
+     * la liste de noms la pose, et les listes de fréquences sont en minuscules. D'abord réservé à l'allemand ; étendu à toutes les
+     * langues le 16/11/2026, quand les listes de noms ont reçu pays, villes et prénoms (tools/enrich_modern_usage.py).
      */
-    private fun sameWord(result: String?, word: String): Boolean =
-        result != null && (result == word || (profile.language == KeyboardLanguage.DE && result.lowercase() == word))
+    private fun sameWord(result: String?, word: String): Boolean = result != null && (result == word || result.lowercase() == word)
 
     fun loadDictionary(root: File, without: Set<String> = emptySet()): Dictionary {
         val frequencies = File(root, "dictionaries/${profile.code}.txt").bufferedReader(Charsets.UTF_8).useLines { lines ->
