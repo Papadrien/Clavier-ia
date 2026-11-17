@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap
  * (`filesDir/dictionaries/`, voir [DictionaryFiles] : ils ne sont plus dans l'APK, le clavier les télécharge dès qu'une
  * langue est utilisée). Un fichier texte, une ligne « mot fréquence », triés par fréquence décroissante ; la fréquence
  * sert à départager les corrections, story 1.14). `<code>.txt` : liste COMPLÈTE de la langue (fr, en, es, de, it, pt, nl).
- * Repli : si la mémoire manque pour la liste complète, le chargeur la relit en ne gardant que les mots proposables
- * (fréquence >= [candidateMinFrequency], ~50 000 mots) au lieu de laisser le clavier sans dictionnaire.
+ * Repli : si la mémoire manque pour la liste complète, le chargeur la relit en ne gardant que les ~50 000 mots les plus
+ * fréquents (fréquence >= [reducedMinFrequency]) au lieu de laisser le clavier sans dictionnaire.
  *
  * Listes complètes : deux seuils de fréquence ([MIN_FREQUENCY], [candidateMinFrequency], détail sur leurs
  * constantes) gardent la mémoire et la vitesse d'autocorrection proches de celles d'une liste de 50 000 mots.
@@ -62,6 +62,17 @@ object DictionaryLoader {
         KeyboardLanguage.DA -> 28L
         KeyboardLanguage.NB -> 18L
         KeyboardLanguage.FI -> 134L
+    }
+
+    /**
+     * Seuil du repli mémoire ([reducedSourceFor]) : ~50 000 mots par langue (fréquence du 50 000e mot). Égal à
+     * [candidateMinFrequency], sauf en français : l'enrichissement du 17/11/2026 (vocabulaire d'aujourd'hui) a relevé les
+     * fréquences, et le seuil de proposition (100) y garde ~64 600 mots. Ce seuil reste à 100 pour proposer les mots récents
+     * (« emojis », « fablab ») ; le repli, lui, ne garde que les ~50 000 plus fréquents.
+     */
+    internal fun reducedMinFrequency(language: KeyboardLanguage): Long = when (language) {
+        KeyboardLanguage.FR -> 169L
+        else -> candidateMinFrequency(language)
     }
 
     /** Fichier et seuils de fréquence d'une liste. */
@@ -185,13 +196,11 @@ object DictionaryLoader {
         Source(DictionaryFiles.localFile(context.filesDir, language, DictionaryFile.FULL), MIN_FREQUENCY, candidateMinFrequency(language))
 
     /**
-     * Repli de [language] : la même liste complète, mais seuls les mots de fréquence >= [candidateMinFrequency] sont gardés
-     * (~50 000 mots, les mêmes que ceux qui sont proposés en correction) ; ceux d'en dessous ne servaient qu'à valider un mot tapé.
+     * Repli de [language] : la même liste complète, mais seuls les mots de fréquence >= [reducedMinFrequency] sont gardés
+     * (~50 000 mots, tous proposables en correction) ; ceux d'en dessous ne servaient surtout qu'à valider un mot tapé.
      */
     private fun reducedSourceFor(context: Context, language: KeyboardLanguage): Source =
-        candidateMinFrequency(language).let {
-            Source(DictionaryFiles.localFile(context.filesDir, language, DictionaryFile.FULL), it, it)
-        }
+        Source(DictionaryFiles.localFile(context.filesDir, language, DictionaryFile.FULL), reducedMinFrequency(language), candidateMinFrequency(language))
 
     private fun emptyDictionary(context: Context, language: KeyboardLanguage): Dictionary {
         AppLog.w(TAG, "dictionnaire $language pas encore téléchargé : saisie sans autocorrection ni suggestions")

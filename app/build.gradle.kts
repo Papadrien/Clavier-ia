@@ -233,4 +233,9 @@ tasks.withType<Test>().configureEach {
     providers.gradleProperty("taipo.robolectricRepo").orNull?.let { systemProperty("robolectric.dependency.repo.url", it) }
     // Robolectric touche aux descripteurs de fichiers internes du JDK (mémoire partagée de l'application simulée).
     jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED", "--add-opens=java.base/java.io=ALL-UNNAMED")
+    // Les tests des dictionnaires (DictionaryAssetsIntegrityTest…) lisent dictionaries/ sur disque : entrée déclarée, sinon le
+    // cache de Gradle réutilise un ancien résultat quand seule une liste change (même cas que :core:test, 16/11/2026).
+    inputs.dir(rootProject.layout.projectDirectory.dir("dictionaries"))
+        .withPropertyName("dictionaries")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
 }
