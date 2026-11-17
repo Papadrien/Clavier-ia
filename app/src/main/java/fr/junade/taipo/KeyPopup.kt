@@ -6,6 +6,8 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.view.View
+import kotlin.math.exp
+import kotlin.math.hypot
 import kotlin.math.roundToInt
 
 /**
@@ -63,6 +65,11 @@ internal class KeyPopup(private val view: View) {
     private var pivotX = 0f
     private var pivotY = 0f
     private var openMaxScale = 1f
+
+    // Glisse (17/11/2026) : la pastille de sélection glisse d'une cellule à l'autre au lieu de sauter (position dessinée).
+    private var selectionX = Float.NaN
+    private var selectionY = Float.NaN
+    private var selectionLastNanos = 0L
 
     val isShown: Boolean get() = key != null
 
@@ -162,6 +169,8 @@ internal class KeyPopup(private val view: View) {
         )
         openLastFrameNanos = 0L
         openSpring.snap(if (ValueAnimator.areAnimatorsEnabled()) PopupOpenPose.START_SCALE else 1f)
+        selectionX = Float.NaN
+        selectionY = Float.NaN
         view.invalidate()
     }
 
@@ -232,12 +241,13 @@ internal class KeyPopup(private val view: View) {
         if (key == null) return
         val openScale = advanceOpening()
         canvas.save()
-        // Gelée ([MotionStyle.JELLY]) : la bulle s'étire en sortant de la touche, s'aplatit en dépassant sa taille.
+        // Ouverture selon le style d'animation (PopupOpenPose.styled) ; Gelée : la bulle s'étire en sortant de la touche, s'aplatit
+        // en dépassant sa taille.
         val style = MotionStyle.current
-        val scaleX = (openScale * style.stretchX(openScale)).coerceAtMost(openMaxScale)
-        val scaleY = (openScale * style.stretchY(openScale)).coerceAtMost(openMaxScale)
-        canvas.scale(scaleX, scaleY, pivotX, pivotY)
-        val alpha = (255 * PopupOpenPose.alpha(openScale)).roundToInt()
+        val pose = PopupOpenPose.styled(style, openScale)
+        canvas.translate(0f, pose.offsetY * popupRect.height())
+        canvas.scale(pose.scaleX.coerceAtMost(openMaxScale), pose.scaleY.coerceAtMost(openMaxScale), pivotX, pivotY)
+        val alpha = (255 * pose.alpha).roundToInt()
         if (alpha < 255) canvas.saveLayerAlpha(popupRect, alpha)
         canvas.drawRoundRect(popupRect, cornerRadius, cornerRadius, popupPaint)
 
@@ -246,16 +256,18 @@ internal class KeyPopup(private val view: View) {
             popupSelectedTextPaint.textSize = textSize
         }
         val baselineOffset = -(popupTextPaint.ascent() + popupTextPaint.descent()) / 2f
+        val selectionRadius = minOf(popupCellWidth, popupCellHeight) / 2f - selectionInset
+        val gliding = style.bubble == KeyPreviewAnimation.GLIDE && drawGlidingSelection(canvas, selectionRadius)
 
         popupGrid.forEachIndexed { rowIndex, row ->
             row.forEachIndexed { colIndex, symbol ->
                 val cx = popupRect.left + popupPadding + (colIndex + 0.5f) * popupCellWidth
                 val cy = popupRect.top + popupPaddingV + (rowIndex + 0.5f) * popupCellHeight
-                val selected = rowIndex == popupSelectedRow && colIndex == popupSelectedCol
-                if (selected) {
-                    val selectionRadius = minOf(popupCellWidth, popupCellHeight) / 2f - selectionInset
-                    canvas.drawCircle(cx, cy, selectionRadius, popupSelectionPaint)
-                }
+                // Glisse : la cellule ne passe en « sélectionnée » (texte blanc) qu'une fois la pastille arrivée dessous.
+                val selected = rowIndex == popupSelectedRow &&
+                    colIndex == popupSelectedCol &&
+                    (!gliding || hypot(selectionX - cx, selectionY - cy) < selectionRadius * SELECTION_ARRIVED)
+                if (selected && !gliding) canvas.drawCircle(cx, cy, selectionRadius, popupSelectionPaint)
                 val icon = icons[symbol]
                 if (icon != null) {
                     val half = minOf(iconSize, popupCellHeight * iconMaxRatio) / 2f
@@ -280,6 +292,34 @@ internal class KeyPopup(private val view: View) {
         }
         if (alpha < 255) canvas.restore()
         canvas.restore()
+    }
+
+    /**
+     * Glisse : dessine la pastille de sélection à sa position animée, qui rejoint la cellule sélectionnée en ~80 ms ; elle part de
+     * la cellule elle-même à la première sélection. Faux s'il n'y a aucune sélection (rien à dessiner).
+     */
+    private fun drawGlidingSelection(canvas: Canvas, radius: Float): Boolean {
+        if (popupSelectedRow < 0 || popupSelectedCol < 0) {
+            selectionX = Float.NaN
+            selectionY = Float.NaN
+            return false
+        }
+        val targetX = popupRect.left + popupPadding + (popupSelectedCol + 0.5f) * popupCellWidth
+        val targetY = popupRect.top + popupPaddingV + (popupSelectedRow + 0.5f) * popupCellHeight
+        val now = System.nanoTime()
+        if (selectionX.isNaN() || !ValueAnimator.areAnimatorsEnabled()) {
+            selectionX = targetX
+            selectionY = targetY
+        } else {
+            val dt = ((now - selectionLastNanos) / NANOS_PER_SECOND).coerceIn(0f, MAX_FRAME_S)
+            val k = 1f - exp(-dt * SELECTION_GLIDE_RATE)
+            selectionX += (targetX - selectionX) * k
+            selectionY += (targetY - selectionY) * k
+            if (hypot(targetX - selectionX, targetY - selectionY) > SELECTION_SETTLED_PX) view.postInvalidateOnAnimation()
+        }
+        selectionLastNanos = now
+        canvas.drawCircle(selectionX, selectionY, radius, popupSelectionPaint)
+        return true
     }
 
     /** Fait avancer le ressort d'ouverture jusqu'à maintenant et demande l'image suivante tant qu'il n'est pas posé. */
@@ -309,5 +349,12 @@ internal class KeyPopup(private val view: View) {
         private const val NANOS_PER_SECOND = 1_000_000_000f
         private const val FIRST_FRAME_S = 1f / 60f
         private const val MAX_FRAME_S = 0.05f
+
+        /** Glisse : vitesse de rattrapage de la pastille (1/s) ; elle a fait ~90 % du chemin en 80 ms. */
+        private const val SELECTION_GLIDE_RATE = 29f
+        private const val SELECTION_SETTLED_PX = 0.5f
+
+        /** Glisse : part du rayon sous laquelle la pastille est considérée arrivée sur sa cellule. */
+        private const val SELECTION_ARRIVED = 0.5f
     }
 }
