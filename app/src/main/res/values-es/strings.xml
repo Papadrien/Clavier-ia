@@ -608,6 +608,13 @@
     <string name="backdrop_hearts">Corazones</string>
     <string name="backdrop_flowers">Flores</string>
     <string name="backdrop_processor">Procesador</string>
+    <string name="backdrop_photo">Imagen</string>
+    <string name="theme_backdrop_photo_change">Elegir otra imagen</string>
+    <string name="theme_backdrop_photo_source_title">Elegir una imagen</string>
+    <string name="theme_backdrop_photo_source_gallery">Galería</string>
+    <string name="theme_backdrop_photo_source_files">Archivos</string>
+    <string name="theme_backdrop_photo_error">No se ha podido abrir esta imagen.</string>
+    <string name="theme_backdrop_photo_no_picker">Ninguna aplicación de este dispositivo permite elegir una imagen.</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Prémium</string>
     <string name="theme_section_font">Tipografía del teclado</string>

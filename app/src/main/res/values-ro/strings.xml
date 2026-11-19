@@ -608,6 +608,13 @@
     <string name="backdrop_hearts">Inimi</string>
     <string name="backdrop_flowers">Flori</string>
     <string name="backdrop_processor">Procesor</string>
+    <string name="backdrop_photo">Imagine</string>
+    <string name="theme_backdrop_photo_change">Alege altă imagine</string>
+    <string name="theme_backdrop_photo_source_title">Alege o imagine</string>
+    <string name="theme_backdrop_photo_source_gallery">Galerie</string>
+    <string name="theme_backdrop_photo_source_files">Fișiere</string>
+    <string name="theme_backdrop_photo_error">Această imagine nu a putut fi deschisă.</string>
+    <string name="theme_backdrop_photo_no_picker">Nicio aplicație de pe acest dispozitiv nu permite alegerea unei imagini.</string>
     <string name="theme_backdrop_free">Gratuit</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Fontul tastaturii</string>

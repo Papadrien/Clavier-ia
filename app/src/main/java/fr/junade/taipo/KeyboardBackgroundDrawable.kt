@@ -1,6 +1,7 @@
 package fr.junade.taipo
 
 import android.animation.ValueAnimator
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.LinearGradient
@@ -16,6 +17,7 @@ import fr.junade.taipo.backdrop.BackdropColors
 import fr.junade.taipo.backdrop.BackdropMotion
 import fr.junade.taipo.backdrop.BackdropPainter
 import fr.junade.taipo.backdrop.KeyboardBackdrop
+import fr.junade.taipo.backdrop.PhotoBackdropDrawer
 
 /**
  * Fond unique de tout le clavier : barre du haut, touches et panneaux (emoji, Smart Clipboard) sont
@@ -32,6 +34,9 @@ import fr.junade.taipo.backdrop.KeyboardBackdrop
  * Voile de la barre du haut (16/11/2026) : sur un motif, la zone au-dessus des touches ([setTopBar]) est recouverte d'un voile de
  * la couleur unie du clavier, qui s'efface juste au-dessus de la première rangée. Les suggestions, en texte sans fond, restent
  * lisibles quel que soit le motif qui passe derrière (un pétale blanc derrière un mot blanc, par exemple).
+ *
+ * Fond « Image » (19/11/2026) : l'image de l'utilisateur ([setPhoto]) remplit le fond, recadrée au centre, fixe ; le voile de la
+ * barre du haut s'y applique comme sur un motif. Tant que l'image n'est pas chargée, le fond reste uni.
  */
 class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
 
@@ -50,6 +55,8 @@ class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
     private var seed = 0L
     private var colors: BackdropColors? = null
     private val motion = BackdropMotion()
+    private var photo: Bitmap? = null
+    private val photoDrawer = PhotoBackdropDrawer()
 
     /** Le motif s'anime pendant la frappe (réglage « Animer le fond pendant la frappe »). */
     var animated = true
@@ -75,6 +82,13 @@ class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
         backdrop = value
         this.seed = seed
         colors = newColors
+        invalidateSelf()
+    }
+
+    /** Image du fond « Image » (null : pas d'image chargée). Dessinée seulement quand le fond choisi est [KeyboardBackdrop.PHOTO]. */
+    fun setPhoto(bitmap: Bitmap?) {
+        if (photo === bitmap) return
+        photo = bitmap
         invalidateSelf()
     }
 
@@ -116,6 +130,11 @@ class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
     override fun draw(canvas: Canvas) {
         val currentPainter = painter
         val currentColors = colors
+        val currentPhoto = photo?.takeIf { backdrop == KeyboardBackdrop.PHOTO && !it.isRecycled }
+        if (currentPhoto != null) {
+            drawClipped(canvas) { photoDrawer.draw(canvas, currentPhoto, bounds.width(), bounds.height(), baseColor) }
+            return
+        }
         if (currentPainter == null || currentColors == null) {
             if (cornerRadius <= 0f) {
                 canvas.drawRect(bounds, paint)
@@ -125,6 +144,11 @@ class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
             canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint)
             return
         }
+        drawClipped(canvas) { currentPainter.drawFrame(canvas, bounds.width(), bounds.height(), seed, currentColors, motion) }
+    }
+
+    /** Fond à motif ou image : [content] dessiné dans les coins du clavier, en coordonnées du fond, puis le voile de la barre. */
+    private inline fun drawClipped(canvas: Canvas, content: () -> Unit) {
         canvas.save()
         if (cornerRadius > 0f) {
             rect.set(bounds)
@@ -135,7 +159,7 @@ class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
             canvas.clipRect(bounds)
         }
         canvas.translate(bounds.left.toFloat(), bounds.top.toFloat())
-        currentPainter.drawFrame(canvas, bounds.width(), bounds.height(), seed, currentColors, motion)
+        content()
         drawTopBarScrim(canvas, bounds.width().toFloat())
         canvas.restore()
     }

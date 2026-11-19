@@ -213,6 +213,9 @@ class TaipoIme : InputMethodService() {
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
     private val keyboardPreferences by lazy { KeyboardPreferences(applicationContext) }
 
+    /** Fond « Image » : l'image de l'utilisateur, décodée hors du thread principal et gardée tant qu'elle ne change pas. */
+    private val photoBackdrop by lazy { fr.junade.taipo.backdrop.PhotoBackdropLoader(applicationContext, serviceScope) }
+
     /** Revue UX : astuces de gestes, une fois chacune, dans la barre du haut (GestureTipPillView). */
     private val gestureTips by lazy { GestureTips(applicationContext) }
 
@@ -493,13 +496,24 @@ class TaipoIme : InputMethodService() {
         keyboardView.bottomMarginDp = keyboardPreferences.bottomMarginDp
         keyboardView.keyPreviewEnabled = keyboardPreferences.isKeyPreviewEnabled
         floatingWindow.apply() // en flottant, remet la marge du bas à zéro (la poignée en tient lieu)
+        val backdrop = fr.junade.taipo.backdrop.KeyboardBackdrop.effective(
+            keyboardPreferences.keyboardBackdrop,
+            PremiumPass.isActive,
+            fr.junade.taipo.backdrop.PhotoBackdrop.exists(this),
+        )
         viewComposer.applyBackdrop(
-            fr.junade.taipo.backdrop.KeyboardBackdrop.effective(keyboardPreferences.keyboardBackdrop, PremiumPass.isActive),
+            backdrop,
             keyboardPreferences.backdropSeed,
             keyboardPreferences.isBackdropAnimated,
             themeColor(R.color.accent),
             KeyboardTheme.mode == KeyboardTheme.Mode.DARK,
         )
+        if (backdrop == fr.junade.taipo.backdrop.KeyboardBackdrop.PHOTO) {
+            photoBackdrop.load(keyboardPreferences.backdropPhotoVersion) { viewComposer.applyBackdropPhoto(it) }
+        } else {
+            photoBackdrop.release()
+            viewComposer.applyBackdropPhoto(null)
+        }
         oneHanded.apply()
         keyboardView.showTouchZones = keyboardPreferences.showTouchZones
         emojiController.hidePanel(resync = false)

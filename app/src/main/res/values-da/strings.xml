@@ -604,6 +604,13 @@
     <string name="backdrop_hearts">Hjerter</string>
     <string name="backdrop_flowers">Blomster</string>
     <string name="backdrop_processor">Processor</string>
+    <string name="backdrop_photo">Billede</string>
+    <string name="theme_backdrop_photo_change">Vælg et andet billede</string>
+    <string name="theme_backdrop_photo_source_title">Vælg et billede</string>
+    <string name="theme_backdrop_photo_source_gallery">Galleri</string>
+    <string name="theme_backdrop_photo_source_files">Filer</string>
+    <string name="theme_backdrop_photo_error">Billedet kunne ikke åbnes.</string>
+    <string name="theme_backdrop_photo_no_picker">Ingen app på enheden kan vælge et billede.</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Tastaturets skrifttype</string>

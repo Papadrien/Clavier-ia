@@ -604,6 +604,13 @@
     <string name="backdrop_hearts">Hartjes</string>
     <string name="backdrop_flowers">Bloemen</string>
     <string name="backdrop_processor">Processor</string>
+    <string name="backdrop_photo">Afbeelding</string>
+    <string name="theme_backdrop_photo_change">Andere afbeelding kiezen</string>
+    <string name="theme_backdrop_photo_source_title">Afbeelding kiezen</string>
+    <string name="theme_backdrop_photo_source_gallery">Galerij</string>
+    <string name="theme_backdrop_photo_source_files">Bestanden</string>
+    <string name="theme_backdrop_photo_error">Deze afbeelding kan niet worden geopend.</string>
+    <string name="theme_backdrop_photo_no_picker">Geen app op dit apparaat kan een afbeelding kiezen.</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Lettertype van het toetsenbord</string>

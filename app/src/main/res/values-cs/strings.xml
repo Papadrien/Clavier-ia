@@ -612,6 +612,13 @@
     <string name="backdrop_hearts">Srdce</string>
     <string name="backdrop_flowers">Květiny</string>
     <string name="backdrop_processor">Procesor</string>
+    <string name="backdrop_photo">Obrázek</string>
+    <string name="theme_backdrop_photo_change">Vybrat jiný obrázek</string>
+    <string name="theme_backdrop_photo_source_title">Vybrat obrázek</string>
+    <string name="theme_backdrop_photo_source_gallery">Galerie</string>
+    <string name="theme_backdrop_photo_source_files">Soubory</string>
+    <string name="theme_backdrop_photo_error">Tento obrázek nelze otevřít.</string>
+    <string name="theme_backdrop_photo_no_picker">Žádná aplikace v tomto zařízení neumožňuje vybrat obrázek.</string>
     <string name="theme_backdrop_free">Zdarma</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Písmo klávesnice</string>

@@ -604,6 +604,13 @@
     <string name="backdrop_hearts">Szívek</string>
     <string name="backdrop_flowers">Virágok</string>
     <string name="backdrop_processor">Processzor</string>
+    <string name="backdrop_photo">Kép</string>
+    <string name="theme_backdrop_photo_change">Másik kép választása</string>
+    <string name="theme_backdrop_photo_source_title">Kép választása</string>
+    <string name="theme_backdrop_photo_source_gallery">Galéria</string>
+    <string name="theme_backdrop_photo_source_files">Fájlok</string>
+    <string name="theme_backdrop_photo_error">Ez a kép nem nyitható meg.</string>
+    <string name="theme_backdrop_photo_no_picker">Ezen az eszközön egyik alkalmazással sem lehet képet választani.</string>
     <string name="theme_backdrop_free">Ingyenes</string>
     <string name="theme_backdrop_premium">Prémium</string>
     <string name="theme_section_font">Billentyűzet betűtípusa</string>

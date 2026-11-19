@@ -1,8 +1,10 @@
 package fr.junade.taipo.backdrop
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.RectF
 import android.view.View
 import fr.junade.taipo.R
@@ -10,7 +12,8 @@ import fr.junade.taipo.R
 /**
  * Vignette d'un fond du clavier (page « Thème ») : le motif dans la couleur et le thème choisis, et trois rangées de petites
  * touches par-dessus (translucides sur un motif, pleines sur le fond uni). Le motif avance avec le défilement de la page
- * ([advance]), pour montrer qu'il est animé.
+ * ([advance]), pour montrer qu'il est animé. Fond « Image » : l'image choisie ([photo]), ou, sans image, un pictogramme d'image
+ * dans la couleur d'accent qui invite à en choisir une.
  */
 class BackdropPreviewView(context: Context) : View(context) {
 
@@ -29,7 +32,22 @@ class BackdropPreviewView(context: Context) : View(context) {
             invalidate()
         }
 
+    /** Image du fond « Image » (null : pas encore choisie). */
+    var photo: Bitmap? = null
+        set(value) {
+            if (field === value) return
+            field = value
+            invalidate()
+        }
+
     private var painter: BackdropPainter? = null
+    private val photoDrawer = PhotoBackdropDrawer()
+    private val glyphPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeJoin = Paint.Join.ROUND
+        strokeCap = Paint.Cap.ROUND
+    }
+    private val glyphPath = Path()
     private var colors: BackdropColors? = null
     private var keyColor = 0
     private val motion = BackdropMotion()
@@ -54,9 +72,19 @@ class BackdropPreviewView(context: Context) : View(context) {
     override fun onDraw(canvas: Canvas) {
         val currentColors = colors ?: return
         val currentPainter = painter
-        if (currentPainter == null) canvas.drawColor(currentColors.base) else currentPainter.drawFrame(canvas, width, height, seed, currentColors, motion)
+        val currentPhoto = photo?.takeIf { !it.isRecycled }
+        when {
+            backdrop == KeyboardBackdrop.PHOTO && currentPhoto != null ->
+                photoDrawer.draw(canvas, currentPhoto, width, height, currentColors.base)
+            backdrop == KeyboardBackdrop.PHOTO -> {
+                canvas.drawColor(currentColors.base)
+                drawImageGlyph(canvas, currentColors.accent)
+            }
+            currentPainter == null -> canvas.drawColor(currentColors.base)
+            else -> currentPainter.drawFrame(canvas, width, height, seed, currentColors, motion)
+        }
         keyPaint.color = keyColor
-        keyPaint.alpha = if (currentPainter == null) OPAQUE else TRANSLUCENT
+        keyPaint.alpha = if (backdrop.isPattern) TRANSLUCENT else OPAQUE
         val gap = width * GAP_RATIO
         val rows = 3
         val top = height * 0.35f
@@ -74,7 +102,33 @@ class BackdropPreviewView(context: Context) : View(context) {
         }
     }
 
+    /** Pictogramme « image » (cadre, montagnes, soleil), centré dans la zone au-dessus des touches. */
+    private fun drawImageGlyph(canvas: Canvas, color: Int) {
+        val size = height * GLYPH_RATIO
+        val cx = width / 2f
+        val cy = height * 0.35f / 2f + size * 0.1f
+        val left = cx - size * 0.6f
+        val top = cy - size * 0.45f
+        val right = cx + size * 0.6f
+        val bottom = cy + size * 0.45f
+        glyphPaint.color = color
+        glyphPaint.strokeWidth = size * 0.08f
+        keyRect.set(left, top, right, bottom)
+        canvas.drawRoundRect(keyRect, size * 0.12f, size * 0.12f, glyphPaint)
+        glyphPath.rewind()
+        glyphPath.moveTo(left + size * 0.1f, bottom - size * 0.12f)
+        glyphPath.lineTo(cx - size * 0.15f, cy - size * 0.05f)
+        glyphPath.lineTo(cx + size * 0.1f, cy + size * 0.2f)
+        glyphPath.lineTo(cx + size * 0.25f, cy + size * 0.05f)
+        glyphPath.lineTo(right - size * 0.1f, bottom - size * 0.12f)
+        canvas.drawPath(glyphPath, glyphPaint)
+        canvas.drawCircle(cx + size * 0.28f, cy - size * 0.18f, size * 0.08f, glyphPaint)
+    }
+
     private companion object {
+        /** Taille du pictogramme « image » par rapport à la hauteur de la vignette. */
+        const val GLYPH_RATIO = 0.28f
+
         /** Avance du motif par pixel défilé. Demande du 12/11/2026 : divisée par 4 (0,012 auparavant). */
         const val SCROLL_TO_PHASE = 0.003f
         const val KEYS_PER_ROW = 7

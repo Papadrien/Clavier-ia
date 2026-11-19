@@ -149,6 +149,12 @@ class ImeViewComposer(
         keyboardView.translucentKeys = backdrop.isPattern
     }
 
+    /** Image du fond « Image » ([fr.junade.taipo.backdrop.PhotoBackdrop]), ou null pour la libérer (autre fond choisi). */
+    fun applyBackdropPhoto(photo: android.graphics.Bitmap?) {
+        if (!isComposed) return
+        background?.setPhoto(photo)
+    }
+
     lateinit var correctionBar: CorrectionBarView
         private set
 

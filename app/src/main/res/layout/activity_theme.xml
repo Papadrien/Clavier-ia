@@ -124,6 +124,16 @@
             android:layout_marginTop="@dimen/taipo_settings_gap_md"
             android:text="@string/theme_backdrop_reseed" />
 
+        <!-- Fond « Image » choisi : changer d'image (galerie ou sélecteur de fichiers), ThemeActivity.choosePhotoSource. -->
+        <Button
+            style="@style/TaipoButton.Secondary"
+            android:id="@+id/button_backdrop_photo_change"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md"
+            android:text="@string/theme_backdrop_photo_change"
+            android:visibility="gone" />
+
         <!-- Motif touché sans pass : il reste sélectionné à l'écran, ce bouton ouvre l'écran du pass. -->
         <Button
             style="@style/TaipoButton.Primary"

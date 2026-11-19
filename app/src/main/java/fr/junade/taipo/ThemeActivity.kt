@@ -1,12 +1,15 @@
 package fr.junade.taipo
 
 import android.animation.ValueAnimator
-import android.app.Activity
+import android.app.AlertDialog
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Layout
 import android.util.TypedValue
+import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +20,9 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.activity.ComponentActivity
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
@@ -24,7 +30,13 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.backdrop.BackdropPreviewView
 import fr.junade.taipo.backdrop.KeyboardBackdrop
+import fr.junade.taipo.backdrop.PhotoBackdrop
 import kotlin.math.abs
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Page « Thème » (paramètres, lots T5 et T7) : cartes d'aperçu, Système (automatique), Clair, Sombre et, dès Android 12,
@@ -43,8 +55,12 @@ import kotlin.math.abs
  * Section « Forme des touches » : une carte par forme ([KeyShape]), par rangées de trois comme les thèmes ; un appui la choisit
  * ([KeyboardPreferences.keyShape]) et les aperçus des thèmes la reprennent. Les formes réservées au pass portent un cadenas et se
  * comportent comme les couleurs réservées : essayées sur les aperçus, bouton du pass, appliquées au retour avec le pass.
+ *
+ * Section « Fond du clavier », fond « Image » (19/11/2026) : l'utilisateur choisit une image dans la galerie (sélecteur de photos
+ * d'Android) ou dans le sélecteur de fichiers ; une copie réduite est gardée par l'application ([PhotoBackdrop]) et remplit le
+ * fond du clavier, avec le voile habituel sous la barre du haut.
  */
-class ThemeActivity : Activity() {
+class ThemeActivity : ComponentActivity() {
 
     private class Card(val choice: ThemeChoice, val view: View, val check: View, val preview: ThemePreviewView)
 
@@ -79,6 +95,15 @@ class ThemeActivity : Activity() {
 
     /** Police réservée touchée sans pass : montrée comme choisie, avec le bouton du pass, sans être posée sur le clavier. */
     private var previewFont: KeyboardFont? = null
+
+    /** Import et lecture de l'image du fond « Image » : annulés avec l'écran. */
+    private val scope = MainScope()
+
+    /** Fond « Image » depuis la galerie : sélecteur de photos d'Android (repli sur le sélecteur de fichiers sur les anciennes versions). */
+    private val pickPhoto = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> uri?.let(::importPhoto) }
+
+    /** Fond « Image » depuis le sélecteur de fichiers (Fichiers, Drive…), images seulement. */
+    private val openPhoto = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> uri?.let(::importPhoto) }
 
     // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
@@ -142,6 +167,11 @@ class ThemeActivity : Activity() {
         renderFonts(preferences.keyboardFont)
         renderBackdrops()
         renderMotions(preferences.motionStyle)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.cancel()
     }
 
     // Retour de l'écran du pass (ou pass forcé en debug) : la couleur essayée est appliquée, les cadenas disparaissent.
@@ -357,6 +387,8 @@ class ThemeActivity : Activity() {
         findViewById<View>(R.id.button_backdrop_unlock).setOnClickListener {
             startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_THEME))
         }
+        findViewById<View>(R.id.button_backdrop_photo_change).setOnClickListener { choosePhotoSource() }
+        loadPhotoPreview()
         // Défilement de la page : les motifs avancent avec lui, pour montrer qu'ils sont animés.
         findViewById<View>(R.id.theme_scroll).setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
             val delta = abs(scrollY - oldScrollY).toFloat()
@@ -405,6 +437,11 @@ class ThemeActivity : Activity() {
             renderBackdrops()
             return
         }
+        if (backdrop == KeyboardBackdrop.PHOTO && !PhotoBackdrop.exists(this)) {
+            // Pas encore d'image : on la fait choisir ; le fond « Image » est posé une fois l'image importée.
+            choosePhotoSource()
+            return
+        }
         previewBackdrop = null
         if (backdrop != preferences.keyboardBackdrop) {
             preferences.keyboardBackdrop = backdrop
@@ -426,7 +463,7 @@ class ThemeActivity : Activity() {
         val accent = palette.recolor(KeyboardTheme.colorIn(this, mode, R.color.accent))
         val key = KeyboardTheme.colorIn(this, mode, R.color.key_normal)
         val seed = preferences.backdropSeed
-        val shown = previewBackdrop ?: KeyboardBackdrop.effective(preferences.keyboardBackdrop, premium)
+        val shown = previewBackdrop ?: KeyboardBackdrop.effective(preferences.keyboardBackdrop, premium, PhotoBackdrop.exists(this))
         for (card in backdropCards) {
             card.preview.seed = seed
             card.preview.setColors(base, accent, mode == KeyboardTheme.Mode.DARK, key)
@@ -442,11 +479,71 @@ class ThemeActivity : Activity() {
             card.view.contentDescription = if (locked) getString(R.string.premium_locked_item, name) else name
             ViewCompat.setAccessibilityDelegate(card.view, radioDelegate(isSelected))
         }
-        val patternSettings = if (shown.isPattern) View.VISIBLE else View.GONE
+        val patternSettings = if (shown.isGenerated) View.VISIBLE else View.GONE
         findViewById<View>(R.id.switch_backdrop_animated).visibility = patternSettings
         findViewById<View>(R.id.text_backdrop_animated_description).visibility = patternSettings
         findViewById<View>(R.id.button_backdrop_reseed).visibility = patternSettings
         findViewById<View>(R.id.button_backdrop_unlock).visibility = if (previewBackdrop != null) View.VISIBLE else View.GONE
+        val photoSettings = shown == KeyboardBackdrop.PHOTO && previewBackdrop == null
+        findViewById<View>(R.id.button_backdrop_photo_change).visibility = if (photoSettings) View.VISIBLE else View.GONE
+    }
+
+    /** Choix de la source de l'image du fond : galerie (sélecteur de photos) ou sélecteur de fichiers. */
+    private fun choosePhotoSource() {
+        val sources = arrayOf(getString(R.string.theme_backdrop_photo_source_gallery), getString(R.string.theme_backdrop_photo_source_files))
+        AlertDialog.Builder(ContextThemeWrapper(this, R.style.MessageDialogTheme))
+            .setTitle(R.string.theme_backdrop_photo_source_title)
+            .setItems(sources) { _, which -> launchPhotoPicker(gallery = which == 0) }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun launchPhotoPicker(gallery: Boolean) {
+        try {
+            if (gallery) {
+                pickPhoto.launch(PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly).build())
+            } else {
+                openPhoto.launch(arrayOf("image/*"))
+            }
+        } catch (e: ActivityNotFoundException) {
+            AppLog.w(TAG, "aucun sélecteur d'image", e)
+            showScreenMessage(R.string.theme_backdrop_photo_no_picker)
+        }
+    }
+
+    /**
+     * Image choisie : copie réduite enregistrée hors du thread principal ([PhotoBackdrop.store]), puis fond « Image » posé et
+     * nouvelle version annoncée au clavier (réglages écrits avec l'image, même si l'écran se ferme entre-temps).
+     */
+    private fun importPhoto(uri: Uri) {
+        val appContext = applicationContext
+        scope.launch {
+            val imported = withContext(Dispatchers.IO) {
+                PhotoBackdrop.store(appContext, uri).also { ok ->
+                    if (ok) {
+                        preferences.backdropPhotoVersion = System.currentTimeMillis()
+                        preferences.keyboardBackdrop = KeyboardBackdrop.PHOTO
+                    }
+                }
+            }
+            if (!imported) {
+                showScreenMessage(R.string.theme_backdrop_photo_error)
+                return@launch
+            }
+            previewBackdrop = null
+            Analytics.setting(this@ThemeActivity, "keyboard_backdrop", KeyboardBackdrop.PHOTO.storageKey)
+            loadPhotoPreview()
+        }
+    }
+
+    /** Vignette du fond « Image » : l'image enregistrée, lue en taille réduite hors du thread principal. */
+    private fun loadPhotoPreview() {
+        val appContext = applicationContext
+        scope.launch {
+            val photo = withContext(Dispatchers.IO) { PhotoBackdrop.load(appContext, PHOTO_PREVIEW_SIDE_PX) }
+            backdropCards.firstOrNull { it.backdrop == KeyboardBackdrop.PHOTO }?.preview?.photo = photo
+            renderBackdrops()
+        }
     }
 
     /**
@@ -674,6 +771,10 @@ class ThemeActivity : Activity() {
         const val CARDS_PER_ROW = 3
         const val SWATCHES_PER_ROW = 5
         const val BACKDROPS_PER_ROW = 2
+
+        /** Grand côté de l'image lue pour la vignette du fond « Image » (la vignette fait la moitié de la largeur de l'écran). */
+        const val PHOTO_PREVIEW_SIDE_PX = 720
+        const val TAG = "ThemeActivity"
     }
 }
 

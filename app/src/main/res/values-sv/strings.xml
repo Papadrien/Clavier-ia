@@ -604,6 +604,13 @@
     <string name="backdrop_hearts">Hjärtan</string>
     <string name="backdrop_flowers">Blommor</string>
     <string name="backdrop_processor">Processor</string>
+    <string name="backdrop_photo">Bild</string>
+    <string name="theme_backdrop_photo_change">Välj en annan bild</string>
+    <string name="theme_backdrop_photo_source_title">Välj en bild</string>
+    <string name="theme_backdrop_photo_source_gallery">Galleri</string>
+    <string name="theme_backdrop_photo_source_files">Filer</string>
+    <string name="theme_backdrop_photo_error">Det gick inte att öppna bilden.</string>
+    <string name="theme_backdrop_photo_no_picker">Ingen app på enheten kan välja en bild.</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Tangentbordets typsnitt</string>

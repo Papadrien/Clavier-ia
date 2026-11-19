@@ -604,6 +604,13 @@
     <string name="backdrop_hearts">Sydämet</string>
     <string name="backdrop_flowers">Kukat</string>
     <string name="backdrop_processor">Prosessori</string>
+    <string name="backdrop_photo">Kuva</string>
+    <string name="theme_backdrop_photo_change">Valitse toinen kuva</string>
+    <string name="theme_backdrop_photo_source_title">Valitse kuva</string>
+    <string name="theme_backdrop_photo_source_gallery">Galleria</string>
+    <string name="theme_backdrop_photo_source_files">Tiedostot</string>
+    <string name="theme_backdrop_photo_error">Kuvaa ei voitu avata.</string>
+    <string name="theme_backdrop_photo_no_picker">Millään tämän laitteen sovelluksella ei voi valita kuvaa.</string>
     <string name="theme_backdrop_free">Ilmainen</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Näppäimistön fontti</string>
