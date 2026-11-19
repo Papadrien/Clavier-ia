@@ -9,14 +9,13 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/** Modèle IA personnalisé : réservé au pack premium (toujours ouvert en debug), hors catalogue, version de LiteRT-LM affichée juste. */
+/** Modèle IA personnalisé : réservé au pack premium (debug compris), hors catalogue, version de LiteRT-LM affichée juste. */
 class CustomModelAccessTest {
 
     @Test
-    fun `pack premium ou build debug`() {
-        assertTrue(CustomModelAccess.isAllowed(premium = true, debugBuild = false))
-        assertTrue(CustomModelAccess.isAllowed(premium = false, debugBuild = true))
-        assertFalse(CustomModelAccess.isAllowed(premium = false, debugBuild = false))
+    fun `seulement avec le pack premium`() {
+        assertTrue(CustomModelAccess.isAllowed(premium = true))
+        assertFalse(CustomModelAccess.isAllowed(premium = false))
     }
 
     @Test
