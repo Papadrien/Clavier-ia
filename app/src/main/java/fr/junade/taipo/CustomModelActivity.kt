@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Page « Modèle personnalisé » (pack premium ; toujours ouverte en build debug, pour essayer un modèle avant de l'ajouter au catalogue).
+ * Page « Modèle personnalisé » (pack premium ; en debug, forcer le pack actif pour l'ouvrir).
  *
  * L'utilisateur fournit un fichier `.litertlm` depuis le système de fichiers ([AiModel.CUSTOM], même mécanisme que « Modèle IA local » :
  * permission SAF persistante, copie interne au premier chargement). Il peut le tester (chargement par LiteRT-LM), en faire le modèle du

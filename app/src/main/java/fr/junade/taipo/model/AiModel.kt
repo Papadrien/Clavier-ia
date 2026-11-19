@@ -102,7 +102,7 @@ enum class AiModel(
     ),
 
     /**
-     * Modèle personnalisé : un fichier `.litertlm` choisi par l'utilisateur (pack premium, ou build debug : voir
+     * Modèle personnalisé : un fichier `.litertlm` choisi par l'utilisateur (pack premium : voir
      * `CustomModelAccess`), compatible avec la version de LiteRT-LM intégrée. Hors catalogue ([entriesOrdered]) : pas de
      * téléchargement, pas d'empreinte ni de taille de référence, entrée audio selon le réglage de sa page ([ModelPreferences.acceptsAudio]).
      */

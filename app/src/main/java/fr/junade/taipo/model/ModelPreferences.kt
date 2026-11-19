@@ -82,7 +82,7 @@ class ModelPreferences(context: Context) {
      * fichier), ou si un fichier a été fourni à la main.
      */
     fun isInstalled(model: AiModel): Boolean {
-        // Modèle personnalisé : seulement avec le pack premium (ou en debug). Sans lui, il reste enregistré mais ne sert pas.
+        // Modèle personnalisé : seulement avec le pack premium. Sans lui, il reste enregistré mais ne sert pas.
         if (model == AiModel.CUSTOM && !CustomModelAccess.allowed) return false
         if (isDownloaded(model)) {
             val file = ModelFileResolver.localFileFor(appContext, model)
