@@ -37,7 +37,7 @@ object PhotoGeometry {
      * déformation : la plus grande zone aux proportions de la destination, centrée (recadrage « center crop »).
      */
     fun centerCrop(srcWidth: Int, srcHeight: Int, dstWidth: Int, dstHeight: Int): CropRect {
-        if (srcWidth <= 0 || srcHeight <= 0 || dstWidth <= 0 || dstHeight <= 0) {
+        if (minOf(srcWidth, srcHeight, dstWidth, dstHeight) <= 0) {
             return CropRect(0, 0, srcWidth.coerceAtLeast(0), srcHeight.coerceAtLeast(0))
         }
         // Comparaison en Long : srcWidth × dstHeight peut dépasser Int pour de grandes images.

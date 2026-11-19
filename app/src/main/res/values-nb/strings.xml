@@ -152,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normal (100%)</string>
     <string name="keyboard_settings_height_large">Stor (110%)</string>
     <string name="keyboard_settings_height_extra_large">Ekstra stor (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Sveipeskriving</string>
+    <string name="keyboard_settings_swipe_typing_description">Dra fingeren fra bokstav til bokstav uten å løfte den: ordet skrives når du løfter den. Trykk på et forslag for å bytte; ⌫ rett etterpå sletter hele ordet.</string>
     <string name="keyboard_settings_habits_switch">Lær av vanene mine</string>
     <string name="keyboard_settings_habits_description">Tastaturet husker rettingene du angrer, og e-postadressene dine, kryptert og bare på denne enheten.</string>
     <string name="keyboard_settings_habits_clear">Tøm rettevanene mine</string>

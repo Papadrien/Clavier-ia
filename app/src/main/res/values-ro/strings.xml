@@ -152,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normală (100%)</string>
     <string name="keyboard_settings_height_large">Mare (110%)</string>
     <string name="keyboard_settings_height_extra_large">Foarte mare (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Tastare prin glisare</string>
+    <string name="keyboard_settings_swipe_typing_description">Glisează degetul de la o literă la alta fără să-l ridici: cuvântul se scrie când îl ridici. Atinge o sugestie pentru a-l schimba; ⌫ imediat după șterge tot cuvântul.</string>
     <string name="keyboard_settings_habits_switch">Învață din obiceiurile mele</string>
     <string name="keyboard_settings_habits_description">Tastatura reține corecturile pe care le anulezi și adresele tale de e-mail, criptat, doar pe acest dispozitiv.</string>
     <string name="keyboard_settings_habits_clear">Șterge obiceiurile mele de corectare</string>

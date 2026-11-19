@@ -152,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normalna (100%)</string>
     <string name="keyboard_settings_height_large">Duża (110%)</string>
     <string name="keyboard_settings_height_extra_large">Bardzo duża (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Pisanie przesuwaniem</string>
+    <string name="keyboard_settings_swipe_typing_description">Przesuwaj palec od litery do litery bez odrywania go: słowo zostanie wpisane po oderwaniu. Dotknij sugestii, aby je zmienić; ⌫ zaraz potem usuwa całe słowo.</string>
     <string name="keyboard_settings_habits_switch">Ucz się moich nawyków</string>
     <string name="keyboard_settings_habits_description">Klawiatura zapamiętuje cofnięte przez Ciebie poprawki i Twoje adresy e-mail, w postaci zaszyfrowanej, wyłącznie na tym urządzeniu.</string>
     <string name="keyboard_settings_habits_clear">Wyczyść moje nawyki poprawiania</string>

@@ -35,6 +35,9 @@ class ImeViewComposer(
 
         fun onCursorMoved(steps: Int)
 
+        /** Saisie par glissement : tracé terminé (voir [KeyboardView.OnGestureListener]). */
+        fun onGesture(path: List<fr.junade.taipo.dictionary.GestureDecoder.Point>, keys: Map<Char, fr.junade.taipo.dictionary.GestureDecoder.Point>)
+
         /** Touche globe de la bulle d'Entrée (clavier multilingue) relâchée : changement de langue. */
         fun onGlobeSelected()
 
@@ -189,6 +192,7 @@ class ImeViewComposer(
         keyboardView.heightScale = host.heightScale()
         keyboardView.setOnKeyListener { key -> host.onKey(key) }
         keyboardView.setOnCursorMoveListener { steps -> host.onCursorMoved(steps) }
+        keyboardView.setOnGestureListener { path, keys -> host.onGesture(path, keys) }
         keyboardView.setOnGlobeSelectedListener { host.onGlobeSelected() }
         keyboardView.setOnOneHandedToggleListener { host.onOneHandedToggled() }
         keyboardView.setOnFloatingToggleListener { host.onFloatingToggled() }

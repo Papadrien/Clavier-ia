@@ -152,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normal (100%)</string>
     <string name="keyboard_settings_height_large">Stor (110%)</string>
     <string name="keyboard_settings_height_extra_large">Extra stor (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Svepskrivning</string>
+    <string name="keyboard_settings_swipe_typing_description">Dra fingret från bokstav till bokstav utan att lyfta det: ordet skrivs när du lyfter. Tryck på ett förslag för att byta; ⌫ direkt efter raderar hela ordet.</string>
     <string name="keyboard_settings_habits_switch">Lär av mina vanor</string>
     <string name="keyboard_settings_habits_description">Tangentbordet kommer ihåg korrigeringar som du ångrar och dina e-postadresser, krypterat och bara på den här enheten.</string>
     <string name="keyboard_settings_habits_clear">Rensa mina korrigeringsvanor</string>

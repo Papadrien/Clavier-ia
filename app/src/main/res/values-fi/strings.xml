@@ -152,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normaali (100%)</string>
     <string name="keyboard_settings_height_large">Suuri (110%)</string>
     <string name="keyboard_settings_height_extra_large">Erittäin suuri (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Pyyhkäisykirjoitus</string>
+    <string name="keyboard_settings_swipe_typing_description">Liu\'uta sormea kirjaimesta toiseen nostamatta sitä: sana kirjoitetaan, kun nostat sormen. Napauta ehdotusta vaihtaaksesi; heti perään painettu ⌫ poistaa koko sanan.</string>
     <string name="keyboard_settings_habits_switch">Opi tottumuksistani</string>
     <string name="keyboard_settings_habits_description">Näppäimistö muistaa kumoamasi korjaukset ja sähköpostiosoitteesi salattuina ja vain tällä laitteella.</string>
     <string name="keyboard_settings_habits_clear">Tyhjennä korjaustottumukseni</string>

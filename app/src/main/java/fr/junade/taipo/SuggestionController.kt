@@ -333,6 +333,7 @@ class SuggestionController(
 
     /** Oublie la dernière entrée : la prochaine demande recalcule tout (nouveau champ). */
     fun invalidate() {
+        pinned = null
         lastSuggestionInput = null
         correctionHistory.clear()
         typedInField = false
@@ -353,6 +354,14 @@ class SuggestionController(
     fun refresh(textBeforeCursor: String) {
         updateNextLetters(textBeforeCursor)
         if (!host.barReady()) return
+        // Saisie par glissement : les autres mots possibles restent affichés tant que le mot glissé est juste avant le curseur.
+        pinned?.let { p ->
+            if (textBeforeCursor.endsWith(p.suffix)) {
+                publishSuggestions(null, p.words)
+                return
+            }
+            unpinWords()
+        }
         val language = host.language()
         // Le prompt est un champ de texte libre : ni le type du champ de l'application ni sa sélection n'y comptent.
         val promptActive = host.promptActive()
@@ -517,6 +526,30 @@ class SuggestionController(
         return slots
     }
 
+    /** Mots imposés par la saisie par glissement ([pinWords]) : affichés tant que le texte avant le curseur finit par [suffix]. */
+    private class PinnedWords(val suffix: String, val words: List<WordSuggestion?>)
+
+    private var pinned: PinnedWords? = null
+
+    /**
+     * Saisie par glissement : affiche [words] (les autres mots possibles autour du mot glissé) à la place des suggestions
+     * calculées, tant que le texte avant le curseur se termine par [suffix] (le mot glissé). Un appui sur l'un d'eux remplace le
+     * mot glissé, comme une suggestion ordinaire.
+     */
+    fun pinWords(suffix: String, words: List<WordSuggestion?>) {
+        pinned = PinnedWords(suffix, words)
+        lastSuggestionInput = null
+        cancelPendingSuggestions()
+        if (host.barReady()) publishSuggestions(null, words)
+    }
+
+    /** Fin des mots imposés par la saisie par glissement : le prochain rafraîchissement recalcule les suggestions. */
+    fun unpinWords() {
+        if (pinned == null) return
+        pinned = null
+        lastSuggestionInput = null
+    }
+
     /** Annule le calcul de suggestions en cours : son résultat, même terminé, ne sera pas affiché. */
     private fun cancelPendingSuggestions() {
         suggestionJob?.cancel()
@@ -541,6 +574,7 @@ class SuggestionController(
 
     /** Vide la bande de suggestions (panneau emoji, dictée ou correction en cours). */
     fun clear() {
+        pinned = null
         lastSuggestionInput = null
         cancelPendingSuggestions()
         currentEmojiSuggestion = null

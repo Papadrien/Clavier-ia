@@ -41,6 +41,7 @@ internal class KeyParticles(private val random: Random = Random.Default) {
     }
 
     /** Une particule : départ à [startAt] (ms) en ([x], [y]), vitesse en px/s, gravité en px/s², durée de vie [lifeMs]. */
+    @Suppress("LongParameterList") // simple porteur de valeurs, presque toutes facultatives (nommées à l'appel)
     class Particle(
         val kind: Kind,
         val startAt: Long,
@@ -172,9 +173,13 @@ internal class KeyParticles(private val random: Random = Random.Default) {
         repeat(BLINK_COUNT) { i ->
             add(
                 Particle(
-                    Kind.BLINK, now + i * BLINK_STAGGER_MS,
-                    key.left + random.nextFloat() * key.width, key.top + random.nextFloat() * key.height,
-                    lifeMs = BLINK_MS, color = color, size = unit * BLINK_SIZE,
+                    Kind.BLINK,
+                    now + i * BLINK_STAGGER_MS,
+                    key.left + random.nextFloat() * key.width,
+                    key.top + random.nextFloat() * key.height,
+                    lifeMs = BLINK_MS,
+                    color = color,
+                    size = unit * BLINK_SIZE,
                 ),
             )
         }

@@ -416,6 +416,17 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putBoolean(KEY_ADAPTIVE_TOUCH, value).apply()
         }
 
+    /**
+     * Saisie par glissement (Paramètres du clavier > Saisie intelligente, 19/11/2026) : le doigt glisse de lettre en lettre sans
+     * se lever, le mot s'écrit au relâchement ([fr.junade.taipo.dictionary.GestureDecoder]). Activée par défaut dans le build
+     * debug (validation sur appareil), désactivée en release tant qu'elle n'est pas validée, comme les zones de frappe adaptatives.
+     */
+    var isSwipeTypingEnabled: Boolean
+        get() = prefs.getBoolean(KEY_SWIPE_TYPING, BuildConfig.DEBUG)
+        set(value) {
+            prefs.edit().putBoolean(KEY_SWIPE_TYPING, value).apply()
+        }
+
     /** Debug seulement : dessine les bords des zones de frappe adaptatives sur le clavier. */
     var showTouchZones: Boolean
         get() = BuildConfig.DEBUG && prefs.getBoolean(KEY_SHOW_TOUCH_ZONES, false)
@@ -432,6 +443,7 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_BACKDROP_ANIMATED = "keyboard_backdrop_animated"
         private const val KEY_BACKDROP_SEED = "keyboard_backdrop_seed"
         private const val KEY_BACKDROP_PHOTO_VERSION = "keyboard_backdrop_photo_version"
+        private const val KEY_SWIPE_TYPING = "swipe_typing"
         private const val KEY_FLOATING_WIDTH = "floating_keyboard_width"
         private const val KEY_FLOATING_X = "floating_keyboard_x"
         private const val KEY_FLOATING_Y = "floating_keyboard_y"

@@ -152,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normale (100%)</string>
     <string name="keyboard_settings_height_large">Grande (110%)</string>
     <string name="keyboard_settings_height_extra_large">Molto grande (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Scrittura a scorrimento</string>
+    <string name="keyboard_settings_swipe_typing_description">Fai scorrere il dito da una lettera all\'altra senza sollevarlo: la parola viene scritta quando lo sollevi. Tocca un suggerimento per cambiarla; ⌫ subito dopo cancella l\'intera parola.</string>
     <string name="keyboard_settings_habits_switch">Impara dalle mie abitudini</string>
     <string name="keyboard_settings_habits_description">La tastiera ricorda le correzioni che annulli e i tuoi indirizzi email, crittografati e solo su questo dispositivo.</string>
     <string name="keyboard_settings_habits_clear">Cancella le mie abitudini di correzione</string>

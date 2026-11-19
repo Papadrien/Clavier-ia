@@ -152,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normal (100 %)</string>
     <string name="keyboard_settings_height_large">Groß (110 %)</string>
     <string name="keyboard_settings_height_extra_large">Sehr groß (120 %)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Wischen zum Tippen</string>
+    <string name="keyboard_settings_swipe_typing_description">Gleite mit dem Finger von Buchstabe zu Buchstabe, ohne ihn anzuheben: Das Wort wird geschrieben, wenn du ihn anhebst. Tippe auf einen Vorschlag, um es zu ändern; ⌫ direkt danach löscht das ganze Wort.</string>
     <string name="keyboard_settings_habits_switch">Aus meinen Gewohnheiten lernen</string>
     <string name="keyboard_settings_habits_description">Die Tastatur merkt sich die Korrekturen, die Sie rückgängig machen, und Ihre E-Mail-Adressen, verschlüsselt und nur auf diesem Gerät.</string>
     <string name="keyboard_settings_habits_clear">Meine Korrekturgewohnheiten löschen</string>

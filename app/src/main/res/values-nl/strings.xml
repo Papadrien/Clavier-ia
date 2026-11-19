@@ -152,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normaal (100%)</string>
     <string name="keyboard_settings_height_large">Groot (110%)</string>
     <string name="keyboard_settings_height_extra_large">Extra groot (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Typen door te vegen</string>
+    <string name="keyboard_settings_swipe_typing_description">Veeg met je vinger van letter naar letter zonder hem op te tillen: het woord verschijnt als je loslaat. Tik op een suggestie om het te wisselen; ⌫ direct daarna wist het hele woord.</string>
     <string name="keyboard_settings_habits_switch">Leren van mijn gewoonten</string>
     <string name="keyboard_settings_habits_description">Het toetsenbord onthoudt de correcties die je ongedaan maakt en je e-mailadressen, versleuteld en alleen op dit apparaat.</string>
     <string name="keyboard_settings_habits_clear">Mijn correctiegewoonten wissen</string>

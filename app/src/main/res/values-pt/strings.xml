@@ -152,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normal (100%)</string>
     <string name="keyboard_settings_height_large">Grande (110%)</string>
     <string name="keyboard_settings_height_extra_large">Muito grande (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Escrita deslizante</string>
+    <string name="keyboard_settings_swipe_typing_description">Deslize o dedo de letra em letra sem o levantar: a palavra é escrita quando o levanta. Toque numa sugestão para a trocar; ⌫ logo a seguir apaga a palavra inteira.</string>
     <string name="keyboard_settings_habits_switch">Aprender com meus hábitos</string>
     <string name="keyboard_settings_habits_description">O teclado lembra as correções que você desfaz e seus endereços de e-mail, criptografados e apenas neste dispositivo.</string>
     <string name="keyboard_settings_habits_clear">Apagar meus hábitos de correção</string>

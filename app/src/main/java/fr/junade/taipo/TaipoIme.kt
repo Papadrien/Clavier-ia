@@ -136,6 +136,10 @@ class TaipoIme : InputMethodService() {
         override fun onWordSuggestionTapped(suggestion: WordSuggestion) = this@TaipoIme.onWordSuggestionTapped(suggestion)
         override fun onKeyPressed(key: Key) = this@TaipoIme.onKeyPressed(key)
         override fun onCursorMoved(steps: Int) = this@TaipoIme.onCursorMoved(steps)
+        override fun onGesture(
+            path: List<fr.junade.taipo.dictionary.GestureDecoder.Point>,
+            keys: Map<Char, fr.junade.taipo.dictionary.GestureDecoder.Point>,
+        ) = this@TaipoIme.swipeTyping.onGesture(path, keys)
         override fun onGlobeSelected() = this@TaipoIme.languages.onGlobeSelected()
         override fun onOneHandedToggled() = this@TaipoIme.oneHanded.toggle()
         override fun onOneHandedSideSwitched() = this@TaipoIme.oneHanded.switchSide()
@@ -231,6 +235,40 @@ class TaipoIme : InputMethodService() {
     private fun watchAiForBackdrop(enabled: Boolean) {
         mainHandler.removeCallbacks(aiBackdropTick)
         if (enabled) mainHandler.post(aiBackdropTick) else viewComposer.setBackdropAiBusy(false)
+    }
+
+    /** Saisie par glissement permise dans le champ courant (réglage activé, champ de texte libre et non sensible). */
+    private var swipeTypingActive = false
+
+    /** Saisie par glissement (19/11/2026) : décodage du tracé, mot écrit, alternatives, ⌫ qui efface le mot : voir [SwipeTypingController]. */
+    private val swipeTyping: SwipeTypingController by lazy {
+        SwipeTypingController(
+            serviceScope,
+            object : SwipeTypingController.Host {
+                override fun inputConnection(): InputConnection? = currentInputConnection
+                override fun language(): KeyboardLanguage = controller.state.language
+                override fun personalWords(): List<String> = knownPersonalWords()
+                override fun isShifted(): Boolean = controller.state.isShifted
+                override fun isCapsLock(): Boolean = controller.state.isCapsLock
+                override fun blocked(): Boolean = prompt.active || isRecording || correctionInProgress || fieldEditor.hasSelection()
+                override fun pinSuggestions(suffix: String, words: List<WordSuggestion?>) = suggestions.pinWords(suffix, words)
+                override fun unpinSuggestions() = suggestions.unpinWords()
+                override fun onWordCommitted(inserted: String) {
+                    hapticFeedback.perform(hapticIntensity)
+                    Analytics.keyboardUsed(this@TaipoIme)
+                    onUserTyped()
+                    clearHighlightIfNeeded()
+                    autocorrections.pending = null
+                    recordUndoEdit(inserted = inserted, original = "")
+                    learnFromTyping() // le mot glissé compte comme un mot tapé (prédiction du mot suivant)
+                    afterFieldEdit()
+                }
+                override fun onWordErased() {
+                    onUserTyped()
+                    afterFieldEdit()
+                }
+            },
+        )
     }
 
     /** Fond « Image » : l'image de l'utilisateur, décodée hors du thread principal et gardée tant qu'elle ne change pas. */
@@ -585,6 +623,10 @@ class TaipoIme : InputMethodService() {
         syncAutoCapitalization()
         correction.clearHighlightState()
         layoutApplier.apply()
+        // Saisie par glissement : jamais dans un champ sans suggestions (mot de passe, e-mail, adresse web, nombre) ni sensible.
+        swipeTypingActive = keyboardPreferences.isSwipeTypingEnabled && suggestions.suggestionsAllowed && !sensitiveField
+        keyboardView.swipeTypingAllowed = { swipeTypingActive && !prompt.active && !isRecording && !correctionInProgress }
+        if (swipeTypingActive) swipeTyping.prepare(keyboardView.gestureKeyChars()) else swipeTyping.clear()
         // Story 2.2 : écoute des copies tant que le clavier est actif, et relecture à l'ouverture du
         // champ (le processus du clavier a pu être tué depuis la dernière copie).
         clipboard.startListening()
@@ -804,6 +846,10 @@ class TaipoIme : InputMethodService() {
             return
         }
 
+        // Saisie par glissement : ⌫ juste après un mot glissé l'efface entier ; une lettre tapée après lui commence un nouveau mot.
+        if (key.action == KeyAction.Backspace && swipeTyping.onBackspace()) return
+        swipeTyping.beforeKey(key)
+
         // Suppression juste après une autocorrection : on annule la correction au lieu d'effacer un caractère.
         if (key.action == KeyAction.Backspace && undoLastAutocorrection()) {
             onUserTyped()
@@ -910,6 +956,7 @@ class TaipoIme : InputMethodService() {
      * éventuelle sélection et respecte les caractères composés du champ.
      */
     private fun onCursorMoved(steps: Int) {
+        swipeTyping.clear()
         lastSpaceCursorMoveAt = android.os.SystemClock.uptimeMillis()
         gestureTips.learned(GestureTips.Tip.MOVE_CURSOR)
         if (prompt.active) {
@@ -999,6 +1046,7 @@ class TaipoIme : InputMethodService() {
             return
         }
         if (suggestion !in currentWordSuggestions) return
+        swipeTyping.clear() // une autre possibilité du mot glissé, ou un mot de la bande : le glissement est terminé
         // Pendant la dictée, seules les alternatives d'un mot touché pour le corriger sont proposées (voir VoiceWordPick).
         if ((isRecording && !voice.wordPickActive) || correctionInProgress || fieldEditor.hasSelection()) return
         val ic = currentInputConnection ?: return

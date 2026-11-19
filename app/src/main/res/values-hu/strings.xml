@@ -152,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normál (100%)</string>
     <string name="keyboard_settings_height_large">Nagy (110%)</string>
     <string name="keyboard_settings_height_extra_large">Nagyon nagy (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Csúsztatásos gépelés</string>
+    <string name="keyboard_settings_swipe_typing_description">Csúsztasd az ujjad betűről betűre felemelés nélkül: a szó akkor íródik be, amikor felemeled. Koppints egy javaslatra a cseréjéhez; a közvetlenül utána nyomott ⌫ az egész szót törli.</string>
     <string name="keyboard_settings_habits_switch">Tanuljon a szokásaimból</string>
     <string name="keyboard_settings_habits_description">A billentyűzet megjegyzi a visszavont javításokat és az e-mail-címeit, titkosítva, csak ezen az eszközön.</string>
     <string name="keyboard_settings_habits_clear">Javítási szokásaim törlése</string>

@@ -1,15 +1,11 @@
 package fr.junade.taipo
 
 import android.animation.ValueAnimator
-import android.app.AlertDialog
-import android.content.ActivityNotFoundException
 import android.content.Context
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.Layout
 import android.util.TypedValue
-import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -21,8 +17,6 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.activity.ComponentActivity
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
@@ -31,12 +25,10 @@ import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.backdrop.BackdropPreviewView
 import fr.junade.taipo.backdrop.KeyboardBackdrop
 import fr.junade.taipo.backdrop.PhotoBackdrop
+import fr.junade.taipo.backdrop.PhotoBackdropSection
 import kotlin.math.abs
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * Page « Thème » (paramètres, lots T5 et T7) : cartes d'aperçu, Système (automatique), Clair, Sombre et, dès Android 12,
@@ -99,11 +91,17 @@ class ThemeActivity : ComponentActivity() {
     /** Import et lecture de l'image du fond « Image » : annulés avec l'écran. */
     private val scope = MainScope()
 
-    /** Fond « Image » depuis la galerie : sélecteur de photos d'Android (repli sur le sélecteur de fichiers sur les anciennes versions). */
-    private val pickPhoto = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri -> uri?.let(::importPhoto) }
-
-    /** Fond « Image » depuis le sélecteur de fichiers (Fichiers, Drive…), images seulement. */
-    private val openPhoto = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> uri?.let(::importPhoto) }
+    /** Fond « Image » : choix (galerie ou fichiers), import, suppression et vignette, voir [PhotoBackdropSection]. */
+    private val photoSection = PhotoBackdropSection(
+        this,
+        scope,
+        preferences = { preferences },
+        onPreview = { photo ->
+            backdropCards.firstOrNull { it.backdrop == KeyboardBackdrop.PHOTO }?.preview?.photo = photo
+            renderBackdrops()
+        },
+        onImported = { previewBackdrop = null },
+    )
 
     // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
@@ -387,9 +385,9 @@ class ThemeActivity : ComponentActivity() {
         findViewById<View>(R.id.button_backdrop_unlock).setOnClickListener {
             startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_THEME))
         }
-        findViewById<View>(R.id.button_backdrop_photo_change).setOnClickListener { choosePhotoSource() }
-        findViewById<View>(R.id.button_backdrop_photo_delete).setOnClickListener { confirmDeletePhoto() }
-        loadPhotoPreview()
+        findViewById<View>(R.id.button_backdrop_photo_change).setOnClickListener { photoSection.choose() }
+        findViewById<View>(R.id.button_backdrop_photo_delete).setOnClickListener { photoSection.confirmDelete() }
+        photoSection.loadPreview()
         // Défilement de la page : les motifs avancent avec lui, pour montrer qu'ils sont animés.
         findViewById<View>(R.id.theme_scroll).setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
             val delta = abs(scrollY - oldScrollY).toFloat()
@@ -440,7 +438,7 @@ class ThemeActivity : ComponentActivity() {
         }
         if (backdrop == KeyboardBackdrop.PHOTO && !PhotoBackdrop.exists(this)) {
             // Pas encore d'image : on la fait choisir ; le fond « Image » est posé une fois l'image importée.
-            choosePhotoSource()
+            photoSection.choose()
             return
         }
         previewBackdrop = null
@@ -488,96 +486,6 @@ class ThemeActivity : ComponentActivity() {
         val photoSettings = shown == KeyboardBackdrop.PHOTO && previewBackdrop == null
         findViewById<View>(R.id.button_backdrop_photo_change).visibility = if (photoSettings) View.VISIBLE else View.GONE
         findViewById<View>(R.id.button_backdrop_photo_delete).visibility = if (photoSettings) View.VISIBLE else View.GONE
-    }
-
-    /** « Supprimer l'image » : confirmation, puis copie supprimée et fond Uni. */
-    private fun confirmDeletePhoto() {
-        AlertDialog.Builder(ContextThemeWrapper(this, R.style.MessageDialogTheme))
-            .setTitle(R.string.theme_backdrop_photo_delete_title)
-            .setMessage(R.string.theme_backdrop_photo_delete_message)
-            .setPositiveButton(R.string.theme_backdrop_photo_delete_confirm) { _, _ -> deletePhoto() }
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
-    }
-
-    /** Supprime la copie de l'image hors du thread principal ; le clavier repasse à Uni au prochain champ (plus d'image). */
-    private fun deletePhoto() {
-        val appContext = applicationContext
-        scope.launch {
-            val deleted = withContext(Dispatchers.IO) {
-                PhotoBackdrop.delete(appContext).also { ok ->
-                    if (ok) {
-                        preferences.backdropPhotoVersion = System.currentTimeMillis()
-                        if (preferences.keyboardBackdrop == KeyboardBackdrop.PHOTO) preferences.keyboardBackdrop = KeyboardBackdrop.PLAIN
-                    }
-                }
-            }
-            if (!deleted) {
-                showScreenMessage(R.string.theme_backdrop_photo_delete_error)
-                return@launch
-            }
-            Analytics.setting(this@ThemeActivity, "keyboard_backdrop", KeyboardBackdrop.PLAIN.storageKey)
-            backdropCards.firstOrNull { it.backdrop == KeyboardBackdrop.PHOTO }?.preview?.photo = null
-            renderBackdrops()
-        }
-    }
-
-    /** Choix de la source de l'image du fond : galerie (sélecteur de photos) ou sélecteur de fichiers. */
-    private fun choosePhotoSource() {
-        val sources = arrayOf(getString(R.string.theme_backdrop_photo_source_gallery), getString(R.string.theme_backdrop_photo_source_files))
-        AlertDialog.Builder(ContextThemeWrapper(this, R.style.MessageDialogTheme))
-            .setTitle(R.string.theme_backdrop_photo_source_title)
-            .setItems(sources) { _, which -> launchPhotoPicker(gallery = which == 0) }
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
-    }
-
-    private fun launchPhotoPicker(gallery: Boolean) {
-        try {
-            if (gallery) {
-                pickPhoto.launch(PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly).build())
-            } else {
-                openPhoto.launch(arrayOf("image/*"))
-            }
-        } catch (e: ActivityNotFoundException) {
-            AppLog.w(TAG, "aucun sélecteur d'image", e)
-            showScreenMessage(R.string.theme_backdrop_photo_no_picker)
-        }
-    }
-
-    /**
-     * Image choisie : copie réduite enregistrée hors du thread principal ([PhotoBackdrop.store]), puis fond « Image » posé et
-     * nouvelle version annoncée au clavier (réglages écrits avec l'image, même si l'écran se ferme entre-temps).
-     */
-    private fun importPhoto(uri: Uri) {
-        val appContext = applicationContext
-        scope.launch {
-            val imported = withContext(Dispatchers.IO) {
-                PhotoBackdrop.store(appContext, uri).also { ok ->
-                    if (ok) {
-                        preferences.backdropPhotoVersion = System.currentTimeMillis()
-                        preferences.keyboardBackdrop = KeyboardBackdrop.PHOTO
-                    }
-                }
-            }
-            if (!imported) {
-                showScreenMessage(R.string.theme_backdrop_photo_error)
-                return@launch
-            }
-            previewBackdrop = null
-            Analytics.setting(this@ThemeActivity, "keyboard_backdrop", KeyboardBackdrop.PHOTO.storageKey)
-            loadPhotoPreview()
-        }
-    }
-
-    /** Vignette du fond « Image » : l'image enregistrée, lue en taille réduite hors du thread principal. */
-    private fun loadPhotoPreview() {
-        val appContext = applicationContext
-        scope.launch {
-            val photo = withContext(Dispatchers.IO) { PhotoBackdrop.load(appContext, PHOTO_PREVIEW_SIDE_PX) }
-            backdropCards.firstOrNull { it.backdrop == KeyboardBackdrop.PHOTO }?.preview?.photo = photo
-            renderBackdrops()
-        }
     }
 
     /**
@@ -805,10 +713,6 @@ class ThemeActivity : ComponentActivity() {
         const val CARDS_PER_ROW = 3
         const val SWATCHES_PER_ROW = 5
         const val BACKDROPS_PER_ROW = 2
-
-        /** Grand côté de l'image lue pour la vignette du fond « Image » (la vignette fait la moitié de la largeur de l'écran). */
-        const val PHOTO_PREVIEW_SIDE_PX = 720
-        const val TAG = "ThemeActivity"
     }
 }
 

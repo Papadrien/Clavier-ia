@@ -211,16 +211,28 @@ internal class KeyPreview(private val view: View) {
         when (style.bubble) {
             KeyPreviewAnimation.SPARKS -> particles.sparks(start, previewRect.centerX(), previewRect.centerY(), unit, accent, accentLight, keyBox)
             KeyPreviewAnimation.PIXELS -> particles.shatter(
-                start, KeyParticles.Box(previewRect.left, previewRect.top, previewRect.width(), previewRect.height()), unit, face, accent,
+                start,
+                KeyParticles.Box(previewRect.left, previewRect.top, previewRect.width(), previewRect.height()),
+                unit,
+                face,
+                accent,
             )
             KeyPreviewAnimation.HEART -> particles.heartTrail(
-                start, previewRect.centerX(), previewRect.centerY() + previewRect.height() * HEART_TRAIL_DROP, previewRect.width(), unit,
+                start,
+                previewRect.centerX(),
+                previewRect.centerY() + previewRect.height() * HEART_TRAIL_DROP,
+                previewRect.width(),
+                unit,
                 accentLight,
             )
             KeyPreviewAnimation.BLOOM -> {
                 val r = bloomRadius()
                 val flower = KeyParticles.Flower(
-                    previewRect.centerX(), previewRect.centerY(), r * BLOOM_PETAL_BASE, r * BLOOM_PETAL_LENGTH, r * BLOOM_PETAL_WIDTH,
+                    previewRect.centerX(),
+                    previewRect.centerY(),
+                    r * BLOOM_PETAL_BASE,
+                    r * BLOOM_PETAL_LENGTH,
+                    r * BLOOM_PETAL_WIDTH,
                 )
                 val colors = IntArray(BLOOM_PETALS) { if (it % 2 == 0) accent else accentLight }
                 particles.petalFall(start, flower, unit, colors, keyBox, BLOOM_CORE_COLOR)
@@ -349,8 +361,14 @@ internal class KeyPreview(private val view: View) {
             fillPaint(if (i % 2 == 0) accent else accentLight, pose.alpha)
             val d = r * BLOOM_PETAL_BASE * open
             // Les pétales tournent un peu en s'ouvrant, comme une corolle qui se déplie.
-            drawPetal(canvas, cx + cos(a) * d, cy + sin(a) * d, r * BLOOM_PETAL_LENGTH * open, r * BLOOM_PETAL_WIDTH * open,
-                a + (Math.PI / 2).toFloat() - (1f - open) * BLOOM_TWIST)
+            drawPetal(
+                canvas,
+                cx + cos(a) * d,
+                cy + sin(a) * d,
+                r * BLOOM_PETAL_LENGTH * open,
+                r * BLOOM_PETAL_WIDTH * open,
+                a + (Math.PI / 2).toFloat() - (1f - open) * BLOOM_TWIST,
+            )
         }
         val core = r * BLOOM_CORE * pose.scaleX
         if (core > 0f) {

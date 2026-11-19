@@ -152,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normal (100%)</string>
     <string name="keyboard_settings_height_large">Stor (110%)</string>
     <string name="keyboard_settings_height_extra_large">Ekstra stor (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Strygeskrivning</string>
+    <string name="keyboard_settings_swipe_typing_description">Stryg fingeren fra bogstav til bogstav uden at løfte den: ordet skrives, når du løfter den. Tryk på et forslag for at skifte; ⌫ lige efter sletter hele ordet.</string>
     <string name="keyboard_settings_habits_switch">Lær af mine vaner</string>
     <string name="keyboard_settings_habits_description">Tastaturet husker de rettelser, du fortryder, og dine e-mailadresser, krypteret og kun på denne enhed.</string>
     <string name="keyboard_settings_habits_clear">Ryd mine rettelsesvaner</string>

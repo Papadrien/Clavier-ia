@@ -158,6 +158,8 @@
     <string name="keyboard_settings_height_normal">Normal (100%)</string>
     <string name="keyboard_settings_height_large">Large (110%)</string>
     <string name="keyboard_settings_height_extra_large">Extra large (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Swipe typing</string>
+    <string name="keyboard_settings_swipe_typing_description">Slide your finger from letter to letter without lifting it: the word is written when you lift it. Tap a suggestion to swap it; ⌫ right after erases the whole word.</string>
     <string name="keyboard_settings_habits_switch">Learn from my habits</string>
     <string name="keyboard_settings_habits_description">The keyboard remembers the corrections you undo and your email addresses, encrypted, on this device only.</string>
     <string name="keyboard_settings_habits_clear">Clear my correction habits</string>

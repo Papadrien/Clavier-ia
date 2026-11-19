@@ -158,6 +158,8 @@
     <string name="keyboard_settings_height_normal">Normale (100 %)</string>
     <string name="keyboard_settings_height_large">Grande (110 %)</string>
     <string name="keyboard_settings_height_extra_large">Très grande (120 %)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Saisie par glissement</string>
+    <string name="keyboard_settings_swipe_typing_description">Glissez le doigt de lettre en lettre sans le lever : le mot s\'écrit quand vous le levez. Touchez une suggestion pour le changer ; ⌫ juste après efface le mot entier.</string>
     <string name="keyboard_settings_habits_switch">Apprendre de mes habitudes</string>
     <string name="keyboard_settings_habits_description">Le clavier retient vos corrections annulées et vos adresses e-mail, chiffrées, sur cet appareil seulement.</string>
     <string name="keyboard_settings_habits_clear">Effacer mes habitudes de correction</string>

@@ -152,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normální (100%)</string>
     <string name="keyboard_settings_height_large">Velká (110%)</string>
     <string name="keyboard_settings_height_extra_large">Velmi velká (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Psaní tahem</string>
+    <string name="keyboard_settings_swipe_typing_description">Táhněte prstem od písmene k písmenu bez zvednutí: slovo se napíše, když prst zvednete. Klepnutím na návrh ho změníte; ⌫ hned potom smaže celé slovo.</string>
     <string name="keyboard_settings_habits_switch">Učit se z mých zvyků</string>
     <string name="keyboard_settings_habits_description">Klávesnice si pamatuje opravy, které vrátíte, a vaše e-mailové adresy, šifrovaně, jen v tomto zařízení.</string>
     <string name="keyboard_settings_habits_clear">Vymazat mé zvyky při opravách</string>
