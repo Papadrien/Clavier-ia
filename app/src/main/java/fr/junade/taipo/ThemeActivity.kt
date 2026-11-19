@@ -835,6 +835,10 @@ internal fun MotionStyle.labelRes(): Int = when (this) {
     MotionStyle.FLIGHT -> R.string.motion_style_flight
     MotionStyle.DROP -> R.string.motion_style_drop
     MotionStyle.GLIDE -> R.string.motion_style_glide
+    MotionStyle.SPARKS -> R.string.motion_style_sparks
+    MotionStyle.PIXELS -> R.string.motion_style_pixels
+    MotionStyle.HEART -> R.string.motion_style_heart
+    MotionStyle.BLOOM -> R.string.motion_style_bloom
 }
 
 /** Nom de la forme des touches (carte de la page « Apparence »). */

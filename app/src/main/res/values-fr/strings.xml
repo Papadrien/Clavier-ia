@@ -697,6 +697,10 @@
     <string name="motion_style_flight">Envol</string>
     <string name="motion_style_drop">Goutte</string>
     <string name="motion_style_glide">Glisse</string>
+    <string name="motion_style_sparks">Étincelles</string>
+    <string name="motion_style_pixels">Pixels</string>
+    <string name="motion_style_heart">Bulle cœur</string>
+    <string name="motion_style_bloom">Éclosion</string>
     <string name="home_row_languages_subtitle">Langues et dispositions du clavier</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Apparence</string>

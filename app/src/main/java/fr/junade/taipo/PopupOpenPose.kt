@@ -55,7 +55,9 @@ internal object PopupOpenPose {
     fun styled(style: MotionStyle, open: Float): Pose {
         val t = ((open - START_SCALE) / (1f - START_SCALE)).coerceIn(0f, 1f)
         return when (style.bubble) {
-            KeyPreviewAnimation.SPRING -> Pose(open * style.stretchX(open), open * style.stretchY(open), 0f, alpha(open))
+            KeyPreviewAnimation.SPRING, KeyPreviewAnimation.SPARKS, KeyPreviewAnimation.PIXELS, KeyPreviewAnimation.HEART,
+            KeyPreviewAnimation.BLOOM,
+            -> Pose(open * style.stretchX(open), open * style.stretchY(open), 0f, alpha(open))
             KeyPreviewAnimation.FLIGHT -> (FLIGHT_START_SCALE + (1f - FLIGHT_START_SCALE) * t).let { Pose(it, it, (1f - t) * FLIGHT_RISE, t) }
             KeyPreviewAnimation.DROP -> Pose(DROP_START_WIDTH + (1f - DROP_START_WIDTH) * minOf(open, 1f), open, 0f, alpha(open))
             KeyPreviewAnimation.GLIDE -> (GLIDE_START_SCALE + (1f - GLIDE_START_SCALE) * t).let { Pose(it, it, 0f, t) }

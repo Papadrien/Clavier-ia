@@ -654,6 +654,10 @@
     <string name="motion_style_flight">Zbor</string>
     <string name="motion_style_drop">Picătură</string>
     <string name="motion_style_glide">Alunecare</string>
+    <string name="motion_style_sparks">Scântei</string>
+    <string name="motion_style_pixels">Pixeli</string>
+    <string name="motion_style_heart">Bulă inimă</string>
+    <string name="motion_style_bloom">Înflorire</string>
     <string name="home_row_languages_subtitle">Limbile și aranjările tastaturii</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Aspect</string>

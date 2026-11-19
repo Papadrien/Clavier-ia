@@ -1,7 +1,11 @@
 package fr.junade.taipo
 
+import kotlin.math.cos
+import kotlin.math.exp
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 /**
  * Forme de l'animation de la bulle d'agrandissement des touches (maquettes du 16/11/2026). Elle n'a pas de réglage propre : elle
@@ -19,6 +23,22 @@ enum class KeyPreviewAnimation {
 
     /** Une seule bulle qui suit la frappe : elle glisse de touche en touche au lieu de s'éteindre et se rallumer. */
     GLIDE,
+
+    /** Étincelles (maquettes du 19/11/2026) : jaillit avec un rebond vif ; au relâchement, éclate en gerbe d'étincelles. */
+    SPARKS,
+
+    /** Pixels : apparaît d'un coup ; au relâchement, se brise en carrés qui tombent (quelques pixels clignotent à l'appui). */
+    PIXELS,
+
+    /** Bulle cœur : la bulle est un cœur ; au relâchement, il s'envole en se balançant, suivi de mini-cœurs. */
+    HEART,
+
+    /** Éclosion : cinq pétales s'ouvrent l'un après l'autre autour de la lettre ; au relâchement, ils tombent en tournoyant. */
+    BLOOM,
+    ;
+
+    /** Au relâchement, la bulle laisse des particules ([KeyParticles]) : étincelles, éclats, cœurs ou pétales. */
+    val hasParticles: Boolean get() = this == SPARKS || this == PIXELS || this == HEART || this == BLOOM
 }
 
 /**
@@ -45,22 +65,35 @@ internal object KeyPreviewPose {
         val alpha: Float = 1f,
         val letterOffsetY: Float = 0f,
         val grow: Float = 1f,
+        /** Décalage horizontal en largeurs de touche (positif vers la droite) : balancement de la bulle cœur. */
+        val offsetX: Float = 0f,
     )
 
     val REST = Pose()
 
     /** Durée de l'entrée : au-delà, la bulle est posée et ne demande plus d'image tant que la touche reste appuyée. */
-    fun enterDurationMs(style: MotionStyle): Long = style.tuneDurationMs(ENTER_MS)
+    fun enterDurationMs(style: MotionStyle): Long = when (style.bubble) {
+        // Ressorts propres aux bulles du 19/11/2026, plus longs à se poser que l'entrée habituelle.
+        KeyPreviewAnimation.SPARKS -> SPARKS_ENTER_MS
+        KeyPreviewAnimation.HEART -> HEART_ENTER_MS
+        KeyPreviewAnimation.BLOOM -> BLOOM_ENTER_MS
+        else -> style.tuneDurationMs(ENTER_MS)
+    }
 
-    /** Durée de la sortie de [animation] (après le relâchement, ou [MIN_SHOW_MS] après l'appui). */
-    fun exitDurationMs(animation: KeyPreviewAnimation, style: MotionStyle): Long = style.tuneDurationMs(
-        when (animation) {
-            KeyPreviewAnimation.SPRING -> SPRING_EXIT_MS
-            KeyPreviewAnimation.FLIGHT -> FLIGHT_EXIT_MS
-            KeyPreviewAnimation.DROP -> DROP_EXIT_MS
-            KeyPreviewAnimation.GLIDE -> GLIDE_EXIT_MS
-        },
-    )
+    /**
+     * Durée de la sortie de [animation] (après le relâchement, ou [MIN_SHOW_MS] après l'appui). Étincelles, Pixels et Éclosion
+     * sortent presque aussitôt : la suite est faite de particules ([KeyParticles]), qui ont leur propre durée.
+     */
+    fun exitDurationMs(animation: KeyPreviewAnimation, style: MotionStyle): Long = when (animation) {
+        KeyPreviewAnimation.SPRING -> style.tuneDurationMs(SPRING_EXIT_MS)
+        KeyPreviewAnimation.FLIGHT -> style.tuneDurationMs(FLIGHT_EXIT_MS)
+        KeyPreviewAnimation.DROP -> style.tuneDurationMs(DROP_EXIT_MS)
+        KeyPreviewAnimation.GLIDE -> style.tuneDurationMs(GLIDE_EXIT_MS)
+        KeyPreviewAnimation.SPARKS -> SPARKS_EXIT_MS
+        KeyPreviewAnimation.PIXELS -> PIXELS_EXIT_MS
+        KeyPreviewAnimation.HEART -> HEART_EXIT_MS
+        KeyPreviewAnimation.BLOOM -> BLOOM_EXIT_MS
+    }
 
     /**
      * Pose de la bulle, ou null une fois sa sortie terminée. [animated] faux (animations coupées dans les réglages système) : la
@@ -84,7 +117,66 @@ internal object KeyPreviewPose {
             KeyPreviewAnimation.GLIDE -> spring(style, sinceDownMs, 0f, fresh).copy(alpha = enterAlpha(sinceDownMs, fresh) * (1f - u))
             KeyPreviewAnimation.FLIGHT -> flight(style, sinceDownMs, u)
             KeyPreviewAnimation.DROP -> drop(style, sinceDownMs, u)
+            KeyPreviewAnimation.SPARKS -> sparks(sinceDownMs, u)
+            KeyPreviewAnimation.PIXELS -> pixels(sinceDownMs, u)
+            KeyPreviewAnimation.HEART -> heart(sinceDownMs, u)
+            KeyPreviewAnimation.BLOOM -> bloom(sinceDownMs, u)
         }
+    }
+
+    /**
+     * Éclosion : ouverture (0 fermé, 1 ouvert, rebond compris) du pétale [index] (0 à 4) à [sinceDownMs] ; chaque pétale part
+     * [BLOOM_PETAL_STAGGER_MS] après le précédent. [animated] faux : pétales ouverts.
+     */
+    fun petalOpen(sinceDownMs: Long, index: Int, animated: Boolean = true): Float {
+        if (!animated) return 1f
+        return springAt(BLOOM_PETAL_OMEGA, BLOOM_PETAL_ZETA, (sinceDownMs - index * BLOOM_PETAL_STAGGER_MS) / MS_PER_S)
+    }
+
+    /** Étincelles : jaillit avec un rebond vif ; en sortie, gonfle et s'efface en un éclair (les étincelles prennent le relais). */
+    private fun sparks(sinceDownMs: Long, u: Float): Pose {
+        val r = springAt(SPARKS_OMEGA, SPARKS_ZETA, sinceDownMs / MS_PER_S)
+        var scale = SPRING_START_SCALE + (1f - SPRING_START_SCALE) * r
+        var alpha = enterAlpha(sinceDownMs, fresh = true)
+        if (u > 0f) {
+            scale *= 1f + SPARKS_EXIT_GROW * u
+            alpha *= 1f - u
+        }
+        return Pose(scale, scale, 0f, alpha)
+    }
+
+    /** Pixels : apparaît d'un coup (à peine plus petite la première trame) ; en sortie, laisse la place aux éclats. */
+    private fun pixels(sinceDownMs: Long, u: Float): Pose {
+        if (u > 0f) return Pose(alpha = 0f)
+        val scale = if (sinceDownMs < PIXELS_SNAP_MS) PIXELS_START_SCALE else 1f
+        return Pose(scale, scale)
+    }
+
+    /** Bulle cœur : grandit avec un rebond ; en sortie, s'envole de [HEART_RISE_KEYS] touches en se balançant et s'efface. */
+    private fun heart(sinceDownMs: Long, u: Float): Pose {
+        val r = springAt(HEART_OMEGA, HEART_ZETA, sinceDownMs / MS_PER_S)
+        var scale = SPRING_START_SCALE + (1f - SPRING_START_SCALE) * r
+        val alpha = enterAlpha(sinceDownMs, fresh = true)
+        if (u <= 0f) return Pose(scale, scale, 0f, alpha)
+        val e = easeOut(u)
+        scale *= 1f - HEART_EXIT_SHRINK * u
+        val sway = sin(u * HEART_SWAY_RAD) * HEART_SWAY_KEYS * (1f - u)
+        return Pose(scale, scale, -e * HEART_RISE_KEYS, alpha * (1f - e), offsetX = sway)
+    }
+
+    /** Éclosion : le cœur de la fleur (la lettre) grandit avec un rebond ; les pétales suivent [petalOpen]. Sortie : les pétales tombent. */
+    private fun bloom(sinceDownMs: Long, u: Float): Pose {
+        if (u > 0f) return Pose(alpha = 0f)
+        val c = springAt(BLOOM_CORE_OMEGA, BLOOM_CORE_ZETA, sinceDownMs / MS_PER_S)
+        return Pose(c, c, 0f, enterAlpha(sinceDownMs, fresh = true))
+    }
+
+    /** Position d'un ressort (pulsation [omega], amortissement [zeta] < 1) lâché de 0 vers 1, à [seconds] ; 0 avant le départ. */
+    private fun springAt(omega: Float, zeta: Float, seconds: Float): Float {
+        if (seconds <= 0f) return 0f
+        val omegaD = omega * sqrt(1f - zeta * zeta)
+        val decay = zeta * omega
+        return 1f - exp(-decay * seconds) * (cos(omegaD * seconds) + decay / omegaD * sin(omegaD * seconds))
     }
 
     /** Ressort : de [SPRING_START_SCALE] à sa taille en montant depuis la touche ; en sortie, se réduit et redescend dans la touche. */
@@ -153,4 +245,29 @@ internal object KeyPreviewPose {
     private const val DROP_MAX_GROW = 1.15f
     private const val DROP_EXIT_MS = 120L
     private const val GLIDE_EXIT_MS = 100L
+
+    // Étincelles, Pixels, Bulle cœur, Éclosion (maquettes du 19/11/2026).
+    private const val SPARKS_OMEGA = 34f
+    private const val SPARKS_ZETA = 0.42f
+    private const val SPARKS_ENTER_MS = 300L
+    private const val SPARKS_EXIT_MS = 90L
+    private const val SPARKS_EXIT_GROW = 0.3f
+    private const val PIXELS_SNAP_MS = 30L
+    private const val PIXELS_START_SCALE = 0.9f
+    private const val PIXELS_EXIT_MS = 40L
+    private const val HEART_OMEGA = 24f
+    private const val HEART_ZETA = 0.4f
+    private const val HEART_ENTER_MS = 400L
+    private const val HEART_EXIT_MS = 600L
+    private const val HEART_EXIT_SHRINK = 0.6f
+    private const val HEART_RISE_KEYS = 2.2f
+    private const val HEART_SWAY_KEYS = 0.15f
+    private const val HEART_SWAY_RAD = 8.4f
+    private const val BLOOM_CORE_OMEGA = 30f
+    private const val BLOOM_CORE_ZETA = 0.6f
+    private const val BLOOM_PETAL_OMEGA = 26f
+    private const val BLOOM_PETAL_ZETA = 0.5f
+    private const val BLOOM_PETAL_STAGGER_MS = 25L
+    private const val BLOOM_ENTER_MS = 400L
+    private const val BLOOM_EXIT_MS = 40L
 }

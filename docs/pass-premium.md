@@ -13,7 +13,7 @@ Achat unique, à vie, **2,99 €** (produit `pass_premium` de type « achat uniq
 | Fond du clavier (page Apparence) | Uni | + 7 fonds animés : Rubans, Bulles, Cristal, Ondes, Cœurs, Fleurs, Processeur, et le fond « Image » (image choisie par l'utilisateur, `PhotoBackdrop`) (`KeyboardBackdrop`) |
 | Forme des touches | 4 formes simples | + 5 formes (`KeyShape`) |
 | Police du clavier | Open Sans | + 9 polices, dont OpenDyslexic (`KeyboardFont`) |
-| Style d'animation | Ressort, Vif | + Gelée (`MotionStyle`) |
+| Style d'animation | Ressort | + Vif, Gelée, Envol, Goutte, Glisse, Étincelles, Pixels, Bulle cœur, Éclosion (`MotionStyle`) |
 
 Restent gratuits : frappe, autocorrection, langues et multilingue, mode une main, accessibilité, dictionnaire personnel,
 sauvegarde, les 4 modèles IA.
