@@ -131,7 +131,7 @@ class EmojiSuggesterTest {
     @Test
     fun `chaque langue ajoutee a sa liste de mots-cles`() {
         val names = realListNames()
-        for (code in listOf("fr", "en", "pl", "ro", "cs", "hu", "sv", "da", "nb", "fi")) {
+        for (code in KeyboardLanguage.entries.map { it.tag }) {
             assertTrue("suggestions-$code.txt" in names, "suggestions-$code.txt manquant")
         }
     }
@@ -175,5 +175,26 @@ class EmojiSuggesterTest {
         assertEquals("🎂", real.suggest("joyeux anniversaire", KeyboardLanguage.FR))
         assertEquals("🍕", real.suggest("I love pizza", KeyboardLanguage.EN))
         assertEquals("🎂", real.suggest("happy birthday", KeyboardLanguage.EN))
+    }
+
+    @Test
+    fun `les fichiers reels de l espagnol a du neerlandais donnent les suggestions attendues`() {
+        fun list(code: String) = EmojiSuggester.parse(File("src/main/assets/emoji/suggestions-$code.txt").readText(Charsets.UTF_8))
+        val languages = listOf(KeyboardLanguage.ES, KeyboardLanguage.DE, KeyboardLanguage.IT, KeyboardLanguage.PT, KeyboardLanguage.NL)
+        val real = EmojiSuggester(french = emptyMap(), english = emptyMap(), others = languages.associateWith { list(it.tag) })
+        assertEquals("🍕", real.suggest("quiero una pizza", KeyboardLanguage.ES))
+        assertEquals("🎂", real.suggest("feliz cumpleaños ", KeyboardLanguage.ES))
+        assertEquals("🐶", real.suggest("mein Hund", KeyboardLanguage.DE))
+        assertEquals("🙏", real.suggest("Danke", KeyboardLanguage.DE))
+        assertEquals("☕", real.suggest("un caffè", KeyboardLanguage.IT))
+        assertEquals("🍕", real.suggest("pizze", KeyboardLanguage.IT))
+        assertEquals("😘", real.suggest("beijos", KeyboardLanguage.PT))
+        assertEquals("🙏", real.suggest("obrigada", KeyboardLanguage.PT))
+        assertEquals("🚲", real.suggest("met de fiets", KeyboardLanguage.NL))
+        assertEquals("🎂", real.suggest("ik ben jarig", KeyboardLanguage.NL))
+        // Mots-outils très fréquents : pas d'emoji (« te » en espagnol et en italien, « dag » en néerlandais).
+        assertNull(real.suggest("te", KeyboardLanguage.ES))
+        assertNull(real.suggest("te", KeyboardLanguage.IT))
+        assertNull(real.suggest("dag", KeyboardLanguage.NL))
     }
 }
