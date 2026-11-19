@@ -100,4 +100,28 @@ class KeyPreviewPoseTest {
         assertEquals(MotionStyle.SPRING, MotionStyle.DEFAULT)
         assertEquals(listOf(MotionStyle.SPRING), MotionStyle.entries.filter { it.isAvailable(premium = false) })
     }
+
+    @Test
+    fun `styles a particules du 19-11-2026`() {
+        assertEquals(KeyPreviewAnimation.SPARKS, MotionStyle.SPARKS.bubble)
+        assertEquals(KeyPreviewAnimation.PIXELS, MotionStyle.PIXELS.bubble)
+        assertEquals(KeyPreviewAnimation.HEART, MotionStyle.HEART.bubble)
+        assertEquals(KeyPreviewAnimation.BLOOM, MotionStyle.BLOOM.bubble)
+        assertTrue(KeyPreviewAnimation.entries.filter { it.hasParticles }.size == 4)
+        // Étincelles : rebond vif à l'entrée.
+        val peak = (0L..300L).maxOf { KeyPreviewPose.pose(KeyPreviewAnimation.SPARKS, MotionStyle.SPARKS, it, -1L)!!.scaleX }
+        assertTrue(peak > 1.05f, "dépassement $peak")
+        // Pixels : posée dès la deuxième image, sans rebond.
+        assertEquals(1f, KeyPreviewPose.pose(KeyPreviewAnimation.PIXELS, MotionStyle.PIXELS, 40L, -1L)!!.scaleX)
+        // Bulle cœur : s'envole et se balance en sortie.
+        val half = KeyPreviewPose.exitDurationMs(KeyPreviewAnimation.HEART, MotionStyle.HEART) / 3
+        val flying = KeyPreviewPose.pose(KeyPreviewAnimation.HEART, MotionStyle.HEART, settled, half)!!
+        assertTrue(flying.offsetY < -0.5f)
+        assertTrue(flying.offsetX != 0f)
+        // Éclosion : les pétales s'ouvrent l'un après l'autre.
+        assertTrue(KeyPreviewPose.petalOpen(30L, 0) > KeyPreviewPose.petalOpen(30L, 4))
+        assertEquals(0f, KeyPreviewPose.petalOpen(50L, 4))
+        assertEquals(1f, KeyPreviewPose.petalOpen(0L, 4, animated = false))
+        assertEquals(1f, KeyPreviewPose.petalOpen(settled, 4), 0.01f)
+    }
 }

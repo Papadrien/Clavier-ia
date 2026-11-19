@@ -154,6 +154,13 @@ class KeyboardSettingsActivity : Activity() {
             Analytics.setting(this, "keyboard_height", selected.storageKey)
         }
 
+        findViewById<CompoundButton>(R.id.switch_swipe_typing).apply {
+            isChecked = preferences.isSwipeTypingEnabled
+            setOnCheckedChangeListener { _, checked ->
+                preferences.isSwipeTypingEnabled = checked
+                Analytics.setting(this@KeyboardSettingsActivity, "swipe_typing", checked)
+            }
+        }
         findViewById<CompoundButton>(R.id.switch_habit_learning).apply {
             isChecked = preferences.isHabitLearningEnabled
             setOnCheckedChangeListener { _, checked ->

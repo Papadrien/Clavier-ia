@@ -29,4 +29,6 @@
     <exclude domain="file" path="voice-model/" />
     <!-- Dictionnaires téléchargés (quelques Mo par langue) : retéléchargés au besoin. -->
     <exclude domain="file" path="dictionaries/" />
+    <!-- Fond « Image » : photo personnelle choisie par l'utilisateur, gardée sur l'appareil seulement (PhotoBackdrop). -->
+    <exclude domain="file" path="backdrop/" />
 </full-backup-content>

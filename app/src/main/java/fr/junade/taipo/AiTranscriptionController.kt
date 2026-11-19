@@ -76,6 +76,9 @@ class AiTranscriptionController(
     private var job: Job? = null
     private var state = AiTranscriptionBarState.IDLE
 
+    /** Le modèle traite l'enregistrement (après l'écoute, avant l'insertion du texte). */
+    val isProcessing: Boolean get() = state == AiTranscriptionBarState.PROCESSING
+
     /** Faux dès que le champ de saisie a changé pendant le traitement : le texte n'est plus inséré. */
     private var insertAllowed = true
 

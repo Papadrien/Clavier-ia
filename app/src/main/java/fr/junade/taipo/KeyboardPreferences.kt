@@ -176,6 +176,16 @@ class KeyboardPreferences(context: Context) {
     val backdropSeed: Long
         get() = prefs.getLong(KEY_BACKDROP_SEED, 0L).takeIf { it != 0L } ?: newBackdropSeed()
 
+    /**
+     * Version de l'image du fond « Image » ([fr.junade.taipo.backdrop.PhotoBackdrop]) : changée à chaque import, elle dit au
+     * clavier de relire l'image au prochain champ. 0 tant qu'aucune image n'a été importée.
+     */
+    var backdropPhotoVersion: Long
+        get() = prefs.getLong(KEY_BACKDROP_PHOTO_VERSION, 0L)
+        set(value) {
+            prefs.edit().putLong(KEY_BACKDROP_PHOTO_VERSION, value).apply()
+        }
+
     fun newBackdropSeed(): Long {
         val seed = java.util.Random().nextLong().takeIf { it != 0L } ?: 1L
         prefs.edit().putLong(KEY_BACKDROP_SEED, seed).apply()
@@ -406,6 +416,17 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putBoolean(KEY_ADAPTIVE_TOUCH, value).apply()
         }
 
+    /**
+     * Saisie par glissement (Paramètres du clavier > Saisie intelligente, 19/11/2026) : le doigt glisse de lettre en lettre sans
+     * se lever, le mot s'écrit au relâchement ([fr.junade.taipo.dictionary.GestureDecoder]). Désactivée par défaut, dans tous
+     * les builds (décision du 19/11/2026) : l'utilisateur l'active dans les paramètres.
+     */
+    var isSwipeTypingEnabled: Boolean
+        get() = prefs.getBoolean(KEY_SWIPE_TYPING, false)
+        set(value) {
+            prefs.edit().putBoolean(KEY_SWIPE_TYPING, value).apply()
+        }
+
     /** Debug seulement : dessine les bords des zones de frappe adaptatives sur le clavier. */
     var showTouchZones: Boolean
         get() = BuildConfig.DEBUG && prefs.getBoolean(KEY_SHOW_TOUCH_ZONES, false)
@@ -421,6 +442,8 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_BACKDROP = "keyboard_backdrop"
         private const val KEY_BACKDROP_ANIMATED = "keyboard_backdrop_animated"
         private const val KEY_BACKDROP_SEED = "keyboard_backdrop_seed"
+        private const val KEY_BACKDROP_PHOTO_VERSION = "keyboard_backdrop_photo_version"
+        private const val KEY_SWIPE_TYPING = "swipe_typing"
         private const val KEY_FLOATING_WIDTH = "floating_keyboard_width"
         private const val KEY_FLOATING_X = "floating_keyboard_x"
         private const val KEY_FLOATING_Y = "floating_keyboard_y"

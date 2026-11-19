@@ -232,7 +232,10 @@ internal object BarReveal {
     fun springFrame(fraction: Float, style: MotionStyle = MotionStyle.current): Frame {
         val f = fraction.coerceIn(0f, 1f)
         return when (style.bubble) {
-            KeyPreviewAnimation.SPRING -> {
+            // Styles à particules (19/11/2026) : les boutons entrent comme en Ressort, avec le ressort de leur style.
+            KeyPreviewAnimation.SPRING, KeyPreviewAnimation.SPARKS, KeyPreviewAnimation.PIXELS, KeyPreviewAnimation.HEART,
+            KeyPreviewAnimation.BLOOM,
+            -> {
                 val p = springProgress(f, style)
                 val scale = SPRING_START_SCALE + (1f - SPRING_START_SCALE) * p
                 // Gelée : le bouton s'élargit et s'aplatit quand il dépasse sa taille, s'étire avant de l'atteindre.
