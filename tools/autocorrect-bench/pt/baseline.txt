@@ -1,32 +1,32 @@
 # Référence du banc d'autocorrection (docs/autocorrection-bench.md). Générée par `main --write-baseline`.
 # À régénérer volontairement quand une phase de la refonte change le comportement, jamais pour masquer une régression.
 [metrics]
-typos.courants.voisine.ok=95.2
+typos.courants.voisine.ok=94.9
 typos.courants.oubli.ok=81.0
-typos.courants.doublon.ok=92.5
+typos.courants.doublon.ok=92.4
 typos.courants.inversion.ok=98.2
-typos.courants.ajout.ok=96.8
+typos.courants.ajout.ok=96.6
 typos.courants.accent.ok=98.2
 typos.courants.apostrophe.ok=0.0
-typos.courants.ok=93.65
+typos.courants.ok=93.55
 typos.courants.missed=3.78
-typos.courants.wrong=2.57
+typos.courants.wrong=2.67
 typos.courants.surMotValide=77.76
-typos.varies.voisine.ok=93.5
-typos.varies.oubli.ok=77.1
-typos.varies.doublon.ok=93.0
-typos.varies.inversion.ok=98.3
+typos.varies.voisine.ok=93.4
+typos.varies.oubli.ok=77.0
+typos.varies.doublon.ok=92.9
+typos.varies.inversion.ok=98.2
 typos.varies.ajout.ok=97.8
 typos.varies.accent.ok=97.9
 typos.varies.apostrophe.ok=0.0
-typos.varies.ok=92.93
+typos.varies.ok=92.87
 typos.varies.missed=2.97
-typos.varies.wrong=4.1
+typos.varies.wrong=4.17
 typos.varies.surMotValide=77.28
 valides.courants.faux=0.0
-valides.courants.restaure=0.1
+valides.courants.restaure=0.14
 valides.varies.faux=0.0
-valides.varies.restaure=0.36
+valides.varies.restaure=0.42
 longues.courants.deux.ok=91.33
 longues.courants.deux.wrong=5.33
 longues.courants.trois.ok=71.67
@@ -54,8 +54,8 @@ heldout.fautes.sansContexte.ok=93.05
 heldout.fautes.surMotValide=11.15
 completion.frappesEconomisees.ok=41.42
 completion.fautes.ok=86.1
-heldout.justes.faux=0.03
-heldout.justes.restaure=0.0
+heldout.justes.faux=0.01
+heldout.justes.restaure=0.01
 [failing-cases]
 erros	Até amanhá.
 [changed-sentences]

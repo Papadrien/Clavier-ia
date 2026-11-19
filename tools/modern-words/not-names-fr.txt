@@ -1,0 +1,23 @@
+# Jamais des noms : la forme en minuscules est un mot courant (voir dictionaries/SOURCES.txt, 16/10 et 12/11/2026).
+pierre
+jean
+rose
+claire
+marine
+jade
+noël
+clément
+renard
+rivière
+boulanger
+carré
+manuel
+paris
+marc
+tours
+nice
+orange
+bordeaux
+rennes
+cannes
+blanche

@@ -303,7 +303,7 @@ class ClipboardController(
         host.playKeySound(KeySound.KEY)
         host.clearHighlight()
         host.clearPendingAutocorrection()
-        val replaced = ic.getSelectedText(0)?.toString().orEmpty()
+        val replaced = selectionToReplace(ic)
         ic.commitText(item.text, 1)
         host.recordUndoEdit(inserted = item.text, original = replaced)
         if (item.isLastClip) state.onPasted()
@@ -477,15 +477,18 @@ class ClipboardController(
 
     /** Une copie vient d'être faite (écoute active pendant toute la vie du service, champ de texte actif ou non). */
     private fun onClipboardChanged() {
-        readClipboard()
+        // Copie faite depuis un champ de mot de passe (mot de passe visible, par exemple) : traitée comme sensible, son aperçu
+        // est masqué (« •••• ») ; elle n'entre pas non plus dans l'historique (voir recordInHistory).
+        readClipboard(copiedInSensitiveField = inputActive && host.sensitiveFieldActive())
         if (!inputActive) return // copie faite hors d'un champ : historique à jour, rien à afficher
         refreshPasteSuggestion()
         refreshPanel() // story 2.5 : une copie faite pendant que le panneau est ouvert s'y ajoute
     }
 
-    private fun readClipboard() {
+    private fun readClipboard(copiedInSensitiveField: Boolean = false) {
         val snapshot = reader.read()
-        val isNewCopy = state.onClipRead(snapshot?.text, snapshot?.copiedAtMillis ?: 0L, snapshot?.sensitive ?: false)
+        val sensitive = (snapshot?.sensitive ?: false) || copiedInSensitiveField
+        val isNewCopy = state.onClipRead(snapshot?.text, snapshot?.copiedAtMillis ?: 0L, sensitive)
         if (isNewCopy && snapshot != null) recordInHistory(snapshot)
     }
 
@@ -657,6 +660,13 @@ class ClipboardController(
     }
 
     /**
+     * Texte sélectionné que le collage va remplacer (pour pouvoir l'annuler). Jamais lu dans un champ de mot de passe : le
+     * clavier n'y lit rien, et l'annulation y est de toute façon coupée.
+     */
+    private fun selectionToReplace(ic: InputConnection): String =
+        if (host.sensitiveFieldActive()) "" else ic.getSelectedText(0)?.toString().orEmpty()
+
+    /**
      * Appui sur la puce : colle le texte copié au curseur (`commitText` remplace une éventuelle
      * sélection), réinitialise l'autocorrection en attente et resynchronise la barre.
      */
@@ -672,7 +682,7 @@ class ClipboardController(
         host.playKeySound(KeySound.KEY) // même tic que le collage d'une carte du Smart Clipboard
         host.clearHighlight()
         host.clearPendingAutocorrection()
-        val replaced = ic.getSelectedText(0)?.toString().orEmpty()
+        val replaced = selectionToReplace(ic)
         ic.commitText(suggestion.text, 1)
         host.recordUndoEdit(inserted = suggestion.text, original = replaced)
         Analytics.track(context, AnalyticsEvents.CLIPBOARD_USED, "action" to "paste")

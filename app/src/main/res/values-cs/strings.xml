@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Zobrazit klávesu emoji</string>
     <string name="keyboard_settings_show_comma_key">Zobrazit klávesu čárky</string>
     <string name="keyboard_settings_show_period_key">Zobrazit klávesu tečky</string>
+    <string name="keyboard_settings_key_preview">Zobrazit bublinu nad stisknutou klávesou</string>
     <string name="keyboard_settings_clipboard_history_switch">Historie schránky</string>
     <string name="keyboard_settings_clipboard_history_description">Uchovává nedávno zkopírované položky, abyste je mohli znovu vložit (12 hodin, 7 dní s balíčkem premium). Hesla a čísla karet se nikdy neuchovávají. Vypnutím se historie smaže.</string>
     <string name="keyboard_settings_screenshots_switch">Navrhovat nedávné snímky obrazovky</string>
@@ -151,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normální (100%)</string>
     <string name="keyboard_settings_height_large">Velká (110%)</string>
     <string name="keyboard_settings_height_extra_large">Velmi velká (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Psaní tahem</string>
+    <string name="keyboard_settings_swipe_typing_description">Táhněte prstem od písmene k písmenu bez zvednutí: slovo se napíše, když prst zvednete. Klepnutím na návrh ho změníte; ⌫ hned potom smaže celé slovo.</string>
     <string name="keyboard_settings_habits_switch">Učit se z mých zvyků</string>
     <string name="keyboard_settings_habits_description">Klávesnice si pamatuje opravy, které vrátíte, a vaše e-mailové adresy, šifrovaně, jen v tomto zařízení.</string>
     <string name="keyboard_settings_habits_clear">Vymazat mé zvyky při opravách</string>
@@ -485,7 +488,7 @@
     <string name="privacy_section_3_title">3. Žádný sběr osobních údajů</string>
     <string name="privacy_section_3_body">Taipo nemá účet ani reklamy. Své používání měří anonymně pomocí Aptabase: události jako „oprava AI se zdařila“, „model byl stažen“ nebo „nastavení se změnilo“, spolu s verzí aplikace, verzí Androidu, modelem zařízení a jeho jazykem a dvěma hrubými rozsahy: jak dlouho je aplikace nainstalována a kolik dní byla používána (například „8 až 30 dní“), nikdy přesné hodnoty. Nikdy váš text, to, co kopírujete nebo diktujete, ani žádný identifikátor zařízení či osoby, a nic z polí pro hesla. Jako u každého připojení k internetu servery Aptabase technicky dostávají adresu IP požadavku; samo Taipo ji nikdy nevidí ani neukládá (jak s ní Aptabase nakládá, popisují jeho zásady ochrany soukromí). Funkce je vypnutá, dokud nesouhlasíte, a svou volbu můžete kdykoli změnit v Moje data > Sdílet údaje o používání. Samo Taipo o vás neshromažďuje žádné osobní údaje.</string>
     <string name="privacy_section_4_title">4. Pole pro hesla</string>
-    <string name="privacy_section_4_body">V poli pro heslo nebo tajný kód jsou akce AI (Opravit, Generovat, Diktovat, diktování s AI) a panel Smart Clipboard vypnuté: obsah pole se nečte a mikrofon se nezapíná. Tlačítko vložení zůstává, abyste mohli vložit heslo zkopírované ze správce hesel; zůstává maskované (••••). Kopie označené jako citlivé (hesla) a čísla karet se v historii schránky nikdy neuchovávají.</string>
+    <string name="privacy_section_4_body">V poli pro heslo nebo tajný kód jsou akce AI (Opravit, Generovat, Diktovat, diktování s AI) vypnuté a mikrofon se nezapíná. Klávesnice obsah pole nikdy nečte. Vkládat můžete dál: tlačítko vložení i panel Smart Clipboard zůstávají, abyste mohli vložit heslo zkopírované ze správce hesel; kopie označené jako citlivé zůstávají maskované (••••). Nic zkopírovaného z pole pro heslo, kopie označené jako citlivé (hesla) ani čísla karet se v historii schránky nikdy neuchovávají.</string>
     <string name="privacy_section_5_title">5. Co je uloženo v zařízení</string>
     <string name="privacy_section_5_body">Váš osobní slovník, položky schránky a nastavení zůstávají ve vašem zařízení, v šifrovaných databázích. Odinstalováním aplikace se tato data smažou. Můžete je také exportovat do nešifrovaného souboru (Moje data > Záloha a obnovení): tento soubor opustí zařízení, jen pokud ho přesunete sami. Taipo nežádá o přístup k vašim fotkám.</string>
     <string name="privacy_section_6_title">6. Učení a přesnost psaní</string>
@@ -534,7 +537,7 @@
     <string name="model_delete_voice_message">Soubory (%1$s) budou ze zařízení smazány. Hlasové diktování nebude fungovat, dokud model znovu nestáhnete.</string>
     <string name="button_voice_model_local">Místní hlasový model</string>
     <string name="home_row_voice_model_local_subtitle">Zadejte soubory hlasového modelu sami</string>
-    <string name="sensitive_field_actions_disabled">V polích pro hesla vypnuto: nic se nečte ani neodesílá AI či do schránky.</string>
+    <string name="sensitive_field_actions_disabled">V polích pro hesla vypnuto: nic se nečte ani neodesílá AI.</string>
     <string name="ai_transcription_button_description">Diktování s AI: nahrát, pak přepsat</string>
     <string name="ai_transcription_button_recording">Diktování s AI: zastavit nahrávání a přepsat</string>
     <string name="ai_transcription_button_processing">Probíhá diktování s AI: klepnutím zrušíte</string>
@@ -610,6 +613,19 @@
     <string name="backdrop_waves">Vlny</string>
     <string name="backdrop_hearts">Srdce</string>
     <string name="backdrop_flowers">Květiny</string>
+    <string name="backdrop_processor">Procesor</string>
+    <string name="backdrop_photo">Obrázek</string>
+    <string name="theme_backdrop_photo_change">Vybrat jiný obrázek</string>
+    <string name="theme_backdrop_photo_source_title">Vybrat obrázek</string>
+    <string name="theme_backdrop_photo_source_gallery">Galerie</string>
+    <string name="theme_backdrop_photo_source_files">Soubory</string>
+    <string name="theme_backdrop_photo_error">Tento obrázek nelze otevřít.</string>
+    <string name="theme_backdrop_photo_no_picker">Žádná aplikace v tomto zařízení neumožňuje vybrat obrázek.</string>
+    <string name="theme_backdrop_photo_delete">Smazat obrázek</string>
+    <string name="theme_backdrop_photo_delete_title">Smazat tento obrázek?</string>
+    <string name="theme_backdrop_photo_delete_message">Pozadí klávesnice se vrátí na jednobarevné. Originál v galerii nebo souborech zůstane beze změny.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Smazat</string>
+    <string name="theme_backdrop_photo_delete_error">Obrázek nelze smazat. Zkuste to znovu.</string>
     <string name="theme_backdrop_free">Zdarma</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Písmo klávesnice</string>
@@ -641,6 +657,13 @@
     <string name="motion_style_spring">Pružina</string>
     <string name="motion_style_snappy">Svižná</string>
     <string name="motion_style_jelly">Želé</string>
+    <string name="motion_style_flight">Odlet</string>
+    <string name="motion_style_drop">Kapka</string>
+    <string name="motion_style_glide">Klouzání</string>
+    <string name="motion_style_sparks">Jiskry</string>
+    <string name="motion_style_pixels">Pixely</string>
+    <string name="motion_style_heart">Srdíčko</string>
+    <string name="motion_style_bloom">Rozkvět</string>
     <string name="home_row_languages_subtitle">Jazyky a rozložení klávesnice</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Vzhled</string>
@@ -672,7 +695,7 @@
     <string name="premium_clipboard_title">Rozšířená schránka</string>
     <string name="premium_clipboard_text">Kopie uchované 7 dní místo 12 hodin. Až 50 připnutých položek místo 5.</string>
     <string name="premium_style_title">Klávesnice ve vašem stylu</string>
-    <string name="premium_style_text">Šest animovaných pozadí, která se hýbou při psaní, pět dalších tvarů kláves, devět písem klávesnice (včetně OpenDyslexic) a styl animace Želé.</string>
+    <string name="premium_style_text">Sedm animovaných pozadí, která se hýbou při psaní, pět dalších tvarů kláves, devět písem klávesnice (včetně OpenDyslexic) a pět stylů animace: Svižná, Želé, Odlet, Kapka a Klouzání.</string>
     <string name="premium_free_reminder">Psaní, jazyky, AI a záloha zůstávají zdarma, s balíčkem i bez něj.</string>
     <string name="premium_buy">Koupit balíček</string>
     <string name="premium_buy_with_price">Koupit balíček · %1$s</string>

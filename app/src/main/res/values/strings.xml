@@ -120,6 +120,7 @@
     <string name="keyboard_settings_show_emoji_key">Show the emoji key</string>
     <string name="keyboard_settings_show_comma_key">Show the comma key</string>
     <string name="keyboard_settings_show_period_key">Show the period key</string>
+    <string name="keyboard_settings_key_preview">Show a bubble above the key you press</string>
     <string name="keyboard_settings_clipboard_history_switch">Clipboard history</string>
     <string name="keyboard_settings_clipboard_history_description">Keeps your recent copies so you can paste them again (12 hours, 7 days with the Premium pack). Passwords and card numbers are never kept. Turning it off deletes the history.</string>
     <string name="keyboard_settings_screenshots_switch">Suggest recent screenshots</string>
@@ -157,6 +158,8 @@
     <string name="keyboard_settings_height_normal">Normal (100%)</string>
     <string name="keyboard_settings_height_large">Large (110%)</string>
     <string name="keyboard_settings_height_extra_large">Extra large (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Swipe typing</string>
+    <string name="keyboard_settings_swipe_typing_description">Slide your finger from letter to letter without lifting it: the word is written when you lift it. Tap a suggestion to swap it; ⌫ right after erases the whole word.</string>
     <string name="keyboard_settings_habits_switch">Learn from my habits</string>
     <string name="keyboard_settings_habits_description">The keyboard remembers the corrections you undo and your email addresses, encrypted, on this device only.</string>
     <string name="keyboard_settings_habits_clear">Clear my correction habits</string>
@@ -492,7 +495,7 @@
     <string name="privacy_section_3_title">3. No personal data collection</string>
     <string name="privacy_section_3_body">Taipo has no account and no ads. It measures its usage anonymously with Aptabase: events such as “an AI correction succeeded”, “a model was downloaded” or “a setting changed”, along with the app version, the Android version, the device model and its language, plus two coarse ranges: how long the app has been installed and on how many days it was used (for example “8 to 30 days”), never exact values. Never your text, what you copy or dictate, or any identifier of the device or the person, and nothing from password fields. As with any Internet connection, Aptabase\'s servers technically receive the IP address of the request; Taipo itself never sees it or stores it (see Aptabase\'s privacy policy for how it is handled). It is off until you agree, and you can change your choice at any time in My data > Share usage data. Taipo itself collects no personal data about you.</string>
     <string name="privacy_section_4_title">4. Password fields</string>
-    <string name="privacy_section_4_body">In a password or secret code field, AI actions (Correct, Generate, Dictate, AI dictation) and the Smart Clipboard panel are disabled: the field\'s content is not read and the microphone is not opened. The paste chip remains, so you can paste a password copied from a password manager; it stays masked (••••). Copies flagged as sensitive (passwords) and card numbers are never kept in the clipboard history.</string>
+    <string name="privacy_section_4_body">In a password or secret code field, AI actions (Correct, Generate, Dictate, AI dictation) are disabled and the microphone is not opened. The keyboard never reads the field\'s content. You can still paste: the paste chip and the Smart Clipboard panel remain, so you can paste a password copied from a password manager; copies flagged as sensitive stay masked (••••). Anything copied from a password field, copies flagged as sensitive (passwords) and card numbers are never kept in the clipboard history.</string>
     <string name="privacy_section_5_title">5. What is stored on the device</string>
     <string name="privacy_section_5_body">Your personal dictionary, clipboard items and settings stay on your device, in encrypted databases. Uninstalling the app deletes this data. You can also export it to an unencrypted file (My data > Backup and restore): this file only leaves the device if you move it yourself. Taipo does not ask for access to your photos.</string>
     <string name="privacy_section_6_title">6. Learning and typing accuracy</string>
@@ -545,7 +548,7 @@
     <string name="button_voice_model_local">Local voice model</string>
     <string name="home_row_voice_model_local_subtitle">Provide the voice model files yourself</string>
 
-    <string name="sensitive_field_actions_disabled">Disabled in password fields: nothing is read or sent to the AI or the clipboard.</string>
+    <string name="sensitive_field_actions_disabled">Disabled in password fields: nothing is read or sent to the AI.</string>
 
     <string name="ai_transcription_button_description">AI dictation: record, then transcribe</string>
     <string name="ai_transcription_button_recording">AI dictation: stop recording and transcribe</string>
@@ -629,6 +632,19 @@
     <string name="backdrop_waves">Waves</string>
     <string name="backdrop_hearts">Hearts</string>
     <string name="backdrop_flowers">Flowers</string>
+    <string name="backdrop_processor">Processor</string>
+    <string name="backdrop_photo">Image</string>
+    <string name="theme_backdrop_photo_change">Choose another image</string>
+    <string name="theme_backdrop_photo_source_title">Choose an image</string>
+    <string name="theme_backdrop_photo_source_gallery">Gallery</string>
+    <string name="theme_backdrop_photo_source_files">Files</string>
+    <string name="theme_backdrop_photo_error">This image could not be opened.</string>
+    <string name="theme_backdrop_photo_no_picker">No app on this device can choose an image.</string>
+    <string name="theme_backdrop_photo_delete">Delete the image</string>
+    <string name="theme_backdrop_photo_delete_title">Delete this image?</string>
+    <string name="theme_backdrop_photo_delete_message">The keyboard background goes back to Plain. The original in your gallery or files is not affected.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Delete</string>
+    <string name="theme_backdrop_photo_delete_error">The image could not be deleted. Please try again.</string>
     <string name="theme_backdrop_free">Free</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Keyboard font</string>
@@ -661,6 +677,13 @@
     <string name="motion_style_spring">Spring</string>
     <string name="motion_style_snappy">Snappy</string>
     <string name="motion_style_jelly">Jelly</string>
+    <string name="motion_style_flight">Fly away</string>
+    <string name="motion_style_drop">Drop</string>
+    <string name="motion_style_glide">Glide</string>
+    <string name="motion_style_sparks">Sparks</string>
+    <string name="motion_style_pixels">Pixels</string>
+    <string name="motion_style_heart">Heart bubble</string>
+    <string name="motion_style_bloom">Bloom</string>
     <string name="home_row_languages_subtitle">Keyboard languages and layouts</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Appearance</string>
@@ -693,7 +716,7 @@
     <string name="premium_clipboard_title">Extended clipboard</string>
     <string name="premium_clipboard_text">Copies kept 7 days instead of 12 h. Up to 50 pinned items instead of 5.</string>
     <string name="premium_style_title">A keyboard in your style</string>
-    <string name="premium_style_text">Six animated backgrounds that move as you type, five more key shapes, nine keyboard fonts (including OpenDyslexic) and the Jelly animation style.</string>
+    <string name="premium_style_text">Seven animated backgrounds that move as you type, five more key shapes, nine keyboard fonts (including OpenDyslexic) and five animation styles: Snappy, Jelly, Fly away, Drop and Glide.</string>
     <string name="premium_free_reminder">Typing, languages, AI and backup stay free, with or without the pack.</string>
     <string name="premium_buy">Buy the pack</string>
     <string name="premium_buy_with_price">Buy the pack · %1$s</string>

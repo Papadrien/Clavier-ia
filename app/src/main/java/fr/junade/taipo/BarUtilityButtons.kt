@@ -30,7 +30,6 @@ internal class UtilityButtons(private val context: Context, private val style: B
 
     private val clipboardBackgrounds = style.toggleBackgrounds() // lot 21 : un Drawable par état, jamais recréé
     private var clipboardActive: Boolean? = null
-    private var clipboardRestricted = false
     private var undoEnabled = false
     private var settingsListener: (() -> Unit)? = null
     private var clipboardListener: (() -> Unit)? = null
@@ -75,17 +74,8 @@ internal class UtilityButtons(private val context: Context, private val style: B
         undoListener = listener
     }
 
-    /** Opacité de repos du bouton Smart Clipboard : l'animation d'apparition la relit au lieu de mémoriser celle du départ. */
-    fun clipboardRestingAlpha(): Float = if (clipboardRestricted) RESTRICTED_ALPHA else 1f
-
     /** Opacité de repos du bouton Annuler. */
     fun undoRestingAlpha(): Float = if (undoEnabled) 1f else RESTRICTED_ALPHA
-
-    /** Story 10.1 : champ sensible, le bouton Smart Clipboard est grisé (il reste touchable pour afficher la raison). */
-    fun setClipboardRestricted(restricted: Boolean) {
-        clipboardRestricted = restricted
-        clipboardButton.alpha = clipboardRestingAlpha()
-    }
 
     /** Le bouton Smart Clipboard est coloré (actif) tant que le panneau est ouvert. */
     fun setClipboardActive(active: Boolean, animate: Boolean) {

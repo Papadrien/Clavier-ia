@@ -91,6 +91,15 @@ class KeyboardSettingsActivity : Activity() {
             }
         }
 
+        // Bulle au-dessus des touches : relue par le clavier à la prochaine ouverture d'un champ.
+        findViewById<CompoundButton>(R.id.switch_key_preview).apply {
+            isChecked = preferences.isKeyPreviewEnabled
+            setOnCheckedChangeListener { _, checked ->
+                preferences.isKeyPreviewEnabled = checked
+                Analytics.setting(this@KeyboardSettingsActivity, "key_preview", checked)
+            }
+        }
+
         setUpClipboardHistory(preferences)
         setUpScreenshotSuggestions(preferences)
 
@@ -145,6 +154,13 @@ class KeyboardSettingsActivity : Activity() {
             Analytics.setting(this, "keyboard_height", selected.storageKey)
         }
 
+        findViewById<CompoundButton>(R.id.switch_swipe_typing).apply {
+            isChecked = preferences.isSwipeTypingEnabled
+            setOnCheckedChangeListener { _, checked ->
+                preferences.isSwipeTypingEnabled = checked
+                Analytics.setting(this@KeyboardSettingsActivity, "swipe_typing", checked)
+            }
+        }
         findViewById<CompoundButton>(R.id.switch_habit_learning).apply {
             isChecked = preferences.isHabitLearningEnabled
             setOnCheckedChangeListener { _, checked ->

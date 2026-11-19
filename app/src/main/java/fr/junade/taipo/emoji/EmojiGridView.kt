@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.view.View
@@ -15,6 +16,11 @@ import android.widget.OverScroller
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.customview.widget.ExploreByTouchHelper
+import fr.junade.taipo.Key
+import fr.junade.taipo.KeyAction
+import fr.junade.taipo.KeyPreview
+import fr.junade.taipo.KeyboardTheme
+import fr.junade.taipo.KeyboardWidth
 import fr.junade.taipo.R
 import fr.junade.taipo.TaipoType
 import fr.junade.taipo.dimen
@@ -31,6 +37,10 @@ import kotlin.math.abs
  *
  * Lot 14 : couleurs, tailles et espacements viennent de la charte (colors.xml, dimens.xml) ; les titres sont
  * en Open Sans ; les emojis restent des glyphes de texte (aucune image).
+ *
+ * 19/11/2026 : l'emoji appuyé a la même bulle d'agrandissement que les touches du clavier ([KeyPreview], même style
+ * d'animation, même réglage « Agrandir la touche appuyée »). Elle peut déborder au-dessus de la grille, sur les onglets ; le
+ * contenu de la grille, lui, reste coupé à ses bords.
  */
 @SuppressLint("ViewConstructor")
 class EmojiGridView(context: Context) : View(context) {
@@ -66,6 +76,37 @@ class EmojiGridView(context: Context) : View(context) {
     private var lastY = 0f
     private var dragging = false
     private var pressedHit: EmojiHit? = null
+
+    /** Bulle d'agrandissement de l'emoji appuyé, comme sur le clavier ; coupée par le réglage « Agrandir la touche appuyée ». */
+    var keyPreviewEnabled = true
+        set(value) {
+            field = value
+            if (!value) keyPreview.dismiss()
+        }
+    private val keyPreview = KeyPreview(this)
+
+    /** Emoji de chaque bulle, et sa cellule dans le contenu (avant défilement). */
+    private val previewCells = HashMap<Key, EmojiHit>()
+    private val previewBounds = RectF()
+    private val bubbleRadiusScale = KeyboardTheme.shape.radiusScale
+    private val previewGeometry = object : KeyPreview.Geometry {
+        override fun keyBounds(key: Key): RectF? {
+            val hit = previewCells[key] ?: return null
+            val g = gridLayout ?: return null
+            val top = hit.top - offsetY
+            return previewBounds.apply { set(hit.left, top, hit.left + g.cellSize, top + g.cellSize) }
+        }
+        override fun text(key: Key): String? = previewCells[key]?.emoji
+        override val headroom: Float get() = headroomPx()
+        override val content: KeyboardWidth get() = KeyboardWidth(0f, width.toFloat())
+        override val maxWidth: Float get() = Float.MAX_VALUE
+        override val cornerRadius: Float get() = pressedRadius * bubbleRadiusScale
+        override val gap: Float get() = pressedInset
+
+        // KeyPreview dessine le texte à 60 % de cette taille : l'emoji y est ainsi plus grand que dans sa cellule.
+        override val textSize: Float get() = (gridLayout?.cellSize ?: 0f) * PREVIEW_TEXT_RATIO
+        override val keyInset: Float get() = pressedInset
+    }
 
     private val emojiPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { textAlign = Paint.Align.CENTER }
     private val headerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -135,6 +176,7 @@ class EmojiGridView(context: Context) : View(context) {
     /** Remplace le contenu de la grille ; le défilement revient en haut. */
     fun setSections(newSections: List<EmojiSection>) {
         sections = newSections
+        keyPreview.dismiss()
         scroller.forceFinished(true)
         offsetY = 0f
         lastReportedSection = -1
@@ -152,6 +194,7 @@ class EmojiGridView(context: Context) : View(context) {
         if (index !in sections.indices) return
         val target = g.sectionTop(index).coerceIn(0f, maxScroll())
         scroller.forceFinished(true)
+        keyPreview.dismiss()
         if (animate) {
             scroller.startScroll(0, offsetY.toInt(), 0, (target - offsetY).toInt(), SCROLL_ANIMATION_MS)
             postInvalidateOnAnimation()
@@ -231,11 +274,40 @@ class EmojiGridView(context: Context) : View(context) {
     override fun onDraw(canvas: Canvas) {
         val g = gridLayout ?: return
         canvas.save()
+        // Le panneau ne coupe pas ses enfants (pour la bulle) : la grille coupe elle-même son contenu défilé.
+        canvas.clipRect(0f, 0f, width.toFloat(), height.toFloat())
         canvas.translate(0f, -offsetY)
         drawCanvas = canvas
         g.forEachVisible(offsetY, offsetY + height, visitor)
         drawCanvas = null
         canvas.restore()
+        val now = SystemClock.uptimeMillis()
+        keyPreview.draw(canvas, now, previewGeometry)
+        if (keyPreview.isRunning(now)) postInvalidateOnAnimation()
+        // Plus aucune bulle en sortie : seule la cellule encore appuyée reste utile.
+        if (!keyPreview.isRunning(now)) previewCells.keys.retainAll { it == keyPreview.key }
+    }
+
+    /** Place disponible au-dessus de la grille, jusqu'au haut de la fenêtre du clavier (la bulle peut recouvrir les onglets). */
+    private fun headroomPx(): Float {
+        var total = top.toFloat()
+        var p = parent as? View
+        while (p != null) {
+            total += p.top
+            p = p.parent as? View
+        }
+        return total.coerceAtLeast(0f)
+    }
+
+    private fun showPreview(hit: EmojiHit?) {
+        if (!keyPreviewEnabled || hit == null) {
+            keyPreview.release(SystemClock.uptimeMillis())
+            return
+        }
+        // Une clé par cellule : le même emoji peut figurer dans « Récents » et dans sa catégorie.
+        val key = Key("emoji@${hit.left},${hit.top}", hit.emoji, PREVIEW_ACTION)
+        previewCells[key] = hit
+        keyPreview.press(key, SystemClock.uptimeMillis())
     }
 
     override fun computeScroll() {
@@ -258,6 +330,7 @@ class EmojiGridView(context: Context) : View(context) {
                 lastY = event.y
                 dragging = false
                 pressedHit = g.hitTest(event.x, event.y + offsetY)
+                showPreview(pressedHit)
                 invalidate()
                 return true
             }
@@ -266,6 +339,8 @@ class EmojiGridView(context: Context) : View(context) {
                 if (!dragging && abs(event.y - downY) > touchSlop) {
                     dragging = true
                     pressedHit = null
+                    // Défilement : la bulle ne suivrait pas son emoji, elle disparaît.
+                    keyPreview.dismiss()
                 }
                 if (dragging) {
                     offsetY = (offsetY - (event.y - lastY)).coerceIn(0f, maxScroll())
@@ -295,6 +370,7 @@ class EmojiGridView(context: Context) : View(context) {
             }
 
             MotionEvent.ACTION_CANCEL -> {
+                keyPreview.dismiss()
                 finishTouch()
                 return true
             }
@@ -303,6 +379,8 @@ class EmojiGridView(context: Context) : View(context) {
     }
 
     private fun finishTouch() {
+        // Relâchement : la bulle sort après son affichage minimal (KeyPreview).
+        keyPreview.release(SystemClock.uptimeMillis())
         pressedHit = null
         dragging = false
         velocityTracker?.recycle()
@@ -312,6 +390,7 @@ class EmojiGridView(context: Context) : View(context) {
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        keyPreview.dismiss()
         scroller.forceFinished(true)
         velocityTracker?.recycle()
         velocityTracker = null
@@ -420,6 +499,12 @@ class EmojiGridView(context: Context) : View(context) {
         /** Taille du texte d'un emoji par rapport au côté de sa cellule. */
         private const val EMOJI_TEXT_RATIO = 0.55f
         private const val SCROLL_ANIMATION_MS = 250
+
+        /** Taille de référence du texte de la bulle, par rapport au côté de la cellule (l'emoji y est dessiné à 60 %). */
+        private const val PREVIEW_TEXT_RATIO = 1.25f
+
+        /** Action fictive des touches de bulle : la bulle ne s'en sert pas, l'emoji est saisi par la grille. */
+        private val PREVIEW_ACTION = KeyAction.TypeChar(' ')
 
         /** Lot 20 : part de la hauteur de la grille défilée par une action de défilement de TalkBack. */
         private const val PAGE_SCROLL_RATIO = 0.8f

@@ -309,11 +309,11 @@ object AutocorrectBench {
     }
 
     /**
-     * Le mot attendu est retrouvé. En allemand, la majuscule d'un nom (« haus » -> « Haus ») est voulue, pas une erreur :
-     * la liste de noms la pose, et les listes de fréquences sont en minuscules.
+     * Le mot attendu est retrouvé. La majuscule d'un nom (« haus » -> « Haus », « sarah » -> « Sarah ») est voulue, pas une erreur :
+     * la liste de noms la pose, et les listes de fréquences sont en minuscules. D'abord réservé à l'allemand ; étendu à toutes les
+     * langues le 16/11/2026, quand les listes de noms ont reçu pays, villes et prénoms (tools/enrich_modern_usage.py).
      */
-    private fun sameWord(result: String?, word: String): Boolean =
-        result != null && (result == word || (profile.language == KeyboardLanguage.DE && result.lowercase() == word))
+    private fun sameWord(result: String?, word: String): Boolean = result != null && (result == word || result.lowercase() == word)
 
     fun loadDictionary(root: File, without: Set<String> = emptySet()): Dictionary {
         val frequencies = File(root, "dictionaries/${profile.code}.txt").bufferedReader(Charsets.UTF_8).useLines { lines ->
@@ -356,6 +356,7 @@ object AutocorrectBench {
         typoMeasures(dictionary, frequencies, metrics, details, timings)
         validWordMeasures(dictionary, frequencies, metrics, details)
         longWordMeasures(dictionary, frequencies, metrics, details)
+        accentTypoMeasures(dictionary, frequencies, metrics, details)
         unknownWordMeasures(root, frequencies, metrics, details)
         rareValidWordMeasures(root, dictionary, metrics, details)
         val changedSentences = sentenceMeasures(root, dictionary, metrics)
@@ -614,6 +615,67 @@ object AutocorrectBench {
                 details += examples
             }
         }
+    }
+
+    // ------------------------------------------------------------------
+    // Accent oublié ET faute de frappe (19/11/2026)
+    // ------------------------------------------------------------------
+
+    private const val ACCENT_TYPO_SAMPLES = 1000
+    private val ACCENT_TYPO_KINDS = listOf(Kind.NEIGHBOR, Kind.OMISSION, Kind.DOUBLE, Kind.SWAP)
+
+    /**
+     * Mot accentué tapé sans ses accents (lettres de base du clavier) et avec une faute de frappe en plus (touche voisine, lettre
+     * oubliée, doublée, inversion) : « delws » pour « děláš ». Cas courant en polonais, roumain, tchèque ou hongrois, où l'on tape
+     * souvent sans signes diacritiques. Mesuré à part de `typos.*` (les totaux de référence ne changent pas). Rien pour l'anglais.
+     */
+    private fun accentTypoMeasures(
+        dictionary: Dictionary,
+        frequencies: Map<String, Long>,
+        metrics: LinkedHashMap<String, Double>,
+        details: MutableList<String>,
+    ) {
+        val pool = frequencies.keys.filter { w -> w.length >= 4 && w.all { it.isLetter() } && Dictionary.foldAccents(w) != w }.sorted()
+        if (pool.isEmpty()) return
+        for (weighted in listOf(true, false)) {
+            val setName = if (weighted) "courants" else "varies"
+            val random = Random(SEED + if (weighted) 51 else 52)
+            accentTypoSet(dictionary, Sampler(pool, frequencies, weighted, random), random, setName, metrics, details)
+        }
+    }
+
+    /** Un jeu de [accentTypoMeasures] : [ACCENT_TYPO_SAMPLES] mots tirés par [sampler]. */
+    private fun accentTypoSet(
+        dictionary: Dictionary,
+        sampler: Sampler,
+        random: Random,
+        setName: String,
+        metrics: LinkedHashMap<String, Double>,
+        details: MutableList<String>,
+    ) {
+        var ok = 0
+        var wrong = 0
+        var total = 0
+        var attempts = 0
+        val examples = ArrayList<String>()
+        while (total < ACCENT_TYPO_SAMPLES && attempts++ < ACCENT_TYPO_SAMPLES * 50) {
+            val word = sampler.next()
+            val plain = Dictionary.foldAccents(word)
+            val typo = makeTypo(plain, ACCENT_TYPO_KINDS[random.nextInt(ACCENT_TYPO_KINDS.size)], random) ?: continue
+            if (typo == plain || dictionary.contains(typo)) continue
+            total++
+            val result = dictionary.correctionFor(typo)
+            if (sameWord(result, word)) {
+                ok++
+            } else if (result != null && result != typo) {
+                wrong++
+                if (examples.size < 15) examples += "  [$setName] $typo -> $result (attendu $word)"
+            }
+        }
+        metrics["accentfaute.$setName.ok"] = percent(ok, total)
+        metrics["accentfaute.$setName.wrong"] = percent(wrong, total)
+        details += "Accent oublié et faute de frappe ($setName), mauvaises corrections :"
+        details += examples
     }
 
     private fun randomEdit(word: String, random: Random): String {

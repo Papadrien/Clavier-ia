@@ -50,6 +50,21 @@ internal object BarReveal {
     /** Part de la durée sur laquelle l'opacité monte de 0 à son niveau de repos. */
     private const val SPRING_FADE_FRACTION = 0.3f
 
+    // Envol, Goutte et Glisse (17/11/2026) : voir springFrame, et pour le rideau (enter) CURTAIN_RISE et CURTAIN_DROP_START.
+    private const val CURTAIN_RISE = 0.35f
+    private const val CURTAIN_DROP_START = 0.3f
+    private const val FLIGHT_START_SCALE = 0.92f
+    private const val FLIGHT_RISE = 0.6f
+    private const val FLIGHT_FADE_FRACTION = 0.5f
+    private const val DROP_START_WIDTH = 0.6f
+    private const val DROP_START_HEIGHT = 0.15f
+    private const val DROP_FADE_FRACTION = 0.2f
+
+    /** Glisse : le bouton part de 2,5 fois la distance habituelle et se pose en 60 % de la durée du style (sans rebond). */
+    private const val GLIDE_DISTANCE = 2.5f
+    private const val GLIDE_SPEED = 1.6f
+    private const val GLIDE_FADE_FRACTION = 0.5f
+
     private val easing by lazy { PathInterpolator(0.2f, 0f, 0f, 1f) } // paresseux : l'objet reste utilisable en test JVM
     private val running = WeakHashMap<View, Animator>()
     private val gliding = WeakHashMap<View, Animator>()
@@ -83,10 +98,11 @@ internal object BarReveal {
         cancel(view)
         if (!ValueAnimator.areAnimatorsEnabled()) return
         val baseAlpha = restingAlpha?.invoke() ?: view.alpha
-        val slidePx = SLIDE_DP * view.resources.displayMetrics.density
+        val style = MotionStyle.current
+        val slidePx = SLIDE_DP * view.resources.displayMetrics.density * if (style.bubble == KeyPreviewAnimation.GLIDE) GLIDE_DISTANCE else 1f
         view.alpha = 0f
         val animator = ValueAnimator.ofFloat(0f, 1f).apply {
-            val scale = MotionStyle.current.curtainScale
+            val scale = style.curtainScale
             duration = ((if (full) DURATION_MS else QUIET_DURATION_MS) * scale).toLong()
             startDelay = (startDelay(order, full) * scale).toLong()
             interpolator = easing
@@ -100,6 +116,15 @@ internal object BarReveal {
                         view.clipBounds = Rect(left, 0, right, view.height)
                     }
                     view.translationX = slideOffset(slidePx, progress, fromEnd)
+                    // Envol : le rideau monte un peu en s'ouvrant ; Goutte : il s'étire aussi depuis le bas (17/11/2026).
+                    when (style.bubble) {
+                        KeyPreviewAnimation.FLIGHT -> view.translationY = (1f - progress) * CURTAIN_RISE * view.height
+                        KeyPreviewAnimation.DROP -> {
+                            view.pivotY = view.height.toFloat()
+                            view.scaleY = CURTAIN_DROP_START + (1f - CURTAIN_DROP_START) * progress
+                        }
+                        else -> Unit
+                    }
                 }
             }
             addListener(
@@ -109,6 +134,11 @@ internal object BarReveal {
                         view.alpha = restingAlpha?.invoke() ?: baseAlpha
                         view.clipBounds = null
                         view.translationX = 0f
+                        view.translationY = 0f
+                        if (view.scaleY != 1f) {
+                            view.scaleY = 1f
+                            resetPivot(view)
+                        }
                     }
                 },
             )
@@ -147,39 +177,98 @@ internal object BarReveal {
         if (!ValueAnimator.areAnimatorsEnabled()) return
         val baseAlpha = restingAlpha?.invoke() ?: view.alpha
         val direction = if (fromEnd) 1f else -1f
-        view.alpha = 0f
-        view.translationX = direction * offsetPx
-        view.scaleX = SPRING_START_SCALE
-        view.scaleY = SPRING_START_SCALE
         val style = MotionStyle.current
+        val apply = { frame: Frame ->
+            view.alpha = (restingAlpha?.invoke() ?: baseAlpha) * frame.alpha
+            view.translationX = direction * offsetPx * frame.slide
+            view.translationY = frame.rise * view.height
+            if (frame.fromBottom) view.pivotY = view.height.toFloat()
+            view.scaleX = frame.scaleX
+            view.scaleY = frame.scaleY
+        }
+        apply(springFrame(0f, style))
         val animator = ValueAnimator.ofFloat(0f, 1f).apply {
             duration = style.revealDurationMs
             startDelay = springStartDelay(order)
             interpolator = LinearInterpolator()
-            addUpdateListener { update ->
-                val fraction = update.animatedValue as Float
-                val progress = springProgress(fraction, style)
-                view.alpha = (restingAlpha?.invoke() ?: baseAlpha) * (fraction / SPRING_FADE_FRACTION).coerceIn(0f, 1f)
-                view.translationX = direction * offsetPx * (1f - progress)
-                val scale = SPRING_START_SCALE + (1f - SPRING_START_SCALE) * progress
-                // Gelée : le bouton s'élargit et s'aplatit quand il dépasse sa taille, s'étire avant de l'atteindre.
-                view.scaleX = scale * style.stretchX(progress, JELLY_STRENGTH)
-                view.scaleY = scale * style.stretchY(progress, JELLY_STRENGTH)
-            }
+            addUpdateListener { update -> apply(springFrame(update.animatedValue as Float, style)) }
             addListener(
                 object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         running.remove(view)
                         view.alpha = restingAlpha?.invoke() ?: baseAlpha
                         view.translationX = 0f
+                        view.translationY = 0f
                         view.scaleX = 1f
                         view.scaleY = 1f
+                        resetPivot(view)
                     }
                 },
             )
         }
         running[view] = animator
         animator.start()
+    }
+
+    /**
+     * Image d'un bouton qui apparaît ([enterSpring]) : [alpha] (part de l'opacité de repos), [slide] (part restante du décalage
+     * horizontal de départ), [rise] (décalage vertical en hauteurs de la vue, positif vers le bas), tailles, et [fromBottom] : la
+     * vue grandit depuis son bas plutôt que depuis son centre.
+     */
+    data class Frame(
+        val alpha: Float,
+        val slide: Float,
+        val rise: Float,
+        val scaleX: Float,
+        val scaleY: Float,
+        val fromBottom: Boolean = false,
+    )
+
+    /**
+     * Image d'un bouton qui apparaît à la [fraction] (0 à 1) de la durée, selon le style d'animation ([MotionStyle.bubble],
+     * 17/11/2026) : Ressort, Vif, Gelée jaillissent du côté du bouton touché en grandissant ; Envol monte en fondu ; Goutte
+     * s'étire vers le haut depuis son bas ; Glisse arrive de plus loin sur le côté, en glissant, sans changer de taille.
+     */
+    fun springFrame(fraction: Float, style: MotionStyle = MotionStyle.current): Frame {
+        val f = fraction.coerceIn(0f, 1f)
+        return when (style.bubble) {
+            // Styles à particules (19/11/2026) : les boutons entrent comme en Ressort, avec le ressort de leur style.
+            KeyPreviewAnimation.SPRING, KeyPreviewAnimation.SPARKS, KeyPreviewAnimation.PIXELS, KeyPreviewAnimation.HEART,
+            KeyPreviewAnimation.BLOOM,
+            -> {
+                val p = springProgress(f, style)
+                val scale = SPRING_START_SCALE + (1f - SPRING_START_SCALE) * p
+                // Gelée : le bouton s'élargit et s'aplatit quand il dépasse sa taille, s'étire avant de l'atteindre.
+                Frame(fade(f, SPRING_FADE_FRACTION), 1f - p, 0f, scale * style.stretchX(p, JELLY_STRENGTH), scale * style.stretchY(p, JELLY_STRENGTH))
+            }
+            KeyPreviewAnimation.FLIGHT -> {
+                val e = easeOut(f)
+                val scale = FLIGHT_START_SCALE + (1f - FLIGHT_START_SCALE) * e
+                Frame(fade(f, FLIGHT_FADE_FRACTION), 0f, (1f - e) * FLIGHT_RISE, scale, scale)
+            }
+            KeyPreviewAnimation.DROP -> {
+                val p = springProgress(f, style)
+                Frame(
+                    alpha = fade(f, DROP_FADE_FRACTION),
+                    slide = 0f,
+                    rise = 0f,
+                    scaleX = DROP_START_WIDTH + (1f - DROP_START_WIDTH) * p,
+                    scaleY = DROP_START_HEIGHT + (1f - DROP_START_HEIGHT) * p,
+                    fromBottom = true,
+                )
+            }
+            KeyPreviewAnimation.GLIDE -> {
+                val e = easeOut(f * GLIDE_SPEED)
+                Frame(fade(f * GLIDE_SPEED, GLIDE_FADE_FRACTION), (1f - e) * GLIDE_DISTANCE, 0f, 1f, 1f)
+            }
+        }
+    }
+
+    private fun fade(fraction: Float, over: Float): Float = (fraction / over).coerceIn(0f, 1f)
+
+    private fun easeOut(t: Float): Float {
+        val k = 1f - t.coerceIn(0f, 1f)
+        return 1f - k * k * k
     }
 
     /** Décalage horizontal restant (px) d'un glissement en ressort parti de [fromPx] à la [fraction] (0 à 1) de la durée. */
@@ -216,6 +305,16 @@ internal object BarReveal {
         running[view] = animator
         gliding[view] = animator
         animator.start()
+    }
+
+    /** Rend à [view] son pivot par défaut (son centre), après une entrée qui grandit depuis le bas (Goutte). */
+    private fun resetPivot(view: View) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            view.resetPivot()
+        } else {
+            view.pivotX = view.width / 2f
+            view.pivotY = view.height / 2f
+        }
     }
 
     /** Interrompt l'animation de [view] et la rend à son état normal (sans effet si aucune n'est en cours). */

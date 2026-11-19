@@ -93,7 +93,11 @@ class MotionStyleTest {
     fun `gelee est reservee au pack premium`() {
         assertEquals(MotionStyle.SPRING, MotionStyle.effective(MotionStyle.JELLY, premium = false))
         assertEquals(MotionStyle.JELLY, MotionStyle.effective(MotionStyle.JELLY, premium = true))
-        assertEquals(MotionStyle.SNAPPY, MotionStyle.effective(MotionStyle.SNAPPY, premium = false))
+        // 16/11/2026 : seul Ressort est gratuit.
+        for (style in MotionStyle.entries.filter { it != MotionStyle.SPRING }) {
+            assertEquals(MotionStyle.SPRING, MotionStyle.effective(style, premium = false), "$style")
+            assertEquals(style, MotionStyle.effective(style, premium = true), "$style")
+        }
     }
 
     @Test

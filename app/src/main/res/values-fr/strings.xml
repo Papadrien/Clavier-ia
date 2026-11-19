@@ -120,6 +120,7 @@
     <string name="keyboard_settings_show_emoji_key">Afficher la touche emoji</string>
     <string name="keyboard_settings_show_comma_key">Afficher la touche virgule</string>
     <string name="keyboard_settings_show_period_key">Afficher la touche point</string>
+    <string name="keyboard_settings_key_preview">Afficher une bulle au-dessus de la touche appuyée</string>
     <string name="keyboard_settings_clipboard_history_switch">Historique du presse-papiers</string>
     <string name="keyboard_settings_clipboard_history_description">Garde vos copies récentes pour les recoller (12 heures, 7 jours avec le pack premium). Les mots de passe et numéros de carte ne sont jamais gardés. Le désactiver efface l\'historique.</string>
     <string name="keyboard_settings_screenshots_switch">Proposer les captures d\'écran récentes</string>
@@ -157,6 +158,8 @@
     <string name="keyboard_settings_height_normal">Normale (100 %)</string>
     <string name="keyboard_settings_height_large">Grande (110 %)</string>
     <string name="keyboard_settings_height_extra_large">Très grande (120 %)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Saisie par glissement</string>
+    <string name="keyboard_settings_swipe_typing_description">Glissez le doigt de lettre en lettre sans le lever : le mot s\'écrit quand vous le levez. Touchez une suggestion pour le changer ; ⌫ juste après efface le mot entier.</string>
     <string name="keyboard_settings_habits_switch">Apprendre de mes habitudes</string>
     <string name="keyboard_settings_habits_description">Le clavier retient vos corrections annulées et vos adresses e-mail, chiffrées, sur cet appareil seulement.</string>
     <string name="keyboard_settings_habits_clear">Effacer mes habitudes de correction</string>
@@ -505,7 +508,7 @@
     <string name="privacy_section_3_title">3. Aucune collecte de données personnelles</string>
     <string name="privacy_section_3_body">Taipo n\'a pas de compte et pas de publicité. Il mesure son usage de façon anonyme avec Aptabase : des événements comme « une correction IA a réussi », « un modèle a été téléchargé » ou « un réglage a changé », avec la version de l\'application, la version d\'Android, le modèle de l\'appareil et sa langue, plus deux tranches approximatives : depuis combien de temps l\'application est installée et sur combien de jours elle a été utilisée (par exemple « 8 à 30 jours »), jamais des valeurs exactes. Jamais votre texte, ce que vous copiez ou dictez, ni un identifiant de l\'appareil ou de la personne, et rien depuis les champs de mot de passe. Elle est désactivée tant que vous ne l\'avez pas acceptée, et vous pouvez changer d\'avis à tout moment dans Mes données > Partager les données d\'utilisation. Comme pour toute connexion Internet, les serveurs d\'Aptabase reçoivent techniquement l\'adresse IP de la requête ; Taipo ne la voit ni ne la conserve jamais (voir la politique de confidentialité d\'Aptabase pour son traitement). Taipo lui-même ne collecte aucune donnée personnelle vous concernant.</string>
     <string name="privacy_section_4_title">4. Champs de mot de passe</string>
-    <string name="privacy_section_4_body">Dans un champ de mot de passe ou de code secret, les actions IA (Corriger, Générer, Dicter, Dictée IA) et le panneau Smart Clipboard sont désactivés : le contenu du champ n\'est pas lu et le micro n\'est pas ouvert. La puce de collage reste, pour coller un mot de passe copié depuis un gestionnaire ; il reste masqué (••••). Les copies signalées sensibles (mots de passe) et les numéros de carte ne sont jamais gardés dans l\'historique du presse-papiers.</string>
+    <string name="privacy_section_4_body">Dans un champ de mot de passe ou de code secret, les actions IA (Corriger, Générer, Dicter, Dictée IA) sont désactivées et le micro n\'est pas ouvert. Le clavier ne lit jamais le contenu du champ. Vous pouvez toujours coller : la puce de collage et le panneau Smart Clipboard restent disponibles, pour coller un mot de passe copié depuis un gestionnaire ; les copies signalées sensibles restent masquées (••••). Ce qui est copié depuis un champ de mot de passe, les copies signalées sensibles (mots de passe) et les numéros de carte ne sont jamais gardés dans l\'historique du presse-papiers.</string>
     <string name="privacy_section_5_title">5. Ce qui est conservé sur l\'appareil</string>
     <string name="privacy_section_5_body">Votre dictionnaire personnel, les éléments du presse-papiers et vos réglages restent sur votre appareil, dans des bases chiffrées. Désinstaller l\'application supprime ces données. Vous pouvez aussi les exporter dans un fichier non chiffré (Mes données > Sauvegarde et restauration) : ce fichier ne quitte l\'appareil que si vous le déplacez vous-même. Taipo ne demande pas l\'accès à vos photos.</string>
     <string name="privacy_section_6_title">6. Apprentissage et précision de frappe</string>
@@ -562,7 +565,7 @@
     <string name="home_row_voice_model_local_subtitle">Fournir soi-même les fichiers du modèle vocal</string>
 
     <!-- Story 10.1 : champ sensible -->
-    <string name="sensitive_field_actions_disabled">Désactivé dans les champs de mot de passe : rien n\'est lu ni envoyé à l\'IA ou au presse-papiers intelligent.</string>
+    <string name="sensitive_field_actions_disabled">Désactivé dans les champs de mot de passe : rien n\'est lu ni envoyé à l\'IA.</string>
 
     <!-- Épopée 14 : transcription IA par modèle multimodal -->
     <string name="ai_transcription_button_description">Dictée IA : enregistrer puis transcrire</string>
@@ -648,6 +651,19 @@
     <string name="backdrop_waves">Ondes</string>
     <string name="backdrop_hearts">Cœurs</string>
     <string name="backdrop_flowers">Fleurs</string>
+    <string name="backdrop_processor">Processeur</string>
+    <string name="backdrop_photo">Image</string>
+    <string name="theme_backdrop_photo_change">Choisir une autre image</string>
+    <string name="theme_backdrop_photo_source_title">Choisir une image</string>
+    <string name="theme_backdrop_photo_source_gallery">Galerie</string>
+    <string name="theme_backdrop_photo_source_files">Fichiers</string>
+    <string name="theme_backdrop_photo_error">Impossible d\'ouvrir cette image.</string>
+    <string name="theme_backdrop_photo_no_picker">Aucune application de cet appareil ne permet de choisir une image.</string>
+    <string name="theme_backdrop_photo_delete">Supprimer l\'image</string>
+    <string name="theme_backdrop_photo_delete_title">Supprimer cette image ?</string>
+    <string name="theme_backdrop_photo_delete_message">Le fond du clavier revient à Uni. L\'original, dans votre galerie ou vos fichiers, n\'est pas touché.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Supprimer</string>
+    <string name="theme_backdrop_photo_delete_error">Impossible de supprimer l\'image. Réessayez.</string>
     <string name="theme_backdrop_free">Gratuit</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Police du clavier</string>
@@ -680,6 +696,13 @@
     <string name="motion_style_spring">Ressort</string>
     <string name="motion_style_snappy">Vif</string>
     <string name="motion_style_jelly">Gelée</string>
+    <string name="motion_style_flight">Envol</string>
+    <string name="motion_style_drop">Goutte</string>
+    <string name="motion_style_glide">Glisse</string>
+    <string name="motion_style_sparks">Étincelles</string>
+    <string name="motion_style_pixels">Pixels</string>
+    <string name="motion_style_heart">Bulle cœur</string>
+    <string name="motion_style_bloom">Éclosion</string>
     <string name="home_row_languages_subtitle">Langues et dispositions du clavier</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Apparence</string>
@@ -712,7 +735,7 @@
     <string name="premium_clipboard_title">Presse-papiers étendu</string>
     <string name="premium_clipboard_text">Copies gardées 7 jours au lieu de 12 h. Jusqu\'à 50 éléments épinglés au lieu de 5.</string>
     <string name="premium_style_title">Un clavier à votre style</string>
-    <string name="premium_style_text">Six fonds animés qui bougent pendant la frappe, cinq formes de touches en plus, neuf polices pour le clavier (dont OpenDyslexic) et le style d\'animation Gelée.</string>
+    <string name="premium_style_text">Sept fonds animés qui bougent pendant la frappe, cinq formes de touches en plus, neuf polices pour le clavier (dont OpenDyslexic) et cinq styles d\'animation : Vif, Gelée, Envol, Goutte et Glisse.</string>
     <string name="premium_free_reminder">La frappe, les langues, l\'IA et la sauvegarde restent gratuites, avec ou sans pack.</string>
     <string name="premium_buy">Acheter le pack</string>
     <string name="premium_buy_with_price">Acheter le pack · %1$s</string>

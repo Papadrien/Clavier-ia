@@ -8,8 +8,8 @@ s'en sert à la place des modèles de Taipo pour Corriger, Chat et la transcript
 de LiteRT-LM intégrée (`CustomModelAccess.LITERT_LM_VERSION`, lue dans `gradle/libs.versions.toml` à la compilation par `BuildConfig` : elle
 suit les montées de version ; aujourd'hui 0.19.1).
 
-Accès (`CustomModelAccess.allowed`) : pack premium actif, ou build debug (pour essayer un modèle avant de l'ajouter au catalogue d'une
-version publiée, sans dépendre du forçage du pass). Sans le pack, la ligne de l'accueil porte un cadenas et ouvre l'écran du pack ; un
+Accès (`CustomModelAccess.allowed`) : pack premium actif, seulement. Depuis le 19/11/2026, un build debug n'y échappe plus : pour
+essayer un modèle, forcer le pack actif avec le bouton « Debug » de l'accueil (`PremiumPass.DebugOverride`). Sans le pack, la ligne de l'accueil porte un cadenas et ouvre l'écran du pack ; un
 modèle déjà choisi reste enregistré mais n'est plus « installé » (`ModelPreferences.isInstalled`), donc les actions IA redirigent vers
 l'écran « Modèle IA » comme sans modèle (story 8.5).
 

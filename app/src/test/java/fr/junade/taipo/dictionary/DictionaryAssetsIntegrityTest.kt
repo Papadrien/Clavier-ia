@@ -82,10 +82,10 @@ class DictionaryAssetsIntegrityTest {
     @ParameterizedTest(name = "{0}.txt : le seuil de repli mémoire garde environ 50 000 mots")
     @ValueSource(strings = ["fr", "en", "es", "de", "it", "pt", "nl"])
     fun `le repli memoire garde environ cinquante mille mots`(language: String) {
-        // DictionaryLoader relit la liste complète en ne gardant que les mots de fréquence >= candidateMinFrequency quand la
+        // DictionaryLoader relit la liste complète en ne gardant que les mots de fréquence >= reducedMinFrequency quand la
         // mémoire manque (il remplace les anciennes listes `_50k`). Si la liste est régénérée et que le seuil ne suit pas, le repli
         // deviendrait trop gros (inutile) ou trop petit (clavier sans dictionnaire utile).
-        val threshold = DictionaryLoader.candidateMinFrequency(KeyboardLanguage.fromTag(language)!!)
+        val threshold = DictionaryLoader.reducedMinFrequency(KeyboardLanguage.fromTag(language)!!)
         val kept = strictEntries(language).count { it.frequency >= threshold }
         assertTrue(kept in 45_000..55_000, "$language.txt : $kept mots de fréquence >= $threshold (attendu : environ 50 000)")
     }

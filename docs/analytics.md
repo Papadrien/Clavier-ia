@@ -57,8 +57,9 @@ de l'appareil** (la doc du SDK le cite ; l'ancien client maison ne l'envoyait pa
 | `undo_used` | aucune | `UndoController` |
 | `keyboard_language` | `lang`, `layout` (disposition choisie pour la langue : `azerty`, `qwerty`, `qwertz`, `qwerty_n`, `colemak`), `auto` | `TaipoIme.startInputView`, une fois par changement de langue |
 | `keyboard_mode` | `mode` (`floating`, `docked`), `via` (`bubble` : bulle d'Entrée, `handle` : poignée glissée en bas ou TalkBack, `one_handed` : passage en mode une main) | `FloatingKeyboardWindow.apply`, à chaque détachement ou recollage depuis le clavier |
-| `setting_changed` | `key`, `value` (`true` / `false` ou mot-clé) | `KeyboardSettingsActivity`, `LanguagesActivity` (`language_added`), `LanguageDetailActivity` (`language_removed`, `letter_arrangement` = `<langue>_<disposition>`), `ThemeActivity` (`theme_choice` = `system` / `light` / `dark` / `dynamic` ; `accent_palette` = `violet` / `indigo` / `blue` / `lagoon` / `emerald` / `amber` / `raspberry` / `magenta` / `graphite` ; `keyboard_backdrop` = `plain` / `ribbons` / `bubbles` / `crystal` / `waves` ; `keyboard_backdrop_animated` = `true` / `false` ; `keyboard_font` = `open_sans` / `system` / `inter` / `atkinson` / `lexend` / `nunito` / `manrope` / `ibm_plex_sans` / `literata` / `opendyslexic`) |
+| `setting_changed` | `key`, `value` (`true` / `false` ou mot-clé) | `KeyboardSettingsActivity` (dont `swipe_typing` = `true` / `false`), `LanguagesActivity` (`language_added`), `LanguageDetailActivity` (`language_removed`, `letter_arrangement` = `<langue>_<disposition>`), `ThemeActivity` (`theme_choice` = `system` / `light` / `dark` / `dynamic` ; `accent_palette` = `violet` / `indigo` / `blue` / `lagoon` / `emerald` / `amber` / `raspberry` / `magenta` / `graphite` ; `keyboard_backdrop` = `plain` / `ribbons` / `bubbles` / `crystal` / `waves` / `hearts` / `flowers` / `processor` / `photo` (jamais l'image elle-même) ; `keyboard_backdrop_animated` = `true` / `false` ; `motion_style` = `spring` / `snappy` / `jelly` / `flight` / `drop` / `glide` / `sparks` / `pixels` / `heart` / `bloom` (règle aussi la bulle des touches) ; `keyboard_font` = `open_sans` / `system` / `inter` / `atkinson` / `lexend` / `nunito` / `manrope` / `ibm_plex_sans` / `literata` / `opendyslexic`) |
 | `first_open` | aucune | `MainActivity.onCreate` via `Analytics.firstOpen`, une fois par installation |
+| `keyboard_used` | aucune | `TaipoIme.onKeyPressed` via `Analytics.keyboardUsed`, à la première touche tapée de la journée (jour local), une fois par jour |
 | `premium_paywall_shown` | `source` (`home`, `about`, `theme`, `prompts`, `clipboard_pin`) | `PremiumActivity.onCreate` |
 | `premium_purchased` | `source` (idem) | `PremiumBilling`, achat confirmé par Google Play |
 
@@ -83,6 +84,21 @@ installations ouvertes (filtrer par période, version de l'app, langue ou pays d
   avec restauration ne recompte pas. Une personne qui active le clavier sans jamais ouvrir l'application n'est pas comptée.
 - **Tester** : désinstaller puis réinstaller (les dates d'installation et de mise à jour doivent être égales) ; « Effacer les
   données » ou une mise à jour par-dessus ne rejoue pas l'événement, car l'application est alors vue comme mise à jour.
+
+## Compter les utilisateurs actifs du clavier (`keyboard_used`)
+
+Les autres événements viennent de l'application ou d'actions précises du clavier : quelqu'un qui se contente de taper n'en
+envoyait aucun. `keyboard_used` part à la **première touche** tapée chaque jour (lettres, espace, effacement, touches de
+disposition, prompt compris), une seule fois par jour **local** de l'appareil : le nombre d'événements `keyboard_used` d'une
+journée est le nombre d'appareils sur lesquels le clavier a servi ce jour-là (avec la mesure acceptée).
+
+- Le jour envoyé est mémorisé (`keyboard_used_day` dans `AnalyticsPreferences`) après l'envoi, et gardé en mémoire pour ne pas
+  relire le réglage à chaque touche. Règles pures dans `DailyKeyboardUse` (`:core`, testées).
+- **Champ de mot de passe, mesure désactivée ou SDK absent** : rien n'est envoyé ni mémorisé ; la touche suivante réessaie.
+- **Horloge** : un changement de fuseau qui recule d'un jour ne renvoie pas l'événement ; une horloge reculée de plus d'un jour
+  ne bloque pas les jours suivants.
+- **Tester** : taper une lettre, un événement `keyboard_used` apparaît dans le tableau de bord debug ; continuer à taper, puis
+  fermer et rouvrir le clavier : aucun second événement le même jour.
 
 ## Lire la rétention dans Aptabase
 

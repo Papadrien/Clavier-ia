@@ -1,0 +1,70 @@
+# Emoji-Vorschläge, Deutsch: ein Emoji, danach die Wörter, die es auslösen (gebeugte Formen ausgeschrieben).
+# Ordre de priorité = ordre du fichier ; mots comparés sans accent ni majuscule ; pas de règle de pluriel (formes écrites).
+# Liste écrite pour Taipo le 19/11/2026, à faire relire par une personne de langue maternelle.
+😀 lächeln glücklich froh fröhlich zufrieden
+😂 haha hahaha lol witzig lustig
+😍 liebe wunderschön traumhaft herrlich
+😘 kuss küsse küsschen bussi
+❤️ herz herzen verliebt
+😢 traurig traurige traurigkeit
+😭 weinen weine tränen
+😡 wütend sauer ärgerlich
+😴 schlafen müde schläfrig
+👍 okay ok passt super perfekt
+👏 bravo glückwunsch gratuliere
+🙏 danke bitte dankeschön
+👋 hallo tschüss servus moin hi
+🎉 party feier feiern
+🎂 geburtstag
+🎁 geschenk geschenke
+🎄 weihnachten weihnachtsbaum
+🔥 feuer heiß
+❄️ kalt schnee winter
+☀️ sonne sonnig sommer
+🌧️ regen regnet
+🍕 pizza pizzen
+🍔 burger hamburger
+🍝 nudeln spaghetti pasta
+🍣 sushi
+🍷 wein
+🍺 bier biere
+☕ kaffee
+🍵 tee
+🍰 kuchen torte
+🍫 schokolade
+🍎 apfel apfelsaft
+🍓 erdbeere erdbeeren
+🐱 katze katzen kätzchen
+🐶 hund hunde hündchen
+🐴 pferd pferde
+🐦 vogel vögelchen
+🌹 rose rosen
+🌸 blume blumen
+🚗 auto autos wagen
+🚲 fahrrad rad
+🚌 bus
+🚆 zug bahn
+✈️ flugzeug flug reise urlaubsreise
+🏠 haus zuhause daheim
+🏖️ strand urlaub ferien
+⚽ fußball spiel tor
+🎮 zocken videospiel
+🎵 musik lied lieder
+🎬 film filme kino
+📚 buch bücher lesen
+📱 handy smartphone
+💻 computer laptop
+📷 foto fotos kamera
+💡 idee ideen
+💰 geld
+📞 anrufen telefonieren
+💼 arbeit büro job
+✅ fertig erledigt
+💪 training stark fitness
+🤔 hmm überlege vielleicht
+😅 hoppla sorry entschuldigung
+🤒 krank erkältet
+😎 cool lässig
+🤗 umarmung drücker
+🤩 unglaublich wahnsinn
+🏆 gewonnen sieg sieger

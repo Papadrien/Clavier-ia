@@ -25,6 +25,7 @@
         <exclude domain="file" path="models/" />
         <exclude domain="file" path="voice-model/" />
         <exclude domain="file" path="dictionaries/" />
+        <exclude domain="file" path="backdrop/" />
     </cloud-backup>
     <device-transfer>
         <exclude domain="database" path="personal_dictionary.db" />
@@ -47,5 +48,6 @@
         <exclude domain="file" path="models/" />
         <exclude domain="file" path="voice-model/" />
         <exclude domain="file" path="dictionaries/" />
+        <exclude domain="file" path="backdrop/" />
     </device-transfer>
 </data-extraction-rules>

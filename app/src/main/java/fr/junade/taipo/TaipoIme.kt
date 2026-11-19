@@ -136,6 +136,10 @@ class TaipoIme : InputMethodService() {
         override fun onWordSuggestionTapped(suggestion: WordSuggestion) = this@TaipoIme.onWordSuggestionTapped(suggestion)
         override fun onKeyPressed(key: Key) = this@TaipoIme.onKeyPressed(key)
         override fun onCursorMoved(steps: Int) = this@TaipoIme.onCursorMoved(steps)
+        override fun onGesture(
+            path: List<fr.junade.taipo.dictionary.GestureDecoder.Point>,
+            keys: Map<Char, fr.junade.taipo.dictionary.GestureDecoder.Point>,
+        ) = this@TaipoIme.swipeTyping.onGesture(path, keys)
         override fun onGlobeSelected() = this@TaipoIme.languages.onGlobeSelected()
         override fun onOneHandedToggled() = this@TaipoIme.oneHanded.toggle()
         override fun onOneHandedSideSwitched() = this@TaipoIme.oneHanded.switchSide()
@@ -212,6 +216,63 @@ class TaipoIme : InputMethodService() {
     private val correctionEngine by lazy { CorrectionEngine(applicationContext, llmHost) }
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
     private val keyboardPreferences by lazy { KeyboardPreferences(applicationContext) }
+
+    /**
+     * Fond animé pendant une action IA : tant que le clavier est affiché sur un motif animé, l'état des actions IA est relu toutes
+     * les [AI_BACKDROP_POLL_MS] ms (simple lecture d'indicateurs) et transmis au fond, qui s'anime comme pendant la frappe.
+     */
+    private val aiBackdropTick = object : Runnable {
+        override fun run() {
+            viewComposer.setBackdropAiBusy(aiActionInProgress())
+            mainHandler.postDelayed(this, AI_BACKDROP_POLL_MS)
+        }
+    }
+
+    /** Une action IA travaille : correction, réponse du chat, traitement d'une dictée ou d'une transcription IA. */
+    private fun aiActionInProgress(): Boolean =
+        correction.inProgress || prompt.generationBusy() || voice.isTranscribing || aiTranscription.isProcessing
+
+    private fun watchAiForBackdrop(enabled: Boolean) {
+        mainHandler.removeCallbacks(aiBackdropTick)
+        if (enabled) mainHandler.post(aiBackdropTick) else viewComposer.setBackdropAiBusy(false)
+    }
+
+    /** Saisie par glissement permise dans le champ courant (réglage activé, champ de texte libre et non sensible). */
+    private var swipeTypingActive = false
+
+    /** Saisie par glissement (19/11/2026) : décodage du tracé, mot écrit, alternatives, ⌫ qui efface le mot : voir [SwipeTypingController]. */
+    private val swipeTyping: SwipeTypingController by lazy {
+        SwipeTypingController(
+            serviceScope,
+            object : SwipeTypingController.Host {
+                override fun inputConnection(): InputConnection? = currentInputConnection
+                override fun language(): KeyboardLanguage = controller.state.language
+                override fun personalWords(): List<String> = knownPersonalWords()
+                override fun isShifted(): Boolean = controller.state.isShifted
+                override fun isCapsLock(): Boolean = controller.state.isCapsLock
+                override fun blocked(): Boolean = prompt.active || isRecording || correctionInProgress || fieldEditor.hasSelection()
+                override fun pinSuggestions(suffix: String, words: List<WordSuggestion?>) = suggestions.pinWords(suffix, words)
+                override fun unpinSuggestions() = suggestions.unpinWords()
+                override fun onWordCommitted(inserted: String) {
+                    hapticFeedback.perform(hapticIntensity)
+                    Analytics.keyboardUsed(this@TaipoIme)
+                    onUserTyped()
+                    clearHighlightIfNeeded()
+                    autocorrections.pending = null
+                    recordUndoEdit(inserted = inserted, original = "")
+                    learnFromTyping() // le mot glissé compte comme un mot tapé (prédiction du mot suivant)
+                    afterFieldEdit()
+                }
+                override fun onWordErased() {
+                    onUserTyped()
+                    afterFieldEdit()
+                }
+            },
+        )
+    }
+
+    /** Fond « Image » : l'image de l'utilisateur, décodée hors du thread principal et gardée tant qu'elle ne change pas. */
+    private val photoBackdrop by lazy { fr.junade.taipo.backdrop.PhotoBackdropLoader(applicationContext, serviceScope) }
 
     /** Revue UX : astuces de gestes, une fois chacune, dans la barre du haut (GestureTipPillView). */
     private val gestureTips by lazy { GestureTips(applicationContext) }
@@ -491,14 +552,28 @@ class TaipoIme : InputMethodService() {
         keyboardHeight = keyboardPreferences.keyboardHeight
         keyboardView.heightScale = keyboardHeight.scale
         keyboardView.bottomMarginDp = keyboardPreferences.bottomMarginDp
+        keyboardView.keyPreviewEnabled = keyboardPreferences.isKeyPreviewEnabled
+        viewComposer.emojiPanel.keyPreviewEnabled = keyboardPreferences.isKeyPreviewEnabled
         floatingWindow.apply() // en flottant, remet la marge du bas à zéro (la poignée en tient lieu)
+        val backdrop = fr.junade.taipo.backdrop.KeyboardBackdrop.effective(
+            keyboardPreferences.keyboardBackdrop,
+            PremiumPass.isActive,
+            fr.junade.taipo.backdrop.PhotoBackdrop.exists(this),
+        )
         viewComposer.applyBackdrop(
-            fr.junade.taipo.backdrop.KeyboardBackdrop.effective(keyboardPreferences.keyboardBackdrop, PremiumPass.isActive),
+            backdrop,
             keyboardPreferences.backdropSeed,
             keyboardPreferences.isBackdropAnimated,
             themeColor(R.color.accent),
             KeyboardTheme.mode == KeyboardTheme.Mode.DARK,
         )
+        watchAiForBackdrop(backdrop.isGenerated && keyboardPreferences.isBackdropAnimated)
+        if (backdrop == fr.junade.taipo.backdrop.KeyboardBackdrop.PHOTO) {
+            photoBackdrop.load(keyboardPreferences.backdropPhotoVersion) { viewComposer.applyBackdropPhoto(it) }
+        } else {
+            photoBackdrop.release()
+            viewComposer.applyBackdropPhoto(null)
+        }
         oneHanded.apply()
         keyboardView.showTouchZones = keyboardPreferences.showTouchZones
         emojiController.hidePanel(resync = false)
@@ -549,6 +624,10 @@ class TaipoIme : InputMethodService() {
         syncAutoCapitalization()
         correction.clearHighlightState()
         layoutApplier.apply()
+        // Saisie par glissement : jamais dans un champ sans suggestions (mot de passe, e-mail, adresse web, nombre) ni sensible.
+        swipeTypingActive = keyboardPreferences.isSwipeTypingEnabled && suggestions.suggestionsAllowed && !sensitiveField
+        keyboardView.swipeTypingAllowed = { swipeTypingActive && !prompt.active && !isRecording && !correctionInProgress }
+        if (swipeTypingActive) swipeTyping.prepare(keyboardView.gestureKeyChars()) else swipeTyping.clear()
         // Story 2.2 : écoute des copies tant que le clavier est actif, et relecture à l'ouverture du
         // champ (le processus du clavier a pu être tué depuis la dernière copie).
         clipboard.startListening()
@@ -619,6 +698,7 @@ class TaipoIme : InputMethodService() {
      */
     override fun onWindowHidden() {
         super.onWindowHidden()
+        watchAiForBackdrop(false)
         prompt.resetConversation()
         memory.onWindowHidden() // clavier masqué longtemps : les gros moteurs (IA, dictée) sont libérés
     }
@@ -710,6 +790,7 @@ class TaipoIme : InputMethodService() {
             correctionEngine.cancel()
             prompt.stopGeneration()
         }
+        mainHandler.removeCallbacks(aiBackdropTick)
         serviceJob.cancel()
         // Écriture terminée avant de rendre la main (lot 2.6 de la revue) : pas de launch asynchrone ici.
         nextWords.flushBlocking()
@@ -738,6 +819,7 @@ class TaipoIme : InputMethodService() {
 
     private fun onKeyPressed(key: Key) {
         hapticFeedback.perform(hapticIntensity)
+        Analytics.keyboardUsed(this) // une fois par jour, à la première touche (rien dans un champ de mot de passe)
         messagePopup.dismissBannerOnKey() // un message d'information s'efface à la frappe suivante (une astuce reste)
         if (keySoundEnabled) keySounds.play(KeySound.forAction(key.action))
         suggestions.markTyping() // le curseur qui bouge ensuite suit la frappe (suggestions de complétion)
@@ -764,6 +846,10 @@ class TaipoIme : InputMethodService() {
             emojiController.showPanel()
             return
         }
+
+        // Saisie par glissement : ⌫ juste après un mot glissé l'efface entier ; une lettre tapée après lui commence un nouveau mot.
+        if (key.action == KeyAction.Backspace && swipeTyping.onBackspace()) return
+        swipeTyping.beforeKey(key)
 
         // Suppression juste après une autocorrection : on annule la correction au lieu d'effacer un caractère.
         if (key.action == KeyAction.Backspace && undoLastAutocorrection()) {
@@ -871,6 +957,7 @@ class TaipoIme : InputMethodService() {
      * éventuelle sélection et respecte les caractères composés du champ.
      */
     private fun onCursorMoved(steps: Int) {
+        swipeTyping.clear()
         lastSpaceCursorMoveAt = android.os.SystemClock.uptimeMillis()
         gestureTips.learned(GestureTips.Tip.MOVE_CURSOR)
         if (prompt.active) {
@@ -960,6 +1047,7 @@ class TaipoIme : InputMethodService() {
             return
         }
         if (suggestion !in currentWordSuggestions) return
+        swipeTyping.clear() // une autre possibilité du mot glissé, ou un mot de la bande : le glissement est terminé
         // Pendant la dictée, seules les alternatives d'un mot touché pour le corriger sont proposées (voir VoiceWordPick).
         if ((isRecording && !voice.wordPickActive) || correctionInProgress || fieldEditor.hasSelection()) return
         val ic = currentInputConnection ?: return
@@ -1212,5 +1300,8 @@ class TaipoIme : InputMethodService() {
         private const val WHATS_NEW_DELAY_MS = 1_000L
         private const val WHATS_NEW_PILL_MS = 8_000L
         private const val SPACE_MOVE_ECHO_MS = 600L
+
+        /** Relecture de l'état des actions IA pour le fond animé : assez vif pour démarrer et s'arrêter avec l'action. */
+        private const val AI_BACKDROP_POLL_MS = 200L
     }
 }

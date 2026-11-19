@@ -95,6 +95,15 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="@string/keyboard_settings_show_period_key" />
+
+            <View style="@style/TaipoSettingsCardDivider" />
+
+            <Switch
+                android:id="@+id/switch_key_preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/keyboard_settings_key_preview" />
         </LinearLayout>
 
         <TextView
@@ -332,6 +341,22 @@
 
         <LinearLayout
             style="@style/TaipoSettingsCard">
+
+            <!-- Saisie par glissement (19/11/2026) : glisser de lettre en lettre, le mot s'écrit au relâchement. -->
+            <Switch
+                android:id="@+id/switch_swipe_typing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/keyboard_settings_swipe_typing_switch" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/keyboard_settings_swipe_typing_description" />
+
+            <View style="@style/TaipoSettingsCardDivider" />
 
             <Switch
                 android:id="@+id/switch_habit_learning"

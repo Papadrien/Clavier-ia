@@ -34,6 +34,12 @@ class AccentPolicy(
     private val strictPair: (plain: String, accented: String) -> Boolean,
     val transliteration: Boolean = false,
     val nounsKeepValidWords: Boolean = false,
+    /**
+     * Recherche de candidats sans accents (19/11/2026) : pour un mot tapé sans aucun accent, la distance d'édition se mesure sur la
+     * forme sans accents des candidats, si bien qu'un accent oublié ne compte plus comme une faute (« delws » -> « děláš »). Utile
+     * aux langues où presque chaque mot porte un signe diacritique et où l'on tape souvent sans eux (voir docs/langues.md).
+     */
+    val foldsAccentsInSearch: Boolean = false,
 ) {
 
     /** Rapport minimal de fréquence (accentuée / sans accent) pour que [plain] soit corrigé en [accented]. */
@@ -85,6 +91,7 @@ class AccentPolicy(
             strictDominance = 10L,
             keptPlain = setOf("e", "da", "si", "la", "li", "ne", "se", "te", "di", "papa", "meta"),
             strictPair = { _, _ -> true },
+            foldsAccentsInSearch = true,
         )
 
         /**
@@ -108,6 +115,7 @@ class AccentPolicy(
             strictDominance = 10L,
             keptPlain = setOf("een", "voor", "dat", "die", "is"),
             strictPair = { _, _ -> true },
+            foldsAccentsInSearch = true,
         )
 
         /**
@@ -119,16 +127,22 @@ class AccentPolicy(
          * - suédois, danois, norvégien, finnois 50 (å, ä, ö, æ, ø ont leur touche, comme les umlauts allemands) : « ar » -> « är »,
          *   « pa » -> « på », « etta » -> « että » ; « sa » / « så », « nar » / « når », « ala » / « älä » intacts.
          */
-        fun uniform(dominance: Long, keptPlain: Set<String> = emptySet()) = AccentPolicy(
+        fun uniform(dominance: Long, keptPlain: Set<String> = emptySet(), foldsAccentsInSearch: Boolean = false) = AccentPolicy(
             softDominance = dominance,
             strictDominance = dominance,
             keptPlain = keptPlain,
             strictPair = { _, _ -> true },
+            foldsAccentsInSearch = foldsAccentsInSearch,
         )
 
-        val POLISH = uniform(40L)
-        val CZECH = uniform(40L)
-        val HUNGARIAN = uniform(50L)
+        // Polonais, tchèque, hongrois, roumain, italien, néerlandais : recherche sans accents ([foldsAccentsInSearch], 19/11/2026). Sur le
+        // banc, un mot tapé sans ses diacritiques et avec une faute de frappe est bien mieux rétabli (cs 36 -> 55 %, hu 51 -> 68 %, pl 49 ->
+        // 63 %, ro 41 -> 52 %, it 36 -> 46 %, nl 64 -> 67 % des mots courants), sans recul des fautes simples ni des mots justes. Pas pour le
+        // français, l'anglais, l'espagnol, le portugais ni l'allemand (petits reculs ou phrase juste changée), ni pour les langues nordiques
+        // (å, ä, ö, æ, ø ont leur touche : les fautes simples reculaient en danois et en norvégien).
+        val POLISH = uniform(40L, foldsAccentsInSearch = true)
+        val CZECH = uniform(40L, foldsAccentsInSearch = true)
+        val HUNGARIAN = uniform(50L, foldsAccentsInSearch = true)
         val NORDIC = uniform(50L)
 
         /**
@@ -136,7 +150,7 @@ class AccentPolicy(
          * sauf les formes sans accent qui sont aussi des mots courants : « sa » (son, sa), « ca » (comme), « cat » (étage), « tine » (toi),
          * « peste » (au-dessus), « fata » (la fille) ; l'accent y reste proposé dans la bande.
          */
-        val ROMANIAN = uniform(4L, setOf("sa", "ca", "cat", "tine", "peste", "fata"))
+        val ROMANIAN = uniform(4L, setOf("sa", "ca", "cat", "tine", "peste", "fata"), foldsAccentsInSearch = true)
 
         /** Espagnol : un seul seuil de 10, et les mots justes dont l'accent change le sens à plus de 10 contre 1. */
         val SPANISH = AccentPolicy(

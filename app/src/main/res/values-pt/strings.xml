@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Mostrar a tecla de emoji</string>
     <string name="keyboard_settings_show_comma_key">Mostrar a tecla de vírgula</string>
     <string name="keyboard_settings_show_period_key">Mostrar a tecla de ponto</string>
+    <string name="keyboard_settings_key_preview">Mostrar um balão acima da tecla pressionada</string>
     <string name="keyboard_settings_clipboard_history_switch">Histórico da área de transferência</string>
     <string name="keyboard_settings_clipboard_history_description">Guarda suas cópias recentes para que você possa colá-las de novo (12 horas, 7 dias com o pacote premium). Senhas e números de cartão nunca são guardados. Desativá-lo apaga o histórico.</string>
     <string name="keyboard_settings_screenshots_switch">Sugerir capturas de tela recentes</string>
@@ -151,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normal (100%)</string>
     <string name="keyboard_settings_height_large">Grande (110%)</string>
     <string name="keyboard_settings_height_extra_large">Muito grande (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Escrita deslizante</string>
+    <string name="keyboard_settings_swipe_typing_description">Deslize o dedo de letra em letra sem o levantar: a palavra é escrita quando o levanta. Toque numa sugestão para a trocar; ⌫ logo a seguir apaga a palavra inteira.</string>
     <string name="keyboard_settings_habits_switch">Aprender com meus hábitos</string>
     <string name="keyboard_settings_habits_description">O teclado lembra as correções que você desfaz e seus endereços de e-mail, criptografados e apenas neste dispositivo.</string>
     <string name="keyboard_settings_habits_clear">Apagar meus hábitos de correção</string>
@@ -481,7 +484,7 @@
     <string name="privacy_section_3_title">3. Nenhuma coleta de dados pessoais</string>
     <string name="privacy_section_3_body">O Taipo não tem conta nem anúncios. Ele mede seu uso de forma anônima com a Aptabase: eventos como “uma correção com IA funcionou”, “um modelo foi baixado” ou “uma configuração mudou”, junto com a versão do app, a versão do Android, o modelo do dispositivo e seu idioma, mais duas faixas aproximadas: há quanto tempo o app está instalado e em quantos dias foi usado (por exemplo, “de 8 a 30 dias”), nunca valores exatos. Nunca o seu texto, o que você copia ou dita, nem qualquer identificador do dispositivo ou da pessoa, e nada dos campos de senha. Como em qualquer conexão com a Internet, os servidores da Aptabase recebem tecnicamente o endereço IP da solicitação; o Taipo nunca o vê nem o guarda (consulte a política de privacidade da Aptabase sobre o tratamento dele). A medição fica desativada até você concordar, e você pode mudar sua escolha a qualquer momento em Meus dados > Compartilhar dados de uso. O próprio Taipo não coleta nenhum dado pessoal sobre você.</string>
     <string name="privacy_section_4_title">4. Campos de senha</string>
-    <string name="privacy_section_4_body">Em um campo de senha ou código secreto, as ações de IA (Corrigir, Gerar, Ditar, Ditado com IA) e o painel Smart Clipboard ficam desativados: o conteúdo do campo não é lido e o microfone não é aberto. O botão de colar continua disponível, para você colar uma senha copiada de um gerenciador de senhas; ela fica oculta (••••). Cópias marcadas como confidenciais (senhas) e números de cartão nunca são guardados no histórico da área de transferência.</string>
+    <string name="privacy_section_4_body">Em um campo de senha ou código secreto, as ações de IA (Corrigir, Gerar, Ditar, Ditado com IA) ficam desativadas e o microfone não é aberto. O teclado nunca lê o conteúdo do campo. Você ainda pode colar: o botão de colar e o painel Smart Clipboard continuam disponíveis, para você colar uma senha copiada de um gerenciador de senhas; cópias marcadas como confidenciais ficam ocultas (••••). O que é copiado de um campo de senha, cópias marcadas como confidenciais (senhas) e números de cartão nunca são guardados no histórico da área de transferência.</string>
     <string name="privacy_section_5_title">5. O que fica guardado no dispositivo</string>
     <string name="privacy_section_5_body">Seu dicionário pessoal, os itens da área de transferência e suas configurações ficam no seu dispositivo, em bancos de dados criptografados. Desinstalar o app exclui esses dados. Você também pode exportá-los para um arquivo sem criptografia (Meus dados > Backup e restauração): esse arquivo só sai do dispositivo se você mesmo o mover. O Taipo não pede acesso às suas fotos.</string>
     <string name="privacy_section_6_title">6. Aprendizado e precisão da digitação</string>
@@ -530,7 +533,7 @@
     <string name="model_delete_voice_message">Os arquivos (%1$s) serão excluídos do seu dispositivo. O ditado por voz não funcionará até você baixar o modelo novamente.</string>
     <string name="button_voice_model_local">Modelo de voz local</string>
     <string name="home_row_voice_model_local_subtitle">Fornecer você mesmo os arquivos do modelo de voz</string>
-    <string name="sensitive_field_actions_disabled">Desativado em campos de senha: nada é lido nem enviado à IA ou à área de transferência.</string>
+    <string name="sensitive_field_actions_disabled">Desativado em campos de senha: nada é lido nem enviado à IA.</string>
     <string name="ai_transcription_button_description">Ditado com IA: gravar e depois transcrever</string>
     <string name="ai_transcription_button_recording">Ditado com IA: parar a gravação e transcrever</string>
     <string name="ai_transcription_button_processing">Ditado com IA em andamento: toque para cancelar</string>
@@ -606,6 +609,19 @@
     <string name="backdrop_waves">Ondas</string>
     <string name="backdrop_hearts">Corações</string>
     <string name="backdrop_flowers">Flores</string>
+    <string name="backdrop_processor">Processador</string>
+    <string name="backdrop_photo">Imagem</string>
+    <string name="theme_backdrop_photo_change">Escolher outra imagem</string>
+    <string name="theme_backdrop_photo_source_title">Escolher uma imagem</string>
+    <string name="theme_backdrop_photo_source_gallery">Galeria</string>
+    <string name="theme_backdrop_photo_source_files">Ficheiros</string>
+    <string name="theme_backdrop_photo_error">Não foi possível abrir esta imagem.</string>
+    <string name="theme_backdrop_photo_no_picker">Nenhuma aplicação deste dispositivo permite escolher uma imagem.</string>
+    <string name="theme_backdrop_photo_delete">Eliminar a imagem</string>
+    <string name="theme_backdrop_photo_delete_title">Eliminar esta imagem?</string>
+    <string name="theme_backdrop_photo_delete_message">O fundo do teclado volta a Liso. O original na galeria ou nos ficheiros não é alterado.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Eliminar</string>
+    <string name="theme_backdrop_photo_delete_error">Não foi possível eliminar a imagem. Tente novamente.</string>
     <string name="theme_backdrop_free">Grátis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Fonte do teclado</string>
@@ -637,6 +653,13 @@
     <string name="motion_style_spring">Mola</string>
     <string name="motion_style_snappy">Ágil</string>
     <string name="motion_style_jelly">Gelatina</string>
+    <string name="motion_style_flight">Voo</string>
+    <string name="motion_style_drop">Gota</string>
+    <string name="motion_style_glide">Deslizar</string>
+    <string name="motion_style_sparks">Faíscas</string>
+    <string name="motion_style_pixels">Píxeis</string>
+    <string name="motion_style_heart">Bolha coração</string>
+    <string name="motion_style_bloom">Florescer</string>
     <string name="home_row_languages_subtitle">Idiomas e layouts do teclado</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Aparência</string>
@@ -668,7 +691,7 @@
     <string name="premium_clipboard_title">Área de transferência ampliada</string>
     <string name="premium_clipboard_text">Cópias guardadas por 7 dias em vez de 12 h. Até 50 itens fixados em vez de 5.</string>
     <string name="premium_style_title">Um teclado do seu jeito</string>
-    <string name="premium_style_text">Seis fundos animados que se movem enquanto você digita, mais cinco formatos de teclas, nove fontes para o teclado (incluindo OpenDyslexic) e o estilo de animação Gelatina.</string>
+    <string name="premium_style_text">Sete fundos animados que se movem enquanto você digita, mais cinco formatos de teclas, nove fontes para o teclado (incluindo OpenDyslexic) e cinco estilos de animação: Ágil, Gelatina, Voo, Gota e Deslizar.</string>
     <string name="premium_free_reminder">Digitação, idiomas, IA e backup continuam gratuitos, com ou sem o pacote.</string>
     <string name="premium_buy">Comprar o pacote</string>
     <string name="premium_buy_with_price">Comprar o pacote · %1$s</string>

@@ -34,16 +34,24 @@ Huit langues ajoutées le 11/11/2026 (pl, ro, cs, hu, sv, da, nb, fi) : voir `di
 | | fr, en | es, de, it, pt, nl | pl, ro, cs, hu, sv, da, nb, fi |
 |---|---|---|---|
 | Dictionnaire complet (téléchargé), prénoms | oui | oui | oui, **une fois les fichiers déposés sur R2** |
-| Liste de démarrage dans l'APK (corrige avant le téléchargement) | oui | non | oui (12/11/2026) |
+| Liste de démarrage dans l'APK (corrige avant le téléchargement) | oui | oui (19/11/2026) | oui (12/11/2026) |
 | Bigrammes (mot précédent) | oui | it, pt, nl | oui |
 | Règles de contexte (homophones, accords, participes) | oui | oui | **non** |
 | Règles de flexion (pluriels réguliers absents des listes) | oui | es, de, pt, nl | **non** (formes fléchies prises dans les listes) |
 | Réglage de décision mesuré sur un banc | oui | oui | oui, sans contexte (`CorrectionConfidence.LATIN`, références du 12/11/2026) |
-| Emoji proposés d'après le mot | oui | **non** | oui (12/11/2026) |
+| Emoji proposés d'après le mot | oui | oui (19/11/2026, listes à faire relire) | oui (12/11/2026) |
 | Dictée vocale (modèle Nemotron multilingue, langue détectée seule) | oui | prise en charge par le modèle, **à tester** | prise en charge par le modèle, **à tester** |
 | Nombres dictés écrits en chiffres (« zwanzig » -> « 20 ») | oui | oui (12/11/2026) | oui (12/11/2026) |
 | IA (correction, chat, dictée IA Gemma 4) | oui | multilingue, non mesuré | multilingue, non mesuré |
 | Interface traduite | oui | oui (à relire) | oui (à relire) |
+
+Accent oublié et faute de frappe (19/11/2026) : tests de frappe sur un OnePlus 6T (taps réels sur les touches, 15 langues) puis
+mesure `accentfaute.*` du banc. Sur une faute simple, toutes les langues sont au niveau du français et de l'anglais (82 à 97 % sur
+le téléphone) ; un mot tapé sans ses diacritiques et avec une faute en plus était mal rétabli partout (fr 45 %, cs 36 %), car chaque
+accent manquant comptait comme une faute. `AccentPolicy.foldsAccentsInSearch` mesure la distance sur la forme sans accents des
+candidats pour pl, ro, cs, hu, it et nl (mots courants : cs 36 -> 55 %, hu 51 -> 68 %, pl 49 -> 63 %, ro 41 -> 52 %, it 36 -> 46 %,
+nl 64 -> 67 %), sans phrase juste changée ni mot juste remplacé. Laissé de côté : fr, en, es, pt, de (petits reculs, et une phrase
+juste allemande changée) et les langues nordiques (å, ä, ö, æ, ø ont leur touche ; fautes simples en recul en da et nb).
 
 Mesures du banc (`./gradlew :core:run --args="--lang=<code>"`, fautes de frappe aléatoires sur les mots courants) : bien corrigées
 pl 95,8 % ; ro 92,1 % ; cs 93,7 % ; hu 95,7 % ; sv 93,3 % ; da 93,3 % ; nb 92,6 % ; fi 95,2 % (nl 95,9 % pour comparer). Aucune

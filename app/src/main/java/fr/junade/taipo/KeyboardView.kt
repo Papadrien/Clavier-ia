@@ -10,11 +10,13 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import fr.junade.taipo.dictionary.GestureDecoder
 import fr.junade.taipo.dictionary.NextLetterModel
 import kotlin.math.roundToInt
 
@@ -154,7 +156,7 @@ class KeyboardView(context: Context) : View(context) {
     private fun onKeyZoneChanged() {
         contentCache = null
         slotCache = null
-        keyPreview.key = null
+        keyPreview.dismiss()
         dismissPopup()
         accessibility.invalidateRoot()
         invalidate()
@@ -280,7 +282,16 @@ class KeyboardView(context: Context) : View(context) {
     // bulle d'accents (1.8) s'affiche par-dessus, ou au relâchement/annulation.
     private val keyPreview = KeyPreview(this)
 
-    private fun showsPreview(key: Key?): Boolean = key?.action is KeyAction.TypeChar
+    /** Bulle d'agrandissement des touches (réglage « Bulle au-dessus des touches », Paramètres du clavier). */
+    var keyPreviewEnabled = true
+        set(value) {
+            if (field == value) return
+            field = value
+            if (!value) keyPreview.dismiss()
+            invalidate()
+        }
+
+    private fun showsPreview(key: Key?): Boolean = keyPreviewEnabled && key?.action is KeyAction.TypeChar
 
     /**
      * L'appui long sur Entrée ouvre toujours une bulle (sélection par glissement vers le haut, comme les accents) avec la
@@ -362,7 +373,7 @@ class KeyboardView(context: Context) : View(context) {
             showPopup(key)
         } else if (digit != null) {
             longPressCommitted = true
-            keyPreview.key = null
+            keyPreview.dismiss()
             keyListener?.onKey(Key("longpress_$digit", digit.toString(), KeyAction.TypeChar(digit)))
             invalidate()
         }
@@ -446,6 +457,34 @@ class KeyboardView(context: Context) : View(context) {
         deleteSwipeListener = listener
     }
 
+    /**
+     * Saisie par glissement (19/11/2026) : tracé terminé, en largeurs de touche ([path]), avec les centres des touches de lettres
+     * dans la même unité ([keys]) ; l'IME le décode ([GestureDecoder]) et écrit le mot.
+     */
+    fun interface OnGestureListener {
+        fun onGesture(path: List<GestureDecoder.Point>, keys: Map<Char, GestureDecoder.Point>)
+    }
+
+    private var gestureListener: OnGestureListener? = null
+
+    fun setOnGestureListener(listener: OnGestureListener) {
+        gestureListener = listener
+    }
+
+    /**
+     * Saisie par glissement permise pour le prochain appui (réglage activé, champ de texte libre, pas de mode prompt...) : lu à
+     * chaque appui, fourni par l'IME.
+     */
+    var swipeTypingAllowed: () -> Boolean = { false }
+
+    /** Appui sur une lettre, glissement encore possible : le tracé est enregistré au cas où il deviendrait un geste. */
+    private var gestureCandidate = false
+
+    /** Le glissement est engagé : plus de touche appuyée ni de bulle, le tracé est dessiné et décodé au relâchement. */
+    private var gestureActive = false
+    private val gesturePath = ArrayList<GestureDecoder.Point>()
+    private val gestureTrail by lazy { GestureTrail(context.themeColor(R.color.accent), dp(GESTURE_TRAIL_WIDTH_DP)) }
+
     // Story 1.7 : glissement horizontal sur la barre espace = déplacement du curseur. Un caractère tous les 24 dp
     // (12 dp jusqu'au 13/11/2026 : deux fois moins sensible, le curseur filait trop vite).
     private val spaceSwipe = SpaceSwipeTracker(activationPx = dp(16f), stepPx = dp(24f))
@@ -519,7 +558,7 @@ class KeyboardView(context: Context) : View(context) {
         isLandscape = landscape
         slotCache = null
         // Une bulle ouverte pendant la rotation serait mal positionnée : on la ferme.
-        keyPreview.key = null
+        keyPreview.dismiss()
         dismissPopup()
         requestLayout()
         invalidate()
@@ -533,7 +572,7 @@ class KeyboardView(context: Context) : View(context) {
         // Story 1.14 : largeur modifiée (dépliage d'un pliable, multi-fenêtre) ; une bulle ouverte
         // serait mal positionnée, on la ferme.
         if (oldw != 0 && w != oldw) {
-            keyPreview.key = null
+            keyPreview.dismiss()
             dismissPopup()
         }
     }
@@ -642,19 +681,21 @@ class KeyboardView(context: Context) : View(context) {
         }
 
         sparkPainter.draw(canvas, shiftAnimation.sparks)
+        gestureTrail.draw(canvas, SystemClock.uptimeMillis(), ValueAnimator.areAnimatorsEnabled())
         drawOneHandedControls(canvas)
         drawTouchZones(canvas)
         drawPopup(canvas)
-        drawPreview(canvas)
-        if (backspaceAnimation.isRunning ||
-            shiftAnimation.isRunning ||
-            spaceBarAnimation.isRunning ||
-            digitSwipeAnimation.isRunning ||
-            oneHandedTransition.isRunning
-        ) {
-            postInvalidateOnAnimation()
-        }
+        val nowMs = SystemClock.uptimeMillis()
+        drawPreview(canvas, nowMs)
+        if (keyAnimationsRunning() || keyPreview.isRunning(nowMs) || gestureTrail.isRunning(nowMs)) postInvalidateOnAnimation()
     }
+
+    /** Une animation des touches est en cours (Effacer, Maj, barre espace, chiffre, mode une main) : l'image suivante est due. */
+    private fun keyAnimationsRunning(): Boolean = backspaceAnimation.isRunning ||
+        shiftAnimation.isRunning ||
+        spaceBarAnimation.isRunning ||
+        digitSwipeAnimation.isRunning ||
+        oneHandedTransition.isRunning
 
     // Multi-touch : en frappe rapide, le doigt suivant se pose avant que le précédent soit levé.
     // Un seul doigt est « actif » à la fois (celui qui alimente appui long, bulles et glissements) ;
@@ -720,10 +761,14 @@ class KeyboardView(context: Context) : View(context) {
         backspaceSwipe.reset()
         deleteSwipeWords = 0
         pressedKey = keyAt(x, y)
+        gestureActive = false
+        gesturePath.clear()
+        gestureCandidate = gestureListener != null && isGestureLetter(pressedKey) && swipeTypingAllowed()
+        if (gestureCandidate) gesturePath += GestureDecoder.Point(x, y)
         digitSwipeKey = pressedKey?.takeIf { it.longPressChar != null }
         digitSwipeAnimation.cancel()
         pressedKey?.takeIf { it.longPressChar != null }?.let { digitSwipeAnimation.onPress(it) }
-        keyPreview.key = pressedKey.takeIf { showsPreview(it) }
+        keyPreview.press(pressedKey.takeIf { showsPreview(it) }, SystemClock.uptimeMillis())
         if (pressedKey?.action is KeyAction.Space) spaceSwipe.onDown(x)
         if (pressedKey?.action is KeyAction.Backspace) {
             backspaceSwipe.onDown(x)
@@ -740,6 +785,17 @@ class KeyboardView(context: Context) : View(context) {
             return
         }
         if (longPressCommitted) return
+        if (gestureActive) {
+            addGesturePoint(x, y)
+            return
+        }
+        if (gestureCandidate) {
+            gesturePath += GestureDecoder.Point(x, y)
+            if (shouldStartGesture(x, y)) {
+                startGesture()
+                return
+            }
+        }
         if (pressedKey?.action is KeyAction.Space) {
             val steps = spaceSwipe.onMove(x)
             if (steps != 0) cursorMoveListener?.onCursorMove(steps)
@@ -775,7 +831,7 @@ class KeyboardView(context: Context) : View(context) {
             digitSwipeKey = null
             digitSwipeAnimation.cancel()
             pressedKey = current
-            keyPreview.key = current.takeIf { showsPreview(it) }
+            keyPreview.press(current.takeIf { showsPreview(it) }, SystemClock.uptimeMillis(), sliding = true)
             startRepeat(current)
             invalidate()
         }
@@ -792,7 +848,7 @@ class KeyboardView(context: Context) : View(context) {
         val slop = ViewConfiguration.get(context).scaledTouchSlop.toFloat()
         val progress = DigitSwipe.progress(x - downX, y - downY, DigitSwipe.threshold(keyHeight, slop))
         digitSwipeAnimation.onDrag(progress)
-        if (progress > PREVIEW_HIDE_PROGRESS) keyPreview.key = null
+        if (progress > PREVIEW_HIDE_PROGRESS) keyPreview.dismiss()
         invalidate()
     }
 
@@ -810,7 +866,7 @@ class KeyboardView(context: Context) : View(context) {
         cancelKeyLongPress()
         longPressCommitted = true
         digitSwipeKey = null
-        keyPreview.key = null
+        keyPreview.dismiss()
         digitSwipeAnimation.onCommit()
         keyListener?.onKey(Key("longpress_$digit", digit.toString(), KeyAction.TypeChar(digit)))
         digitHintListener?.onSwipeDigit()
@@ -823,6 +879,87 @@ class KeyboardView(context: Context) : View(context) {
         val key = pressedKey ?: return false
         if (key != digitSwipeKey) return false
         return DigitSwipe.keepsKey(x - downX, y - downY, ViewConfiguration.get(context).scaledTouchSlop.toFloat())
+    }
+
+    /** Lettre (touche de caractère alphabétique) : seul point de départ possible d'un glissement. */
+    private fun isGestureLetter(key: Key?): Boolean {
+        val action = key?.action as? KeyAction.TypeChar ?: return false
+        return action.char.isLetter()
+    }
+
+    /**
+     * Le glissement s'engage quand le doigt s'est éloigné de [GESTURE_START_KEYS] largeur de touche de son point d'appui, sauf
+     * s'il descend droit depuis une touche du haut (chiffre par glissement, [DigitSwipe]).
+     */
+    private fun shouldStartGesture(x: Float, y: Float): Boolean {
+        val unit = letterKeyWidthPx()
+        if (unit <= 0f) return false
+        val dx = x - downX
+        val dy = y - downY
+        if (dx * dx + dy * dy < (GESTURE_START_KEYS * unit) * (GESTURE_START_KEYS * unit)) return false
+        return !keptByDigitSwipe(x, y)
+    }
+
+    /** Le glissement s'engage : la touche n'est plus appuyée (ni bulle, ni appui long, ni répétition), la traînée apparaît. */
+    private fun startGesture() {
+        gestureActive = true
+        cancelKeyLongPress()
+        stopRepeat()
+        keyPreview.dismiss()
+        digitSwipeKey = null
+        digitSwipeAnimation.cancel()
+        pressedKey = null
+        val now = SystemClock.uptimeMillis()
+        gestureTrail.clear()
+        for (p in gesturePath) gestureTrail.add(p.x, p.y, now)
+        invalidate()
+    }
+
+    private fun addGesturePoint(x: Float, y: Float) {
+        gesturePath += GestureDecoder.Point(x, y)
+        gestureTrail.add(x, y, SystemClock.uptimeMillis())
+        invalidate()
+    }
+
+    /** Doigt levé pendant un glissement : le tracé, ramené en largeurs de touche, part au décodage ; la traînée s'efface. */
+    private fun finishGesture(x: Float, y: Float) {
+        addGesturePoint(x, y)
+        gestureActive = false
+        gestureCandidate = false
+        pressedKey = null
+        if (ValueAnimator.areAnimatorsEnabled()) gestureTrail.release(SystemClock.uptimeMillis()) else gestureTrail.clear()
+        val unit = letterKeyWidthPx()
+        if (unit > 0f) {
+            val path = gesturePath.map { GestureDecoder.Point(it.x / unit, it.y / unit) }
+            gestureListener?.onGesture(path, gestureKeyCenters(unit))
+        }
+        gesturePath.clear()
+        invalidate()
+    }
+
+    /** Largeur (px) d'une touche de lettre : l'unité des tracés de la saisie par glissement ; 0 sans touche de lettre. */
+    private fun letterKeyWidthPx(): Float {
+        val key = layout.rows.firstNotNullOfOrNull { row -> row.firstOrNull { isGestureLetter(it) } } ?: return 0f
+        return keyBounds(key)?.width() ?: 0f
+    }
+
+    /** Centres des touches de lettres (et de l'apostrophe) de la disposition affichée, en largeurs de touche ([unit] px). */
+    private fun gestureKeyCenters(unit: Float): Map<Char, GestureDecoder.Point> {
+        val centers = HashMap<Char, GestureDecoder.Point>()
+        for (key in layout.rows.flatten()) {
+            val char = gestureChar(key) ?: continue
+            keyBounds(key)?.let { centers[char] = GestureDecoder.Point(it.centerX() / unit, it.centerY() / unit) }
+        }
+        return centers
+    }
+
+    /** Lettres de la disposition affichée (pour préparer le décodeur de la saisie par glissement avant le premier geste). */
+    fun gestureKeyChars(): Set<Char> = layout.rows.flatten().mapNotNull { gestureChar(it) }.toSet()
+
+    /** Caractère (en minuscule) que la touche [key] apporte à un glissement : une lettre ou l'apostrophe ; null sinon. */
+    private fun gestureChar(key: Key): Char? {
+        val char = (key.action as? KeyAction.TypeChar)?.char?.lowercaseChar() ?: return null
+        return char.takeIf { it.isLetter() || it == '\'' }
     }
 
     /** Symbole choisi dans une bulle d'appui long : une icône de la bulle d'Entrée (globe, une main, flottant) ou un caractère. */
@@ -853,6 +990,11 @@ class KeyboardView(context: Context) : View(context) {
             invalidate()
             return
         }
+        if (gestureActive) {
+            finishGesture(x, y)
+            return
+        }
+        gestureCandidate = false
         spaceBarAnimation.onRelease()
         // Doigt levé sans nouveau déplacement depuis que le délai minimal est passé : le glissement saisit le chiffre maintenant.
         val swipeOpen = !keyPopup.isShown && !longPressCommitted
@@ -861,7 +1003,8 @@ class KeyboardView(context: Context) : View(context) {
         digitSwipeAnimation.onRelease()
         stopRepeat()
         cancelKeyLongPress()
-        keyPreview.key = null
+        // La bulle reste affichée un instant après le relâchement, puis sort (KeyPreview).
+        keyPreview.release(SystemClock.uptimeMillis())
         if (keyPopup.isShown) {
             releaseOnPopup(x, y)
             return
@@ -950,6 +1093,10 @@ class KeyboardView(context: Context) : View(context) {
 
     private fun cancelTouch() {
         pressedControl = null
+        gestureActive = false
+        gestureCandidate = false
+        gesturePath.clear()
+        gestureTrail.clear()
         if (backspaceSwipe.isActive) deleteSwipeListener?.onDeleteSwipeCancel()
         backspaceAnimation.onSwipeCancel()
         spaceBarAnimation.onRelease()
@@ -958,7 +1105,7 @@ class KeyboardView(context: Context) : View(context) {
         stopRepeat()
         cancelKeyLongPress()
         dismissPopup()
-        keyPreview.key = null
+        keyPreview.dismiss()
         longPressCommitted = false
         spaceSwipe.reset()
         backspaceSwipe.reset()
@@ -1103,7 +1250,7 @@ class KeyboardView(context: Context) : View(context) {
     }
 
     private fun showPopup(key: Key, grid: List<List<Char>> = key.popup) {
-        keyPreview.key = null
+        keyPreview.dismiss()
         val bounds = keyBounds(key) ?: return
         // Place disponible au-dessus de la vue : la bulle peut recouvrir la barre d'actions qui la
         // surmonte (le parent ne clippe pas ses enfants, voir TaipoIme), pas au-delà de la fenêtre.
@@ -1123,25 +1270,24 @@ class KeyboardView(context: Context) : View(context) {
         icons = bubbleIcons,
     )
 
-    /** Story 1.10 : bulle d'agrandissement affichée au-dessus de la touche de caractère pressée. */
-    private fun drawPreview(canvas: Canvas) {
-        val key = keyPreview.key ?: return
-        val bounds = keyBounds(key) ?: return
-        val upper = keyRenderer.shiftedChar(key, layout, isShifted)
-        val label = if (upper == NO_CHAR) keyRenderer.displayLabel(key, layout, isShifted) else ""
-        if (upper == NO_CHAR && label.isEmpty()) return
-        keyPreview.draw(
-            canvas,
-            bounds = bounds,
-            upper = upper.takeIf { it != NO_CHAR },
-            label = label,
-            headroom = headroomPx(),
-            content = keyboardWidth(),
-            maxWidth = dims.previewMaxWidth,
-            cornerRadius = dims.keyCornerRadius * bubbleRadiusScale,
-            gap = dims.previewGap,
-            textSize = dims.previewTextSize,
-        )
+    /** Story 1.10 : bulle d'agrandissement affichée au-dessus de la touche de caractère pressée (animée par [KeyPreview]). */
+    private fun drawPreview(canvas: Canvas, nowMs: Long) = keyPreview.draw(canvas, nowMs, previewGeometry)
+
+    /** Mesures de la bulle d'agrandissement, relues à chaque dessin (dimensions, Maj, zone des touches). */
+    private val previewGeometry = object : KeyPreview.Geometry {
+        override fun keyBounds(key: Key): RectF? = this@KeyboardView.keyBounds(key)
+        override fun text(key: Key): String? {
+            val upper = keyRenderer.shiftedChar(key, layout, isShifted)
+            if (upper != NO_CHAR) return upper.toString()
+            return keyRenderer.displayLabel(key, layout, isShifted).ifEmpty { null }
+        }
+        override val headroom: Float get() = headroomPx()
+        override val content: KeyboardWidth get() = keyboardWidth()
+        override val maxWidth: Float get() = dims.previewMaxWidth
+        override val cornerRadius: Float get() = dims.keyCornerRadius * bubbleRadiusScale
+        override val gap: Float get() = dims.previewGap
+        override val textSize: Float get() = dims.previewTextSize
+        override val keyInset: Float get() = dims.keyInset
     }
 
     private fun keyAt(x: Float, y: Float): Key? {
@@ -1236,6 +1382,12 @@ class KeyboardView(context: Context) : View(context) {
 
         /** Avancement du glissement du chiffre à partir duquel la bulle d'agrandissement de la lettre est masquée. */
         const val PREVIEW_HIDE_PROGRESS = 0.15f
+
+        /** Saisie par glissement : distance (en largeurs de touche) au-delà de laquelle un appui sur une lettre devient un geste. */
+        const val GESTURE_START_KEYS = 0.8f
+
+        /** Épaisseur de la traînée du glissement, à son point le plus récent. */
+        const val GESTURE_TRAIL_WIDTH_DP = 6f
 
         /** Lot 21 : « pas de caractère » (voir [KeyRenderer.shiftedChar]). */
         const val NO_CHAR = KeyRenderer.NO_CHAR

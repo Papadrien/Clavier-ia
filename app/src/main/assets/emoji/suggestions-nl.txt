@@ -1,0 +1,70 @@
+# Emoji-suggesties, Nederlands: een emoji en daarna de woorden die hem oproepen (verbogen vormen voluit geschreven).
+# Ordre de priorité = ordre du fichier ; mots comparés sans accent ni majuscule ; pas de règle de pluriel (formes écrites).
+# Liste écrite pour Taipo le 19/11/2026, à faire relire par une personne de langue maternelle.
+😀 glimlach blij gelukkig vrolijk tevreden
+😂 haha hahaha lol grappig hilarisch
+😍 prachtig geweldig schitterend
+😘 kus kusjes kusje
+❤️ liefde hart verliefd
+😢 verdrietig droevig
+😭 huilen huil tranen
+😡 boos woedend kwaad
+😴 slapen moe slaperig
+👍 oké prima perfect top
+👏 bravo gefeliciteerd proficiat
+🙏 bedankt dankjewel dankuwel alsjeblieft alstublieft
+👋 hoi hallo doei
+🎉 feest feestje vieren
+🎂 verjaardag jarig
+🎁 cadeau cadeautje cadeaus
+🎄 kerst kerstmis kerstboom
+🔥 vuur heet warm
+❄️ koud sneeuw winter
+☀️ zon zonnig zomer
+🌧️ regen regent
+🍕 pizza
+🍔 hamburger burger
+🍝 pasta spaghetti
+🍣 sushi
+🍷 wijn
+🍺 bier biertje
+☕ koffie koffietje
+🍵 thee
+🍰 taart gebak
+🍫 chocolade
+🍎 appel appels
+🍓 aardbei aardbeien
+🐱 kat katten poes poesje
+🐶 hond honden hondje
+🐴 paard paarden
+🐦 vogel vogels
+🌹 roos rozen
+🌸 bloem bloemen
+🚗 auto
+🚲 fiets fietsen
+🚌 bus
+🚆 trein
+✈️ vliegtuig vlucht reis
+🏠 huis thuis
+🏖️ strand vakantie
+⚽ voetbal wedstrijd
+🎮 gamen game
+🎵 muziek liedje
+🎬 film films bioscoop
+📚 boek boeken lezen
+📱 telefoon mobiel
+💻 computer laptop
+📷 foto camera
+💡 idee ideeën
+💰 geld
+📞 bellen
+💼 werk kantoor
+✅ klaar gedaan
+💪 sportschool sterk
+🤔 hmm misschien denk
+😅 sorry oeps
+🤒 ziek
+😎 cool relaxed
+🤗 knuffel knuffels
+🤩 ongelooflijk fantastisch
+🏆 gewonnen winnen kampioen

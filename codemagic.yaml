@@ -1,0 +1,117 @@
+# Codemagic : même CI que .github/workflows/android.yml (quota GitHub Actions épuisé, 16/11/2026). Voir docs/codemagic.md.
+#
+# Plan gratuit de Codemagic : 500 minutes par mois, seulement sur Mac M2 (mac_mini_m2). Les machines Linux sont payantes.
+#   - pr       : pull request vers main ou develop   → tests, lint, ktlint/detekt, APK + AAB debug
+#   - develop  : push sur develop                    → idem
+#   - instrumented-tests : à la main, sur Linux (payant) : l'émulateur Android ne tourne pas sur Mac M2.
+#
+# Codemagic ne fait que des builds debug (16/11/2026) : la release signée et l'envoi sur Play restent sur GitHub Actions.
+# Aucun secret à créer dans Codemagic.
+
+definitions:
+  environment: &environment
+    java: 21 # Robolectric 4.17 exige Java 21 pour simuler Android 16 (API 36) ; le code reste compilé pour Java 17.
+
+  cache: &cache
+    cache_paths:
+      - ~/.gradle/caches
+      - ~/.gradle/wrapper
+      # Robolectric télécharge une image d'Android d'environ 150 Mo.
+      - ~/.m2/repository/org/robolectric
+
+  scripts:
+    - &litertlm
+      name: Version de LiteRT-LM
+      script: ./gradlew :app:dependencies --configuration debugRuntimeClasspath | grep litertlm
+    # Tests JVM : ceux de l'app (testDebugUnitTest) et ceux du module :core, qui n'a pas de tâche testDebugUnitTest.
+    - &unit_tests
+      name: Tests unitaires
+      script: ./gradlew testDebugUnitTest :core:test
+      test_report: "**/build/test-results/**/*.xml"
+    # Lint Android : une erreur (API trop récente sans garde, ressource manquante…) fait échouer le build.
+    - &lint
+      name: Android lint
+      script: ./gradlew :app:lintDebug
+    # ktlint (format) et detekt (analyse statique) : la dette existante est figée dans quality/ ; tout nouvel écart échoue.
+    - &quality
+      name: ktlint et detekt
+      script: ./gradlew qualityCheck
+    - &build_debug
+      name: APK + AAB debug
+      script: ./gradlew assembleDebug bundleDebug
+
+  debug_artifacts: &debug_artifacts
+    - app/build/outputs/apk/*/*.apk
+    - app/build/outputs/bundle/*/*.aab
+    - app/build/reports/lint-results-debug.html
+
+workflows:
+  pr:
+    name: Android CI (pull request)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment: *environment
+    cache: *cache
+    triggering:
+      events:
+        - pull_request
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: false # branche cible de la pull request
+        - pattern: develop
+          include: true
+          source: false
+      cancel_previous_builds: true
+    scripts:
+      - *litertlm
+      - *unit_tests
+      - *lint
+      - *quality
+      - *build_debug
+    artifacts: *debug_artifacts
+
+  develop:
+    name: Android CI (develop)
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment: *environment
+    cache: *cache
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: develop
+          include: true
+      cancel_previous_builds: true
+    scripts:
+      - *litertlm
+      - *unit_tests
+      - *lint
+      - *quality
+      - *build_debug
+    artifacts: *debug_artifacts
+
+  # Audit CI-04 : tests instrumentés (Room + SQLCipher + Keystore réels) sur émulateur. Linux seulement (l'émulateur ne tourne pas
+  # sur Mac M2), donc facturé à la minute : lancé à la main depuis Codemagic, aucun déclencheur automatique.
+  instrumented-tests:
+    name: Tests instrumentés (émulateur, Linux payant)
+    instance_type: linux_x2
+    max_build_duration: 60
+    environment:
+      java: 17
+    cache: *cache
+    scripts:
+      - name: Démarrer l'émulateur
+        script: |
+          emulator -avd emulator -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect > /dev/null 2>&1 &
+          adb wait-for-device
+          until [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ]; do sleep 5; done
+          adb shell settings put global window_animation_scale 0
+          adb shell settings put global transition_animation_scale 0
+          adb shell settings put global animator_duration_scale 0
+      - name: Tests instrumentés
+        script: ./gradlew connectedDebugAndroidTest
+        test_report: app/build/outputs/androidTest-results/connected/**/*.xml
+    artifacts:
+      - app/build/reports/androidTests/connected/**

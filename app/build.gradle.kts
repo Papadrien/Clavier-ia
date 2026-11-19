@@ -18,7 +18,7 @@ android {
         // Lot 2.1 : versionCode croissant en CI (VERSION_CODE, sinon le numéro d'exécution GitHub
         // Actions) ; 1 en local. Play refuse un versionCode déjà publié.
         versionCode = (System.getenv("VERSION_CODE") ?: System.getenv("GITHUB_RUN_NUMBER"))?.toIntOrNull() ?: 1
-        versionName = "3.0.0"
+        versionName = "3.1.0"
 
         // Mesure d'usage anonyme (SDK Aptabase, serveur UE). Une clé d'application Aptabase n'est pas un secret : elle ne permet
         // que d'envoyer des événements, et figure de toute façon dans l'APK. Voir docs/analytics.md.
@@ -233,4 +233,9 @@ tasks.withType<Test>().configureEach {
     providers.gradleProperty("taipo.robolectricRepo").orNull?.let { systemProperty("robolectric.dependency.repo.url", it) }
     // Robolectric touche aux descripteurs de fichiers internes du JDK (mémoire partagée de l'application simulée).
     jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED", "--add-opens=java.base/java.io=ALL-UNNAMED")
+    // Les tests des dictionnaires (DictionaryAssetsIntegrityTest…) lisent dictionaries/ sur disque : entrée déclarée, sinon le
+    // cache de Gradle réutilise un ancien résultat quand seule une liste change (même cas que :core:test, 16/11/2026).
+    inputs.dir(rootProject.layout.projectDirectory.dir("dictionaries"))
+        .withPropertyName("dictionaries")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
 }

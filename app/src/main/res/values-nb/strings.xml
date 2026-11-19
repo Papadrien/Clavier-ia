@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Vis emojitasten</string>
     <string name="keyboard_settings_show_comma_key">Vis kommatasten</string>
     <string name="keyboard_settings_show_period_key">Vis punktumtasten</string>
+    <string name="keyboard_settings_key_preview">Vis en boble over tasten du trykker på</string>
     <string name="keyboard_settings_clipboard_history_switch">Utklippshistorikk</string>
     <string name="keyboard_settings_clipboard_history_description">Tar vare på det du nylig har kopiert, slik at du kan lime det inn igjen (12 timer, 7 dager med premiumpakken). Passord og kortnumre lagres aldri. Slår du den av, slettes historikken.</string>
     <string name="keyboard_settings_screenshots_switch">Foreslå nylige skjermbilder</string>
@@ -151,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normal (100%)</string>
     <string name="keyboard_settings_height_large">Stor (110%)</string>
     <string name="keyboard_settings_height_extra_large">Ekstra stor (120%)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Sveipeskriving</string>
+    <string name="keyboard_settings_swipe_typing_description">Dra fingeren fra bokstav til bokstav uten å løfte den: ordet skrives når du løfter den. Trykk på et forslag for å bytte; ⌫ rett etterpå sletter hele ordet.</string>
     <string name="keyboard_settings_habits_switch">Lær av vanene mine</string>
     <string name="keyboard_settings_habits_description">Tastaturet husker rettingene du angrer, og e-postadressene dine, kryptert og bare på denne enheten.</string>
     <string name="keyboard_settings_habits_clear">Tøm rettevanene mine</string>
@@ -477,7 +480,7 @@
     <string name="privacy_section_3_title">3. Ingen innsamling av personopplysninger</string>
     <string name="privacy_section_3_body">Taipo har ingen konto og ingen reklame. Appen måler bruken sin anonymt med Aptabase: hendelser som «en AI-retting lyktes», «en modell ble lastet ned» eller «en innstilling ble endret», sammen med appversjon, Android-versjon, enhetsmodell og enhetens språk, i tillegg til to grove intervaller: hvor lenge appen har vært installert, og hvor mange dager den har vært brukt (for eksempel «8 til 30 dager»), aldri nøyaktige verdier. Aldri teksten din, det du kopierer eller dikterer, eller noen identifikator for enheten eller personen, og ingenting fra passordfelt. Som ved alle internettilkoblinger mottar Aptabases servere teknisk sett forespørselens IP-adresse; Taipo selv ser den aldri og lagrer den aldri (se Aptabases personvernerklæring for hvordan den håndteres). Funksjonen er slått av til du godtar den, og du kan når som helst endre valget ditt under Mine data > Del bruksdata. Taipo selv samler ikke inn noen personopplysninger om deg.</string>
     <string name="privacy_section_4_title">4. Passordfelt</string>
-    <string name="privacy_section_4_body">I et felt for passord eller hemmelig kode er AI-handlingene (Rett, Generer, Diktér, AI-diktering) og panelet Smart Clipboard deaktivert: innholdet i feltet leses ikke, og mikrofonen åpnes ikke. Lim inn-knappen blir værende, slik at du kan lime inn et passord som er kopiert fra en passordbehandler; det forblir skjult (••••). Kopier som er merket som sensitive (passord), og kortnumre lagres aldri i utklippshistorikken.</string>
+    <string name="privacy_section_4_body">I et felt for passord eller hemmelig kode er AI-handlingene (Rett, Generer, Diktér, AI-diktering) deaktivert, og mikrofonen åpnes ikke. Tastaturet leser aldri innholdet i feltet. Du kan fortsatt lime inn: Lim inn-knappen og panelet Smart Clipboard blir værende, slik at du kan lime inn et passord som er kopiert fra en passordbehandler; kopier som er merket som sensitive, forblir skjult (••••). Det som kopieres fra et passordfelt, kopier som er merket som sensitive (passord), og kortnumre lagres aldri i utklippshistorikken.</string>
     <string name="privacy_section_5_title">5. Hva som lagres på enheten</string>
     <string name="privacy_section_5_body">Den personlige ordboken, elementene i utklippstavlen og innstillingene dine blir på enheten din, i krypterte databaser. Avinstallerer du appen, slettes disse dataene. Du kan også eksportere dem til en ukryptert fil (Mine data > Sikkerhetskopiering og gjenoppretting): filen forlater bare enheten hvis du flytter den selv. Taipo ber ikke om tilgang til bildene dine.</string>
     <string name="privacy_section_6_title">6. Læring og skrivepresisjon</string>
@@ -526,7 +529,7 @@
     <string name="model_delete_voice_message">Filene (%1$s) slettes fra enheten din. Talediktering fungerer ikke før du laster ned modellen på nytt.</string>
     <string name="button_voice_model_local">Lokal talemodell</string>
     <string name="home_row_voice_model_local_subtitle">Oppgi filene til talemodellen selv</string>
-    <string name="sensitive_field_actions_disabled">Deaktivert i passordfelt: ingenting leses eller sendes til AI-en eller utklippstavlen.</string>
+    <string name="sensitive_field_actions_disabled">Deaktivert i passordfelt: ingenting leses eller sendes til AI-en.</string>
     <string name="ai_transcription_button_description">AI-diktering: ta opp, og transkriber deretter</string>
     <string name="ai_transcription_button_recording">AI-diktering: stopp opptaket og transkriber</string>
     <string name="ai_transcription_button_processing">AI-diktering pågår: trykk for å avbryte</string>
@@ -602,6 +605,19 @@
     <string name="backdrop_waves">Bølger</string>
     <string name="backdrop_hearts">Hjerter</string>
     <string name="backdrop_flowers">Blomster</string>
+    <string name="backdrop_processor">Prosessor</string>
+    <string name="backdrop_photo">Bilde</string>
+    <string name="theme_backdrop_photo_change">Velg et annet bilde</string>
+    <string name="theme_backdrop_photo_source_title">Velg et bilde</string>
+    <string name="theme_backdrop_photo_source_gallery">Galleri</string>
+    <string name="theme_backdrop_photo_source_files">Filer</string>
+    <string name="theme_backdrop_photo_error">Kunne ikke åpne bildet.</string>
+    <string name="theme_backdrop_photo_no_picker">Ingen app på enheten kan velge et bilde.</string>
+    <string name="theme_backdrop_photo_delete">Slett bildet</string>
+    <string name="theme_backdrop_photo_delete_title">Vil du slette dette bildet?</string>
+    <string name="theme_backdrop_photo_delete_message">Tastaturbakgrunnen blir ensfarget igjen. Originalen i galleriet eller filene dine berøres ikke.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Slett</string>
+    <string name="theme_backdrop_photo_delete_error">Kunne ikke slette bildet. Prøv igjen.</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Tastaturets skrifttype</string>
@@ -633,6 +649,13 @@
     <string name="motion_style_spring">Fjær</string>
     <string name="motion_style_snappy">Kvikk</string>
     <string name="motion_style_jelly">Gelé</string>
+    <string name="motion_style_flight">Avgang</string>
+    <string name="motion_style_drop">Dråpe</string>
+    <string name="motion_style_glide">Gli</string>
+    <string name="motion_style_sparks">Gnister</string>
+    <string name="motion_style_pixels">Piksler</string>
+    <string name="motion_style_heart">Hjerteboble</string>
+    <string name="motion_style_bloom">Blomstring</string>
     <string name="home_row_languages_subtitle">Tastaturets språk og oppsett</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Utseende</string>
@@ -664,7 +687,7 @@
     <string name="premium_clipboard_title">Utvidet utklippstavle</string>
     <string name="premium_clipboard_text">Kopier lagres i 7 dager i stedet for 12 timer. Opptil 50 festede elementer i stedet for 5.</string>
     <string name="premium_style_title">Et tastatur i din stil</string>
-    <string name="premium_style_text">Seks animerte bakgrunner som beveger seg mens du skriver, fem ekstra tasteformer, ni skrifttyper for tastaturet (blant annet OpenDyslexic) og animasjonsstilen Gelé.</string>
+    <string name="premium_style_text">Sju animerte bakgrunner som beveger seg mens du skriver, fem ekstra tasteformer, ni skrifttyper for tastaturet (blant annet OpenDyslexic) og fem animasjonsstiler: Kvikk, Gelé, Avgang, Dråpe og Gli.</string>
     <string name="premium_free_reminder">Skriving, språk, AI og sikkerhetskopiering er fortsatt gratis, med eller uten pakken.</string>
     <string name="premium_buy">Kjøp pakken</string>
     <string name="premium_buy_with_price">Kjøp pakken · %1$s</string>

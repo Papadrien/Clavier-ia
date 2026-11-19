@@ -78,6 +78,8 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
 
     init {
         orientation = VERTICAL
+        // La bulle de l'emoji appuyé (EmojiGridView) peut déborder au-dessus de la grille, sur les onglets.
+        clipChildren = false
         // Fond transparent : le panneau laisse voir le fond commun du clavier (KeyboardBackgroundDrawable, #0E0E0E).
 
         addView(tabs, LayoutParams(LayoutParams.MATCH_PARENT, dimen(R.dimen.taipo_emoji_tabs_height).toInt()))
@@ -101,6 +103,13 @@ class EmojiPanelView(context: Context) : LinearLayout(context) {
         setupBackspaceKey()
         setupAccessibility()
     }
+
+    /** Bulle d'agrandissement de l'emoji appuyé (réglage « Agrandir la touche appuyée », partagé avec le clavier). */
+    var keyPreviewEnabled: Boolean
+        get() = grid.keyPreviewEnabled
+        set(value) {
+            grid.keyPreviewEnabled = value
+        }
 
     fun setOnEmojiSelectedListener(listener: EmojiGridView.OnEmojiSelectedListener) {
         grid.setOnEmojiSelectedListener(listener)

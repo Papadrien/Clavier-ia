@@ -114,6 +114,7 @@
     <string name="keyboard_settings_show_emoji_key">Emoji-Taste anzeigen</string>
     <string name="keyboard_settings_show_comma_key">Komma-Taste anzeigen</string>
     <string name="keyboard_settings_show_period_key">Punkt-Taste anzeigen</string>
+    <string name="keyboard_settings_key_preview">Blase über der gedrückten Taste anzeigen</string>
     <string name="keyboard_settings_clipboard_history_switch">Zwischenablage-Verlauf</string>
     <string name="keyboard_settings_clipboard_history_description">Behält Ihre letzten Kopien, damit Sie sie erneut einfügen können (12 Stunden, 7 Tage mit dem Premium-Paket). Passwörter und Kartennummern werden nie behalten. Beim Ausschalten wird der Verlauf gelöscht.</string>
     <string name="keyboard_settings_screenshots_switch">Aktuelle Screenshots vorschlagen</string>
@@ -151,6 +152,8 @@
     <string name="keyboard_settings_height_normal">Normal (100 %)</string>
     <string name="keyboard_settings_height_large">Groß (110 %)</string>
     <string name="keyboard_settings_height_extra_large">Sehr groß (120 %)</string>
+    <string name="keyboard_settings_swipe_typing_switch">Wischen zum Tippen</string>
+    <string name="keyboard_settings_swipe_typing_description">Gleite mit dem Finger von Buchstabe zu Buchstabe, ohne ihn anzuheben: Das Wort wird geschrieben, wenn du ihn anhebst. Tippe auf einen Vorschlag, um es zu ändern; ⌫ direkt danach löscht das ganze Wort.</string>
     <string name="keyboard_settings_habits_switch">Aus meinen Gewohnheiten lernen</string>
     <string name="keyboard_settings_habits_description">Die Tastatur merkt sich die Korrekturen, die Sie rückgängig machen, und Ihre E-Mail-Adressen, verschlüsselt und nur auf diesem Gerät.</string>
     <string name="keyboard_settings_habits_clear">Meine Korrekturgewohnheiten löschen</string>
@@ -477,7 +480,7 @@
     <string name="privacy_section_3_title">3. Keine Erhebung personenbezogener Daten</string>
     <string name="privacy_section_3_body">Taipo hat kein Konto und keine Werbung. Es misst seine Nutzung anonym mit Aptabase: Ereignisse wie „eine KI-Korrektur war erfolgreich“, „ein Modell wurde heruntergeladen“ oder „eine Einstellung wurde geändert“, zusammen mit der App-Version, der Android-Version, dem Gerätemodell und seiner Sprache sowie zwei groben Bereichen: wie lange die App installiert ist und an wie vielen Tagen sie verwendet wurde (zum Beispiel „8 bis 30 Tage“), nie genaue Werte. Nie Ihren Text, was Sie kopieren oder diktieren, keine Kennung des Geräts oder der Person und nichts aus Passwortfeldern. Wie bei jeder Internetverbindung erhalten die Server von Aptabase technisch die IP-Adresse der Anfrage; Taipo selbst sieht oder speichert sie nie (siehe die Datenschutzerklärung von Aptabase zu ihrer Behandlung). Die Messung ist ausgeschaltet, bis Sie zustimmen, und Sie können Ihre Wahl jederzeit unter Meine Daten > Nutzungsdaten teilen ändern. Taipo selbst erhebt keine personenbezogenen Daten über Sie.</string>
     <string name="privacy_section_4_title">4. Passwortfelder</string>
-    <string name="privacy_section_4_body">In einem Passwort- oder Geheimcodefeld sind die KI-Aktionen (Korrigieren, Erzeugen, Diktieren, KI-Diktat) und das Smart-Clipboard-Feld deaktiviert: Der Inhalt des Feldes wird nicht gelesen und das Mikrofon nicht geöffnet. Die Einfügen-Schaltfläche bleibt, damit Sie ein aus einem Passwortmanager kopiertes Passwort einfügen können; es bleibt verdeckt (••••). Als vertraulich markierte Kopien (Passwörter) und Kartennummern werden nie im Verlauf der Zwischenablage behalten.</string>
+    <string name="privacy_section_4_body">In einem Passwort- oder Geheimcodefeld sind die KI-Aktionen (Korrigieren, Erzeugen, Diktieren, KI-Diktat) deaktiviert, und das Mikrofon wird nicht geöffnet. Die Tastatur liest den Inhalt des Feldes nie. Einfügen geht weiterhin: Die Einfügen-Schaltfläche und das Smart-Clipboard-Feld bleiben, damit Sie ein aus einem Passwortmanager kopiertes Passwort einfügen können; als vertraulich markierte Kopien bleiben verdeckt (••••). Was aus einem Passwortfeld kopiert wird, als vertraulich markierte Kopien (Passwörter) und Kartennummern werden nie im Verlauf der Zwischenablage behalten.</string>
     <string name="privacy_section_5_title">5. Was auf dem Gerät gespeichert wird</string>
     <string name="privacy_section_5_body">Ihr persönliches Wörterbuch, die Elemente der Zwischenablage und Ihre Einstellungen bleiben auf Ihrem Gerät, in verschlüsselten Datenbanken. Beim Deinstallieren der App werden diese Daten gelöscht. Sie können sie auch in eine unverschlüsselte Datei exportieren (Meine Daten > Sichern und wiederherstellen): Diese Datei verlässt das Gerät nur, wenn Sie sie selbst verschieben. Taipo fragt nicht nach Zugriff auf Ihre Fotos.</string>
     <string name="privacy_section_6_title">6. Lernen und Tippgenauigkeit</string>
@@ -526,7 +529,7 @@
     <string name="model_delete_voice_message">Die Dateien (%1$s) werden von Ihrem Gerät gelöscht. Das Diktat funktioniert erst wieder, wenn Sie das Modell erneut herunterladen.</string>
     <string name="button_voice_model_local">Lokales Sprachmodell</string>
     <string name="home_row_voice_model_local_subtitle">Die Dateien des Sprachmodells selbst bereitstellen</string>
-    <string name="sensitive_field_actions_disabled">In Passwortfeldern deaktiviert: Nichts wird gelesen oder an die KI oder die Zwischenablage gesendet.</string>
+    <string name="sensitive_field_actions_disabled">In Passwortfeldern deaktiviert: Nichts wird gelesen oder an die KI gesendet.</string>
     <string name="ai_transcription_button_description">KI-Diktat: aufnehmen, dann transkribieren</string>
     <string name="ai_transcription_button_recording">KI-Diktat: Aufnahme beenden und transkribieren</string>
     <string name="ai_transcription_button_processing">KI-Diktat läuft: tippen zum Abbrechen</string>
@@ -602,6 +605,19 @@
     <string name="backdrop_waves">Wellen</string>
     <string name="backdrop_hearts">Herzen</string>
     <string name="backdrop_flowers">Blumen</string>
+    <string name="backdrop_processor">Prozessor</string>
+    <string name="backdrop_photo">Bild</string>
+    <string name="theme_backdrop_photo_change">Anderes Bild wählen</string>
+    <string name="theme_backdrop_photo_source_title">Bild wählen</string>
+    <string name="theme_backdrop_photo_source_gallery">Galerie</string>
+    <string name="theme_backdrop_photo_source_files">Dateien</string>
+    <string name="theme_backdrop_photo_error">Dieses Bild konnte nicht geöffnet werden.</string>
+    <string name="theme_backdrop_photo_no_picker">Keine App auf diesem Gerät kann ein Bild auswählen.</string>
+    <string name="theme_backdrop_photo_delete">Bild löschen</string>
+    <string name="theme_backdrop_photo_delete_title">Dieses Bild löschen?</string>
+    <string name="theme_backdrop_photo_delete_message">Der Tastaturhintergrund wird wieder einfarbig. Das Original in deiner Galerie oder deinen Dateien bleibt erhalten.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Löschen</string>
+    <string name="theme_backdrop_photo_delete_error">Das Bild konnte nicht gelöscht werden. Bitte versuche es erneut.</string>
     <string name="theme_backdrop_free">Kostenlos</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Tastaturschrift</string>
@@ -633,6 +649,13 @@
     <string name="motion_style_spring">Feder</string>
     <string name="motion_style_snappy">Flink</string>
     <string name="motion_style_jelly">Gelee</string>
+    <string name="motion_style_flight">Abflug</string>
+    <string name="motion_style_drop">Tropfen</string>
+    <string name="motion_style_glide">Gleiten</string>
+    <string name="motion_style_sparks">Funken</string>
+    <string name="motion_style_pixels">Pixel</string>
+    <string name="motion_style_heart">Herzblase</string>
+    <string name="motion_style_bloom">Blüte</string>
     <string name="home_row_languages_subtitle">Tastatursprachen und Layouts</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
     <string name="button_theme">Erscheinungsbild</string>
@@ -664,7 +687,7 @@
     <string name="premium_clipboard_title">Erweiterte Zwischenablage</string>
     <string name="premium_clipboard_text">Kopien werden 7 Tage statt 12 Std. behalten. Bis zu 50 angeheftete Elemente statt 5.</string>
     <string name="premium_style_title">Eine Tastatur in Ihrem Stil</string>
-    <string name="premium_style_text">Sechs animierte Hintergründe, die sich beim Tippen bewegen, fünf weitere Tastenformen, neun Tastaturschriften (darunter OpenDyslexic) und der Animationsstil Gelee.</string>
+    <string name="premium_style_text">Sieben animierte Hintergründe, die sich beim Tippen bewegen, fünf weitere Tastenformen, neun Tastaturschriften (darunter OpenDyslexic) und fünf Animationsstile: Flink, Gelee, Abflug, Tropfen und Gleiten.</string>
     <string name="premium_free_reminder">Tippen, Sprachen, KI und Sicherung bleiben kostenlos, mit oder ohne Paket.</string>
     <string name="premium_buy">Paket kaufen</string>
     <string name="premium_buy_with_price">Paket kaufen · %1$s</string>

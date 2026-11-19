@@ -28,6 +28,9 @@ object AnalyticsEvents {
     const val SETTING_CHANGED = "setting_changed"
     const val FIRST_OPEN = "first_open"
 
+    /** Clavier utilisé (première touche tapée) : au plus une fois par jour local, voir [DailyKeyboardUse]. */
+    const val KEYBOARD_USED = "keyboard_used"
+
     /** Écran du pass premium ouvert ; `source` : d'où (home, about, theme, prompts, clipboard_pin). */
     const val PREMIUM_PAYWALL_SHOWN = "premium_paywall_shown"
 

@@ -1,7 +1,6 @@
 package fr.junade.taipo
 
 import android.animation.ValueAnimator
-import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -17,6 +16,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.activity.ComponentActivity
 import androidx.annotation.StringRes
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
@@ -24,7 +24,11 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.backdrop.BackdropPreviewView
 import fr.junade.taipo.backdrop.KeyboardBackdrop
+import fr.junade.taipo.backdrop.PhotoBackdrop
+import fr.junade.taipo.backdrop.PhotoBackdropSection
 import kotlin.math.abs
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 
 /**
  * Page « Thème » (paramètres, lots T5 et T7) : cartes d'aperçu, Système (automatique), Clair, Sombre et, dès Android 12,
@@ -43,8 +47,12 @@ import kotlin.math.abs
  * Section « Forme des touches » : une carte par forme ([KeyShape]), par rangées de trois comme les thèmes ; un appui la choisit
  * ([KeyboardPreferences.keyShape]) et les aperçus des thèmes la reprennent. Les formes réservées au pass portent un cadenas et se
  * comportent comme les couleurs réservées : essayées sur les aperçus, bouton du pass, appliquées au retour avec le pass.
+ *
+ * Section « Fond du clavier », fond « Image » (19/11/2026) : l'utilisateur choisit une image dans la galerie (sélecteur de photos
+ * d'Android) ou dans le sélecteur de fichiers ; une copie réduite est gardée par l'application ([PhotoBackdrop]) et remplit le
+ * fond du clavier, avec le voile habituel sous la barre du haut.
  */
-class ThemeActivity : Activity() {
+class ThemeActivity : ComponentActivity() {
 
     private class Card(val choice: ThemeChoice, val view: View, val check: View, val preview: ThemePreviewView)
 
@@ -79,6 +87,21 @@ class ThemeActivity : Activity() {
 
     /** Police réservée touchée sans pass : montrée comme choisie, avec le bouton du pass, sans être posée sur le clavier. */
     private var previewFont: KeyboardFont? = null
+
+    /** Import et lecture de l'image du fond « Image » : annulés avec l'écran. */
+    private val scope = MainScope()
+
+    /** Fond « Image » : choix (galerie ou fichiers), import, suppression et vignette, voir [PhotoBackdropSection]. */
+    private val photoSection = PhotoBackdropSection(
+        this,
+        scope,
+        preferences = { preferences },
+        onPreview = { photo ->
+            backdropCards.firstOrNull { it.backdrop == KeyboardBackdrop.PHOTO }?.preview?.photo = photo
+            renderBackdrops()
+        },
+        onImported = { previewBackdrop = null },
+    )
 
     // Écrans de l'application : même thème que le clavier (page « Apparence »), voir KeyboardTheme.wrap.
     override fun attachBaseContext(newBase: Context) {
@@ -144,6 +167,11 @@ class ThemeActivity : Activity() {
         renderMotions(preferences.motionStyle)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.cancel()
+    }
+
     // Retour de l'écran du pass (ou pass forcé en debug) : la couleur essayée est appliquée, les cadenas disparaissent.
     override fun onResume() {
         super.onResume()
@@ -185,8 +213,9 @@ class ThemeActivity : Activity() {
     }
 
     /**
-     * Cartes des styles d'animation ([MotionStyle]) sur une rangée : chacune montre son style en boucle ([MotionPreviewView], à la
-     * place de l'aperçu de thème de la carte).
+     * Cartes des styles d'animation ([MotionStyle]), par rangées de [CARDS_PER_ROW] : chacune montre son style en boucle avec la
+     * vraie bulle des touches ([MotionPreviewView], à la place de l'aperçu de thème de la carte). Un style règle à la fois le
+     * clavier et la bulle (16/11/2026).
      */
     /** Section « Animations » : titre lu comme tel par TalkBack, cartes des styles. */
     private fun setUpMotions(inflater: LayoutInflater, gap: Int) {
@@ -195,18 +224,36 @@ class ThemeActivity : Activity() {
     }
 
     private fun buildMotions(container: LinearLayout, inflater: LayoutInflater, gap: Int) {
-        MotionStyle.entries.forEachIndexed { index, style ->
-            val card = inflater.inflate(R.layout.item_theme_card, container, false)
-            val themePreview = card.findViewById<View>(R.id.theme_preview)
-            val frame = themePreview.parent as ViewGroup
-            frame.removeView(themePreview)
-            frame.addView(MotionPreviewView(KeyboardTheme.themed(this), style), 0, themePreview.layoutParams)
-            card.findViewById<TextView>(R.id.theme_label).setCardLabel(getString(style.labelRes()))
-            card.setOnClickListener { selectMotion(style) }
-            (card.layoutParams as LinearLayout.LayoutParams).apply { if (index > 0) marginStart = gap }
-            container.addView(card)
-            motionCards += MotionCard(style, card, card.findViewById(R.id.theme_check), card.findViewById(R.id.theme_lock))
+        MotionStyle.entries.chunked(CARDS_PER_ROW).forEachIndexed { rowIndex, styles ->
+            val row = LinearLayout(this)
+            row.orientation = LinearLayout.HORIZONTAL
+            row.isBaselineAligned = false
+            repeat(CARDS_PER_ROW) { index ->
+                val style = styles.getOrNull(index)
+                val view = if (style != null) {
+                    motionCard(inflater, row, style)
+                } else {
+                    View(this).apply { layoutParams = LinearLayout.LayoutParams(0, 0, 1f) }
+                }
+                (view.layoutParams as LinearLayout.LayoutParams).apply { if (index > 0) marginStart = gap }
+                row.addView(view)
+            }
+            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            if (rowIndex > 0) params.topMargin = gap
+            container.addView(row, params)
         }
+    }
+
+    private fun motionCard(inflater: LayoutInflater, row: LinearLayout, style: MotionStyle): View {
+        val card = inflater.inflate(R.layout.item_theme_card, row, false)
+        val themePreview = card.findViewById<View>(R.id.theme_preview)
+        val frame = themePreview.parent as ViewGroup
+        frame.removeView(themePreview)
+        frame.addView(MotionPreviewView(KeyboardTheme.themed(this), style), 0, themePreview.layoutParams)
+        card.findViewById<TextView>(R.id.theme_label).setCardLabel(getString(style.labelRes()))
+        card.setOnClickListener { selectMotion(style) }
+        motionCards += MotionCard(style, card, card.findViewById(R.id.theme_check), card.findViewById(R.id.theme_lock))
+        return card
     }
 
     private fun selectMotion(style: MotionStyle) {
@@ -338,6 +385,9 @@ class ThemeActivity : Activity() {
         findViewById<View>(R.id.button_backdrop_unlock).setOnClickListener {
             startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_THEME))
         }
+        findViewById<View>(R.id.button_backdrop_photo_change).setOnClickListener { photoSection.choose() }
+        findViewById<View>(R.id.button_backdrop_photo_delete).setOnClickListener { photoSection.confirmDelete() }
+        photoSection.loadPreview()
         // Défilement de la page : les motifs avancent avec lui, pour montrer qu'ils sont animés.
         findViewById<View>(R.id.theme_scroll).setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
             val delta = abs(scrollY - oldScrollY).toFloat()
@@ -386,6 +436,11 @@ class ThemeActivity : Activity() {
             renderBackdrops()
             return
         }
+        if (backdrop == KeyboardBackdrop.PHOTO && !PhotoBackdrop.exists(this)) {
+            // Pas encore d'image : on la fait choisir ; le fond « Image » est posé une fois l'image importée.
+            photoSection.choose()
+            return
+        }
         previewBackdrop = null
         if (backdrop != preferences.keyboardBackdrop) {
             preferences.keyboardBackdrop = backdrop
@@ -407,7 +462,7 @@ class ThemeActivity : Activity() {
         val accent = palette.recolor(KeyboardTheme.colorIn(this, mode, R.color.accent))
         val key = KeyboardTheme.colorIn(this, mode, R.color.key_normal)
         val seed = preferences.backdropSeed
-        val shown = previewBackdrop ?: KeyboardBackdrop.effective(preferences.keyboardBackdrop, premium)
+        val shown = previewBackdrop ?: KeyboardBackdrop.effective(preferences.keyboardBackdrop, premium, PhotoBackdrop.exists(this))
         for (card in backdropCards) {
             card.preview.seed = seed
             card.preview.setColors(base, accent, mode == KeyboardTheme.Mode.DARK, key)
@@ -423,11 +478,14 @@ class ThemeActivity : Activity() {
             card.view.contentDescription = if (locked) getString(R.string.premium_locked_item, name) else name
             ViewCompat.setAccessibilityDelegate(card.view, radioDelegate(isSelected))
         }
-        val patternSettings = if (shown.isPattern) View.VISIBLE else View.GONE
+        val patternSettings = if (shown.isGenerated) View.VISIBLE else View.GONE
         findViewById<View>(R.id.switch_backdrop_animated).visibility = patternSettings
         findViewById<View>(R.id.text_backdrop_animated_description).visibility = patternSettings
         findViewById<View>(R.id.button_backdrop_reseed).visibility = patternSettings
         findViewById<View>(R.id.button_backdrop_unlock).visibility = if (previewBackdrop != null) View.VISIBLE else View.GONE
+        val photoSettings = shown == KeyboardBackdrop.PHOTO && previewBackdrop == null
+        findViewById<View>(R.id.button_backdrop_photo_change).visibility = if (photoSettings) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.button_backdrop_photo_delete).visibility = if (photoSettings) View.VISIBLE else View.GONE
     }
 
     /**
@@ -678,6 +736,13 @@ internal fun MotionStyle.labelRes(): Int = when (this) {
     MotionStyle.SPRING -> R.string.motion_style_spring
     MotionStyle.SNAPPY -> R.string.motion_style_snappy
     MotionStyle.JELLY -> R.string.motion_style_jelly
+    MotionStyle.FLIGHT -> R.string.motion_style_flight
+    MotionStyle.DROP -> R.string.motion_style_drop
+    MotionStyle.GLIDE -> R.string.motion_style_glide
+    MotionStyle.SPARKS -> R.string.motion_style_sparks
+    MotionStyle.PIXELS -> R.string.motion_style_pixels
+    MotionStyle.HEART -> R.string.motion_style_heart
+    MotionStyle.BLOOM -> R.string.motion_style_bloom
 }
 
 /** Nom de la forme des touches (carte de la page « Apparence »). */

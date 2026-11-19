@@ -94,13 +94,14 @@ abstract class BackdropPainter {
 
     companion object {
         fun of(backdrop: KeyboardBackdrop): BackdropPainter? = when (backdrop) {
-            KeyboardBackdrop.PLAIN -> null
+            KeyboardBackdrop.PLAIN, KeyboardBackdrop.PHOTO -> null
             KeyboardBackdrop.RIBBONS -> RibbonsPainter()
             KeyboardBackdrop.BUBBLES -> BubblesPainter()
             KeyboardBackdrop.CRYSTAL -> CrystalPainter()
             KeyboardBackdrop.WAVES -> WavesPainter()
             KeyboardBackdrop.HEARTS -> HeartsPainter()
             KeyboardBackdrop.FLOWERS -> FlowersPainter()
+            KeyboardBackdrop.PROCESSOR -> ProcessorPainter()
         }
     }
 }

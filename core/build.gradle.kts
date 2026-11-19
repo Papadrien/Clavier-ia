@@ -44,3 +44,15 @@ tasks.register("testDebugUnitTest") {
     description = "Alias de test : permet à `./gradlew testDebugUnitTest` d'inclure les tests du module core."
     dependsOn("test")
 }
+
+// Le banc d'autocorrection (AutocorrectBaselineTest) lit sur disque les dictionnaires et ses références : ils sont déclarés comme
+// entrées des tests. Sinon le cache de Gradle réutilise un ancien résultat quand seuls ces fichiers changent, et une régression
+// passe inaperçue jusqu'au prochain changement de code (listes de noms du 12/11/2026, vue seulement le 16/11/2026).
+tasks.named<Test>("test") {
+    inputs.dir(rootProject.layout.projectDirectory.dir("dictionaries"))
+        .withPropertyName("dictionaries")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.dir(rootProject.layout.projectDirectory.dir("tools/autocorrect-bench"))
+        .withPropertyName("autocorrectBench")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+}

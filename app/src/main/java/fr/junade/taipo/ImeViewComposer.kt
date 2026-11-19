@@ -35,6 +35,9 @@ class ImeViewComposer(
 
         fun onCursorMoved(steps: Int)
 
+        /** Saisie par glissement : tracé terminé (voir [KeyboardView.OnGestureListener]). */
+        fun onGesture(path: List<fr.junade.taipo.dictionary.GestureDecoder.Point>, keys: Map<Char, fr.junade.taipo.dictionary.GestureDecoder.Point>)
+
         /** Touche globe de la bulle d'Entrée (clavier multilingue) relâchée : changement de langue. */
         fun onGlobeSelected()
 
@@ -149,6 +152,18 @@ class ImeViewComposer(
         keyboardView.translucentKeys = backdrop.isPattern
     }
 
+    /** Action IA en cours ([busy]) : le fond animé s'anime comme pendant la frappe ([KeyboardBackgroundDrawable.aiBusy]). */
+    fun setBackdropAiBusy(busy: Boolean) {
+        if (!isComposed) return
+        background?.aiBusy = busy
+    }
+
+    /** Image du fond « Image » ([fr.junade.taipo.backdrop.PhotoBackdrop]), ou null pour la libérer (autre fond choisi). */
+    fun applyBackdropPhoto(photo: android.graphics.Bitmap?) {
+        if (!isComposed) return
+        background?.setPhoto(photo)
+    }
+
     lateinit var correctionBar: CorrectionBarView
         private set
 
@@ -177,6 +192,7 @@ class ImeViewComposer(
         keyboardView.heightScale = host.heightScale()
         keyboardView.setOnKeyListener { key -> host.onKey(key) }
         keyboardView.setOnCursorMoveListener { steps -> host.onCursorMoved(steps) }
+        keyboardView.setOnGestureListener { path, keys -> host.onGesture(path, keys) }
         keyboardView.setOnGlobeSelectedListener { host.onGlobeSelected() }
         keyboardView.setOnOneHandedToggleListener { host.onOneHandedToggled() }
         keyboardView.setOnFloatingToggleListener { host.onFloatingToggled() }
@@ -253,8 +269,8 @@ class ImeViewComposer(
             host.onEmojiSuggestionClicked()
         }
         // Le même bouton ouvre le panneau et, tant qu'il est ouvert (bouton coloré), le referme.
+        // Le panneau s'ouvre aussi dans un champ de mot de passe (16/11/2026) : on y colle, rien n'est lu dans le champ.
         correctionBar.setOnClipboardClickListener {
-            if (blockedBySensitiveField()) return@setOnClipboardClickListener
             host.playBarButtonSound()
             clipboard.onPanelButtonClicked()
         }
@@ -359,6 +375,12 @@ class ImeViewComposer(
         // Clavier flottant : la carte (tout le clavier) est portée par une racine qui la place ; la poignée de déplacement,
         // masquée quand le clavier est ancré, vient sous les touches.
         card = root
+        // Voile du fond sous la barre du haut : tout ce qui est au-dessus des touches (barre, suggestions, zone de chat) ; suit la
+        // hauteur de cette zone, qui change avec la barre d'emojis récents ou le mode prompt.
+        val scrimFade = context.resources.displayMetrics.density * TOP_BAR_SCRIM_FADE_DP
+        keyboardStack.addOnLayoutChangeListener { view, _, _, _, _, _, _, _, _ ->
+            background?.setTopBar(view.top.toFloat(), scrimFade)
+        }
         // Fond animé : chaque doigt posé sur les touches fait réagir le fond, en coordonnées de la carte.
         keyboardView.touchDownListener = { x, y ->
             card.getLocationInWindow(cardLocation)
@@ -375,5 +397,10 @@ class ImeViewComposer(
         prompt.applyViews() // la vue est recréée (rotation...) alors que le mode prompt peut être actif
         host.onViewsCreated()
         return frame
+    }
+
+    private companion object {
+        /** Hauteur du dégradé par lequel le voile de la barre du haut s'efface, juste au-dessus des touches. */
+        const val TOP_BAR_SCRIM_FADE_DP = 14f
     }
 }

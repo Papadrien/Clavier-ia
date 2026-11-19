@@ -37,6 +37,8 @@ class Dictionary private constructor(
     private val table: CompactWordTable = CompactWordTable.from(source)
     internal val frequencies: Map<String, Long> = table
 
+    private val foldsAccentsInSearch: Boolean = accentPolicy.foldsAccentsInSearch
+
     // Prénoms et noms propres courants (forme avec majuscule, « Adrien », « Éric ») : les listes de fréquence sont
     // toutes en minuscules, elles ne savent donc pas qu'un mot prend une majuscule. Clé = minuscules.
     private val exactNames: Map<String, String> = properNames.associateBy { it.lowercase() }
@@ -116,6 +118,23 @@ class Dictionary private constructor(
     // Masque des lettres de chaque candidat (voir [letterMask]) : pré-filtre bon marché de la recherche par distance
     // d'édition. 8 octets par candidat (~400 Ko pour 50 000 mots).
     internal val candidateMasks: LongArray = LongArray(candidateWords.size) { letterMask(candidateWords[it]) }
+
+    // Recherche sans accents ([AccentPolicy.foldsAccentsInSearch]) : forme sans accents de chaque candidat accentué (null s'il n'en a
+    // pas), pour qu'un mot tapé sans signes diacritiques ne paie pas chaque accent comme une faute (« delws » -> « děláš » : une
+    // seule faute de frappe, pas trois erreurs). Vide si la langue ne s'en sert pas.
+    private val candidateFolded: Array<String?> = if (!foldsAccentsInSearch) {
+        emptyArray()
+    } else {
+        Array(candidateWords.size) { i -> WordForms.foldAccents(candidateWords[i]).takeIf { it != candidateWords[i] } }
+    }
+
+    // Masques des lettres des formes sans accents (pré-filtre de la recherche sans accents, aussi exact que [candidateMasks]) ; vide
+    // si la langue ne s'en sert pas.
+    private val candidateFoldedMasks: LongArray = if (!foldsAccentsInSearch) {
+        LongArray(0)
+    } else {
+        LongArray(candidateWords.size) { i -> candidateFolded[i]?.let(::letterMask) ?: candidateMasks[i] }
+    }
 
     // Indices des candidats regroupés par longueur (ordre d'origine conservé dans chaque groupe) : la
     // recherche par distance d'édition ne parcourt que les longueurs à ±distance du mot tapé, au lieu
@@ -503,10 +522,14 @@ class Dictionary private constructor(
         // Point 1 (bigrammes) : le mot précédent départage les candidats, s'il est connu du modèle et que la langue lui donne un poids.
         val context = previousWord?.takeIf { confidence.contextWeight > 0.0 && ngrams.contextCount(it) > 0 }
 
-        fun consider(candidate: String, frequency: Long, isPersonal: Boolean = false) {
+        // Mot tapé sans aucun accent, dans une langue qui cherche sans accents : la distance se mesure sur la forme sans accents.
+        val typedPlain = foldsAccentsInSearch && WordForms.foldAccents(lower) == lower
+
+        fun consider(candidate: String, frequency: Long, isPersonal: Boolean = false, folded: String? = null) {
             // Distance bornée : renvoie allowedDistance + 1 dès que le candidat est trop loin (même
             // résultat que damerauLevenshtein pour tout candidat retenu, mais sans calculer le reste).
-            val distance = damerauLevenshteinBounded(lower, candidate, allowedDistance)
+            val target = if (typedPlain && folded != null) folded else candidate
+            val distance = damerauLevenshteinBounded(lower, target, allowedDistance)
             if (distance > allowedDistance) return
             // Un mot sans accent dont la version accentuée domine (« ete » pour « été ») est une faute du corpus : jamais
             // une correction (« eet » -> « est », pas « ete »).
@@ -529,18 +552,20 @@ class Dictionary private constructor(
         // (chaque insertion, suppression ou substitution change l'ensemble des lettres d'au plus une lettre de
         // chaque côté ; une inversion ne le change pas). Un candidat qui en diffère de plus est trop loin : il était
         // déjà écarté par la distance bornée, le résultat est donc strictement identique, sans calculer la distance.
-        val typedMask = letterMask(lower)
+        // Recherche sans accents : masques sans accents des deux côtés (une erreur de la forme sans accents change au plus une lettre).
+        val typedMask = letterMask(if (foldsAccentsInSearch) WordForms.foldAccents(lower) else lower)
+        val masks = if (foldsAccentsInSearch) candidateFoldedMasks else candidateMasks
         for (length in minLength..maxLength) {
             for (i in indicesByLength[length]) {
                 if (letterPrefilter) {
-                    val mask = candidateMasks[i]
+                    val mask = masks[i]
                     if ((typedMask and mask.inv()).countOneBits() > allowedDistance ||
                         (mask and typedMask.inv()).countOneBits() > allowedDistance
                     ) {
                         continue
                     }
                 }
-                consider(candidateWords[i], candidateFrequencies[i])
+                consider(candidateWords[i], candidateFrequencies[i], folded = if (typedPlain) candidateFolded[i] else null)
             }
         }
         for (candidate in personal.keys) if (candidate !in frequencies) consider(candidate, personalFrequency, isPersonal = true)

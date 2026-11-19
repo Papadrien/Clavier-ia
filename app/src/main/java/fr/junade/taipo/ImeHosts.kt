@@ -6,6 +6,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
 import fr.junade.taipo.ai.VoiceField
+import fr.junade.taipo.dictionary.GestureDecoder
 import fr.junade.taipo.dictionary.NextLetterModel
 import fr.junade.taipo.dictionary.WordSuggestion
 import fr.junade.taipo.emoji.EmojiPanelView
@@ -111,6 +112,7 @@ internal interface ImeHostContext {
     fun onWordSuggestionTapped(suggestion: WordSuggestion)
     fun onKeyPressed(key: Key)
     fun onCursorMoved(steps: Int)
+    fun onGesture(path: List<GestureDecoder.Point>, keys: Map<Char, GestureDecoder.Point>)
     fun onGlobeSelected()
     fun onOneHandedToggled()
     fun onOneHandedSideSwitched()
@@ -432,6 +434,7 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
     override fun heightScale(): Float = ime.heightScale
     override fun onKey(key: Key) = ime.onKeyPressed(key)
     override fun onCursorMoved(steps: Int) = ime.onCursorMoved(steps)
+    override fun onGesture(path: List<GestureDecoder.Point>, keys: Map<Char, GestureDecoder.Point>) = ime.onGesture(path, keys)
     override fun onGlobeSelected() = ime.onGlobeSelected()
     override fun onOneHandedToggled() = ime.onOneHandedToggled()
     override fun onOneHandedSideSwitched() = ime.onOneHandedSideSwitched()

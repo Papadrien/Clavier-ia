@@ -79,6 +79,7 @@ object BackupService {
                 backdrop = keyboard.keyboardBackdrop.storageKey,
                 backdropAnimated = keyboard.isBackdropAnimated,
                 keySound = keyboard.isKeySoundEnabled,
+                keyPreview = keyboard.isKeyPreviewEnabled,
                 barSound = keyboard.isBarSoundEnabled,
                 keySoundVolume = keyboard.keySoundVolumePercent,
                 bottomMarginDp = keyboard.bottomMarginDp,
@@ -186,6 +187,7 @@ object BackupService {
     /** Sons, marge, zones de frappe, historique, mode une main et flottant (valeurs bornées par les réglages eux-mêmes). */
     private fun restoreBehaviour(keyboard: KeyboardPreferences, settings: BackupKeyboardSettings) {
         settings.keySound?.let { keyboard.isKeySoundEnabled = it }
+        settings.keyPreview?.let { keyboard.isKeyPreviewEnabled = it }
         settings.barSound?.let { keyboard.isBarSoundEnabled = it }
         settings.keySoundVolume?.let { keyboard.keySoundVolumePercent = it }
         settings.bottomMarginDp?.let { keyboard.bottomMarginDp = it }
