@@ -418,11 +418,11 @@ class KeyboardPreferences(context: Context) {
 
     /**
      * Saisie par glissement (Paramètres du clavier > Saisie intelligente, 19/11/2026) : le doigt glisse de lettre en lettre sans
-     * se lever, le mot s'écrit au relâchement ([fr.junade.taipo.dictionary.GestureDecoder]). Activée par défaut dans le build
-     * debug (validation sur appareil), désactivée en release tant qu'elle n'est pas validée, comme les zones de frappe adaptatives.
+     * se lever, le mot s'écrit au relâchement ([fr.junade.taipo.dictionary.GestureDecoder]). Désactivée par défaut, dans tous
+     * les builds (décision du 19/11/2026) : l'utilisateur l'active dans les paramètres.
      */
     var isSwipeTypingEnabled: Boolean
-        get() = prefs.getBoolean(KEY_SWIPE_TYPING, BuildConfig.DEBUG)
+        get() = prefs.getBoolean(KEY_SWIPE_TYPING, false)
         set(value) {
             prefs.edit().putBoolean(KEY_SWIPE_TYPING, value).apply()
         }
