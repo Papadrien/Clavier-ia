@@ -81,20 +81,18 @@ object DictionaryLoader {
     private val cache = ConcurrentHashMap<KeyboardLanguage, Dictionary>()
 
     /**
-     * Audit UX-01 : liste de démarrage embarquée (les 40 000 mots les plus fréquents, `assets/dictionaries/starter/`), pour le
-     * français, l'anglais et les huit langues ajoutées le 11/11/2026 ([STARTER_LANGUAGES]). Elle sert tant que la liste complète
+     * Audit UX-01 : liste de démarrage embarquée (les 40 000 mots les plus fréquents, `assets/dictionaries/starter/`), pour
+     * chaque langue du clavier ([STARTER_LANGUAGES]). Elle sert tant que la liste complète
      * n'est pas téléchargée (installation hors connexion) : le clavier corrige et propose dès la première frappe. Jamais mise
      * dans [cache], pour que la liste complète la remplace.
      */
     private val starters = ConcurrentHashMap<KeyboardLanguage, Dictionary>()
 
-    /** Langues qui ont une liste de démarrage embarquée. */
-    val STARTER_LANGUAGES: Set<KeyboardLanguage> = setOf(
-        KeyboardLanguage.FR, KeyboardLanguage.EN,
-        // 12/11/2026 : les huit langues ajoutées le 11/11 corrigent aussi dès l'installation, avant le téléchargement.
-        KeyboardLanguage.PL, KeyboardLanguage.RO, KeyboardLanguage.CS, KeyboardLanguage.HU,
-        KeyboardLanguage.SV, KeyboardLanguage.DA, KeyboardLanguage.NB, KeyboardLanguage.FI,
-    )
+    /**
+     * Langues qui ont une liste de démarrage embarquée : toutes depuis le 19/11/2026 (es, de, it, pt et nl n'en avaient pas et ne
+     * corrigeaient rien avant la fin du téléchargement, contrairement au français et à l'anglais).
+     */
+    val STARTER_LANGUAGES: Set<KeyboardLanguage> = KeyboardLanguage.entries.toSet()
 
     /** Chemin de la liste de démarrage dans les assets. */
     fun starterAssetPath(language: KeyboardLanguage): String = "dictionaries/starter/${language.tag}.txt"

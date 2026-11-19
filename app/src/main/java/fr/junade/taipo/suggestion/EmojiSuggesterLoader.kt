@@ -27,17 +27,11 @@ object EmojiSuggesterLoader {
         return suggester
     }
 
-    /** Langues qui ont aussi leur liste (`suggestions-<code>.txt`, 12/11/2026). */
-    private val OTHER_LANGUAGES = listOf(
-        KeyboardLanguage.PL,
-        KeyboardLanguage.RO,
-        KeyboardLanguage.CS,
-        KeyboardLanguage.HU,
-        KeyboardLanguage.SV,
-        KeyboardLanguage.DA,
-        KeyboardLanguage.NB,
-        KeyboardLanguage.FI,
-    )
+    /**
+     * Langues qui ont aussi leur liste (`suggestions-<code>.txt`) : les huit ajoutées le 11/11/2026 depuis le 12/11, puis
+     * l'espagnol, l'allemand, l'italien, le portugais et le néerlandais le 19/11/2026. Toutes les langues du clavier en ont une.
+     */
+    private val OTHER_LANGUAGES = KeyboardLanguage.entries - KeyboardLanguage.FR - KeyboardLanguage.EN
 
     private fun readAsset(context: Context, path: String): String =
         context.assets.open(path).bufferedReader(Charsets.UTF_8).use { it.readText() }

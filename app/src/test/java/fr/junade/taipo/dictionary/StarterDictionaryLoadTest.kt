@@ -26,8 +26,14 @@ class StarterDictionaryLoadTest {
     }
 
     @Test
-    fun `une langue sans liste de demarrage reste vide`() {
-        assertFalse(DictionaryLoader.loadStarter(testContext, KeyboardLanguage.DE))
-        assertTrue(DictionaryLoader.forLanguage(testContext, KeyboardLanguage.DE).frequencyOf("hallo") == 0L)
+    fun `chaque langue a sa liste de demarrage`() {
+        // 19/11/2026 : l'espagnol, l'allemand, l'italien, le portugais et le néerlandais n'en avaient pas (aucune correction avant la
+        // fin du téléchargement) ; toutes les langues en ont désormais une.
+        for (language in KeyboardLanguage.entries) {
+            assertTrue(language.tag, DictionaryLoader.loadStarter(testContext, language))
+            assertNotNull(language.tag, DictionaryLoader.peek(language))
+        }
+        assertTrue(DictionaryLoader.forLanguage(testContext, KeyboardLanguage.DE).frequencyOf("hallo") > 0L)
+        assertTrue(DictionaryLoader.forLanguage(testContext, KeyboardLanguage.ES).frequencyOf("gracias") > 0L)
     }
 }

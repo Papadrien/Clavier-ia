@@ -21,6 +21,7 @@ appris : ni habitudes, ni dictionnaire personnel. Tirages reproductibles (graine
 | `contexte.<catégorie>.ok` | phrases fautives de `context-cases.tsv` frappées mot par mot, comparées à la phrase attendue | plus haut = mieux |
 | `longues.<jeu>.deux/trois.ok / wrong` | mots de 8 lettres ou plus abîmés par 2 ou 3 erreurs aléatoires : bien rétablis / remplacés par un autre mot (hors totaux `typos.*`) | `ok` plus haut, `wrong` plus bas |
 | `inconnus.<jeu>.faux` | mots courants retirés des listes puis tapés (imitent prénoms, argot, termes techniques) et remplacés par un autre mot | plus bas = mieux ; borne pessimiste, à lire d'une phase à l'autre |
+| `accentfaute.<jeu>.ok / wrong` | mot accentué tapé sans ses accents ET avec une faute de frappe (« delws » pour « děláš »), 1 000 tirages, hors des totaux `typos.*` (19/11/2026) | `ok` plus haut, `wrong` plus bas |
 
 Deux jeux de mots : **courants** (tirés au prorata de la fréquence : ce que l'on tape vraiment) et **varies** (tirés
 uniformément parmi les mots proposables : plus difficile). Le temps de `correctionFor` est affiché (p50, p95, p99, max) mais
