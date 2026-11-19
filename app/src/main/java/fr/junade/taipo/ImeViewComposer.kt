@@ -149,6 +149,12 @@ class ImeViewComposer(
         keyboardView.translucentKeys = backdrop.isPattern
     }
 
+    /** Action IA en cours ([busy]) : le fond animé s'anime comme pendant la frappe ([KeyboardBackgroundDrawable.aiBusy]). */
+    fun setBackdropAiBusy(busy: Boolean) {
+        if (!isComposed) return
+        background?.aiBusy = busy
+    }
+
     /** Image du fond « Image » ([fr.junade.taipo.backdrop.PhotoBackdrop]), ou null pour la libérer (autre fond choisi). */
     fun applyBackdropPhoto(photo: android.graphics.Bitmap?) {
         if (!isComposed) return

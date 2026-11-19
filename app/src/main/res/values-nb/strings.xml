@@ -611,6 +611,11 @@
     <string name="theme_backdrop_photo_source_files">Filer</string>
     <string name="theme_backdrop_photo_error">Kunne ikke åpne bildet.</string>
     <string name="theme_backdrop_photo_no_picker">Ingen app på enheten kan velge et bilde.</string>
+    <string name="theme_backdrop_photo_delete">Slett bildet</string>
+    <string name="theme_backdrop_photo_delete_title">Vil du slette dette bildet?</string>
+    <string name="theme_backdrop_photo_delete_message">Tastaturbakgrunnen blir ensfarget igjen. Originalen i galleriet eller filene dine berøres ikke.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Slett</string>
+    <string name="theme_backdrop_photo_delete_error">Kunne ikke slette bildet. Prøv igjen.</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Tastaturets skrifttype</string>

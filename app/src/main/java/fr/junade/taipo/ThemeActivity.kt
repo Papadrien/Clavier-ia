@@ -388,6 +388,7 @@ class ThemeActivity : ComponentActivity() {
             startActivity(PremiumActivity.intent(this, PremiumActivity.SOURCE_THEME))
         }
         findViewById<View>(R.id.button_backdrop_photo_change).setOnClickListener { choosePhotoSource() }
+        findViewById<View>(R.id.button_backdrop_photo_delete).setOnClickListener { confirmDeletePhoto() }
         loadPhotoPreview()
         // Défilement de la page : les motifs avancent avec lui, pour montrer qu'ils sont animés.
         findViewById<View>(R.id.theme_scroll).setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
@@ -486,6 +487,39 @@ class ThemeActivity : ComponentActivity() {
         findViewById<View>(R.id.button_backdrop_unlock).visibility = if (previewBackdrop != null) View.VISIBLE else View.GONE
         val photoSettings = shown == KeyboardBackdrop.PHOTO && previewBackdrop == null
         findViewById<View>(R.id.button_backdrop_photo_change).visibility = if (photoSettings) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.button_backdrop_photo_delete).visibility = if (photoSettings) View.VISIBLE else View.GONE
+    }
+
+    /** « Supprimer l'image » : confirmation, puis copie supprimée et fond Uni. */
+    private fun confirmDeletePhoto() {
+        AlertDialog.Builder(ContextThemeWrapper(this, R.style.MessageDialogTheme))
+            .setTitle(R.string.theme_backdrop_photo_delete_title)
+            .setMessage(R.string.theme_backdrop_photo_delete_message)
+            .setPositiveButton(R.string.theme_backdrop_photo_delete_confirm) { _, _ -> deletePhoto() }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    /** Supprime la copie de l'image hors du thread principal ; le clavier repasse à Uni au prochain champ (plus d'image). */
+    private fun deletePhoto() {
+        val appContext = applicationContext
+        scope.launch {
+            val deleted = withContext(Dispatchers.IO) {
+                PhotoBackdrop.delete(appContext).also { ok ->
+                    if (ok) {
+                        preferences.backdropPhotoVersion = System.currentTimeMillis()
+                        if (preferences.keyboardBackdrop == KeyboardBackdrop.PHOTO) preferences.keyboardBackdrop = KeyboardBackdrop.PLAIN
+                    }
+                }
+            }
+            if (!deleted) {
+                showScreenMessage(R.string.theme_backdrop_photo_delete_error)
+                return@launch
+            }
+            Analytics.setting(this@ThemeActivity, "keyboard_backdrop", KeyboardBackdrop.PLAIN.storageKey)
+            backdropCards.firstOrNull { it.backdrop == KeyboardBackdrop.PHOTO }?.preview?.photo = null
+            renderBackdrops()
+        }
     }
 
     /** Choix de la source de l'image du fond : galerie (sélecteur de photos) ou sélecteur de fichiers. */

@@ -13,6 +13,7 @@ import android.graphics.RectF
 import android.graphics.Shader
 import android.graphics.drawable.Drawable
 import android.view.Choreographer
+import fr.junade.taipo.backdrop.AmbientTyping
 import fr.junade.taipo.backdrop.BackdropColors
 import fr.junade.taipo.backdrop.BackdropMotion
 import fr.junade.taipo.backdrop.BackdropPainter
@@ -37,6 +38,10 @@ import fr.junade.taipo.backdrop.PhotoBackdropDrawer
  *
  * Fond « Image » (19/11/2026) : l'image de l'utilisateur ([setPhoto]) remplit le fond, recadrée au centre, fixe ; le voile de la
  * barre du haut s'y applique comme sur un motif. Tant que l'image n'est pas chargée, le fond reste uni.
+ *
+ * Action IA en cours ([aiBusy], 19/11/2026) : le motif s'anime comme pendant la frappe, avec des touches simulées au rythme d'une
+ * frappe soutenue ([AmbientTyping]) sur la zone des touches, jusqu'à la fin de l'action. Mêmes conditions que la frappe : motif
+ * animé ([animated]) et animations Android actives.
  */
 class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
 
@@ -57,6 +62,18 @@ class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
     private val motion = BackdropMotion()
     private var photo: Bitmap? = null
     private val photoDrawer = PhotoBackdropDrawer()
+    private val ambientTyping = AmbientTyping()
+
+    /** Une action IA est en cours : le motif s'anime comme si l'utilisateur tapait, tant qu'elle dure. */
+    var aiBusy = false
+        set(value) {
+            if (field == value) return
+            field = value
+            if (value && canAnimate()) {
+                ambientTyping.reset()
+                scheduleFrame()
+            }
+        }
 
     /** Le motif s'anime pendant la frappe (réglage « Animer le fond pendant la frappe »). */
     var animated = true
@@ -106,22 +123,38 @@ class KeyboardBackgroundDrawable(backgroundColor: Int) : Drawable() {
 
     /** Une touche vient d'être appuyée en ([x], [y]), coordonnées de ce fond : le motif dérive et réagit autour d'elle. */
     fun onKeyPress(x: Float, y: Float) {
-        if (painter == null || !animated || !ValueAnimator.areAnimatorsEnabled()) return
+        if (!canAnimate()) return
         motion.press(x - bounds.left, y - bounds.top)
-        if (!frameScheduled) {
-            frameScheduled = true
-            lastFrameNanos = 0L
-            Choreographer.getInstance().postFrameCallback(frameCallback)
-        }
+        scheduleFrame()
+    }
+
+    /** Un motif animé est affiché et les animations Android sont actives. */
+    private fun canAnimate(): Boolean = painter != null && animated && ValueAnimator.areAnimatorsEnabled()
+
+    private fun scheduleFrame() {
+        if (frameScheduled) return
+        frameScheduled = true
+        lastFrameNanos = 0L
+        Choreographer.getInstance().postFrameCallback(frameCallback)
+    }
+
+    /** Action IA : touches simulées sur la zone des touches (sous la barre du haut), en coordonnées du fond. */
+    private fun simulateTyping(dt: Float) {
+        val width = bounds.width().toFloat()
+        val keysTop = barBottom.coerceIn(0f, bounds.height().toFloat())
+        val keysHeight = bounds.height() - keysTop
+        ambientTyping.advance(dt) { fx, fy -> motion.press(fx * width, keysTop + fy * keysHeight) }
     }
 
     private fun onFrame(nowNanos: Long) {
         frameScheduled = false
         val dt = if (lastFrameNanos == 0L) FIRST_FRAME_S else ((nowNanos - lastFrameNanos) / NANOS_PER_SECOND).coerceIn(0f, MAX_FRAME_S)
         lastFrameNanos = nowNanos
+        val simulating = aiBusy && canAnimate()
+        if (simulating) simulateTyping(dt)
         motion.step(dt)
         invalidateSelf()
-        if (motion.isRunning && callback != null) {
+        if ((motion.isRunning || simulating) && callback != null) {
             frameScheduled = true
             Choreographer.getInstance().postFrameCallback(frameCallback)
         }

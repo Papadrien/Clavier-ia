@@ -611,6 +611,11 @@
     <string name="theme_backdrop_photo_source_files">Fájlok</string>
     <string name="theme_backdrop_photo_error">Ez a kép nem nyitható meg.</string>
     <string name="theme_backdrop_photo_no_picker">Ezen az eszközön egyik alkalmazással sem lehet képet választani.</string>
+    <string name="theme_backdrop_photo_delete">Kép törlése</string>
+    <string name="theme_backdrop_photo_delete_title">Törlöd ezt a képet?</string>
+    <string name="theme_backdrop_photo_delete_message">A billentyűzet háttere visszaáll egyszínűre. A galériában vagy a fájlok között lévő eredeti megmarad.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Törlés</string>
+    <string name="theme_backdrop_photo_delete_error">A képet nem sikerült törölni. Próbáld újra.</string>
     <string name="theme_backdrop_free">Ingyenes</string>
     <string name="theme_backdrop_premium">Prémium</string>
     <string name="theme_section_font">Billentyűzet betűtípusa</string>

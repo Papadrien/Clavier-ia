@@ -638,6 +638,11 @@
     <string name="theme_backdrop_photo_source_files">Files</string>
     <string name="theme_backdrop_photo_error">This image could not be opened.</string>
     <string name="theme_backdrop_photo_no_picker">No app on this device can choose an image.</string>
+    <string name="theme_backdrop_photo_delete">Delete the image</string>
+    <string name="theme_backdrop_photo_delete_title">Delete this image?</string>
+    <string name="theme_backdrop_photo_delete_message">The keyboard background goes back to Plain. The original in your gallery or files is not affected.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Delete</string>
+    <string name="theme_backdrop_photo_delete_error">The image could not be deleted. Please try again.</string>
     <string name="theme_backdrop_free">Free</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Keyboard font</string>

@@ -657,6 +657,11 @@
     <string name="theme_backdrop_photo_source_files">Fichiers</string>
     <string name="theme_backdrop_photo_error">Impossible d\'ouvrir cette image.</string>
     <string name="theme_backdrop_photo_no_picker">Aucune application de cet appareil ne permet de choisir une image.</string>
+    <string name="theme_backdrop_photo_delete">Supprimer l\'image</string>
+    <string name="theme_backdrop_photo_delete_title">Supprimer cette image ?</string>
+    <string name="theme_backdrop_photo_delete_message">Le fond du clavier revient à Uni. L\'original, dans votre galerie ou vos fichiers, n\'est pas touché.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Supprimer</string>
+    <string name="theme_backdrop_photo_delete_error">Impossible de supprimer l\'image. Réessayez.</string>
     <string name="theme_backdrop_free">Gratuit</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Police du clavier</string>

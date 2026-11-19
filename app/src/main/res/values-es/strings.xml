@@ -615,6 +615,11 @@
     <string name="theme_backdrop_photo_source_files">Archivos</string>
     <string name="theme_backdrop_photo_error">No se ha podido abrir esta imagen.</string>
     <string name="theme_backdrop_photo_no_picker">Ninguna aplicación de este dispositivo permite elegir una imagen.</string>
+    <string name="theme_backdrop_photo_delete">Eliminar la imagen</string>
+    <string name="theme_backdrop_photo_delete_title">¿Eliminar esta imagen?</string>
+    <string name="theme_backdrop_photo_delete_message">El fondo del teclado vuelve a Liso. El original de tu galería o tus archivos no se toca.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Eliminar</string>
+    <string name="theme_backdrop_photo_delete_error">No se ha podido eliminar la imagen. Inténtalo de nuevo.</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Prémium</string>
     <string name="theme_section_font">Tipografía del teclado</string>

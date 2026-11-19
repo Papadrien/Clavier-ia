@@ -615,6 +615,11 @@
     <string name="theme_backdrop_photo_source_files">Fișiere</string>
     <string name="theme_backdrop_photo_error">Această imagine nu a putut fi deschisă.</string>
     <string name="theme_backdrop_photo_no_picker">Nicio aplicație de pe acest dispozitiv nu permite alegerea unei imagini.</string>
+    <string name="theme_backdrop_photo_delete">Șterge imaginea</string>
+    <string name="theme_backdrop_photo_delete_title">Ștergi această imagine?</string>
+    <string name="theme_backdrop_photo_delete_message">Fundalul tastaturii revine la Uni. Originalul din galerie sau din fișiere nu este afectat.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Șterge</string>
+    <string name="theme_backdrop_photo_delete_error">Imaginea nu a putut fi ștearsă. Încearcă din nou.</string>
     <string name="theme_backdrop_free">Gratuit</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Fontul tastaturii</string>

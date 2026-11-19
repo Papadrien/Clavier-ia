@@ -615,6 +615,11 @@
     <string name="theme_backdrop_photo_source_files">File</string>
     <string name="theme_backdrop_photo_error">Impossibile aprire questa immagine.</string>
     <string name="theme_backdrop_photo_no_picker">Nessuna app su questo dispositivo permette di scegliere un\'immagine.</string>
+    <string name="theme_backdrop_photo_delete">Elimina l\'immagine</string>
+    <string name="theme_backdrop_photo_delete_title">Eliminare questa immagine?</string>
+    <string name="theme_backdrop_photo_delete_message">Lo sfondo della tastiera torna Tinta unita. L\'originale nella galleria o nei file non viene toccato.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Elimina</string>
+    <string name="theme_backdrop_photo_delete_error">Impossibile eliminare l\'immagine. Riprova.</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Carattere della tastiera</string>

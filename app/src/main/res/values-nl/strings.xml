@@ -611,6 +611,11 @@
     <string name="theme_backdrop_photo_source_files">Bestanden</string>
     <string name="theme_backdrop_photo_error">Deze afbeelding kan niet worden geopend.</string>
     <string name="theme_backdrop_photo_no_picker">Geen app op dit apparaat kan een afbeelding kiezen.</string>
+    <string name="theme_backdrop_photo_delete">Afbeelding verwijderen</string>
+    <string name="theme_backdrop_photo_delete_title">Deze afbeelding verwijderen?</string>
+    <string name="theme_backdrop_photo_delete_message">De toetsenbordachtergrond wordt weer effen. Het origineel in je galerij of bestanden blijft staan.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Verwijderen</string>
+    <string name="theme_backdrop_photo_delete_error">De afbeelding kan niet worden verwijderd. Probeer het opnieuw.</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Lettertype van het toetsenbord</string>

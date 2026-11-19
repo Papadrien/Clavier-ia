@@ -213,6 +213,26 @@ class TaipoIme : InputMethodService() {
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
     private val keyboardPreferences by lazy { KeyboardPreferences(applicationContext) }
 
+    /**
+     * Fond animé pendant une action IA : tant que le clavier est affiché sur un motif animé, l'état des actions IA est relu toutes
+     * les [AI_BACKDROP_POLL_MS] ms (simple lecture d'indicateurs) et transmis au fond, qui s'anime comme pendant la frappe.
+     */
+    private val aiBackdropTick = object : Runnable {
+        override fun run() {
+            viewComposer.setBackdropAiBusy(aiActionInProgress())
+            mainHandler.postDelayed(this, AI_BACKDROP_POLL_MS)
+        }
+    }
+
+    /** Une action IA travaille : correction, réponse du chat, traitement d'une dictée ou d'une transcription IA. */
+    private fun aiActionInProgress(): Boolean =
+        correction.inProgress || prompt.generationBusy() || voice.isTranscribing || aiTranscription.isProcessing
+
+    private fun watchAiForBackdrop(enabled: Boolean) {
+        mainHandler.removeCallbacks(aiBackdropTick)
+        if (enabled) mainHandler.post(aiBackdropTick) else viewComposer.setBackdropAiBusy(false)
+    }
+
     /** Fond « Image » : l'image de l'utilisateur, décodée hors du thread principal et gardée tant qu'elle ne change pas. */
     private val photoBackdrop by lazy { fr.junade.taipo.backdrop.PhotoBackdropLoader(applicationContext, serviceScope) }
 
@@ -508,6 +528,7 @@ class TaipoIme : InputMethodService() {
             themeColor(R.color.accent),
             KeyboardTheme.mode == KeyboardTheme.Mode.DARK,
         )
+        watchAiForBackdrop(backdrop.isGenerated && keyboardPreferences.isBackdropAnimated)
         if (backdrop == fr.junade.taipo.backdrop.KeyboardBackdrop.PHOTO) {
             photoBackdrop.load(keyboardPreferences.backdropPhotoVersion) { viewComposer.applyBackdropPhoto(it) }
         } else {
@@ -634,6 +655,7 @@ class TaipoIme : InputMethodService() {
      */
     override fun onWindowHidden() {
         super.onWindowHidden()
+        watchAiForBackdrop(false)
         prompt.resetConversation()
         memory.onWindowHidden() // clavier masqué longtemps : les gros moteurs (IA, dictée) sont libérés
     }
@@ -725,6 +747,7 @@ class TaipoIme : InputMethodService() {
             correctionEngine.cancel()
             prompt.stopGeneration()
         }
+        mainHandler.removeCallbacks(aiBackdropTick)
         serviceJob.cancel()
         // Écriture terminée avant de rendre la main (lot 2.6 de la revue) : pas de launch asynchrone ici.
         nextWords.flushBlocking()
@@ -1228,5 +1251,8 @@ class TaipoIme : InputMethodService() {
         private const val WHATS_NEW_DELAY_MS = 1_000L
         private const val WHATS_NEW_PILL_MS = 8_000L
         private const val SPACE_MOVE_ECHO_MS = 600L
+
+        /** Relecture de l'état des actions IA pour le fond animé : assez vif pour démarrer et s'arrêter avec l'action. */
+        private const val AI_BACKDROP_POLL_MS = 200L
     }
 }

@@ -611,6 +611,11 @@
     <string name="theme_backdrop_photo_source_files">Filer</string>
     <string name="theme_backdrop_photo_error">Det gick inte att öppna bilden.</string>
     <string name="theme_backdrop_photo_no_picker">Ingen app på enheten kan välja en bild.</string>
+    <string name="theme_backdrop_photo_delete">Ta bort bilden</string>
+    <string name="theme_backdrop_photo_delete_title">Ta bort den här bilden?</string>
+    <string name="theme_backdrop_photo_delete_message">Tangentbordets bakgrund blir enfärgad igen. Originalet i galleriet eller bland filerna påverkas inte.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Ta bort</string>
+    <string name="theme_backdrop_photo_delete_error">Det gick inte att ta bort bilden. Försök igen.</string>
     <string name="theme_backdrop_free">Gratis</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Tangentbordets typsnitt</string>

@@ -619,6 +619,11 @@
     <string name="theme_backdrop_photo_source_files">Soubory</string>
     <string name="theme_backdrop_photo_error">Tento obrázek nelze otevřít.</string>
     <string name="theme_backdrop_photo_no_picker">Žádná aplikace v tomto zařízení neumožňuje vybrat obrázek.</string>
+    <string name="theme_backdrop_photo_delete">Smazat obrázek</string>
+    <string name="theme_backdrop_photo_delete_title">Smazat tento obrázek?</string>
+    <string name="theme_backdrop_photo_delete_message">Pozadí klávesnice se vrátí na jednobarevné. Originál v galerii nebo souborech zůstane beze změny.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Smazat</string>
+    <string name="theme_backdrop_photo_delete_error">Obrázek nelze smazat. Zkuste to znovu.</string>
     <string name="theme_backdrop_free">Zdarma</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Písmo klávesnice</string>

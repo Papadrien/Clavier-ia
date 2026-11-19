@@ -611,6 +611,11 @@
     <string name="theme_backdrop_photo_source_files">Tiedostot</string>
     <string name="theme_backdrop_photo_error">Kuvaa ei voitu avata.</string>
     <string name="theme_backdrop_photo_no_picker">Millään tämän laitteen sovelluksella ei voi valita kuvaa.</string>
+    <string name="theme_backdrop_photo_delete">Poista kuva</string>
+    <string name="theme_backdrop_photo_delete_title">Poistetaanko tämä kuva?</string>
+    <string name="theme_backdrop_photo_delete_message">Näppäimistön tausta palaa yksiväriseksi. Galleriassa tai tiedostoissa olevaan alkuperäiseen ei kosketa.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Poista</string>
+    <string name="theme_backdrop_photo_delete_error">Kuvaa ei voitu poistaa. Yritä uudelleen.</string>
     <string name="theme_backdrop_free">Ilmainen</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Näppäimistön fontti</string>

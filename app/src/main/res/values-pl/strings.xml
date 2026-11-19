@@ -619,6 +619,11 @@
     <string name="theme_backdrop_photo_source_files">Pliki</string>
     <string name="theme_backdrop_photo_error">Nie można otworzyć tego obrazu.</string>
     <string name="theme_backdrop_photo_no_picker">Żadna aplikacja na tym urządzeniu nie umożliwia wybrania obrazu.</string>
+    <string name="theme_backdrop_photo_delete">Usuń obraz</string>
+    <string name="theme_backdrop_photo_delete_title">Usunąć ten obraz?</string>
+    <string name="theme_backdrop_photo_delete_message">Tło klawiatury wróci do jednolitego. Oryginał w galerii lub plikach pozostanie nienaruszony.</string>
+    <string name="theme_backdrop_photo_delete_confirm">Usuń</string>
+    <string name="theme_backdrop_photo_delete_error">Nie można usunąć obrazu. Spróbuj ponownie.</string>
     <string name="theme_backdrop_free">Bezpłatne</string>
     <string name="theme_backdrop_premium">Premium</string>
     <string name="theme_section_font">Czcionka klawiatury</string>

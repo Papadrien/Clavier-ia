@@ -39,6 +39,13 @@ object PhotoBackdrop {
 
     fun exists(context: Context): Boolean = file(context).isFile
 
+    /** Supprime la copie privée de l'image (l'original, dans la galerie ou les fichiers, n'est pas touché). Vrai si elle n'existe plus. */
+    @WorkerThread
+    fun delete(context: Context): Boolean {
+        val target = file(context)
+        return !target.exists() || target.delete()
+    }
+
     /**
      * Importe l'image [uri] : décodée, redressée, réduite, puis enregistrée (fichier temporaire puis renommage, l'image
      * précédente reste en place si l'import échoue). Renvoie false si l'image ne peut pas être lue. Hors du thread principal.
