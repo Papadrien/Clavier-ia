@@ -553,6 +553,7 @@ class TaipoIme : InputMethodService() {
         keyboardView.heightScale = keyboardHeight.scale
         keyboardView.bottomMarginDp = keyboardPreferences.bottomMarginDp
         keyboardView.keyPreviewEnabled = keyboardPreferences.isKeyPreviewEnabled
+        viewComposer.emojiPanel.keyPreviewEnabled = keyboardPreferences.isKeyPreviewEnabled
         floatingWindow.apply() // en flottant, remet la marge du bas à zéro (la poignée en tient lieu)
         val backdrop = fr.junade.taipo.backdrop.KeyboardBackdrop.effective(
             keyboardPreferences.keyboardBackdrop,
