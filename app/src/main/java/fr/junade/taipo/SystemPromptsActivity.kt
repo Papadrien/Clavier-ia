@@ -13,8 +13,8 @@ import fr.junade.taipo.ai.TranslationPromptPreferences
 
 /**
  * Page « Prompts système » : consulter, modifier et réinitialiser les prompts système envoyés au modèle IA, un par
- * usage (correction, mode prompt, transcription IA, changement de ton, traduction). Chaque champ affiche le prompt actuellement utilisé (le défaut tant qu'aucun prompt
- * personnalisé n'est enregistré).
+ * usage (correction, mode prompt, transcription IA, changement de ton, traduction). Chaque champ affiche le prompt actuellement
+ * utilisé (le défaut tant qu'aucun prompt personnalisé n'est enregistré).
  */
 class SystemPromptsActivity : Activity() {
 

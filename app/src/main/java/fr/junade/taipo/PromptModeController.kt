@@ -362,7 +362,7 @@ class PromptModeController(
      */
     fun enterTranslation() {
         if (active || !this::promptBar.isInitialized) return
-        if (host.isRecording() || host.isCorrectionInProgress() || host.isTranscriptionInProgress() || generationBusy() || host.toneBusy()) {
+        if (host.isRecording() || otherAiBusy()) {
             host.showMessage(context.getString(R.string.ai_action_busy))
             return
         }
@@ -375,6 +375,12 @@ class PromptModeController(
             translating = false
             promptBar.hintOverride = null
         }
+    }
+
+    /** Le moteur est pris par une génération, une traduction ou un changement de ton. */
+    private fun otherAiBusy(): Boolean {
+        val engineTaken = generationBusy() || host.toneBusy()
+        return engineTaken || host.isCorrectionInProgress() || host.isTranscriptionInProgress()
     }
 
     private fun translationHint(): String =

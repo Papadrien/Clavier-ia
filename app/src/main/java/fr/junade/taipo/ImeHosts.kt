@@ -333,6 +333,7 @@ internal class PromptHost(private val ime: ImeHostContext) : PromptModeControlle
 internal class CorrectionHost(private val ime: ImeHostContext) : CorrectionAiController.Host {
     override fun showMessage(message: String) = ime.showMessage(message)
     override fun inputConnection() = ime.inputConnection()
+
     // Le moteur est pris par la génération, une traduction ou un changement de ton.
     override fun generationBusy(): Boolean = ime.prompt.generationBusy() || ime.aiPanel.toneBusy
     override fun transcriptionInProgress(): Boolean = ime.isTranscriptionInProgress()

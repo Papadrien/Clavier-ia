@@ -255,6 +255,7 @@ class LiveTranslator(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught", "SwallowedException") // échec du moteur : message à l'utilisateur, pas de plantage
     private fun launch(model: AiModel, work: suspend () -> Unit) {
         val startedAt = SystemClock.elapsedRealtime()
         cancelled = false

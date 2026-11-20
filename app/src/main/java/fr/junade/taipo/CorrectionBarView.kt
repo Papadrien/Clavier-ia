@@ -308,6 +308,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             row.forgetPositions()
         }
     }
+
     /**
      * Boutons que la zone tactile étendue peut viser : ceux des rangées affichées, et Vocal. Pendant une astuce de geste, la
      * pilule (à la largeur de son texte, centrée) remplace les boutons qu'elle recouvre ; ceux d'à côté restent touchables.

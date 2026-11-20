@@ -14,6 +14,7 @@ import fr.junade.taipo.ai.ToneSupport
 import fr.junade.taipo.ai.messageRes
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
+import fr.junade.taipo.model.AiModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,6 +47,7 @@ internal class AiPanelController(
     val toneBusy: Boolean get() = toneJob?.isActive == true
 
     private var toneJob: Job? = null
+
     @Volatile private var toneCancelled = false
 
     /** Session de changement de ton : texte d'origine, dernière version écrite, ton choisi. */
@@ -214,21 +216,7 @@ internal class AiPanelController(
     }
 
     override fun onToneTapped(tone: Tone) {
-        if (toneBusy) return
-        if (blockedBySensitiveField()) return
-        val model = ime.activeModel()
-        if (model == null) {
-            ModelScreenRedirect.open(ime.keyboardView.context)
-            return
-        }
-        if (!ToneSupport.supports(model)) {
-            ime.showMessage(String.format(ime.string(R.string.ai_tone_model_too_small), ime.string(R.string.model_name_leger)))
-            return
-        }
-        if (ime.isRecording() || ime.isCorrectionInProgress() || ime.isTranscriptionInProgress() || ime.prompt.generationBusy()) {
-            ime.showMessage(ime.string(R.string.ai_action_busy))
-            return
-        }
+        val model = toneModelOrNull() ?: return
         val ic = ime.inputConnection() ?: return
         val source = sessionSource(ic)
         if (source.isNullOrBlank()) {
@@ -236,44 +224,8 @@ internal class AiPanelController(
             return
         }
         ime.hapticAi(AiHapticCue.ACTION_START)
-        val startedAt = SystemClock.elapsedRealtime()
         toneCancelled = false
-        val core = source.trim()
-        val job = scope.launch {
-            try {
-                val response = engine().rewrite(
-                    model,
-                    tonePromptPreferences.get(),
-                    TonePrompt.userTurn(tone, core),
-                    "ton",
-                    isCancelled = { toneCancelled },
-                )
-                if (toneCancelled) return@launch
-                val rewritten = RewriteSafeguard.clean(response)
-                if (rewritten == null) {
-                    ime.showMessage(ime.string(R.string.ai_tone_failed))
-                    return@launch
-                }
-                val leading = source.takeWhile { it.isWhitespace() }
-                val trailing = source.takeLastWhile { it.isWhitespace() }
-                if (write(leading + rewritten + trailing)) {
-                    selectedTone = tone
-                    ime.hapticAi(AiHapticCue.PROCESSING_DONE)
-                    Analytics.aiAction(ime.keyboardView.context, AnalyticsEvents.AiType.TONE, model.id, startedAt)
-                }
-            } catch (e: RewriteCancelledException) {
-                AppLog.i(TAG, "changement de ton abandonné")
-            } catch (e: CancellationException) {
-                throw e
-            } catch (t: Throwable) {
-                if (!toneCancelled) {
-                    val cause = InferenceFailureClassifier.classify(t)
-                    AppLog.e(TAG, "Échec du changement de ton ($cause)", t)
-                    Analytics.aiAction(ime.keyboardView.context, AnalyticsEvents.AiType.TONE, model.id, startedAt, failure = cause)
-                    ime.showMessage(ime.string(cause.messageRes()))
-                }
-            }
-        }
+        val job = scope.launch { rewriteTone(model, tone, source) }
         toneJob = job
         job.invokeOnCompletion {
             ime.keyboardView.post {
@@ -282,6 +234,68 @@ internal class AiPanelController(
             }
         }
         renderTones()
+    }
+
+    /** Modèle avec lequel changer le ton maintenant, ou null (avec le message ou l'écran qui convient). */
+    private fun toneModelOrNull(): AiModel? {
+        if (toneBusy || blockedBySensitiveField()) return null
+        val model = ime.activeModel()
+        if (model == null) {
+            ModelScreenRedirect.open(ime.keyboardView.context)
+            return null
+        }
+        if (!ToneSupport.supports(model)) {
+            ime.showMessage(String.format(ime.string(R.string.ai_tone_model_too_small), ime.string(R.string.model_name_leger)))
+            return null
+        }
+        if (engineBusy()) {
+            ime.showMessage(ime.string(R.string.ai_action_busy))
+            return null
+        }
+        return model
+    }
+
+    /** Dictée, correction, transcription ou génération en cours : le moteur (ou le micro) est pris. */
+    private fun engineBusy(): Boolean =
+        ime.isRecording() || ime.isCorrectionInProgress() || ime.isTranscriptionInProgress() || ime.prompt.generationBusy()
+
+    /** Réécrit [source] dans le ton [tone] et l'écrit à la place de la version précédente. */
+    @Suppress("TooGenericExceptionCaught", "SwallowedException") // échec du moteur : message à l'utilisateur, pas de plantage
+    private suspend fun rewriteTone(model: AiModel, tone: Tone, source: String) {
+        val startedAt = SystemClock.elapsedRealtime()
+        try {
+            val response = engine().rewrite(
+                model,
+                tonePromptPreferences.get(),
+                TonePrompt.userTurn(tone, source.trim()),
+                "ton",
+                isCancelled = { toneCancelled },
+            )
+            if (toneCancelled) return
+            val rewritten = RewriteSafeguard.clean(response)
+            if (rewritten == null) {
+                ime.showMessage(ime.string(R.string.ai_tone_failed))
+                return
+            }
+            val leading = source.takeWhile { it.isWhitespace() }
+            val trailing = source.takeLastWhile { it.isWhitespace() }
+            if (write(leading + rewritten + trailing)) {
+                selectedTone = tone
+                ime.hapticAi(AiHapticCue.PROCESSING_DONE)
+                Analytics.aiAction(ime.keyboardView.context, AnalyticsEvents.AiType.TONE, model.id, startedAt)
+            }
+        } catch (e: RewriteCancelledException) {
+            AppLog.i(TAG, "changement de ton abandonné")
+        } catch (e: CancellationException) {
+            throw e
+        } catch (t: Throwable) {
+            if (!toneCancelled) {
+                val cause = InferenceFailureClassifier.classify(t)
+                AppLog.e(TAG, "Échec du changement de ton ($cause)", t)
+                Analytics.aiAction(ime.keyboardView.context, AnalyticsEvents.AiType.TONE, model.id, startedAt, failure = cause)
+                ime.showMessage(ime.string(cause.messageRes()))
+            }
+        }
     }
 
     /**

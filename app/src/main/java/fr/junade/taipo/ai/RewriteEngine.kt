@@ -28,6 +28,7 @@ class RewriteEngine(private val host: LlmEngineHost) {
     @Volatile private var nativeCancelRequested = false
 
     /** Interrompt l'inférence en cours ; sans effet sinon. Peut bloquer un instant : hors du thread principal. */
+    @Suppress("TooGenericExceptionCaught") // l'arrêt natif peut échouer de bien des façons : il est seulement journalisé
     fun cancel() {
         val running = runningConversation ?: return
         nativeCancelRequested = true
@@ -43,6 +44,7 @@ class RewriteEngine(private val host: LlmEngineHost) {
      * doit d'abord être chargé. [isCancelled] est testé une fois le modèle prêt ([RewriteCancelledException]). [label] : nom de
      * l'usage dans le journal (jamais le texte).
      */
+    @Suppress("TooGenericExceptionCaught") // relance sur le processeur central quelle que soit l'erreur du GPU (voir abandonGpuAfter)
     suspend fun rewrite(
         model: AiModel,
         systemPrompt: String,
