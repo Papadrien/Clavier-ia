@@ -51,8 +51,8 @@ enum class KeyPreviewAnimation {
  */
 internal object KeyPreviewPose {
 
-    /** Durée minimale d'affichage de la bulle, comptée depuis l'appui, avant sa sortie (150 ms le 16/11/2026, 250 ms le 19/11/2026). */
-    const val MIN_SHOW_MS = 250L
+    /** Durée minimale d'affichage de la bulle, comptée depuis l'appui, avant sa sortie (150 ms le 16/11/2026, 250 ms le 19/11/2026, 200 ms le 20/11/2026). */
+    const val MIN_SHOW_MS = 200L
 
     /**
      * [scaleX], [scaleY] : taille autour du bas-centre de la bulle ; [offsetY] : décalage vertical en hauteurs de touche (positif
