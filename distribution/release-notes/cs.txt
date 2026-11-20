@@ -1,6 +1,6 @@
-Novinky v Taipo 3
-• Plovoucí klávesnice
-• 15 jazyků: angličtina, francouzština, němčina, španělština, italština, portugalština, nizozemština, polština, rumunština, čeština, maďarština, švédština, dánština, norština a finština
-• Vzhled podle vás
-• Přepis s AI se všemi modely
-• Ještě více soukromí
+Novinky v Taipo 3.1
+• Celá AI v jednom panelu
+• Změna tónu
+• Překlad v telefonu
+• Psaní tahem
+• Nové animace a obrázek na pozadí

@@ -1,6 +1,6 @@
-Nieuw in Taipo 3
-• Zwevend toetsenbord
-• 15 talen: Engels, Frans, Duits, Spaans, Italiaans, Portugees, Nederlands, Pools, Roemeens, Tsjechisch, Hongaars, Zweeds, Deens, Noors en Fins
-• Een uiterlijk naar jouw smaak
-• AI-transcriptie met alle modellen
-• Nog meer privacy
+Nieuw in Taipo 3.1
+• Alle AI in één paneel
+• Toon veranderen
+• Vertaling op je telefoon
+• Swipen om te typen
+• Nieuwe animaties en fotoachtergrond

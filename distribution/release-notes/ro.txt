@@ -1,6 +1,6 @@
-Noutățile din Taipo 3
-• Tastatură plutitoare
-• 15 limbi: engleza, franceza, germana, spaniola, italiana, portugheza, neerlandeza, poloneza, româna, ceha, maghiara, suedeza, daneza, norvegiana și finlandeza
-• Un aspect pe gustul tău
-• Transcriere AI cu toate modelele
-• Și mai multă confidențialitate
+Noutățile din Taipo 3.1
+• Toată AI-ul într-un panou
+• Schimbă tonul
+• Traducere pe telefon
+• Scriere prin glisare
+• Animații noi și fundal cu imagine
