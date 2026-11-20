@@ -1,6 +1,7 @@
-# Traduction dans le clavier (plan, non commencé)
+# Traduction dans le clavier
 
-État : **plan seulement**, rien n'est codé. Décision produit à prendre avant le lot 1 (voir « Questions ouvertes »).
+État (20/11/2026) : **lots 1 à 3 faits avec Gemma** (moteur, mode Traduction en direct, traduction du texte du champ), dans le
+panneau IA. Voir `docs/panneau-ia.md`. Ce document garde le plan d'origine ; Bergamot reste une piste si la latence gêne.
 
 ## Ce que font Gboard et SwiftKey
 

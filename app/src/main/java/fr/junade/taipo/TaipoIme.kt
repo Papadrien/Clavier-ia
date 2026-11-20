@@ -20,6 +20,7 @@ import fr.junade.taipo.ai.AiTranscriptionEngine
 import fr.junade.taipo.ai.CorrectionEngine
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.ai.ProtectedWords
+import fr.junade.taipo.ai.RewriteEngine
 import fr.junade.taipo.ai.TranscriptionPromptPreferences
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
@@ -63,6 +64,7 @@ class TaipoIme : InputMethodService() {
         override val deleteSwipe: DeleteSwipeController get() = this@TaipoIme.deleteSwipe
         override val undo: UndoController get() = this@TaipoIme.undoController
         override val aiTranscription: AiTranscriptionController get() = this@TaipoIme.aiTranscription
+        override val aiPanel: AiPanelController get() = this@TaipoIme.aiPanel
         override val messagePopup: MessagePopup get() = this@TaipoIme.messagePopup
         override val viewComposer: ImeViewComposer get() = this@TaipoIme.viewComposer
         override val correctionBar: CorrectionBarView get() = this@TaipoIme.correctionBar
@@ -133,6 +135,8 @@ class TaipoIme : InputMethodService() {
         override fun deleteLastCluster() = this@TaipoIme.fieldEditor.deleteLastCluster()
         override fun insertGeneratedText(text: String): Boolean = this@TaipoIme.fieldEditor.insertGeneratedText(text)
         override fun replaceFieldText(text: String): Boolean = this@TaipoIme.fieldEditor.replaceFieldText(text)
+        override fun replaceTextBeforeCursor(previous: String, text: String): String? =
+            this@TaipoIme.fieldEditor.replaceTextBeforeCursor(previous, text)
         override fun onWordSuggestionTapped(suggestion: WordSuggestion) = this@TaipoIme.onWordSuggestionTapped(suggestion)
         override fun onKeyPressed(key: Key) = this@TaipoIme.onKeyPressed(key)
         override fun onCursorMoved(steps: Int) = this@TaipoIme.onCursorMoved(steps)
@@ -194,8 +198,12 @@ class TaipoIme : InputMethodService() {
             mainHandler,
             llmHost,
             PromptHost(imeContext),
+            { rewriteEngine },
         )
     }
+
+    // Panneau IA (20/11/2026) : actions IA, épinglage dans la barre, changement de ton. Voir AiPanelController.
+    private val aiPanel: AiPanelController by lazy { AiPanelController(imeContext, serviceScope) { rewriteEngine } }
 
     /** Vrai quand le champ courant est celui d'une messagerie, relu à chaque champ. */
     private var messagingField = false
@@ -214,6 +222,9 @@ class TaipoIme : InputMethodService() {
     private val llmHostLazy = lazy { LlmEngineHost(applicationContext) }
     private val llmHost by llmHostLazy
     private val correctionEngine by lazy { CorrectionEngine(applicationContext, llmHost) }
+
+    // Réécritures en un tour sur le même moteur : changement de ton et traduction (20/11/2026).
+    private val rewriteEngine by lazy { RewriteEngine(llmHost) }
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
     private val keyboardPreferences by lazy { KeyboardPreferences(applicationContext) }
 
@@ -578,6 +589,8 @@ class TaipoIme : InputMethodService() {
         keyboardView.showTouchZones = keyboardPreferences.showTouchZones
         emojiController.hidePanel(resync = false)
         clipboard.hidePanel(resync = false)
+        aiPanel.hidePanel(resync = false)
+        correctionBar.pinnedAiActions = keyboardPreferences.pinnedAiActions
         correctionBar.collapseMenu()
         suggestions.suggestionsAllowed = SuggestionPolicy.allowsSuggestions(info?.inputType ?: 0)
         // IME_FLAG_NO_PERSONALIZED_LEARNING : navigation privée, champ confidentiel... rien n'est appris ni proposé.
@@ -666,6 +679,7 @@ class TaipoIme : InputMethodService() {
         // une rotation ou un changement de taille de fenêtre, plutôt que d'afficher un panneau mal ajusté.
         if (emojiController.isPanelVisible) emojiController.hidePanel()
         if (clipboard.isPanelVisible) clipboard.hidePanel()
+        if (viewComposer.isComposed && aiPanel.isPanelVisible) aiPanel.hidePanel()
     }
 
     override fun onFinishInputView(finishingInput: Boolean) {
@@ -676,7 +690,10 @@ class TaipoIme : InputMethodService() {
         suggestions.correctionHabits.flush()
         inlineSuggestions.clear()
         messagePopup.dismiss()
-        if (viewComposer.isComposed) emojiController.hidePanel(resync = false)
+        if (viewComposer.isComposed) {
+            emojiController.hidePanel(resync = false)
+            aiPanel.hidePanel(resync = false)
+        }
         clipboard.hidePanel(resync = false)
         correction.clearHighlightState()
         if (finishingInput) undoController.clear(notify = false)

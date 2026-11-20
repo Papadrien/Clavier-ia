@@ -49,7 +49,7 @@ de l'appareil** (la doc du SDK le cite ; l'ancien client maison ne l'envoyait pa
 |---|---|---|
 | `model_download_started` / `_done` | `model` (`ultra_leger`, `leger`, `equilibre`, `performant`, `voice`) | `ModelDownloadWorker`, `VoiceModelDownloadWorker` |
 | `model_download_failed` | `model`, `reason` (`network`, `server`, `no_space`, `corrupted`, `other`) | idem |
-| `ai_action` | `type` (`correct`, `generate`, `transcribe`), `model`, `duration` (tranche), `success` (`true` / `false`) | `CorrectionAiController`, `PromptModeController`, `AiTranscriptionController` |
+| `ai_action` | `type` (`correct`, `generate`, `transcribe`, `tone`, `translate`), `model`, `duration` (tranche), `success` (`true` / `false`) | `CorrectionAiController`, `PromptModeController`, `AiTranscriptionController`, `AiPanelController` (ton), `LiveTranslator` (traduction) |
 | `ai_action_failed` | `type`, `model`, `cause` (`model_file`, `out_of_memory`, `model_incompatible`, `text_too_long`, `unexpected`) | idem (en plus de `ai_action` avec `success = false`) |
 | `voice_input` | `mode` (`tap`, `hold`), `duration` (tranche d'écoute) | `VoiceController.stopRecording` |
 | `autocorrect_undone` | aucune | `TaipoIme` (champ et prompt) |

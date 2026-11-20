@@ -174,7 +174,7 @@
 
     <string name="clipboard_button">Clipboard</string>
     <string name="settings_button_description">Open the app settings</string>
-    <string name="actions_menu_description">Menu: settings, clipboard, undo, chat, correction and transcription</string>
+    <string name="actions_menu_description">Menu: settings, clipboard, undo and AI actions</string>
     <string name="action_pill_chat">Chat</string>
     <string name="action_pill_transcription">Transcription</string>
     <string name="action_pill_correction">Correction</string>
@@ -845,4 +845,42 @@
     <string name="home_row_custom_model_subtitle">Your own LiteRT-LM model and its prompts</string>
     <string name="premium_custom_model_title">Your own AI model</string>
     <string name="premium_custom_model_text">Load the LiteRT-LM model of your choice from your files and give it its own instructions for each feature.</string>
+    <!-- Panneau IA, changement de ton et traduction (20/11/2026) -->
+    <string name="ai_action_tone">Tone</string>
+    <string name="ai_action_translate">Translate</string>
+    <string name="ai_panel_button_description">AI actions</string>
+    <string name="ai_panel_button_label">AI</string>
+    <string name="ai_panel_pin_tip">Long-press an action to pin it to the bar (%1$d at most)</string>
+    <string name="ai_panel_back">Back to AI actions</string>
+    <string name="ai_panel_tile_pinned">%1$s, pinned to the bar</string>
+    <string name="ai_panel_pinned">%1$s pinned to the bar</string>
+    <string name="ai_panel_unpinned">%1$s removed from the bar</string>
+    <string name="ai_panel_pins_full">%1$d actions are already pinned: long-press one to remove it first</string>
+    <string name="ai_panel_transcription_unavailable">AI transcription needs an installed AI model</string>
+    <string name="ai_tone_title">Pick a tone</string>
+    <string name="ai_tone_working">Rewriting…</string>
+    <string name="ai_tone_applied">Tone: %1$s</string>
+    <string name="ai_tone_restore">Restore</string>
+    <string name="ai_tone_nothing">Write some text first (or select it)</string>
+    <string name="ai_tone_failed">The rewrite gave nothing usable: text unchanged</string>
+    <string name="ai_tone_model_too_small">This model is too small to change the tone: choose %1$s or larger</string>
+    <string name="tone_professional">Professional</string>
+    <string name="tone_friendly">Friendly</string>
+    <string name="tone_casual">Casual</string>
+    <string name="tone_polite">Polite</string>
+    <string name="tone_concise">Concise</string>
+    <string name="tone_confident">Confident</string>
+    <string name="tone_empathetic">Empathetic</string>
+    <string name="tone_social">Social post</string>
+    <string name="translation_hint">Type here: translation into %1$s</string>
+    <string name="translation_in_progress">Translating…</string>
+    <string name="translation_translate_field">Translate the text</string>
+    <string name="translation_target_description">Translate into %1$s</string>
+    <string name="translation_model_too_small">This model is too small to translate: choose %1$s or larger</string>
+    <string name="translation_field_changed">The text has changed: translation continues at the cursor</string>
+    <string name="translation_field_empty">No text to translate in the field</string>
+    <string name="system_prompt_tone_title">Tone change</string>
+    <string name="system_prompt_tone_description">Instruction sent to the model to rewrite a message in the chosen tone (professional, friendly, concise…) without changing its meaning or language.</string>
+    <string name="system_prompt_translation_title">Translation</string>
+    <string name="system_prompt_translation_description">Instruction sent to the model to translate the text into the chosen language, keeping its meaning, register and tone.</string>
 </resources>

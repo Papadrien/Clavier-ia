@@ -7,11 +7,13 @@ import android.view.View
 import android.widget.LinearLayout
 import fr.junade.taipo.ai.CorrectionPromptPreferences
 import fr.junade.taipo.ai.GenerationPromptPreferences
+import fr.junade.taipo.ai.TonePromptPreferences
 import fr.junade.taipo.ai.TranscriptionPromptPreferences
+import fr.junade.taipo.ai.TranslationPromptPreferences
 
 /**
  * Page « Prompts système » : consulter, modifier et réinitialiser les prompts système envoyés au modèle IA, un par
- * usage (correction, mode prompt, transcription IA). Chaque champ affiche le prompt actuellement utilisé (le défaut tant qu'aucun prompt
+ * usage (correction, mode prompt, transcription IA, changement de ton, traduction). Chaque champ affiche le prompt actuellement utilisé (le défaut tant qu'aucun prompt
  * personnalisé n'est enregistré).
  */
 class SystemPromptsActivity : Activity() {
@@ -49,6 +51,22 @@ class SystemPromptsActivity : Activity() {
             R.id.edit_system_prompt_transcription,
             R.string.system_prompt_transcription_title,
             R.string.system_prompt_transcription_description,
+            first = false,
+        )
+        addSystemPromptSection(
+            container,
+            TonePromptPreferences(this),
+            R.id.edit_system_prompt_tone,
+            R.string.system_prompt_tone_title,
+            R.string.system_prompt_tone_description,
+            first = false,
+        )
+        addSystemPromptSection(
+            container,
+            TranslationPromptPreferences(this),
+            R.id.edit_system_prompt_translation,
+            R.string.system_prompt_translation_title,
+            R.string.system_prompt_translation_description,
             first = false,
         )
 

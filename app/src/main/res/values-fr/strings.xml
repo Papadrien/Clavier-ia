@@ -174,7 +174,7 @@
 
     <string name="clipboard_button">Presse-papiers</string>
     <string name="settings_button_description">Ouvrir les réglages de l\'application</string>
-    <string name="actions_menu_description">Menu : paramètres, presse-papiers, annuler, chat, correction et transcription</string>
+    <string name="actions_menu_description">Menu : paramètres, presse-papiers, annuler et actions IA</string>
     <!-- Textes des pilules d'action IA (menu « robot » ouvert) ; Vocal reste sans texte. -->
     <string name="action_pill_chat">Chat</string>
     <string name="action_pill_transcription">Transcription</string>
@@ -864,4 +864,42 @@
     <string name="home_row_custom_model_subtitle">Votre propre modèle LiteRT-LM et ses prompts</string>
     <string name="premium_custom_model_title">Votre propre modèle IA</string>
     <string name="premium_custom_model_text">Chargez le modèle LiteRT-LM de votre choix depuis vos fichiers et donnez-lui ses propres consignes pour chaque fonction.</string>
+    <!-- Panneau IA, changement de ton et traduction (20/11/2026) -->
+    <string name="ai_action_tone">Ton</string>
+    <string name="ai_action_translate">Traduire</string>
+    <string name="ai_panel_button_description">Actions IA</string>
+    <string name="ai_panel_button_label">IA</string>
+    <string name="ai_panel_pin_tip">Appui long sur une action pour l\'épingler dans la barre (%1$d au maximum)</string>
+    <string name="ai_panel_back">Retour aux actions IA</string>
+    <string name="ai_panel_tile_pinned">%1$s, épinglé dans la barre</string>
+    <string name="ai_panel_pinned">%1$s épinglé dans la barre</string>
+    <string name="ai_panel_unpinned">%1$s retiré de la barre</string>
+    <string name="ai_panel_pins_full">%1$d actions sont déjà épinglées : retirez-en une d\'abord (appui long)</string>
+    <string name="ai_panel_transcription_unavailable">La transcription IA demande un modèle IA installé</string>
+    <string name="ai_tone_title">Choisissez un ton</string>
+    <string name="ai_tone_working">Réécriture en cours…</string>
+    <string name="ai_tone_applied">Ton : %1$s</string>
+    <string name="ai_tone_restore">Rétablir</string>
+    <string name="ai_tone_nothing">Écrivez d\'abord un texte (ou sélectionnez-le)</string>
+    <string name="ai_tone_failed">La réécriture n\'a rien donné : texte inchangé</string>
+    <string name="ai_tone_model_too_small">Ce modèle est trop petit pour changer le ton : choisissez %1$s ou plus</string>
+    <string name="tone_professional">Pro</string>
+    <string name="tone_friendly">Amical</string>
+    <string name="tone_casual">Décontracté</string>
+    <string name="tone_polite">Poli</string>
+    <string name="tone_concise">Concis</string>
+    <string name="tone_confident">Assuré</string>
+    <string name="tone_empathetic">Bienveillant</string>
+    <string name="tone_social">Réseaux sociaux</string>
+    <string name="translation_hint">Écrivez ici : traduction en %1$s</string>
+    <string name="translation_in_progress">Traduction…</string>
+    <string name="translation_translate_field">Traduire le texte</string>
+    <string name="translation_target_description">Traduire en %1$s</string>
+    <string name="translation_model_too_small">Ce modèle est trop petit pour traduire : choisissez %1$s ou plus</string>
+    <string name="translation_field_changed">Le texte a changé : la traduction continue au curseur</string>
+    <string name="translation_field_empty">Aucun texte à traduire dans le champ</string>
+    <string name="system_prompt_tone_title">Changement de ton</string>
+    <string name="system_prompt_tone_description">Consigne envoyée au modèle pour réécrire un message dans le ton choisi (pro, amical, concis…) sans en changer le sens ni la langue.</string>
+    <string name="system_prompt_translation_title">Traduction</string>
+    <string name="system_prompt_translation_description">Consigne envoyée au modèle pour traduire le texte dans la langue choisie, en gardant son sens, son registre et son ton.</string>
 </resources>

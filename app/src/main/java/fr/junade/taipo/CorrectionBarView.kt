@@ -95,6 +95,24 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     private val hideGestureTipRunnable = Runnable { hideGestureTip() }
 
     private var listener: OnCorrectListener? = null
+    private var aiPanelListener: (() -> Unit)? = null
+    private var toneListener: (() -> Unit)? = null
+    private var translateListener: (() -> Unit)? = null
+
+    /**
+     * Panneau IA (20/11/2026) : actions épinglées dans la barre ([AiPins], deux au plus), placées à gauche du bouton IA. Changer la
+     * liste replace les boutons dans les deux rangées.
+     */
+    var pinnedAiActions: List<AiAction> = AiPins.DEFAULT
+        set(value) {
+            if (field == value) return
+            field = value
+            arrangeAiButtons()
+            render()
+        }
+
+    /** Le panneau IA est ouvert : le bouton IA est violet, et un nouvel appui le referme. */
+    private var aiPanelOpen = false
     private var cancelListener: (() -> Unit)? = null
     private var generateListener: (() -> Unit)? = null
     private var actionsMenuClickListener: (() -> Unit)? = null
@@ -169,8 +187,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         pasteChip.visibility = View.GONE
         normalRow.addView(pasteChip, SpaceBetweenRow.LayoutParams(LayoutParams.WRAP_CONTENT, barHeight, RowRole.SHRINK))
         normalRow.addView(normalButtons.undoButton, roundParams())
-        // Actions IA de la barre normale : Chat, Corriger, Transcription IA (avant Vocal, posé par-dessus).
-        for (view in normalActions.views) normalRow.addView(view, roundParams())
+        // Actions IA de la barre normale (épinglées, puis le bouton IA, avant Vocal posé par-dessus) : voir arrangeAiButtons.
 
         // Rangée de saisie : Robot, [menu ouvert : Paramètres, Smart Clipboard, Annuler, Chat], bande, Corriger, Transcription.
         style.styleRoundIconButton(robotButton, R.drawable.ic_robot)
@@ -202,10 +219,22 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
                 generateListener?.invoke()
             }
         }
-        menuActions.generateButton.visibility = View.GONE
-        typingRow.addView(menuActions.generateButton, roundParams())
-
         typingRow.addView(zoneView, SpaceBetweenRow.LayoutParams(0, barHeight, RowRole.FILL))
+
+        // Panneau IA : bouton IA, Ton et Traduire (le moteur est partagé : rien pendant une écoute, une correction ou une transcription).
+        for (actions in listOf(normalActions, menuActions)) {
+            actions.aiButton.setOnClickListener { aiPanelListener?.invoke() }
+            actions.toneButton.setOnClickListener {
+                if (generateBlocked()) return@setOnClickListener
+                collapseMenu()
+                toneListener?.invoke()
+            }
+            actions.translateButton.setOnClickListener {
+                if (generateBlocked()) return@setOnClickListener
+                collapseMenu()
+                translateListener?.invoke()
+            }
+        }
 
         // Icône seule, grise comme Vocal ; l'état (chargement, correction…) passe par la transparence et la description d'accessibilité.
         for (button in listOf(normalActions.correctButton, menuActions.correctButton)) {
@@ -223,11 +252,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
                 }
             }
         }
-        typingRow.addView(menuActions.correctButton, roundParams())
-
-        // Story 14.5 : bouton « voix vers texte ». Le clic est relié par l'IME.
-        menuActions.transcriptionButton.visibility = View.GONE
-        typingRow.addView(menuActions.transcriptionButton, roundParams())
+        arrangeAiButtons()
 
         addView(normalRow, LayoutParams(LayoutParams.MATCH_PARENT, rowHeight))
         addView(typingRow, LayoutParams(LayoutParams.MATCH_PARENT, rowHeight))
@@ -263,6 +288,27 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     private fun roundParams() = SpaceBetweenRow.LayoutParams(iconButtonWidth, barHeight, RowRole.ROUND)
 
     /**
+     * Place les boutons IA en fin de rangée, dans l'ordre de [AiPins.rowOrder] puis le bouton IA : la barre se lit, depuis la
+     * droite, Vocal, IA, première épinglée, seconde épinglée. Les actions non épinglées restent dans la rangée, cachées : elles
+     * n'apparaissent que pendant leur traitement (bouton d'arrêt), voir [BarVisibility.busyAiActions].
+     */
+    private fun arrangeAiButtons() {
+        val order = AiPins.rowOrder(pinnedAiActions)
+        for ((row, actions) in listOf(normalRow to normalActions, typingRow to menuActions)) {
+            for (view in actions.views) {
+                if (view.parent === row) row.removeView(view)
+            }
+            for (action in order) {
+                val button = actions.button(action)
+                button.visibility = View.GONE
+                row.addView(button, roundParams())
+            }
+            actions.aiButton.visibility = View.GONE
+            row.addView(actions.aiButton, roundParams())
+            row.forgetPositions()
+        }
+    }
+    /**
      * Boutons que la zone tactile étendue peut viser : ceux des rangées affichées, et Vocal. Pendant une astuce de geste, la
      * pilule (à la largeur de son texte, centrée) remplace les boutons qu'elle recouvre ; ceux d'à côté restent touchables.
      */
@@ -297,6 +343,28 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     fun setOnAiTranscriptionClickListener(listener: () -> Unit) {
         normalActions.transcriptionButton.setOnClickListener { listener() }
         menuActions.transcriptionButton.setOnClickListener { listener() }
+    }
+
+    /** Touche sur le bouton IA : ouvrir ou refermer le panneau IA. */
+    fun setOnAiPanelClickListener(listener: () -> Unit) {
+        aiPanelListener = listener
+    }
+
+    /** Touche sur l'action épinglée « Ton ». */
+    fun setOnToneClickListener(listener: () -> Unit) {
+        toneListener = listener
+    }
+
+    /** Touche sur l'action épinglée « Traduire ». */
+    fun setOnTranslateClickListener(listener: () -> Unit) {
+        translateListener = listener
+    }
+
+    /** Le panneau IA est ouvert (ou refermé) : le bouton IA est violet tant qu'il est ouvert. */
+    fun setAiPanelOpen(open: Boolean) {
+        if (aiPanelOpen == open) return
+        aiPanelOpen = open
+        for (actions in listOf(normalActions, menuActions)) actions.aiButton.face = if (open) R.color.accent else R.color.surface_button
     }
 
     /** Touche sur « Chat » : entrer en mode prompt (story 5.1). */
@@ -525,14 +593,7 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         )
         val mode = BarVisibility.mode(zoneState)
         val content = BarVisibility.content(zoneState, mode)
-        val actions = BarVisibility.actionButtons(
-            voiceState,
-            state,
-            zoneState,
-            mode,
-            wordsShown || emojiShown,
-            aiTranscriptionState,
-        )
+        val typingAi = BarVisibility.typingRowAi(pinnedAiActions, state, zoneState, mode, wordsShown || emojiShown, aiTranscriptionState)
         val wantLabels = BarVisibility.labeledActions(zoneState, mode)
         if (labelsWanted != wantLabels) {
             labelsWanted = wantLabels
@@ -563,61 +624,12 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
             spring = spring,
             restingAlpha = menuButtons::undoRestingAlpha,
         )
-        setRevealed(
-            menuActions.generateButton,
-            actions.generate,
-            order = 3,
-            full = reveal,
-            row = typingRow,
-            spring = spring,
-            restingAlpha = ::generateRestingAlpha,
-        )
-        setRevealed(
-            menuActions.correctButton,
-            actions.correct,
-            order = 4,
-            full = reveal,
-            row = typingRow,
-            spring = spring,
-            restingAlpha = ::correctRestingAlpha,
-        )
-        setRevealed(
-            menuActions.transcriptionButton,
-            actions.aiTranscription && aiTranscriptionAvailable,
-            order = 5,
-            full = reveal,
-            row = typingRow,
-            spring = spring,
-            restingAlpha = ::transcriptionRestingAlpha,
-        )
+        revealAiButtons(menuActions, typingAi, typingRow, reveal, spring)
 
         // Rangée normale : la puce de collage apparaît à côté du bouton Smart Clipboard, suivie des actions IA.
         setRevealed(pasteChip, content.pasteChip, order = 0, full = false, row = normalRow)
-        val normal = BarVisibility.normalRowActions(mode)
-        setRevealed(
-            normalActions.generateButton,
-            normal.generate,
-            order = 3,
-            full = false,
-            row = normalRow,
-            restingAlpha = ::generateRestingAlpha,
-        )
-        setRevealed(
-            normalActions.correctButton,
-            normal.correct,
-            order = 4,
-            full = false,
-            row = normalRow,
-            restingAlpha = ::correctRestingAlpha,
-        )
-        setRevealed(
-            normalActions.transcriptionButton,
-            normal.aiTranscription && aiTranscriptionAvailable,
-            order = 5,
-            full = false,
-            row = normalRow,
-            restingAlpha = ::transcriptionRestingAlpha,
-        )
+        val normalAi = BarVisibility.normalRowAi(pinnedAiActions, state, aiTranscriptionState)
+        revealAiButtons(normalActions, normalAi, normalRow, reveal = false, spring = false)
 
         val menuOpen = mode == BarMode.TYPING && zoneState.menuOpen
         if (robotActive != menuOpen) {
@@ -629,6 +641,22 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         normalButtons.setClipboardActive(zoneState.clipboardPanelOpen, animate = isLaidOut)
         menuButtons.setClipboardActive(zoneState.clipboardPanelOpen, animate = isLaidOut)
         applyFieldRestriction()
+    }
+
+    /** Boutons IA d'une rangée : actions de [visibility] (Transcription seulement si le modèle la permet), puis le bouton IA. */
+    private fun revealAiButtons(actions: AiActionButtons, visibility: AiRowVisibility, row: View, reveal: Boolean, spring: Boolean) {
+        var order = AI_FIRST_ORDER
+        for (action in AiPins.rowOrder(pinnedAiActions)) {
+            val shown = action in visibility.actions && (action != AiAction.TRANSCRIPTION || aiTranscriptionAvailable)
+            setRevealed(actions.button(action), shown, order = order++, full = reveal, row = row, spring = spring, restingAlpha = restingAlpha(action))
+        }
+        setRevealed(actions.aiButton, visibility.aiButton, order = order, full = reveal, row = row, spring = spring)
+    }
+
+    private fun restingAlpha(action: AiAction): () -> Float = when (action) {
+        AiAction.CORRECT -> ::correctRestingAlpha
+        AiAction.TRANSCRIPTION -> ::transcriptionRestingAlpha
+        AiAction.CHAT, AiAction.TONE, AiAction.TRANSLATE -> ::generateRestingAlpha
     }
 
     /**
@@ -827,7 +855,8 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         val blocked = generateBlocked()
         // Un bouton qui joue son animation d'apparition (en attente de son tour, donc encore transparent) garde l'opacité que
         // l'animation lui donne : la lui rendre ici le ferait surgir, petit, avant les autres boutons du menu.
-        for (button in listOf(menuActions.generateButton, normalActions.generateButton)) {
+        val engineButtons = listOf(menuActions, normalActions).flatMap { listOf(it.generateButton, it.toneButton, it.translateButton) }
+        for (button in engineButtons) {
             button.isEnabled = !blocked
             if (!BarReveal.isEntering(button)) button.alpha = generateRestingAlpha()
         }
@@ -856,6 +885,9 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     private companion object {
         /** Durée d'affichage du tip « Swipe vers le bas » si l'utilisateur ne tape rien ensuite. */
         const val DIGIT_TIP_DURATION_MS = 5000L
+
+        /** Rang d'apparition du premier bouton IA (après Paramètres, Smart Clipboard et Annuler). */
+        const val AI_FIRST_ORDER = 3
 
         /** La rangée de saisie (ou la rangée normale) arrive juste après le départ de l'autre. */
         const val ROW_ENTER_DELAY_MS = 60L
