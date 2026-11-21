@@ -1,6 +1,6 @@
-A Taipo 3 újdonságai
-• Lebegő billentyűzet
-• 15 nyelv: angol, francia, német, spanyol, olasz, portugál, holland, lengyel, román, cseh, magyar, svéd, dán, norvég és finn
-• Az Ön ízlése szerinti megjelenés
-• MI-átirat minden modellel
-• Még több adatvédelem
+Újdonságok a Taipo 4-ben
+• Minden MI egy panelen
+• Hangnemváltás
+• Fordítás a telefonon
+• Csúsztatásos gépelés
+• Új animációk és képes háttér

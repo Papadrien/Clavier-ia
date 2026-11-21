@@ -127,6 +127,39 @@ internal class FieldEditor(
         return true
     }
 
+    /**
+     * Traduction en direct (20/11/2026) : remplace [previous], écrit juste avant le curseur par la traduction précédente, par
+     * [text]. [previous] vide : première écriture, [text] est inséré au curseur avec les espaces que le texte voisin demande.
+     * Renvoie le texte réellement écrit (espaces comprises), ou null si le champ n'est pas accessible ou si [previous] n'est plus
+     * juste avant le curseur (l'utilisateur a déplacé le curseur ou modifié le texte). Rien n'est enregistré pour Annuler :
+     * l'appelant enregistre la traduction finale en une seule fois.
+     */
+    fun replaceTextBeforeCursor(previous: String, text: String): String? {
+        val ic = ime.inputConnection() ?: return null
+        ime.clearHighlight()
+        ime.clearPendingAutocorrection()
+        val before = ic.getTextBeforeCursor(previous.length + 1, 0)?.toString() ?: return null
+        if (!before.endsWith(previous)) return null
+        val toWrite = if (previous.isEmpty()) {
+            if (text.isEmpty()) return ""
+            InsertSpacing.around(before.lastOrNull(), text, ic.getTextAfterCursor(1, 0)?.firstOrNull())
+        } else {
+            // Mêmes espaces en bordure que l'écriture précédente : seul le texte traduit change.
+            val leading = previous.takeWhile { it == ' ' }
+            val trailing = previous.takeLastWhile { it == ' ' }.takeIf { previous.isNotBlank() }.orEmpty()
+            if (text.isEmpty()) "" else leading + text + trailing
+        }
+        ime.correction.markSelfEdit()
+        ic.beginBatchEdit()
+        try {
+            if (previous.isNotEmpty()) ic.deleteSurroundingText(previous.length, 0)
+            if (toWrite.isNotEmpty()) ic.commitText(toWrite, 1)
+        } finally {
+            ic.endBatchEdit()
+        }
+        return toWrite
+    }
+
     /** Entrée : retour à la ligne dans un champ multiligne ou sans action, sinon l'action de l'éditeur (Envoyer, Rechercher…). */
     fun pressEnter() {
         val ic = ime.inputConnection() ?: return

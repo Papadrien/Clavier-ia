@@ -38,6 +38,7 @@ internal interface ImeHostContext {
     val deleteSwipe: DeleteSwipeController
     val undo: UndoController
     val aiTranscription: AiTranscriptionController
+    val aiPanel: AiPanelController
     val messagePopup: MessagePopup
     val viewComposer: ImeViewComposer
     val correctionBar: CorrectionBarView
@@ -109,6 +110,9 @@ internal interface ImeHostContext {
     fun deleteLastCluster()
     fun insertGeneratedText(text: String): Boolean
     fun replaceFieldText(text: String): Boolean
+
+    /** Traduction en direct : voir [FieldEditor.replaceTextBeforeCursor]. */
+    fun replaceTextBeforeCursor(previous: String, text: String): String?
     fun onWordSuggestionTapped(suggestion: WordSuggestion)
     fun onKeyPressed(key: Key)
     fun onCursorMoved(steps: Int)
@@ -210,7 +214,10 @@ internal class ClipboardHost(private val ime: ImeHostContext) : ClipboardControl
     override fun isRecording(): Boolean = ime.isRecording()
     override fun isCorrectionInProgress(): Boolean = ime.isCorrectionInProgress()
     override fun isEmojiPanelVisible(): Boolean = ime.emoji.isPanelVisible
-    override fun hideEmojiPanel() = ime.emoji.hidePanel(resync = false)
+    override fun hideEmojiPanel() {
+        ime.emoji.hidePanel(resync = false)
+        ime.aiPanel.hidePanel(resync = false)
+    }
     override fun keyboardBottomInsetPx(): Int = ime.keyboardView.bottomInsetPx()
     override fun setKeyboardVisible(visible: Boolean) {
         ime.keyboardView.visibility = if (visible) View.VISIBLE else View.INVISIBLE
@@ -292,7 +299,10 @@ internal class PromptHost(private val ime: ImeHostContext) : PromptModeControlle
     }
     override fun collapseMenu() = ime.correctionBar.collapseMenu()
     override fun hideEmojiPanel() {
-        if (ime.viewComposer.isComposed) ime.emoji.hidePanel(resync = false)
+        if (ime.viewComposer.isComposed) {
+            ime.emoji.hidePanel(resync = false)
+            ime.aiPanel.hidePanel(resync = false) // Chat ou Traduire lancés depuis la barre, panneau IA ouvert
+        }
     }
     override fun hideClipboardPanel() = ime.clipboard.hidePanel(resync = false)
     override fun refreshRecentEmojiBar() = ime.emoji.refreshRecentBar()
@@ -309,13 +319,23 @@ internal class PromptHost(private val ime: ImeHostContext) : PromptModeControlle
     override fun replaceFieldText(text: String): Boolean = ime.replaceFieldText(text)
     override fun onWordSuggestionTapped(suggestion: WordSuggestion) = ime.onWordSuggestionTapped(suggestion)
     override fun onEmojiSuggestionTapped() = ime.emoji.onSuggestionTapped()
+    override fun replaceTextBeforeCursor(previous: String, text: String): String? = ime.replaceTextBeforeCursor(previous, text)
+    override fun fieldTextToTranslate(): String? {
+        val ic = ime.inputConnection() ?: return null
+        val selected = ic.getSelectedText(0)?.toString().orEmpty()
+        return selected.ifEmpty { ime.correction.captureFieldText(ic)?.text }
+    }
+    override fun recordUndoEdit(inserted: String, original: String) = ime.recordUndoEdit(inserted, original)
+    override fun toneBusy(): Boolean = ime.aiPanel.toneBusy
 }
 
 /** Correction IA : voir [CorrectionAiController]. */
 internal class CorrectionHost(private val ime: ImeHostContext) : CorrectionAiController.Host {
     override fun showMessage(message: String) = ime.showMessage(message)
     override fun inputConnection() = ime.inputConnection()
-    override fun generationBusy(): Boolean = ime.prompt.isGenerating // le moteur est pris par la génération
+
+    // Le moteur est pris par la génération, une traduction ou un changement de ton.
+    override fun generationBusy(): Boolean = ime.prompt.generationBusy() || ime.aiPanel.toneBusy
     override fun transcriptionInProgress(): Boolean = ime.isTranscriptionInProgress()
     override fun activeModel() = ime.activeModel()
     override fun protectedWords(text: String): List<String> = ime.protectedWordsIn(text)
@@ -483,6 +503,9 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
         ime.emoji.hidePanel()
     }
     override fun onEmojiTabSelected() = ime.haptic()
+    override fun onAiPanelClick() = ime.aiPanel.onAiButtonClicked()
+    override fun onToneClick() = ime.aiPanel.onToneButtonClicked()
+    override fun onTranslateClick() = ime.aiPanel.onTranslateButtonClicked()
     override fun onViewsCreated() = ime.applyState()
 }
 

@@ -370,12 +370,12 @@ internal class KeyPreview(private val view: View) {
                 a + (Math.PI / 2).toFloat() - (1f - open) * BLOOM_TWIST,
             )
         }
-        val core = r * BLOOM_CORE * pose.scaleX
+        val core = r * BLOOM_CORE * BLOOM_CORE_SCALE * pose.scaleX
         if (core > 0f) {
             fillPaint(face, pose.alpha)
             canvas.drawCircle(cx, cy, core, effectPaint)
         }
-        setTextSize(g.textSize * PREVIEW_SCALE * BLOOM_TEXT)
+        setTextSize(g.textSize * PREVIEW_SCALE * BLOOM_TEXT * BLOOM_CORE_SCALE)
         val baseline = cy - (previewTextPaint.ascent() + previewTextPaint.descent()) / 2f
         drawText(canvas, text, baseline, pose.alpha * pose.scaleX.coerceIn(0f, 1f))
     }
@@ -508,6 +508,9 @@ internal class KeyPreview(private val view: View) {
         const val BLOOM_CORE = 0.62f
         const val BLOOM_TWIST = 1.2f
         const val BLOOM_TEXT = 0.85f
+
+        /** Rond central de la fleur (et sa lettre) : 40 % plus grand (21/11/2026) ; les pétales gardent leur taille. */
+        const val BLOOM_CORE_SCALE = 1.4f
 
         /** Cœur de la fleur laissé sur la touche (jaune pollen, identique dans tous les thèmes). */
         val BLOOM_CORE_COLOR = 0xFFFFD54A.toInt()

@@ -21,8 +21,8 @@ class WhatsNewTest {
     }
 
     @Test
-    fun `la v3 a des nouveautes, sans doublon`() {
-        assertEquals("3.0", WhatsNew.RELEASE)
+    fun `la 4_0 a des nouveautes, sans doublon`() {
+        assertEquals("4.0", WhatsNew.RELEASE)
         assertTrue(WhatsNew.items.isNotEmpty())
         assertEquals(WhatsNew.items.size, WhatsNew.items.map { it.title }.toSet().size)
     }

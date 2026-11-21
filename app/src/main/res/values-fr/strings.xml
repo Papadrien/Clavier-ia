@@ -174,7 +174,7 @@
 
     <string name="clipboard_button">Presse-papiers</string>
     <string name="settings_button_description">Ouvrir les réglages de l\'application</string>
-    <string name="actions_menu_description">Menu : paramètres, presse-papiers, annuler, chat, correction et transcription</string>
+    <string name="actions_menu_description">Menu : paramètres, presse-papiers, annuler et actions IA</string>
     <!-- Textes des pilules d'action IA (menu « robot » ouvert) ; Vocal reste sans texte. -->
     <string name="action_pill_chat">Chat</string>
     <string name="action_pill_transcription">Transcription</string>
@@ -819,19 +819,21 @@
     <string name="floating_a11y_docked">Clavier ancré en bas</string>
     <!-- Nouveautés de la version (WhatsNew) -->
     <string name="whats_new_title">Nouveautés</string>
-    <string name="whats_new_heading">Les nouveautés de Taipo 3</string>
+    <string name="whats_new_heading">Les nouveautés de Taipo 4</string>
     <string name="whats_new_intro">Voici ce qui change avec cette version.</string>
     <string name="whats_new_pill">Nouveautés</string>
-    <string name="whats_new_pill_description">Nouveautés de Taipo 3. Touchez pour les découvrir dans l\'application.</string>
-    <string name="home_row_whats_new_subtitle">Ce qui change dans Taipo 3</string>
-    <string name="whats_new_floating_title">Clavier flottant</string>
-    <string name="whats_new_languages_title">15 langues</string>
-    <string name="whats_new_languages_body">Anglais, français, allemand, espagnol, italien, portugais, néerlandais, polonais, roumain, tchèque, hongrois, suédois, danois, norvégien et finnois.</string>
-    <string name="whats_new_appearance_title">Une apparence à votre goût</string>
-    <string name="whats_new_appearance_body">Neuf formes de touches et trois styles d\'animation dans la page Apparence. Avec le pack premium : polices du clavier et fond animé pendant la frappe. Les écrans de l\'application suivent aussi le thème choisi.</string>
-    <string name="whats_new_dictation_title">Transcription IA avec tous les modèles</string>
-    <string name="whats_new_privacy_title">Encore plus de confidentialité</string>
-    <string name="whats_new_privacy_body">Les copies sensibles, comme les mots de passe, ne sont jamais gardées dans le presse-papiers, et la mesure d\'usage anonyme ne démarre qu\'avec votre accord.</string>
+    <string name="whats_new_pill_description">Nouveautés de Taipo 4. Touchez pour les découvrir dans l\'application.</string>
+    <string name="home_row_whats_new_subtitle">Ce qui change dans Taipo 4</string>
+    <string name="whats_new_ai_panel_title">Toute l\'IA dans un panneau</string>
+    <string name="whats_new_ai_panel_body">Le bouton IA ouvre toutes les actions IA. Un appui long en épingle une dans la barre : deux au maximum.</string>
+    <string name="whats_new_tone_title">Changer le ton</string>
+    <string name="whats_new_tone_body">Rendez votre message pro, amical, concis, poli… en un appui, et rétablissez l\'original.</string>
+    <string name="whats_new_translation_title">Traduction sur votre téléphone</string>
+    <string name="whats_new_translation_body">Écrivez, la traduction s\'affiche en direct dans le champ. Rien ne quitte votre téléphone.</string>
+    <string name="whats_new_swipe_title">Saisie par glissement</string>
+    <string name="whats_new_swipe_body">Glissez le doigt de lettre en lettre. À activer dans les Paramètres du clavier.</string>
+    <string name="whats_new_animations_title">Nouvelles animations et fond Image</string>
+    <string name="whats_new_animations_body">Étincelles, Pixels, Bulle cœur et Éclosion, et votre photo derrière les touches (pack premium).</string>
     <string name="model_name_custom">Modèle personnalisé</string>
     <string name="model_subtitle_custom">Votre propre fichier LiteRT-LM</string>
     <string name="model_hint_custom">Un fichier .litertlm compatible avec la version de LiteRT-LM intégrée à Taipo.</string>
@@ -864,4 +866,42 @@
     <string name="home_row_custom_model_subtitle">Votre propre modèle LiteRT-LM et ses prompts</string>
     <string name="premium_custom_model_title">Votre propre modèle IA</string>
     <string name="premium_custom_model_text">Chargez le modèle LiteRT-LM de votre choix depuis vos fichiers et donnez-lui ses propres consignes pour chaque fonction.</string>
+    <!-- Panneau IA, changement de ton et traduction (20/11/2026) -->
+    <string name="ai_action_tone">Ton</string>
+    <string name="ai_action_translate">Traduire</string>
+    <string name="ai_panel_button_description">Actions IA</string>
+    <string name="ai_panel_button_label">IA</string>
+    <string name="ai_panel_pin_tip">Appui long sur une action pour l\'épingler dans la barre (%1$d au maximum)</string>
+    <string name="ai_panel_back">Retour aux actions IA</string>
+    <string name="ai_panel_tile_pinned">%1$s, épinglé dans la barre</string>
+    <string name="ai_panel_pinned">%1$s épinglé dans la barre</string>
+    <string name="ai_panel_unpinned">%1$s retiré de la barre</string>
+    <string name="ai_panel_pins_full">%1$d actions sont déjà épinglées : retirez-en une d\'abord (appui long)</string>
+    <string name="ai_panel_transcription_unavailable">La transcription IA demande un modèle IA installé</string>
+    <string name="ai_tone_title">Choisissez un ton</string>
+    <string name="ai_tone_working">Réécriture en cours…</string>
+    <string name="ai_tone_applied">Ton : %1$s</string>
+    <string name="ai_tone_restore">Rétablir</string>
+    <string name="ai_tone_nothing">Écrivez d\'abord un texte (ou sélectionnez-le)</string>
+    <string name="ai_tone_failed">La réécriture n\'a rien donné : texte inchangé</string>
+    <string name="ai_tone_model_too_small">Ce modèle est trop petit pour changer le ton : choisissez %1$s ou plus</string>
+    <string name="tone_professional">Pro</string>
+    <string name="tone_friendly">Amical</string>
+    <string name="tone_casual">Décontracté</string>
+    <string name="tone_polite">Poli</string>
+    <string name="tone_concise">Concis</string>
+    <string name="tone_confident">Assuré</string>
+    <string name="tone_empathetic">Bienveillant</string>
+    <string name="tone_social">Réseaux sociaux</string>
+    <string name="translation_hint">Écrivez ici : traduction en %1$s</string>
+    <string name="translation_in_progress">Traduction…</string>
+    <string name="translation_translate_field">Traduire le texte</string>
+    <string name="translation_target_description">Traduire en %1$s</string>
+    <string name="translation_model_too_small">Ce modèle est trop petit pour traduire : choisissez %1$s ou plus</string>
+    <string name="translation_field_changed">Le texte a changé : la traduction continue au curseur</string>
+    <string name="translation_field_empty">Aucun texte à traduire dans le champ</string>
+    <string name="system_prompt_tone_title">Changement de ton</string>
+    <string name="system_prompt_tone_description">Consigne envoyée au modèle pour réécrire un message dans le ton choisi (pro, amical, concis…) sans en changer le sens ni la langue.</string>
+    <string name="system_prompt_translation_title">Traduction</string>
+    <string name="system_prompt_translation_description">Consigne envoyée au modèle pour traduire le texte dans la langue choisie, en gardant son sens, son registre et son ton.</string>
 </resources>

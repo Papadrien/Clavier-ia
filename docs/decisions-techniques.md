@@ -20,7 +20,7 @@ Gemma 4 ; WorkManager + service au premier plan, SHA-256 embarqué par modèle).
 
 ## Transcription vocale
 - **Nemotron 3.5 ASR Streaming** via **sherpa-onnx** (`OnlineRecognizer` / `OnlineStream`), export ONNX du modèle multilingue
-  (sherpa-onnx v1.13.5 ou plus récent, PR #3732 et #3734). Le modèle couvre 35 langues, dont les 15 du clavier (fiche Hugging Face
+  (sherpa-onnx v1.13.5 ou plus récent, PR #3732 et #3734 ; version embarquée : v2.0.2 depuis le 21/11/2026). Le modèle couvre 35 langues, dont les 15 du clavier (fiche Hugging Face
   `nvidia/nemotron-3.5-asr-streaming-0.6b` ; le `tokens.txt` hébergé contient leurs lettres et 39 étiquettes de langue comme
   `<pl-PL>`). Aucune langue n'est imposée au modèle : il la détecte seul. Vérifié sur appareil en français et en anglais
   seulement (12/11/2026) ; les autres langues sont à tester (`docs/langues.md`).

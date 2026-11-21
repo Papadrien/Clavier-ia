@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Charte Taipo (lot 09) : bouton IA de la barre (20/11/2026), qui ouvre le panneau des actions IA : deux étincelles pleines.
+     Taille : taipo_icon_size. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/taipo_icon_size"
+    android:height="@dimen/taipo_icon_size"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@color/taipo_text"
+        android:pathData="M10,3 C10.5,7.8 13.2,10.5 18,11 C13.2,11.5 10.5,14.2 10,19 C9.5,14.2 6.8,11.5 2,11 C6.8,10.5 9.5,7.8 10,3 Z" />
+    <path
+        android:fillColor="@color/taipo_text"
+        android:pathData="M18.5,14 C18.7,16.2 19.8,17.3 22,17.5 C19.8,17.7 18.7,18.8 18.5,21 C18.3,18.8 17.2,17.7 15,17.5 C17.2,17.3 18.3,16.2 18.5,14 Z" />
+</vector>

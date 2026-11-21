@@ -10,6 +10,10 @@ n'est nécessaire.
 
 ## Où prendre les fichiers
 
+Version embarquée : **v2.0.2** (21/11/2026). Depuis la v2.0, la release GitHub publie un `.aar` : les `.so` de
+`sherpa-onnx-2.0.2.aar`, dossier `jni/arm64-v8a/`, ont été copiés ici (empreinte de l'`.aar` vérifiée contre le
+`checksum.txt` de la release). `libonnxruntime.so` est identique à celui de la v1.13.8 (ONNX Runtime 1.28.2).
+
 Depuis l'archive `sherpa-onnx-vX.Y.Z-android.tar.bz2` téléchargée sur
 https://github.com/k2-fsa/sherpa-onnx/releases (ou son miroir Hugging Face
 https://huggingface.co/csukuangfj/sherpa-onnx-libs), dans le sous-dossier

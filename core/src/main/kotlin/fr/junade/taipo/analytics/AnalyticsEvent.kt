@@ -43,6 +43,12 @@ object AnalyticsEvents {
         const val GENERATE = "generate"
         const val TRANSCRIBE = "transcribe"
         const val CHAT = "chat"
+
+        /** Changement de ton (panneau IA, 20/11/2026). */
+        const val TONE = "tone"
+
+        /** Traduction, en direct ou du texte du champ (panneau IA, 20/11/2026). */
+        const val TRANSLATE = "translate"
     }
 
     /** Disposition d'origine des lettres d'une langue ([LetterArrangement.defaultFor]) : « azerty », « qwertz », « qwerty_sv »… */

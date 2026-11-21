@@ -15,7 +15,9 @@ import fr.junade.taipo.ThemeChoice
 import fr.junade.taipo.ai.CorrectionPromptPreferences
 import fr.junade.taipo.ai.GenerationPromptPreferences
 import fr.junade.taipo.ai.SystemPromptPreferences
+import fr.junade.taipo.ai.TonePromptPreferences
 import fr.junade.taipo.ai.TranscriptionPromptPreferences
+import fr.junade.taipo.ai.TranslationPromptPreferences
 import fr.junade.taipo.backdrop.KeyboardBackdrop
 import fr.junade.taipo.clipboard.ClipboardItems
 import fr.junade.taipo.clipboard.ClipboardProvider
@@ -80,6 +82,7 @@ object BackupService {
                 backdropAnimated = keyboard.isBackdropAnimated,
                 keySound = keyboard.isKeySoundEnabled,
                 keyPreview = keyboard.isKeyPreviewEnabled,
+                pinnedAiActions = fr.junade.taipo.AiPins.serialize(keyboard.pinnedAiActions),
                 barSound = keyboard.isBarSoundEnabled,
                 keySoundVolume = keyboard.keySoundVolumePercent,
                 bottomMarginDp = keyboard.bottomMarginDp,
@@ -188,6 +191,7 @@ object BackupService {
     private fun restoreBehaviour(keyboard: KeyboardPreferences, settings: BackupKeyboardSettings) {
         settings.keySound?.let { keyboard.isKeySoundEnabled = it }
         settings.keyPreview?.let { keyboard.isKeyPreviewEnabled = it }
+        settings.pinnedAiActions?.let { keyboard.pinnedAiActions = fr.junade.taipo.AiPins.parse(it) }
         settings.barSound?.let { keyboard.isBarSoundEnabled = it }
         settings.keySoundVolume?.let { keyboard.keySoundVolumePercent = it }
         settings.bottomMarginDp?.let { keyboard.bottomMarginDp = it }
@@ -235,6 +239,8 @@ object BackupService {
             BackupAiSettings.PROMPT_CORRECTION to CorrectionPromptPreferences(context),
             BackupAiSettings.PROMPT_GENERATION to GenerationPromptPreferences(context),
             BackupAiSettings.PROMPT_TRANSCRIPTION to TranscriptionPromptPreferences(context),
+            BackupAiSettings.PROMPT_TONE to TonePromptPreferences(context),
+            BackupAiSettings.PROMPT_TRANSLATION to TranslationPromptPreferences(context),
         )
         // Prompts du modèle personnalisé : mêmes usages, préfixés (« custom_model_correction »...).
         return base + base.map { (usage, preferences) -> BackupAiSettings.CUSTOM_MODEL_PREFIX + usage to preferences.forCustomModel() }

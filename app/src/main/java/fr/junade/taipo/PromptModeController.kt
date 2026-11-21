@@ -13,6 +13,7 @@ import fr.junade.taipo.ai.InferenceFailureClassifier
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.ai.PromptConversation
 import fr.junade.taipo.ai.PromptMessageStatus
+import fr.junade.taipo.ai.RewriteEngine
 import fr.junade.taipo.ai.VoiceField
 import fr.junade.taipo.ai.messageRes
 import fr.junade.taipo.analytics.Analytics
@@ -41,6 +42,7 @@ class PromptModeController(
     private val mainHandler: Handler,
     private val llmHost: LlmEngineHost,
     private val host: Host,
+    rewriteEngine: () -> RewriteEngine,
 ) {
 
     /** Ce que le mode prompt demande à l'IME. */
@@ -116,7 +118,59 @@ class PromptModeController(
         fun onWordSuggestionTapped(suggestion: WordSuggestion)
 
         fun onEmojiSuggestionTapped()
+
+        /** Traduction en direct : remplace [previous] (juste avant le curseur) par [text] ; voir [FieldEditor.replaceTextBeforeCursor]. */
+        fun replaceTextBeforeCursor(previous: String, text: String): String?
+
+        /** Sélection du champ de l'application, ou à défaut tout son texte (null : champ inaccessible). */
+        fun fieldTextToTranslate(): String?
+
+        fun recordUndoEdit(inserted: String, original: String)
+
+        /** Un changement de ton occupe le moteur (panneau IA). */
+        fun toneBusy(): Boolean
     }
+
+    /**
+     * Mode Traduction (20/11/2026) : même zone de saisie que le mode Chat, mais le texte tapé est traduit en direct dans le champ
+     * de l'application ([LiveTranslator]) au lieu d'être envoyé au chat. La zone de chat laisse la place au bandeau des langues.
+     */
+    var translating = false
+        private set
+
+    private val translator = LiveTranslator(
+        context,
+        scope,
+        mainHandler,
+        rewriteEngine,
+        object : LiveTranslator.Host {
+            override fun activeModel(): AiModel? = host.activeModel()
+            override fun showMessage(message: String) = host.showMessage(message)
+            override fun replaceTextBeforeCursor(previous: String, text: String): String? = host.replaceTextBeforeCursor(previous, text)
+            override fun replaceFieldText(text: String): Boolean = host.replaceFieldText(text)
+            override fun fieldTextToTranslate(): String? = host.fieldTextToTranslate()
+            override fun recordUndoEdit(inserted: String, original: String) = host.recordUndoEdit(inserted, original)
+            override fun hapticAi(cue: AiHapticCue) = host.hapticAi(cue)
+            override fun onStateChanged() = renderTranslationBar()
+            override fun engineBusyElsewhere(): Boolean =
+                host.isCorrectionInProgress() || host.isTranscriptionInProgress() || host.toneBusy() || conversation.isGenerating
+        },
+    ).also { translator ->
+        translator.onSegmentCommitted = {
+            // Segment figé : la saisie se vide pour la phrase suivante, la traduction reste dans le champ.
+            host.learnFromTyping("\n")
+            buffer.clear()
+            host.clearPendingAutocorrection()
+            refreshInput()
+            host.syncAutoCapitalization()
+            host.applyState()
+        }
+    }
+
+    /** Bandeau des langues du mode Traduction, juste au-dessus de la barre de saisie (créé avec les vues). */
+    internal lateinit var translationBar: TranslationBarView
+        private set
+    private lateinit var translationPresence: SpringPresence
 
     /** Story 5.1 (phase 5.1-2) : zone de chat, premier enfant de la racine, masquée par défaut. */
     lateinit var chatZone: ChatZoneView
@@ -221,6 +275,19 @@ class PromptModeController(
             applyViews()
         }
 
+        translationBar = TranslationBarView(context)
+        translationBar.visibility = View.GONE
+        translationPresence = SpringPresence(translationBar) { context.dimen(R.dimen.taipo_prompt_bar_rise_distance) }
+        translationBar.onLanguageSelected = { language ->
+            host.haptic()
+            translator.selectTarget(language)
+            promptBar.hintOverride = translationHint()
+        }
+        translationBar.onTranslateFieldClicked = {
+            host.haptic()
+            translator.translateField()
+        }
+
         // Suggestions de mots et d'emoji du prompt : mêmes actions que la bande de la barre du haut.
         suggestionBar = PromptSuggestionBarView(context)
         suggestionBar.visibility = View.GONE
@@ -290,6 +357,42 @@ class PromptModeController(
     }
 
     /**
+     * Panneau IA, « Traduire » (20/11/2026) : la barre du haut devient la zone de saisie, comme pour le Chat, et ce qui y est tapé
+     * se traduit en direct dans le champ. Sans effet si la traduction n'est pas possible (pas de modèle, modèle trop petit).
+     */
+    fun enterTranslation() {
+        if (active || !this::promptBar.isInitialized) return
+        if (host.isRecording() || otherAiBusy()) {
+            host.showMessage(context.getString(R.string.ai_action_busy))
+            return
+        }
+        if (!translator.start(host.keyboardLanguage())) return
+        translating = true
+        promptBar.hintOverride = translationHint()
+        enter()
+        if (!active) {
+            translator.finish()
+            translating = false
+            promptBar.hintOverride = null
+        }
+    }
+
+    /** Le moteur est pris par une génération, une traduction ou un changement de ton. */
+    private fun otherAiBusy(): Boolean {
+        val engineTaken = generationBusy() || host.toneBusy()
+        return engineTaken || host.isCorrectionInProgress() || host.isTranscriptionInProgress()
+    }
+
+    private fun translationHint(): String =
+        context.getString(R.string.translation_hint, translator.target?.displayName().orEmpty())
+
+    private fun renderTranslationBar() {
+        if (!this::translationBar.isInitialized) return
+        val fieldHasText = active && translating && buffer.isBlank && !host.capturedFieldText().isNullOrBlank()
+        translationBar.render(translator.languages, translator.target, translator.busy, fieldHasText)
+    }
+
+    /**
      * Décision 18 : charge le modèle actif en arrière-plan dès l'entrée dans le mode prompt, pendant que
      * l'utilisateur saisit son message. Sans modèle sélectionné, rien à faire (le pop-up viendra à
      * l'envoi, comme avant). Un échec de chargement est seulement journalisé ici : [requestSend]
@@ -335,7 +438,7 @@ class PromptModeController(
      * d'un mode prompt dont la génération s'arrête (croix, changement de champ).
      */
     fun generationBusy(): Boolean =
-        conversation.isGenerating || generationJob?.isActive == true
+        conversation.isGenerating || generationJob?.isActive == true || translator.busy
 
     /**
      * Touche sur la croix « annuler » : si une génération est en cours, elle est interrompue d'abord
@@ -361,6 +464,11 @@ class PromptModeController(
     fun exit(resync: Boolean = true) {
         if (!active) return
         active = false
+        if (translating) {
+            translator.finish() // la traduction écrite reste dans le champ (une action Annuler)
+            translating = false
+            promptBar.hintOverride = null
+        }
         host.cancelVoice() // dictée en cours dans le prompt : annulée, rien ne doit atterrir dans le champ de l'application
         buffer.clear() // la croix « annuler » abandonne le prompt en cours de saisie (pas la conversation)
         host.clearPendingAutocorrection()
@@ -378,6 +486,10 @@ class PromptModeController(
     /** Redessine le texte du prompt et son curseur dans la pilule. */
     fun refreshInput() {
         if (this::promptBar.isInitialized) promptBar.setInput(buffer.text, buffer.cursor)
+        if (active && translating) {
+            translator.onInputChanged(buffer.text)
+            renderTranslationBar()
+        }
     }
 
     // ------------------------------------------------------------------
@@ -390,6 +502,10 @@ class PromptModeController(
      * est déjà en cours (le stop vient en 5.1-7). Sans modèle sélectionné, le prompt reste dans la saisie.
      */
     fun requestSend() {
+        if (active && translating) {
+            translator.commit() // fige la traduction ; la saisie se vide une fois la dernière version écrite
+            return
+        }
         if (!active || buffer.isBlank || conversation.isGenerating) return
         if (host.isRecording() || host.isCorrectionInProgress()) { // ne devrait pas arriver : leurs boutons sont masqués en mode prompt
             host.showMessage(context.getString(R.string.ai_action_busy))
@@ -605,11 +721,15 @@ class PromptModeController(
             suggestionPresence.hide(animate)
         }
         host.refreshRecentEmojiBar()
-        val chatVisible = active && chatAvailable && chatShown
+        if (this::translationBar.isInitialized) {
+            if (active && translating) translationPresence.show(animate) else translationPresence.hide(animate)
+            renderTranslationBar()
+        }
+        val chatVisible = active && !translating && chatAvailable && chatShown
         if (this::chatZone.isInitialized) {
             if (chatVisible) chatPresence.show(animate) else chatPresence.hide(animate)
         }
-        promptBar.setChatToggleVisible(active && chatAvailable)
+        promptBar.setChatToggleVisible(active && !translating && chatAvailable)
         promptBar.setChatShown(chatVisible)
         promptBar.stopping = stopping && !conversation.isGenerating && generationJob?.isActive == true
         promptBar.generating = conversation.isGenerating // bouton rond : stop pendant la génération (décision 10)

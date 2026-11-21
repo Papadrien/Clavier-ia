@@ -321,4 +321,7 @@
     <dimen name="taipo_spinner_item_padding_horizontal">16dp</dimen>
     <!-- Taille minimale du texte d'un segment (taille automatique, voir TaipoSegment). -->
     <dimen name="taipo_segment_min_text_size">10sp</dimen>
+    <!-- Panneau IA (20/11/2026) : punaise des actions épinglées, hauteur des puces (tons, langues de traduction). -->
+    <dimen name="taipo_ai_panel_pin_size">14dp</dimen>
+    <dimen name="taipo_ai_panel_chip_height">34dp</dimen>
 </resources>
