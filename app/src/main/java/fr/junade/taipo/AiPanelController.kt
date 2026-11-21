@@ -99,10 +99,7 @@ internal class AiPanelController(
         ime.correctionBar.setAiPanelOpen(true)
         ime.emoji.refreshRecentBar()
         ime.clearSuggestions()
-        if (!wasVisible) {
-            ime.keyboardPreferences.aiPanelOpenCount = ime.keyboardPreferences.aiPanelOpenCount + 1
-            ime.aiWarmup.onAiPanelOpened() // le modèle se charge pendant que l'utilisateur choisit son action
-        }
+        if (!wasVisible) ime.keyboardPreferences.aiPanelOpenCount = ime.keyboardPreferences.aiPanelOpenCount + 1
         if (tonePage) openTonePage() else showActions()
     }
 

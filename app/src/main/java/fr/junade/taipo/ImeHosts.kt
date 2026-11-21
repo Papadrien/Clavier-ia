@@ -39,7 +39,6 @@ internal interface ImeHostContext {
     val undo: UndoController
     val aiTranscription: AiTranscriptionController
     val aiPanel: AiPanelController
-    val aiWarmup: AiWarmup
     val messagePopup: MessagePopup
     val viewComposer: ImeViewComposer
     val correctionBar: CorrectionBarView

@@ -1,12 +1,11 @@
 package fr.junade.taipo.ai
 
-import fr.junade.taipo.AiWarmup
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/** Optimisations du 21/11/2026 : plafond de réponse, préchargement du modèle, traduction phrase par phrase. */
+/** Optimisations du 21/11/2026 : plafond de réponse, traduction phrase par phrase. */
 class SpeedTuningTest {
 
     @Test
@@ -17,17 +16,6 @@ class SpeedTuningTest {
         assertEquals(1, InferenceTuning.GREEDY.topK)
     }
 
-    @Test
-    fun `prechargement au panneau toujours, au texte seulement apres un usage recent`() {
-        val now = 10 * AiWarmup.RECENT_USE_MS
-        assertTrue(AiWarmup.shouldPreload(now, lastUseMs = 0, loaded = false, loading = false, requireRecentUse = false))
-        assertFalse(AiWarmup.shouldPreload(now, lastUseMs = 0, loaded = false, loading = false, requireRecentUse = true))
-        assertTrue(AiWarmup.shouldPreload(now, lastUseMs = now - 60_000, loaded = false, loading = false, requireRecentUse = true))
-        assertFalse(AiWarmup.shouldPreload(now, lastUseMs = now - 2 * AiWarmup.RECENT_USE_MS, loaded = false, loading = false, requireRecentUse = true))
-        // Déjà chargé ou en cours de chargement : rien à faire.
-        assertFalse(AiWarmup.shouldPreload(now, lastUseMs = now, loaded = true, loading = false, requireRecentUse = false))
-        assertFalse(AiWarmup.shouldPreload(now, lastUseMs = now, loaded = false, loading = true, requireRecentUse = false))
-    }
 
     @Test
     fun `traduction phrase par phrase avec les separateurs d origine`() {

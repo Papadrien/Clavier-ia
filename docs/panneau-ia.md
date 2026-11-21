@@ -60,15 +60,12 @@ Mesure d'usage : `ai_action` avec `type` `tone` ou `translate` (jamais le texte 
 
 ## Rapidité (21/11/2026, version 4.0.0)
 
-- **Préchargement** (`AiWarmup`) : le modèle se charge en arrière-plan à l'ouverture du panneau IA, et dès que le champ reçoit du
-  texte si une action IA a servi dans les dernières 24 h ; avec l'audio si la dernière action était une Transcription IA. Le
-  chargement (plusieurs secondes pour Gemma 4 sur processeur) n'est plus attendu au premier appui. Libération inchangée (clavier
-  masqué 5 min, mémoire basse).
 - **Décodage glouton et réponse plafonnée** (`InferenceTuning`) pour la correction, le ton et la traduction : pas de tirage au
   sort, et un modèle qui part en boucle s'arrête tôt (plafond : longueur du texte / 2 + 64 jetons). Le Chat n'est pas concerné.
 - **Traduction en direct phrase par phrase** et pause ramenée à 450 ms.
-- Pixel 9 : le GPU échoue avec LiteRT-LM (OpenCL absent), le modèle tourne sur le processeur ; le gain le plus net vient du
-  préchargement et d'un modèle plus léger (Colibri) pour la correction.
+- Pixel 9 : le GPU échoue avec LiteRT-LM (OpenCL absent), le modèle tourne sur le processeur ; un modèle plus léger (Colibri)
+  répond nettement plus vite pour la correction. Préchargement du modèle essayé puis retiré le même jour : la frappe n'était
+  pas fluide pendant le chargement ; le modèle se charge de nouveau au premier appui, comme avant.
 
 ## À valider sur l'appareil
 
