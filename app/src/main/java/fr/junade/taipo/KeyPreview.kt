@@ -229,7 +229,7 @@ internal class KeyPreview(private val view: View) {
                 val r = bloomRadius()
                 val flower = KeyParticles.Flower(
                     previewRect.centerX(),
-                    previewRect.centerY(),
+                    bloomCenterY(),
                     r * BLOOM_PETAL_BASE,
                     r * BLOOM_PETAL_LENGTH,
                     r * BLOOM_PETAL_WIDTH,
@@ -311,7 +311,12 @@ internal class KeyPreview(private val view: View) {
     }
 
     /** Éclosion : rayon de la fleur, d'après la bulle placée ([previewRect]). */
-    private fun bloomRadius(): Float = min(previewRect.width(), previewRect.height()) / 2f
+    private fun bloomRadius(): Float = baseBloomRadius() * BLOOM_SCALE
+
+    private fun baseBloomRadius(): Float = min(previewRect.width(), previewRect.height()) / 2f
+
+    /** Centre de la fleur : remonté de ce qu'elle a grandi ([BLOOM_SCALE]), pour que son bas ne descende pas sur la touche. */
+    private fun bloomCenterY(): Float = previewRect.centerY() - (bloomRadius() - baseBloomRadius())
 
     private fun drawOne(canvas: Canvas, b: Bubble, pose: KeyPreviewPose.Pose, now: Long, animated: Boolean, g: Geometry) {
         val bounds = g.keyBounds(b.key) ?: return
@@ -351,7 +356,7 @@ internal class KeyPreview(private val view: View) {
     private fun drawBloom(canvas: Canvas, b: Bubble, pose: KeyPreviewPose.Pose, text: String, now: Long, animated: Boolean, g: Geometry) {
         if (pose.alpha <= 0f) return
         val cx = previewRect.centerX()
-        val cy = previewRect.centerY()
+        val cy = bloomCenterY()
         val r = bloomRadius()
         val since = now - b.downAt
         for (i in 0 until BLOOM_PETALS) {
@@ -375,7 +380,7 @@ internal class KeyPreview(private val view: View) {
             fillPaint(face, pose.alpha)
             canvas.drawCircle(cx, cy, core, effectPaint)
         }
-        setTextSize(g.textSize * PREVIEW_SCALE * BLOOM_TEXT)
+        setTextSize(g.textSize * PREVIEW_SCALE * BLOOM_TEXT * BLOOM_SCALE)
         val baseline = cy - (previewTextPaint.ascent() + previewTextPaint.descent()) / 2f
         drawText(canvas, text, baseline, pose.alpha * pose.scaleX.coerceIn(0f, 1f))
     }
@@ -508,6 +513,9 @@ internal class KeyPreview(private val view: View) {
         const val BLOOM_CORE = 0.62f
         const val BLOOM_TWIST = 1.2f
         const val BLOOM_TEXT = 0.85f
+
+        /** Taille de la fleur (pétales, cœur et lettre) par rapport à la bulle : 40 % de plus (21/11/2026). */
+        const val BLOOM_SCALE = 1.4f
 
         /** Cœur de la fleur laissé sur la touche (jaune pollen, identique dans tous les thèmes). */
         val BLOOM_CORE_COLOR = 0xFFFFD54A.toInt()
