@@ -16,7 +16,6 @@ class SpeedTuningTest {
         assertEquals(1, InferenceTuning.GREEDY.topK)
     }
 
-
     @Test
     fun `traduction phrase par phrase avec les separateurs d origine`() {
         val pieces = SentenceTranslation.split("  Bonjour Paul. Ça va ?\nÀ demain")
