@@ -5,8 +5,5 @@ Neu in Taipo 4
 • Schnellere KI
 • Wischen zum Schreiben
 • Passwort einfügen
-• Neue Animationen
-• Neue Übergänge
 • Dein Foto als Hintergrund
 • Neuer Hintergrund Prozessor
-• Aktuelleres Französisch

@@ -785,16 +785,10 @@
     <string name="whats_new_swipe_body">Dra fingeren fra bokstav til bokstav. Slå det på i tastaturinnstillingene.</string>
     <string name="whats_new_password_paste_title">Lim inn et passord</string>
     <string name="whats_new_password_paste_body">Utklippstavlen åpnes nå også i passordfelt, så du kan lime inn passordet fra passordbehandleren. Ingenting i feltet leses eller lagres.</string>
-    <string name="whats_new_animations_title">Nye animasjoner</string>
-    <string name="whats_new_animations_body">Boblen over tastene følger animasjonsstilen din, også i emojipanelet: Avgang, Dråpe, Gli, Gnister, Piksler, Hjerteboble og Blomstring (premiumpakke). Du kan slå den av i tastaturinnstillingene.</string>
-    <string name="whats_new_transitions_title">Nye overganger</string>
-    <string name="whats_new_transitions_body">Tegnene ruller som en teller mellom bokstaver og symboler, og emoji- og AI-panelene trekkes ned som en rullegardin.</string>
     <string name="whats_new_photo_title">Ditt bilde som bakgrunn</string>
     <string name="whats_new_photo_body">Velg et bilde fra galleriet eller filene dine som tastaturbakgrunn (premiumpakke). Det blir på telefonen.</string>
     <string name="whats_new_processor_title">Ny bakgrunn Prosessor</string>
     <string name="whats_new_processor_body">Et kretskort der banene lyser opp ved hvert tastetrykk (premiumpakke). Animerte bakgrunner beveger seg også mens AI-en jobber.</string>
-    <string name="whats_new_french_title">Mer oppdatert fransk</string>
-    <string name="whats_new_french_body">Tusenvis av dagens ord og nesten 5000 egennavn (byer, fornavn, merker) i den franske ordboken.</string>
     <string name="model_name_custom">Egen modell</string>
     <string name="model_subtitle_custom">Din egen LiteRT-LM-fil</string>
     <string name="model_hint_custom">En .litertlm-fil som fungerer med LiteRT-LM-versjonen i Taipo.</string>

@@ -5,8 +5,5 @@ What's new in Taipo 4
 • Faster AI
 • Swipe typing
 • Paste a password
-• New animations
-• New transitions
 • Your photo as background
 • New Processor background
-• Up-to-date French

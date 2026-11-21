@@ -5,8 +5,5 @@
 • Gyorsabb MI
 • Csúsztatásos gépelés
 • Jelszó beillesztése
-• Új animációk
-• Új átmenetek
 • Saját fotó háttérként
 • Új Processzor háttér
-• Naprakészebb francia

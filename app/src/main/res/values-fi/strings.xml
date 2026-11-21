@@ -785,16 +785,10 @@
     <string name="whats_new_swipe_body">Liu\'uta sormea kirjaimesta toiseen. Ota käyttöön näppäimistön asetuksissa.</string>
     <string name="whats_new_password_paste_title">Liitä salasana</string>
     <string name="whats_new_password_paste_body">Leikepöytä avautuu nyt myös salasanakentissä, joten voit liittää salasanan salasanojen hallinnasta. Kentästä ei lueta eikä tallenneta mitään.</string>
-    <string name="whats_new_animations_title">Uudet animaatiot</string>
-    <string name="whats_new_animations_body">Näppäinten yläpuolinen kupla seuraa animaatiotyyliäsi myös emojipaneelissa: Lento, Pisara, Liuku, Kipinät, Pikselit, Sydänkupla ja Kukinta (premium-paketti). Voit poistaa sen käytöstä näppäimistön asetuksissa.</string>
-    <string name="whats_new_transitions_title">Uudet siirtymät</string>
-    <string name="whats_new_transitions_body">Merkit rullaavat kuin laskuri kirjainten ja symbolien välillä, ja emoji- ja tekoälypaneeli laskeutuvat alas kuin rullaverho.</string>
     <string name="whats_new_photo_title">Oma kuva taustana</string>
     <string name="whats_new_photo_body">Valitse kuva galleriasta tai tiedostoistasi näppäimistön taustaksi (premium-paketti). Se pysyy puhelimessasi.</string>
     <string name="whats_new_processor_title">Uusi Prosessori-tausta</string>
     <string name="whats_new_processor_body">Piirilevy, jonka johtimet syttyvät jokaisella näppäilyllä (premium-paketti). Animoidut taustat liikkuvat myös tekoälyn työskennellessä.</string>
-    <string name="whats_new_french_title">Ajantasaisempi ranska</string>
-    <string name="whats_new_french_body">Tuhansia tämän päivän sanoja ja lähes 5 000 erisnimeä (kaupungit, etunimet, tuotemerkit) ranskan sanakirjassa.</string>
     <string name="model_name_custom">Oma malli</string>
     <string name="model_subtitle_custom">Oma LiteRT-LM-tiedostosi</string>
     <string name="model_hint_custom">Taipoon sisäänrakennetun LiteRT-LM-version kanssa yhteensopiva .litertlm-tiedosto.</string>

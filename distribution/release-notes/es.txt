@@ -5,8 +5,5 @@ Novedades de Taipo 4
 • Una IA más rápida
 • Escritura deslizando
 • Pegar una contraseña
-• Nuevas animaciones
-• Nuevas transiciones
 • Tu foto de fondo
 • Nuevo fondo Procesador
-• Un francés más actual

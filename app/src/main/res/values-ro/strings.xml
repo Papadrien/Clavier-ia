@@ -789,16 +789,10 @@
     <string name="whats_new_swipe_body">Glisează degetul de la o literă la alta. Activeaz-o în Setările tastaturii.</string>
     <string name="whats_new_password_paste_title">Lipește o parolă</string>
     <string name="whats_new_password_paste_body">Clipboardul se deschide acum și în câmpurile de parolă, ca să lipești parola din managerul de parole. Nimic din câmp nu este citit sau păstrat.</string>
-    <string name="whats_new_animations_title">Animații noi</string>
-    <string name="whats_new_animations_body">Bula de deasupra tastelor urmează stilul tău de animație, și în panoul de emoji: Zbor, Picătură, Alunecare, Scântei, Pixeli, Bulă inimă și Înflorire (pachet premium). O poți dezactiva în Setările tastaturii.</string>
-    <string name="whats_new_transitions_title">Tranziții noi</string>
-    <string name="whats_new_transitions_body">Caracterele se derulează ca un contor între litere și simboluri, iar panourile de emoji și AI coboară ca o jaluzea.</string>
     <string name="whats_new_photo_title">Fotografia ta ca fundal</string>
     <string name="whats_new_photo_body">Alege o imagine din galerie sau din fișierele tale pentru fundalul tastaturii (pachet premium). Rămâne pe telefonul tău.</string>
     <string name="whats_new_processor_title">Fundal nou Procesor</string>
     <string name="whats_new_processor_body">Un circuit imprimat ale cărui trasee se aprind la fiecare tastă (pachet premium). Fundalurile animate prind viață și cât timp lucrează AI-ul.</string>
-    <string name="whats_new_french_title">O franceză mai actuală</string>
-    <string name="whats_new_french_body">Mii de cuvinte de azi și aproape 5.000 de nume proprii (orașe, prenume, mărci) în dicționarul francez.</string>
     <string name="model_name_custom">Model personalizat</string>
     <string name="model_subtitle_custom">Propriul tău fișier LiteRT-LM</string>
     <string name="model_hint_custom">Un fișier .litertlm compatibil cu versiunea LiteRT-LM inclusă în Taipo.</string>

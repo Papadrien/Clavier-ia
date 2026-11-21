@@ -26,8 +26,8 @@ object WhatsNew {
     data class Item(@StringRes val title: Int, @StringRes val body: Int? = null)
 
     /**
-     * Nouveautés de [RELEASE], dans l'ordre de la page : tout ce qui a changé pour l'utilisateur depuis la 3.0 (la 3.1 n'a pas été
-     * annoncée à part). Les titres sont aussi les lignes des notes de version Play (`distribution/release-notes`).
+     * Nouveautés de [RELEASE], dans l'ordre de la page : les principaux changements depuis la 3.0 (la 3.1 n'a pas été annoncée à
+     * part). Les titres sont aussi les lignes des notes de version Play (`distribution/release-notes`).
      */
     val items: List<Item> = listOf(
         Item(R.string.whats_new_ai_panel_title, R.string.whats_new_ai_panel_body),
@@ -36,11 +36,8 @@ object WhatsNew {
         Item(R.string.whats_new_faster_ai_title, R.string.whats_new_faster_ai_body),
         Item(R.string.whats_new_swipe_title, R.string.whats_new_swipe_body),
         Item(R.string.whats_new_password_paste_title, R.string.whats_new_password_paste_body),
-        Item(R.string.whats_new_animations_title, R.string.whats_new_animations_body),
-        Item(R.string.whats_new_transitions_title, R.string.whats_new_transitions_body),
         Item(R.string.whats_new_photo_title, R.string.whats_new_photo_body),
         Item(R.string.whats_new_processor_title, R.string.whats_new_processor_body),
-        Item(R.string.whats_new_french_title, R.string.whats_new_french_body),
     )
 
     /** La pilule peut être montrée : version pas encore ouverte, et montrée moins de [MAX_SHOWS] fois. Logique pure. */

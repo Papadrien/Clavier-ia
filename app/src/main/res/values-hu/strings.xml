@@ -785,16 +785,10 @@
     <string name="whats_new_swipe_body">Csúsztassa ujját betűről betűre. A billentyűzet beállításaiban kapcsolható be.</string>
     <string name="whats_new_password_paste_title">Jelszó beillesztése</string>
     <string name="whats_new_password_paste_body">A vágólap most a jelszómezőkben is megnyílik, így beillesztheti a jelszókezelőből a jelszót. A Taipo semmit sem olvas ki a mezőből, és nem is tárol.</string>
-    <string name="whats_new_animations_title">Új animációk</string>
-    <string name="whats_new_animations_body">A billentyűk feletti buborék az animációs stílust követi, az emojipanelen is: Elrepülés, Csepp, Csúszás, Szikrák, Pixelek, Szívbuborék és Virágzás (prémium csomag). A billentyűzet beállításaiban kikapcsolható.</string>
-    <string name="whats_new_transitions_title">Új átmenetek</string>
-    <string name="whats_new_transitions_body">A betűk és szimbólumok között a karakterek számlálóként pörögnek, az emoji- és MI-panel pedig redőnyként ereszkedik le.</string>
     <string name="whats_new_photo_title">Saját fotó háttérként</string>
     <string name="whats_new_photo_body">Válasszon képet a galériából vagy a fájljai közül a billentyűzet hátteréhez (prémium csomag). A telefonján marad.</string>
     <string name="whats_new_processor_title">Új Processzor háttér</string>
     <string name="whats_new_processor_body">Áramköri lap, amelynek vezetékei minden billentyűnél felvillannak (prémium csomag). Az animált hátterek akkor is mozognak, amikor az MI dolgozik.</string>
-    <string name="whats_new_french_title">Naprakészebb francia</string>
-    <string name="whats_new_french_body">Több ezer mai szó és csaknem 5000 tulajdonnév (városok, keresztnevek, márkák) a francia szótárban.</string>
     <string name="model_name_custom">Saját modell</string>
     <string name="model_subtitle_custom">Saját LiteRT-LM-fájl</string>
     <string name="model_hint_custom">A Taipóba épített LiteRT-LM-verzióval kompatibilis .litertlm fájl.</string>

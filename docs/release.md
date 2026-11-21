@@ -5,6 +5,9 @@
   (JNI sherpa-onnx, LiteRT-LM, SQLCipher conservés). Règles larges par prudence, non encore validées sur appareil.
 - **versionCode** : variable `VERSION_CODE`, sinon `GITHUB_RUN_NUMBER` (automatique sur GitHub Actions), sinon 1.
 - **Signature** : seulement si `key.properties` (racine du dépôt) ou `TAIPO_KEYSTORE_PATH` est défini ; sinon l'APK release n'est pas signé.
+- **Clé de licence Google Play** (vérification des achats du pack premium, 21/11/2026) : obligatoire, le build release est refusé sans elle
+  (`checkPlayLicenseKey`). Ligne `playLicenseKey=<clé base64>` dans `key.properties` (donc dans le secret `ANDROID_KEY_PROPERTIES`
+  de la CI), ou propriété Gradle `taipo.playLicenseKey`, ou variable `TAIPO_PLAY_LICENSE_KEY`. Voir `docs/pass-premium.md`.
 - **Gradle** : `org.gradle.caching=true`. Versions de Room (unique) et de `litertlm-android` (figée) dans `gradle/libs.versions.toml`.
 
 ## Secrets GitHub pour signer (décision D6 : Play App Signing recommandé, clé d'**upload**)
@@ -46,6 +49,7 @@ Play exige un **AAB** : `./gradlew bundleRelease` (sortie `app/build/outputs/bun
 - [ ] Correction IA, mode prompt (streaming), dictée (sherpa-onnx) et transcription IA.
 - [ ] Mesure d'usage (Aptabase) : activer puis désactiver, aucune erreur dans logcat.
 - [ ] Demande d'avis Play (peut ne rien afficher hors Play) et écran de confidentialité.
+- [ ] Pack premium avec un compte testeur de licence : achat, puis « Restaurer » après réinstallation ; le pack s'active (signature vérifiée avec la clé de licence du build).
 - [ ] Noter la taille de l'APK debug et release, et de l'AAB.
 - [ ] Contrôler l'alignement 16 Ko des `.so` de l'AAB (outil d'alignement des NDK/Android Studio ou Analyseur d'APK).
 

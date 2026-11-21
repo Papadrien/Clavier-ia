@@ -793,16 +793,10 @@
     <string name="whats_new_swipe_body">Przesuwaj palec od litery do litery. Włącz w ustawieniach klawiatury.</string>
     <string name="whats_new_password_paste_title">Wklejanie hasła</string>
     <string name="whats_new_password_paste_body">Schowek otwiera się teraz także w polach hasła, by wkleić hasło z menedżera haseł. Nic z pola nie jest odczytywane ani zapisywane.</string>
-    <string name="whats_new_animations_title">Nowe animacje</string>
-    <string name="whats_new_animations_body">Dymek nad klawiszami podąża za stylem animacji, także w panelu emoji: Odlot, Kropla, Ślizg, Iskry, Piksele, Serduszko i Rozkwit (pakiet premium). Można go wyłączyć w ustawieniach klawiatury.</string>
-    <string name="whats_new_transitions_title">Nowe przejścia</string>
-    <string name="whats_new_transitions_body">Znaki przewijają się jak licznik między literami a symbolami, a panele emoji i AI zjeżdżają jak roleta.</string>
     <string name="whats_new_photo_title">Twoje zdjęcie w tle</string>
     <string name="whats_new_photo_body">Wybierz obraz z galerii lub plików jako tło klawiatury (pakiet premium). Zostaje w Twoim telefonie.</string>
     <string name="whats_new_processor_title">Nowe tło Procesor</string>
     <string name="whats_new_processor_body">Płytka drukowana, której ścieżki rozświetlają się przy każdym klawiszu (pakiet premium). Animowane tła ożywają też, gdy pracuje AI.</string>
-    <string name="whats_new_french_title">Bardziej aktualny francuski</string>
-    <string name="whats_new_french_body">Tysiące współczesnych słów i prawie 5000 nazw własnych (miasta, imiona, marki) we francuskim słowniku.</string>
     <string name="model_name_custom">Własny model</string>
     <string name="model_subtitle_custom">Twój własny plik LiteRT-LM</string>
     <string name="model_hint_custom">Plik .litertlm zgodny z wersją LiteRT-LM wbudowaną w Taipo.</string>

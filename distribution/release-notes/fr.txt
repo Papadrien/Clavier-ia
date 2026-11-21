@@ -5,8 +5,5 @@ Les nouveautés de Taipo 4
 • Une IA plus rapide
 • Saisie par glissement
 • Coller un mot de passe
-• Nouvelles animations
-• Nouvelles transitions
 • Votre photo en fond
 • Nouveau fond Processeur
-• Un français plus à jour

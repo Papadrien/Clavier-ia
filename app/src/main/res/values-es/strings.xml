@@ -789,16 +789,10 @@
     <string name="whats_new_swipe_body">Desliza el dedo de letra en letra. Actívala en Ajustes del teclado.</string>
     <string name="whats_new_password_paste_title">Pegar una contraseña</string>
     <string name="whats_new_password_paste_body">El portapapeles también se abre en los campos de contraseña, para pegar la de tu gestor de contraseñas. No se lee ni se guarda nada del campo.</string>
-    <string name="whats_new_animations_title">Nuevas animaciones</string>
-    <string name="whats_new_animations_body">La burbuja sobre las teclas sigue tu estilo de animación, también en el panel de emojis: Vuelo, Gota, Deslizar, Chispas, Píxeles, Burbuja corazón y Floración (pack premium). Puedes desactivarla en Ajustes del teclado.</string>
-    <string name="whats_new_transitions_title">Nuevas transiciones</string>
-    <string name="whats_new_transitions_body">Los caracteres giran como un contador entre letras y símbolos, y los paneles de emojis e IA bajan como una persiana.</string>
     <string name="whats_new_photo_title">Tu foto de fondo</string>
     <string name="whats_new_photo_body">Elige una imagen de tu galería o de tus archivos como fondo del teclado (pack premium). Se queda en tu teléfono.</string>
     <string name="whats_new_processor_title">Nuevo fondo Procesador</string>
     <string name="whats_new_processor_body">Un circuito impreso cuyas pistas se iluminan con cada tecla (pack premium). Los fondos animados también se mueven mientras la IA trabaja.</string>
-    <string name="whats_new_french_title">Un francés más actual</string>
-    <string name="whats_new_french_body">Miles de palabras de hoy y casi 5000 nombres propios (ciudades, nombres, marcas) en el diccionario francés.</string>
     <string name="model_name_custom">Modelo personalizado</string>
     <string name="model_subtitle_custom">Tu propio archivo LiteRT-LM</string>
     <string name="model_hint_custom">Un archivo .litertlm compatible con la versión de LiteRT-LM integrada en Taipo.</string>

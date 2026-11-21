@@ -5,8 +5,5 @@ Nyt i Taipo 4
 • Hurtigere AI
 • Swipe-skrivning
 • Indsæt en adgangskode
-• Nye animationer
-• Nye overgange
 • Dit foto som baggrund
 • Ny baggrund Processor
-• Mere moderne fransk
