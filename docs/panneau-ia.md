@@ -65,6 +65,16 @@ Prompts système modifiables (pack premium) dans « Prompts système » et « Mo
 
 Mesure d'usage : `ai_action` avec `type` `tone` ou `translate` (jamais le texte ni la langue).
 
+## Transitions (21/11/2026)
+
+- **Compteur** (`LayoutRoll`, dessiné par `KeyRenderer`) entre lettres, chiffres et symboles : les touches ne bougent pas, chaque
+  caractère défile hors de sa touche et le nouveau arrive à sa place, en vague depuis la touche touchée (« ?123 », « ABC »,
+  « =\< »). Vers les pages suivantes les caractères montent, vers les précédentes ils descendent.
+- **Store** (`PanelShade`) pour les panneaux emoji et IA : le panneau descend du haut de la zone des touches et se pose en
+  ressort, les touches s'assombrissent derrière ; à la fermeture (ABC, bouton IA), il remonte. Changement de champ ou rotation :
+  direct.
+- Les deux suivent le ressort du style d'animation ; animations Android coupées : changement direct.
+
 ## Rapidité (21/11/2026, version 4.0.0)
 
 - **Décodage glouton et réponse plafonnée** (`InferenceTuning`) pour la correction, le ton et la traduction : pas de tirage au

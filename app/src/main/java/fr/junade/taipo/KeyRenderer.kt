@@ -122,6 +122,10 @@ internal class KeyRenderer(private val context: Context) {
     var shiftAnimation: ShiftAnimation? = null
     private val shiftPainter = ShiftIconPainter(context.themeColor(R.color.key_label))
 
+    /** Animation « compteur » du changement de page en cours ([LayoutRoll]), posée par la vue avant chaque dessin, et son instant. */
+    var roll: LayoutRoll? = null
+    var rollNowMs = 0L
+
     /** Inclinaison de l'icône retour arrière en degrés (balancier et glissement : voir [BackspaceAnimation]), posée par la vue avant chaque dessin. */
     var backspaceIconAngle = 0f
 
@@ -344,8 +348,49 @@ internal class KeyRenderer(private val context: Context) {
 
             KeyAction.Backspace -> drawKeyIcon(canvas, backspaceIcon, backspaceIconAngle)
 
-            else -> drawKeyLabel(canvas, key)
+            else -> {
+                val running = roll
+                if (running == null) drawKeyLabel(canvas, key) else drawRollingLabel(canvas, key, running)
+            }
         }
+    }
+
+    /**
+     * Libellé texte de [key] tel qu'il est affiché (majuscule comprise), ou null pour une touche à icône (Maj, Effacer, Entrée,
+     * espace, emoji) : sert à l'animation « compteur » ([LayoutRoll]).
+     */
+    fun labelText(key: Key, layout: KeyboardLayout, shifted: Boolean): String? = when (key.action) {
+        KeyAction.Shift, KeyAction.Backspace, KeyAction.Enter, KeyAction.Space, KeyAction.Emoji -> null
+        else -> {
+            val upper = shiftedChar(key, layout, shifted)
+            if (upper != NO_CHAR) upper.toString() else displayLabel(key, layout, shifted).ifEmpty { null }
+        }
+    }
+
+    /**
+     * Compteur ([LayoutRoll]) : dans la touche (le dessin est coupé à sa face), l'ancien caractère part vers le haut (ou le bas)
+     * pendant que le nouveau arrive du côté opposé.
+     */
+    private fun drawRollingLabel(canvas: Canvas, key: Key, roll: LayoutRoll) {
+        val p = roll.progress(key, rollNowMs)
+        if (p >= 1f) {
+            drawKeyLabel(canvas, key)
+            return
+        }
+        val travel = keyRect.height() * roll.direction
+        canvas.save()
+        canvas.clipRect(keyRect)
+        roll.outgoingLabel(key)?.let { old ->
+            autoSizeTextPaint(key, old)
+            val alpha = textPaint.alpha
+            textPaint.alpha = (alpha * (1f - p).coerceIn(0f, 1f)).toInt()
+            val baseline = keyRect.centerY() - (textPaint.ascent() + textPaint.descent()) / 2f - travel * p
+            canvas.drawText(old, keyRect.centerX(), baseline, textPaint)
+            textPaint.alpha = alpha
+        }
+        canvas.translate(0f, travel * (1f - p))
+        drawKeyLabel(canvas, key)
+        canvas.restore()
     }
 
     /**

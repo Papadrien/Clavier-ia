@@ -94,8 +94,7 @@ internal class AiPanelController(
         panel.configure(keyboard.rowHeightPx(), keyboard.bottomInsetPx())
         panel.listener = this
         val wasVisible = isPanelVisible
-        keyboard.visibility = View.INVISIBLE
-        panel.visibility = View.VISIBLE
+        if (!wasVisible) PanelShade.show(panel, keyboard) // le panneau descend comme un store
         ime.correctionBar.setAiPanelOpen(true)
         ime.emoji.refreshRecentBar()
         ime.clearSuggestions()
@@ -107,8 +106,11 @@ internal class AiPanelController(
     fun hidePanel(resync: Boolean = true) {
         if (!isPanelVisible) return
         endToneSession()
-        panel.visibility = View.GONE
-        ime.keyboardView.visibility = View.VISIBLE
+        if (resync) {
+            PanelShade.hide(panel, ime.keyboardView) // le store remonte
+        } else {
+            PanelShade.hideNow(panel, ime.keyboardView)
+        }
         ime.correctionBar.setAiPanelOpen(false)
         ime.emoji.refreshRecentBar()
         if (resync) ime.resyncKeyboard()
