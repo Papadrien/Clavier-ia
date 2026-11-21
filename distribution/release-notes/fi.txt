@@ -2,5 +2,11 @@ Uutta Taipo 4:ssä
 • Kaikki tekoäly yhdessä paneelissa
 • Vaihda sävyä
 • Käännös puhelimessa
+• Nopeampi tekoäly
 • Liukukirjoitus
-• Uudet animaatiot ja kuvatausta
+• Liitä salasana
+• Uudet animaatiot
+• Uudet siirtymät
+• Oma kuva taustana
+• Uusi Prosessori-tausta
+• Ajantasaisempi ranska

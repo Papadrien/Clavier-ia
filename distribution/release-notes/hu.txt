@@ -2,5 +2,11 @@
 • Minden MI egy panelen
 • Hangnemváltás
 • Fordítás a telefonon
+• Gyorsabb MI
 • Csúsztatásos gépelés
-• Új animációk és képes háttér
+• Jelszó beillesztése
+• Új animációk
+• Új átmenetek
+• Saját fotó háttérként
+• Új Processzor háttér
+• Naprakészebb francia

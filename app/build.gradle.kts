@@ -238,4 +238,8 @@ tasks.withType<Test>().configureEach {
     inputs.dir(rootProject.layout.projectDirectory.dir("dictionaries"))
         .withPropertyName("dictionaries")
         .withPathSensitivity(PathSensitivity.RELATIVE)
+    // WhatsNewTest compare les notes de version Play aux titres de la page « Nouveautés » : même raison.
+    inputs.dir(rootProject.layout.projectDirectory.dir("distribution/release-notes"))
+        .withPropertyName("releaseNotes")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
 }

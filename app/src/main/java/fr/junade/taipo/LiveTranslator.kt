@@ -100,6 +100,13 @@ class LiveTranslator(
 
     /** Dernier texte tapé (zone de saisie). */
     private var pendingSource = ""
+
+    /**
+     * Texte dont la dernière traduction a échoué (erreur du moteur) : il n'est pas relancé tout seul à la fin de la tâche, sinon
+     * un échec durable (modèle illisible, mémoire insuffisante) relancerait la traduction en boucle, avec un message à chaque
+     * tour. Une nouvelle frappe, un changement de langue ou Envoyer relancent la traduction.
+     */
+    private var failedSource: String? = null
     private var job: Job? = null
     private var active = false
 
@@ -127,6 +134,7 @@ class LiveTranslator(
         written = ""
         writtenSource = ""
         pendingSource = ""
+        failedSource = null
         sentenceCache.clear()
         active = true
         return true
@@ -175,6 +183,7 @@ class LiveTranslator(
 
     private fun languagesChanged() {
         host.onStateChanged()
+        failedSource = null // autres langues : un échec précédent ne bloque plus la relance
         if (pendingSource.isNotBlank()) {
             writtenSource = "" // même texte, autres langues : à retraduire
             schedule(immediate = true)
@@ -184,7 +193,9 @@ class LiveTranslator(
     /** Le texte tapé a changé : nouvelle traduction après une pause. */
     fun onInputChanged(text: String) {
         if (!active) return
+        if (text == pendingSource) return // même texte (rafraîchissement de la zone de saisie) : rien à retraduire
         pendingSource = text
+        failedSource = null
         schedule(immediate = false)
     }
 
@@ -210,12 +221,14 @@ class LiveTranslator(
             host.showMessage(context.getString(R.string.ai_action_busy))
             return
         }
-        launch(model) {
+        // Langue de départ figée pour toute la tâche : cache, prompt et contrôle final portent sur la même.
+        val from = this.source
+        launch(model, attempted = source) {
             // Phrase par phrase : les phrases déjà traduites viennent du cache, seule celle en cours part au modèle.
             val pieces = SentenceTranslation.split(source)
             val translations = ArrayList<String>(pieces.size)
             for (piece in pieces) {
-                val key = SentenceTranslation.cacheKey(this.source?.tag.orEmpty() + ">" + language.tag, piece.sentence)
+                val key = SentenceTranslation.cacheKey(from?.tag.orEmpty() + ">" + language.tag, piece.sentence)
                 val cached = sentenceCache[key]
                 if (cached != null) {
                     translations += cached
@@ -223,14 +236,14 @@ class LiveTranslator(
                 }
                 // Texte retapé entre-temps : on s'arrête là, la traduction suivante (lancée à la fin) reprendra le cache.
                 if (pendingSource != source && translations.isNotEmpty()) return@launch
-                val response = engine().rewrite(model, promptPreferences.get(), TranslationPrompt.userTurn(language, piece.sentence, this.source), "traduction")
+                val response = engine().rewrite(model, promptPreferences.get(), TranslationPrompt.userTurn(language, piece.sentence, from), "traduction")
                 // Réponse inutilisable : la phrase reste dans sa langue d'origine plutôt que de disparaître.
                 val translated = RewriteSafeguard.clean(response) ?: piece.sentence
                 remember(key, translated)
                 translations += translated
             }
-            // Session refermée ou autre langue choisie entre-temps : résultat périmé.
-            if (!active || target != language) return@launch
+            // Session refermée ou autre langue (d'arrivée ou de départ) choisie entre-temps : résultat périmé, retraduit à la fin.
+            if (!active || target != language || this.source != from) return@launch
             write(SentenceTranslation.assemble(pieces, translations))
             writtenSource = source
         }
@@ -269,6 +282,7 @@ class LiveTranslator(
         }
         if (pendingSource != writtenSource || busy) {
             commitAfterTranslation = true
+            failedSource = null // Envoyer après un échec : nouvelle tentative
             translateNow()
             return false
         }
@@ -302,6 +316,7 @@ class LiveTranslator(
         written = ""
         writtenSource = ""
         pendingSource = ""
+        failedSource = null
         commitAfterTranslation = false
     }
 
@@ -338,8 +353,9 @@ class LiveTranslator(
         }
     }
 
+    /** [attempted] : texte tapé que traduit la tâche (null pour « Traduire le texte du champ »), retenu s'il échoue. */
     @Suppress("TooGenericExceptionCaught", "SwallowedException") // échec du moteur : message à l'utilisateur, pas de plantage
-    private fun launch(model: AiModel, work: suspend () -> Unit) {
+    private fun launch(model: AiModel, attempted: String? = null, work: suspend () -> Unit) {
         val startedAt = SystemClock.elapsedRealtime()
         cancelled = false
         val started = scope.launch {
@@ -353,6 +369,11 @@ class LiveTranslator(
                 throw e
             } catch (t: Throwable) {
                 if (!cancelled) {
+                    if (attempted != null) {
+                        failedSource = attempted
+                        // Envoyer touché avant l'échec : le segment ne se figera pas plus tard, sur une autre traduction.
+                        commitAfterTranslation = false
+                    }
                     val cause = InferenceFailureClassifier.classify(t)
                     AppLog.e(TAG, "Échec de la traduction ($cause)", t)
                     Analytics.aiAction(context, AnalyticsEvents.AiType.TRANSLATE, model.id, startedAt, failure = cause)
@@ -367,10 +388,10 @@ class LiveTranslator(
                 if (job === started) job = null
                 host.onStateChanged()
                 if (!active) return@post
-                // Texte tapé pendant la traduction : on traduit la version la plus récente.
-                if (pendingSource != writtenSource) {
+                // Texte tapé pendant la traduction : on traduit la version la plus récente (sauf celle qui vient d'échouer).
+                if (pendingSource != writtenSource && pendingSource != failedSource) {
                     translateNow()
-                } else if (commitAfterTranslation) {
+                } else if (commitAfterTranslation && pendingSource == writtenSource) {
                     closeSegment()
                 }
             }

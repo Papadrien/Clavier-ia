@@ -2,5 +2,11 @@ What's new in Taipo 4
 • All the AI in one panel
 • Change the tone
 • Translation on your phone
+• Faster AI
 • Swipe typing
-• New animations and photo background
+• Paste a password
+• New animations
+• New transitions
+• Your photo as background
+• New Processor background
+• Up-to-date French

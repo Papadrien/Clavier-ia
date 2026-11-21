@@ -2,5 +2,11 @@ Novedades de Taipo 4
 • Toda la IA en un panel
 • Cambiar el tono
 • Traducción en tu teléfono
+• Una IA más rápida
 • Escritura deslizando
-• Nuevas animaciones y fondo con imagen
+• Pegar una contraseña
+• Nuevas animaciones
+• Nuevas transiciones
+• Tu foto de fondo
+• Nuevo fondo Procesador
+• Un francés más actual

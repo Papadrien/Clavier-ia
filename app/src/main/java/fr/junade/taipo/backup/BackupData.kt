@@ -49,6 +49,8 @@ data class BackupKeyboardSettings(
     val keySoundVolume: Int? = null,
     val bottomMarginDp: Int? = null,
     val adaptiveTouch: Boolean? = null,
+    /** Saisie par glissement (19/11/2026). Facultatif. */
+    val swipeTyping: Boolean? = null,
     val clipboardHistory: Boolean? = null,
     val oneHandedMode: String? = null,
     val oneHandedWidth: Int? = null,
