@@ -393,6 +393,13 @@ class ImeViewComposer(
                         ),
                     )
                     addView(
+                        prompt.translationPanel,
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                        ),
+                    )
+                    addView(
                         clipboardPanel,
                         FrameLayout.LayoutParams(
                             FrameLayout.LayoutParams.MATCH_PARENT,

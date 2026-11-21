@@ -70,13 +70,24 @@ class LiveTranslator(
     private val preferences = KeyboardPreferences(context)
     private val promptPreferences = TranslationPromptPreferences(context)
 
-    /** Langues proposées pour le modèle actif. */
-    var languages: List<TranslationLanguage> = emptyList()
+    /** Langues utilisables avec le modèle actif (les autres sont grisées dans la liste). */
+    var available: List<TranslationLanguage> = emptyList()
         private set
+
+    /** Langues choisies récemment (départ ou arrivée), la plus récente d'abord, parmi [available]. */
+    val recent: List<TranslationLanguage>
+        get() = preferences.translationRecent.mapNotNull { tag -> available.firstOrNull { it.tag == tag } }
 
     /** Langue cible choisie (null : pas de traduction possible avec ce modèle). */
     var target: TranslationLanguage? = null
         private set
+
+    /** Langue de départ choisie ; null : détectée par le modèle (« Détecter », par défaut). */
+    var source: TranslationLanguage? = null
+        private set
+
+    /** Langue du clavier : cible proposée quand on inverse depuis « Détecter ». */
+    private var keyboardLanguage = KeyboardLanguage.FR
 
     /** Une traduction tourne (en direct ou du champ). */
     val busy: Boolean get() = job?.isActive == true
@@ -109,8 +120,10 @@ class LiveTranslator(
             host.showMessage(context.getString(R.string.translation_model_too_small, context.getString(R.string.model_name_leger)))
             return false
         }
-        languages = TranslationLanguages.ordered(available, preferences.translationRecent)
+        this.available = available
+        keyboardLanguage = keyboard
         target = TranslationLanguages.defaultTarget(available, preferences.translationTarget, keyboard)
+        source = available.firstOrNull { it.tag == preferences.translationSource }?.takeIf { it != target }
         written = ""
         writtenSource = ""
         pendingSource = ""
@@ -122,11 +135,50 @@ class LiveTranslator(
     /** Langue cible touchée : retenue, et le segment en cours est retraduit dans cette langue. */
     fun selectTarget(language: TranslationLanguage) {
         if (target == language) return
+        // Même langue que celle de départ : on revient à « Détecter » (traduire vers sa propre langue n'a pas de sens).
+        if (source == language) setSource(null)
         target = language
         preferences.translationTarget = language.tag
+        remember(language)
+        languagesChanged()
+    }
+
+    /** Langue de départ touchée ([language] null : « Détecter »). */
+    fun selectSource(language: TranslationLanguage?) {
+        if (source == language) return
+        if (language != null && language == target) {
+            swap()
+            return
+        }
+        setSource(language)
+        language?.let(::remember)
+        languagesChanged()
+    }
+
+    /** ⇄ : la langue d'arrivée devient celle de départ, et inversement (depuis « Détecter », l'arrivée devient la langue du clavier). */
+    fun swap() {
+        val (newSource, newTarget) = TranslationLanguages.swap(source, target ?: return, keyboardLanguage, available)
+        setSource(newSource)
+        target = newTarget
+        preferences.translationTarget = newTarget.tag
+        languagesChanged()
+    }
+
+    private fun setSource(language: TranslationLanguage?) {
+        source = language
+        preferences.translationSource = language?.tag
+    }
+
+    private fun remember(language: TranslationLanguage) {
         preferences.translationRecent = TranslationLanguages.pushRecent(preferences.translationRecent, language.tag)
+    }
+
+    private fun languagesChanged() {
         host.onStateChanged()
-        if (pendingSource.isNotBlank()) schedule(immediate = true)
+        if (pendingSource.isNotBlank()) {
+            writtenSource = "" // même texte, autres langues : à retraduire
+            schedule(immediate = true)
+        }
     }
 
     /** Le texte tapé a changé : nouvelle traduction après une pause. */
@@ -163,7 +215,7 @@ class LiveTranslator(
             val pieces = SentenceTranslation.split(source)
             val translations = ArrayList<String>(pieces.size)
             for (piece in pieces) {
-                val key = SentenceTranslation.cacheKey(language.tag, piece.sentence)
+                val key = SentenceTranslation.cacheKey(this.source?.tag.orEmpty() + ">" + language.tag, piece.sentence)
                 val cached = sentenceCache[key]
                 if (cached != null) {
                     translations += cached
@@ -171,7 +223,7 @@ class LiveTranslator(
                 }
                 // Texte retapé entre-temps : on s'arrête là, la traduction suivante (lancée à la fin) reprendra le cache.
                 if (pendingSource != source && translations.isNotEmpty()) return@launch
-                val response = engine().rewrite(model, promptPreferences.get(), TranslationPrompt.userTurn(language, piece.sentence), "traduction")
+                val response = engine().rewrite(model, promptPreferences.get(), TranslationPrompt.userTurn(language, piece.sentence, this.source), "traduction")
                 // Réponse inutilisable : la phrase reste dans sa langue d'origine plutôt que de disparaître.
                 val translated = RewriteSafeguard.clean(response) ?: piece.sentence
                 remember(key, translated)
@@ -268,7 +320,12 @@ class LiveTranslator(
             return
         }
         launch(model) {
-            val response = engine().rewrite(model, promptPreferences.get(), TranslationPrompt.userTurn(language, source.trim()), "traduction du champ")
+            val response = engine().rewrite(
+                model,
+                promptPreferences.get(),
+                TranslationPrompt.userTurn(language, source.trim(), this.source),
+                "traduction du champ",
+            )
             val translated = RewriteSafeguard.clean(response) ?: return@launch
             if (!active) return@launch
             if (host.fieldTextToTranslate() != source) {

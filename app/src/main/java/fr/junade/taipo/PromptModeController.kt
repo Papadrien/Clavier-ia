@@ -129,6 +129,12 @@ class PromptModeController(
 
         /** Un changement de ton occupe le moteur (panneau IA). */
         fun toneBusy(): Boolean
+
+        /** Mode Traduction : les touches s'effacent (liste des langues ouverte) ou reviennent. */
+        fun setKeysHidden(hidden: Boolean, animate: Boolean = true)
+
+        /** Marge basse du clavier (zone système), reprise par la liste des langues. */
+        fun keyboardBottomInsetPx(): Int
     }
 
     /**
@@ -169,6 +175,10 @@ class PromptModeController(
 
     /** Bandeau des langues du mode Traduction, juste au-dessus de la barre de saisie (créé avec les vues). */
     internal lateinit var translationBar: TranslationBarView
+        private set
+
+    /** Liste des langues du mode Traduction, à la place des touches (créée avec les vues). */
+    internal lateinit var translationPanel: TranslationLanguagePanelView
         private set
     private lateinit var translationPresence: SpringPresence
 
@@ -275,18 +285,7 @@ class PromptModeController(
             applyViews()
         }
 
-        translationBar = TranslationBarView(context)
-        translationBar.visibility = View.GONE
-        translationPresence = SpringPresence(translationBar) { context.dimen(R.dimen.taipo_prompt_bar_rise_distance) }
-        translationBar.onLanguageSelected = { language ->
-            host.haptic()
-            translator.selectTarget(language)
-            promptBar.hintOverride = translationHint()
-        }
-        translationBar.onTranslateFieldClicked = {
-            host.haptic()
-            translator.translateField()
-        }
+        createTranslationViews()
 
         // Suggestions de mots et d'emoji du prompt : mêmes actions que la bande de la barre du haut.
         suggestionBar = PromptSuggestionBarView(context)
@@ -299,6 +298,53 @@ class PromptModeController(
         suggestionBar.setOnEmojiClickListener {
             host.playKeySound(KeySound.KEY)
             host.onEmojiSuggestionTapped()
+        }
+    }
+
+    /** Mode Traduction : bandeau des langues et liste des langues (masqués). */
+    private fun createTranslationViews() {
+        translationBar = TranslationBarView(context)
+        translationBar.visibility = View.GONE
+        translationPresence = SpringPresence(translationBar) { context.dimen(R.dimen.taipo_prompt_bar_rise_distance) }
+        translationBar.onTranslateFieldClicked = {
+            host.haptic()
+            closeLanguagePanel()
+            translator.translateField()
+        }
+        translationBar.onSourceClicked = { toggleLanguagePanel(TranslationBarView.Side.SOURCE) }
+        translationBar.onTargetClicked = { toggleLanguagePanel(TranslationBarView.Side.TARGET) }
+        translationBar.onSwapClicked = {
+            host.haptic()
+            closeLanguagePanel()
+            translator.swap()
+        }
+
+        // Liste des langues, à la place des touches (ajoutée à la pile clavier + panneaux par l'IME).
+        translationPanel = TranslationLanguagePanelView(context)
+        translationPanel.visibility = View.GONE
+        translationPanel.onClose = {
+            host.haptic()
+            closeLanguagePanel()
+        }
+        translationPanel.onLanguageChosen = { language ->
+            host.haptic()
+            if (openSide == TranslationBarView.Side.SOURCE) {
+                translator.selectSource(language)
+            } else if (language != null) {
+                translator.selectTarget(language)
+            }
+            closeLanguagePanel()
+        }
+        translationPanel.onUnavailableChosen = { language ->
+            host.haptic()
+            host.showMessage(
+                context.getString(
+                    R.string.translation_language_unavailable,
+                    language.displayName(),
+                    context.getString(R.string.model_name_equilibre),
+                    context.getString(R.string.model_name_performant),
+                ),
+            )
         }
     }
 
@@ -388,8 +434,46 @@ class PromptModeController(
 
     private fun renderTranslationBar() {
         if (!this::translationBar.isInitialized) return
-        val fieldHasText = active && translating && buffer.isBlank && !host.capturedFieldText().isNullOrBlank()
-        translationBar.render(translator.languages, translator.target, translator.busy, fieldHasText)
+        translationBar.render(translator.source, translator.target, translator.busy, openSide)
+        if (active && translating) promptBar.hintOverride = translationHint()
+    }
+
+    /** Côté dont la liste des langues est ouverte (à la place des touches), ou aucun. */
+    private var openSide = TranslationBarView.Side.NONE
+
+    /** Langue de départ ou d'arrivée touchée : ouvre sa liste, la referme si elle est déjà ouverte, ou passe à l'autre côté. */
+    private fun toggleLanguagePanel(side: TranslationBarView.Side) {
+        host.haptic()
+        if (openSide == side) {
+            closeLanguagePanel()
+            return
+        }
+        val wasOpen = openSide != TranslationBarView.Side.NONE
+        openSide = side
+        translationPanel.configure(host.keyboardBottomInsetPx())
+        translationPanel.fill(
+            forSource = side == TranslationBarView.Side.SOURCE,
+            selected = if (side == TranslationBarView.Side.SOURCE) translator.source else translator.target,
+            available = translator.available,
+            recent = translator.recent,
+            unavailableTag = context.getString(R.string.translation_needs_gemma4),
+        )
+        if (!wasOpen) host.setKeysHidden(true)
+        translationPanel.showAnimated()
+        renderTranslationBar()
+    }
+
+    /** Referme la liste des langues (animée, sauf [animate] faux) : les touches reviennent. */
+    private fun closeLanguagePanel(animate: Boolean = true) {
+        if (openSide == TranslationBarView.Side.NONE) return
+        openSide = TranslationBarView.Side.NONE
+        if (animate) {
+            translationPanel.hideAnimated { if (openSide == TranslationBarView.Side.NONE) host.setKeysHidden(false) }
+        } else {
+            translationPanel.visibility = View.GONE
+            host.setKeysHidden(false, animate = false)
+        }
+        renderTranslationBar()
     }
 
     /**
@@ -465,6 +549,7 @@ class PromptModeController(
         if (!active) return
         active = false
         if (translating) {
+            closeLanguagePanel(animate = false)
             translator.finish() // la traduction écrite reste dans le champ (une action Annuler)
             translating = false
             promptBar.hintOverride = null

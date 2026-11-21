@@ -327,6 +327,31 @@ internal class PromptHost(private val ime: ImeHostContext) : PromptModeControlle
     }
     override fun recordUndoEdit(inserted: String, original: String) = ime.recordUndoEdit(inserted, original)
     override fun toneBusy(): Boolean = ime.aiPanel.toneBusy
+    override fun keyboardBottomInsetPx(): Int = ime.keyboardView.bottomInsetPx()
+    override fun setKeysHidden(hidden: Boolean, animate: Boolean) {
+        val keys = ime.keyboardView
+        keys.animate().cancel()
+        if (!animate || !android.animation.ValueAnimator.areAnimatorsEnabled()) {
+            keys.visibility = if (hidden) View.INVISIBLE else View.VISIBLE
+            keys.alpha = 1f
+            keys.translationY = 0f
+            return
+        }
+        val shift = ime.keyboardView.context.dimen(R.dimen.taipo_translation_keys_shift)
+        if (hidden) {
+            // Les touches s'effacent en descendant un peu, pendant que la liste monte.
+            keys.animate().alpha(0f).translationY(shift).setDuration(KEYS_FADE_MS).withEndAction {
+                keys.visibility = View.INVISIBLE
+                keys.alpha = 1f
+                keys.translationY = 0f
+            }.start()
+        } else {
+            keys.visibility = View.VISIBLE
+            keys.alpha = 0f
+            keys.translationY = shift
+            keys.animate().alpha(1f).translationY(0f).setDuration(KEYS_FADE_MS).start()
+        }
+    }
 }
 
 /** Correction IA : voir [CorrectionAiController]. */
@@ -514,3 +539,6 @@ internal class InlineSuggestionsHost(private val ime: ImeHostContext) : InlineSu
     override fun isComposed(): Boolean = ime.viewComposer.isComposed
     override fun setInlineSuggestions(views: List<View>) = ime.correctionBar.setInlineSuggestions(views)
 }
+
+/** Mode Traduction : durée du fondu des touches quand la liste des langues s'ouvre ou se ferme. */
+private const val KEYS_FADE_MS = 220L

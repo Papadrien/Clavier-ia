@@ -324,4 +324,11 @@
     <!-- Panneau IA (20/11/2026) : punaise des actions épinglées, hauteur des puces (tons, langues de traduction). -->
     <dimen name="taipo_ai_panel_pin_size">14dp</dimen>
     <dimen name="taipo_ai_panel_chip_height">34dp</dimen>
+    <!-- Mode Traduction (21/11/2026) : rebond des noms de langue, contour de la puce ouverte, lignes et sections de la liste,
+         descente des touches quand la liste s'ouvre. -->
+    <dimen name="taipo_translation_name_bounce">6dp</dimen>
+    <dimen name="taipo_translation_open_stroke">2dp</dimen>
+    <dimen name="taipo_translation_row_height">44dp</dimen>
+    <dimen name="taipo_translation_section_text_size">11sp</dimen>
+    <dimen name="taipo_translation_keys_shift">18dp</dimen>
 </resources>
