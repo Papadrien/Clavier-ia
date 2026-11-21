@@ -23,12 +23,13 @@ internal class ImeMemoryManager(
     /** Libération différée des moteurs quand le clavier reste masqué ([MemoryRelease.IDLE_RELEASE_MS]). */
     private var idleReleaseJob: Job? = null
 
-    /** Clavier masqué : les gros moteurs seront libérés s'il le reste [MemoryRelease.IDLE_RELEASE_MS]. */
+    /** Clavier masqué : le modèle IA sera libéré s'il le reste [MemoryRelease.IDLE_RELEASE_MS] (pas le modèle de dictée). */
     fun onWindowHidden() {
         idleReleaseJob?.cancel()
         idleReleaseJob = scope.launch {
             delay(MemoryRelease.IDLE_RELEASE_MS)
-            releaseHeavyEngines("clavier masqué depuis ${MemoryRelease.IDLE_RELEASE_MS / 60_000} min")
+            // Le modèle de dictée (Vocal) reste chargé : léger et souvent utilisé (21/11/2026). Seul le modèle IA est libéré.
+            releaseHeavyEngines("clavier masqué depuis ${MemoryRelease.IDLE_RELEASE_MS / 60_000} min", includeVoice = false)
         }
     }
 
@@ -43,11 +44,11 @@ internal class ImeMemoryManager(
     }
 
     /**
-     * Libère le modèle IA et le modèle de dictée s'ils ne servent pas en ce moment (ils se rechargent à la prochaine
-     * utilisation). Le moteur IA est fermé hors du thread principal (la libération d'un gros modèle peut prendre un instant).
+     * Libère le modèle IA et, si [includeVoice] (mémoire basse seulement), le modèle de dictée, s'ils ne servent pas en ce moment
+     * (ils se rechargent à la prochaine utilisation). Le moteur IA est fermé hors du thread principal (la libération d'un gros modèle peut prendre un instant).
      */
-    private fun releaseHeavyEngines(reason: String) {
-        val voiceReleased = voice().releaseEngineIfIdle()
+    private fun releaseHeavyEngines(reason: String, includeVoice: Boolean = true) {
+        val voiceReleased = includeVoice && voice().releaseEngineIfIdle()
         scope.launch {
             val aiReleased = withContext(Dispatchers.Default) { llmHost().releaseIfIdle() }
             if (aiReleased || voiceReleased) AppLog.d(TAG, "moteurs libérés ($reason) : IA=$aiReleased dictée=$voiceReleased")
