@@ -19,6 +19,9 @@ internal class AiActionButtons(context: Context, style: BarStyle) {
     /** Bouton IA : ouvre (et referme) le panneau IA ; violet tant que le panneau est ouvert. */
     val aiButton = LabeledIconButton(context, style)
 
+    /** Icône du bouton IA animée : les étincelles deviennent quatre cases quand le panneau s'ouvre ([AiPanelIconDrawable]). */
+    val aiIcon = AiPanelIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
+
     /** Icône « corriger » animée : faisceau pendant le chargement ou la correction, coche retracée à la réussite. */
     val correctIcon = CorrectIconDrawable(context.dimen(R.dimen.taipo_icon_size).toInt())
 
@@ -64,6 +67,7 @@ internal class AiActionButtons(context: Context, style: BarStyle) {
         translateButton.label = context.getString(R.string.ai_action_translate)
 
         style.styleRoundIconButton(aiButton, R.drawable.ic_ai_panel)
+        aiButton.setImageDrawable(aiIcon) // même tracé que ic_ai_panel ; animé à l'ouverture du panneau
         aiButton.contentDescription = context.getString(R.string.ai_panel_button_description)
         aiButton.label = context.getString(R.string.ai_panel_button_label)
     }

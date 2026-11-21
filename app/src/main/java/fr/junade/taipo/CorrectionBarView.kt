@@ -365,7 +365,10 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
     fun setAiPanelOpen(open: Boolean) {
         if (aiPanelOpen == open) return
         aiPanelOpen = open
-        for (actions in listOf(normalActions, menuActions)) actions.aiButton.face = if (open) R.color.accent else R.color.surface_button
+        for (actions in listOf(normalActions, menuActions)) {
+            actions.aiButton.face = if (open) R.color.accent else R.color.surface_button
+            actions.aiIcon.setActive(open, animate = isLaidOut)
+        }
     }
 
     /** Touche sur « Chat » : entrer en mode prompt (story 5.1). */
@@ -390,6 +393,8 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
 
     override fun onDetachedFromWindow() {
         robotIcon?.cancel()
+        normalActions.aiIcon.cancel()
+        menuActions.aiIcon.cancel()
         modeAnimator?.cancel()
         hideGestureTip()
         super.onDetachedFromWindow()
