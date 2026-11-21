@@ -71,7 +71,9 @@ class KeyboardView(context: Context) : View(context) {
     var layout: KeyboardLayout = Keyboards.letters
         set(value) {
             if (field === value) return
+            val previous = field
             field = value
+            startLayoutRoll(previous, value)
             slotCache = null
             zones = computeZones()
             accessibility.invalidateRoot()
@@ -649,6 +651,10 @@ class KeyboardView(context: Context) : View(context) {
         if (spaceBarAnimation.isRunning) spaceBarAnimation.advance(now)
         if (digitSwipeAnimation.isRunning) digitSwipeAnimation.advance(now)
         keyRenderer.backspaceIconAngle = backspaceAnimation.iconAngle
+        val rollNow = SystemClock.uptimeMillis()
+        layoutRoll?.let { if (!it.isRunning(rollNow)) layoutRoll = null }
+        keyRenderer.roll = layoutRoll
+        keyRenderer.rollNowMs = rollNow
 
         val unit = content.widthPx / layout.referenceUnits
         // La touche dont le chiffre s'anime s'étire vers le bas : elle est dessinée en dernier, par-dessus la rangée du dessous.
@@ -690,8 +696,56 @@ class KeyboardView(context: Context) : View(context) {
         if (keyAnimationsRunning() || keyPreview.isRunning(nowMs) || gestureTrail.isRunning(nowMs)) postInvalidateOnAnimation()
     }
 
+    /** Animation « compteur » du changement de page en cours, ou null ([LayoutRoll]). */
+    private var layoutRoll: LayoutRoll? = null
+
+    /**
+     * Lettres ↔ chiffres ↔ symboles : démarre le compteur ([LayoutRoll]) depuis la touche de bascule de la nouvelle page. Rien
+     * avant le premier affichage, sans animations Android, ni pour un autre changement (langue, rangée de chiffres, pavé numérique).
+     */
+    private fun startLayoutRoll(previous: KeyboardLayout, next: KeyboardLayout) {
+        layoutRoll = null
+        val direction = LayoutRoll.direction(previous.id, next.id) ?: return
+        if (!isLaidOut || width == 0 || !ValueAnimator.areAnimatorsEnabled()) return
+        val oldSlots = slotsOf(previous)
+        val newSlots = slotsOf(next)
+        val origin = newSlots.firstOrNull { it.key.action is KeyAction.ToggleLayout || it.key.action is KeyAction.SymbolPage }
+            ?: return
+        val content = keyboardWidth()
+        layoutRoll = LayoutRoll.start(
+            SystemClock.uptimeMillis(),
+            direction,
+            oldSlots,
+            newSlots,
+            origin.centerX,
+            origin.centerY,
+            content.widthPx / next.referenceUnits,
+            usableHeightPx() / next.rows.size.toFloat(),
+            MotionStyle.current,
+        )
+        postInvalidateOnAnimation()
+    }
+
+    /** Centre et libellé de chaque touche de [page], à la place où elle est dessinée. */
+    private fun slotsOf(page: KeyboardLayout): List<LayoutRoll.Slot> {
+        val content = keyboardWidth()
+        val rowHeight = usableHeightPx() / page.rows.size.toFloat()
+        val unit = content.widthPx / page.referenceUnits
+        val slots = ArrayList<LayoutRoll.Slot>()
+        page.rows.forEachIndexed { rowIndex, row ->
+            var left = content.leftPx + page.rowStartUnits(row) * unit
+            for (key in row) {
+                val keyWidth = unit * key.weight
+                slots += LayoutRoll.Slot(key, left + keyWidth / 2f, rowIndex * rowHeight + rowHeight / 2f, keyRenderer.labelText(key, page, isShifted))
+                left += keyWidth
+            }
+        }
+        return slots
+    }
+
     /** Une animation des touches est en cours (Effacer, Maj, barre espace, chiffre, mode une main) : l'image suivante est due. */
-    private fun keyAnimationsRunning(): Boolean = backspaceAnimation.isRunning ||
+    private fun keyAnimationsRunning(): Boolean = layoutRoll != null ||
+        backspaceAnimation.isRunning ||
         shiftAnimation.isRunning ||
         spaceBarAnimation.isRunning ||
         digitSwipeAnimation.isRunning ||

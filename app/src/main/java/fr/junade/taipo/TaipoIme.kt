@@ -239,9 +239,9 @@ class TaipoIme : InputMethodService() {
         }
     }
 
-    /** Une action IA travaille : correction, réponse du chat, traitement d'une dictée ou d'une transcription IA. */
+    /** Une action IA travaille : correction, réponse du chat, traduction, changement de ton, dictée ou transcription IA. */
     private fun aiActionInProgress(): Boolean =
-        correction.inProgress || prompt.generationBusy() || voice.isTranscribing || aiTranscription.isProcessing
+        correction.inProgress || prompt.generationBusy() || voice.isTranscribing || aiTranscription.isProcessing || aiPanel.toneBusy
 
     private fun watchAiForBackdrop(enabled: Boolean) {
         mainHandler.removeCallbacks(aiBackdropTick)

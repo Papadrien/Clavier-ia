@@ -220,7 +220,14 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putString(KEY_TRANSLATION_TARGET, value).apply()
         }
 
-    /** Traduction : langues cibles récentes, la plus récente d'abord. */
+    /** Traduction : langue de départ (étiquette BCP 47) ; null : détectée par le modèle. */
+    var translationSource: String?
+        get() = prefs.getString(KEY_TRANSLATION_SOURCE, null)
+        set(value) {
+            prefs.edit().putString(KEY_TRANSLATION_SOURCE, value).apply()
+        }
+
+    /** Traduction : langues récentes (départ ou arrivée), la plus récente d'abord. */
     var translationRecent: List<String>
         get() = prefs.getString(KEY_TRANSLATION_RECENT, null)?.split(',')?.filter { it.isNotBlank() }.orEmpty()
         set(value) {
@@ -485,6 +492,7 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_AI_PANEL_OPEN_COUNT = "ai_panel_open_count"
         private const val KEY_TRANSLATION_TARGET = "translation_target"
         private const val KEY_TRANSLATION_RECENT = "translation_recent"
+        private const val KEY_TRANSLATION_SOURCE = "translation_source"
         private const val KEY_ADAPTIVE_TOUCH = "adaptive_touch_enabled"
         private const val KEY_SHOW_TOUCH_ZONES = "show_touch_zones"
         private const val KEY_NUMBER_ROW = "number_row_enabled"

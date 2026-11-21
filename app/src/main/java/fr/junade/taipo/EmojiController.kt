@@ -97,8 +97,7 @@ class EmojiController(private val host: Host) {
         val keyboard = host.keyboardView()
         panel.configure(keyboard.rowHeightPx(), keyboard.bottomInsetPx())
         panel.show(host.recentEmojis())
-        keyboard.visibility = View.INVISIBLE
-        panel.visibility = View.VISIBLE
+        PanelShade.show(panel, keyboard) // le panneau descend comme un store, les touches s'assombrissent
         refreshRecentBar()
         host.clearSuggestions()
     }
@@ -107,8 +106,12 @@ class EmojiController(private val host: Host) {
     fun hidePanel(resync: Boolean = true) {
         val panel = host.emojiPanel()
         if (panel.visibility != View.VISIBLE) return
-        panel.visibility = View.GONE
-        host.keyboardView().visibility = View.VISIBLE
+        // Bouton ABC : le store remonte ; changement de champ ou rotation ([resync] faux) : retour direct.
+        if (resync) {
+            PanelShade.hide(panel, host.keyboardView())
+        } else {
+            PanelShade.hideNow(panel, host.keyboardView())
+        }
         refreshRecentBar()
         if (resync) {
             host.syncAutoCapitalization()

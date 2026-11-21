@@ -60,4 +60,28 @@ class RewriteAndTranslationTest {
         assertEquals("es", TranslationLanguages.ordered(available, recent).first().tag)
         assertEquals(available.size, TranslationLanguages.ordered(available, recent).size)
     }
+
+    @Test
+    fun `langue de depart dans le tour utilisateur seulement si elle est choisie`() {
+        val fr = TranslationLanguage("fr", "French")
+        val en = TranslationLanguage("en", "English")
+        assertTrue(TranslationPrompt.userTurn(en, "Salut", fr).startsWith("Source language: French.\nTarget language: English."))
+        assertFalse(TranslationPrompt.userTurn(en, "Salut").contains("Source language"))
+    }
+
+    @Test
+    fun `inverser les langues`() {
+        val available = TranslationLanguages.forModel(AiModel.EQUILIBRE)
+        val fr = available.first { it.tag == "fr" }
+        val en = available.first { it.tag == "en" }
+        val ja = available.first { it.tag == "ja" }
+        // Départ choisi : simple échange.
+        assertEquals(en to fr, TranslationLanguages.swap(fr, en, KeyboardLanguage.FR, available))
+        // Depuis « Détecter » : l'arrivée devient le départ, la langue du clavier devient l'arrivée.
+        assertEquals(ja to fr, TranslationLanguages.swap(null, ja, KeyboardLanguage.FR, available))
+        // Clavier déjà dans la langue d'arrivée : on prend une autre langue (jamais la même des deux côtés).
+        val (src, dst) = TranslationLanguages.swap(null, fr, KeyboardLanguage.FR, available)
+        assertEquals(fr, src)
+        assertEquals(en, dst)
+    }
 }

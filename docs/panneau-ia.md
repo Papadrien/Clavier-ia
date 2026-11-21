@@ -40,7 +40,14 @@ Comme Gboard et SwiftKey, mais sur l'appareil : le texte ne part jamais vers un 
 - On tape dans la zone ; la traduction s'écrit dans le champ après 450 ms de pause et remplace la version précédente. Elle se fait
   phrase par phrase : les phrases déjà traduites viennent d'un cache, seule la phrase en cours repart au modèle.
   Envoyer (ou Entrée) fige le segment ; la suite s'écrit après lui. Croix ou appui dans le champ : on sort, la traduction reste.
-- La langue d'origine est détectée par le modèle. Langue cible retenue, langues récentes en tête.
+- Bandeau (maquette du 21/11/2026) : « Traduire le texte », langue de départ (« Détecter » par défaut), ⇄, langue d'arrivée.
+  Toucher une langue ouvre la liste des langues à la place des touches (`TranslationLanguagePanelView`) : « Détecter » (départ),
+  récentes, puis les 43 langues de l'application par ordre alphabétique ; celles que le modèle actif ne traduit pas sont grisées
+  (« Gemma 4 »). Langues de départ et d'arrivée retenues. ⇄ échange les deux ; depuis « Détecter », l'arrivée devient la langue
+  du clavier.
+- Animations : la liste monte en ressort, ses lignes arrivent l'une après l'autre, les touches s'effacent en descendant ; un nom
+  de langue qui change rebondit ; ⇄ tourne d'un demi-tour. Le fond animé s'anime pendant toute traduction (et tout changement de
+  ton), comme pour les autres actions IA.
 - « Traduire le texte » (rien de tapé, du texte dans le champ) : la sélection, ou tout le texte, est traduit sur place.
 - Langues proposées selon le modèle (`TranslationLanguages.forModel`) : aucune avec Gemma 3 270M, les 15 langues du clavier avec
   Gemma 3 1B (entraîné surtout en anglais), 43 langues avec Gemma 4 E2B / E4B et le modèle personnalisé.
@@ -57,6 +64,16 @@ Prompts système modifiables (pack premium) dans « Prompts système » et « Mo
 `TranslationPromptPreferences`. Ils font partie de la sauvegarde (`tone`, `translation`).
 
 Mesure d'usage : `ai_action` avec `type` `tone` ou `translate` (jamais le texte ni la langue).
+
+## Transitions (21/11/2026)
+
+- **Compteur** (`LayoutRoll`, dessiné par `KeyRenderer`) entre lettres, chiffres et symboles : les touches ne bougent pas, chaque
+  caractère défile hors de sa touche et le nouveau arrive à sa place, en vague depuis la touche touchée (« ?123 », « ABC »,
+  « =\< »). Vers les pages suivantes les caractères montent, vers les précédentes ils descendent.
+- **Store** (`PanelShade`) pour les panneaux emoji et IA : le panneau descend du haut de la zone des touches et se pose en
+  ressort, les touches s'assombrissent derrière ; à la fermeture (ABC, bouton IA), il remonte. Changement de champ ou rotation :
+  direct.
+- Les deux suivent le ressort du style d'animation ; animations Android coupées : changement direct.
 
 ## Rapidité (21/11/2026, version 4.0.0)
 

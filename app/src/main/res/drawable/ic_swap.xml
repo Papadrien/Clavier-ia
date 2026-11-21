@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Charte Taipo (lot 09) : ⇄ du mode Traduction (21/11/2026), deux flèches opposées. Taille : taipo_icon_size. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/taipo_icon_size"
+    android:height="@dimen/taipo_icon_size"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M4,8 H18 L14,4 M20,16 H6 L10,20"
+        android:strokeColor="@color/taipo_text"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

@@ -124,11 +124,16 @@ internal class AiPanelView(context: Context) : LinearLayout(context) {
             orientation = VERTICAL
             gravity = Gravity.CENTER
         }
+        val size = dimen(R.dimen.taipo_icon_size).toInt()
         val icon = ImageView(context).apply {
-            setImageResource(iconOf(action))
+            // Transcription : la même icône que le bouton de la barre (trois barres, au repos), pas le pictogramme du fichier.
+            if (action == AiAction.TRANSCRIPTION) {
+                setImageDrawable(WaveIconDrawable(size, context.themeColor(R.color.taipo_purple_light)))
+            } else {
+                setImageResource(iconOf(action))
+            }
             imageTintList = ColorStateList.valueOf(context.themeColor(R.color.text_primary))
         }
-        val size = dimen(R.dimen.taipo_icon_size).toInt()
         column.addView(icon, LayoutParams(size, size))
         val label = TextView(context).apply {
             setText(labelOf(action))
