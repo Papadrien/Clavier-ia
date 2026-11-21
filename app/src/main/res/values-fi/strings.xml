@@ -768,11 +768,11 @@
     <string name="floating_a11y_docked">Näppäimistö kiinnitetty alas</string>
     <!-- Nouveautés de la version (WhatsNew) -->
     <string name="whats_new_title">Uutta</string>
-    <string name="whats_new_heading">Uutta Taipo 3.1:ssä</string>
+    <string name="whats_new_heading">Uutta Taipo 4:ssä</string>
     <string name="whats_new_intro">Tämä muuttuu tässä versiossa.</string>
     <string name="whats_new_pill">Uutta</string>
-    <string name="whats_new_pill_description">Taipo 3.1:n uutuudet. Napauta ja tutustu niihin sovelluksessa.</string>
-    <string name="home_row_whats_new_subtitle">Mitä uutta Taipo 3.1:ssä</string>
+    <string name="whats_new_pill_description">Taipo 4:n uutuudet. Napauta ja tutustu niihin sovelluksessa.</string>
+    <string name="home_row_whats_new_subtitle">Mitä uutta Taipo 4:ssä</string>
     <string name="whats_new_ai_panel_title">Kaikki tekoäly yhdessä paneelissa</string>
     <string name="whats_new_ai_panel_body">Tekoälypainike avaa kaikki tekoälytoiminnot. Pitkä painallus kiinnittää toiminnon palkkiin: enintään kaksi.</string>
     <string name="whats_new_tone_title">Vaihda sävyä</string>

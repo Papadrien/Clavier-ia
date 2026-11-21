@@ -772,11 +772,11 @@
     <string name="floating_a11y_docked">Tastatură fixată jos</string>
     <!-- Nouveautés de la version (WhatsNew) -->
     <string name="whats_new_title">Noutăți</string>
-    <string name="whats_new_heading">Noutățile din Taipo 3.1</string>
+    <string name="whats_new_heading">Noutățile din Taipo 4</string>
     <string name="whats_new_intro">Iată ce se schimbă în această versiune.</string>
     <string name="whats_new_pill">Noutăți</string>
-    <string name="whats_new_pill_description">Noutățile din Taipo 3.1. Atinge pentru a le descoperi în aplicație.</string>
-    <string name="home_row_whats_new_subtitle">Ce se schimbă în Taipo 3.1</string>
+    <string name="whats_new_pill_description">Noutățile din Taipo 4. Atinge pentru a le descoperi în aplicație.</string>
+    <string name="home_row_whats_new_subtitle">Ce se schimbă în Taipo 4</string>
     <string name="whats_new_ai_panel_title">Toată AI-ul într-un panou</string>
     <string name="whats_new_ai_panel_body">Butonul AI deschide toate acțiunile AI. Ține apăsat pe una ca s-o fixezi în bară: cel mult două.</string>
     <string name="whats_new_tone_title">Schimbă tonul</string>

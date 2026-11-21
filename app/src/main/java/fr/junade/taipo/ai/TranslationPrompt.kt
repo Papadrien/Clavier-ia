@@ -119,3 +119,35 @@ object TranslationLanguages {
 object ToneSupport {
     fun supports(model: AiModel): Boolean = model != AiModel.ULTRA_LEGER
 }
+
+/**
+ * Traduction en direct phrase par phrase (optimisation du 21/11/2026) : seule la phrase en cours de frappe change d'une pause à
+ * l'autre ; les phrases déjà traduites sont reprises du cache au lieu d'être renvoyées au modèle. Le temps de chaque traduction ne
+ * grandit donc plus avec la longueur du texte tapé. Logique pure, testée en JVM.
+ */
+object SentenceTranslation {
+
+    /** Une phrase du texte source et ce qui la précède (espaces, retours à la ligne), gardé tel quel dans la traduction. */
+    data class Piece(val gapBefore: String, val sentence: String)
+
+    /** Phrases de [source] ([SentenceSplitter]), les blancs du début et de la fin écartés. */
+    fun split(source: String): List<Piece> {
+        val blocks = SentenceSplitter.split(source)
+        var previousEnd = -1
+        return blocks.map { block ->
+            val gap = if (previousEnd < 0) "" else source.substring(previousEnd, block.start)
+            previousEnd = block.endExclusive
+            Piece(gap, source.substring(block.start, block.endExclusive))
+        }
+    }
+
+    /** Recompose la traduction : chaque phrase traduite ([translations], même ordre que [pieces]) après son séparateur d'origine. */
+    fun assemble(pieces: List<Piece>, translations: List<String>): String =
+        pieces.zip(translations).joinToString("") { (piece, translated) -> piece.gapBefore + translated }
+
+    /** Clé du cache : langue cible et phrase source. */
+    fun cacheKey(targetTag: String, sentence: String): String = "$targetTag\u0000$sentence"
+
+    /** Taille du cache d'une session (phrases d'un long message, dans quelques langues). */
+    const val MAX_CACHED = 128
+}

@@ -800,11 +800,11 @@
     <string name="floating_a11y_docked">Keyboard docked at the bottom</string>
     <!-- Nouveautés de la version (WhatsNew) -->
     <string name="whats_new_title">What\'s new</string>
-    <string name="whats_new_heading">What\'s new in Taipo 3.1</string>
+    <string name="whats_new_heading">What\'s new in Taipo 4</string>
     <string name="whats_new_intro">Here is what changes with this version.</string>
     <string name="whats_new_pill">What\'s new</string>
-    <string name="whats_new_pill_description">What\'s new in Taipo 3.1. Tap to discover it in the app.</string>
-    <string name="home_row_whats_new_subtitle">What\'s new in Taipo 3.1</string>
+    <string name="whats_new_pill_description">What\'s new in Taipo 4. Tap to discover it in the app.</string>
+    <string name="home_row_whats_new_subtitle">What\'s new in Taipo 4</string>
     <string name="whats_new_ai_panel_title">All the AI in one panel</string>
     <string name="whats_new_ai_panel_body">The AI button opens every AI action. Long-press one to pin it to the bar: two at most.</string>
     <string name="whats_new_tone_title">Change the tone</string>

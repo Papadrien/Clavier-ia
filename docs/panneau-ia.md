@@ -37,7 +37,8 @@ Assuré, Bienveillant, Réseaux sociaux.
 Comme Gboard et SwiftKey, mais sur l'appareil : le texte ne part jamais vers un service en ligne.
 
 - Le mode Traduction réutilise la zone de saisie du mode Chat ; la zone de chat laisse la place au bandeau des langues.
-- On tape dans la zone ; la traduction s'écrit dans le champ après 700 ms de pause et remplace la version précédente.
+- On tape dans la zone ; la traduction s'écrit dans le champ après 450 ms de pause et remplace la version précédente. Elle se fait
+  phrase par phrase : les phrases déjà traduites viennent d'un cache, seule la phrase en cours repart au modèle.
   Envoyer (ou Entrée) fige le segment ; la suite s'écrit après lui. Croix ou appui dans le champ : on sort, la traduction reste.
 - La langue d'origine est détectée par le modèle. Langue cible retenue, langues récentes en tête.
 - « Traduire le texte » (rien de tapé, du texte dans le champ) : la sélection, ou tout le texte, est traduit sur place.
@@ -56,6 +57,18 @@ Prompts système modifiables (pack premium) dans « Prompts système » et « Mo
 `TranslationPromptPreferences`. Ils font partie de la sauvegarde (`tone`, `translation`).
 
 Mesure d'usage : `ai_action` avec `type` `tone` ou `translate` (jamais le texte ni la langue).
+
+## Rapidité (21/11/2026, version 4.0.0)
+
+- **Préchargement** (`AiWarmup`) : le modèle se charge en arrière-plan à l'ouverture du panneau IA, et dès que le champ reçoit du
+  texte si une action IA a servi dans les dernières 24 h ; avec l'audio si la dernière action était une Transcription IA. Le
+  chargement (plusieurs secondes pour Gemma 4 sur processeur) n'est plus attendu au premier appui. Libération inchangée (clavier
+  masqué 5 min, mémoire basse).
+- **Décodage glouton et réponse plafonnée** (`InferenceTuning`) pour la correction, le ton et la traduction : pas de tirage au
+  sort, et un modèle qui part en boucle s'arrête tôt (plafond : longueur du texte / 2 + 64 jetons). Le Chat n'est pas concerné.
+- **Traduction en direct phrase par phrase** et pause ramenée à 450 ms.
+- Pixel 9 : le GPU échoue avec LiteRT-LM (OpenCL absent), le modèle tourne sur le processeur ; le gain le plus net vient du
+  préchargement et d'un modèle plus léger (Colibri) pour la correction.
 
 ## À valider sur l'appareil
 

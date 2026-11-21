@@ -768,11 +768,11 @@
     <string name="floating_a11y_docked">Tastatur unten angedockt</string>
     <!-- Nouveautés de la version (WhatsNew) -->
     <string name="whats_new_title">Neuigkeiten</string>
-    <string name="whats_new_heading">Neu in Taipo 3.1</string>
+    <string name="whats_new_heading">Neu in Taipo 4</string>
     <string name="whats_new_intro">Das ändert sich mit dieser Version.</string>
     <string name="whats_new_pill">Neuigkeiten</string>
-    <string name="whats_new_pill_description">Neu in Taipo 3.1. Tippe, um es in der App zu entdecken.</string>
-    <string name="home_row_whats_new_subtitle">Was sich in Taipo 3.1 ändert</string>
+    <string name="whats_new_pill_description">Neu in Taipo 4. Tippe, um es in der App zu entdecken.</string>
+    <string name="home_row_whats_new_subtitle">Was sich in Taipo 4 ändert</string>
     <string name="whats_new_ai_panel_title">Die ganze KI in einem Bereich</string>
     <string name="whats_new_ai_panel_body">Die KI-Taste öffnet alle KI-Aktionen. Lange drücken heftet eine an die Leiste an: höchstens zwei.</string>
     <string name="whats_new_tone_title">Ton ändern</string>

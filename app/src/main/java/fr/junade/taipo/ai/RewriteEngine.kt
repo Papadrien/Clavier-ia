@@ -1,9 +1,7 @@
 package fr.junade.taipo.ai
 
 import android.os.SystemClock
-import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.Conversation
-import com.google.ai.edge.litertlm.ConversationConfig
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.model.AiModel
 import kotlinx.coroutines.CancellationException
@@ -74,7 +72,7 @@ class RewriteEngine(private val host: LlmEngineHost) {
         if (isCancelled()) throw RewriteCancelledException()
         // Une seule conversation à la fois sur le moteur : celle du mode Chat est refermée (rouverte au prompt suivant).
         host.releaseOpenConversation()
-        val config = ConversationConfig(systemInstruction = Contents.of(systemPrompt))
+        val config = InferenceTuning.rewriteConversation(systemPrompt, userTurn.length)
         val startedAt = SystemClock.elapsedRealtime()
         return withContext(Dispatchers.Default) {
             engine.createConversation(config).use { conversation ->

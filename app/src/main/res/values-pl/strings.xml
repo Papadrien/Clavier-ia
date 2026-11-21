@@ -776,11 +776,11 @@
     <string name="floating_a11y_docked">Klawiatura zadokowana na dole</string>
     <!-- Nouveautés de la version (WhatsNew) -->
     <string name="whats_new_title">Nowości</string>
-    <string name="whats_new_heading">Nowości w Taipo 3.1</string>
+    <string name="whats_new_heading">Nowości w Taipo 4</string>
     <string name="whats_new_intro">Oto co zmienia się w tej wersji.</string>
     <string name="whats_new_pill">Nowości</string>
-    <string name="whats_new_pill_description">Nowości w Taipo 3.1. Dotknij, by poznać je w aplikacji.</string>
-    <string name="home_row_whats_new_subtitle">Co się zmienia w Taipo 3.1</string>
+    <string name="whats_new_pill_description">Nowości w Taipo 4. Dotknij, by poznać je w aplikacji.</string>
+    <string name="home_row_whats_new_subtitle">Co się zmienia w Taipo 4</string>
     <string name="whats_new_ai_panel_title">Całe AI w jednym panelu</string>
     <string name="whats_new_ai_panel_body">Przycisk AI otwiera wszystkie akcje AI. Przytrzymaj jedną, by przypiąć ją do paska: najwyżej dwie.</string>
     <string name="whats_new_tone_title">Zmiana tonu</string>

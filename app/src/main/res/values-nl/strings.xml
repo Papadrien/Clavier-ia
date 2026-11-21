@@ -768,11 +768,11 @@
     <string name="floating_a11y_docked">Toetsenbord onderaan vastgezet</string>
     <!-- Nouveautés de la version (WhatsNew) -->
     <string name="whats_new_title">Nieuw</string>
-    <string name="whats_new_heading">Nieuw in Taipo 3.1</string>
+    <string name="whats_new_heading">Nieuw in Taipo 4</string>
     <string name="whats_new_intro">Dit verandert er met deze versie.</string>
     <string name="whats_new_pill">Nieuw</string>
-    <string name="whats_new_pill_description">Nieuw in Taipo 3.1. Tik om het in de app te ontdekken.</string>
-    <string name="home_row_whats_new_subtitle">Wat verandert er in Taipo 3.1</string>
+    <string name="whats_new_pill_description">Nieuw in Taipo 4. Tik om het in de app te ontdekken.</string>
+    <string name="home_row_whats_new_subtitle">Wat verandert er in Taipo 4</string>
     <string name="whats_new_ai_panel_title">Alle AI in één paneel</string>
     <string name="whats_new_ai_panel_body">De AI-knop opent alle AI-acties. Houd er één ingedrukt om ze aan de balk vast te pinnen: maximaal twee.</string>
     <string name="whats_new_tone_title">Toon veranderen</string>

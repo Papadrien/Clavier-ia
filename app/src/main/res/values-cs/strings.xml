@@ -776,11 +776,11 @@
     <string name="floating_a11y_docked">Klávesnice ukotvená dole</string>
     <!-- Nouveautés de la version (WhatsNew) -->
     <string name="whats_new_title">Novinky</string>
-    <string name="whats_new_heading">Novinky v Taipo 3.1</string>
+    <string name="whats_new_heading">Novinky v Taipo 4</string>
     <string name="whats_new_intro">Tohle se mění v této verzi.</string>
     <string name="whats_new_pill">Novinky</string>
-    <string name="whats_new_pill_description">Novinky v Taipo 3.1. Klepnutím je objevíte v aplikaci.</string>
-    <string name="home_row_whats_new_subtitle">Co je nového v Taipo 3.1</string>
+    <string name="whats_new_pill_description">Novinky v Taipo 4. Klepnutím je objevíte v aplikaci.</string>
+    <string name="home_row_whats_new_subtitle">Co je nového v Taipo 4</string>
     <string name="whats_new_ai_panel_title">Celá AI v jednom panelu</string>
     <string name="whats_new_ai_panel_body">Tlačítko AI otevře všechny akce AI. Podržením akci připnete na lištu: nejvýše dvě.</string>
     <string name="whats_new_tone_title">Změna tónu</string>

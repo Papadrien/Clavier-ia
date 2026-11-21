@@ -86,8 +86,10 @@ class LlmEngineHost(private val appContext: Context) {
      * déjà chargé sans audio est alors rechargé avec. Un moteur chargé avec audio reste réutilisé pour le texte.
      * À appeler avec [inferenceLock] tenu.
      */
-    suspend fun ensureLoaded(model: AiModel, onLoading: () -> Unit, withAudio: Boolean = false): Engine {
+    suspend fun ensureLoaded(model: AiModel, onLoading: () -> Unit, withAudio: Boolean = false, forUse: Boolean = true): Engine {
         val file = ModelFileResolver.resolve(appContext, model)
+        // Une vraie action IA (pas un préchargement) : retenue pour précharger le modèle la prochaine fois (voir AiWarmup).
+        if (forUse) usagePrefs.edit().putLong(KEY_LAST_USE, System.currentTimeMillis()).putBoolean(KEY_LAST_AUDIO, withAudio).apply()
 
         val current = engine
         if (current != null && loadedModel == model && loadedFile?.path == file.path && (loadedWithAudio || !withAudio)) {
@@ -186,6 +188,14 @@ class LlmEngineHost(private val appContext: Context) {
         return true
     }
 
+    private val usagePrefs = appContext.getSharedPreferences(USAGE_PREFS, Context.MODE_PRIVATE)
+
+    /** Instant (ms, horloge murale) de la dernière action IA, 0 si aucune : décide du préchargement ([fr.junade.taipo.AiWarmup]). */
+    val lastUseAt: Long get() = usagePrefs.getLong(KEY_LAST_USE, 0L)
+
+    /** La dernière action IA demandait l'audio (Transcription IA) : le préchargement charge alors le moteur avec l'audio. */
+    val lastUseWithAudio: Boolean get() = usagePrefs.getBoolean(KEY_LAST_AUDIO, false)
+
     /** Un moteur est chargé en mémoire. */
     val isLoaded: Boolean get() = engine != null
 
@@ -211,8 +221,8 @@ class LlmEngineHost(private val appContext: Context) {
      * si une correction ou une génération est en cours, il attend son tour ; si le modèle est déjà
      * chargé, il ne fait rien. Lève les exceptions de chargement (modèle absent, échec d'initialisation).
      */
-    suspend fun preload(model: AiModel) {
-        inferenceLock.withLock { ensureLoaded(model, onLoading = { }) }
+    suspend fun preload(model: AiModel, withAudio: Boolean = false) {
+        inferenceLock.withLock { ensureLoaded(model, onLoading = { }, withAudio = withAudio, forUse = false) }
     }
 
     init {
@@ -253,6 +263,9 @@ class LlmEngineHost(private val appContext: Context) {
 
     companion object {
         private const val TAG = "LlmEngineHost"
+        private const val USAGE_PREFS = "ai_usage"
+        private const val KEY_LAST_USE = "last_use_at"
+        private const val KEY_LAST_AUDIO = "last_use_audio"
 
         /** Ferme tous les moteurs du processus (changement d'accélération dans l'écran « Modèle IA »). Hors du thread principal. */
         fun closeEverywhere() {

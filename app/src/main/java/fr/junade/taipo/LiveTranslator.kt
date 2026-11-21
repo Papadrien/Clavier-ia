@@ -7,6 +7,7 @@ import fr.junade.taipo.ai.InferenceFailureClassifier
 import fr.junade.taipo.ai.RewriteCancelledException
 import fr.junade.taipo.ai.RewriteEngine
 import fr.junade.taipo.ai.RewriteSafeguard
+import fr.junade.taipo.ai.SentenceTranslation
 import fr.junade.taipo.ai.TranslationLanguage
 import fr.junade.taipo.ai.TranslationLanguages
 import fr.junade.taipo.ai.TranslationPrompt
@@ -113,6 +114,7 @@ class LiveTranslator(
         written = ""
         writtenSource = ""
         pendingSource = ""
+        sentenceCache.clear()
         active = true
         return true
     }
@@ -157,13 +159,37 @@ class LiveTranslator(
             return
         }
         launch(model) {
-            val response = engine().rewrite(model, promptPreferences.get(), TranslationPrompt.userTurn(language, source.trim()), "traduction")
-            val translated = RewriteSafeguard.clean(response) ?: return@launch
+            // Phrase par phrase : les phrases déjà traduites viennent du cache, seule celle en cours part au modèle.
+            val pieces = SentenceTranslation.split(source)
+            val translations = ArrayList<String>(pieces.size)
+            for (piece in pieces) {
+                val key = SentenceTranslation.cacheKey(language.tag, piece.sentence)
+                val cached = sentenceCache[key]
+                if (cached != null) {
+                    translations += cached
+                    continue
+                }
+                // Texte retapé entre-temps : on s'arrête là, la traduction suivante (lancée à la fin) reprendra le cache.
+                if (pendingSource != source && translations.isNotEmpty()) return@launch
+                val response = engine().rewrite(model, promptPreferences.get(), TranslationPrompt.userTurn(language, piece.sentence), "traduction")
+                // Réponse inutilisable : la phrase reste dans sa langue d'origine plutôt que de disparaître.
+                val translated = RewriteSafeguard.clean(response) ?: piece.sentence
+                remember(key, translated)
+                translations += translated
+            }
             // Session refermée ou autre langue choisie entre-temps : résultat périmé.
             if (!active || target != language) return@launch
-            write(translated)
+            write(SentenceTranslation.assemble(pieces, translations))
             writtenSource = source
         }
+    }
+
+    /** Traductions déjà obtenues dans la session (phrase source et langue cible → traduction), les plus anciennes oubliées d'abord. */
+    private val sentenceCache = LinkedHashMap<String, String>()
+
+    private fun remember(key: String, translation: String) {
+        sentenceCache[key] = translation
+        while (sentenceCache.size > SentenceTranslation.MAX_CACHED) sentenceCache.remove(sentenceCache.keys.first())
     }
 
     private fun write(text: String) {
@@ -308,7 +334,7 @@ class LiveTranslator(
     private companion object {
         const val TAG = "LiveTranslator"
 
-        /** Pause de frappe avant de traduire (un peu plus longue que chez Gboard : le modèle local est plus lent). */
-        const val PAUSE_MS = 700L
+        /** Pause de frappe avant de traduire (21/11/2026 : 450 ms au lieu de 700, seule la phrase en cours est retraduite). */
+        const val PAUSE_MS = 450L
     }
 }

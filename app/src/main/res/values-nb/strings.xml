@@ -768,11 +768,11 @@
     <string name="floating_a11y_docked">Tastaturet er festet nederst</string>
     <!-- Nouveautés de la version (WhatsNew) -->
     <string name="whats_new_title">Nyheter</string>
-    <string name="whats_new_heading">Nytt i Taipo 3.1</string>
+    <string name="whats_new_heading">Nytt i Taipo 4</string>
     <string name="whats_new_intro">Dette endres med denne versjonen.</string>
     <string name="whats_new_pill">Nyheter</string>
-    <string name="whats_new_pill_description">Nytt i Taipo 3.1. Trykk for å oppdage det i appen.</string>
-    <string name="home_row_whats_new_subtitle">Hva som er nytt i Taipo 3.1</string>
+    <string name="whats_new_pill_description">Nytt i Taipo 4. Trykk for å oppdage det i appen.</string>
+    <string name="home_row_whats_new_subtitle">Hva som er nytt i Taipo 4</string>
     <string name="whats_new_ai_panel_title">All AI i ett panel</string>
     <string name="whats_new_ai_panel_body">AI-knappen åpner alle AI-handlinger. Hold inne én for å feste den i linjen: maks to.</string>
     <string name="whats_new_tone_title">Endre tonen</string>

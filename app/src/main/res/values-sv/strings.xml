@@ -768,11 +768,11 @@
     <string name="floating_a11y_docked">Tangentbordet är dockat längst ned</string>
     <!-- Nouveautés de la version (WhatsNew) -->
     <string name="whats_new_title">Nyheter</string>
-    <string name="whats_new_heading">Nytt i Taipo 3.1</string>
+    <string name="whats_new_heading">Nytt i Taipo 4</string>
     <string name="whats_new_intro">Det här ändras med den här versionen.</string>
     <string name="whats_new_pill">Nyheter</string>
-    <string name="whats_new_pill_description">Nytt i Taipo 3.1. Tryck för att upptäcka det i appen.</string>
-    <string name="home_row_whats_new_subtitle">Vad som är nytt i Taipo 3.1</string>
+    <string name="whats_new_pill_description">Nytt i Taipo 4. Tryck för att upptäcka det i appen.</string>
+    <string name="home_row_whats_new_subtitle">Vad som är nytt i Taipo 4</string>
     <string name="whats_new_ai_panel_title">All AI i en panel</string>
     <string name="whats_new_ai_panel_body">AI-knappen öppnar alla AI-åtgärder. Håll in en för att fästa den i fältet: högst två.</string>
     <string name="whats_new_tone_title">Ändra tonen</string>

@@ -768,11 +768,11 @@
     <string name="floating_a11y_docked">Billentyűzet alul rögzítve</string>
     <!-- Nouveautés de la version (WhatsNew) -->
     <string name="whats_new_title">Újdonságok</string>
-    <string name="whats_new_heading">Újdonságok a Taipo 3.1-ben</string>
+    <string name="whats_new_heading">Újdonságok a Taipo 4-ben</string>
     <string name="whats_new_intro">Ez változik ebben a verzióban.</string>
     <string name="whats_new_pill">Újdonságok</string>
-    <string name="whats_new_pill_description">A Taipo 3.1 újdonságai. Koppintson, és fedezze fel őket az alkalmazásban.</string>
-    <string name="home_row_whats_new_subtitle">Mi változik a Taipo 3.1-ben</string>
+    <string name="whats_new_pill_description">A Taipo 4 újdonságai. Koppintson, és fedezze fel őket az alkalmazásban.</string>
+    <string name="home_row_whats_new_subtitle">Mi változik a Taipo 4-ben</string>
     <string name="whats_new_ai_panel_title">Minden MI egy panelen</string>
     <string name="whats_new_ai_panel_body">Az MI gomb megnyitja az összes MI-műveletet. Hosszan nyomva egyet kitűzhet a sávra: legfeljebb kettőt.</string>
     <string name="whats_new_tone_title">Hangnemváltás</string>

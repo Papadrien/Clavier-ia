@@ -1,4 +1,4 @@
-What's new in Taipo 3.1
+What's new in Taipo 4
 • All the AI in one panel
 • Change the tone
 • Translation on your phone

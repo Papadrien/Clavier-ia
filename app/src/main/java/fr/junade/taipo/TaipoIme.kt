@@ -65,6 +65,7 @@ class TaipoIme : InputMethodService() {
         override val undo: UndoController get() = this@TaipoIme.undoController
         override val aiTranscription: AiTranscriptionController get() = this@TaipoIme.aiTranscription
         override val aiPanel: AiPanelController get() = this@TaipoIme.aiPanel
+        override val aiWarmup: AiWarmup get() = this@TaipoIme.aiWarmup
         override val messagePopup: MessagePopup get() = this@TaipoIme.messagePopup
         override val viewComposer: ImeViewComposer get() = this@TaipoIme.viewComposer
         override val correctionBar: CorrectionBarView get() = this@TaipoIme.correctionBar
@@ -222,6 +223,9 @@ class TaipoIme : InputMethodService() {
     private val llmHostLazy = lazy { LlmEngineHost(applicationContext) }
     private val llmHost by llmHostLazy
     private val correctionEngine by lazy { CorrectionEngine(applicationContext, llmHost) }
+
+    // Préchargement du modèle avant qu'une action IA le demande (21/11/2026) : voir AiWarmup.
+    private val aiWarmup by lazy { AiWarmup(serviceScope, { llmHost }, { imeContext.activeModel() }) }
 
     // Réécritures en un tour sur le même moteur : changement de ton et traduction (20/11/2026).
     private val rewriteEngine by lazy { RewriteEngine(llmHost) }
@@ -1301,6 +1305,8 @@ class TaipoIme : InputMethodService() {
                     !ic.getSelectedText(0).isNullOrEmpty() // tout le texte peut être sélectionné
                 )
         correctionBar.setFieldHasText(hasText)
+        // Du texte à corriger, traduire ou réécrire : le modèle se charge d'avance si l'IA a servi récemment (pas dans un champ sensible).
+        if (hasText && correctionBar.state == CorrectionBarState.HIDDEN && !sensitiveField) aiWarmup.onFieldHasText()
         correctionBar.state = when {
             !hasText -> CorrectionBarState.HIDDEN
             else -> CorrectionBarState.IDLE

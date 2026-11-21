@@ -772,11 +772,11 @@
     <string name="floating_a11y_docked">Tastiera agganciata in basso</string>
     <!-- Nouveautés de la version (WhatsNew) -->
     <string name="whats_new_title">Novità</string>
-    <string name="whats_new_heading">Le novità di Taipo 3.1</string>
+    <string name="whats_new_heading">Le novità di Taipo 4</string>
     <string name="whats_new_intro">Ecco cosa cambia con questa versione.</string>
     <string name="whats_new_pill">Novità</string>
-    <string name="whats_new_pill_description">Novità di Taipo 3.1. Tocca per scoprirle nell\'app.</string>
-    <string name="home_row_whats_new_subtitle">Cosa cambia in Taipo 3.1</string>
+    <string name="whats_new_pill_description">Novità di Taipo 4. Tocca per scoprirle nell\'app.</string>
+    <string name="home_row_whats_new_subtitle">Cosa cambia in Taipo 4</string>
     <string name="whats_new_ai_panel_title">Tutta l\'IA in un pannello</string>
     <string name="whats_new_ai_panel_body">Il pulsante IA apre tutte le azioni IA. Tieni premuta un\'azione per fissarla nella barra: al massimo due.</string>
     <string name="whats_new_tone_title">Cambia il tono</string>

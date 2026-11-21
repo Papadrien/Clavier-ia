@@ -17,7 +17,7 @@ import androidx.annotation.StringRes
 object WhatsNew {
 
     /** Version annoncée. */
-    const val RELEASE = "3.1"
+    const val RELEASE = "4.0"
 
     /** Nombre d'ouvertures du clavier où la pilule est montrée, au plus. */
     const val MAX_SHOWS = 3

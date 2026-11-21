@@ -1,4 +1,4 @@
-Uutta Taipo 3.1:ssä
+Uutta Taipo 4:ssä
 • Kaikki tekoäly yhdessä paneelissa
 • Vaihda sävyä
 • Käännös puhelimessa

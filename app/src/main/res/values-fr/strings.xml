@@ -819,11 +819,11 @@
     <string name="floating_a11y_docked">Clavier ancré en bas</string>
     <!-- Nouveautés de la version (WhatsNew) -->
     <string name="whats_new_title">Nouveautés</string>
-    <string name="whats_new_heading">Les nouveautés de Taipo 3.1</string>
+    <string name="whats_new_heading">Les nouveautés de Taipo 4</string>
     <string name="whats_new_intro">Voici ce qui change avec cette version.</string>
     <string name="whats_new_pill">Nouveautés</string>
-    <string name="whats_new_pill_description">Nouveautés de Taipo 3.1. Touchez pour les découvrir dans l\'application.</string>
-    <string name="home_row_whats_new_subtitle">Ce qui change dans Taipo 3.1</string>
+    <string name="whats_new_pill_description">Nouveautés de Taipo 4. Touchez pour les découvrir dans l\'application.</string>
+    <string name="home_row_whats_new_subtitle">Ce qui change dans Taipo 4</string>
     <string name="whats_new_ai_panel_title">Toute l\'IA dans un panneau</string>
     <string name="whats_new_ai_panel_body">Le bouton IA ouvre toutes les actions IA. Un appui long en épingle une dans la barre : deux au maximum.</string>
     <string name="whats_new_tone_title">Changer le ton</string>
