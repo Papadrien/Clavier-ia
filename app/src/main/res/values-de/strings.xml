@@ -679,12 +679,12 @@
     <string name="premium_colors_title">Neun Tastaturfarben</string>
     <string name="premium_colors_text">Indigo, Lagune, Himbeere… Eingabetaste, Schaltflächen und Auswahlen übernehmen die gewählte Farbe, in Hell und Dunkel.</string>
     <string name="premium_prompts_title">Ihre eigenen KI-Anweisungen</string>
-    <string name="premium_prompts_text">Schreiben Sie die Anweisungen für Korrektur, Chat und Diktat um, damit die KI so schreibt wie Sie.</string>
+    <string name="premium_prompts_text">Schreiben Sie die Anweisungen für Korrektur, Chat, Diktat, Ton und Übersetzung um, damit die KI so schreibt wie Sie.</string>
     <string name="premium_prompts_example">„Korrigiere die Fehler, ohne meinen Stil oder meine Formulierungen zu ändern.“</string>
     <string name="premium_clipboard_title">Erweiterte Zwischenablage</string>
     <string name="premium_clipboard_text">Kopien werden 7 Tage statt 12 Std. behalten. Bis zu 50 angeheftete Elemente statt 5.</string>
     <string name="premium_style_title">Eine Tastatur in Ihrem Stil</string>
-    <string name="premium_style_text">Sieben animierte Hintergründe, die sich beim Tippen bewegen, fünf weitere Tastenformen, neun Tastaturschriften (darunter OpenDyslexic) und fünf Animationsstile: Flink, Gelee, Abflug, Tropfen und Gleiten.</string>
+    <string name="premium_style_text">Sieben animierte Hintergründe, die sich beim Tippen bewegen, Ihr eigenes Foto hinter den Tasten, fünf weitere Tastenformen und neun Tastaturschriften (darunter OpenDyslexic).</string>
     <string name="premium_free_reminder">Tippen, Sprachen, KI und Sicherung bleiben kostenlos, mit oder ohne Paket.</string>
     <string name="premium_buy">Paket kaufen</string>
     <string name="premium_buy_with_price">Paket kaufen · %1$s</string>
@@ -692,7 +692,7 @@
     <string name="premium_back_home">Zurück zur Startseite</string>
     <string name="back_arrow_description">Zurück</string>
     <string name="premium_active_title">Paket aktiv</string>
-    <string name="premium_active_thanks">Danke! Farben, animierte Hintergründe, Tastenformen, Schriften, Ihre KI-Anweisungen und die erweiterte Zwischenablage sind freigeschaltet.</string>
+    <string name="premium_active_thanks">Danke! Farben, animierte Hintergründe und Ihr Foto, Tastenformen, Schriften, Animationsstile, Ihre KI-Anweisungen, Ihr eigenes Modell und die erweiterte Zwischenablage sind freigeschaltet.</string>
     <string name="premium_status_pending">Zahlung ausstehend: Das Paket wird aktiviert, sobald Google Play sie bestätigt.</string>
     <string name="premium_status_unavailable">Google Play ist auf diesem Gerät nicht verfügbar, oder das Paket konnte nicht geladen werden. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.</string>
     <string name="premium_status_error">Der Kauf ist nicht zustande gekommen. Es wurde nichts belastet; Sie können es erneut versuchen.</string>
@@ -875,4 +875,6 @@
     <string name="onboarding_done_title">Taipo ist bereit</string>
     <string name="onboarding_done_show">Alle 6 Schritte sind erledigt. Tippe, um sie wieder anzuzeigen.</string>
     <string name="onboarding_done_hide">Tippe, um die Schritte auszublenden.</string>
+    <string name="premium_motion_title">Animationen nach Ihrem Geschmack</string>
+    <string name="premium_motion_text">Neun Stile für alle Animationen der Tastatur: Flink, Gelee, Abflug, Tropfen und Gleiten sowie die Partikelstile Funken, Pixel, Herzblase und Blüte.</string>
 </resources>

@@ -687,12 +687,12 @@
     <string name="premium_colors_title">Devět barev klávesnice</string>
     <string name="premium_colors_text">Indigová, Laguna, Malinová… Klávesa Enter, tlačítka a výběry převezmou zvolenou barvu, ve světlém i tmavém režimu.</string>
     <string name="premium_prompts_title">Vlastní pokyny pro AI</string>
-    <string name="premium_prompts_text">Přepište pokyny pro opravy, chat a diktování, aby AI psala jako vy.</string>
+    <string name="premium_prompts_text">Přepište pokyny pro opravy, chat, diktování, tón a překlad, aby AI psala jako vy.</string>
     <string name="premium_prompts_example">„Oprav chyby, ale neměň můj styl ani formulace.“</string>
     <string name="premium_clipboard_title">Rozšířená schránka</string>
     <string name="premium_clipboard_text">Kopie uchované 7 dní místo 12 hodin. Až 50 připnutých položek místo 5.</string>
     <string name="premium_style_title">Klávesnice ve vašem stylu</string>
-    <string name="premium_style_text">Sedm animovaných pozadí, která se hýbou při psaní, pět dalších tvarů kláves, devět písem klávesnice (včetně OpenDyslexic) a pět stylů animace: Svižná, Želé, Odlet, Kapka a Klouzání.</string>
+    <string name="premium_style_text">Sedm animovaných pozadí, která se hýbou při psaní, vaše vlastní fotka za klávesami, pět dalších tvarů kláves a devět písem klávesnice (včetně OpenDyslexic).</string>
     <string name="premium_free_reminder">Psaní, jazyky, AI a záloha zůstávají zdarma, s balíčkem i bez něj.</string>
     <string name="premium_buy">Koupit balíček</string>
     <string name="premium_buy_with_price">Koupit balíček · %1$s</string>
@@ -700,7 +700,7 @@
     <string name="premium_back_home">Zpět na úvod</string>
     <string name="back_arrow_description">Zpět</string>
     <string name="premium_active_title">Balíček aktivní</string>
-    <string name="premium_active_thanks">Děkujeme! Barvy, animovaná pozadí, tvary kláves, písma, vaše pokyny pro AI a rozšířená schránka jsou odemčené.</string>
+    <string name="premium_active_thanks">Děkujeme! Barvy, animovaná pozadí a vaše fotka, tvary kláves, písma, styly animace, vaše pokyny pro AI, váš vlastní model a rozšířená schránka jsou odemčené.</string>
     <string name="premium_status_pending">Platba čeká na vyřízení: balíček se aktivuje, jakmile ji Google Play potvrdí.</string>
     <string name="premium_status_unavailable">Google Play není v tomto zařízení dostupné nebo se balíček nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu.</string>
     <string name="premium_status_error">Nákup neproběhl. Nic nebylo účtováno; můžete to zkusit znovu.</string>
@@ -883,4 +883,6 @@
     <string name="onboarding_done_title">Taipo je připraveno</string>
     <string name="onboarding_done_show">Všech 6 kroků je hotovo. Klepnutím je znovu zobrazíte.</string>
     <string name="onboarding_done_hide">Klepnutím kroky skryjete.</string>
+    <string name="premium_motion_title">Animace podle vašeho vkusu</string>
+    <string name="premium_motion_text">Devět stylů pro všechny animace klávesnice: Svižná, Želé, Odlet, Kapka a Klouzání a částicové styly Jiskry, Pixely, Srdíčko a Rozkvět.</string>
 </resources>

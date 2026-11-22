@@ -683,12 +683,12 @@
     <string name="premium_colors_title">Nueve colores de teclado</string>
     <string name="premium_colors_text">Índigo, Laguna, Frambuesa… La tecla Intro, los botones y las selecciones toman el color elegido, en claro y en oscuro.</string>
     <string name="premium_prompts_title">Tus propias instrucciones de IA</string>
-    <string name="premium_prompts_text">Reescribe las instrucciones de corrección, chat y dictado para que la IA escriba como tú.</string>
+    <string name="premium_prompts_text">Reescribe las instrucciones de corrección, chat, dictado, tono y traducción para que la IA escriba como tú.</string>
     <string name="premium_prompts_example">«Corrige los errores sin cambiar mi estilo ni mis expresiones.»</string>
     <string name="premium_clipboard_title">Portapapeles ampliado</string>
     <string name="premium_clipboard_text">Copias guardadas 7 días en lugar de 12 h. Hasta 50 elementos fijados en lugar de 5.</string>
     <string name="premium_style_title">Un teclado a tu estilo</string>
-    <string name="premium_style_text">Siete fondos animados que se mueven al escribir, cinco formas de teclas más, nueve fuentes para el teclado (entre ellas OpenDyslexic) y cinco estilos de animación: Ágil, Gelatina, Vuelo, Gota y Deslizar.</string>
+    <string name="premium_style_text">Siete fondos animados que se mueven al escribir, tu propia foto detrás de las teclas, cinco formas de teclas más y nueve fuentes para el teclado (entre ellas OpenDyslexic).</string>
     <string name="premium_free_reminder">La escritura, los idiomas, la IA y la copia de seguridad siguen siendo gratis, con o sin el paquete.</string>
     <string name="premium_buy">Comprar el paquete</string>
     <string name="premium_buy_with_price">Comprar el paquete · %1$s</string>
@@ -696,7 +696,7 @@
     <string name="premium_back_home">Volver al inicio</string>
     <string name="back_arrow_description">Atrás</string>
     <string name="premium_active_title">Paquete activo</string>
-    <string name="premium_active_thanks">¡Gracias! Los colores, los fondos animados, las formas de teclas, las fuentes, tus instrucciones para la IA y el portapapeles ampliado están desbloqueados.</string>
+    <string name="premium_active_thanks">¡Gracias! Los colores, los fondos animados y tu foto, las formas de teclas, las fuentes, los estilos de animación, tus instrucciones para la IA, tu propio modelo y el portapapeles ampliado están desbloqueados.</string>
     <string name="premium_status_pending">Pago pendiente: el paquete se activará en cuanto Google Play lo confirme.</string>
     <string name="premium_status_unavailable">Google Play no está disponible en este dispositivo o no se ha podido cargar el paquete. Comprueba tu conexión e inténtalo de nuevo.</string>
     <string name="premium_status_error">La compra no se ha completado. No se ha cobrado nada; puedes intentarlo de nuevo.</string>
@@ -879,4 +879,6 @@
     <string name="onboarding_done_title">Taipo está listo</string>
     <string name="onboarding_done_show">Los 6 pasos están hechos. Toca para volver a verlos.</string>
     <string name="onboarding_done_hide">Toca para ocultar los pasos.</string>
+    <string name="premium_motion_title">Animaciones a tu gusto</string>
+    <string name="premium_motion_text">Nueve estilos para todas las animaciones del teclado: Ágil, Gelatina, Vuelo, Gota y Deslizar, y los estilos de partículas Chispas, Píxeles, Burbuja corazón y Floración.</string>
 </resources>

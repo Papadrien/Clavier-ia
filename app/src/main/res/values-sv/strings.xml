@@ -679,12 +679,12 @@
     <string name="premium_colors_title">Nio tangentbordsfärger</string>
     <string name="premium_colors_text">Indigo, Lagun, Hallon … Returtangenten, knapparna och markeringarna får den valda färgen, i ljust och mörkt läge.</string>
     <string name="premium_prompts_title">Egna AI-instruktioner</string>
-    <string name="premium_prompts_text">Skriv om instruktionerna för korrigering, chatt och diktering så att AI:n skriver som du.</string>
+    <string name="premium_prompts_text">Skriv om instruktionerna för korrigering, chatt, diktering, ton och översättning så att AI:n skriver som du.</string>
     <string name="premium_prompts_example">”Rätta felen utan att ändra min stil eller mina formuleringar.”</string>
     <string name="premium_clipboard_title">Utökat urklipp</string>
     <string name="premium_clipboard_text">Kopior sparas i 7 dagar i stället för 12 timmar. Upp till 50 fästa objekt i stället för 5.</string>
     <string name="premium_style_title">Ett tangentbord i din stil</string>
-    <string name="premium_style_text">Sju animerade bakgrunder som rör sig när du skriver, fem fler tangentformer, nio typsnitt för tangentbordet (bland annat OpenDyslexic) och fem animationsstilar: Kvick, Gelé, Iväg, Droppe och Glid.</string>
+    <string name="premium_style_text">Sju animerade bakgrunder som rör sig när du skriver, ditt eget foto bakom tangenterna, fem fler tangentformer och nio typsnitt för tangentbordet (bland annat OpenDyslexic).</string>
     <string name="premium_free_reminder">Skrivande, språk, AI och säkerhetskopiering är fortsatt gratis, med eller utan paketet.</string>
     <string name="premium_buy">Köp paketet</string>
     <string name="premium_buy_with_price">Köp paketet · %1$s</string>
@@ -692,7 +692,7 @@
     <string name="premium_back_home">Tillbaka till startsidan</string>
     <string name="back_arrow_description">Tillbaka</string>
     <string name="premium_active_title">Paketet är aktivt</string>
-    <string name="premium_active_thanks">Tack! Färger, animerade bakgrunder, tangentformer, typsnitt, dina AI-instruktioner och det utökade urklippet är upplåsta.</string>
+    <string name="premium_active_thanks">Tack! Färger, animerade bakgrunder och ditt foto, tangentformer, typsnitt, animationsstilar, dina AI-instruktioner, din egen modell och det utökade urklippet är upplåsta.</string>
     <string name="premium_status_pending">Betalningen väntar: paketet aktiveras så snart Google Play har bekräftat den.</string>
     <string name="premium_status_unavailable">Google Play är inte tillgängligt på den här enheten, eller så kunde paketet inte läsas in. Kontrollera anslutningen och försök igen.</string>
     <string name="premium_status_error">Köpet genomfördes inte. Ingenting har debiterats; du kan försöka igen.</string>
@@ -875,4 +875,6 @@
     <string name="onboarding_done_title">Taipo är klart</string>
     <string name="onboarding_done_show">Alla 6 steg är klara. Tryck för att se dem igen.</string>
     <string name="onboarding_done_hide">Tryck för att dölja stegen.</string>
+    <string name="premium_motion_title">Animationer efter din smak</string>
+    <string name="premium_motion_text">Nio stilar för alla tangentbordets animationer: Kvick, Gelé, Iväg, Droppe och Glid, plus partikelstilarna Gnistor, Pixlar, Hjärtbubbla och Blomning.</string>
 </resources>

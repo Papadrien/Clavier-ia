@@ -683,12 +683,12 @@
     <string name="premium_colors_title">Nove cores de teclado</string>
     <string name="premium_colors_text">Índigo, Lagoa, Framboesa… A tecla Enter, os botões e as seleções assumem a cor escolhida, no claro e no escuro.</string>
     <string name="premium_prompts_title">Suas próprias instruções de IA</string>
-    <string name="premium_prompts_text">Reescreva as instruções de correção, chat e ditado para que a IA escreva como você.</string>
+    <string name="premium_prompts_text">Reescreva as instruções de correção, chat, ditado, tom e tradução para que a IA escreva como você.</string>
     <string name="premium_prompts_example">“Corrija os erros sem mudar meu estilo nem minhas expressões.”</string>
     <string name="premium_clipboard_title">Área de transferência ampliada</string>
     <string name="premium_clipboard_text">Cópias guardadas por 7 dias em vez de 12 h. Até 50 itens fixados em vez de 5.</string>
     <string name="premium_style_title">Um teclado do seu jeito</string>
-    <string name="premium_style_text">Sete fundos animados que se movem enquanto você digita, mais cinco formatos de teclas, nove fontes para o teclado (incluindo OpenDyslexic) e cinco estilos de animação: Ágil, Gelatina, Voo, Gota e Deslizar.</string>
+    <string name="premium_style_text">Sete fundos animados que se movem enquanto você digita, a sua própria foto atrás das teclas, mais cinco formatos de teclas e nove fontes para o teclado (incluindo OpenDyslexic).</string>
     <string name="premium_free_reminder">Digitação, idiomas, IA e backup continuam gratuitos, com ou sem o pacote.</string>
     <string name="premium_buy">Comprar o pacote</string>
     <string name="premium_buy_with_price">Comprar o pacote · %1$s</string>
@@ -696,7 +696,7 @@
     <string name="premium_back_home">Voltar ao início</string>
     <string name="back_arrow_description">Voltar</string>
     <string name="premium_active_title">Pacote ativo</string>
-    <string name="premium_active_thanks">Obrigado! Cores, fundos animados, formatos de teclas, fontes, suas instruções para a IA e a área de transferência estendida estão desbloqueados.</string>
+    <string name="premium_active_thanks">Obrigado! Cores, fundos animados e a sua foto, formatos de teclas, fontes, estilos de animação, suas instruções para a IA, o seu próprio modelo e a área de transferência estendida estão desbloqueados.</string>
     <string name="premium_status_pending">Pagamento pendente: o pacote será ativado assim que o Google Play o confirmar.</string>
     <string name="premium_status_unavailable">O Google Play não está disponível neste dispositivo, ou não foi possível carregar o pacote. Verifique sua conexão e tente novamente.</string>
     <string name="premium_status_error">A compra não foi concluída. Nada foi cobrado; você pode tentar novamente.</string>
@@ -879,4 +879,6 @@
     <string name="onboarding_done_title">O Taipo está pronto</string>
     <string name="onboarding_done_show">Os 6 passos estão feitos. Toque para os voltar a ver.</string>
     <string name="onboarding_done_hide">Toque para ocultar os passos.</string>
+    <string name="premium_motion_title">Animações ao seu gosto</string>
+    <string name="premium_motion_text">Nove estilos para todas as animações do teclado: Ágil, Gelatina, Voo, Gota e Deslizar, e os estilos de partículas Faíscas, Píxeis, Bolha coração e Florescer.</string>
 </resources>

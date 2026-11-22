@@ -679,12 +679,12 @@
     <string name="premium_colors_title">Negen toetsenbordkleuren</string>
     <string name="premium_colors_text">Indigo, Lagune, Framboos… De Enter-toets, de knoppen en de selecties krijgen de gekozen kleur, in licht en donker.</string>
     <string name="premium_prompts_title">Je eigen AI-instructies</string>
-    <string name="premium_prompts_text">Herschrijf de instructies voor correctie, chat en dictee zodat de AI schrijft zoals jij.</string>
+    <string name="premium_prompts_text">Herschrijf de instructies voor correctie, chat, dictee, toon en vertaling zodat de AI schrijft zoals jij.</string>
     <string name="premium_prompts_example">‘Verbeter de fouten zonder mijn stijl of mijn woorden te veranderen.’</string>
     <string name="premium_clipboard_title">Uitgebreid klembord</string>
     <string name="premium_clipboard_text">Kopieën 7 dagen bewaard in plaats van 12 uur. Tot 50 vastgezette items in plaats van 5.</string>
     <string name="premium_style_title">Een toetsenbord in jouw stijl</string>
-    <string name="premium_style_text">Zeven geanimeerde achtergronden die bewegen tijdens het typen, vijf extra toetsvormen, negen lettertypen voor het toetsenbord (waaronder OpenDyslexic) en vijf animatiestijlen: Vlot, Gelei, Wegvliegen, Druppel en Glijden.</string>
+    <string name="premium_style_text">Zeven geanimeerde achtergronden die bewegen tijdens het typen, je eigen foto achter de toetsen, vijf extra toetsvormen en negen lettertypen voor het toetsenbord (waaronder OpenDyslexic).</string>
     <string name="premium_free_reminder">Typen, talen, AI en back-up blijven gratis, met of zonder het pakket.</string>
     <string name="premium_buy">Het pakket kopen</string>
     <string name="premium_buy_with_price">Het pakket kopen · %1$s</string>
@@ -692,7 +692,7 @@
     <string name="premium_back_home">Terug naar start</string>
     <string name="back_arrow_description">Terug</string>
     <string name="premium_active_title">Pakket actief</string>
-    <string name="premium_active_thanks">Bedankt! Kleuren, geanimeerde achtergronden, toetsvormen, lettertypen, je AI-instructies en het uitgebreide klembord zijn ontgrendeld.</string>
+    <string name="premium_active_thanks">Bedankt! Kleuren, geanimeerde achtergronden en je foto, toetsvormen, lettertypen, animatiestijlen, je AI-instructies, je eigen model en het uitgebreide klembord zijn ontgrendeld.</string>
     <string name="premium_status_pending">Betaling in behandeling: het pakket wordt actief zodra Google Play die bevestigt.</string>
     <string name="premium_status_unavailable">Google Play is niet beschikbaar op dit apparaat, of het pakket kon niet worden geladen. Controleer je verbinding en probeer het opnieuw.</string>
     <string name="premium_status_error">De aankoop is niet gelukt. Er is niets afgeschreven; je kunt het opnieuw proberen.</string>
@@ -875,4 +875,6 @@
     <string name="onboarding_done_title">Taipo is klaar</string>
     <string name="onboarding_done_show">Alle 6 stappen zijn gedaan. Tik om ze opnieuw te zien.</string>
     <string name="onboarding_done_hide">Tik om de stappen te verbergen.</string>
+    <string name="premium_motion_title">Animaties naar jouw smaak</string>
+    <string name="premium_motion_text">Negen stijlen voor alle animaties van het toetsenbord: Vlot, Gelei, Wegvliegen, Druppel en Glijden, plus de deeltjesstijlen Vonken, Pixels, Hartbel en Bloei.</string>
 </resources>

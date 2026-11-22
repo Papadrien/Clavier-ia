@@ -687,12 +687,12 @@
     <string name="premium_colors_title">Dziewięć kolorów klawiatury</string>
     <string name="premium_colors_text">Indygo, Laguna, Malina… Klawisz Enter, przyciski i zaznaczenia przyjmują wybrany kolor, w trybie jasnym i ciemnym.</string>
     <string name="premium_prompts_title">Własne instrukcje AI</string>
-    <string name="premium_prompts_text">Przepisz instrukcje korekty, czatu i dyktowania, aby AI pisała tak jak Ty.</string>
+    <string name="premium_prompts_text">Przepisz instrukcje korekty, czatu, dyktowania, tonu i tłumaczenia, aby AI pisała tak jak Ty.</string>
     <string name="premium_prompts_example">„Popraw błędy, nie zmieniając mojego stylu ani sformułowań.”</string>
     <string name="premium_clipboard_title">Rozszerzony schowek</string>
     <string name="premium_clipboard_text">Kopie przechowywane przez 7 dni zamiast 12 godzin. Do 50 przypiętych elementów zamiast 5.</string>
     <string name="premium_style_title">Klawiatura w Twoim stylu</string>
-    <string name="premium_style_text">Siedem animowanych teł, które poruszają się podczas pisania, pięć dodatkowych kształtów klawiszy, dziewięć czcionek klawiatury (w tym OpenDyslexic) i pięć stylów animacji: Żwawa, Galaretka, Odlot, Kropla i Ślizg.</string>
+    <string name="premium_style_text">Siedem animowanych teł, które poruszają się podczas pisania, Twoje zdjęcie za klawiszami, pięć dodatkowych kształtów klawiszy i dziewięć czcionek klawiatury (w tym OpenDyslexic).</string>
     <string name="premium_free_reminder">Pisanie, języki, AI i kopia zapasowa pozostają bezpłatne, z pakietem lub bez.</string>
     <string name="premium_buy">Kup pakiet</string>
     <string name="premium_buy_with_price">Kup pakiet · %1$s</string>
@@ -700,7 +700,7 @@
     <string name="premium_back_home">Wróć do ekranu głównego</string>
     <string name="back_arrow_description">Wstecz</string>
     <string name="premium_active_title">Pakiet aktywny</string>
-    <string name="premium_active_thanks">Dziękujemy! Kolory, animowane tła, kształty klawiszy, czcionki, Twoje instrukcje dla AI i rozszerzony schowek są odblokowane.</string>
+    <string name="premium_active_thanks">Dziękujemy! Kolory, animowane tła i Twoje zdjęcie, kształty klawiszy, czcionki, style animacji, Twoje instrukcje dla AI, Twój własny model i rozszerzony schowek są odblokowane.</string>
     <string name="premium_status_pending">Płatność w toku: pakiet zostanie włączony, gdy tylko Google Play ją potwierdzi.</string>
     <string name="premium_status_unavailable">Google Play nie jest dostępne na tym urządzeniu lub nie udało się wczytać pakietu. Sprawdź połączenie i spróbuj ponownie.</string>
     <string name="premium_status_error">Zakup nie został zrealizowany. Nic nie pobrano; możesz spróbować ponownie.</string>
@@ -883,4 +883,6 @@
     <string name="onboarding_done_title">Taipo jest gotowe</string>
     <string name="onboarding_done_show">Wszystkie 6 kroków wykonane. Dotknij, by je zobaczyć.</string>
     <string name="onboarding_done_hide">Dotknij, by ukryć kroki.</string>
+    <string name="premium_motion_title">Animacje według Twojego gustu</string>
+    <string name="premium_motion_text">Dziewięć stylów wszystkich animacji klawiatury: Żwawa, Galaretka, Odlot, Kropla i Ślizg oraz style z cząsteczkami Iskry, Piksele, Serduszko i Rozkwit.</string>
 </resources>

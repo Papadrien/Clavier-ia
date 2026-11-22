@@ -708,12 +708,12 @@
     <string name="premium_colors_title">Nine keyboard colors</string>
     <string name="premium_colors_text">Indigo, Lagoon, Raspberry… The Enter key, the buttons and the selections take the chosen color, in light and dark.</string>
     <string name="premium_prompts_title">Your own AI instructions</string>
-    <string name="premium_prompts_text">Rewrite the instructions for correction, chat and dictation so the AI writes like you.</string>
+    <string name="premium_prompts_text">Rewrite the instructions for correction, chat, dictation, tone and translation so the AI writes like you.</string>
     <string name="premium_prompts_example">“Fix the mistakes without changing my style or my wording.”</string>
     <string name="premium_clipboard_title">Extended clipboard</string>
     <string name="premium_clipboard_text">Copies kept 7 days instead of 12 h. Up to 50 pinned items instead of 5.</string>
     <string name="premium_style_title">A keyboard in your style</string>
-    <string name="premium_style_text">Seven animated backgrounds that move as you type, five more key shapes, nine keyboard fonts (including OpenDyslexic) and five animation styles: Snappy, Jelly, Fly away, Drop and Glide.</string>
+    <string name="premium_style_text">Seven animated backgrounds that move as you type, your own photo behind the keys, five more key shapes and nine keyboard fonts (including OpenDyslexic).</string>
     <string name="premium_free_reminder">Typing, languages, AI and backup stay free, with or without the pack.</string>
     <string name="premium_buy">Buy the pack</string>
     <string name="premium_buy_with_price">Buy the pack · %1$s</string>
@@ -721,7 +721,7 @@
     <string name="premium_back_home">Back to home</string>
     <string name="back_arrow_description">Back</string>
     <string name="premium_active_title">Pack active</string>
-    <string name="premium_active_thanks">Thank you! Colors, animated backgrounds, key shapes, fonts, your AI instructions and the extended clipboard are unlocked.</string>
+    <string name="premium_active_thanks">Thank you! Colors, animated backgrounds and your photo, key shapes, fonts, animation styles, your AI instructions, your own model and the extended clipboard are unlocked.</string>
     <string name="premium_status_pending">Payment pending: the pack will turn on as soon as Google Play confirms it.</string>
     <string name="premium_status_unavailable">Google Play is not available on this device, or the pack could not be loaded. Check your connection and try again.</string>
     <string name="premium_status_error">The purchase did not go through. Nothing was charged; you can try again.</string>
@@ -909,4 +909,6 @@
     <string name="onboarding_done_title">Taipo is ready</string>
     <string name="onboarding_done_show">All 6 steps are done. Tap to see them again.</string>
     <string name="onboarding_done_hide">Tap to hide the steps.</string>
+    <string name="premium_motion_title">Animations to your taste</string>
+    <string name="premium_motion_text">Nine styles for every keyboard animation: Snappy, Jelly, Fly away, Drop and Glide, plus the particle styles Sparks, Pixels, Heart bubble and Bloom.</string>
 </resources>
