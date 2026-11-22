@@ -54,8 +54,14 @@
             android:layout_marginBottom="@dimen/taipo_settings_gap_sm"
             android:text="@string/keyboard_settings_layout_title" />
 
+        <!-- 22/11/2026 : trois cartes (rangée de chiffres, touches du bas, bulle) dans un même groupe, masqué ou montré d'un bloc. -->
         <LinearLayout
             android:id="@+id/card_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <LinearLayout
             style="@style/TaipoSettingsCard">
 
             <Switch
@@ -71,8 +77,11 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="@string/keyboard_settings_number_row_passwords" />
+        </LinearLayout>
 
-            <View style="@style/TaipoSettingsCardDivider" />
+        <LinearLayout
+            style="@style/TaipoSettingsCard"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md">
 
             <TextView
                 style="@style/TaipoText.Label"
@@ -100,8 +109,11 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="@string/keyboard_settings_show_period_key" />
+        </LinearLayout>
 
-            <View style="@style/TaipoSettingsCardDivider" />
+        <LinearLayout
+            style="@style/TaipoSettingsCard"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md">
 
             <Switch
                 android:id="@+id/switch_key_preview"
@@ -109,6 +121,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="@string/keyboard_settings_key_preview" />
+        </LinearLayout>
         </LinearLayout>
 
         <TextView

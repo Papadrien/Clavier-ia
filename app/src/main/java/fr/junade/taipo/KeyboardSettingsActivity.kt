@@ -47,6 +47,7 @@ class KeyboardSettingsActivity : Activity() {
         setContentView(R.layout.activity_keyboard_settings)
         val preferences = KeyboardPreferences(this)
         setUpLanguagesRow()
+        SettingsRowIcons.apply(this)
         findViewById<android.view.View>(android.R.id.content).applyTaipoFontToTree()
         applySystemBarInsets()
 

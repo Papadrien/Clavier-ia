@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icône de ligne de réglage (22/11/2026) : trait de 1,8, couleur d'accent, posée sur la pastille bg_settings_row_icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/taipo_icon_size"
+    android:height="@dimen/taipo_icon_size"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M7,3h10a2,2 0,0 1,2 2v16l-7,-3l-7,3V5a2,2 0,0 1,2 -2z"
+        android:strokeColor="@color/accent_on_key"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M9,10l2,2l4,-4"
+        android:strokeColor="@color/accent_on_key"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>
