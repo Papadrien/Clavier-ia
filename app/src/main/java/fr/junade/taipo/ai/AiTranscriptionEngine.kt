@@ -27,7 +27,8 @@ import kotlinx.coroutines.withContext
  * Prompt : [TranscriptionPrompt] (nettoyage et reformulation, ton conservé), modifiable via [TranscriptionPromptPreferences].
  * Ni l'audio ni le texte ne sont écrits dans les journaux (story 14.6) : seulement des durées et des tailles.
  *
- * Gemma 3 (sans entrée audio, décision du 13/11/2026) : [dictate] passe l'enregistrement à la dictée (sherpa-onnx, moteur
+ * Gemma 3 (sans entrée audio, décision du 13/11/2026) et Gemma 4 (audio natif trop lent, 22/11/2026, [TranscriptionRoute]) :
+ * [dictate] passe l'enregistrement à la dictée (sherpa-onnx, moteur
  * [voiceEngine] partagé avec le bouton Vocal), puis [rewrite] fait reformuler le texte brut par le modèle de texte
  * ([TranscriptionPrompt.DICTATION_SYSTEM]), morceau par morceau ; une réponse écartée par [DictationRewrite.accept] laisse
  * le texte brut de ce morceau.
@@ -172,14 +173,16 @@ class AiTranscriptionEngine(
         val engine = host.ensureLoaded(model, onLoading)
         if (isCancelled()) throw CancellationException("Transcription cancelled by the user")
         host.releaseOpenConversation()
-        val config = ConversationConfig(systemInstruction = Contents.of(TranscriptionPrompt.DICTATION_SYSTEM))
+        // Décodage glouton et réponse plafonnée (comme la correction) : plus rapide, et un modèle qui part en boucle s'arrête tôt.
+        val userTurn = TranscriptionPrompt.dictationUserTurn(chunk)
+        val config = InferenceTuning.rewriteConversation(TranscriptionPrompt.DICTATION_SYSTEM, userTurn.length)
         val startedAt = SystemClock.elapsedRealtime()
         return withContext(Dispatchers.Default) {
             engine.createConversation(config).use { conversation ->
                 nativeCancelRequested = false
                 runningConversation = conversation
                 try {
-                    val result = conversation.sendMessage(TranscriptionPrompt.dictationUserTurn(chunk)).toString().trim()
+                    val result = conversation.sendMessage(userTurn).toString().trim()
                     AppLog.i(
                         TAG,
                         "reformulation: modèle=${model.id} entrée=${chunk.length} car. sortie=${result.length} car. " +

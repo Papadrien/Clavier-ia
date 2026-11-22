@@ -120,10 +120,11 @@ class AiTranscriptionController(
     }
 
     /**
-     * Le modèle traite l'audio lui-même (Gemma 4, ou modèle personnalisé réglé ainsi sur sa page) ; sinon dictée avec le modèle vocal
-     * puis reformulation du texte.
+     * Le modèle traite l'audio lui-même (modèle personnalisé réglé ainsi sur sa page seulement) ; sinon, Gemma 3 et Gemma 4 compris
+     * (22/11/2026), dictée avec le modèle vocal puis reformulation du texte. Voir [fr.junade.taipo.ai.TranscriptionRoute].
      */
-    private fun nativeAudio(model: AiModel): Boolean = ModelPreferences(context).acceptsAudio(model)
+    private fun nativeAudio(model: AiModel): Boolean =
+        fr.junade.taipo.ai.TranscriptionRoute.nativeAudio(model, ModelPreferences(context).acceptsAudio(AiModel.CUSTOM))
 
     private fun start() {
         if (host.voiceRecording() || host.aiBusy()) {
@@ -136,7 +137,7 @@ class AiTranscriptionController(
             return
         }
         if (!nativeAudio(model) && !voiceModelPreferences.isComplete()) {
-            // Gemma 3 passe par la dictée : sans modèle vocal, on ouvre son écran, comme le bouton Vocal.
+            // Gemma 3 et Gemma 4 passent par la dictée : sans modèle vocal, on ouvre son écran, comme le bouton Vocal.
             ModelScreenRedirect.openVoice(context)
             return
         }
