@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Das Android-Systemwörterbuch (Wörter, die Sie durch Tippen auf ein rot unterstrichenes Wort hinzufügen) wird nicht verwendet. Erlauben Sie den Zugriff, damit diese Wörter nicht korrigiert und vorgeschlagen werden können. Taipo liest es nur und ändert es nie.</string>
     <string name="personal_dictionary_system_on">Das Android-Systemwörterbuch wird verwendet: %1$d Wort/Wörter gelesen. Taipo liest es nur und ändert es nie. Sie können den Zugriff in den Android-Einstellungen widerrufen.</string>
     <string name="personal_dictionary_system_allow">Zugriff erlauben</string>
-    <string name="button_keyboard_settings">Tastatureinstellungen</string>
     <string name="keyboard_settings_title">Tastatureinstellungen</string>
     <string name="keyboard_settings_layout_title">Tastenanordnung</string>
     <string name="keyboard_settings_size_title">Größe und Position</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Zum Testen hier tippen</string>
     <string name="home_section_keyboard">Tastatur</string>
     <string name="home_section_ai">Künstliche Intelligenz</string>
-    <string name="home_row_keyboard_settings_subtitle">Zahlenreihe, Vibration, Höhe, Einhandmodus, Lernen</string>
     <string name="home_row_personal_dictionary_subtitle">Wörter hinzufügen oder entfernen</string>
     <string name="home_row_model_settings_subtitle">Eine Modelldatei selbst bereitstellen</string>
     <string name="home_row_voice_model_subtitle">Das Diktiermodell herunterladen</string>
@@ -870,4 +868,7 @@
     <string name="system_prompt_tone_description">Anweisung an das Modell, eine Nachricht im gewählten Ton (professionell, freundlich, knapp…) umzuschreiben, ohne Sinn oder Sprache zu ändern.</string>
     <string name="system_prompt_translation_title">Übersetzung</string>
     <string name="system_prompt_translation_description">Anweisung an das Modell, den Text in die gewählte Sprache zu übersetzen und dabei Sinn, Stilebene und Ton zu bewahren.</string>
+    <string name="home_row_keyboard_layout_subtitle">Zahlenreihe, untere Tasten, Tastenblase</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibration, Tastenton, Lautstärke</string>
+    <string name="home_row_keyboard_smart_subtitle">Wischen, Lernen, Verlauf der Zwischenablage</string>
 </resources>

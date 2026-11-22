@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Androids systemordlista (ord som du lägger till genom att trycka på ett rödunderstruket ord) används inte. Tillåt åtkomst så att de orden inte korrigeras och kan föreslås. Taipo läser den bara och ändrar den aldrig.</string>
     <string name="personal_dictionary_system_on">Androids systemordlista används: lästa ord: %1$d. Taipo läser den bara och ändrar den aldrig. Du kan dra tillbaka åtkomsten i Androids inställningar.</string>
     <string name="personal_dictionary_system_allow">Tillåt åtkomst</string>
-    <string name="button_keyboard_settings">Tangentbordsinställningar</string>
     <string name="keyboard_settings_title">Tangentbordsinställningar</string>
     <string name="keyboard_settings_layout_title">Tangentlayout</string>
     <string name="keyboard_settings_size_title">Storlek och position</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Skriv här för att testa</string>
     <string name="home_section_keyboard">Tangentbord</string>
     <string name="home_section_ai">Artificiell intelligens</string>
-    <string name="home_row_keyboard_settings_subtitle">Sifferrad, vibration, höjd, enhandsläge, inlärning</string>
     <string name="home_row_personal_dictionary_subtitle">Lägg till eller ta bort ord</string>
     <string name="home_row_model_settings_subtitle">Ange en modellfil själv</string>
     <string name="home_row_voice_model_subtitle">Ladda ned dikteringsmodellen</string>
@@ -870,4 +868,7 @@
     <string name="system_prompt_tone_description">Instruktion till modellen att skriva om ett meddelande i vald ton (professionell, vänlig, koncis…) utan att ändra innebörd eller språk.</string>
     <string name="system_prompt_translation_title">Översättning</string>
     <string name="system_prompt_translation_description">Instruktion till modellen att översätta texten till valt språk och behålla innebörd, stilnivå och ton.</string>
+    <string name="home_row_keyboard_layout_subtitle">Sifferrad, nedre tangenter, tangentbubbla</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibration, tangentljud, volym</string>
+    <string name="home_row_keyboard_smart_subtitle">Svepskrivning, inlärning, urklippshistorik</string>
 </resources>

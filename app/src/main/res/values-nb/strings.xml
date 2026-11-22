@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Androids systemordbok (ord du legger til ved å trykke på et rødt understreket ord) brukes ikke. Tillat tilgang slik at disse ordene ikke rettes og kan foreslås. Taipo bare leser den og endrer den aldri.</string>
     <string name="personal_dictionary_system_on">Androids systemordbok brukes: leste ord: %1$d. Taipo bare leser den og endrer den aldri. Du kan trekke tilbake tilgangen i Android-innstillingene.</string>
     <string name="personal_dictionary_system_allow">Tillat tilgang</string>
-    <string name="button_keyboard_settings">Tastaturinnstillinger</string>
     <string name="keyboard_settings_title">Tastaturinnstillinger</string>
     <string name="keyboard_settings_layout_title">Tasteoppsett</string>
     <string name="keyboard_settings_size_title">Størrelse og plassering</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Skriv her for å teste</string>
     <string name="home_section_keyboard">Tastatur</string>
     <string name="home_section_ai">Kunstig intelligens</string>
-    <string name="home_row_keyboard_settings_subtitle">Tallrad, vibrasjon, høyde, enhåndsmodus, læring</string>
     <string name="home_row_personal_dictionary_subtitle">Legg til eller fjern ord</string>
     <string name="home_row_model_settings_subtitle">Oppgi en modellfil selv</string>
     <string name="home_row_voice_model_subtitle">Last ned dikteringsmodellen</string>
@@ -870,4 +868,7 @@
     <string name="system_prompt_tone_description">Instruks til modellen om å skrive om en melding i valgt tone (profesjonell, vennlig, kortfattet …) uten å endre mening eller språk.</string>
     <string name="system_prompt_translation_title">Oversettelse</string>
     <string name="system_prompt_translation_description">Instruks til modellen om å oversette teksten til valgt språk og beholde mening, stilnivå og tone.</string>
+    <string name="home_row_keyboard_layout_subtitle">Tallrad, nederste taster, tasteboble</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibrering, tastaturlyd, volum</string>
+    <string name="home_row_keyboard_smart_subtitle">Sveiping, læring, utklippshistorikk</string>
 </resources>

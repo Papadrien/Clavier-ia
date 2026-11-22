@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Androids systemordbog (ord, du tilføjer ved at trykke på et rødt understreget ord) bruges ikke. Tillad adgang, så de ord ikke rettes og kan foreslås. Taipo læser den kun og ændrer den aldrig.</string>
     <string name="personal_dictionary_system_on">Androids systemordbog bruges: læste ord: %1$d. Taipo læser den kun og ændrer den aldrig. Du kan trække adgangen tilbage i Androids indstillinger.</string>
     <string name="personal_dictionary_system_allow">Tillad adgang</string>
-    <string name="button_keyboard_settings">Tastaturindstillinger</string>
     <string name="keyboard_settings_title">Tastaturindstillinger</string>
     <string name="keyboard_settings_layout_title">Tastelayout</string>
     <string name="keyboard_settings_size_title">Størrelse og placering</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Skriv her for at teste</string>
     <string name="home_section_keyboard">Tastatur</string>
     <string name="home_section_ai">Kunstig intelligens</string>
-    <string name="home_row_keyboard_settings_subtitle">Talrække, vibration, højde, enhåndstilstand, læring</string>
     <string name="home_row_personal_dictionary_subtitle">Tilføj eller fjern ord</string>
     <string name="home_row_model_settings_subtitle">Angiv selv en modelfil</string>
     <string name="home_row_voice_model_subtitle">Download dikteringsmodellen</string>
@@ -870,4 +868,7 @@
     <string name="system_prompt_tone_description">Instruktion til modellen om at omskrive en besked i den valgte tone (professionel, venlig, kortfattet…) uden at ændre betydning eller sprog.</string>
     <string name="system_prompt_translation_title">Oversættelse</string>
     <string name="system_prompt_translation_description">Instruktion til modellen om at oversætte teksten til det valgte sprog med samme betydning, stilniveau og tone.</string>
+    <string name="home_row_keyboard_layout_subtitle">Talrække, nederste taster, tasteboble</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibration, tastaturlyd, lydstyrke</string>
+    <string name="home_row_keyboard_smart_subtitle">Swipe, læring, udklipsholderhistorik</string>
 </resources>

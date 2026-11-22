@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Androidin järjestelmäsanastoa (sanat, jotka lisäät napauttamalla punaisella alleviivattua sanaa) ei käytetä. Salli käyttö, jotta näitä sanoja ei korjata ja niitä voidaan ehdottaa. Taipo vain lukee sitä eikä koskaan muuta sitä.</string>
     <string name="personal_dictionary_system_on">Androidin järjestelmäsanasto on käytössä: luettuja sanoja: %1$d. Taipo vain lukee sitä eikä koskaan muuta sitä. Voit peruuttaa käyttöoikeuden Androidin asetuksissa.</string>
     <string name="personal_dictionary_system_allow">Salli käyttö</string>
-    <string name="button_keyboard_settings">Näppäimistön asetukset</string>
     <string name="keyboard_settings_title">Näppäimistön asetukset</string>
     <string name="keyboard_settings_layout_title">Näppäinasettelu</string>
     <string name="keyboard_settings_size_title">Koko ja sijainti</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Kirjoita tähän kokeillaksesi</string>
     <string name="home_section_keyboard">Näppäimistö</string>
     <string name="home_section_ai">Tekoäly</string>
-    <string name="home_row_keyboard_settings_subtitle">Numerorivi, värinä, korkeus, yhden käden tila, oppiminen</string>
     <string name="home_row_personal_dictionary_subtitle">Lisää tai poista sanoja</string>
     <string name="home_row_model_settings_subtitle">Anna mallitiedosto itse</string>
     <string name="home_row_voice_model_subtitle">Lataa sanelumalli</string>
@@ -870,4 +868,7 @@
     <string name="system_prompt_tone_description">Mallille lähetettävä ohje kirjoittaa viesti uudelleen valitulla sävyllä (asiallinen, ystävällinen, tiivis…) muuttamatta sen merkitystä tai kieltä.</string>
     <string name="system_prompt_translation_title">Käännös</string>
     <string name="system_prompt_translation_description">Mallille lähetettävä ohje kääntää teksti valitulle kielelle niin, että merkitys, tyylitaso ja sävy säilyvät.</string>
+    <string name="home_row_keyboard_layout_subtitle">Numerorivi, alarivin näppäimet, näppäinkupla</string>
+    <string name="home_row_keyboard_sounds_subtitle">Värinä, näppäimistön ääni, äänenvoimakkuus</string>
+    <string name="home_row_keyboard_smart_subtitle">Liukukirjoitus, oppiminen, leikepöydän historia</string>
 </resources>

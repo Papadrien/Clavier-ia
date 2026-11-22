@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Het Android-systeemwoordenboek (woorden die je toevoegt door op een rood onderstreept woord te tikken) wordt niet gebruikt. Sta toegang toe zodat die woorden niet worden gecorrigeerd en kunnen worden voorgesteld. Taipo leest het alleen en wijzigt het nooit.</string>
     <string name="personal_dictionary_system_on">Het Android-systeemwoordenboek wordt gebruikt: %1$d woord(en) gelezen. Taipo leest het alleen en wijzigt het nooit. Je kunt de toegang intrekken in de Android-instellingen.</string>
     <string name="personal_dictionary_system_allow">Toegang toestaan</string>
-    <string name="button_keyboard_settings">Toetsenbordinstellingen</string>
     <string name="keyboard_settings_title">Toetsenbordinstellingen</string>
     <string name="keyboard_settings_layout_title">Toetsindeling</string>
     <string name="keyboard_settings_size_title">Grootte en positie</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Typ hier om te testen</string>
     <string name="home_section_keyboard">Toetsenbord</string>
     <string name="home_section_ai">Kunstmatige intelligentie</string>
-    <string name="home_row_keyboard_settings_subtitle">Cijferrij, trillen, hoogte, eenhandige modus, leren</string>
     <string name="home_row_personal_dictionary_subtitle">Woorden toevoegen of verwijderen</string>
     <string name="home_row_model_settings_subtitle">Zelf een modelbestand aanleveren</string>
     <string name="home_row_voice_model_subtitle">Het dicteermodel downloaden</string>
@@ -870,4 +868,7 @@
     <string name="system_prompt_tone_description">Instructie aan het model om een bericht te herschrijven in de gekozen toon (professioneel, vriendelijk, beknopt…) zonder de betekenis of de taal te veranderen.</string>
     <string name="system_prompt_translation_title">Vertaling</string>
     <string name="system_prompt_translation_description">Instructie aan het model om de tekst te vertalen naar de gekozen taal, met behoud van betekenis, register en toon.</string>
+    <string name="home_row_keyboard_layout_subtitle">Cijferrij, onderste toetsen, toetsbel</string>
+    <string name="home_row_keyboard_sounds_subtitle">Trillen, toetsgeluid, volume</string>
+    <string name="home_row_keyboard_smart_subtitle">Swipen, leren, klembordgeschiedenis</string>
 </resources>

@@ -453,8 +453,9 @@
         android:clipToOutline="true"
         android:layout_marginBottom="@dimen/taipo_settings_gap_xl">
 
+        <!-- Revue UX : les langues sur l'accueil, sous-titre = langues en service (MainActivity.renderLanguagesRow). -->
         <include
-            android:id="@+id/button_keyboard_settings"
+            android:id="@+id/button_home_languages"
             layout="@layout/view_settings_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -465,9 +466,46 @@
             android:layout_marginStart="@dimen/taipo_settings_card_padding"
             android:background="@color/settings_divider" />
 
-        <!-- Revue UX : les langues sur l'accueil, sous-titre = langues en service (MainActivity.renderLanguagesRow). -->
+        <!-- 22/11/2026 (maquette A) : les paramètres du clavier, un thème par ligne, à la place de l'ancienne ligne unique ;
+             chacune ouvre KeyboardSettingsActivity sur ce seul thème (KeyboardSettingsSection). -->
         <include
-            android:id="@+id/button_home_languages"
+            android:id="@+id/button_keyboard_size"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
+            android:id="@+id/button_keyboard_layout"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
+            android:id="@+id/button_keyboard_sounds"
+            layout="@layout/view_settings_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/taipo_settings_divider_thickness"
+            android:layout_marginStart="@dimen/taipo_settings_card_padding"
+            android:background="@color/settings_divider" />
+
+        <include
+            android:id="@+id/button_keyboard_smart"
             layout="@layout/view_settings_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

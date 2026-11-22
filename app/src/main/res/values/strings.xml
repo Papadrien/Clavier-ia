@@ -102,7 +102,6 @@
     <string name="personal_dictionary_system_on">The Android system dictionary is used: %1$d word(s) read. Taipo only reads it and never changes it. You can withdraw access in the Android settings.</string>
     <string name="personal_dictionary_system_allow">Allow access</string>
 
-    <string name="button_keyboard_settings">Keyboard settings</string>
     <string name="keyboard_settings_title">Keyboard settings</string>
     <string name="keyboard_settings_layout_title">Key layout</string>
     <string name="keyboard_settings_size_title">Size and position</string>
@@ -329,7 +328,6 @@
     <string name="onboarding_try_hint">Type here to test</string>
     <string name="home_section_keyboard">Keyboard</string>
     <string name="home_section_ai">Artificial intelligence</string>
-    <string name="home_row_keyboard_settings_subtitle">Number row, vibration, height, one-handed mode, learning</string>
     <string name="home_row_personal_dictionary_subtitle">Add or remove words</string>
     <string name="home_row_model_settings_subtitle">Provide a model file yourself</string>
     <string name="home_row_voice_model_subtitle">Download the dictation model</string>
@@ -902,4 +900,9 @@
     <string name="system_prompt_tone_description">Instruction sent to the model to rewrite a message in the chosen tone (professional, friendly, concise…) without changing its meaning or language.</string>
     <string name="system_prompt_translation_title">Translation</string>
     <string name="system_prompt_translation_description">Instruction sent to the model to translate the text into the chosen language, keeping its meaning, register and tone.</string>
+    <string name="home_row_keyboard_layout_subtitle">Number row, bottom keys, key bubble</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibration, key sound, volume</string>
+    <string name="home_row_keyboard_smart_subtitle">Swipe typing, learning, clipboard history</string>
+    <!-- Résumé « Taille et position » de l'accueil : hauteur · mode (« 100 % · Normal »). -->
+    <string name="home_row_two_values" translatable="false">%1$s · %2$s</string>
 </resources>

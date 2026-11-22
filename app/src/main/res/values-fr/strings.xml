@@ -102,7 +102,6 @@
     <string name="personal_dictionary_system_on">Le dictionnaire du système Android est utilisé : %1$d mot(s) lu(s). Taipo le lit seulement et ne le modifie jamais. Vous pouvez retirer l\'accès dans les réglages Android.</string>
     <string name="personal_dictionary_system_allow">Autoriser l\'accès</string>
 
-    <string name="button_keyboard_settings">Paramètres du clavier</string>
     <string name="keyboard_settings_title">Paramètres du clavier</string>
     <string name="keyboard_settings_layout_title">Disposition des touches</string>
     <string name="keyboard_settings_size_title">Taille et position</string>
@@ -335,7 +334,6 @@
     <!-- Réglages de l'accueil (lot UX 3) -->
     <string name="home_section_keyboard">Clavier</string>
     <string name="home_section_ai">Intelligence artificielle</string>
-    <string name="home_row_keyboard_settings_subtitle">Rangée de chiffres, vibrations, hauteur, mode une main, apprentissage</string>
     <string name="home_row_personal_dictionary_subtitle">Ajouter ou supprimer des mots</string>
     <string name="home_row_model_settings_subtitle">Fournir soi-même un fichier de modèle</string>
     <string name="home_row_voice_model_subtitle">Télécharger le modèle de dictée</string>
@@ -921,4 +919,7 @@
     <string name="system_prompt_tone_description">Consigne envoyée au modèle pour réécrire un message dans le ton choisi (pro, amical, concis…) sans en changer le sens ni la langue.</string>
     <string name="system_prompt_translation_title">Traduction</string>
     <string name="system_prompt_translation_description">Consigne envoyée au modèle pour traduire le texte dans la langue choisie, en gardant son sens, son registre et son ton.</string>
+    <string name="home_row_keyboard_layout_subtitle">Rangée de chiffres, touches du bas, bulle des touches</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibrations, son du clavier, volume</string>
+    <string name="home_row_keyboard_smart_subtitle">Glissement, habitudes, historique du presse-papiers</string>
 </resources>

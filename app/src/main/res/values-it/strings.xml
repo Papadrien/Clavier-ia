@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Il dizionario di sistema Android (le parole che aggiungi toccando una parola sottolineata in rosso) non viene usato. Consenti l\'accesso perché quelle parole non vengano corrette e possano essere suggerite. Taipo si limita a leggerlo e non lo modifica mai.</string>
     <string name="personal_dictionary_system_on">Il dizionario di sistema Android è in uso: %1$d parola/e lette. Taipo si limita a leggerlo e non lo modifica mai. Puoi revocare l\'accesso nelle impostazioni di Android.</string>
     <string name="personal_dictionary_system_allow">Consenti l\'accesso</string>
-    <string name="button_keyboard_settings">Impostazioni della tastiera</string>
     <string name="keyboard_settings_title">Impostazioni della tastiera</string>
     <string name="keyboard_settings_layout_title">Disposizione dei tasti</string>
     <string name="keyboard_settings_size_title">Dimensioni e posizione</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Scrivi qui per provare</string>
     <string name="home_section_keyboard">Tastiera</string>
     <string name="home_section_ai">Intelligenza artificiale</string>
-    <string name="home_row_keyboard_settings_subtitle">Riga dei numeri, vibrazione, altezza, modalità a una mano, apprendimento</string>
     <string name="home_row_personal_dictionary_subtitle">Aggiungi o rimuovi parole</string>
     <string name="home_row_model_settings_subtitle">Fornisci tu stesso un file di modello</string>
     <string name="home_row_voice_model_subtitle">Scarica il modello di dettatura</string>
@@ -874,4 +872,7 @@
     <string name="system_prompt_tone_description">Istruzione inviata al modello per riscrivere un messaggio nel tono scelto (professionale, amichevole, conciso…) senza cambiarne il senso né la lingua.</string>
     <string name="system_prompt_translation_title">Traduzione</string>
     <string name="system_prompt_translation_description">Istruzione inviata al modello per tradurre il testo nella lingua scelta, mantenendone senso, registro e tono.</string>
+    <string name="home_row_keyboard_layout_subtitle">Riga dei numeri, tasti in basso, bolla dei tasti</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibrazione, suono della tastiera, volume</string>
+    <string name="home_row_keyboard_smart_subtitle">Scorrimento, apprendimento, cronologia degli appunti</string>
 </resources>

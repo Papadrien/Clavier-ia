@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">O dicionário do sistema Android (palavras que você adiciona tocando em uma palavra sublinhada em vermelho) não é usado. Permita o acesso para que essas palavras não sejam corrigidas e possam ser sugeridas. O Taipo apenas o lê e nunca o altera.</string>
     <string name="personal_dictionary_system_on">O dicionário do sistema Android é usado: %1$d palavra(s) lida(s). O Taipo apenas o lê e nunca o altera. Você pode retirar o acesso nas configurações do Android.</string>
     <string name="personal_dictionary_system_allow">Permitir o acesso</string>
-    <string name="button_keyboard_settings">Configurações do teclado</string>
     <string name="keyboard_settings_title">Configurações do teclado</string>
     <string name="keyboard_settings_layout_title">Disposição das teclas</string>
     <string name="keyboard_settings_size_title">Tamanho e posição</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Digite aqui para testar</string>
     <string name="home_section_keyboard">Teclado</string>
     <string name="home_section_ai">Inteligência artificial</string>
-    <string name="home_row_keyboard_settings_subtitle">Linha de números, vibração, altura, modo para uma mão, aprendizado</string>
     <string name="home_row_personal_dictionary_subtitle">Adicionar ou remover palavras</string>
     <string name="home_row_model_settings_subtitle">Fornecer você mesmo um arquivo de modelo</string>
     <string name="home_row_voice_model_subtitle">Baixar o modelo de ditado</string>
@@ -874,4 +872,7 @@
     <string name="system_prompt_tone_description">Instrução enviada ao modelo para reescrever uma mensagem no tom escolhido (profissional, amigável, conciso…) sem mudar o sentido nem a língua.</string>
     <string name="system_prompt_translation_title">Tradução</string>
     <string name="system_prompt_translation_description">Instrução enviada ao modelo para traduzir o texto para a língua escolhida, mantendo o sentido, o registo e o tom.</string>
+    <string name="home_row_keyboard_layout_subtitle">Fila de números, teclas inferiores, bolha das teclas</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibração, som do teclado, volume</string>
+    <string name="home_row_keyboard_smart_subtitle">Deslize, aprendizagem, histórico da área de transferência</string>
 </resources>

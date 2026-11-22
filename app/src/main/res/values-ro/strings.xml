@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Dicționarul de sistem Android (cuvintele adăugate atingând un cuvânt subliniat cu roșu) nu este folosit. Permite accesul pentru ca aceste cuvinte să nu fie corectate și să poată fi sugerate. Taipo doar îl citește și nu îl modifică niciodată.</string>
     <string name="personal_dictionary_system_on">Dicționarul de sistem Android este folosit: cuvinte citite: %1$d. Taipo doar îl citește și nu îl modifică niciodată. Poți retrage accesul din setările Android.</string>
     <string name="personal_dictionary_system_allow">Permite accesul</string>
-    <string name="button_keyboard_settings">Setări tastatură</string>
     <string name="keyboard_settings_title">Setări tastatură</string>
     <string name="keyboard_settings_layout_title">Aranjarea tastelor</string>
     <string name="keyboard_settings_size_title">Dimensiune și poziție</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Scrie aici pentru a testa</string>
     <string name="home_section_keyboard">Tastatură</string>
     <string name="home_section_ai">Inteligență artificială</string>
-    <string name="home_row_keyboard_settings_subtitle">Rând de cifre, vibrații, înălțime, mod pentru o mână, învățare</string>
     <string name="home_row_personal_dictionary_subtitle">Adaugă sau elimină cuvinte</string>
     <string name="home_row_model_settings_subtitle">Indică tu un fișier de model</string>
     <string name="home_row_voice_model_subtitle">Descarcă modelul de dictare</string>
@@ -874,4 +872,7 @@
     <string name="system_prompt_tone_description">Instrucțiune trimisă modelului pentru a rescrie un mesaj în tonul ales (profesional, prietenos, concis…) fără a-i schimba sensul sau limba.</string>
     <string name="system_prompt_translation_title">Traducere</string>
     <string name="system_prompt_translation_description">Instrucțiune trimisă modelului pentru a traduce textul în limba aleasă, păstrându-i sensul, registrul și tonul.</string>
+    <string name="home_row_keyboard_layout_subtitle">Rândul de cifre, tastele de jos, bula tastelor</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibrații, sunetul tastaturii, volum</string>
+    <string name="home_row_keyboard_smart_subtitle">Glisare, învățare, istoricul clipboardului</string>
 </resources>

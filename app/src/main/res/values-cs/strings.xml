@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Systémový slovník Androidu (slova přidaná klepnutím na červeně podtržené slovo) se nepoužívá. Povolte přístup, aby se tato slova neopravovala a mohla se navrhovat. Taipo ho jen čte a nikdy ho nemění.</string>
     <string name="personal_dictionary_system_on">Systémový slovník Androidu se používá: přečtená slova: %1$d. Taipo ho jen čte a nikdy ho nemění. Přístup můžete odebrat v nastavení Androidu.</string>
     <string name="personal_dictionary_system_allow">Povolit přístup</string>
-    <string name="button_keyboard_settings">Nastavení klávesnice</string>
     <string name="keyboard_settings_title">Nastavení klávesnice</string>
     <string name="keyboard_settings_layout_title">Rozložení kláves</string>
     <string name="keyboard_settings_size_title">Velikost a poloha</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Pište sem na zkoušku</string>
     <string name="home_section_keyboard">Klávesnice</string>
     <string name="home_section_ai">Umělá inteligence</string>
-    <string name="home_row_keyboard_settings_subtitle">Řada číslic, vibrace, výška, režim jedné ruky, učení</string>
     <string name="home_row_personal_dictionary_subtitle">Přidávejte nebo odebírejte slova</string>
     <string name="home_row_model_settings_subtitle">Zadejte soubor modelu sami</string>
     <string name="home_row_voice_model_subtitle">Stáhnout model diktování</string>
@@ -878,4 +876,7 @@
     <string name="system_prompt_tone_description">Pokyn modelu, aby přepsal zprávu ve zvoleném tónu (profesionální, přátelský, stručný…) beze změny smyslu i jazyka.</string>
     <string name="system_prompt_translation_title">Překlad</string>
     <string name="system_prompt_translation_description">Pokyn modelu, aby přeložil text do zvoleného jazyka a zachoval jeho smysl, rejstřík a tón.</string>
+    <string name="home_row_keyboard_layout_subtitle">Řada číslic, spodní klávesy, bublina kláves</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibrace, zvuk klávesnice, hlasitost</string>
+    <string name="home_row_keyboard_smart_subtitle">Psaní tahem, učení, historie schránky</string>
 </resources>

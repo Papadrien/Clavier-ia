@@ -132,12 +132,11 @@ class MainActivity : Activity() {
 
     /** Lignes de l'accueil : titre, sous-titre et écran ouvert. */
     private fun bindRows() {
-        bindRow(
-            R.id.button_keyboard_settings,
-            R.string.button_keyboard_settings,
-            R.string.home_row_keyboard_settings_subtitle,
-            KeyboardSettingsActivity::class.java,
-        )
+        // Paramètres du clavier (22/11/2026, maquette A) : une ligne par thème, chacune ouvre sa page.
+        bindSectionRow(R.id.button_keyboard_size, KeyboardSettingsSection.SIZE, R.string.keyboard_settings_size_title)
+        bindSectionRow(R.id.button_keyboard_layout, KeyboardSettingsSection.LAYOUT, R.string.home_row_keyboard_layout_subtitle)
+        bindSectionRow(R.id.button_keyboard_sounds, KeyboardSettingsSection.SOUNDS, R.string.home_row_keyboard_sounds_subtitle)
+        bindSectionRow(R.id.button_keyboard_smart, KeyboardSettingsSection.SMART, R.string.home_row_keyboard_smart_subtitle)
         bindRow(R.id.button_theme, R.string.button_theme, R.string.home_row_theme_subtitle, ThemeActivity::class.java)
         bindRow(R.id.button_home_languages, R.string.languages_title, R.string.home_row_languages_subtitle, LanguagesActivity::class.java)
         bindRow(
@@ -200,6 +199,7 @@ class MainActivity : Activity() {
         renderModelStatuses()
         renderThemeRow()
         renderLanguagesRow()
+        renderKeyboardSizeRow()
         renderPremium()
         billing.refresh()
     }
@@ -362,6 +362,26 @@ class MainActivity : Activity() {
             getString(R.string.home_row_theme_subtitle, getString(preferences.themeChoice.labelRes()), getString(palette.labelRes()))
     }
 
+    /** Ligne « Taille et position » : hauteur et mode choisis (« 100 % · Normal »), relus au retour de la page. */
+    private fun renderKeyboardSizeRow() {
+        val preferences = KeyboardPreferences(this)
+        val height = when (preferences.keyboardHeight) {
+            KeyboardHeight.COMPACT -> R.string.keyboard_settings_height_compact_short
+            KeyboardHeight.SMALL -> R.string.keyboard_settings_height_small_short
+            KeyboardHeight.NORMAL -> R.string.keyboard_settings_height_normal_short
+            KeyboardHeight.LARGE -> R.string.keyboard_settings_height_large_short
+            KeyboardHeight.EXTRA_LARGE -> R.string.keyboard_settings_height_extra_large_short
+        }
+        val mode = when {
+            preferences.isFloatingKeyboard -> R.string.keyboard_settings_mode_floating
+            preferences.oneHandedMode == OneHandedMode.LEFT -> R.string.keyboard_settings_mode_left
+            preferences.oneHandedMode == OneHandedMode.RIGHT -> R.string.keyboard_settings_mode_right
+            else -> R.string.keyboard_settings_mode_normal
+        }
+        findViewById<View>(R.id.button_keyboard_size).findViewById<TextView>(R.id.row_subtitle).text =
+            getString(R.string.home_row_two_values, getString(height), getString(mode))
+    }
+
     /** Ligne « Langues » : les langues en service (« Français, English »), comme dans les paramètres du clavier. */
     private fun renderLanguagesRow() {
         val languages = KeyboardPreferences(this).languageSetup.inUse(automaticKeyboardLanguage())
@@ -452,6 +472,14 @@ class MainActivity : Activity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (permissionsStep.onRequestResult(requestCode)) renderOnboarding(readOnboardingState())
+    }
+
+    /** Ligne d'un thème des paramètres du clavier : titre de la section, ouvre sa page seule. */
+    private fun bindSectionRow(@IdRes id: Int, section: KeyboardSettingsSection, @StringRes subtitle: Int) {
+        val row = findViewById<View>(id)
+        row.findViewById<TextView>(R.id.row_title).setText(section.titleRes)
+        row.findViewById<TextView>(R.id.row_subtitle).setText(subtitle)
+        row.setOnClickListener { startActivity(KeyboardSettingsActivity.intent(this, section)) }
     }
 
     /** Ligne de réglage de l'accueil (lot UX 3) : pose le titre et le sous-titre, ouvre [target] au toucher. */

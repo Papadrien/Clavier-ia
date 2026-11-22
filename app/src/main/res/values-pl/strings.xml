@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Słownik systemowy Androida (słowa dodane przez dotknięcie słowa podkreślonego na czerwono) nie jest używany. Zezwól na dostęp, aby te słowa nie były poprawiane i mogły być podpowiadane. Taipo tylko go odczytuje i nigdy go nie zmienia.</string>
     <string name="personal_dictionary_system_on">Słownik systemowy Androida jest używany: odczytano słów: %1$d. Taipo tylko go odczytuje i nigdy go nie zmienia. Dostęp możesz cofnąć w ustawieniach Androida.</string>
     <string name="personal_dictionary_system_allow">Zezwól na dostęp</string>
-    <string name="button_keyboard_settings">Ustawienia klawiatury</string>
     <string name="keyboard_settings_title">Ustawienia klawiatury</string>
     <string name="keyboard_settings_layout_title">Układ klawiszy</string>
     <string name="keyboard_settings_size_title">Rozmiar i położenie</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Pisz tutaj, aby wypróbować</string>
     <string name="home_section_keyboard">Klawiatura</string>
     <string name="home_section_ai">Sztuczna inteligencja</string>
-    <string name="home_row_keyboard_settings_subtitle">Rząd cyfr, wibracje, wysokość, tryb jednoręczny, nauka</string>
     <string name="home_row_personal_dictionary_subtitle">Dodawaj lub usuwaj słowa</string>
     <string name="home_row_model_settings_subtitle">Wskaż plik modelu samodzielnie</string>
     <string name="home_row_voice_model_subtitle">Pobierz model dyktowania</string>
@@ -878,4 +876,7 @@
     <string name="system_prompt_tone_description">Polecenie wysyłane do modelu, by przepisał wiadomość w wybranym tonie (profesjonalnym, przyjaznym, zwięzłym…) bez zmiany sensu i języka.</string>
     <string name="system_prompt_translation_title">Tłumaczenie</string>
     <string name="system_prompt_translation_description">Polecenie wysyłane do modelu, by przetłumaczył tekst na wybrany język, zachowując sens, rejestr i ton.</string>
+    <string name="home_row_keyboard_layout_subtitle">Rząd cyfr, dolne klawisze, dymek klawiszy</string>
+    <string name="home_row_keyboard_sounds_subtitle">Wibracje, dźwięk klawiatury, głośność</string>
+    <string name="home_row_keyboard_smart_subtitle">Przesuwanie, nauka, historia schowka</string>
 </resources>
