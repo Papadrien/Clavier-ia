@@ -876,4 +876,7 @@
     <string name="home_row_keyboard_smart_subtitle">Glisare, învățare, istoricul clipboardului</string>
     <string name="appearance_section_theme">Temă și culoare</string>
     <string name="appearance_section_keys">Taste și font</string>
+    <string name="onboarding_done_title">Taipo este gata</string>
+    <string name="onboarding_done_show">Toți cei 6 pași sunt făcuți. Atinge pentru a-i revedea.</string>
+    <string name="onboarding_done_hide">Atinge pentru a ascunde pașii.</string>
 </resources>

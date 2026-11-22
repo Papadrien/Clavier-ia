@@ -872,4 +872,7 @@
     <string name="home_row_keyboard_smart_subtitle">Csúsztatás, tanulás, vágólapelőzmények</string>
     <string name="appearance_section_theme">Téma és szín</string>
     <string name="appearance_section_keys">Billentyűk és betűtípus</string>
+    <string name="onboarding_done_title">A Taipo készen áll</string>
+    <string name="onboarding_done_show">Mind a 6 lépés kész. Koppintson, hogy újra lássa őket.</string>
+    <string name="onboarding_done_hide">Koppintson a lépések elrejtéséhez.</string>
 </resources>

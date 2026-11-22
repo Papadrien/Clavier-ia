@@ -906,4 +906,7 @@
     <string name="home_row_two_values" translatable="false">%1$s · %2$s</string>
     <string name="appearance_section_theme">Theme and color</string>
     <string name="appearance_section_keys">Keys and font</string>
+    <string name="onboarding_done_title">Taipo is ready</string>
+    <string name="onboarding_done_show">All 6 steps are done. Tap to see them again.</string>
+    <string name="onboarding_done_hide">Tap to hide the steps.</string>
 </resources>

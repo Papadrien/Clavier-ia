@@ -111,3 +111,9 @@ Reste à faire (suite du plan UX) : en-tête commun des sous-pages.
 
 À vérifier sur l'appareil : position et lisibilité du bandeau (clair et sombre, mode une main, paysage), apparition de l'astuce
 de langue à l'ouverture d'un champ, étape 4 avec et sans modèle installé.
+
+## Tutoriel terminé (22/11/2026)
+- Les 6 étapes faites, elles tiennent dans une petite carte en haut, « Taipo est prêt » (coche, « Touchez pour les revoir ») ; la
+  toucher montre ou masque les étapes (pas retenu d'une ouverture à l'autre). Tant qu'il reste une étape, les cartes s'affichent
+  comme avant ; pendant la frappe dans le champ d'essai, elles restent affichées.
+- La carte du pack premium est juste sous le tutoriel, avant la carte d'accord de la mesure d'usage.

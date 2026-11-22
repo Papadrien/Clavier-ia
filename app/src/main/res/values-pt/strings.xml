@@ -876,4 +876,7 @@
     <string name="home_row_keyboard_smart_subtitle">Deslize, aprendizagem, histórico da área de transferência</string>
     <string name="appearance_section_theme">Tema e cor</string>
     <string name="appearance_section_keys">Teclas e tipo de letra</string>
+    <string name="onboarding_done_title">O Taipo está pronto</string>
+    <string name="onboarding_done_show">Os 6 passos estão feitos. Toque para os voltar a ver.</string>
+    <string name="onboarding_done_hide">Toque para ocultar os passos.</string>
 </resources>

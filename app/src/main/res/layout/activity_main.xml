@@ -32,6 +32,71 @@
         android:text="@string/main_title"
         android:layout_marginBottom="@dimen/taipo_settings_gap_xxl" />
 
+    <!-- 22/11/2026 : les 6 étapes faites, le tutoriel tient dans cette petite carte ; la toucher montre (ou masque) les étapes
+         (MainActivity.renderOnboarding). -->
+    <LinearLayout
+        android:id="@+id/onboarding_done_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:minHeight="@dimen/taipo_settings_row_min_height"
+        android:background="@drawable/bg_settings_card"
+        android:paddingStart="@dimen/taipo_settings_card_padding"
+        android:paddingEnd="@dimen/taipo_settings_gap_sm"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_md"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="@dimen/taipo_step_badge_size"
+            android:layout_height="@dimen/taipo_step_badge_size"
+            android:background="@drawable/bg_step_badge_done"
+            android:importantForAccessibility="no" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/taipo_settings_gap_md"
+            android:paddingTop="@dimen/taipo_settings_gap_sm"
+            android:paddingBottom="@dimen/taipo_settings_gap_sm"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/TaipoText.Lead"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:text="@string/onboarding_done_title" />
+
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:id="@+id/onboarding_done_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/onboarding_done_show" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/onboarding_done_chevron"
+            android:layout_width="@dimen/taipo_icon_size"
+            android:layout_height="@dimen/taipo_icon_size"
+            android:layout_marginStart="@dimen/taipo_settings_gap_sm"
+            android:src="@drawable/ic_chevron_right"
+            android:rotation="90"
+            android:importantForAccessibility="no" />
+    </LinearLayout>
+
+    <!-- Les 6 étapes du tutoriel, masquées derrière onboarding_done_card une fois toutes faites. -->
+    <LinearLayout
+        android:id="@+id/onboarding_steps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
     <LinearLayout
         android:id="@+id/step1_card"
         android:layout_width="match_parent"
@@ -337,9 +402,57 @@
                 android:text="@string/onboarding_step6_button" />
         </LinearLayout>
     </LinearLayout>
+    </LinearLayout>
 
     <!-- Pass premium : carte d'offre, montrée une fois les 3 étapes faites, tant que le pass n'est pas actif et qu'elle n'a pas
          été masquée (MainActivity.renderPremium). Le pass reste accessible par la ligne « Pass premium » de « À propos ». -->
+    <LinearLayout
+        android:id="@+id/premium_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_theme_card"
+        android:padding="@dimen/taipo_settings_card_padding"
+        android:layout_marginBottom="@dimen/taipo_settings_gap_xl"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                style="@style/TaipoText.Section"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/home_premium_card_title" />
+
+            <ImageButton
+                android:id="@+id/button_premium_card_close"
+                android:layout_width="@dimen/taipo_settings_row_min_height"
+                android:layout_height="@dimen/taipo_settings_row_min_height"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_close"
+                android:contentDescription="@string/home_premium_card_close" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/TaipoText.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/home_premium_card_text" />
+
+        <Button
+            style="@style/TaipoButton.Primary"
+            android:id="@+id/button_premium_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md"
+            android:text="@string/home_premium_card_button" />
+    </LinearLayout>
+
     <!-- Audit PRIV-01 : accord explicite pour la mesure d'usage, tant que l'utilisateur n'a pas répondu. -->
     <LinearLayout
         android:id="@+id/analytics_consent_card"
@@ -389,52 +502,6 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/premium_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/bg_theme_card"
-        android:padding="@dimen/taipo_settings_card_padding"
-        android:layout_marginBottom="@dimen/taipo_settings_gap_xl"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <TextView
-                style="@style/TaipoText.Section"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/home_premium_card_title" />
-
-            <ImageButton
-                android:id="@+id/button_premium_card_close"
-                android:layout_width="@dimen/taipo_settings_row_min_height"
-                android:layout_height="@dimen/taipo_settings_row_min_height"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_close"
-                android:contentDescription="@string/home_premium_card_close" />
-        </LinearLayout>
-
-        <TextView
-            style="@style/TaipoText.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/home_premium_card_text" />
-
-        <Button
-            style="@style/TaipoButton.Primary"
-            android:id="@+id/button_premium_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_md"
-            android:text="@string/home_premium_card_button" />
-    </LinearLayout>
 
     <TextView
         style="@style/TaipoText.Section"

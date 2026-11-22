@@ -872,4 +872,7 @@
     <string name="home_row_keyboard_smart_subtitle">Swipen, leren, klembordgeschiedenis</string>
     <string name="appearance_section_theme">Thema en kleur</string>
     <string name="appearance_section_keys">Toetsen en lettertype</string>
+    <string name="onboarding_done_title">Taipo is klaar</string>
+    <string name="onboarding_done_show">Alle 6 stappen zijn gedaan. Tik om ze opnieuw te zien.</string>
+    <string name="onboarding_done_hide">Tik om de stappen te verbergen.</string>
 </resources>

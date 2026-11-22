@@ -876,4 +876,7 @@
     <string name="home_row_keyboard_smart_subtitle">Scorrimento, apprendimento, cronologia degli appunti</string>
     <string name="appearance_section_theme">Tema e colore</string>
     <string name="appearance_section_keys">Tasti e carattere</string>
+    <string name="onboarding_done_title">Taipo è pronto</string>
+    <string name="onboarding_done_show">Tutti e 6 i passaggi sono fatti. Tocca per rivederli.</string>
+    <string name="onboarding_done_hide">Tocca per nascondere i passaggi.</string>
 </resources>

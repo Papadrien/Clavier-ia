@@ -872,4 +872,7 @@
     <string name="home_row_keyboard_smart_subtitle">Sveiping, læring, utklippshistorikk</string>
     <string name="appearance_section_theme">Tema og farge</string>
     <string name="appearance_section_keys">Taster og skrift</string>
+    <string name="onboarding_done_title">Taipo er klart</string>
+    <string name="onboarding_done_show">Alle 6 trinnene er gjort. Trykk for å se dem igjen.</string>
+    <string name="onboarding_done_hide">Trykk for å skjule trinnene.</string>
 </resources>

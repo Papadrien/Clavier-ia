@@ -872,4 +872,7 @@
     <string name="home_row_keyboard_smart_subtitle">Wischen, Lernen, Verlauf der Zwischenablage</string>
     <string name="appearance_section_theme">Design und Farbe</string>
     <string name="appearance_section_keys">Tasten und Schrift</string>
+    <string name="onboarding_done_title">Taipo ist bereit</string>
+    <string name="onboarding_done_show">Alle 6 Schritte sind erledigt. Tippe, um sie wieder anzuzeigen.</string>
+    <string name="onboarding_done_hide">Tippe, um die Schritte auszublenden.</string>
 </resources>

@@ -876,4 +876,7 @@
     <string name="home_row_keyboard_smart_subtitle">Deslizar, aprendizaje, historial del portapapeles</string>
     <string name="appearance_section_theme">Tema y color</string>
     <string name="appearance_section_keys">Teclas y fuente</string>
+    <string name="onboarding_done_title">Taipo está listo</string>
+    <string name="onboarding_done_show">Los 6 pasos están hechos. Toca para volver a verlos.</string>
+    <string name="onboarding_done_hide">Toca para ocultar los pasos.</string>
 </resources>

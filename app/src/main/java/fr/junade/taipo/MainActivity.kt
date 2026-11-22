@@ -537,8 +537,37 @@ class MainActivity : Activity() {
     /** Dernier état lu de l'installation : la carte du pass s'en sert sans relire Android (lecture qui interroge le système). */
     private var lastOnboarding: OnboardingState? = null
 
+    /** Tutoriel terminé : les étapes montrées sous la petite carte « Taipo est prêt » (toucher la carte). Pas retenu. */
+    private var onboardingStepsExpanded = false
+
+    /**
+     * Tutoriel terminé (22/11/2026) : les 6 étapes tiennent dans une petite carte en haut, qui les montre ou les masque au toucher.
+     * Tant qu'il reste une étape, les cartes des étapes sont affichées comme avant.
+     */
+    private fun renderOnboardingSummary(state: OnboardingState) {
+        val doneCard = findViewById<View>(R.id.onboarding_done_card)
+        val steps = findViewById<View>(R.id.onboarding_steps)
+        if (!state.complete) {
+            doneCard.visibility = View.GONE
+            steps.visibility = View.VISIBLE
+            return
+        }
+        doneCard.visibility = View.VISIBLE
+        // Phrase d'essai en cours de frappe (étape 3 qui vient de se terminer) : les étapes restent sous le doigt.
+        steps.visibility = if (onboardingStepsExpanded || tryInput.hasFocus()) View.VISIBLE else View.GONE
+        findViewById<TextView>(R.id.onboarding_done_hint).setText(
+            if (onboardingStepsExpanded) R.string.onboarding_done_hide else R.string.onboarding_done_show,
+        )
+        findViewById<View>(R.id.onboarding_done_chevron).rotation = if (onboardingStepsExpanded) CHEVRON_UP else CHEVRON_DOWN
+        doneCard.setOnClickListener {
+            onboardingStepsExpanded = !onboardingStepsExpanded
+            renderOnboardingSummary(state)
+        }
+    }
+
     private fun renderOnboarding(state: OnboardingState) {
         lastOnboarding = state
+        renderOnboardingSummary(state)
         renderStep(
             step1,
             state.activate,
@@ -638,6 +667,8 @@ class MainActivity : Activity() {
 
     private companion object {
         const val HOME_PREFS = "home_prefs"
+        const val CHEVRON_DOWN = 90f
+        const val CHEVRON_UP = -90f
         const val KEY_PREMIUM_CARD_DISMISSED = "premium_card_dismissed"
         const val KEY_TRIED = "onboarding_tried"
     }

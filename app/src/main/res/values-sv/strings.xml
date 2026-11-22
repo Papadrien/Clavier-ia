@@ -872,4 +872,7 @@
     <string name="home_row_keyboard_smart_subtitle">Svepskrivning, inlärning, urklippshistorik</string>
     <string name="appearance_section_theme">Tema och färg</string>
     <string name="appearance_section_keys">Tangenter och typsnitt</string>
+    <string name="onboarding_done_title">Taipo är klart</string>
+    <string name="onboarding_done_show">Alla 6 steg är klara. Tryck för att se dem igen.</string>
+    <string name="onboarding_done_hide">Tryck för att dölja stegen.</string>
 </resources>

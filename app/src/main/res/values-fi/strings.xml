@@ -872,4 +872,7 @@
     <string name="home_row_keyboard_smart_subtitle">Liukukirjoitus, oppiminen, leikepöydän historia</string>
     <string name="appearance_section_theme">Teema ja väri</string>
     <string name="appearance_section_keys">Näppäimet ja fontti</string>
+    <string name="onboarding_done_title">Taipo on valmis</string>
+    <string name="onboarding_done_show">Kaikki 6 vaihetta on tehty. Näytä ne uudelleen napauttamalla.</string>
+    <string name="onboarding_done_hide">Piilota vaiheet napauttamalla.</string>
 </resources>

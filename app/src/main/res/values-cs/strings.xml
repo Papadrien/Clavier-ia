@@ -880,4 +880,7 @@
     <string name="home_row_keyboard_smart_subtitle">Psaní tahem, učení, historie schránky</string>
     <string name="appearance_section_theme">Motiv a barva</string>
     <string name="appearance_section_keys">Klávesy a písmo</string>
+    <string name="onboarding_done_title">Taipo je připraveno</string>
+    <string name="onboarding_done_show">Všech 6 kroků je hotovo. Klepnutím je znovu zobrazíte.</string>
+    <string name="onboarding_done_hide">Klepnutím kroky skryjete.</string>
 </resources>

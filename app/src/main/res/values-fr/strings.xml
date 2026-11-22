@@ -923,4 +923,7 @@
     <string name="home_row_keyboard_smart_subtitle">Glissement, habitudes, historique du presse-papiers</string>
     <string name="appearance_section_theme">Thème et couleur</string>
     <string name="appearance_section_keys">Touches et police</string>
+    <string name="onboarding_done_title">Taipo est prêt</string>
+    <string name="onboarding_done_show">Les 6 étapes sont faites. Touchez pour les revoir.</string>
+    <string name="onboarding_done_hide">Touchez pour masquer les étapes.</string>
 </resources>

@@ -880,4 +880,7 @@
     <string name="home_row_keyboard_smart_subtitle">Przesuwanie, nauka, historia schowka</string>
     <string name="appearance_section_theme">Motyw i kolor</string>
     <string name="appearance_section_keys">Klawisze i czcionka</string>
+    <string name="onboarding_done_title">Taipo jest gotowe</string>
+    <string name="onboarding_done_show">Wszystkie 6 kroków wykonane. Dotknij, by je zobaczyć.</string>
+    <string name="onboarding_done_hide">Dotknij, by ukryć kroki.</string>
 </resources>
