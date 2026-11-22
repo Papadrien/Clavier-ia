@@ -117,3 +117,11 @@ de langue à l'ouverture d'un champ, étape 4 avec et sans modèle installé.
   toucher montre ou masque les étapes (pas retenu d'une ouverture à l'autre). Tant qu'il reste une étape, les cartes s'affichent
   comme avant ; pendant la frappe dans le champ d'essai, elles restent affichées.
 - La carte du pack premium est juste sous le tutoriel, avant la carte d'accord de la mesure d'usage.
+
+## Icônes, carte du pack, Disposition des touches (22/11/2026)
+- Chaque ligne de réglage des écrans (accueil, ligne Langues des paramètres) porte une icône au trait, couleur d'accent, sur une
+  pastille violette (`view_settings_row` / `row_icon`, `SettingsRowIcons`, icônes `ic_row_*`). `SettingsRowIconsTest` vérifie que
+  toutes les lignes de l'accueil en ont une.
+- La carte « Pack premium » (ligne encadrée de violet, auparavant en tête de « À propos ») est juste sous le tutoriel ; masquée tant
+  que la carte d'offre du pack est affichée, pour ne pas faire doublon.
+- Page « Disposition des touches » : trois cartes (rangée de chiffres ; touches de la rangée du bas ; bulle des touches).

@@ -45,6 +45,8 @@
     <!-- Icônes (lot 09) : une seule taille pour toutes les icônes VectorDrawable (touches du clavier et boutons
          des barres) ; le trait (2 sur 24) et les couleurs sont dans les drawables. Plafonnée sur les touches basses. -->
     <dimen name="taipo_icon_size">24dp</dimen>
+    <!-- Pastille de l'icône d'une ligne de réglage (view_settings_row). -->
+    <dimen name="taipo_settings_row_icon_tile">40dp</dimen>
     <!-- Barre de la touche espace. -->
     <dimen name="taipo_space_bar_length">22dp</dimen>
     <!-- Demi-longueur ci-dessus ; épaisseur (lot 06 : 6 px fixes avant, soit ~2,3 dp sur Pixel 9). -->

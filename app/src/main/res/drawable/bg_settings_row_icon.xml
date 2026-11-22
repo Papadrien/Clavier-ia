@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pastille derrière l'icône d'une ligne de réglage : violet léger, lisible en thème clair comme en sombre. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#298C00FF" />
+    <corners android:radius="12dp" />
+</shape>

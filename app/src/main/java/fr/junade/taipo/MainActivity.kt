@@ -133,6 +133,7 @@ class MainActivity : Activity() {
 
     /** Lignes de l'accueil : titre, sous-titre et écran ouvert. */
     private fun bindRows() {
+        SettingsRowIcons.apply(this)
         // Paramètres du clavier (22/11/2026, maquette A) : une ligne par thème, chacune ouvre sa page.
         bindSectionRow(R.id.button_keyboard_size, KeyboardSettingsSection.SIZE, R.string.keyboard_settings_size_title)
         bindSectionRow(R.id.button_keyboard_layout, KeyboardSettingsSection.LAYOUT, R.string.home_row_keyboard_layout_subtitle)
@@ -281,7 +282,10 @@ class MainActivity : Activity() {
         val active = PremiumPass.isActive
         val onboarded = (lastOnboarding ?: readOnboardingState()).let { it.enabled && it.selected }
         val dismissed = homePrefs().getBoolean(KEY_PREMIUM_CARD_DISMISSED, false)
-        findViewById<View>(R.id.premium_card).visibility = if (onboarded && !active && !dismissed) View.VISIBLE else View.GONE
+        val offerShown = onboarded && !active && !dismissed
+        findViewById<View>(R.id.premium_card).visibility = if (offerShown) View.VISIBLE else View.GONE
+        // Ligne « Pack premium » sous le tutoriel : pas en double avec la carte d'offre.
+        findViewById<View>(R.id.premium_row_card).visibility = if (offerShown) View.GONE else View.VISIBLE
         findViewById<View>(R.id.button_premium).findViewById<TextView>(R.id.row_subtitle).setText(
             if (active) R.string.home_row_premium_subtitle_active else R.string.home_row_premium_subtitle_offer,
         )
