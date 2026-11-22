@@ -67,7 +67,7 @@ Builds debug : section « Debug » tout en bas de l'accueil, un bouton qui passe
 ## À faire hors du code
 
 - Play Console : créer le produit `pass_premium` (achat unique, 2,99 €), ajouter des testeurs de licence.
-- Copier la clé publique de licence (Monétiser > Configuration de la monétisation > Licences) dans `playLicenseKey` du secret
-  `ANDROID_KEY_PROPERTIES` (ou `taipo.playLicenseKey` de `gradle.properties`) : sans elle, la release ne se construit pas.
+- Clé publique de licence : renseignée le 22/11/2026 dans `gradle.properties` (`taipo.playLicenseKey`). À changer seulement si
+  la Play Console en donne une autre ; sans elle, la release ne se construit pas.
 - Fiche « Sécurité des données » : historique d'achats (géré par Google Play).
 - Page Confidentialité : mentionner que l'achat passe par Google Play, sans donnée envoyée par Taipo.
