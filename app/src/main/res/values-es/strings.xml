@@ -660,7 +660,6 @@
     <string name="motion_style_bloom">Floración</string>
     <string name="home_row_languages_subtitle">Idiomas y disposiciones del teclado</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Apariencia</string>
     <string name="languages_title">Idiomas</string>
     <string name="languages_section_keyboard">Idiomas del teclado</string>
     <string name="languages_summary_device">%1$s · idioma del dispositivo</string>
@@ -875,4 +874,6 @@
     <string name="home_row_keyboard_layout_subtitle">Fila de números, teclas inferiores, burbuja de teclas</string>
     <string name="home_row_keyboard_sounds_subtitle">Vibración, sonido del teclado, volumen</string>
     <string name="home_row_keyboard_smart_subtitle">Deslizar, aprendizaje, historial del portapapeles</string>
+    <string name="appearance_section_theme">Tema y color</string>
+    <string name="appearance_section_keys">Teclas y fuente</string>
 </resources>

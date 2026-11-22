@@ -684,7 +684,6 @@
     <string name="motion_style_bloom">Bloom</string>
     <string name="home_row_languages_subtitle">Keyboard languages and layouts</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Appearance</string>
     <string name="languages_title">Languages</string>
     <string name="languages_section_keyboard">Keyboard languages</string>
     <string name="languages_summary_device">%1$s · device language</string>
@@ -905,4 +904,6 @@
     <string name="home_row_keyboard_smart_subtitle">Swipe typing, learning, clipboard history</string>
     <!-- Résumé « Taille et position » de l'accueil : hauteur · mode (« 100 % · Normal »). -->
     <string name="home_row_two_values" translatable="false">%1$s · %2$s</string>
+    <string name="appearance_section_theme">Theme and color</string>
+    <string name="appearance_section_keys">Keys and font</string>
 </resources>

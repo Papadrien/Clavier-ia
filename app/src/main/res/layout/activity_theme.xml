@@ -21,6 +21,13 @@
             android:layout_marginBottom="@dimen/taipo_settings_gap_xl"
             android:text="@string/theme_title" />
 
+        <!-- Groupe « keyboard » : affiché seul quand la page est ouverte sur ce thème depuis l'accueil (AppearanceSection). -->
+        <LinearLayout
+            android:id="@+id/theme_group_keyboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
         <TextView
             style="@style/TaipoText.Section"
             android:layout_width="wrap_content"
@@ -33,6 +40,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
+        </LinearLayout>
+
+        <!-- Groupe « color » : affiché seul quand la page est ouverte sur ce thème depuis l'accueil (AppearanceSection). -->
+        <LinearLayout
+            android:id="@+id/theme_group_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
         <TextView
             style="@style/TaipoText.Section"
@@ -58,6 +73,14 @@
             android:layout_marginTop="@dimen/taipo_settings_gap_md"
             android:text="@string/premium_unlock"
             android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Groupe « shape » : affiché seul quand la page est ouverte sur ce thème depuis l'accueil (AppearanceSection). -->
+        <LinearLayout
+            android:id="@+id/theme_group_shape"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
         <!-- Section « Forme des touches » : une carte par forme (KeyShape), posées par ThemeActivity par rangées de trois. Les formes
              réservées au pass portent un cadenas ; touchée sans pass, une forme est montrée sur les aperçus et ce bouton ouvre le pass. -->
@@ -84,6 +107,14 @@
             android:layout_marginTop="@dimen/taipo_settings_gap_md"
             android:text="@string/premium_unlock"
             android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Groupe « backdrop » : affiché seul quand la page est ouverte sur ce thème depuis l'accueil (AppearanceSection). -->
+        <LinearLayout
+            android:id="@+id/theme_group_backdrop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
         <TextView
             style="@style/TaipoText.Section"
@@ -153,6 +184,14 @@
             android:layout_marginTop="@dimen/taipo_settings_gap_md"
             android:text="@string/premium_unlock"
             android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Groupe « font » : affiché seul quand la page est ouverte sur ce thème depuis l'accueil (AppearanceSection). -->
+        <LinearLayout
+            android:id="@+id/theme_group_font"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
         <TextView
             style="@style/TaipoText.Section"
@@ -188,6 +227,14 @@
             android:layout_marginTop="@dimen/taipo_settings_gap_md"
             android:text="@string/premium_unlock"
             android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Groupe « motion » : affiché seul quand la page est ouverte sur ce thème depuis l'accueil (AppearanceSection). -->
+        <LinearLayout
+            android:id="@+id/theme_group_motion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
         <!-- Section « Animations » : une carte par style (MotionStyle), aperçu animé en boucle avec la bulle des touches, posées par
              ThemeActivity par rangées de trois. Un style règle le clavier et la bulle. Gelée, réservée au pack, porte un cadenas ;
@@ -221,5 +268,6 @@
             android:layout_marginTop="@dimen/taipo_settings_gap_md"
             android:text="@string/premium_unlock"
             android:visibility="gone" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

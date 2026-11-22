@@ -660,7 +660,6 @@
     <string name="motion_style_bloom">Înflorire</string>
     <string name="home_row_languages_subtitle">Limbile și aranjările tastaturii</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Aspect</string>
     <string name="languages_title">Limbi</string>
     <string name="languages_section_keyboard">Limbile tastaturii</string>
     <string name="languages_summary_device">%1$s · limba dispozitivului</string>
@@ -875,4 +874,6 @@
     <string name="home_row_keyboard_layout_subtitle">Rândul de cifre, tastele de jos, bula tastelor</string>
     <string name="home_row_keyboard_sounds_subtitle">Vibrații, sunetul tastaturii, volum</string>
     <string name="home_row_keyboard_smart_subtitle">Glisare, învățare, istoricul clipboardului</string>
+    <string name="appearance_section_theme">Temă și culoare</string>
+    <string name="appearance_section_keys">Taste și font</string>
 </resources>

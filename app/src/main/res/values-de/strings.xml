@@ -656,7 +656,6 @@
     <string name="motion_style_bloom">Blüte</string>
     <string name="home_row_languages_subtitle">Tastatursprachen und Layouts</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Erscheinungsbild</string>
     <string name="languages_title">Sprachen</string>
     <string name="languages_section_keyboard">Tastatursprachen</string>
     <string name="languages_summary_device">%1$s · Gerätesprache</string>
@@ -871,4 +870,6 @@
     <string name="home_row_keyboard_layout_subtitle">Zahlenreihe, untere Tasten, Tastenblase</string>
     <string name="home_row_keyboard_sounds_subtitle">Vibration, Tastenton, Lautstärke</string>
     <string name="home_row_keyboard_smart_subtitle">Wischen, Lernen, Verlauf der Zwischenablage</string>
+    <string name="appearance_section_theme">Design und Farbe</string>
+    <string name="appearance_section_keys">Tasten und Schrift</string>
 </resources>

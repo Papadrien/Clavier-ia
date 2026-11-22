@@ -664,7 +664,6 @@
     <string name="motion_style_bloom">Rozkwit</string>
     <string name="home_row_languages_subtitle">Języki i układy klawiatury</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Wygląd</string>
     <string name="languages_title">Języki</string>
     <string name="languages_section_keyboard">Języki klawiatury</string>
     <string name="languages_summary_device">%1$s · język urządzenia</string>
@@ -879,4 +878,6 @@
     <string name="home_row_keyboard_layout_subtitle">Rząd cyfr, dolne klawisze, dymek klawiszy</string>
     <string name="home_row_keyboard_sounds_subtitle">Wibracje, dźwięk klawiatury, głośność</string>
     <string name="home_row_keyboard_smart_subtitle">Przesuwanie, nauka, historia schowka</string>
+    <string name="appearance_section_theme">Motyw i kolor</string>
+    <string name="appearance_section_keys">Klawisze i czcionka</string>
 </resources>

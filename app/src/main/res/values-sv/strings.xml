@@ -656,7 +656,6 @@
     <string name="motion_style_bloom">Blomning</string>
     <string name="home_row_languages_subtitle">Tangentbordets språk och layouter</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Utseende</string>
     <string name="languages_title">Språk</string>
     <string name="languages_section_keyboard">Tangentbordets språk</string>
     <string name="languages_summary_device">%1$s · enhetens språk</string>
@@ -871,4 +870,6 @@
     <string name="home_row_keyboard_layout_subtitle">Sifferrad, nedre tangenter, tangentbubbla</string>
     <string name="home_row_keyboard_sounds_subtitle">Vibration, tangentljud, volym</string>
     <string name="home_row_keyboard_smart_subtitle">Svepskrivning, inlärning, urklippshistorik</string>
+    <string name="appearance_section_theme">Tema och färg</string>
+    <string name="appearance_section_keys">Tangenter och typsnitt</string>
 </resources>

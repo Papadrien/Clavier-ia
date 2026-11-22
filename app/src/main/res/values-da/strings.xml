@@ -656,7 +656,6 @@
     <string name="motion_style_bloom">Blomstring</string>
     <string name="home_row_languages_subtitle">Tastaturets sprog og layouts</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Udseende</string>
     <string name="languages_title">Sprog</string>
     <string name="languages_section_keyboard">Tastatursprog</string>
     <string name="languages_summary_device">%1$s · enhedens sprog</string>
@@ -871,4 +870,6 @@
     <string name="home_row_keyboard_layout_subtitle">Talrække, nederste taster, tasteboble</string>
     <string name="home_row_keyboard_sounds_subtitle">Vibration, tastaturlyd, lydstyrke</string>
     <string name="home_row_keyboard_smart_subtitle">Swipe, læring, udklipsholderhistorik</string>
+    <string name="appearance_section_theme">Tema og farve</string>
+    <string name="appearance_section_keys">Taster og skrifttype</string>
 </resources>

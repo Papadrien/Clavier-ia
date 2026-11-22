@@ -35,7 +35,8 @@ changer de clavier par défaut pendant que l'accueil est ouvert puis revenir.
 - Les cinq boutons secondaires sont remplacés par deux cartes de lignes (titre, sous-titre, chevron) :
   **Clavier** (depuis le 22/11/2026, maquette A : Langues, Taille et position, Disposition des touches, Sons et vibrations,
   Saisie intelligente, chacune ouvrant sa page des paramètres du clavier (`KeyboardSettingsSection`) à la place de l'ancienne ligne
-  unique « Paramètres du clavier », puis Apparence et Dictionnaire personnel) et **Intelligence artificielle** (Modèle IA, Modèle vocal,
+  unique « Paramètres du clavier », puis Dictionnaire personnel) ; **Apparence** (22/11/2026 : carte de 4 lignes, Thème et couleur,
+  Touches et police, Fond du clavier, Animations, chacune ouvrant la page Apparence sur ses seules sections, `AppearanceSection`) et **Intelligence artificielle** (Modèle IA, Modèle vocal,
   Prompts système). Une ligne = `layout/view_settings_row.xml` (inclus cinq fois, textes posés par `MainActivity.bindRow`).
 - Zone tactile d'au moins 48 dp par ligne ; retour visuel au toucher qui suit les coins arrondis de la carte
   (`clipToOutline`) ; les deux titres de groupe sont déclarés comme titres pour TalkBack.

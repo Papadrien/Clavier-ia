@@ -121,6 +121,7 @@ class MainActivity : Activity() {
 
         // Titres de groupe annoncés comme des titres par TalkBack (navigation par titres).
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_keyboard), true)
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.section_appearance), true)
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_ai), true)
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_data), true)
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_about), true)
@@ -137,7 +138,11 @@ class MainActivity : Activity() {
         bindSectionRow(R.id.button_keyboard_layout, KeyboardSettingsSection.LAYOUT, R.string.home_row_keyboard_layout_subtitle)
         bindSectionRow(R.id.button_keyboard_sounds, KeyboardSettingsSection.SOUNDS, R.string.home_row_keyboard_sounds_subtitle)
         bindSectionRow(R.id.button_keyboard_smart, KeyboardSettingsSection.SMART, R.string.home_row_keyboard_smart_subtitle)
-        bindRow(R.id.button_theme, R.string.button_theme, R.string.home_row_theme_subtitle, ThemeActivity::class.java)
+        // Apparence (22/11/2026) : 4 lignes, chacune ouvre sa page ; sous-titres posés par renderAppearanceRows.
+        bindAppearanceRow(R.id.button_appearance_theme, AppearanceSection.THEME)
+        bindAppearanceRow(R.id.button_appearance_keys, AppearanceSection.KEYS)
+        bindAppearanceRow(R.id.button_appearance_backdrop, AppearanceSection.BACKDROP)
+        bindAppearanceRow(R.id.button_appearance_motion, AppearanceSection.MOTION)
         bindRow(R.id.button_home_languages, R.string.languages_title, R.string.home_row_languages_subtitle, LanguagesActivity::class.java)
         bindRow(
             R.id.button_personal_dictionary,
@@ -197,7 +202,7 @@ class MainActivity : Activity() {
         super.onResume()
         renderOnboarding(readOnboardingState())
         renderModelStatuses()
-        renderThemeRow()
+        renderAppearanceRows()
         renderLanguagesRow()
         renderKeyboardSizeRow()
         renderPremium()
@@ -354,12 +359,42 @@ class MainActivity : Activity() {
         }
     }
 
-    /** Ligne « Apparence » : thème et couleur choisis (« Sombre · Lagon »), relus au retour de la page (le choix s'y fait). */
-    private fun renderThemeRow() {
+    /**
+     * Carte « Apparence » : choix actuels, relus au retour des pages (les choix s'y font). Valeurs effectives : un choix réservé au
+     * pack, sans lui, s'affiche comme celui qui sert vraiment (couleur violette, Arrondi, Open Sans, Ressort, fond Uni).
+     */
+    private fun renderAppearanceRows() {
         val preferences = KeyboardPreferences(this)
-        val palette = AccentPalette.effective(preferences.accentPalette, PremiumPass.isActive)
-        findViewById<View>(R.id.button_theme).findViewById<TextView>(R.id.row_subtitle).text =
-            getString(R.string.home_row_theme_subtitle, getString(preferences.themeChoice.labelRes()), getString(palette.labelRes()))
+        val premium = PremiumPass.isActive
+        val palette = AccentPalette.effective(preferences.accentPalette, premium)
+        setRowSubtitle(
+            R.id.button_appearance_theme,
+            getString(R.string.home_row_theme_subtitle, getString(preferences.themeChoice.labelRes()), getString(palette.labelRes())),
+        )
+        val font = KeyboardFont.effective(preferences.keyboardFont, premium)
+        val fontName = font.displayName ?: getString(checkNotNull(font.labelRes))
+        setRowSubtitle(
+            R.id.button_appearance_keys,
+            getString(R.string.home_row_two_values, getString(KeyShape.effective(preferences.keyShape, premium).labelRes()), fontName),
+        )
+        val backdrop = fr.junade.taipo.backdrop.KeyboardBackdrop.effective(
+            preferences.keyboardBackdrop,
+            premium,
+            fr.junade.taipo.backdrop.PhotoBackdrop.exists(this),
+        )
+        setRowSubtitle(R.id.button_appearance_backdrop, getString(backdrop.labelRes))
+        setRowSubtitle(R.id.button_appearance_motion, getString(MotionStyle.effective(preferences.motionStyle, premium).labelRes()))
+    }
+
+    private fun setRowSubtitle(@IdRes id: Int, text: String) {
+        findViewById<View>(id).findViewById<TextView>(R.id.row_subtitle).text = text
+    }
+
+    /** Ligne d'un thème de l'apparence : titre de la section, ouvre sa page seule. */
+    private fun bindAppearanceRow(@IdRes id: Int, section: AppearanceSection) {
+        val row = findViewById<View>(id)
+        row.findViewById<TextView>(R.id.row_title).setText(section.titleRes)
+        row.setOnClickListener { startActivity(ThemeActivity.intent(this, section)) }
     }
 
     /** Ligne « Taille et position » : hauteur et mode choisis (« 100 % · Normal »), relus au retour de la page. */

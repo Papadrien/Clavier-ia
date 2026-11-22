@@ -664,7 +664,6 @@
     <string name="motion_style_bloom">Rozkvět</string>
     <string name="home_row_languages_subtitle">Jazyky a rozložení klávesnice</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Vzhled</string>
     <string name="languages_title">Jazyky</string>
     <string name="languages_section_keyboard">Jazyky klávesnice</string>
     <string name="languages_summary_device">%1$s · jazyk zařízení</string>
@@ -879,4 +878,6 @@
     <string name="home_row_keyboard_layout_subtitle">Řada číslic, spodní klávesy, bublina kláves</string>
     <string name="home_row_keyboard_sounds_subtitle">Vibrace, zvuk klávesnice, hlasitost</string>
     <string name="home_row_keyboard_smart_subtitle">Psaní tahem, učení, historie schránky</string>
+    <string name="appearance_section_theme">Motiv a barva</string>
+    <string name="appearance_section_keys">Klávesy a písmo</string>
 </resources>
