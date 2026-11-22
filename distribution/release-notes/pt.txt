@@ -2,5 +2,8 @@ Novidades do Taipo 4
 • Toda a IA num painel
 • Mudar o tom
 • Tradução no telemóvel
+• Uma IA mais rápida
 • Escrita por deslize
-• Novas animações e fundo com imagem
+• Colar uma palavra-passe
+• A sua foto como fundo
+• Novo fundo Processador

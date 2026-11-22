@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Das Android-Systemwörterbuch (Wörter, die Sie durch Tippen auf ein rot unterstrichenes Wort hinzufügen) wird nicht verwendet. Erlauben Sie den Zugriff, damit diese Wörter nicht korrigiert und vorgeschlagen werden können. Taipo liest es nur und ändert es nie.</string>
     <string name="personal_dictionary_system_on">Das Android-Systemwörterbuch wird verwendet: %1$d Wort/Wörter gelesen. Taipo liest es nur und ändert es nie. Sie können den Zugriff in den Android-Einstellungen widerrufen.</string>
     <string name="personal_dictionary_system_allow">Zugriff erlauben</string>
-    <string name="button_keyboard_settings">Tastatureinstellungen</string>
     <string name="keyboard_settings_title">Tastatureinstellungen</string>
     <string name="keyboard_settings_layout_title">Tastenanordnung</string>
     <string name="keyboard_settings_size_title">Größe und Position</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Zum Testen hier tippen</string>
     <string name="home_section_keyboard">Tastatur</string>
     <string name="home_section_ai">Künstliche Intelligenz</string>
-    <string name="home_row_keyboard_settings_subtitle">Zahlenreihe, Vibration, Höhe, Einhandmodus, Lernen</string>
     <string name="home_row_personal_dictionary_subtitle">Wörter hinzufügen oder entfernen</string>
     <string name="home_row_model_settings_subtitle">Eine Modelldatei selbst bereitstellen</string>
     <string name="home_row_voice_model_subtitle">Das Diktiermodell herunterladen</string>
@@ -658,7 +656,6 @@
     <string name="motion_style_bloom">Blüte</string>
     <string name="home_row_languages_subtitle">Tastatursprachen und Layouts</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Erscheinungsbild</string>
     <string name="languages_title">Sprachen</string>
     <string name="languages_section_keyboard">Tastatursprachen</string>
     <string name="languages_summary_device">%1$s · Gerätesprache</string>
@@ -776,13 +773,19 @@
     <string name="whats_new_ai_panel_title">Die ganze KI in einem Bereich</string>
     <string name="whats_new_ai_panel_body">Die KI-Taste öffnet alle KI-Aktionen. Lange drücken heftet eine an die Leiste an: höchstens zwei.</string>
     <string name="whats_new_tone_title">Ton ändern</string>
-    <string name="whats_new_tone_body">Mach deine Nachricht mit einem Tippen professionell, freundlich, knapp, höflich… und stelle das Original wieder her.</string>
+    <string name="whats_new_tone_body">Acht Töne, von professionell bis Social Media: Formuliere deine Nachricht mit einem Tippen um und stelle das Original wieder her.</string>
     <string name="whats_new_translation_title">Übersetzung auf dem Handy</string>
-    <string name="whats_new_translation_body">Schreib, und die Übersetzung erscheint live im Feld. Nichts verlässt dein Handy.</string>
+    <string name="whats_new_translation_body">Schreib, und die Übersetzung erscheint live im Feld. Wähle beide Sprachen und tausche sie mit ⇄: bis zu 43 Sprachen mit Gemma 4. Nichts verlässt dein Handy.</string>
+    <string name="whats_new_faster_ai_title">Schnellere KI</string>
+    <string name="whats_new_faster_ai_body">Korrektur, Ton und Übersetzung antworten schneller, und das Diktat startet sofort: sein Modell bleibt bereit.</string>
     <string name="whats_new_swipe_title">Wischen zum Schreiben</string>
     <string name="whats_new_swipe_body">Wische mit dem Finger von Buchstabe zu Buchstabe. In den Tastatureinstellungen einschalten.</string>
-    <string name="whats_new_animations_title">Neue Animationen und Bildhintergrund</string>
-    <string name="whats_new_animations_body">Funken, Pixel, Herzblase und Blüte, und dein eigenes Bild hinter den Tasten (Premium-Paket).</string>
+    <string name="whats_new_password_paste_title">Passwort einfügen</string>
+    <string name="whats_new_password_paste_body">Die Zwischenablage öffnet sich jetzt auch in Passwortfeldern, um das Passwort aus deinem Passwortmanager einzufügen. Aus dem Feld wird nichts gelesen oder gespeichert.</string>
+    <string name="whats_new_photo_title">Dein Foto als Hintergrund</string>
+    <string name="whats_new_photo_body">Wähle ein Bild aus deiner Galerie oder deinen Dateien als Tastaturhintergrund (Premium-Paket). Es bleibt auf deinem Handy.</string>
+    <string name="whats_new_processor_title">Neuer Hintergrund Prozessor</string>
+    <string name="whats_new_processor_body">Eine Platine, deren Leiterbahnen bei jeder Taste aufleuchten (Premium-Paket). Animierte Hintergründe bewegen sich auch, während die KI arbeitet.</string>
     <string name="model_name_custom">Eigenes Modell</string>
     <string name="model_subtitle_custom">Deine eigene LiteRT-LM-Datei</string>
     <string name="model_hint_custom">Eine .litertlm-Datei, kompatibel mit der in Taipo enthaltenen LiteRT-LM-Version.</string>
@@ -864,4 +867,12 @@
     <string name="system_prompt_tone_description">Anweisung an das Modell, eine Nachricht im gewählten Ton (professionell, freundlich, knapp…) umzuschreiben, ohne Sinn oder Sprache zu ändern.</string>
     <string name="system_prompt_translation_title">Übersetzung</string>
     <string name="system_prompt_translation_description">Anweisung an das Modell, den Text in die gewählte Sprache zu übersetzen und dabei Sinn, Stilebene und Ton zu bewahren.</string>
+    <string name="home_row_keyboard_layout_subtitle">Zahlenreihe, untere Tasten, Tastenblase</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibration, Tastenton, Lautstärke</string>
+    <string name="home_row_keyboard_smart_subtitle">Wischen, Lernen, Verlauf der Zwischenablage</string>
+    <string name="appearance_section_theme">Design und Farbe</string>
+    <string name="appearance_section_keys">Tasten und Schrift</string>
+    <string name="onboarding_done_title">Taipo ist bereit</string>
+    <string name="onboarding_done_show">Alle 6 Schritte sind erledigt. Tippe, um sie wieder anzuzeigen.</string>
+    <string name="onboarding_done_hide">Tippe, um die Schritte auszublenden.</string>
 </resources>

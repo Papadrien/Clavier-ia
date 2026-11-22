@@ -2,5 +2,8 @@ Neu in Taipo 4
 • Die ganze KI in einem Bereich
 • Ton ändern
 • Übersetzung auf dem Handy
+• Schnellere KI
 • Wischen zum Schreiben
-• Neue Animationen und Bildhintergrund
+• Passwort einfügen
+• Dein Foto als Hintergrund
+• Neuer Hintergrund Prozessor

@@ -33,7 +33,10 @@ changer de clavier par défaut pendant que l'accueil est ouvert puis revenir.
 ## Lot 3 — réglages en lignes groupées (06/10/2026)
 
 - Les cinq boutons secondaires sont remplacés par deux cartes de lignes (titre, sous-titre, chevron) :
-  **Clavier** (Paramètres du clavier, Dictionnaire personnel) et **Intelligence artificielle** (Modèle IA, Modèle vocal,
+  **Clavier** (depuis le 22/11/2026, maquette A : Langues, Taille et position, Disposition des touches, Sons et vibrations,
+  Saisie intelligente, chacune ouvrant sa page des paramètres du clavier (`KeyboardSettingsSection`) à la place de l'ancienne ligne
+  unique « Paramètres du clavier », puis Dictionnaire personnel) ; **Apparence** (22/11/2026 : carte de 4 lignes, Thème et couleur,
+  Touches et police, Fond du clavier, Animations, chacune ouvrant la page Apparence sur ses seules sections, `AppearanceSection`) et **Intelligence artificielle** (Modèle IA, Modèle vocal,
   Prompts système). Une ligne = `layout/view_settings_row.xml` (inclus cinq fois, textes posés par `MainActivity.bindRow`).
 - Zone tactile d'au moins 48 dp par ligne ; retour visuel au toucher qui suit les coins arrondis de la carte
   (`clipToOutline`) ; les deux titres de groupe sont déclarés comme titres pour TalkBack.
@@ -108,3 +111,9 @@ Reste à faire (suite du plan UX) : en-tête commun des sous-pages.
 
 À vérifier sur l'appareil : position et lisibilité du bandeau (clair et sombre, mode une main, paysage), apparition de l'astuce
 de langue à l'ouverture d'un champ, étape 4 avec et sans modèle installé.
+
+## Tutoriel terminé (22/11/2026)
+- Les 6 étapes faites, elles tiennent dans une petite carte en haut, « Taipo est prêt » (coche, « Touchez pour les revoir ») ; la
+  toucher montre ou masque les étapes (pas retenu d'une ouverture à l'autre). Tant qu'il reste une étape, les cartes s'affichent
+  comme avant ; pendant la frappe dans le champ d'essai, elles restent affichées.
+- La carte du pack premium est juste sous le tutoriel, avant la carte d'accord de la mesure d'usage.

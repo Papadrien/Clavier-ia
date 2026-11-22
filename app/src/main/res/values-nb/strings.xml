@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Androids systemordbok (ord du legger til ved å trykke på et rødt understreket ord) brukes ikke. Tillat tilgang slik at disse ordene ikke rettes og kan foreslås. Taipo bare leser den og endrer den aldri.</string>
     <string name="personal_dictionary_system_on">Androids systemordbok brukes: leste ord: %1$d. Taipo bare leser den og endrer den aldri. Du kan trekke tilbake tilgangen i Android-innstillingene.</string>
     <string name="personal_dictionary_system_allow">Tillat tilgang</string>
-    <string name="button_keyboard_settings">Tastaturinnstillinger</string>
     <string name="keyboard_settings_title">Tastaturinnstillinger</string>
     <string name="keyboard_settings_layout_title">Tasteoppsett</string>
     <string name="keyboard_settings_size_title">Størrelse og plassering</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Skriv her for å teste</string>
     <string name="home_section_keyboard">Tastatur</string>
     <string name="home_section_ai">Kunstig intelligens</string>
-    <string name="home_row_keyboard_settings_subtitle">Tallrad, vibrasjon, høyde, enhåndsmodus, læring</string>
     <string name="home_row_personal_dictionary_subtitle">Legg til eller fjern ord</string>
     <string name="home_row_model_settings_subtitle">Oppgi en modellfil selv</string>
     <string name="home_row_voice_model_subtitle">Last ned dikteringsmodellen</string>
@@ -658,7 +656,6 @@
     <string name="motion_style_bloom">Blomstring</string>
     <string name="home_row_languages_subtitle">Tastaturets språk og oppsett</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Utseende</string>
     <string name="languages_title">Språk</string>
     <string name="languages_section_keyboard">Tastaturspråk</string>
     <string name="languages_summary_device">%1$s · enhetens språk</string>
@@ -776,13 +773,19 @@
     <string name="whats_new_ai_panel_title">All AI i ett panel</string>
     <string name="whats_new_ai_panel_body">AI-knappen åpner alle AI-handlinger. Hold inne én for å feste den i linjen: maks to.</string>
     <string name="whats_new_tone_title">Endre tonen</string>
-    <string name="whats_new_tone_body">Gjør meldingen profesjonell, vennlig, kortfattet, høflig … med ett trykk, og gjenopprett originalen.</string>
+    <string name="whats_new_tone_body">Åtte toner, fra profesjonell til sosiale medier: skriv om meldingen med ett trykk, og gjenopprett originalen.</string>
     <string name="whats_new_translation_title">Oversettelse på telefonen</string>
-    <string name="whats_new_translation_body">Skriv, og oversettelsen vises direkte i feltet. Ingenting forlater telefonen.</string>
+    <string name="whats_new_translation_body">Skriv, og oversettelsen vises direkte i feltet. Velg begge språkene, og bytt dem med ⇄: opptil 43 språk med Gemma 4. Ingenting forlater telefonen.</string>
+    <string name="whats_new_faster_ai_title">Raskere AI</string>
+    <string name="whats_new_faster_ai_body">Retting, tone og oversettelse svarer raskere, og diktering starter med en gang: modellen står klar.</string>
     <string name="whats_new_swipe_title">Sveipeskriving</string>
     <string name="whats_new_swipe_body">Dra fingeren fra bokstav til bokstav. Slå det på i tastaturinnstillingene.</string>
-    <string name="whats_new_animations_title">Nye animasjoner og bildebakgrunn</string>
-    <string name="whats_new_animations_body">Gnister, Piksler, Hjerteboble og Blomstring, og ditt eget bilde bak tastene (premiumpakke).</string>
+    <string name="whats_new_password_paste_title">Lim inn et passord</string>
+    <string name="whats_new_password_paste_body">Utklippstavlen åpnes nå også i passordfelt, så du kan lime inn passordet fra passordbehandleren. Ingenting i feltet leses eller lagres.</string>
+    <string name="whats_new_photo_title">Ditt bilde som bakgrunn</string>
+    <string name="whats_new_photo_body">Velg et bilde fra galleriet eller filene dine som tastaturbakgrunn (premiumpakke). Det blir på telefonen.</string>
+    <string name="whats_new_processor_title">Ny bakgrunn Prosessor</string>
+    <string name="whats_new_processor_body">Et kretskort der banene lyser opp ved hvert tastetrykk (premiumpakke). Animerte bakgrunner beveger seg også mens AI-en jobber.</string>
     <string name="model_name_custom">Egen modell</string>
     <string name="model_subtitle_custom">Din egen LiteRT-LM-fil</string>
     <string name="model_hint_custom">En .litertlm-fil som fungerer med LiteRT-LM-versjonen i Taipo.</string>
@@ -864,4 +867,12 @@
     <string name="system_prompt_tone_description">Instruks til modellen om å skrive om en melding i valgt tone (profesjonell, vennlig, kortfattet …) uten å endre mening eller språk.</string>
     <string name="system_prompt_translation_title">Oversettelse</string>
     <string name="system_prompt_translation_description">Instruks til modellen om å oversette teksten til valgt språk og beholde mening, stilnivå og tone.</string>
+    <string name="home_row_keyboard_layout_subtitle">Tallrad, nederste taster, tasteboble</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibrering, tastaturlyd, volum</string>
+    <string name="home_row_keyboard_smart_subtitle">Sveiping, læring, utklippshistorikk</string>
+    <string name="appearance_section_theme">Tema og farge</string>
+    <string name="appearance_section_keys">Taster og skrift</string>
+    <string name="onboarding_done_title">Taipo er klart</string>
+    <string name="onboarding_done_show">Alle 6 trinnene er gjort. Trykk for å se dem igjen.</string>
+    <string name="onboarding_done_hide">Trykk for å skjule trinnene.</string>
 </resources>

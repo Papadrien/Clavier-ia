@@ -2,5 +2,8 @@ Nyt i Taipo 4
 • Al AI i ét panel
 • Skift tone
 • Oversættelse på telefonen
+• Hurtigere AI
 • Swipe-skrivning
-• Nye animationer og billedbaggrund
+• Indsæt en adgangskode
+• Dit foto som baggrund
+• Ny baggrund Processor

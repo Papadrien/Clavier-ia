@@ -121,6 +121,7 @@ class MainActivity : Activity() {
 
         // Titres de groupe annoncés comme des titres par TalkBack (navigation par titres).
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_keyboard), true)
+        ViewCompat.setAccessibilityHeading(findViewById(R.id.section_appearance), true)
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_ai), true)
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_data), true)
         ViewCompat.setAccessibilityHeading(findViewById(R.id.section_about), true)
@@ -132,13 +133,16 @@ class MainActivity : Activity() {
 
     /** Lignes de l'accueil : titre, sous-titre et écran ouvert. */
     private fun bindRows() {
-        bindRow(
-            R.id.button_keyboard_settings,
-            R.string.button_keyboard_settings,
-            R.string.home_row_keyboard_settings_subtitle,
-            KeyboardSettingsActivity::class.java,
-        )
-        bindRow(R.id.button_theme, R.string.button_theme, R.string.home_row_theme_subtitle, ThemeActivity::class.java)
+        // Paramètres du clavier (22/11/2026, maquette A) : une ligne par thème, chacune ouvre sa page.
+        bindSectionRow(R.id.button_keyboard_size, KeyboardSettingsSection.SIZE, R.string.keyboard_settings_size_title)
+        bindSectionRow(R.id.button_keyboard_layout, KeyboardSettingsSection.LAYOUT, R.string.home_row_keyboard_layout_subtitle)
+        bindSectionRow(R.id.button_keyboard_sounds, KeyboardSettingsSection.SOUNDS, R.string.home_row_keyboard_sounds_subtitle)
+        bindSectionRow(R.id.button_keyboard_smart, KeyboardSettingsSection.SMART, R.string.home_row_keyboard_smart_subtitle)
+        // Apparence (22/11/2026) : 4 lignes, chacune ouvre sa page ; sous-titres posés par renderAppearanceRows.
+        bindAppearanceRow(R.id.button_appearance_theme, AppearanceSection.THEME)
+        bindAppearanceRow(R.id.button_appearance_keys, AppearanceSection.KEYS)
+        bindAppearanceRow(R.id.button_appearance_backdrop, AppearanceSection.BACKDROP)
+        bindAppearanceRow(R.id.button_appearance_motion, AppearanceSection.MOTION)
         bindRow(R.id.button_home_languages, R.string.languages_title, R.string.home_row_languages_subtitle, LanguagesActivity::class.java)
         bindRow(
             R.id.button_personal_dictionary,
@@ -198,8 +202,9 @@ class MainActivity : Activity() {
         super.onResume()
         renderOnboarding(readOnboardingState())
         renderModelStatuses()
-        renderThemeRow()
+        renderAppearanceRows()
         renderLanguagesRow()
+        renderKeyboardSizeRow()
         renderPremium()
         billing.refresh()
     }
@@ -354,12 +359,62 @@ class MainActivity : Activity() {
         }
     }
 
-    /** Ligne « Apparence » : thème et couleur choisis (« Sombre · Lagon »), relus au retour de la page (le choix s'y fait). */
-    private fun renderThemeRow() {
+    /**
+     * Carte « Apparence » : choix actuels, relus au retour des pages (les choix s'y font). Valeurs effectives : un choix réservé au
+     * pack, sans lui, s'affiche comme celui qui sert vraiment (couleur violette, Arrondi, Open Sans, Ressort, fond Uni).
+     */
+    private fun renderAppearanceRows() {
         val preferences = KeyboardPreferences(this)
-        val palette = AccentPalette.effective(preferences.accentPalette, PremiumPass.isActive)
-        findViewById<View>(R.id.button_theme).findViewById<TextView>(R.id.row_subtitle).text =
-            getString(R.string.home_row_theme_subtitle, getString(preferences.themeChoice.labelRes()), getString(palette.labelRes()))
+        val premium = PremiumPass.isActive
+        val palette = AccentPalette.effective(preferences.accentPalette, premium)
+        setRowSubtitle(
+            R.id.button_appearance_theme,
+            getString(R.string.home_row_theme_subtitle, getString(preferences.themeChoice.labelRes()), getString(palette.labelRes())),
+        )
+        val font = KeyboardFont.effective(preferences.keyboardFont, premium)
+        val fontName = font.displayName ?: getString(checkNotNull(font.labelRes))
+        setRowSubtitle(
+            R.id.button_appearance_keys,
+            getString(R.string.home_row_two_values, getString(KeyShape.effective(preferences.keyShape, premium).labelRes()), fontName),
+        )
+        val backdrop = fr.junade.taipo.backdrop.KeyboardBackdrop.effective(
+            preferences.keyboardBackdrop,
+            premium,
+            fr.junade.taipo.backdrop.PhotoBackdrop.exists(this),
+        )
+        setRowSubtitle(R.id.button_appearance_backdrop, getString(backdrop.labelRes))
+        setRowSubtitle(R.id.button_appearance_motion, getString(MotionStyle.effective(preferences.motionStyle, premium).labelRes()))
+    }
+
+    private fun setRowSubtitle(@IdRes id: Int, text: String) {
+        findViewById<View>(id).findViewById<TextView>(R.id.row_subtitle).text = text
+    }
+
+    /** Ligne d'un thème de l'apparence : titre de la section, ouvre sa page seule. */
+    private fun bindAppearanceRow(@IdRes id: Int, section: AppearanceSection) {
+        val row = findViewById<View>(id)
+        row.findViewById<TextView>(R.id.row_title).setText(section.titleRes)
+        row.setOnClickListener { startActivity(ThemeActivity.intent(this, section)) }
+    }
+
+    /** Ligne « Taille et position » : hauteur et mode choisis (« 100 % · Normal »), relus au retour de la page. */
+    private fun renderKeyboardSizeRow() {
+        val preferences = KeyboardPreferences(this)
+        val height = when (preferences.keyboardHeight) {
+            KeyboardHeight.COMPACT -> R.string.keyboard_settings_height_compact_short
+            KeyboardHeight.SMALL -> R.string.keyboard_settings_height_small_short
+            KeyboardHeight.NORMAL -> R.string.keyboard_settings_height_normal_short
+            KeyboardHeight.LARGE -> R.string.keyboard_settings_height_large_short
+            KeyboardHeight.EXTRA_LARGE -> R.string.keyboard_settings_height_extra_large_short
+        }
+        val mode = when {
+            preferences.isFloatingKeyboard -> R.string.keyboard_settings_mode_floating
+            preferences.oneHandedMode == OneHandedMode.LEFT -> R.string.keyboard_settings_mode_left
+            preferences.oneHandedMode == OneHandedMode.RIGHT -> R.string.keyboard_settings_mode_right
+            else -> R.string.keyboard_settings_mode_normal
+        }
+        findViewById<View>(R.id.button_keyboard_size).findViewById<TextView>(R.id.row_subtitle).text =
+            getString(R.string.home_row_two_values, getString(height), getString(mode))
     }
 
     /** Ligne « Langues » : les langues en service (« Français, English »), comme dans les paramètres du clavier. */
@@ -454,6 +509,14 @@ class MainActivity : Activity() {
         if (permissionsStep.onRequestResult(requestCode)) renderOnboarding(readOnboardingState())
     }
 
+    /** Ligne d'un thème des paramètres du clavier : titre de la section, ouvre sa page seule. */
+    private fun bindSectionRow(@IdRes id: Int, section: KeyboardSettingsSection, @StringRes subtitle: Int) {
+        val row = findViewById<View>(id)
+        row.findViewById<TextView>(R.id.row_title).setText(section.titleRes)
+        row.findViewById<TextView>(R.id.row_subtitle).setText(subtitle)
+        row.setOnClickListener { startActivity(KeyboardSettingsActivity.intent(this, section)) }
+    }
+
     /** Ligne de réglage de l'accueil (lot UX 3) : pose le titre et le sous-titre, ouvre [target] au toucher. */
     private fun bindRow(@IdRes id: Int, @StringRes title: Int, @StringRes subtitle: Int, target: Class<*>) {
         val row = findViewById<View>(id)
@@ -474,8 +537,37 @@ class MainActivity : Activity() {
     /** Dernier état lu de l'installation : la carte du pass s'en sert sans relire Android (lecture qui interroge le système). */
     private var lastOnboarding: OnboardingState? = null
 
+    /** Tutoriel terminé : les étapes montrées sous la petite carte « Taipo est prêt » (toucher la carte). Pas retenu. */
+    private var onboardingStepsExpanded = false
+
+    /**
+     * Tutoriel terminé (22/11/2026) : les 6 étapes tiennent dans une petite carte en haut, qui les montre ou les masque au toucher.
+     * Tant qu'il reste une étape, les cartes des étapes sont affichées comme avant.
+     */
+    private fun renderOnboardingSummary(state: OnboardingState) {
+        val doneCard = findViewById<View>(R.id.onboarding_done_card)
+        val steps = findViewById<View>(R.id.onboarding_steps)
+        if (!state.complete) {
+            doneCard.visibility = View.GONE
+            steps.visibility = View.VISIBLE
+            return
+        }
+        doneCard.visibility = View.VISIBLE
+        // Phrase d'essai en cours de frappe (étape 3 qui vient de se terminer) : les étapes restent sous le doigt.
+        steps.visibility = if (onboardingStepsExpanded || tryInput.hasFocus()) View.VISIBLE else View.GONE
+        findViewById<TextView>(R.id.onboarding_done_hint).setText(
+            if (onboardingStepsExpanded) R.string.onboarding_done_hide else R.string.onboarding_done_show,
+        )
+        findViewById<View>(R.id.onboarding_done_chevron).rotation = if (onboardingStepsExpanded) CHEVRON_UP else CHEVRON_DOWN
+        doneCard.setOnClickListener {
+            onboardingStepsExpanded = !onboardingStepsExpanded
+            renderOnboardingSummary(state)
+        }
+    }
+
     private fun renderOnboarding(state: OnboardingState) {
         lastOnboarding = state
+        renderOnboardingSummary(state)
         renderStep(
             step1,
             state.activate,
@@ -575,6 +667,8 @@ class MainActivity : Activity() {
 
     private companion object {
         const val HOME_PREFS = "home_prefs"
+        const val CHEVRON_DOWN = 90f
+        const val CHEVRON_UP = -90f
         const val KEY_PREMIUM_CARD_DISMISSED = "premium_card_dismissed"
         const val KEY_TRIED = "onboarding_tried"
     }

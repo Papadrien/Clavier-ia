@@ -494,9 +494,9 @@ class ClipboardController(
 
     /**
      * Story 2.9 : une nouvelle copie entre dans l'historique chiffré (12 h). Une copie vide ou de
-     * plus de 10 000 caractères reste en mémoire du clavier seulement ; une copie sensible est
-     * enregistrée comme les autres, avec son drapeau (le panneau en masque l'aperçu). Le texte
-     * copié n'est jamais journalisé.
+     * plus de 10 000 caractères reste en mémoire du clavier seulement, comme une copie sensible
+     * (audit SEC-01 : jamais écrite dans l'historique, proposée masquée par la puce de collage). Le
+     * texte copié n'est jamais journalisé.
      */
     private fun recordInHistory(snapshot: ClipboardReader.Snapshot) {
         if (ClipboardItems.historyRefusal(snapshot.text)) return

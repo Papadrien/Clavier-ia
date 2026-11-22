@@ -2,5 +2,8 @@
 • Minden MI egy panelen
 • Hangnemváltás
 • Fordítás a telefonon
+• Gyorsabb MI
 • Csúsztatásos gépelés
-• Új animációk és képes háttér
+• Jelszó beillesztése
+• Saját fotó háttérként
+• Új Processzor háttér

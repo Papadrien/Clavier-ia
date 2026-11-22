@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Androidin järjestelmäsanastoa (sanat, jotka lisäät napauttamalla punaisella alleviivattua sanaa) ei käytetä. Salli käyttö, jotta näitä sanoja ei korjata ja niitä voidaan ehdottaa. Taipo vain lukee sitä eikä koskaan muuta sitä.</string>
     <string name="personal_dictionary_system_on">Androidin järjestelmäsanasto on käytössä: luettuja sanoja: %1$d. Taipo vain lukee sitä eikä koskaan muuta sitä. Voit peruuttaa käyttöoikeuden Androidin asetuksissa.</string>
     <string name="personal_dictionary_system_allow">Salli käyttö</string>
-    <string name="button_keyboard_settings">Näppäimistön asetukset</string>
     <string name="keyboard_settings_title">Näppäimistön asetukset</string>
     <string name="keyboard_settings_layout_title">Näppäinasettelu</string>
     <string name="keyboard_settings_size_title">Koko ja sijainti</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Kirjoita tähän kokeillaksesi</string>
     <string name="home_section_keyboard">Näppäimistö</string>
     <string name="home_section_ai">Tekoäly</string>
-    <string name="home_row_keyboard_settings_subtitle">Numerorivi, värinä, korkeus, yhden käden tila, oppiminen</string>
     <string name="home_row_personal_dictionary_subtitle">Lisää tai poista sanoja</string>
     <string name="home_row_model_settings_subtitle">Anna mallitiedosto itse</string>
     <string name="home_row_voice_model_subtitle">Lataa sanelumalli</string>
@@ -658,7 +656,6 @@
     <string name="motion_style_bloom">Kukinta</string>
     <string name="home_row_languages_subtitle">Näppäimistön kielet ja asettelut</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Ulkoasu</string>
     <string name="languages_title">Kielet</string>
     <string name="languages_section_keyboard">Näppäimistön kielet</string>
     <string name="languages_summary_device">%1$s · laitteen kieli</string>
@@ -776,13 +773,19 @@
     <string name="whats_new_ai_panel_title">Kaikki tekoäly yhdessä paneelissa</string>
     <string name="whats_new_ai_panel_body">Tekoälypainike avaa kaikki tekoälytoiminnot. Pitkä painallus kiinnittää toiminnon palkkiin: enintään kaksi.</string>
     <string name="whats_new_tone_title">Vaihda sävyä</string>
-    <string name="whats_new_tone_body">Tee viestistä yhdellä napautuksella asiallinen, ystävällinen, tiivis, kohtelias… ja palauta alkuperäinen.</string>
+    <string name="whats_new_tone_body">Kahdeksan sävyä asiallisesta someen: kirjoita viesti uudelleen yhdellä napautuksella ja palauta alkuperäinen.</string>
     <string name="whats_new_translation_title">Käännös puhelimessa</string>
-    <string name="whats_new_translation_body">Kirjoita, niin käännös näkyy kentässä heti. Mikään ei lähde puhelimesta.</string>
+    <string name="whats_new_translation_body">Kirjoita, niin käännös näkyy kentässä heti. Valitse molemmat kielet ja vaihda ne keskenään ⇄-painikkeella: jopa 43 kieltä Gemma 4:llä. Mikään ei lähde puhelimesta.</string>
+    <string name="whats_new_faster_ai_title">Nopeampi tekoäly</string>
+    <string name="whats_new_faster_ai_body">Korjaus, sävy ja käännös vastaavat nopeammin, ja sanelu alkaa heti: sen malli pysyy valmiina.</string>
     <string name="whats_new_swipe_title">Liukukirjoitus</string>
     <string name="whats_new_swipe_body">Liu\'uta sormea kirjaimesta toiseen. Ota käyttöön näppäimistön asetuksissa.</string>
-    <string name="whats_new_animations_title">Uudet animaatiot ja kuvatausta</string>
-    <string name="whats_new_animations_body">Kipinät, Pikselit, Sydänkupla ja Kukinta sekä oma kuvasi näppäinten takana (premium-paketti).</string>
+    <string name="whats_new_password_paste_title">Liitä salasana</string>
+    <string name="whats_new_password_paste_body">Leikepöytä avautuu nyt myös salasanakentissä, joten voit liittää salasanan salasanojen hallinnasta. Kentästä ei lueta eikä tallenneta mitään.</string>
+    <string name="whats_new_photo_title">Oma kuva taustana</string>
+    <string name="whats_new_photo_body">Valitse kuva galleriasta tai tiedostoistasi näppäimistön taustaksi (premium-paketti). Se pysyy puhelimessasi.</string>
+    <string name="whats_new_processor_title">Uusi Prosessori-tausta</string>
+    <string name="whats_new_processor_body">Piirilevy, jonka johtimet syttyvät jokaisella näppäilyllä (premium-paketti). Animoidut taustat liikkuvat myös tekoälyn työskennellessä.</string>
     <string name="model_name_custom">Oma malli</string>
     <string name="model_subtitle_custom">Oma LiteRT-LM-tiedostosi</string>
     <string name="model_hint_custom">Taipoon sisäänrakennetun LiteRT-LM-version kanssa yhteensopiva .litertlm-tiedosto.</string>
@@ -864,4 +867,12 @@
     <string name="system_prompt_tone_description">Mallille lähetettävä ohje kirjoittaa viesti uudelleen valitulla sävyllä (asiallinen, ystävällinen, tiivis…) muuttamatta sen merkitystä tai kieltä.</string>
     <string name="system_prompt_translation_title">Käännös</string>
     <string name="system_prompt_translation_description">Mallille lähetettävä ohje kääntää teksti valitulle kielelle niin, että merkitys, tyylitaso ja sävy säilyvät.</string>
+    <string name="home_row_keyboard_layout_subtitle">Numerorivi, alarivin näppäimet, näppäinkupla</string>
+    <string name="home_row_keyboard_sounds_subtitle">Värinä, näppäimistön ääni, äänenvoimakkuus</string>
+    <string name="home_row_keyboard_smart_subtitle">Liukukirjoitus, oppiminen, leikepöydän historia</string>
+    <string name="appearance_section_theme">Teema ja väri</string>
+    <string name="appearance_section_keys">Näppäimet ja fontti</string>
+    <string name="onboarding_done_title">Taipo on valmis</string>
+    <string name="onboarding_done_show">Kaikki 6 vaihetta on tehty. Näytä ne uudelleen napauttamalla.</string>
+    <string name="onboarding_done_hide">Piilota vaiheet napauttamalla.</string>
 </resources>

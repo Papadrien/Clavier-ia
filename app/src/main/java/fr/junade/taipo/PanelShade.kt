@@ -98,11 +98,18 @@ internal object PanelShade {
         animator.start()
     }
 
+    /**
+     * Découpe réutilisée d'une image à l'autre (pas d'allocation pendant l'animation) : [View.setClipBounds] en garde une copie.
+     * Thread principal seulement, comme toutes les animations de vues.
+     */
+    private val clip = Rect()
+
     /** Décale [panel] de [offsetY] (négatif : vers le haut) et coupe ce qui dépasse au-dessus de la zone des touches. */
     private fun place(panel: View, offsetY: Float) {
         panel.translationY = offsetY
         val hiddenTop = ceil(-offsetY).toInt().coerceAtLeast(0)
-        panel.clipBounds = Rect(0, hiddenTop, CLIP_WIDTH, CLIP_WIDTH)
+        clip.set(0, hiddenTop, CLIP_WIDTH, CLIP_WIDTH)
+        panel.clipBounds = clip
     }
 
     private fun settleShown(panel: View, keys: View) {

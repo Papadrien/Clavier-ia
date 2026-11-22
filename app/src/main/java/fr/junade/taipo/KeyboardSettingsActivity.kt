@@ -181,6 +181,41 @@ class KeyboardSettingsActivity : Activity() {
         }
         findViewById<View>(R.id.link_privacy).setOnClickListener { startActivity(Intent(this, PrivacyActivity::class.java)) }
         findViewById<Button>(R.id.button_habit_clear).setOnClickListener { confirmClearHabits() }
+        KeyboardSettingsSection.fromKey(intent.getStringExtra(EXTRA_SECTION))?.let(::showOnly)
+    }
+
+    /**
+     * Page d'un seul thème (ouverte depuis une ligne de l'accueil) : son titre devient celui de la page, les autres cartes (et la
+     * ligne Langues, qui a la sienne sur l'accueil) sont masquées. Sans section : toutes les cartes, comme avant.
+     */
+    private fun showOnly(section: KeyboardSettingsSection) {
+        title = getString(section.titleRes)
+        findViewById<TextView>(R.id.keyboard_settings_heading).setText(section.titleRes)
+        val cards = mapOf(
+            KeyboardSettingsSection.LAYOUT to (R.id.section_title_layout to R.id.card_layout),
+            KeyboardSettingsSection.SIZE to (R.id.section_title_size to R.id.card_size),
+            KeyboardSettingsSection.SOUNDS to (R.id.section_title_sounds to R.id.card_sounds),
+            KeyboardSettingsSection.SMART to (R.id.section_title_smart to R.id.card_smart),
+        )
+        listOf(R.id.section_title_languages, R.id.card_languages).forEach { findViewById<View>(it).visibility = View.GONE }
+        for ((key, ids) in cards) {
+            val (titleId, cardId) = ids
+            findViewById<View>(titleId).visibility = View.GONE // le titre de la page le remplace
+            val card = findViewById<View>(cardId)
+            if (key == section) {
+                (card.layoutParams as? android.view.ViewGroup.MarginLayoutParams)?.let { params ->
+                    params.topMargin = resources.getDimensionPixelSize(R.dimen.taipo_settings_gap_lg)
+                    card.layoutParams = params
+                }
+            } else {
+                card.visibility = View.GONE
+            }
+        }
+        if (section != KeyboardSettingsSection.SMART) {
+            // Réglages debug et lien vers vos données : avec la saisie intelligente (apprentissage, presse-papiers).
+            findViewById<View>(R.id.group_touch_precision).visibility = View.GONE
+            findViewById<View>(R.id.link_privacy).visibility = View.GONE
+        }
     }
 
     override fun onStart() {
@@ -424,8 +459,14 @@ class KeyboardSettingsActivity : Activity() {
             .show()
     }
 
-    private companion object {
+    companion object {
         /** Code de la demande de permission d'images (captures d'écran). */
-        const val REQUEST_SCREENSHOT_PERMISSION = 4101
+        private const val REQUEST_SCREENSHOT_PERMISSION = 4101
+
+        /** Section à afficher seule ([KeyboardSettingsSection.storageKey]) ; absente : toutes. */
+        const val EXTRA_SECTION = "fr.junade.taipo.extra.KEYBOARD_SETTINGS_SECTION"
+
+        fun intent(context: Context, section: KeyboardSettingsSection): Intent =
+            Intent(context, KeyboardSettingsActivity::class.java).putExtra(EXTRA_SECTION, section.storageKey)
     }
 }

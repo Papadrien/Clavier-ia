@@ -1,8 +1,8 @@
 package fr.junade.taipo.dictionary
 
-import kotlin.math.hypot
 import kotlin.math.ln
 import kotlin.math.max
+import kotlin.math.sqrt
 
 /**
  * Saisie par glissement (19/11/2026), sur le principe de Gboard et SwiftKey : le doigt part de la première lettre et passe sur
@@ -231,7 +231,15 @@ class GestureDecoder(private val words: Array<String>, private val frequencies: 
             return sum
         }
 
-        private fun distance(a: Point, b: Point): Float = hypot(a.x - b.x, a.y - b.y)
+        /**
+         * Distance euclidienne. `sqrt` plutôt que `hypot` : `hypot` protège des débordements (inutile pour des coordonnées en
+         * largeurs de touche) et coûte nettement plus cher ; ce calcul est fait des milliers de fois par tracé ([passesThrough]).
+         */
+        private fun distance(a: Point, b: Point): Float {
+            val dx = a.x - b.x
+            val dy = a.y - b.y
+            return sqrt(dx * dx + dy * dy)
+        }
 
         /** Lettres dont la touche est à moins de [END_RADIUS] de [p], au plus [END_KEYS], la plus proche toujours comprise. */
         private fun nearKeys(p: Point, keys: Map<Char, Point>): Set<Char> {

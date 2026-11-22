@@ -87,6 +87,7 @@ object BackupService {
                 keySoundVolume = keyboard.keySoundVolumePercent,
                 bottomMarginDp = keyboard.bottomMarginDp,
                 adaptiveTouch = keyboard.isAdaptiveTouchEnabled,
+                swipeTyping = keyboard.isSwipeTypingEnabled,
                 clipboardHistory = keyboard.isClipboardHistoryEnabled,
                 oneHandedMode = keyboard.oneHandedMode.storageKey,
                 oneHandedWidth = keyboard.oneHandedWidthPercent,
@@ -196,6 +197,7 @@ object BackupService {
         settings.keySoundVolume?.let { keyboard.keySoundVolumePercent = it }
         settings.bottomMarginDp?.let { keyboard.bottomMarginDp = it }
         settings.adaptiveTouch?.let { keyboard.isAdaptiveTouchEnabled = it }
+        settings.swipeTyping?.let { keyboard.isSwipeTypingEnabled = it }
         settings.clipboardHistory?.let { keyboard.isClipboardHistoryEnabled = it }
         settings.oneHandedMode?.let { key -> OneHandedMode.entries.firstOrNull { it.storageKey == key } }?.let { keyboard.oneHandedMode = it }
         settings.oneHandedWidth?.let { keyboard.oneHandedWidthPercent = it }

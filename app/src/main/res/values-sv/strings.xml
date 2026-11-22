@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Androids systemordlista (ord som du lägger till genom att trycka på ett rödunderstruket ord) används inte. Tillåt åtkomst så att de orden inte korrigeras och kan föreslås. Taipo läser den bara och ändrar den aldrig.</string>
     <string name="personal_dictionary_system_on">Androids systemordlista används: lästa ord: %1$d. Taipo läser den bara och ändrar den aldrig. Du kan dra tillbaka åtkomsten i Androids inställningar.</string>
     <string name="personal_dictionary_system_allow">Tillåt åtkomst</string>
-    <string name="button_keyboard_settings">Tangentbordsinställningar</string>
     <string name="keyboard_settings_title">Tangentbordsinställningar</string>
     <string name="keyboard_settings_layout_title">Tangentlayout</string>
     <string name="keyboard_settings_size_title">Storlek och position</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Skriv här för att testa</string>
     <string name="home_section_keyboard">Tangentbord</string>
     <string name="home_section_ai">Artificiell intelligens</string>
-    <string name="home_row_keyboard_settings_subtitle">Sifferrad, vibration, höjd, enhandsläge, inlärning</string>
     <string name="home_row_personal_dictionary_subtitle">Lägg till eller ta bort ord</string>
     <string name="home_row_model_settings_subtitle">Ange en modellfil själv</string>
     <string name="home_row_voice_model_subtitle">Ladda ned dikteringsmodellen</string>
@@ -658,7 +656,6 @@
     <string name="motion_style_bloom">Blomning</string>
     <string name="home_row_languages_subtitle">Tangentbordets språk och layouter</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Utseende</string>
     <string name="languages_title">Språk</string>
     <string name="languages_section_keyboard">Tangentbordets språk</string>
     <string name="languages_summary_device">%1$s · enhetens språk</string>
@@ -776,13 +773,19 @@
     <string name="whats_new_ai_panel_title">All AI i en panel</string>
     <string name="whats_new_ai_panel_body">AI-knappen öppnar alla AI-åtgärder. Håll in en för att fästa den i fältet: högst två.</string>
     <string name="whats_new_tone_title">Ändra tonen</string>
-    <string name="whats_new_tone_body">Gör meddelandet professionellt, vänligt, koncist, artigt… med ett tryck, och återställ originalet.</string>
+    <string name="whats_new_tone_body">Åtta toner, från professionell till sociala medier: skriv om meddelandet med ett tryck och återställ originalet.</string>
     <string name="whats_new_translation_title">Översättning i telefonen</string>
-    <string name="whats_new_translation_body">Skriv, så visas översättningen direkt i fältet. Inget lämnar telefonen.</string>
+    <string name="whats_new_translation_body">Skriv, så visas översättningen direkt i fältet. Välj båda språken och byt plats på dem med ⇄: upp till 43 språk med Gemma 4. Inget lämnar telefonen.</string>
+    <string name="whats_new_faster_ai_title">Snabbare AI</string>
+    <string name="whats_new_faster_ai_body">Rättning, ton och översättning svarar snabbare, och dikteringen startar direkt: dess modell står redo.</string>
     <string name="whats_new_swipe_title">Svepskrivning</string>
     <string name="whats_new_swipe_body">Dra fingret från bokstav till bokstav. Slå på det i tangentbordsinställningarna.</string>
-    <string name="whats_new_animations_title">Nya animationer och bildbakgrund</string>
-    <string name="whats_new_animations_body">Gnistor, Pixlar, Hjärtbubbla och Blomning, och din egen bild bakom tangenterna (premiumpaket).</string>
+    <string name="whats_new_password_paste_title">Klistra in ett lösenord</string>
+    <string name="whats_new_password_paste_body">Urklipp öppnas nu även i lösenordsfält, så att du kan klistra in lösenordet från din lösenordshanterare. Inget i fältet läses eller sparas.</string>
+    <string name="whats_new_photo_title">Ditt foto som bakgrund</string>
+    <string name="whats_new_photo_body">Välj en bild från galleriet eller dina filer som tangentbordsbakgrund (premiumpaket). Den stannar i telefonen.</string>
+    <string name="whats_new_processor_title">Ny bakgrund Processor</string>
+    <string name="whats_new_processor_body">Ett kretskort vars ledningsbanor lyser upp vid varje tangent (premiumpaket). Animerade bakgrunder rör sig också medan AI:n arbetar.</string>
     <string name="model_name_custom">Egen modell</string>
     <string name="model_subtitle_custom">Din egen LiteRT-LM-fil</string>
     <string name="model_hint_custom">En .litertlm-fil som fungerar med LiteRT-LM-versionen i Taipo.</string>
@@ -864,4 +867,12 @@
     <string name="system_prompt_tone_description">Instruktion till modellen att skriva om ett meddelande i vald ton (professionell, vänlig, koncis…) utan att ändra innebörd eller språk.</string>
     <string name="system_prompt_translation_title">Översättning</string>
     <string name="system_prompt_translation_description">Instruktion till modellen att översätta texten till valt språk och behålla innebörd, stilnivå och ton.</string>
+    <string name="home_row_keyboard_layout_subtitle">Sifferrad, nedre tangenter, tangentbubbla</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibration, tangentljud, volym</string>
+    <string name="home_row_keyboard_smart_subtitle">Svepskrivning, inlärning, urklippshistorik</string>
+    <string name="appearance_section_theme">Tema och färg</string>
+    <string name="appearance_section_keys">Tangenter och typsnitt</string>
+    <string name="onboarding_done_title">Taipo är klart</string>
+    <string name="onboarding_done_show">Alla 6 steg är klara. Tryck för att se dem igen.</string>
+    <string name="onboarding_done_hide">Tryck för att dölja stegen.</string>
 </resources>

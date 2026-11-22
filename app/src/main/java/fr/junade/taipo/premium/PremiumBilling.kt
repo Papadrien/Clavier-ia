@@ -13,6 +13,7 @@ import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
 import fr.junade.taipo.AppLog
+import fr.junade.taipo.BuildConfig
 import fr.junade.taipo.PremiumPass
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
@@ -26,6 +27,8 @@ import fr.junade.taipo.analytics.AnalyticsEvents
  * - [loadPrice] lit le prix affiché dans la Play Console (promotion comprise), dans la monnaie de l'utilisateur.
  * - [purchase] ouvre la fenêtre de paiement de Google Play ; le résultat arrive dans [Listener.onStateChanged].
  * - Tout achat reçu est confirmé ([acknowledge]) : sans confirmation, Google Play le rembourse au bout de 3 jours.
+ * - Un achat n'active le pack que si sa signature est vérifiée ([PurchaseVerifier], clé publique de la Play Console dans
+ *   `BuildConfig.PLAY_LICENSE_KEY`) : un achat inventé par une fausse bibliothèque Google Play est refusé (21/11/2026).
  *
  * Toutes les réponses arrivent sur le fil principal (BillingClient les y renvoie).
  */
@@ -91,17 +94,34 @@ class PremiumBilling(context: Context, private val listener: Listener) {
                 return@queryPurchasesAsync
             }
             val pass = purchases.filter { PremiumPass.PRODUCT_ID in it.products }
-            val owned = pass.firstOrNull { it.purchaseState == Purchase.PurchaseState.PURCHASED }
+            val bought = pass.filter { it.purchaseState == Purchase.PurchaseState.PURCHASED }
+            val decisions = bought.map { it to trust(it) }
+            val owned = decisions.firstOrNull { it.second == PurchaseTrust.Decision.TRUSTED }?.first
+            if (owned == null && decisions.any { it.second == PurchaseTrust.Decision.UNKNOWN }) {
+                // Vérification impossible (clé illisible) : l'état connu reste tel quel, le pack n'est pas retiré aux vrais acheteurs.
+                listener.onStateChanged(State.ERROR)
+                return@queryPurchasesAsync
+            }
+            // Un achat refusé (signature fausse) ne compte pas : s'il n'y en a pas d'autre, le pack est retiré.
             PremiumPass.setPurchased(appContext, owned != null)
             owned?.let(::acknowledge)
             listener.onStateChanged(
                 when {
                     owned != null -> State.PURCHASED
                     pass.any { it.purchaseState == Purchase.PurchaseState.PENDING } -> State.PENDING
+                    decisions.isNotEmpty() -> State.ERROR // seulement des achats refusés
                     else -> State.IDLE
                 },
             )
         }
+    }
+
+    /** Achat authentique de ce pack, pour cette application ? Voir [PurchaseTrust]. */
+    private fun trust(purchase: Purchase): PurchaseTrust.Decision {
+        val verification = PurchaseVerifier.verify(BuildConfig.PLAY_LICENSE_KEY, purchase.originalJson, purchase.signature)
+        val decision = PurchaseTrust.decide(verification, purchase.packageName == appContext.packageName, BuildConfig.DEBUG)
+        if (decision != PurchaseTrust.Decision.TRUSTED) AppLog.w(TAG, "Achat non retenu : vérification $verification, décision $decision")
+        return decision
     }
 
     /** Prix du pass tel que Google Play l'affiche (ex. « 2,99 € »). */
@@ -143,7 +163,8 @@ class PremiumBilling(context: Context, private val listener: Listener) {
         when (result.responseCode) {
             BillingClient.BillingResponseCode.OK -> {
                 val pass = purchases.orEmpty().filter { PremiumPass.PRODUCT_ID in it.products }
-                val owned = pass.firstOrNull { it.purchaseState == Purchase.PurchaseState.PURCHASED }
+                val bought = pass.filter { it.purchaseState == Purchase.PurchaseState.PURCHASED }
+                val owned = bought.firstOrNull { trust(it) == PurchaseTrust.Decision.TRUSTED }
                 when {
                     owned != null -> {
                         PremiumPass.setPurchased(appContext, true)
@@ -151,14 +172,13 @@ class PremiumBilling(context: Context, private val listener: Listener) {
                         Analytics.track(appContext, AnalyticsEvents.PREMIUM_PURCHASED, "source" to source)
                         listener.onStateChanged(State.PURCHASED)
                     }
+                    bought.isNotEmpty() -> listener.onStateChanged(State.ERROR) // achat refusé (signature) ou invérifiable
                     pass.isNotEmpty() -> listener.onStateChanged(State.PENDING) // paiement en attente (espèces, virement…)
                     else -> listener.onStateChanged(State.IDLE)
                 }
             }
-            BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> {
-                PremiumPass.setPurchased(appContext, true)
-                listener.onStateChanged(State.PURCHASED)
-            }
+            // Déjà acheté : l'achat est relu chez Google Play et vérifié comme les autres, pas accepté sur parole.
+            BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> refresh()
             BillingClient.BillingResponseCode.USER_CANCELED -> listener.onStateChanged(State.CANCELLED)
             else -> {
                 AppLog.w(TAG, "Achat échoué : ${result.responseCode} ${result.debugMessage}")

@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Dicționarul de sistem Android (cuvintele adăugate atingând un cuvânt subliniat cu roșu) nu este folosit. Permite accesul pentru ca aceste cuvinte să nu fie corectate și să poată fi sugerate. Taipo doar îl citește și nu îl modifică niciodată.</string>
     <string name="personal_dictionary_system_on">Dicționarul de sistem Android este folosit: cuvinte citite: %1$d. Taipo doar îl citește și nu îl modifică niciodată. Poți retrage accesul din setările Android.</string>
     <string name="personal_dictionary_system_allow">Permite accesul</string>
-    <string name="button_keyboard_settings">Setări tastatură</string>
     <string name="keyboard_settings_title">Setări tastatură</string>
     <string name="keyboard_settings_layout_title">Aranjarea tastelor</string>
     <string name="keyboard_settings_size_title">Dimensiune și poziție</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Scrie aici pentru a testa</string>
     <string name="home_section_keyboard">Tastatură</string>
     <string name="home_section_ai">Inteligență artificială</string>
-    <string name="home_row_keyboard_settings_subtitle">Rând de cifre, vibrații, înălțime, mod pentru o mână, învățare</string>
     <string name="home_row_personal_dictionary_subtitle">Adaugă sau elimină cuvinte</string>
     <string name="home_row_model_settings_subtitle">Indică tu un fișier de model</string>
     <string name="home_row_voice_model_subtitle">Descarcă modelul de dictare</string>
@@ -662,7 +660,6 @@
     <string name="motion_style_bloom">Înflorire</string>
     <string name="home_row_languages_subtitle">Limbile și aranjările tastaturii</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Aspect</string>
     <string name="languages_title">Limbi</string>
     <string name="languages_section_keyboard">Limbile tastaturii</string>
     <string name="languages_summary_device">%1$s · limba dispozitivului</string>
@@ -780,13 +777,19 @@
     <string name="whats_new_ai_panel_title">Toată AI-ul într-un panou</string>
     <string name="whats_new_ai_panel_body">Butonul AI deschide toate acțiunile AI. Ține apăsat pe una ca s-o fixezi în bară: cel mult două.</string>
     <string name="whats_new_tone_title">Schimbă tonul</string>
-    <string name="whats_new_tone_body">Fă-ți mesajul profesional, prietenos, concis, politicos… dintr-o atingere și revino la original.</string>
+    <string name="whats_new_tone_body">Opt tonuri, de la profesional la rețele sociale: rescrie mesajul dintr-o atingere și revino la original.</string>
     <string name="whats_new_translation_title">Traducere pe telefon</string>
-    <string name="whats_new_translation_body">Scrie, iar traducerea apare în direct în câmp. Nimic nu părăsește telefonul.</string>
+    <string name="whats_new_translation_body">Scrie, iar traducerea apare în direct în câmp. Alege ambele limbi și inversează-le cu ⇄: până la 43 de limbi cu Gemma 4. Nimic nu părăsește telefonul.</string>
+    <string name="whats_new_faster_ai_title">AI mai rapid</string>
+    <string name="whats_new_faster_ai_body">Corectarea, tonul și traducerea răspund mai repede, iar dictarea pornește imediat: modelul ei rămâne pregătit.</string>
     <string name="whats_new_swipe_title">Scriere prin glisare</string>
     <string name="whats_new_swipe_body">Glisează degetul de la o literă la alta. Activeaz-o în Setările tastaturii.</string>
-    <string name="whats_new_animations_title">Animații noi și fundal cu imagine</string>
-    <string name="whats_new_animations_body">Scântei, Pixeli, Bulă inimă și Înflorire, plus fotografia ta în spatele tastelor (pachet premium).</string>
+    <string name="whats_new_password_paste_title">Lipește o parolă</string>
+    <string name="whats_new_password_paste_body">Clipboardul se deschide acum și în câmpurile de parolă, ca să lipești parola din managerul de parole. Nimic din câmp nu este citit sau păstrat.</string>
+    <string name="whats_new_photo_title">Fotografia ta ca fundal</string>
+    <string name="whats_new_photo_body">Alege o imagine din galerie sau din fișierele tale pentru fundalul tastaturii (pachet premium). Rămâne pe telefonul tău.</string>
+    <string name="whats_new_processor_title">Fundal nou Procesor</string>
+    <string name="whats_new_processor_body">Un circuit imprimat ale cărui trasee se aprind la fiecare tastă (pachet premium). Fundalurile animate prind viață și cât timp lucrează AI-ul.</string>
     <string name="model_name_custom">Model personalizat</string>
     <string name="model_subtitle_custom">Propriul tău fișier LiteRT-LM</string>
     <string name="model_hint_custom">Un fișier .litertlm compatibil cu versiunea LiteRT-LM inclusă în Taipo.</string>
@@ -868,4 +871,12 @@
     <string name="system_prompt_tone_description">Instrucțiune trimisă modelului pentru a rescrie un mesaj în tonul ales (profesional, prietenos, concis…) fără a-i schimba sensul sau limba.</string>
     <string name="system_prompt_translation_title">Traducere</string>
     <string name="system_prompt_translation_description">Instrucțiune trimisă modelului pentru a traduce textul în limba aleasă, păstrându-i sensul, registrul și tonul.</string>
+    <string name="home_row_keyboard_layout_subtitle">Rândul de cifre, tastele de jos, bula tastelor</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibrații, sunetul tastaturii, volum</string>
+    <string name="home_row_keyboard_smart_subtitle">Glisare, învățare, istoricul clipboardului</string>
+    <string name="appearance_section_theme">Temă și culoare</string>
+    <string name="appearance_section_keys">Taste și font</string>
+    <string name="onboarding_done_title">Taipo este gata</string>
+    <string name="onboarding_done_show">Toți cei 6 pași sunt făcuți. Atinge pentru a-i revedea.</string>
+    <string name="onboarding_done_hide">Atinge pentru a ascunde pașii.</string>
 </resources>

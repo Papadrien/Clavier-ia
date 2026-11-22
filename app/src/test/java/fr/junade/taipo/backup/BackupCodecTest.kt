@@ -38,6 +38,7 @@ class BackupCodecTest {
             keySoundVolume = 40,
             bottomMarginDp = 12,
             adaptiveTouch = true,
+            swipeTyping = true,
             clipboardHistory = false,
             oneHandedMode = "left",
             oneHandedWidth = 75,

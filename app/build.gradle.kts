@@ -6,6 +6,21 @@ plugins {
     alias(libs.plugins.room)
 }
 
+// Clé publique de licence Google Play (21/11/2026), pour vérifier la signature des achats du pack premium
+// (premium/PurchaseVerifier.kt). Play Console > Monétiser > Configuration de la monétisation > Licences : « Clé publique encodée
+// en base64 ». Elle n'est pas secrète (elle finit dans l'APK) ; trois emplacements possibles, le premier trouvé l'emporte :
+// `playLicenseKey=` dans key.properties (celui que la CI écrit depuis le secret ANDROID_KEY_PROPERTIES), la propriété Gradle
+// `taipo.playLicenseKey` (gradle.properties ou ~/.gradle/gradle.properties), la variable d'environnement TAIPO_PLAY_LICENSE_KEY.
+// Sans clé, un build debug accepte les achats sans les vérifier, et un build de publication est refusé (checkPlayLicenseKey).
+val playLicenseKey: String = run {
+    val keyFile = rootProject.file("key.properties")
+    val fromKeyFile = Properties().apply { if (keyFile.isFile) keyFile.inputStream().use { load(it) } }.getProperty("playLicenseKey")
+    (fromKeyFile ?: providers.gradleProperty("taipo.playLicenseKey").orNull ?: System.getenv("TAIPO_PLAY_LICENSE_KEY"))
+        .orEmpty()
+        .filterNot { it.isWhitespace() }
+}
+require(playLicenseKey.all { it.isLetterOrDigit() || it in "+/=" }) { "playLicenseKey : clé base64 attendue (lettres, chiffres, + / =)" }
+
 android {
     namespace = "fr.junade.taipo"
     compileSdk = 37
@@ -25,6 +40,8 @@ android {
         buildConfigField("String", "APTABASE_APP_KEY", "\"A-EU-8162668661\"")
         // Version de LiteRT-LM intégrée (clé litertlm du catalogue) : affichée sur la page « Modèle personnalisé ».
         buildConfigField("String", "LITERT_LM_VERSION", "\"${libs.versions.litertlm.get()}\"")
+        // Vérification des achats du pack premium : voir playLicenseKey en haut de ce fichier.
+        buildConfigField("String", "PLAY_LICENSE_KEY", "\"$playLicenseKey\"")
 
         // Lot 4.1 (B7, décision D7) : les bibliothèques natives de la dictée (sherpa-onnx) n'existent que pour
         // arm64-v8a. La release (et la variante benchmark) ne contient donc que cet ABI ; la variante debug
@@ -126,6 +143,23 @@ kotlin {
     compilerOptions {
         jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
+}
+
+// Pack premium : un build de publication sans clé de licence ne pourrait vérifier aucun achat (le pack ne s'activerait pour
+// personne) ; il est refusé dès le début du build release. La variante benchmark (jamais publiée) n'est pas concernée.
+val checkPlayLicenseKey = tasks.register("checkPlayLicenseKey") {
+    val configured = playLicenseKey.isNotEmpty()
+    doLast {
+        if (!configured) {
+            throw GradleException(
+                "Clé publique de licence Google Play absente : renseigner playLicenseKey (key.properties), la propriété " +
+                    "taipo.playLicenseKey ou TAIPO_PLAY_LICENSE_KEY. Voir docs/pass-premium.md.",
+            )
+        }
+    }
+}
+tasks.configureEach {
+    if (name == "preReleaseBuild") dependsOn(checkPlayLicenseKey)
 }
 
 // Export des schémas Room (JSON versionné dans le dépôt) : indispensable pour
@@ -237,5 +271,9 @@ tasks.withType<Test>().configureEach {
     // cache de Gradle réutilise un ancien résultat quand seule une liste change (même cas que :core:test, 16/11/2026).
     inputs.dir(rootProject.layout.projectDirectory.dir("dictionaries"))
         .withPropertyName("dictionaries")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    // WhatsNewTest compare les notes de version Play aux titres de la page « Nouveautés » : même raison.
+    inputs.dir(rootProject.layout.projectDirectory.dir("distribution/release-notes"))
+        .withPropertyName("releaseNotes")
         .withPathSensitivity(PathSensitivity.RELATIVE)
 }

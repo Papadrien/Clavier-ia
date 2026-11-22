@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">O dicionário do sistema Android (palavras que você adiciona tocando em uma palavra sublinhada em vermelho) não é usado. Permita o acesso para que essas palavras não sejam corrigidas e possam ser sugeridas. O Taipo apenas o lê e nunca o altera.</string>
     <string name="personal_dictionary_system_on">O dicionário do sistema Android é usado: %1$d palavra(s) lida(s). O Taipo apenas o lê e nunca o altera. Você pode retirar o acesso nas configurações do Android.</string>
     <string name="personal_dictionary_system_allow">Permitir o acesso</string>
-    <string name="button_keyboard_settings">Configurações do teclado</string>
     <string name="keyboard_settings_title">Configurações do teclado</string>
     <string name="keyboard_settings_layout_title">Disposição das teclas</string>
     <string name="keyboard_settings_size_title">Tamanho e posição</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Digite aqui para testar</string>
     <string name="home_section_keyboard">Teclado</string>
     <string name="home_section_ai">Inteligência artificial</string>
-    <string name="home_row_keyboard_settings_subtitle">Linha de números, vibração, altura, modo para uma mão, aprendizado</string>
     <string name="home_row_personal_dictionary_subtitle">Adicionar ou remover palavras</string>
     <string name="home_row_model_settings_subtitle">Fornecer você mesmo um arquivo de modelo</string>
     <string name="home_row_voice_model_subtitle">Baixar o modelo de ditado</string>
@@ -662,7 +660,6 @@
     <string name="motion_style_bloom">Florescer</string>
     <string name="home_row_languages_subtitle">Idiomas e layouts do teclado</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Aparência</string>
     <string name="languages_title">Idiomas</string>
     <string name="languages_section_keyboard">Idiomas do teclado</string>
     <string name="languages_summary_device">%1$s · idioma do dispositivo</string>
@@ -780,13 +777,19 @@
     <string name="whats_new_ai_panel_title">Toda a IA num painel</string>
     <string name="whats_new_ai_panel_body">O botão IA abre todas as ações de IA. Um toque longo fixa uma na barra: no máximo duas.</string>
     <string name="whats_new_tone_title">Mudar o tom</string>
-    <string name="whats_new_tone_body">Torne a mensagem profissional, amigável, concisa, educada… com um toque, e reponha o original.</string>
+    <string name="whats_new_tone_body">Oito tons, do profissional às redes sociais: reescreva a mensagem com um toque e reponha o original.</string>
     <string name="whats_new_translation_title">Tradução no telemóvel</string>
-    <string name="whats_new_translation_body">Escreva e a tradução aparece em direto no campo. Nada sai do seu telemóvel.</string>
+    <string name="whats_new_translation_body">Escreva e a tradução aparece em direto no campo. Escolha as duas línguas e troque-as com ⇄: até 43 línguas com o Gemma 4. Nada sai do seu telemóvel.</string>
+    <string name="whats_new_faster_ai_title">Uma IA mais rápida</string>
+    <string name="whats_new_faster_ai_body">A correção, o tom e a tradução respondem mais depressa, e o ditado começa logo: o seu modelo fica pronto.</string>
     <string name="whats_new_swipe_title">Escrita por deslize</string>
     <string name="whats_new_swipe_body">Deslize o dedo de letra em letra. Ative-a nas Definições do teclado.</string>
-    <string name="whats_new_animations_title">Novas animações e fundo com imagem</string>
-    <string name="whats_new_animations_body">Faíscas, Píxeis, Bolha coração e Florescer, e a sua foto atrás das teclas (pacote premium).</string>
+    <string name="whats_new_password_paste_title">Colar uma palavra-passe</string>
+    <string name="whats_new_password_paste_body">A área de transferência abre-se também nos campos de palavra-passe, para colar a do seu gestor de palavras-passe. Nada do campo é lido nem guardado.</string>
+    <string name="whats_new_photo_title">A sua foto como fundo</string>
+    <string name="whats_new_photo_body">Escolha uma imagem da galeria ou dos seus ficheiros para o fundo do teclado (pacote premium). Fica no seu telemóvel.</string>
+    <string name="whats_new_processor_title">Novo fundo Processador</string>
+    <string name="whats_new_processor_body">Um circuito impresso cujas pistas se acendem a cada tecla (pacote premium). Os fundos animados também se mexem enquanto a IA trabalha.</string>
     <string name="model_name_custom">Modelo personalizado</string>
     <string name="model_subtitle_custom">O seu próprio ficheiro LiteRT-LM</string>
     <string name="model_hint_custom">Um ficheiro .litertlm compatível com a versão do LiteRT-LM integrada no Taipo.</string>
@@ -868,4 +871,12 @@
     <string name="system_prompt_tone_description">Instrução enviada ao modelo para reescrever uma mensagem no tom escolhido (profissional, amigável, conciso…) sem mudar o sentido nem a língua.</string>
     <string name="system_prompt_translation_title">Tradução</string>
     <string name="system_prompt_translation_description">Instrução enviada ao modelo para traduzir o texto para a língua escolhida, mantendo o sentido, o registo e o tom.</string>
+    <string name="home_row_keyboard_layout_subtitle">Fila de números, teclas inferiores, bolha das teclas</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibração, som do teclado, volume</string>
+    <string name="home_row_keyboard_smart_subtitle">Deslize, aprendizagem, histórico da área de transferência</string>
+    <string name="appearance_section_theme">Tema e cor</string>
+    <string name="appearance_section_keys">Teclas e tipo de letra</string>
+    <string name="onboarding_done_title">O Taipo está pronto</string>
+    <string name="onboarding_done_show">Os 6 passos estão feitos. Toque para os voltar a ver.</string>
+    <string name="onboarding_done_hide">Toque para ocultar os passos.</string>
 </resources>

@@ -96,7 +96,6 @@
     <string name="personal_dictionary_system_off">Systémový slovník Androidu (slova přidaná klepnutím na červeně podtržené slovo) se nepoužívá. Povolte přístup, aby se tato slova neopravovala a mohla se navrhovat. Taipo ho jen čte a nikdy ho nemění.</string>
     <string name="personal_dictionary_system_on">Systémový slovník Androidu se používá: přečtená slova: %1$d. Taipo ho jen čte a nikdy ho nemění. Přístup můžete odebrat v nastavení Androidu.</string>
     <string name="personal_dictionary_system_allow">Povolit přístup</string>
-    <string name="button_keyboard_settings">Nastavení klávesnice</string>
     <string name="keyboard_settings_title">Nastavení klávesnice</string>
     <string name="keyboard_settings_layout_title">Rozložení kláves</string>
     <string name="keyboard_settings_size_title">Velikost a poloha</string>
@@ -319,7 +318,6 @@
     <string name="onboarding_try_hint">Pište sem na zkoušku</string>
     <string name="home_section_keyboard">Klávesnice</string>
     <string name="home_section_ai">Umělá inteligence</string>
-    <string name="home_row_keyboard_settings_subtitle">Řada číslic, vibrace, výška, režim jedné ruky, učení</string>
     <string name="home_row_personal_dictionary_subtitle">Přidávejte nebo odebírejte slova</string>
     <string name="home_row_model_settings_subtitle">Zadejte soubor modelu sami</string>
     <string name="home_row_voice_model_subtitle">Stáhnout model diktování</string>
@@ -666,7 +664,6 @@
     <string name="motion_style_bloom">Rozkvět</string>
     <string name="home_row_languages_subtitle">Jazyky a rozložení klávesnice</string>
     <string name="home_row_theme_subtitle">%1$s · %2$s</string>
-    <string name="button_theme">Vzhled</string>
     <string name="languages_title">Jazyky</string>
     <string name="languages_section_keyboard">Jazyky klávesnice</string>
     <string name="languages_summary_device">%1$s · jazyk zařízení</string>
@@ -784,13 +781,19 @@
     <string name="whats_new_ai_panel_title">Celá AI v jednom panelu</string>
     <string name="whats_new_ai_panel_body">Tlačítko AI otevře všechny akce AI. Podržením akci připnete na lištu: nejvýše dvě.</string>
     <string name="whats_new_tone_title">Změna tónu</string>
-    <string name="whats_new_tone_body">Jedním klepnutím udělejte zprávu profesionální, přátelskou, stručnou, zdvořilou… a obnovte původní text.</string>
+    <string name="whats_new_tone_body">Osm tónů, od profesionálního po sociální sítě: přepište zprávu jedním klepnutím a obnovte původní text.</string>
     <string name="whats_new_translation_title">Překlad v telefonu</string>
-    <string name="whats_new_translation_body">Pište a překlad se v poli zobrazuje živě. Nic neopustí váš telefon.</string>
+    <string name="whats_new_translation_body">Pište a překlad se v poli zobrazuje živě. Vyberte oba jazyky a prohoďte je tlačítkem ⇄: až 43 jazyků s Gemma 4. Nic neopustí váš telefon.</string>
+    <string name="whats_new_faster_ai_title">Rychlejší AI</string>
+    <string name="whats_new_faster_ai_body">Oprava, tón a překlad odpovídají rychleji a diktování začne hned: jeho model zůstává připravený.</string>
     <string name="whats_new_swipe_title">Psaní tahem</string>
     <string name="whats_new_swipe_body">Táhněte prstem od písmene k písmenu. Zapněte v nastavení klávesnice.</string>
-    <string name="whats_new_animations_title">Nové animace a obrázek na pozadí</string>
-    <string name="whats_new_animations_body">Jiskry, Pixely, Srdíčko a Rozkvět a vaše fotka za klávesami (prémiový balíček).</string>
+    <string name="whats_new_password_paste_title">Vložení hesla</string>
+    <string name="whats_new_password_paste_body">Schránka se nyní otevře i v polích pro heslo, abyste mohli vložit heslo ze správce hesel. Z pole se nic nečte ani neukládá.</string>
+    <string name="whats_new_photo_title">Vaše fotka na pozadí</string>
+    <string name="whats_new_photo_body">Vyberte obrázek z galerie nebo ze souborů jako pozadí klávesnice (prémiový balíček). Zůstane ve vašem telefonu.</string>
+    <string name="whats_new_processor_title">Nové pozadí Procesor</string>
+    <string name="whats_new_processor_body">Deska plošných spojů, jejíž cesty se rozsvítí s každou klávesou (prémiový balíček). Animovaná pozadí ožívají i ve chvíli, kdy pracuje AI.</string>
     <string name="model_name_custom">Vlastní model</string>
     <string name="model_subtitle_custom">Váš vlastní soubor LiteRT-LM</string>
     <string name="model_hint_custom">Soubor .litertlm kompatibilní s verzí LiteRT-LM v Taipo.</string>
@@ -872,4 +875,12 @@
     <string name="system_prompt_tone_description">Pokyn modelu, aby přepsal zprávu ve zvoleném tónu (profesionální, přátelský, stručný…) beze změny smyslu i jazyka.</string>
     <string name="system_prompt_translation_title">Překlad</string>
     <string name="system_prompt_translation_description">Pokyn modelu, aby přeložil text do zvoleného jazyka a zachoval jeho smysl, rejstřík a tón.</string>
+    <string name="home_row_keyboard_layout_subtitle">Řada číslic, spodní klávesy, bublina kláves</string>
+    <string name="home_row_keyboard_sounds_subtitle">Vibrace, zvuk klávesnice, hlasitost</string>
+    <string name="home_row_keyboard_smart_subtitle">Psaní tahem, učení, historie schránky</string>
+    <string name="appearance_section_theme">Motiv a barva</string>
+    <string name="appearance_section_keys">Klávesy a písmo</string>
+    <string name="onboarding_done_title">Taipo je připraveno</string>
+    <string name="onboarding_done_show">Všech 6 kroků je hotovo. Klepnutím je znovu zobrazíte.</string>
+    <string name="onboarding_done_hide">Klepnutím kroky skryjete.</string>
 </resources>
