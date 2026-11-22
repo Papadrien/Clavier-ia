@@ -29,7 +29,7 @@ work = "2.12.0"
 play-review = "2.0.2"
 
 # Pass premium (achat unique) : Google Play Billing. 8.0.0 : API stable connue (achats en attente, QueryProductDetailsResult).
-play-billing = "8.0.0"
+play-billing = "9.1.0"
 
 # SDK Kotlin d'Aptabase (JitPack). 0.1.0 : compilé contre l'API 37 et Kotlin stdlib 2.2, minSdk 16 (la doc du site cite encore 0.0.8).
 aptabase = "0.1.0"
