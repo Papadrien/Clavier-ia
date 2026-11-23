@@ -568,8 +568,10 @@ class SuggestionController(
     }
 
     private fun publishWords(words: List<WordSuggestion?>) {
-        currentWordSuggestions = words
-        host.showWords(words)
+        // Mots bloqués par l'utilisateur (« Retirer du dictionnaire ») : jamais proposés, le mot tapé reste.
+        val shown = fr.junade.taipo.dictionary.BlockedWordFilter.slots(words, fr.junade.taipo.dictionary.BlockedWords.keys(appContext))
+        currentWordSuggestions = shown
+        host.showWords(shown)
     }
 
     /** Vide la bande de suggestions (panneau emoji, dictée ou correction en cours). */
@@ -762,7 +764,12 @@ class SuggestionController(
         var common = 0
         val limit = minOf(corrected.length, textBeforeCursor.length)
         while (common < limit && corrected[common] == textBeforeCursor[common]) common++
-        return AutocorrectionEdit(deleteCount = textBeforeCursor.length - common, insert = corrected.substring(common))
+        val removed = textBeforeCursor.substring(common)
+        val inserted = corrected.substring(common)
+        // Une correction vers un mot bloqué par l'utilisateur n'est pas faite : le mot tapé reste.
+        val blocked = fr.junade.taipo.dictionary.BlockedWords.keys(appContext)
+        if (fr.junade.taipo.dictionary.BlockedWordFilter.blocksCorrection(removed, inserted, blocked)) return null
+        return AutocorrectionEdit(deleteCount = removed.length, insert = inserted)
     }
 
     private companion object {

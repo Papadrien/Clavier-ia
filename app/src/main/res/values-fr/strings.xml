@@ -929,11 +929,14 @@
     <string name="premium_motion_title">Des animations à votre goût</string>
     <string name="premium_motion_text">Neuf styles pour toutes les animations du clavier : Vif, Gelée, Envol, Goutte et Glisse, et les styles à particules Étincelles, Pixels, Bulle cœur et Éclosion.</string>
     <string name="suggestion_word_already">« %1$s » est déjà dans votre dictionnaire</string>
-    <string name="suggestion_word_removed">« %1$s » retiré de votre dictionnaire</string>
-    <string name="suggestion_word_not_removable">« %1$s » n\'est pas dans votre dictionnaire Taipo : il ne peut pas être retiré</string>
+    <string name="suggestion_word_removed">« %1$s » retiré : il ne sera plus proposé</string>
     <string name="suggestion_word_failed">Votre dictionnaire n\'a pas pu être modifié. Réessayez.</string>
     <string name="suggestion_word_add_action">Ajouter au dictionnaire</string>
     <string name="suggestion_word_remove_action">Retirer du dictionnaire</string>
     <string name="tip_dictionary">Astuce : appui long sur une suggestion pour l\'ajouter au dictionnaire ou l\'en retirer.</string>
     <string name="suggestion_word_popup_title">« %1$s »</string>
+    <string name="personal_dictionary_blocked_button">Mots bloqués (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Mots bloqués</string>
+    <string name="personal_dictionary_unblock">Débloquer</string>
+    <string name="personal_dictionary_unblocked">Mots débloqués : ils peuvent de nouveau être proposés.</string>
 </resources>

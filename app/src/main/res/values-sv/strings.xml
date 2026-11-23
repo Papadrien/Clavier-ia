@@ -878,11 +878,14 @@
     <string name="premium_motion_title">Animationer efter din smak</string>
     <string name="premium_motion_text">Nio stilar för alla tangentbordets animationer: Kvick, Gelé, Iväg, Droppe och Glid, plus partikelstilarna Gnistor, Pixlar, Hjärtbubbla och Blomning.</string>
     <string name="suggestion_word_already">”%1$s” finns redan i din ordlista</string>
-    <string name="suggestion_word_removed">”%1$s” har tagits bort från din ordlista</string>
-    <string name="suggestion_word_not_removable">”%1$s” finns inte i din Taipo-ordlista och kan inte tas bort</string>
+    <string name="suggestion_word_removed">”%1$s” borttaget: föreslås inte längre</string>
     <string name="suggestion_word_failed">Ordlistan kunde inte ändras. Försök igen.</string>
     <string name="suggestion_word_add_action">Lägg till i ordlistan</string>
     <string name="suggestion_word_remove_action">Ta bort från ordlistan</string>
     <string name="tip_dictionary">Tips: håll in ett förslag för att lägga till det i ordlistan eller ta bort det.</string>
     <string name="suggestion_word_popup_title">”%1$s”</string>
+    <string name="personal_dictionary_blocked_button">Blockerade ord (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Blockerade ord</string>
+    <string name="personal_dictionary_unblock">Avblockera</string>
+    <string name="personal_dictionary_unblocked">Orden avblockerade: de kan föreslås igen.</string>
 </resources>

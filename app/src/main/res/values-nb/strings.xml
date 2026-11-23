@@ -878,11 +878,14 @@
     <string name="premium_motion_title">Animasjoner etter din smak</string>
     <string name="premium_motion_text">Ni stiler for alle tastaturets animasjoner: Kvikk, Gelé, Avgang, Dråpe og Gli, pluss partikkelstilene Gnister, Piksler, Hjerteboble og Blomstring.</string>
     <string name="suggestion_word_already">«%1$s» er allerede i ordboken din</string>
-    <string name="suggestion_word_removed">«%1$s» er fjernet fra ordboken din</string>
-    <string name="suggestion_word_not_removable">«%1$s» er ikke i Taipo-ordboken din og kan ikke fjernes</string>
+    <string name="suggestion_word_removed">«%1$s» fjernet: foreslås ikke lenger</string>
     <string name="suggestion_word_failed">Ordboken kunne ikke endres. Prøv igjen.</string>
     <string name="suggestion_word_add_action">Legg til i ordboken</string>
     <string name="suggestion_word_remove_action">Fjern fra ordboken</string>
     <string name="tip_dictionary">Tips: hold inne et forslag for å legge det til i ordboken eller fjerne det.</string>
     <string name="suggestion_word_popup_title">«%1$s»</string>
+    <string name="personal_dictionary_blocked_button">Blokkerte ord (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Blokkerte ord</string>
+    <string name="personal_dictionary_unblock">Opphev blokkering</string>
+    <string name="personal_dictionary_unblocked">Blokkering opphevet: ordene kan foreslås igjen.</string>
 </resources>

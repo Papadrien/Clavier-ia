@@ -13,6 +13,8 @@ data class BackupData(
     val pins: List<BackupPin>,
     val keyboard: BackupKeyboardSettings,
     val ai: BackupAiSettings,
+    /** Mots bloqués (« Retirer du dictionnaire », 23/11/2026) ; absent d'un fichier plus ancien. */
+    val blockedWords: List<String> = emptyList(),
 )
 
 /** Élément épinglé du Smart Clipboard, avec son étiquette éventuelle. */

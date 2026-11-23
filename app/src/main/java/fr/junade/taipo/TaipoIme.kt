@@ -279,6 +279,8 @@ class TaipoIme : InputMethodService() {
                     learnFromTyping() // le mot glissé compte comme un mot tapé (prédiction du mot suivant)
                     afterFieldEdit()
                 }
+                override fun isBlocked(word: String): Boolean =
+                    fr.junade.taipo.dictionary.BlockedWords.isBlocked(applicationContext, word)
                 override fun onWordErased() {
                     onUserTyped()
                     afterFieldEdit()
@@ -1077,6 +1079,8 @@ class TaipoIme : InputMethodService() {
      */
     private fun addSuggestionToDictionary(word: String) {
         serviceScope.launch {
+            // Un mot ajouté n'est plus bloqué (s'il l'avait été par « Retirer du dictionnaire »).
+            val unblocked = fr.junade.taipo.dictionary.BlockedWords.unblock(applicationContext, listOf(word))
             val result = try {
                 withContext(Dispatchers.IO) { personalDictionary.add(word) }
             } catch (e: CancellationException) {
@@ -1087,23 +1091,25 @@ class TaipoIme : InputMethodService() {
             }
             val message = when (result) {
                 PersonalDictionary.AddResult.ADDED -> getString(R.string.personal_dictionary_added, word)
-                PersonalDictionary.AddResult.ALREADY_PRESENT -> getString(R.string.suggestion_word_already, word)
+                PersonalDictionary.AddResult.ALREADY_PRESENT ->
+                    getString(if (unblocked) R.string.personal_dictionary_added else R.string.suggestion_word_already, word)
                 PersonalDictionary.AddResult.INVALID -> getString(R.string.personal_dictionary_invalid)
                 PersonalDictionary.AddResult.FULL -> getString(R.string.personal_dictionary_full, PersonalDictionary.MAX_WORDS)
                 null -> getString(R.string.suggestion_word_failed)
             }
-            if (result == PersonalDictionary.AddResult.ADDED) suggestions.invalidate()
+            if (result == PersonalDictionary.AddResult.ADDED || unblocked) suggestions.invalidate()
             messagePopup.show(message)
         }
     }
 
     /**
-     * Bouton « Retirer du dictionnaire » du pop-up d'une suggestion : le mot est retiré du dictionnaire personnel. Un mot du dictionnaire de la langue (ou du
-     * dictionnaire du téléphone, en lecture seule) ne peut pas l'être : un message le dit.
+     * Bouton « Retirer du dictionnaire » du pop-up d'une suggestion : le mot sort du dictionnaire personnel (s'il y était) et entre
+     * dans les mots bloqués ([fr.junade.taipo.dictionary.BlockedWords]) : il n'est plus proposé ni utilisé pour corriger, même s'il
+     * vient du dictionnaire de la langue ou de celui du téléphone (qui, eux, ne sont jamais modifiés).
      */
     private fun removeSuggestionFromDictionary(word: String) {
         serviceScope.launch {
-            val removed = try {
+            val removedFromPersonal = try {
                 withContext(Dispatchers.IO) { personalDictionary.remove(word) }
             } catch (e: CancellationException) {
                 throw e
@@ -1111,16 +1117,14 @@ class TaipoIme : InputMethodService() {
                 AppLog.e(TAG, "retrait du dictionnaire personnel en échec", e)
                 null
             }
-            val message = when (removed) {
-                true -> getString(R.string.suggestion_word_removed, word)
-                false -> getString(R.string.suggestion_word_not_removable, word)
-                null -> getString(R.string.suggestion_word_failed)
+            if (removedFromPersonal == null) {
+                messagePopup.show(getString(R.string.suggestion_word_failed))
+                return@launch
             }
-            if (removed == true) {
-                suggestions.invalidate()
-                refreshSuggestions(currentInputConnection?.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty())
-            }
-            messagePopup.show(message)
+            fr.junade.taipo.dictionary.BlockedWords.block(applicationContext, word)
+            suggestions.invalidate()
+            refreshSuggestions(currentInputConnection?.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty())
+            messagePopup.show(getString(R.string.suggestion_word_removed, word))
         }
     }
 

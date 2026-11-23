@@ -886,11 +886,14 @@
     <string name="premium_motion_title">Animace podle vašeho vkusu</string>
     <string name="premium_motion_text">Devět stylů pro všechny animace klávesnice: Svižná, Želé, Odlet, Kapka a Klouzání a částicové styly Jiskry, Pixely, Srdíčko a Rozkvět.</string>
     <string name="suggestion_word_already">„%1$s“ už ve vašem slovníku je</string>
-    <string name="suggestion_word_removed">„%1$s“ odebráno z vašeho slovníku</string>
-    <string name="suggestion_word_not_removable">„%1$s“ není ve vašem slovníku Taipo: nelze ho odebrat</string>
+    <string name="suggestion_word_removed">„%1$s“ odebráno: už nebude navrhováno</string>
     <string name="suggestion_word_failed">Slovník se nepodařilo změnit. Zkuste to znovu.</string>
     <string name="suggestion_word_add_action">Přidat do slovníku</string>
     <string name="suggestion_word_remove_action">Odebrat ze slovníku</string>
     <string name="tip_dictionary">Tip: podržením návrhu ho přidáte do slovníku nebo z něj odeberete.</string>
     <string name="suggestion_word_popup_title">„%1$s“</string>
+    <string name="personal_dictionary_blocked_button">Blokovaná slova (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Blokovaná slova</string>
+    <string name="personal_dictionary_unblock">Odblokovat</string>
+    <string name="personal_dictionary_unblocked">Slova odblokována: mohou být znovu navrhována.</string>
 </resources>

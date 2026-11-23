@@ -878,11 +878,14 @@
     <string name="premium_motion_title">Animationen nach Ihrem Geschmack</string>
     <string name="premium_motion_text">Neun Stile für alle Animationen der Tastatur: Flink, Gelee, Abflug, Tropfen und Gleiten sowie die Partikelstile Funken, Pixel, Herzblase und Blüte.</string>
     <string name="suggestion_word_already">„%1$s“ ist schon in Ihrem Wörterbuch</string>
-    <string name="suggestion_word_removed">„%1$s“ aus Ihrem Wörterbuch entfernt</string>
-    <string name="suggestion_word_not_removable">„%1$s“ ist nicht in Ihrem Taipo-Wörterbuch und kann nicht entfernt werden</string>
+    <string name="suggestion_word_removed">„%1$s“ entfernt: wird nicht mehr vorgeschlagen</string>
     <string name="suggestion_word_failed">Ihr Wörterbuch konnte nicht geändert werden. Versuchen Sie es erneut.</string>
     <string name="suggestion_word_add_action">Zum Wörterbuch hinzufügen</string>
     <string name="suggestion_word_remove_action">Aus dem Wörterbuch entfernen</string>
     <string name="tip_dictionary">Tipp: Lange auf einen Vorschlag drücken, um ihn zum Wörterbuch hinzuzufügen oder daraus zu entfernen.</string>
     <string name="suggestion_word_popup_title">„%1$s“</string>
+    <string name="personal_dictionary_blocked_button">Blockierte Wörter (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Blockierte Wörter</string>
+    <string name="personal_dictionary_unblock">Freigeben</string>
+    <string name="personal_dictionary_unblocked">Wörter freigegeben: Sie können wieder vorgeschlagen werden.</string>
 </resources>

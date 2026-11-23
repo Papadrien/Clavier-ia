@@ -882,11 +882,14 @@
     <string name="premium_motion_title">Animaciones a tu gusto</string>
     <string name="premium_motion_text">Nueve estilos para todas las animaciones del teclado: Ágil, Gelatina, Vuelo, Gota y Deslizar, y los estilos de partículas Chispas, Píxeles, Burbuja corazón y Floración.</string>
     <string name="suggestion_word_already">«%1$s» ya está en tu diccionario</string>
-    <string name="suggestion_word_removed">«%1$s» quitado de tu diccionario</string>
-    <string name="suggestion_word_not_removable">«%1$s» no está en tu diccionario de Taipo: no se puede quitar</string>
+    <string name="suggestion_word_removed">«%1$s» quitado: ya no se sugerirá</string>
     <string name="suggestion_word_failed">No se ha podido modificar tu diccionario. Inténtalo de nuevo.</string>
     <string name="suggestion_word_add_action">Añadir al diccionario</string>
     <string name="suggestion_word_remove_action">Quitar del diccionario</string>
     <string name="tip_dictionary">Consejo: mantén pulsada una sugerencia para añadirla al diccionario o quitarla.</string>
     <string name="suggestion_word_popup_title">«%1$s»</string>
+    <string name="personal_dictionary_blocked_button">Palabras bloqueadas (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Palabras bloqueadas</string>
+    <string name="personal_dictionary_unblock">Desbloquear</string>
+    <string name="personal_dictionary_unblocked">Palabras desbloqueadas: pueden volver a sugerirse.</string>
 </resources>

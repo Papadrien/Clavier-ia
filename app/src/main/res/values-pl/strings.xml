@@ -886,11 +886,14 @@
     <string name="premium_motion_title">Animacje według Twojego gustu</string>
     <string name="premium_motion_text">Dziewięć stylów wszystkich animacji klawiatury: Żwawa, Galaretka, Odlot, Kropla i Ślizg oraz style z cząsteczkami Iskry, Piksele, Serduszko i Rozkwit.</string>
     <string name="suggestion_word_already">„%1$s” jest już w Twoim słowniku</string>
-    <string name="suggestion_word_removed">Usunięto „%1$s” z Twojego słownika</string>
-    <string name="suggestion_word_not_removable">„%1$s” nie ma w Twoim słowniku Taipo: nie można go usunąć</string>
+    <string name="suggestion_word_removed">Usunięto „%1$s”: nie będzie już podpowiadane</string>
     <string name="suggestion_word_failed">Nie udało się zmienić słownika. Spróbuj ponownie.</string>
     <string name="suggestion_word_add_action">Dodaj do słownika</string>
     <string name="suggestion_word_remove_action">Usuń ze słownika</string>
     <string name="tip_dictionary">Wskazówka: przytrzymaj podpowiedź, by dodać ją do słownika lub z niego usunąć.</string>
     <string name="suggestion_word_popup_title">„%1$s”</string>
+    <string name="personal_dictionary_blocked_button">Zablokowane słowa (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Zablokowane słowa</string>
+    <string name="personal_dictionary_unblock">Odblokuj</string>
+    <string name="personal_dictionary_unblocked">Słowa odblokowane: mogą znów być podpowiadane.</string>
 </resources>

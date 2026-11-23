@@ -48,6 +48,7 @@ object BackupCodec {
             put("formatVersion", FORMAT_VERSION)
             put("exportedAt", data.exportedAtMillis)
             put("dictionary", JSONArray(data.dictionary))
+            if (data.blockedWords.isNotEmpty()) put("blockedWords", JSONArray(data.blockedWords))
             put("pinnedClips", pins)
             put(
                 "settings",
@@ -119,6 +120,7 @@ object BackupCodec {
         return BackupData(
             exportedAtMillis = root.optLong("exportedAt", 0L),
             dictionary = strings(root.optJSONArray("dictionary")),
+            blockedWords = strings(root.optJSONArray("blockedWords")),
             pins = pins(root.optJSONArray("pinnedClips")),
             keyboard = BackupKeyboardSettings(
                 numberRow = keyboard.boolean("numberRow"),

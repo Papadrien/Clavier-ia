@@ -882,11 +882,14 @@
     <string name="premium_motion_title">Animazioni a tuo gusto</string>
     <string name="premium_motion_text">Nove stili per tutte le animazioni della tastiera: Scattante, Gelatina, Volo, Goccia e Scivola, più gli stili a particelle Scintille, Pixel, Bolla cuore e Fioritura.</string>
     <string name="suggestion_word_already">«%1$s» è già nel tuo dizionario</string>
-    <string name="suggestion_word_removed">«%1$s» rimosso dal tuo dizionario</string>
-    <string name="suggestion_word_not_removable">«%1$s» non è nel tuo dizionario Taipo: non può essere rimosso</string>
+    <string name="suggestion_word_removed">«%1$s» rimosso: non verrà più suggerito</string>
     <string name="suggestion_word_failed">Impossibile modificare il dizionario. Riprova.</string>
     <string name="suggestion_word_add_action">Aggiungi al dizionario</string>
     <string name="suggestion_word_remove_action">Rimuovi dal dizionario</string>
     <string name="tip_dictionary">Suggerimento: tieni premuto un suggerimento per aggiungerlo al dizionario o rimuoverlo.</string>
     <string name="suggestion_word_popup_title">«%1$s»</string>
+    <string name="personal_dictionary_blocked_button">Parole bloccate (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Parole bloccate</string>
+    <string name="personal_dictionary_unblock">Sblocca</string>
+    <string name="personal_dictionary_unblocked">Parole sbloccate: possono essere suggerite di nuovo.</string>
 </resources>

@@ -912,11 +912,14 @@
     <string name="premium_motion_title">Animations to your taste</string>
     <string name="premium_motion_text">Nine styles for every keyboard animation: Snappy, Jelly, Fly away, Drop and Glide, plus the particle styles Sparks, Pixels, Heart bubble and Bloom.</string>
     <string name="suggestion_word_already">“%1$s” is already in your dictionary</string>
-    <string name="suggestion_word_removed">“%1$s” removed from your dictionary</string>
-    <string name="suggestion_word_not_removable">“%1$s” is not in your Taipo dictionary: it cannot be removed</string>
+    <string name="suggestion_word_removed">“%1$s” removed: it will no longer be suggested</string>
     <string name="suggestion_word_failed">Your dictionary could not be changed. Try again.</string>
     <string name="suggestion_word_add_action">Add to dictionary</string>
     <string name="suggestion_word_remove_action">Remove from dictionary</string>
     <string name="tip_dictionary">Tip: long-press a suggestion to add it to your dictionary or remove it.</string>
     <string name="suggestion_word_popup_title">“%1$s”</string>
+    <string name="personal_dictionary_blocked_button">Blocked words (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Blocked words</string>
+    <string name="personal_dictionary_unblock">Unblock</string>
+    <string name="personal_dictionary_unblocked">Words unblocked: they can be suggested again.</string>
 </resources>

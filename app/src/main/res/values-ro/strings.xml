@@ -882,11 +882,14 @@
     <string name="premium_motion_title">Animații pe gustul tău</string>
     <string name="premium_motion_text">Nouă stiluri pentru toate animațiile tastaturii: Vioi, Jeleu, Zbor, Picătură și Alunecare, plus stilurile cu particule Scântei, Pixeli, Bulă inimă și Înflorire.</string>
     <string name="suggestion_word_already">„%1$s” este deja în dicționarul tău</string>
-    <string name="suggestion_word_removed">„%1$s” a fost eliminat din dicționarul tău</string>
-    <string name="suggestion_word_not_removable">„%1$s” nu este în dicționarul tău Taipo: nu poate fi eliminat</string>
+    <string name="suggestion_word_removed">„%1$s” eliminat: nu va mai fi sugerat</string>
     <string name="suggestion_word_failed">Dicționarul nu a putut fi modificat. Încearcă din nou.</string>
     <string name="suggestion_word_add_action">Adaugă în dicționar</string>
     <string name="suggestion_word_remove_action">Elimină din dicționar</string>
     <string name="tip_dictionary">Sfat: ține apăsat pe o sugestie ca s-o adaugi în dicționar sau s-o elimini.</string>
     <string name="suggestion_word_popup_title">„%1$s”</string>
+    <string name="personal_dictionary_blocked_button">Cuvinte blocate (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Cuvinte blocate</string>
+    <string name="personal_dictionary_unblock">Deblochează</string>
+    <string name="personal_dictionary_unblocked">Cuvinte deblocate: pot fi sugerate din nou.</string>
 </resources>

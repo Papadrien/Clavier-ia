@@ -878,11 +878,14 @@
     <string name="premium_motion_title">Animációk az Ön ízlése szerint</string>
     <string name="premium_motion_text">Kilenc stílus a billentyűzet összes animációjához: Fürge, Zselé, Elrepülés, Csepp és Csúszás, valamint a részecskés Szikrák, Pixelek, Szívbuborék és Virágzás.</string>
     <string name="suggestion_word_already">„%1$s” már szerepel a szótárában</string>
-    <string name="suggestion_word_removed">„%1$s” eltávolítva a szótárából</string>
-    <string name="suggestion_word_not_removable">„%1$s” nincs a Taipo-szótárában, ezért nem távolítható el</string>
+    <string name="suggestion_word_removed">„%1$s” eltávolítva: többé nem jelenik meg javaslatként</string>
     <string name="suggestion_word_failed">A szótárat nem sikerült módosítani. Próbálja újra.</string>
     <string name="suggestion_word_add_action">Hozzáadás a szótárhoz</string>
     <string name="suggestion_word_remove_action">Eltávolítás a szótárból</string>
     <string name="tip_dictionary">Tipp: nyomja hosszan a javaslatot, hogy felvegye a szótárba vagy törölje onnan.</string>
     <string name="suggestion_word_popup_title">„%1$s”</string>
+    <string name="personal_dictionary_blocked_button">Letiltott szavak (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Letiltott szavak</string>
+    <string name="personal_dictionary_unblock">Feloldás</string>
+    <string name="personal_dictionary_unblocked">Szavak feloldva: újra megjelenhetnek javaslatként.</string>
 </resources>

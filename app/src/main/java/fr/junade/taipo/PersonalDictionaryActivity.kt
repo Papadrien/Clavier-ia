@@ -64,6 +64,7 @@ class PersonalDictionaryActivity : Activity() {
 
         systemStatus = findViewById(R.id.personal_dictionary_system_status)
         systemAllow = findViewById(R.id.personal_dictionary_system_allow)
+        findViewById<Button>(R.id.personal_dictionary_blocked).setOnClickListener { showBlockedWords() }
         // Permission runtime : une IME ne peut pas la demander, mais cet écran est une Activity.
         systemAllow.setOnClickListener {
             requestPermissions(arrayOf(SystemUserDictionary.READ_PERMISSION), REQUEST_SYSTEM_DICTIONARY)
@@ -74,6 +75,7 @@ class PersonalDictionaryActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
+        renderBlockedButton()
         refreshSystemDictionary()
     }
 
@@ -181,6 +183,34 @@ class PersonalDictionaryActivity : Activity() {
             },
         )
         return row
+    }
+
+    /** Bouton « Mots bloqués (n) » : visible seulement s'il y en a. */
+    private fun renderBlockedButton() {
+        val count = fr.junade.taipo.dictionary.BlockedWords.all(this).size
+        findViewById<Button>(R.id.personal_dictionary_blocked).apply {
+            visibility = if (count > 0) android.view.View.VISIBLE else android.view.View.GONE
+            text = getString(R.string.personal_dictionary_blocked_button, count)
+        }
+    }
+
+    /** Liste des mots bloqués : cocher ceux à débloquer (ils pourront de nouveau être proposés). */
+    private fun showBlockedWords() {
+        val words = fr.junade.taipo.dictionary.BlockedWords.all(this)
+        if (words.isEmpty()) return
+        val checked = BooleanArray(words.size)
+        android.app.AlertDialog.Builder(this)
+            .setTitle(R.string.personal_dictionary_blocked_title)
+            .setMultiChoiceItems(words.toTypedArray(), checked) { _, which, isChecked -> checked[which] = isChecked }
+            .setPositiveButton(R.string.personal_dictionary_unblock) { _, _ ->
+                val chosen = words.filterIndexed { index, _ -> checked[index] }
+                if (chosen.isNotEmpty() && fr.junade.taipo.dictionary.BlockedWords.unblock(this, chosen)) {
+                    toast(getString(R.string.personal_dictionary_unblocked))
+                }
+                renderBlockedButton()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     private fun toast(message: String) = showScreenMessage(message)

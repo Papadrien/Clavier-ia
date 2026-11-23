@@ -53,6 +53,15 @@
         android:layout_marginTop="@dimen/taipo_settings_gap_sm"
         android:text="@string/personal_dictionary_system_allow" />
 
+    <!-- Mots bloqués (« Retirer du dictionnaire » depuis la bande de suggestions) : bouton visible s'il y en a, liste pour débloquer. -->
+    <Button
+        style="@style/TaipoButton.Secondary"
+        android:id="@+id/personal_dictionary_blocked"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+        android:visibility="gone" />
+
     <TextView
         style="@style/TaipoText.Label"
         android:id="@+id/personal_dictionary_count"
