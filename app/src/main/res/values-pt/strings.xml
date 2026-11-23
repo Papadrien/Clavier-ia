@@ -881,4 +881,10 @@
     <string name="onboarding_done_hide">Toque para ocultar os passos.</string>
     <string name="premium_motion_title">Animações ao seu gosto</string>
     <string name="premium_motion_text">Nove estilos para todas as animações do teclado: Ágil, Gelatina, Voo, Gota e Deslizar, e os estilos de partículas Faíscas, Píxeis, Bolha coração e Florescer.</string>
+    <string name="suggestion_word_already">«%1$s» já está no seu dicionário</string>
+    <string name="suggestion_word_removed">«%1$s» removido do seu dicionário</string>
+    <string name="suggestion_word_not_removable">«%1$s» não está no seu dicionário do Taipo: não pode ser removido</string>
+    <string name="suggestion_word_failed">Não foi possível alterar o seu dicionário. Tente novamente.</string>
+    <string name="suggestion_word_add_action">Adicionar ao dicionário</string>
+    <string name="suggestion_word_remove_action">Remover do dicionário</string>
 </resources>

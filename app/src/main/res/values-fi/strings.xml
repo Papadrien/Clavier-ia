@@ -877,4 +877,10 @@
     <string name="onboarding_done_hide">Piilota vaiheet napauttamalla.</string>
     <string name="premium_motion_title">Animaatiot makusi mukaan</string>
     <string name="premium_motion_text">Yhdeksän tyyliä kaikkiin näppäimistön animaatioihin: Ripeä, Hyytelö, Lento, Pisara ja Liuku sekä hiukkastyylit Kipinät, Pikselit, Sydänkupla ja Kukinta.</string>
+    <string name="suggestion_word_already">”%1$s” on jo sanakirjassasi</string>
+    <string name="suggestion_word_removed">”%1$s” poistettiin sanakirjastasi</string>
+    <string name="suggestion_word_not_removable">”%1$s” ei ole Taipo-sanakirjassasi, joten sitä ei voi poistaa</string>
+    <string name="suggestion_word_failed">Sanakirjaa ei voitu muuttaa. Yritä uudelleen.</string>
+    <string name="suggestion_word_add_action">Lisää sanakirjaan</string>
+    <string name="suggestion_word_remove_action">Poista sanakirjasta</string>
 </resources>

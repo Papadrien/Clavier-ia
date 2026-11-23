@@ -125,3 +125,11 @@ de langue à l'ouverture d'un champ, étape 4 avec et sans modèle installé.
 - La carte « Pack premium » (ligne encadrée de violet, auparavant en tête de « À propos ») est juste sous le tutoriel ; masquée tant
   que la carte d'offre du pack est affichée, pour ne pas faire doublon.
 - Page « Disposition des touches » : trois cartes (rangée de chiffres ; touches de la rangée du bas ; bulle des touches).
+
+## Dictionnaire depuis la bande de suggestions (23/11/2026, comme Gboard)
+- Appui long sur un mot suggéré (mot tapé entre guillemets compris, pas une adresse e-mail) : le mot se détache, suit le doigt, et
+  une poubelle apparaît au milieu de la bande (`SuggestionStripView`, `SuggestionWordDrag`).
+  - Relâché ailleurs : le mot est ajouté au dictionnaire personnel (« déjà dans votre dictionnaire » s'il y est).
+  - Déposé sur la poubelle (rouge au survol) : il est retiré du dictionnaire personnel. Un mot du dictionnaire de la langue ou du
+    téléphone (lecture seule) ne peut pas l'être : un message le dit.
+- TalkBack : actions « Ajouter au dictionnaire » et « Retirer du dictionnaire » sur chaque mot.

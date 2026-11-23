@@ -881,4 +881,10 @@
     <string name="onboarding_done_hide">Tocca per nascondere i passaggi.</string>
     <string name="premium_motion_title">Animazioni a tuo gusto</string>
     <string name="premium_motion_text">Nove stili per tutte le animazioni della tastiera: Scattante, Gelatina, Volo, Goccia e Scivola, più gli stili a particelle Scintille, Pixel, Bolla cuore e Fioritura.</string>
+    <string name="suggestion_word_already">«%1$s» è già nel tuo dizionario</string>
+    <string name="suggestion_word_removed">«%1$s» rimosso dal tuo dizionario</string>
+    <string name="suggestion_word_not_removable">«%1$s» non è nel tuo dizionario Taipo: non può essere rimosso</string>
+    <string name="suggestion_word_failed">Impossibile modificare il dizionario. Riprova.</string>
+    <string name="suggestion_word_add_action">Aggiungi al dizionario</string>
+    <string name="suggestion_word_remove_action">Rimuovi dal dizionario</string>
 </resources>

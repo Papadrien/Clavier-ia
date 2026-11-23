@@ -24,6 +24,7 @@ import fr.junade.taipo.ai.RewriteEngine
 import fr.junade.taipo.ai.TranscriptionPromptPreferences
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
+import fr.junade.taipo.dictionary.PersonalDictionary
 import fr.junade.taipo.dictionary.PersonalDictionaryProvider
 import fr.junade.taipo.dictionary.SystemDictionaryWords
 import fr.junade.taipo.dictionary.SystemUserDictionary
@@ -38,6 +39,7 @@ import fr.junade.taipo.suggestion.NextWordRepository
 import fr.junade.taipo.suggestion.SuggestionPolicy
 import fr.junade.taipo.suggestion.WordText
 import kotlin.math.abs
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -138,6 +140,8 @@ class TaipoIme : InputMethodService() {
         override fun replaceTextBeforeCursor(previous: String, text: String): String? =
             this@TaipoIme.fieldEditor.replaceTextBeforeCursor(previous, text)
         override fun onWordSuggestionTapped(suggestion: WordSuggestion) = this@TaipoIme.onWordSuggestionTapped(suggestion)
+        override fun addSuggestionToDictionary(word: String) = this@TaipoIme.addSuggestionToDictionary(word)
+        override fun removeSuggestionFromDictionary(word: String) = this@TaipoIme.removeSuggestionFromDictionary(word)
         override fun onKeyPressed(key: Key) = this@TaipoIme.onKeyPressed(key)
         override fun onCursorMoved(steps: Int) = this@TaipoIme.onCursorMoved(steps)
         override fun onGesture(
@@ -1058,6 +1062,59 @@ class TaipoIme : InputMethodService() {
      * - mot tapé (entre guillemets) : conservé tel quel, sans correction ;
      * - complétion : remplace le mot en cours.
      */
+    /**
+     * Appui long sur une suggestion relâché hors de la poubelle (23/11/2026, comme Gboard) : le mot entre dans le dictionnaire
+     * personnel (jamais corrigé, proposé ensuite). Message selon le résultat ; la base est écrite hors du thread principal.
+     */
+    private fun addSuggestionToDictionary(word: String) {
+        serviceScope.launch {
+            val result = try {
+                withContext(Dispatchers.IO) { personalDictionary.add(word) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) { // base inaccessible : simple message
+                AppLog.e(TAG, "ajout au dictionnaire personnel en échec", e)
+                null
+            }
+            val message = when (result) {
+                PersonalDictionary.AddResult.ADDED -> getString(R.string.personal_dictionary_added, word)
+                PersonalDictionary.AddResult.ALREADY_PRESENT -> getString(R.string.suggestion_word_already, word)
+                PersonalDictionary.AddResult.INVALID -> getString(R.string.personal_dictionary_invalid)
+                PersonalDictionary.AddResult.FULL -> getString(R.string.personal_dictionary_full, PersonalDictionary.MAX_WORDS)
+                null -> getString(R.string.suggestion_word_failed)
+            }
+            if (result == PersonalDictionary.AddResult.ADDED) suggestions.invalidate()
+            messagePopup.show(message)
+        }
+    }
+
+    /**
+     * Suggestion déposée sur la poubelle : le mot est retiré du dictionnaire personnel. Un mot du dictionnaire de la langue (ou du
+     * dictionnaire du téléphone, en lecture seule) ne peut pas l'être : un message le dit.
+     */
+    private fun removeSuggestionFromDictionary(word: String) {
+        serviceScope.launch {
+            val removed = try {
+                withContext(Dispatchers.IO) { personalDictionary.remove(word) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+                AppLog.e(TAG, "retrait du dictionnaire personnel en échec", e)
+                null
+            }
+            val message = when (removed) {
+                true -> getString(R.string.suggestion_word_removed, word)
+                false -> getString(R.string.suggestion_word_not_removable, word)
+                null -> getString(R.string.suggestion_word_failed)
+            }
+            if (removed == true) {
+                suggestions.invalidate()
+                refreshSuggestions(currentInputConnection?.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty())
+            }
+            messagePopup.show(message)
+        }
+    }
+
     private fun onWordSuggestionTapped(suggestion: WordSuggestion) {
         if (prompt.active) {
             promptKeys.onWordSuggestionTapped(suggestion)

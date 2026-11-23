@@ -482,6 +482,11 @@ class CorrectionBarView(context: Context) : FrameLayout(context) {
         }
     }
 
+    /** Appui long sur un mot suggéré : ajout au dictionnaire personnel, ou retrait en le déposant sur la poubelle. */
+    fun setOnWordSuggestionEditListener(listener: SuggestionStripView.OnWordEditListener?) {
+        zoneView.setOnWordSuggestionEditListener(listener)
+    }
+
     fun setOnWordSuggestionClickListener(listener: SuggestionStripView.OnWordClickListener) {
         zoneView.setOnWordSuggestionClickListener(listener)
     }

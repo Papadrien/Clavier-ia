@@ -928,4 +928,10 @@
     <string name="onboarding_done_hide">Touchez pour masquer les étapes.</string>
     <string name="premium_motion_title">Des animations à votre goût</string>
     <string name="premium_motion_text">Neuf styles pour toutes les animations du clavier : Vif, Gelée, Envol, Goutte et Glisse, et les styles à particules Étincelles, Pixels, Bulle cœur et Éclosion.</string>
+    <string name="suggestion_word_already">« %1$s » est déjà dans votre dictionnaire</string>
+    <string name="suggestion_word_removed">« %1$s » retiré de votre dictionnaire</string>
+    <string name="suggestion_word_not_removable">« %1$s » n\'est pas dans votre dictionnaire Taipo : il ne peut pas être retiré</string>
+    <string name="suggestion_word_failed">Votre dictionnaire n\'a pas pu être modifié. Réessayez.</string>
+    <string name="suggestion_word_add_action">Ajouter au dictionnaire</string>
+    <string name="suggestion_word_remove_action">Retirer du dictionnaire</string>
 </resources>

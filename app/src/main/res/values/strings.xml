@@ -911,4 +911,10 @@
     <string name="onboarding_done_hide">Tap to hide the steps.</string>
     <string name="premium_motion_title">Animations to your taste</string>
     <string name="premium_motion_text">Nine styles for every keyboard animation: Snappy, Jelly, Fly away, Drop and Glide, plus the particle styles Sparks, Pixels, Heart bubble and Bloom.</string>
+    <string name="suggestion_word_already">“%1$s” is already in your dictionary</string>
+    <string name="suggestion_word_removed">“%1$s” removed from your dictionary</string>
+    <string name="suggestion_word_not_removable">“%1$s” is not in your Taipo dictionary: it cannot be removed</string>
+    <string name="suggestion_word_failed">Your dictionary could not be changed. Try again.</string>
+    <string name="suggestion_word_add_action">Add to dictionary</string>
+    <string name="suggestion_word_remove_action">Remove from dictionary</string>
 </resources>

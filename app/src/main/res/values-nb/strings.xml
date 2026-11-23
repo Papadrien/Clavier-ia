@@ -877,4 +877,10 @@
     <string name="onboarding_done_hide">Trykk for å skjule trinnene.</string>
     <string name="premium_motion_title">Animasjoner etter din smak</string>
     <string name="premium_motion_text">Ni stiler for alle tastaturets animasjoner: Kvikk, Gelé, Avgang, Dråpe og Gli, pluss partikkelstilene Gnister, Piksler, Hjerteboble og Blomstring.</string>
+    <string name="suggestion_word_already">«%1$s» er allerede i ordboken din</string>
+    <string name="suggestion_word_removed">«%1$s» er fjernet fra ordboken din</string>
+    <string name="suggestion_word_not_removable">«%1$s» er ikke i Taipo-ordboken din og kan ikke fjernes</string>
+    <string name="suggestion_word_failed">Ordboken kunne ikke endres. Prøv igjen.</string>
+    <string name="suggestion_word_add_action">Legg til i ordboken</string>
+    <string name="suggestion_word_remove_action">Fjern fra ordboken</string>
 </resources>

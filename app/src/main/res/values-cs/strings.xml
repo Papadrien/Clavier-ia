@@ -885,4 +885,10 @@
     <string name="onboarding_done_hide">Klepnutím kroky skryjete.</string>
     <string name="premium_motion_title">Animace podle vašeho vkusu</string>
     <string name="premium_motion_text">Devět stylů pro všechny animace klávesnice: Svižná, Želé, Odlet, Kapka a Klouzání a částicové styly Jiskry, Pixely, Srdíčko a Rozkvět.</string>
+    <string name="suggestion_word_already">„%1$s“ už ve vašem slovníku je</string>
+    <string name="suggestion_word_removed">„%1$s“ odebráno z vašeho slovníku</string>
+    <string name="suggestion_word_not_removable">„%1$s“ není ve vašem slovníku Taipo: nelze ho odebrat</string>
+    <string name="suggestion_word_failed">Slovník se nepodařilo změnit. Zkuste to znovu.</string>
+    <string name="suggestion_word_add_action">Přidat do slovníku</string>
+    <string name="suggestion_word_remove_action">Odebrat ze slovníku</string>
 </resources>

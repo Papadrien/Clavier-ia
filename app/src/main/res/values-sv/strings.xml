@@ -877,4 +877,10 @@
     <string name="onboarding_done_hide">Tryck för att dölja stegen.</string>
     <string name="premium_motion_title">Animationer efter din smak</string>
     <string name="premium_motion_text">Nio stilar för alla tangentbordets animationer: Kvick, Gelé, Iväg, Droppe och Glid, plus partikelstilarna Gnistor, Pixlar, Hjärtbubbla och Blomning.</string>
+    <string name="suggestion_word_already">”%1$s” finns redan i din ordlista</string>
+    <string name="suggestion_word_removed">”%1$s” har tagits bort från din ordlista</string>
+    <string name="suggestion_word_not_removable">”%1$s” finns inte i din Taipo-ordlista och kan inte tas bort</string>
+    <string name="suggestion_word_failed">Ordlistan kunde inte ändras. Försök igen.</string>
+    <string name="suggestion_word_add_action">Lägg till i ordlistan</string>
+    <string name="suggestion_word_remove_action">Ta bort från ordlistan</string>
 </resources>

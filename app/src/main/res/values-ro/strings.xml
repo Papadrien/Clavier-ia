@@ -881,4 +881,10 @@
     <string name="onboarding_done_hide">Atinge pentru a ascunde pașii.</string>
     <string name="premium_motion_title">Animații pe gustul tău</string>
     <string name="premium_motion_text">Nouă stiluri pentru toate animațiile tastaturii: Vioi, Jeleu, Zbor, Picătură și Alunecare, plus stilurile cu particule Scântei, Pixeli, Bulă inimă și Înflorire.</string>
+    <string name="suggestion_word_already">„%1$s” este deja în dicționarul tău</string>
+    <string name="suggestion_word_removed">„%1$s” a fost eliminat din dicționarul tău</string>
+    <string name="suggestion_word_not_removable">„%1$s” nu este în dicționarul tău Taipo: nu poate fi eliminat</string>
+    <string name="suggestion_word_failed">Dicționarul nu a putut fi modificat. Încearcă din nou.</string>
+    <string name="suggestion_word_add_action">Adaugă în dicționar</string>
+    <string name="suggestion_word_remove_action">Elimină din dicționar</string>
 </resources>

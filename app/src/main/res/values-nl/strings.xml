@@ -877,4 +877,10 @@
     <string name="onboarding_done_hide">Tik om de stappen te verbergen.</string>
     <string name="premium_motion_title">Animaties naar jouw smaak</string>
     <string name="premium_motion_text">Negen stijlen voor alle animaties van het toetsenbord: Vlot, Gelei, Wegvliegen, Druppel en Glijden, plus de deeltjesstijlen Vonken, Pixels, Hartbel en Bloei.</string>
+    <string name="suggestion_word_already">‘%1$s’ staat al in je woordenboek</string>
+    <string name="suggestion_word_removed">‘%1$s’ verwijderd uit je woordenboek</string>
+    <string name="suggestion_word_not_removable">‘%1$s’ staat niet in je Taipo-woordenboek en kan niet worden verwijderd</string>
+    <string name="suggestion_word_failed">Je woordenboek kon niet worden gewijzigd. Probeer het opnieuw.</string>
+    <string name="suggestion_word_add_action">Aan woordenboek toevoegen</string>
+    <string name="suggestion_word_remove_action">Uit woordenboek verwijderen</string>
 </resources>

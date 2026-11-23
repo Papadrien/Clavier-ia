@@ -114,6 +114,12 @@ internal interface ImeHostContext {
     /** Traduction en direct : voir [FieldEditor.replaceTextBeforeCursor]. */
     fun replaceTextBeforeCursor(previous: String, text: String): String?
     fun onWordSuggestionTapped(suggestion: WordSuggestion)
+
+    /** Ajoute [word] au dictionnaire personnel (appui long sur une suggestion), avec un message. */
+    fun addSuggestionToDictionary(word: String)
+
+    /** Retire [word] du dictionnaire personnel (suggestion déposée sur la poubelle), avec un message. */
+    fun removeSuggestionFromDictionary(word: String)
     fun onKeyPressed(key: Key)
     fun onCursorMoved(steps: Int)
     fun onGesture(path: List<GestureDecoder.Point>, keys: Map<Char, GestureDecoder.Point>)
@@ -531,6 +537,8 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
     override fun onAiTranscriptionClick() = ime.aiTranscription.onClick()
     override fun onEmojiSuggestionClicked() = ime.emoji.onSuggestionTapped()
     override fun onWordSuggestionClicked(suggestion: WordSuggestion) = ime.onWordSuggestionTapped(suggestion)
+    override fun onWordSuggestionAdd(suggestion: WordSuggestion) = ime.addSuggestionToDictionary(suggestion.text)
+    override fun onWordSuggestionRemove(suggestion: WordSuggestion) = ime.removeSuggestionFromDictionary(suggestion.text)
     override fun openAppHome() = ime.openAppHome()
     override fun onEmojiSelected(emoji: String) = ime.emoji.onSelected(emoji)
     override fun onEmojiBackspace() = ime.emoji.onBackspace()

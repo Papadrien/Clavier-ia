@@ -885,4 +885,10 @@
     <string name="onboarding_done_hide">Dotknij, by ukryć kroki.</string>
     <string name="premium_motion_title">Animacje według Twojego gustu</string>
     <string name="premium_motion_text">Dziewięć stylów wszystkich animacji klawiatury: Żwawa, Galaretka, Odlot, Kropla i Ślizg oraz style z cząsteczkami Iskry, Piksele, Serduszko i Rozkwit.</string>
+    <string name="suggestion_word_already">„%1$s” jest już w Twoim słowniku</string>
+    <string name="suggestion_word_removed">Usunięto „%1$s” z Twojego słownika</string>
+    <string name="suggestion_word_not_removable">„%1$s” nie ma w Twoim słowniku Taipo: nie można go usunąć</string>
+    <string name="suggestion_word_failed">Nie udało się zmienić słownika. Spróbuj ponownie.</string>
+    <string name="suggestion_word_add_action">Dodaj do słownika</string>
+    <string name="suggestion_word_remove_action">Usuń ze słownika</string>
 </resources>
