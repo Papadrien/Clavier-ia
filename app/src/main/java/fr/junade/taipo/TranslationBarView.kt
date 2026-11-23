@@ -33,13 +33,16 @@ internal class TranslationBarView(context: Context) : LinearLayout(context) {
     var onTargetClicked: (() -> Unit)? = null
     var onSwapClicked: (() -> Unit)? = null
 
+    // Déclarées avant les puces : [LanguageChip] dessine son fond (pill) dès sa construction, et un chipHeight encore à 0
+    // donnait des coins carrés jusqu'au premier toucher.
+    private val chipHeight = dimen(R.dimen.taipo_ai_panel_chip_height).toInt()
+    private val gap = dimen(R.dimen.taipo_bar_gap).toInt()
+    private val bounce = dimen(R.dimen.taipo_translation_name_bounce)
+
     private val action = TextView(context)
     private val source = LanguageChip(context)
     private val swap = ImageButton(context)
     private val target = LanguageChip(context)
-    private val chipHeight = dimen(R.dimen.taipo_ai_panel_chip_height).toInt()
-    private val gap = dimen(R.dimen.taipo_bar_gap).toInt()
-    private val bounce = dimen(R.dimen.taipo_translation_name_bounce)
 
     init {
         orientation = HORIZONTAL
