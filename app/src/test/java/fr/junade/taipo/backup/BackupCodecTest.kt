@@ -38,6 +38,7 @@ class BackupCodecTest {
             keySoundVolume = 40,
             bottomMarginDp = 12,
             adaptiveTouch = true,
+            swipeTyping = true,
             clipboardHistory = false,
             oneHandedMode = "left",
             oneHandedWidth = 75,
@@ -52,6 +53,7 @@ class BackupCodecTest {
             activeModelId = "equilibre",
             prompts = mapOf(BackupAiSettings.PROMPT_TRANSCRIPTION to "Ligne 1\nLigne 2 « ok »"),
         ),
+        blockedWords = listOf("bonsoir", "été"),
     )
 
     @Test

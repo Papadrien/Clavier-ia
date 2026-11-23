@@ -70,7 +70,7 @@ class ClipHistoryRepository(
      * (0 ou moins = inconnue : la copie est datée de maintenant, et si son texte est déjà dans
      * l'historique, la ligne garde son heure d'origine). Refusés sans toucher la base : texte vide
      * ou plus long que [ClipboardItems.MAX_HISTORY_CHARS] (la copie reste alors en mémoire du clavier
-     * seulement). Le caractère sensible est enregistré comme drapeau, pas écarté. Retourne vrai si
+     * seulement), et copie sensible (audit SEC-01 : jamais écrite, voir ci-dessous). Retourne vrai si
      * la copie est dans l'historique. Lève l'exception de la base en cas d'échec d'accès.
      */
     suspend fun record(text: String, copiedAtMillis: Long, sensitive: Boolean): Boolean {

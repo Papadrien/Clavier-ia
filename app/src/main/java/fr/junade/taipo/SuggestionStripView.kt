@@ -43,6 +43,16 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         fun onWordClick(suggestion: WordSuggestion)
     }
 
+    /**
+     * Mot du dictionnaire personnel depuis la bande (23/11/2026) : l'appui long ouvre un pop-up « Ajouter au dictionnaire » /
+     * « Retirer du dictionnaire » ([onWordLongPress]) ; TalkBack propose les deux actions directement ([onWordAdd], [onWordRemove]).
+     */
+    interface OnWordEditListener {
+        fun onWordLongPress(suggestion: WordSuggestion)
+        fun onWordAdd(suggestion: WordSuggestion)
+        fun onWordRemove(suggestion: WordSuggestion)
+    }
+
     private val style = BarStyle(context)
     private val wordSlots = List(WORD_SLOT_COUNT) { TextView(context) }
     private val emojiSlot = TextView(context)
@@ -53,6 +63,10 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
     private var emojiListener: OnEmojiClickListener? = null
     private var wordListener: OnWordClickListener? = null
     private var pasteListener: (() -> Unit)? = null
+    private var editListener: OnWordEditListener? = null
+
+    private val a11yAddIds = IntArray(WORD_SLOT_COUNT) { View.NO_ID }
+    private val a11yRemoveIds = IntArray(WORD_SLOT_COUNT) { View.NO_ID }
 
     /** Contenu des emplacements de mots (null = emplacement vide), au plus [WORD_SLOT_COUNT]. */
     var words: List<WordSuggestion?> = emptyList()
@@ -80,6 +94,16 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
             slot.setPadding(slotPadding, 0, slotPadding, shadow)
             slot.visibility = View.GONE
             slot.setOnClickListener { words.getOrNull(index)?.let { wordListener?.onWordClick(it) } }
+            slot.setOnLongClickListener {
+                val suggestion = words.getOrNull(index)
+                val listener = editListener
+                if (suggestion != null && listener != null && SuggestionWordActions.canEdit(suggestion)) {
+                    listener.onWordLongPress(suggestion)
+                    true
+                } else {
+                    false
+                }
+            }
             slot.announceAsButton() // lot 20
             addView(slot, LayoutParams(0, LayoutParams.MATCH_PARENT, 1f))
         }
@@ -159,6 +183,28 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         wordListener = listener
     }
 
+    fun setOnWordEditListener(listener: OnWordEditListener?) {
+        editListener = listener
+    }
+
+    /** Lot 20 : TalkBack propose « Ajouter au dictionnaire » et « Retirer du dictionnaire » sur chaque mot (pas d'appui long). */
+    private fun updateEditActions(index: Int, slot: TextView, suggestion: WordSuggestion?) {
+        if (a11yAddIds[index] != View.NO_ID) ViewCompat.removeAccessibilityAction(slot, a11yAddIds[index])
+        if (a11yRemoveIds[index] != View.NO_ID) ViewCompat.removeAccessibilityAction(slot, a11yRemoveIds[index])
+        a11yAddIds[index] = View.NO_ID
+        a11yRemoveIds[index] = View.NO_ID
+        val listener = editListener ?: return
+        if (suggestion == null || !SuggestionWordActions.canEdit(suggestion)) return
+        a11yAddIds[index] = ViewCompat.addAccessibilityAction(slot, context.getString(R.string.suggestion_word_add_action)) { _, _ ->
+            listener.onWordAdd(suggestion)
+            true
+        }
+        a11yRemoveIds[index] = ViewCompat.addAccessibilityAction(slot, context.getString(R.string.suggestion_word_remove_action)) { _, _ ->
+            listener.onWordRemove(suggestion)
+            true
+        }
+    }
+
     /** Affiche [newEmoji] dans l'emplacement emoji, ou le vide si null. */
     fun setEmoji(newEmoji: String?) {
         if (emoji == newEmoji) return
@@ -193,6 +239,7 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
                 slot,
                 if (suggestion?.replacesOnSpace == true) context.getString(R.string.a11y_suggestion_replaces_on_space) else null,
             )
+            updateEditActions(index, slot, suggestion)
         }
         updateGaps()
     }

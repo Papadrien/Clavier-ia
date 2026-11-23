@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Charte Taipo (lot 09) : trait de 2 sur une grille de 24, extrémités arrondies. « Changer le ton » (choix du 21/11/2026) :
+     une plume qui réécrit, et l'étincelle pleine des actions IA. Taille : taipo_icon_size. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/taipo_icon_size"
+    android:height="@dimen/taipo_icon_size"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M20,4 C14,4 9,8 7,15 L5,20 M20,4 C20,10 16,14 10,15 M7,15 H12"
+        android:strokeColor="@color/taipo_text"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="@color/taipo_text"
+        android:pathData="M5.5,2.8 C5.7,4.3 6.4,5 7.9,5.2 C6.4,5.4 5.7,6.1 5.5,7.6 C5.3,6.1 4.6,5.4 3.1,5.2 C4.6,5 5.3,4.3 5.5,2.8 Z" />
+</vector>

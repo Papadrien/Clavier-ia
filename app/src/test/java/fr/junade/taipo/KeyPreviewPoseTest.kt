@@ -6,15 +6,15 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-/** Bulle des touches animée (16/11/2026) : entrée, affichage d'au moins 250 ms depuis l'appui, sortie, selon le style d'animation. */
+/** Bulle des touches animée (16/11/2026) : entrée, affichage d'au moins 200 ms depuis l'appui, sortie, selon le style d'animation. */
 class KeyPreviewPoseTest {
 
     private val style = MotionStyle.SPRING
     private val settled = 2_000L
 
     @Test
-    fun `la bulle reste au moins 250 ms a l ecran depuis l appui`() {
-        assertEquals(250L, KeyPreviewPose.MIN_SHOW_MS)
+    fun `la bulle reste au moins 200 ms a l ecran depuis l appui`() {
+        assertEquals(200L, KeyPreviewPose.MIN_SHOW_MS)
     }
 
     @Test

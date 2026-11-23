@@ -2,9 +2,7 @@ package fr.junade.taipo.ai
 
 import android.content.Context
 import android.os.SystemClock
-import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.Conversation
-import com.google.ai.edge.litertlm.ConversationConfig
 import fr.junade.taipo.AppLog
 import fr.junade.taipo.model.AiModel
 import kotlinx.coroutines.CancellationException
@@ -96,9 +94,8 @@ class CorrectionEngine(
         // Le moteur ne porte qu'une conversation à la fois : on ferme celle de la génération par
         // prompt (elle sera rouverte, historique rejoué, au prompt suivant).
         host.releaseOpenConversation()
-        val conversationConfig = ConversationConfig(
-            systemInstruction = Contents.of(promptPreferences.get()),
-        )
+        // Décodage glouton et réponse plafonnée (optimisation du 21/11/2026, voir InferenceTuning).
+        val conversationConfig = InferenceTuning.rewriteConversation(promptPreferences.get(), text.length)
         // Les petits modèles (ex. gemma-3-270m-it, "Ultra-léger") respectent mal le rôle système seul
         // et peuvent halluciner : la consigne de FORMAT est donc répétée dans le tour utilisateur,
         // avec les mots du dictionnaire personnel présents dans le texte (voir CorrectionPrompt.userTurn).

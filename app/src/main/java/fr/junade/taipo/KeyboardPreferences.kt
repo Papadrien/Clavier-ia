@@ -199,6 +199,41 @@ class KeyboardPreferences(context: Context) {
             prefs.edit().putBoolean(KEY_KEY_PREVIEW, value).apply()
         }
 
+    /** Panneau IA (20/11/2026) : actions épinglées dans la barre du haut, deux au plus ([AiPins]). Par défaut : Corriger, Transcription. */
+    var pinnedAiActions: List<AiAction>
+        get() = AiPins.parse(prefs.getString(KEY_PINNED_AI_ACTIONS, null))
+        set(value) {
+            prefs.edit().putString(KEY_PINNED_AI_ACTIONS, AiPins.serialize(value.take(AiPins.MAX))).apply()
+        }
+
+    /** Nombre d'ouvertures du panneau IA (l'astuce d'épinglage s'affiche les premières fois, voir [AiPins.showsPinTip]). */
+    var aiPanelOpenCount: Int
+        get() = prefs.getInt(KEY_AI_PANEL_OPEN_COUNT, 0)
+        set(value) {
+            prefs.edit().putInt(KEY_AI_PANEL_OPEN_COUNT, value).apply()
+        }
+
+    /** Traduction : dernière langue cible (étiquette BCP 47), null tant qu'aucune n'a été choisie. */
+    var translationTarget: String?
+        get() = prefs.getString(KEY_TRANSLATION_TARGET, null)
+        set(value) {
+            prefs.edit().putString(KEY_TRANSLATION_TARGET, value).apply()
+        }
+
+    /** Traduction : langue de départ (étiquette BCP 47) ; null : détectée par le modèle. */
+    var translationSource: String?
+        get() = prefs.getString(KEY_TRANSLATION_SOURCE, null)
+        set(value) {
+            prefs.edit().putString(KEY_TRANSLATION_SOURCE, value).apply()
+        }
+
+    /** Traduction : langues récentes (départ ou arrivée), la plus récente d'abord. */
+    var translationRecent: List<String>
+        get() = prefs.getString(KEY_TRANSLATION_RECENT, null)?.split(',')?.filter { it.isNotBlank() }.orEmpty()
+        set(value) {
+            prefs.edit().putString(KEY_TRANSLATION_RECENT, value.joinToString(",")).apply()
+        }
+
     /** Son du clavier (tic doux à chaque frappe, plus aigu pour la barre d'espace). Activé par défaut. */
     var isKeySoundEnabled: Boolean
         get() = prefs.getBoolean(KEY_KEY_SOUND, DEFAULT_KEY_SOUND)
@@ -453,6 +488,11 @@ class KeyboardPreferences(context: Context) {
         private const val KEY_KEY_SHAPE = "key_shape"
         private const val KEY_MOTION_STYLE = "motion_style"
         private const val KEY_KEY_PREVIEW = "key_preview"
+        private const val KEY_PINNED_AI_ACTIONS = "pinned_ai_actions"
+        private const val KEY_AI_PANEL_OPEN_COUNT = "ai_panel_open_count"
+        private const val KEY_TRANSLATION_TARGET = "translation_target"
+        private const val KEY_TRANSLATION_RECENT = "translation_recent"
+        private const val KEY_TRANSLATION_SOURCE = "translation_source"
         private const val KEY_ADAPTIVE_TOUCH = "adaptive_touch_enabled"
         private const val KEY_SHOW_TOUCH_ZONES = "show_touch_zones"
         private const val KEY_NUMBER_ROW = "number_row_enabled"

@@ -20,9 +20,11 @@ import fr.junade.taipo.ai.AiTranscriptionEngine
 import fr.junade.taipo.ai.CorrectionEngine
 import fr.junade.taipo.ai.LlmEngineHost
 import fr.junade.taipo.ai.ProtectedWords
+import fr.junade.taipo.ai.RewriteEngine
 import fr.junade.taipo.ai.TranscriptionPromptPreferences
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
+import fr.junade.taipo.dictionary.PersonalDictionary
 import fr.junade.taipo.dictionary.PersonalDictionaryProvider
 import fr.junade.taipo.dictionary.SystemDictionaryWords
 import fr.junade.taipo.dictionary.SystemUserDictionary
@@ -37,6 +39,7 @@ import fr.junade.taipo.suggestion.NextWordRepository
 import fr.junade.taipo.suggestion.SuggestionPolicy
 import fr.junade.taipo.suggestion.WordText
 import kotlin.math.abs
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -63,6 +66,7 @@ class TaipoIme : InputMethodService() {
         override val deleteSwipe: DeleteSwipeController get() = this@TaipoIme.deleteSwipe
         override val undo: UndoController get() = this@TaipoIme.undoController
         override val aiTranscription: AiTranscriptionController get() = this@TaipoIme.aiTranscription
+        override val aiPanel: AiPanelController get() = this@TaipoIme.aiPanel
         override val messagePopup: MessagePopup get() = this@TaipoIme.messagePopup
         override val viewComposer: ImeViewComposer get() = this@TaipoIme.viewComposer
         override val correctionBar: CorrectionBarView get() = this@TaipoIme.correctionBar
@@ -133,7 +137,12 @@ class TaipoIme : InputMethodService() {
         override fun deleteLastCluster() = this@TaipoIme.fieldEditor.deleteLastCluster()
         override fun insertGeneratedText(text: String): Boolean = this@TaipoIme.fieldEditor.insertGeneratedText(text)
         override fun replaceFieldText(text: String): Boolean = this@TaipoIme.fieldEditor.replaceFieldText(text)
+        override fun replaceTextBeforeCursor(previous: String, text: String): String? =
+            this@TaipoIme.fieldEditor.replaceTextBeforeCursor(previous, text)
         override fun onWordSuggestionTapped(suggestion: WordSuggestion) = this@TaipoIme.onWordSuggestionTapped(suggestion)
+        override fun showWordDictionaryActions(word: String) = this@TaipoIme.showWordDictionaryActions(word)
+        override fun addSuggestionToDictionary(word: String) = this@TaipoIme.addSuggestionToDictionary(word)
+        override fun removeSuggestionFromDictionary(word: String) = this@TaipoIme.removeSuggestionFromDictionary(word)
         override fun onKeyPressed(key: Key) = this@TaipoIme.onKeyPressed(key)
         override fun onCursorMoved(steps: Int) = this@TaipoIme.onCursorMoved(steps)
         override fun onGesture(
@@ -194,8 +203,12 @@ class TaipoIme : InputMethodService() {
             mainHandler,
             llmHost,
             PromptHost(imeContext),
+            { rewriteEngine },
         )
     }
+
+    // Panneau IA (20/11/2026) : actions IA, épinglage dans la barre, changement de ton. Voir AiPanelController.
+    private val aiPanel: AiPanelController by lazy { AiPanelController(imeContext, serviceScope) { rewriteEngine } }
 
     /** Vrai quand le champ courant est celui d'une messagerie, relu à chaque champ. */
     private var messagingField = false
@@ -214,6 +227,9 @@ class TaipoIme : InputMethodService() {
     private val llmHostLazy = lazy { LlmEngineHost(applicationContext) }
     private val llmHost by llmHostLazy
     private val correctionEngine by lazy { CorrectionEngine(applicationContext, llmHost) }
+
+    // Réécritures en un tour sur le même moteur : changement de ton et traduction (20/11/2026).
+    private val rewriteEngine by lazy { RewriteEngine(llmHost) }
     private val modelPreferences by lazy { ModelPreferences(applicationContext) }
     private val keyboardPreferences by lazy { KeyboardPreferences(applicationContext) }
 
@@ -228,9 +244,9 @@ class TaipoIme : InputMethodService() {
         }
     }
 
-    /** Une action IA travaille : correction, réponse du chat, traitement d'une dictée ou d'une transcription IA. */
+    /** Une action IA travaille : correction, réponse du chat, traduction, changement de ton, dictée ou transcription IA. */
     private fun aiActionInProgress(): Boolean =
-        correction.inProgress || prompt.generationBusy() || voice.isTranscribing || aiTranscription.isProcessing
+        correction.inProgress || prompt.generationBusy() || voice.isTranscribing || aiTranscription.isProcessing || aiPanel.toneBusy
 
     private fun watchAiForBackdrop(enabled: Boolean) {
         mainHandler.removeCallbacks(aiBackdropTick)
@@ -263,6 +279,8 @@ class TaipoIme : InputMethodService() {
                     learnFromTyping() // le mot glissé compte comme un mot tapé (prédiction du mot suivant)
                     afterFieldEdit()
                 }
+                override fun isBlocked(word: String): Boolean =
+                    fr.junade.taipo.dictionary.BlockedWords.isBlocked(applicationContext, word)
                 override fun onWordErased() {
                     onUserTyped()
                     afterFieldEdit()
@@ -306,6 +324,7 @@ class TaipoIme : InputMethodService() {
                     GestureTips.Tip.MOVE_CURSOR -> R.string.tip_move_cursor
                     GestureTips.Tip.SWITCH_LANGUAGE -> R.string.tip_switch_language
                     GestureTips.Tip.DIGITS -> R.string.tip_digits
+                    GestureTips.Tip.DICTIONARY -> R.string.tip_dictionary
                 },
             ),
         )
@@ -578,6 +597,8 @@ class TaipoIme : InputMethodService() {
         keyboardView.showTouchZones = keyboardPreferences.showTouchZones
         emojiController.hidePanel(resync = false)
         clipboard.hidePanel(resync = false)
+        aiPanel.hidePanel(resync = false)
+        correctionBar.pinnedAiActions = keyboardPreferences.pinnedAiActions
         correctionBar.collapseMenu()
         suggestions.suggestionsAllowed = SuggestionPolicy.allowsSuggestions(info?.inputType ?: 0)
         // IME_FLAG_NO_PERSONALIZED_LEARNING : navigation privée, champ confidentiel... rien n'est appris ni proposé.
@@ -666,6 +687,7 @@ class TaipoIme : InputMethodService() {
         // une rotation ou un changement de taille de fenêtre, plutôt que d'afficher un panneau mal ajusté.
         if (emojiController.isPanelVisible) emojiController.hidePanel()
         if (clipboard.isPanelVisible) clipboard.hidePanel()
+        if (viewComposer.isComposed && aiPanel.isPanelVisible) aiPanel.hidePanel()
     }
 
     override fun onFinishInputView(finishingInput: Boolean) {
@@ -676,7 +698,10 @@ class TaipoIme : InputMethodService() {
         suggestions.correctionHabits.flush()
         inlineSuggestions.clear()
         messagePopup.dismiss()
-        if (viewComposer.isComposed) emojiController.hidePanel(resync = false)
+        if (viewComposer.isComposed) {
+            emojiController.hidePanel(resync = false)
+            aiPanel.hidePanel(resync = false)
+        }
         clipboard.hidePanel(resync = false)
         correction.clearHighlightState()
         if (finishingInput) undoController.clear(notify = false)
@@ -1041,12 +1066,76 @@ class TaipoIme : InputMethodService() {
      * - mot tapé (entre guillemets) : conservé tel quel, sans correction ;
      * - complétion : remplace le mot en cours.
      */
+    /** Appui long sur une suggestion (23/11/2026) : pop-up « Ajouter au dictionnaire » / « Retirer du dictionnaire ». */
+    private fun showWordDictionaryActions(word: String) {
+        hapticFeedback.perform(hapticIntensity)
+        gestureTips.learned(GestureTips.Tip.DICTIONARY) // le geste est connu : l'astuce ne viendra plus
+        messagePopup.showWordActions(word, onAdd = { addSuggestionToDictionary(word) }, onRemove = { removeSuggestionFromDictionary(word) })
+    }
+
+    /**
+     * Bouton « Ajouter au dictionnaire » du pop-up d'une suggestion (23/11/2026) : le mot entre dans le dictionnaire
+     * personnel (jamais corrigé, proposé ensuite). Message selon le résultat ; la base est écrite hors du thread principal.
+     */
+    private fun addSuggestionToDictionary(word: String) {
+        serviceScope.launch {
+            // Un mot ajouté n'est plus bloqué (s'il l'avait été par « Retirer du dictionnaire »).
+            val unblocked = fr.junade.taipo.dictionary.BlockedWords.unblock(applicationContext, listOf(word))
+            val result = try {
+                withContext(Dispatchers.IO) { personalDictionary.add(word) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) { // base inaccessible : simple message
+                AppLog.e(TAG, "ajout au dictionnaire personnel en échec", e)
+                null
+            }
+            val message = when (result) {
+                PersonalDictionary.AddResult.ADDED -> getString(R.string.personal_dictionary_added, word)
+                PersonalDictionary.AddResult.ALREADY_PRESENT ->
+                    getString(if (unblocked) R.string.personal_dictionary_added else R.string.suggestion_word_already, word)
+                PersonalDictionary.AddResult.INVALID -> getString(R.string.personal_dictionary_invalid)
+                PersonalDictionary.AddResult.FULL -> getString(R.string.personal_dictionary_full, PersonalDictionary.MAX_WORDS)
+                null -> getString(R.string.suggestion_word_failed)
+            }
+            if (result == PersonalDictionary.AddResult.ADDED || unblocked) suggestions.invalidate()
+            messagePopup.show(message)
+        }
+    }
+
+    /**
+     * Bouton « Retirer du dictionnaire » du pop-up d'une suggestion : le mot sort du dictionnaire personnel (s'il y était) et entre
+     * dans les mots bloqués ([fr.junade.taipo.dictionary.BlockedWords]) : il n'est plus proposé ni utilisé pour corriger, même s'il
+     * vient du dictionnaire de la langue ou de celui du téléphone (qui, eux, ne sont jamais modifiés).
+     */
+    private fun removeSuggestionFromDictionary(word: String) {
+        serviceScope.launch {
+            val removedFromPersonal = try {
+                withContext(Dispatchers.IO) { personalDictionary.remove(word) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+                AppLog.e(TAG, "retrait du dictionnaire personnel en échec", e)
+                null
+            }
+            if (removedFromPersonal == null) {
+                messagePopup.show(getString(R.string.suggestion_word_failed))
+                return@launch
+            }
+            fr.junade.taipo.dictionary.BlockedWords.block(applicationContext, word)
+            suggestions.invalidate()
+            refreshSuggestions(currentInputConnection?.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty())
+            messagePopup.show(getString(R.string.suggestion_word_removed, word))
+        }
+    }
+
     private fun onWordSuggestionTapped(suggestion: WordSuggestion) {
         if (prompt.active) {
             promptKeys.onWordSuggestionTapped(suggestion)
             return
         }
         if (suggestion !in currentWordSuggestions) return
+        // Astuce : après quelques suggestions touchées, l'appui long pour le dictionnaire (une fois, après les autres).
+        if (SuggestionWordActions.canEdit(suggestion)) showGestureTip(gestureTips.onSuggestionTapped())
         swipeTyping.clear() // une autre possibilité du mot glissé, ou un mot de la bande : le glissement est terminé
         // Pendant la dictée, seules les alternatives d'un mot touché pour le corriger sont proposées (voir VoiceWordPick).
         if ((isRecording && !voice.wordPickActive) || correctionInProgress || fieldEditor.hasSelection()) return

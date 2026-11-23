@@ -27,7 +27,8 @@ import kotlinx.coroutines.withContext
  * Prompt : [TranscriptionPrompt] (nettoyage et reformulation, ton conservé), modifiable via [TranscriptionPromptPreferences].
  * Ni l'audio ni le texte ne sont écrits dans les journaux (story 14.6) : seulement des durées et des tailles.
  *
- * Gemma 3 (sans entrée audio, décision du 13/11/2026) : [dictate] passe l'enregistrement à la dictée (sherpa-onnx, moteur
+ * Gemma 3 (sans entrée audio, décision du 13/11/2026) et Gemma 4 (audio natif trop lent, 22/11/2026, [TranscriptionRoute]) :
+ * [dictate] passe l'enregistrement à la dictée (sherpa-onnx, moteur
  * [voiceEngine] partagé avec le bouton Vocal), puis [rewrite] fait reformuler le texte brut par le modèle de texte
  * ([TranscriptionPrompt.DICTATION_SYSTEM]), morceau par morceau ; une réponse écartée par [DictationRewrite.accept] laisse
  * le texte brut de ce morceau.
@@ -35,7 +36,8 @@ import kotlinx.coroutines.withContext
 class AiTranscriptionEngine(
     private val host: LlmEngineHost,
     private val promptPreferences: TranscriptionPromptPreferences,
-    private val voiceEngine: () -> VoiceEngine,
+    /** Moteur de dictée partagé avec le bouton Vocal (lu aussi par la transcription en direct, [LiveDictation]). */
+    val voiceEngine: () -> VoiceEngine,
 ) {
 
     /** Conversation dont l'inférence tourne en ce moment (null hors inférence) : cible de [cancel]. */
@@ -151,35 +153,64 @@ class AiTranscriptionEngine(
      * [DictationRewrite.MAX_WORDS_PER_CHUNK] mots ; les morceaux sont rejoints par des paragraphes. Un morceau dont la
      * réponse est écartée par [DictationRewrite.accept] reste tel que dicté.
      */
-    suspend fun rewrite(model: AiModel, text: String, isCancelled: () -> Boolean, onLoading: () -> Unit): String {
-        val parts = DictationRewrite.chunks(text).map { chunk ->
-            val rewritten = host.inferenceLock.withLock {
-                try {
-                    rewriteLocked(model, chunk, isCancelled, onLoading)
-                } catch (e: Exception) {
-                    // GPU en échec pendant la réponse : une seule relance, sur le processeur central (comme la correction).
-                    if (!host.abandonGpuAfter(e)) throw e
-                    rewriteLocked(model, chunk, isCancelled, onLoading)
-                }
-            }
-            DictationRewrite.accept(chunk, rewritten) ?: chunk.also { AppLog.w(TAG, "reformulation écartée : texte dicté gardé", null) }
+    suspend fun rewrite(
+        model: AiModel,
+        text: String,
+        isCancelled: () -> Boolean,
+        onLoading: () -> Unit,
+        context: DictationContext = DictationContext(),
+    ): String {
+        val parts = ArrayList<String>()
+        for (chunk in DictationRewrite.chunks(text)) {
+            parts += rewriteChunk(model, chunk, context.continuedBy(parts.joinToString(" ")), isCancelled, onLoading)
         }
         return parts.joinToString("\n\n")
     }
 
+    /**
+     * Reformule un morceau [chunk] du texte dicté, avec son [context] (type de champ, noms, texte déjà écrit) ; une réponse écartée
+     * par [DictationRewrite.accept] rend le morceau tel que dicté. Utilisé aussi par la transcription en direct ([LiveDictation]).
+     */
+    suspend fun rewriteChunk(
+        model: AiModel,
+        chunk: String,
+        context: DictationContext,
+        isCancelled: () -> Boolean,
+        onLoading: () -> Unit = {},
+    ): String {
+        val rewritten = host.inferenceLock.withLock {
+            try {
+                rewriteLocked(model, chunk, context, isCancelled, onLoading)
+            } catch (e: Exception) {
+                // GPU en échec pendant la réponse : une seule relance, sur le processeur central (comme la correction).
+                if (!host.abandonGpuAfter(e)) throw e
+                rewriteLocked(model, chunk, context, isCancelled, onLoading)
+            }
+        }
+        return DictationRewrite.accept(chunk, rewritten) ?: chunk.also { AppLog.w(TAG, "reformulation écartée : texte dicté gardé", null) }
+    }
+
     /** Une reformulation, avec [LlmEngineHost.inferenceLock] tenu. */
-    private suspend fun rewriteLocked(model: AiModel, chunk: String, isCancelled: () -> Boolean, onLoading: () -> Unit): String {
+    private suspend fun rewriteLocked(
+        model: AiModel,
+        chunk: String,
+        context: DictationContext,
+        isCancelled: () -> Boolean,
+        onLoading: () -> Unit,
+    ): String {
         val engine = host.ensureLoaded(model, onLoading)
         if (isCancelled()) throw CancellationException("Transcription cancelled by the user")
         host.releaseOpenConversation()
-        val config = ConversationConfig(systemInstruction = Contents.of(TranscriptionPrompt.DICTATION_SYSTEM))
+        // Décodage glouton et réponse plafonnée (comme la correction) : plus rapide, et un modèle qui part en boucle s'arrête tôt.
+        val userTurn = TranscriptionPrompt.dictationUserTurn(chunk, context)
+        val config = InferenceTuning.rewriteConversation(TranscriptionPrompt.DICTATION_SYSTEM, userTurn.length)
         val startedAt = SystemClock.elapsedRealtime()
         return withContext(Dispatchers.Default) {
             engine.createConversation(config).use { conversation ->
                 nativeCancelRequested = false
                 runningConversation = conversation
                 try {
-                    val result = conversation.sendMessage(TranscriptionPrompt.dictationUserTurn(chunk)).toString().trim()
+                    val result = conversation.sendMessage(userTurn).toString().trim()
                     AppLog.i(
                         TAG,
                         "reformulation: modèle=${model.id} entrée=${chunk.length} car. sortie=${result.length} car. " +

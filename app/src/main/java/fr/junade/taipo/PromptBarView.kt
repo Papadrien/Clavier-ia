@@ -103,6 +103,14 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         }
     }
 
+    /** Invite de la saisie vide à la place de celle du mode Chat (mode Traduction : « Écrivez, la traduction s'affiche… »). */
+    var hintOverride: String? = null
+        set(value) {
+            if (field == value) return
+            field = value
+            renderInput()
+        }
+
     /** Vrai pendant la génération : le bouton rond est alors un bouton stop. */
     var generating: Boolean = false
         set(value) {
@@ -340,7 +348,7 @@ class PromptBarView(context: Context) : LinearLayout(context) {
         renderedEllipsized = false
         if (inputText.isEmpty()) {
             // Saisie vide : le curseur est dessiné devant l'invite, pour montrer que la frappe arrive dans ce champ.
-            val hint = context.getString(if (modelLoading) R.string.prompt_loading_model else R.string.prompt_hint)
+            val hint = if (modelLoading) context.getString(R.string.prompt_loading_model) else hintOverride ?: context.getString(R.string.prompt_hint)
             // Lot 20 : TalkBack lit l'invite, sans le trait du curseur.
             inputView.contentDescription = hint
             val empty = SpannableStringBuilder(CARET).append(hint)

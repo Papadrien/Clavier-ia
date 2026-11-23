@@ -5,6 +5,9 @@
   (JNI sherpa-onnx, LiteRT-LM, SQLCipher conservés). Règles larges par prudence, non encore validées sur appareil.
 - **versionCode** : variable `VERSION_CODE`, sinon `GITHUB_RUN_NUMBER` (automatique sur GitHub Actions), sinon 1.
 - **Signature** : seulement si `key.properties` (racine du dépôt) ou `TAIPO_KEYSTORE_PATH` est défini ; sinon l'APK release n'est pas signé.
+- **Clé de licence Google Play** (vérification des achats du pack premium, 21/11/2026) : obligatoire, le build release est refusé sans elle
+  (`checkPlayLicenseKey`). Ligne `playLicenseKey=<clé base64>` dans `key.properties` (donc dans le secret `ANDROID_KEY_PROPERTIES`
+  de la CI), ou propriété Gradle `taipo.playLicenseKey`, ou variable `TAIPO_PLAY_LICENSE_KEY`. Voir `docs/pass-premium.md`.
 - **Gradle** : `org.gradle.caching=true`. Versions de Room (unique) et de `litertlm-android` (figée) dans `gradle/libs.versions.toml`.
 
 ## Secrets GitHub pour signer (décision D6 : Play App Signing recommandé, clé d'**upload**)
@@ -29,7 +32,7 @@ Developer v3, bibliothèque standard + `openssl`, sans action tierce).
   utilisé est refusé par Play : en cas de besoin, fixer `VERSION_CODE`.
 - **Notes de version** : `distribution/release-notes/<langue>.txt` (un fichier par langue de l'application, 500 caractères au plus,
   vérifié avant l'envoi). Chaque langue de la fiche Play Store reçoit le fichier de sa langue (`fr-FR` → `fr.txt`, `no-NO` → `nb.txt`),
-  sinon `en.txt`. À réécrire à chaque version, en accord avec la page « Nouveautés » de l'application (`WhatsNew.kt`).
+  sinon `en.txt`. À réécrire à chaque version, en accord avec la page « Nouveautés » de l'application (`WhatsNew.kt`) : `WhatsNewTest` vérifie que chaque note reprend les titres de la page, dans le même ordre, en 500 caractères au plus.
 - En cas d'erreur, la modification Play n'est pas validée (rien ne change) ; le message de Google est dans le log du job.
 - Révoquer : supprimer la clé dans Google Cloud (Comptes de service > Clés) ou retirer le compte dans Play Console.
 
@@ -46,6 +49,7 @@ Play exige un **AAB** : `./gradlew bundleRelease` (sortie `app/build/outputs/bun
 - [ ] Correction IA, mode prompt (streaming), dictée (sherpa-onnx) et transcription IA.
 - [ ] Mesure d'usage (Aptabase) : activer puis désactiver, aucune erreur dans logcat.
 - [ ] Demande d'avis Play (peut ne rien afficher hors Play) et écran de confidentialité.
+- [ ] Pack premium avec un compte testeur de licence : achat, puis « Restaurer » après réinstallation ; le pack s'active (signature vérifiée avec la clé de licence du build).
 - [ ] Noter la taille de l'APK debug et release, et de l'AAB.
 - [ ] Contrôler l'alignement 16 Ko des `.so` de l'AAB (outil d'alignement des NDK/Android Studio ou Analyseur d'APK).
 

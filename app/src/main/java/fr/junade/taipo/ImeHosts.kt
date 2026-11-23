@@ -38,6 +38,7 @@ internal interface ImeHostContext {
     val deleteSwipe: DeleteSwipeController
     val undo: UndoController
     val aiTranscription: AiTranscriptionController
+    val aiPanel: AiPanelController
     val messagePopup: MessagePopup
     val viewComposer: ImeViewComposer
     val correctionBar: CorrectionBarView
@@ -109,7 +110,19 @@ internal interface ImeHostContext {
     fun deleteLastCluster()
     fun insertGeneratedText(text: String): Boolean
     fun replaceFieldText(text: String): Boolean
+
+    /** Traduction en direct : voir [FieldEditor.replaceTextBeforeCursor]. */
+    fun replaceTextBeforeCursor(previous: String, text: String): String?
     fun onWordSuggestionTapped(suggestion: WordSuggestion)
+
+    /** Appui long sur une suggestion : pop-up « Ajouter » / « Retirer » pour [word]. */
+    fun showWordDictionaryActions(word: String)
+
+    /** Ajoute [word] au dictionnaire personnel (appui long sur une suggestion), avec un message. */
+    fun addSuggestionToDictionary(word: String)
+
+    /** Retire [word] du dictionnaire personnel (bouton du pop-up d'une suggestion), avec un message. */
+    fun removeSuggestionFromDictionary(word: String)
     fun onKeyPressed(key: Key)
     fun onCursorMoved(steps: Int)
     fun onGesture(path: List<GestureDecoder.Point>, keys: Map<Char, GestureDecoder.Point>)
@@ -210,7 +223,10 @@ internal class ClipboardHost(private val ime: ImeHostContext) : ClipboardControl
     override fun isRecording(): Boolean = ime.isRecording()
     override fun isCorrectionInProgress(): Boolean = ime.isCorrectionInProgress()
     override fun isEmojiPanelVisible(): Boolean = ime.emoji.isPanelVisible
-    override fun hideEmojiPanel() = ime.emoji.hidePanel(resync = false)
+    override fun hideEmojiPanel() {
+        ime.emoji.hidePanel(resync = false)
+        ime.aiPanel.hidePanel(resync = false)
+    }
     override fun keyboardBottomInsetPx(): Int = ime.keyboardView.bottomInsetPx()
     override fun setKeyboardVisible(visible: Boolean) {
         ime.keyboardView.visibility = if (visible) View.VISIBLE else View.INVISIBLE
@@ -292,7 +308,10 @@ internal class PromptHost(private val ime: ImeHostContext) : PromptModeControlle
     }
     override fun collapseMenu() = ime.correctionBar.collapseMenu()
     override fun hideEmojiPanel() {
-        if (ime.viewComposer.isComposed) ime.emoji.hidePanel(resync = false)
+        if (ime.viewComposer.isComposed) {
+            ime.emoji.hidePanel(resync = false)
+            ime.aiPanel.hidePanel(resync = false) // Chat ou Traduire lancés depuis la barre, panneau IA ouvert
+        }
     }
     override fun hideClipboardPanel() = ime.clipboard.hidePanel(resync = false)
     override fun refreshRecentEmojiBar() = ime.emoji.refreshRecentBar()
@@ -309,13 +328,48 @@ internal class PromptHost(private val ime: ImeHostContext) : PromptModeControlle
     override fun replaceFieldText(text: String): Boolean = ime.replaceFieldText(text)
     override fun onWordSuggestionTapped(suggestion: WordSuggestion) = ime.onWordSuggestionTapped(suggestion)
     override fun onEmojiSuggestionTapped() = ime.emoji.onSuggestionTapped()
+    override fun replaceTextBeforeCursor(previous: String, text: String): String? = ime.replaceTextBeforeCursor(previous, text)
+    override fun fieldTextToTranslate(): String? {
+        val ic = ime.inputConnection() ?: return null
+        val selected = ic.getSelectedText(0)?.toString().orEmpty()
+        return selected.ifEmpty { ime.correction.captureFieldText(ic)?.text }
+    }
+    override fun recordUndoEdit(inserted: String, original: String) = ime.recordUndoEdit(inserted, original)
+    override fun toneBusy(): Boolean = ime.aiPanel.toneBusy
+    override fun keyboardBottomInsetPx(): Int = ime.keyboardView.bottomInsetPx()
+    override fun setKeysHidden(hidden: Boolean, animate: Boolean) {
+        val keys = ime.keyboardView
+        keys.animate().cancel()
+        if (!animate || !android.animation.ValueAnimator.areAnimatorsEnabled()) {
+            keys.visibility = if (hidden) View.INVISIBLE else View.VISIBLE
+            keys.alpha = 1f
+            keys.translationY = 0f
+            return
+        }
+        val shift = ime.keyboardView.context.dimen(R.dimen.taipo_translation_keys_shift)
+        if (hidden) {
+            // Les touches s'effacent en descendant un peu, pendant que la liste monte.
+            keys.animate().alpha(0f).translationY(shift).setDuration(KEYS_FADE_MS).withEndAction {
+                keys.visibility = View.INVISIBLE
+                keys.alpha = 1f
+                keys.translationY = 0f
+            }.start()
+        } else {
+            keys.visibility = View.VISIBLE
+            keys.alpha = 0f
+            keys.translationY = shift
+            keys.animate().alpha(1f).translationY(0f).setDuration(KEYS_FADE_MS).start()
+        }
+    }
 }
 
 /** Correction IA : voir [CorrectionAiController]. */
 internal class CorrectionHost(private val ime: ImeHostContext) : CorrectionAiController.Host {
     override fun showMessage(message: String) = ime.showMessage(message)
     override fun inputConnection() = ime.inputConnection()
-    override fun generationBusy(): Boolean = ime.prompt.isGenerating // le moteur est pris par la génération
+
+    // Le moteur est pris par la génération, une traduction ou un changement de ton.
+    override fun generationBusy(): Boolean = ime.prompt.generationBusy() || ime.aiPanel.toneBusy
     override fun transcriptionInProgress(): Boolean = ime.isTranscriptionInProgress()
     override fun activeModel() = ime.activeModel()
     override fun protectedWords(text: String): List<String> = ime.protectedWordsIn(text)
@@ -397,6 +451,17 @@ internal class AiTranscriptionHost(private val ime: ImeHostContext) : AiTranscri
     override fun setLevel(level: Float) = ime.correctionBar.setAiTranscriptionLevel(level)
     override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
     override fun playSound(sound: KeySound) = ime.playSound(sound)
+
+    // Contexte de la reformulation (23/11/2026) : fin du texte avant le curseur et type de champ ; jamais journalisé.
+    override fun dictationContext(): fr.junade.taipo.ai.DictationContext {
+        val before = ime.inputConnection()?.getTextBeforeCursor(fr.junade.taipo.ai.DictationContext.MAX_TEXT_BEFORE * 2, 0)?.toString()
+        val info = ime.editorInfo()
+        return fr.junade.taipo.ai.DictationContext(
+            textBefore = fr.junade.taipo.ai.DictationContext.tail(before.orEmpty()),
+            kind = fr.junade.taipo.ai.DictationContext.fieldKind(info?.packageName, info?.inputType ?: 0, ime.messagingField),
+        )
+    }
+    override fun personalWords(): List<String> = ime.personalWords()
 }
 
 /** Glissement de suppression depuis la touche retour arrière (story 1.9) : voir [DeleteSwipeController]. */
@@ -475,6 +540,9 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
     override fun onAiTranscriptionClick() = ime.aiTranscription.onClick()
     override fun onEmojiSuggestionClicked() = ime.emoji.onSuggestionTapped()
     override fun onWordSuggestionClicked(suggestion: WordSuggestion) = ime.onWordSuggestionTapped(suggestion)
+    override fun onWordSuggestionLongPress(suggestion: WordSuggestion) = ime.showWordDictionaryActions(suggestion.text)
+    override fun onWordSuggestionAdd(suggestion: WordSuggestion) = ime.addSuggestionToDictionary(suggestion.text)
+    override fun onWordSuggestionRemove(suggestion: WordSuggestion) = ime.removeSuggestionFromDictionary(suggestion.text)
     override fun openAppHome() = ime.openAppHome()
     override fun onEmojiSelected(emoji: String) = ime.emoji.onSelected(emoji)
     override fun onEmojiBackspace() = ime.emoji.onBackspace()
@@ -483,6 +551,9 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
         ime.emoji.hidePanel()
     }
     override fun onEmojiTabSelected() = ime.haptic()
+    override fun onAiPanelClick() = ime.aiPanel.onAiButtonClicked()
+    override fun onToneClick() = ime.aiPanel.onToneButtonClicked()
+    override fun onTranslateClick() = ime.aiPanel.onTranslateButtonClicked()
     override fun onViewsCreated() = ime.applyState()
 }
 
@@ -491,3 +562,6 @@ internal class InlineSuggestionsHost(private val ime: ImeHostContext) : InlineSu
     override fun isComposed(): Boolean = ime.viewComposer.isComposed
     override fun setInlineSuggestions(views: List<View>) = ime.correctionBar.setInlineSuggestions(views)
 }
+
+/** Mode Traduction : durée du fondu des touches quand la liste des langues s'ouvre ou se ferme. */
+private const val KEYS_FADE_MS = 220L

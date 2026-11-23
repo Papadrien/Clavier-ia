@@ -11,22 +11,6 @@ import androidx.annotation.StringRes
 /** Story 10.1 : opacité d'un bouton grisé parce que le champ est sensible (il reste touchable pour afficher la raison). */
 internal const val RESTRICTED_ALPHA = 0.4f
 
-internal data class ActionButtonsVisibility(
-    val voice: Boolean,
-    /** Transcription IA : rangée du menu ouvert, ou petite pendant son traitement (menu fermé). */
-    val aiTranscription: Boolean,
-    val generate: Boolean,
-    val correct: Boolean,
-)
-
-/** Actions IA de la rangée normale (champ vide) : boutons ronds, juste avant Vocal. */
-internal data class NormalRowActions(
-    val generate: Boolean,
-    /** Visible mais grisé et inactif tant que le champ est vide (rien à corriger). */
-    val correct: Boolean,
-    val aiTranscription: Boolean,
-)
-
 /** Ce que montre la barre : quelle rangée, et le contenu variable de la rangée de saisie et de la rangée normale. */
 internal data class BarContentVisibility(
     val normalRow: Boolean,
@@ -40,6 +24,9 @@ internal data class BarContentVisibility(
     /** Paramètres, Smart Clipboard et Annuler de la rangée de saisie : seulement menu ouvert. */
     val menuUtilityButtons: Boolean,
 )
+
+/** Boutons IA d'une rangée de la barre : actions affichées et bouton IA (qui ouvre le panneau IA). */
+internal data class AiRowVisibility(val actions: Set<AiAction>, val aiButton: Boolean)
 
 /** Apparence du bouton Corriger (état [CorrectionBarState.HIDDEN] : aucun changement d'apparence). */
 internal data class CorrectAppearance(
@@ -102,7 +89,7 @@ internal object BarVisibility {
     /**
      * État de barre affiché : celui de la zone de suggestions, quelle que soit l'action en cours (correction, écoute,
      * transcription IA). Une action qui démarre depuis la barre normale ne la change donc pas : ses boutons restent à leur
-     * place et servent d'arrêt ou d'indicateur (voir [normalRowActions]).
+     * place et servent d'arrêt ou d'indicateur (voir [normalRowAi]).
      */
     fun mode(zoneState: SuggestionZoneState): BarMode = zoneState.mode
 
@@ -121,49 +108,47 @@ internal object BarVisibility {
     }
 
     /**
-     * Vocal est toujours visible, fixé à droite. Dans la rangée de saisie : Corriger est visible dès que du texte permet de
-     * corriger, sauf tant qu'une suggestion est affichée ; Transcription IA et Chat sont rangés derrière le robot (menu
-     * ouvert). Chat reste affiché mais grisé et inactif quand [generateBlocked] (le moteur est partagé : pas de génération en parallèle). Corriger reste visible
-     * dès que son état n'est plus au repos (chargement, correction en cours) : il sert alors d'annulation ou d'indicateur.
-     *
-     * Transcription IA reste visible, en petit (icône seule), tant que [aiTranscription] n'est pas au repos (écoute,
-     * traitement, annulation), même menu fermé : c'est le bouton qui arrête l'écoute ou annule le traitement, il ne doit
-     * jamais disparaître avant la fin. Pendant une saisie vocale, menu fermé (la dictée referme le menu en insérant du texte), Chat et
-     * Transcription IA ne sont pas affichés : ils ne reviennent qu'à l'ouverture du menu.
-     * [wordSuggestionsShown] : la bande de mots affiche au moins un mot ou un emoji.
+     * Actions IA traitées en ce moment : Corriger pendant le chargement, la correction ou l'annulation, Transcription IA pendant
+     * l'écoute, le traitement ou l'annulation. Leur bouton est alors affiché même sans être épinglé : c'est lui qui arrête l'action
+     * (ou qui montre qu'elle tourne), il ne doit jamais disparaître avant la fin.
      */
-    fun actionButtons(
-        voice: VoiceBarState,
-        correction: CorrectionBarState,
-        zoneState: SuggestionZoneState,
-        mode: BarMode,
-        wordSuggestionsShown: Boolean = false,
-        aiTranscription: AiTranscriptionBarState = AiTranscriptionBarState.IDLE,
-    ): ActionButtonsVisibility {
-        val typing = mode == BarMode.TYPING
-        val menuOpen = typing && zoneState.menuOpen
-        val hiddenBySuggestion = correction == CorrectionBarState.IDLE &&
-            suggestionsDisplayed(zoneState, mode, wordSuggestionsShown)
-        return ActionButtonsVisibility(
-            voice = true,
-            aiTranscription = typing && (menuOpen || aiTranscription != AiTranscriptionBarState.IDLE),
-            generate = typing && menuOpen,
-            correct = typing && correction != CorrectionBarState.HIDDEN && !hiddenBySuggestion,
-        )
+    fun busyAiActions(correction: CorrectionBarState, aiTranscription: AiTranscriptionBarState): Set<AiAction> = buildSet {
+        if (correction == CorrectionBarState.LOADING ||
+            correction == CorrectionBarState.CORRECTING ||
+            correction == CorrectionBarState.CANCELLING
+        ) {
+            add(AiAction.CORRECT)
+        }
+        if (aiTranscription != AiTranscriptionBarState.IDLE) add(AiAction.TRANSCRIPTION)
     }
 
     /**
-     * Actions IA de la barre normale : Chat, Corriger et Transcription IA (le bouton n'est réellement affiché que si le
-     * modèle actif a une entrée audio). Les trois restent affichés pendant une action (la barre normale ne change pas) ;
-     * Chat est alors sans effet, le moteur étant partagé (pas de génération en parallèle : voir [isBusy]).
+     * Panneau IA (20/11/2026) : boutons IA de la barre normale (champ vide). Le bouton IA est toujours là, juste avant Vocal ; à sa
+     * gauche, les actions épinglées ([pins], deux au plus) et celles en cours de traitement ([busyAiActions]). Transcription IA
+     * n'est réellement affichée que si le modèle actif la permet (filtré par la vue).
      */
-    fun normalRowActions(mode: BarMode): NormalRowActions {
-        val normal = mode == BarMode.NORMAL
-        return NormalRowActions(
-            generate = normal,
-            correct = normal,
-            aiTranscription = normal,
-        )
+    fun normalRowAi(pins: List<AiAction>, correction: CorrectionBarState, aiTranscription: AiTranscriptionBarState): AiRowVisibility =
+        AiRowVisibility(actions = pins.toSet() + busyAiActions(correction, aiTranscription), aiButton = true)
+
+    /**
+     * Boutons IA de la rangée de saisie. Menu du robot ouvert : comme la barre normale (épinglées, en cours, bouton IA). Menu
+     * fermé : la bande de mots prend la place ; seul Corriger, s'il est épinglé, reste visible tant qu'aucune suggestion n'est
+     * affichée (comme avant le panneau), plus les actions en cours de traitement.
+     */
+    fun typingRowAi(
+        pins: List<AiAction>,
+        correction: CorrectionBarState,
+        zoneState: SuggestionZoneState,
+        mode: BarMode,
+        wordSuggestionsShown: Boolean,
+        aiTranscription: AiTranscriptionBarState,
+    ): AiRowVisibility {
+        val busy = busyAiActions(correction, aiTranscription)
+        if (mode != BarMode.TYPING) return AiRowVisibility(emptySet(), aiButton = false)
+        if (zoneState.menuOpen) return AiRowVisibility(pins.toSet() + busy, aiButton = true)
+        val hiddenBySuggestion = correction == CorrectionBarState.IDLE && suggestionsDisplayed(zoneState, mode, wordSuggestionsShown)
+        val correct = AiAction.CORRECT in pins && correction != CorrectionBarState.HIDDEN && !hiddenBySuggestion
+        return AiRowVisibility(if (correct) busy + AiAction.CORRECT else busy, aiButton = false)
     }
 
     /**

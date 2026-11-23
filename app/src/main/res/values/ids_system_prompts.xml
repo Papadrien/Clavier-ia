@@ -4,4 +4,6 @@
     <item name="edit_system_prompt_correction" type="id" />
     <item name="edit_system_prompt_generation" type="id" />
     <item name="edit_system_prompt_transcription" type="id" />
+    <item name="edit_system_prompt_tone" type="id" />
+    <item name="edit_system_prompt_translation" type="id" />
 </resources>

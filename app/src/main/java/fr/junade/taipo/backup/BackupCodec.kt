@@ -48,6 +48,7 @@ object BackupCodec {
             put("formatVersion", FORMAT_VERSION)
             put("exportedAt", data.exportedAtMillis)
             put("dictionary", JSONArray(data.dictionary))
+            if (data.blockedWords.isNotEmpty()) put("blockedWords", JSONArray(data.blockedWords))
             put("pinnedClips", pins)
             put(
                 "settings",
@@ -80,10 +81,12 @@ object BackupCodec {
             "backdropAnimated" to k.backdropAnimated,
             "keySound" to k.keySound,
             "keyPreview" to k.keyPreview,
+            "pinnedAiActions" to k.pinnedAiActions,
             "barSound" to k.barSound,
             "keySoundVolume" to k.keySoundVolume,
             "bottomMarginDp" to k.bottomMarginDp,
             "adaptiveTouch" to k.adaptiveTouch,
+            "swipeTyping" to k.swipeTyping,
             "clipboardHistory" to k.clipboardHistory,
             "oneHandedMode" to k.oneHandedMode,
             "oneHandedWidth" to k.oneHandedWidth,
@@ -117,6 +120,7 @@ object BackupCodec {
         return BackupData(
             exportedAtMillis = root.optLong("exportedAt", 0L),
             dictionary = strings(root.optJSONArray("dictionary")),
+            blockedWords = strings(root.optJSONArray("blockedWords")),
             pins = pins(root.optJSONArray("pinnedClips")),
             keyboard = BackupKeyboardSettings(
                 numberRow = keyboard.boolean("numberRow"),
@@ -137,10 +141,12 @@ object BackupCodec {
                 backdropAnimated = keyboard.boolean("backdropAnimated"),
                 keySound = keyboard.boolean("keySound"),
                 keyPreview = keyboard.boolean("keyPreview"),
+                pinnedAiActions = keyboard.string("pinnedAiActions"),
                 barSound = keyboard.boolean("barSound"),
                 keySoundVolume = keyboard.int("keySoundVolume"),
                 bottomMarginDp = keyboard.int("bottomMarginDp"),
                 adaptiveTouch = keyboard.boolean("adaptiveTouch"),
+                swipeTyping = keyboard.boolean("swipeTyping"),
                 clipboardHistory = keyboard.boolean("clipboardHistory"),
                 oneHandedMode = keyboard.string("oneHandedMode"),
                 oneHandedWidth = keyboard.int("oneHandedWidth"),

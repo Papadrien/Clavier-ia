@@ -45,6 +45,8 @@
     <!-- Icônes (lot 09) : une seule taille pour toutes les icônes VectorDrawable (touches du clavier et boutons
          des barres) ; le trait (2 sur 24) et les couleurs sont dans les drawables. Plafonnée sur les touches basses. -->
     <dimen name="taipo_icon_size">24dp</dimen>
+    <!-- Pastille de l'icône d'une ligne de réglage (view_settings_row). -->
+    <dimen name="taipo_settings_row_icon_tile">40dp</dimen>
     <!-- Barre de la touche espace. -->
     <dimen name="taipo_space_bar_length">22dp</dimen>
     <!-- Demi-longueur ci-dessus ; épaisseur (lot 06 : 6 px fixes avant, soit ~2,3 dp sur Pixel 9). -->
@@ -321,4 +323,14 @@
     <dimen name="taipo_spinner_item_padding_horizontal">16dp</dimen>
     <!-- Taille minimale du texte d'un segment (taille automatique, voir TaipoSegment). -->
     <dimen name="taipo_segment_min_text_size">10sp</dimen>
+    <!-- Panneau IA (20/11/2026) : punaise des actions épinglées, hauteur des puces (tons, langues de traduction). -->
+    <dimen name="taipo_ai_panel_pin_size">14dp</dimen>
+    <dimen name="taipo_ai_panel_chip_height">34dp</dimen>
+    <!-- Mode Traduction (21/11/2026) : rebond des noms de langue, contour de la puce ouverte, lignes et sections de la liste,
+         descente des touches quand la liste s'ouvre. -->
+    <dimen name="taipo_translation_name_bounce">6dp</dimen>
+    <dimen name="taipo_translation_open_stroke">2dp</dimen>
+    <dimen name="taipo_translation_row_height">44dp</dimen>
+    <dimen name="taipo_translation_section_text_size">11sp</dimen>
+    <dimen name="taipo_translation_keys_shift">18dp</dimen>
 </resources>

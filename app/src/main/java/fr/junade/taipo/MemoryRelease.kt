@@ -8,7 +8,8 @@ import android.content.ComponentCallbacks2
  *
  * - Android manque sérieusement de mémoire (`TRIM_MEMORY_RUNNING_CRITICAL`, ou processus en arrière-plan) : toujours.
  * - Mémoire basse (`TRIM_MEMORY_RUNNING_LOW`) : seulement si le clavier est masqué, pour ne pas faire attendre une action en cours.
- * - Clavier masqué depuis [IDLE_RELEASE_MS] : libérés aussi, sans attendre qu'Android le demande.
+ * - Clavier masqué depuis [IDLE_RELEASE_MS] : le modèle IA seulement, sans attendre qu'Android le demande. Le modèle de dictée
+ *   reste chargé (21/11/2026) : léger et utilisé souvent, il n'est libéré qu'en manque de mémoire.
  *
  * Logique pure, testée en JVM (`MemoryReleaseTest`).
  */

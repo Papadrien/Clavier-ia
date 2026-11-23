@@ -134,8 +134,9 @@ des mises en page et des allocations évités, plus deux mesures sur le serveur 
 
 ### Mémoire et IA
 - **Moteurs libérés** (`MemoryRelease`, `TaipoIme.onTrimMemory`) : modèle IA et modèle de dictée libérés quand Android manque
-  de mémoire (toujours en mémoire critique, seulement clavier masqué en mémoire basse) et après 5 min de clavier masqué. Ils se
-  rechargent à la prochaine action. Les dictionnaires restent.
+  de mémoire (toujours en mémoire critique, seulement clavier masqué en mémoire basse). Après 5 min de clavier masqué, seul le
+  modèle IA est libéré : le modèle de dictée reste chargé (21/11/2026, léger et utilisé souvent). Ils se rechargent à la
+  prochaine action. Les dictionnaires restent.
 - **GPU (expérimental, toutes versions)** : `AiAcceleration`, interrupteur « Utiliser le GPU » de l'écran « Modèle IA ». Repli
   automatique sur le processeur si le moteur refuse le GPU, ou si une réponse échoue sur GPU (réponse relancée sur le processeur) ;
   un plantage natif pendant l'essai est détecté au démarrage suivant et coupe le GPU. `libOpenCL.so` et `libvndksupport.so` sont

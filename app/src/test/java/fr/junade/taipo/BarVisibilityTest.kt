@@ -13,15 +13,31 @@ class BarVisibilityTest {
 
     private fun typingMenuOpen(): SuggestionZoneState = typing().apply { toggleMenu() }
 
+    /** Boutons de la rangée de saisie (Vocal y est toujours, fixé à droite). */
+    private data class Buttons(val voice: Boolean, val generate: Boolean, val correct: Boolean, val aiTranscription: Boolean, val aiButton: Boolean)
+
+    /**
+     * Rangée de saisie avec les trois actions d'avant le panneau IA épinglées (Chat, Corriger, Transcription) : les règles d'avant
+     * restent vraies pour elles. [voice] ne change pas les boutons affichés (seulement leur apparence, testée à part).
+     */
+    @Suppress("UNUSED_PARAMETER")
     private fun actions(
         zone: SuggestionZoneState,
         correction: CorrectionBarState = CorrectionBarState.IDLE,
         voice: VoiceBarState = VoiceBarState.IDLE,
         wordsShown: Boolean = false,
         aiTranscription: AiTranscriptionBarState = AiTranscriptionBarState.IDLE,
-    ): ActionButtonsVisibility {
+        pins: List<AiAction> = listOf(AiAction.CORRECT, AiAction.CHAT, AiAction.TRANSCRIPTION),
+    ): Buttons {
         val mode = BarVisibility.mode(zone)
-        return BarVisibility.actionButtons(voice, correction, zone, mode, wordsShown, aiTranscription)
+        val row = BarVisibility.typingRowAi(pins, correction, zone, mode, wordsShown, aiTranscription)
+        return Buttons(
+            voice = true,
+            generate = AiAction.CHAT in row.actions,
+            correct = AiAction.CORRECT in row.actions,
+            aiTranscription = AiAction.TRANSCRIPTION in row.actions,
+            aiButton = row.aiButton,
+        )
     }
 
     private fun content(zone: SuggestionZoneState, correction: CorrectionBarState = CorrectionBarState.IDLE): BarContentVisibility =
@@ -52,24 +68,44 @@ class BarVisibilityTest {
         assertFalse(buttons.correct)
         assertFalse(buttons.generate)
         assertFalse(buttons.aiTranscription)
-        // Les actions IA de la barre normale sont des boutons à part (jeu propre à la rangée normale).
-        val normalActions = BarVisibility.normalRowActions(BarMode.NORMAL)
-        assertTrue(normalActions.generate)
-        assertTrue(normalActions.correct)
-        assertTrue(normalActions.aiTranscription)
+        // Les actions IA de la barre normale sont des boutons à part (jeu propre à la rangée normale) : les épinglées et le bouton IA.
+        val normal = BarVisibility.normalRowAi(AiPins.DEFAULT, CorrectionBarState.HIDDEN, AiTranscriptionBarState.IDLE)
+        assertEquals(setOf(AiAction.CORRECT, AiAction.TRANSCRIPTION), normal.actions)
+        assertTrue(normal.aiButton)
     }
 
     @Test
-    fun `la barre normale garde ses boutons pendant une action et la rangee de saisie n a pas les actions normales`() {
-        // Aucun paramètre d'état : écoute, correction ou transcription IA en cours ne changent pas les boutons de la barre normale.
-        val normal = BarVisibility.normalRowActions(BarMode.NORMAL)
-        assertTrue(normal.generate)
-        assertTrue(normal.correct)
-        assertTrue(normal.aiTranscription)
-        val typing = BarVisibility.normalRowActions(BarMode.TYPING)
-        assertFalse(typing.generate)
-        assertFalse(typing.correct)
-        assertFalse(typing.aiTranscription)
+    fun `la barre normale montre les actions epinglees, et celles en cours meme non epinglees`() {
+        val pins = listOf(AiAction.TONE, AiAction.TRANSLATE)
+        val idle = BarVisibility.normalRowAi(pins, CorrectionBarState.HIDDEN, AiTranscriptionBarState.IDLE)
+        assertEquals(setOf(AiAction.TONE, AiAction.TRANSLATE), idle.actions)
+        // Correction lancée depuis le panneau : Corriger apparaît le temps du traitement (c'est lui qui l'annule).
+        val correcting = BarVisibility.normalRowAi(pins, CorrectionBarState.LOADING, AiTranscriptionBarState.IDLE)
+        assertTrue(AiAction.CORRECT in correcting.actions)
+        val recording = BarVisibility.normalRowAi(emptyList(), CorrectionBarState.HIDDEN, AiTranscriptionBarState.RECORDING)
+        assertEquals(setOf(AiAction.TRANSCRIPTION), recording.actions)
+        assertTrue(recording.aiButton)
+    }
+
+    @Test
+    fun `rangee de saisie menu ferme seul Corriger epingle reste, et le bouton IA est derriere le robot`() {
+        val zone = typing()
+        assertTrue(actions(zone, pins = AiPins.DEFAULT).correct)
+        assertFalse(actions(zone, pins = AiPins.DEFAULT).aiButton)
+        // Corriger non épinglé : rien à droite de la bande, sauf pendant une correction.
+        assertFalse(actions(zone, pins = listOf(AiAction.TONE)).correct)
+        assertTrue(actions(zone, CorrectionBarState.CORRECTING, pins = listOf(AiAction.TONE)).correct)
+        // Menu ouvert : épinglées et bouton IA.
+        val open = BarVisibility.typingRowAi(
+            listOf(AiAction.TONE),
+            CorrectionBarState.IDLE,
+            typingMenuOpen(),
+            BarMode.TYPING,
+            false,
+            AiTranscriptionBarState.IDLE,
+        )
+        assertEquals(setOf(AiAction.TONE), open.actions)
+        assertTrue(open.aiButton)
     }
 
     @Test

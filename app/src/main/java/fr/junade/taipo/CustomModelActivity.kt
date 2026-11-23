@@ -16,7 +16,9 @@ import androidx.annotation.StringRes
 import fr.junade.taipo.ai.CorrectionPromptPreferences
 import fr.junade.taipo.ai.GenerationPromptPreferences
 import fr.junade.taipo.ai.LlmEngineHost
+import fr.junade.taipo.ai.TonePromptPreferences
 import fr.junade.taipo.ai.TranscriptionPromptPreferences
+import fr.junade.taipo.ai.TranslationPromptPreferences
 import fr.junade.taipo.model.AiModel
 import fr.junade.taipo.model.ModelFileResolver
 import fr.junade.taipo.model.ModelPreferences
@@ -130,6 +132,22 @@ class CustomModelActivity : ComponentActivity() {
             R.id.edit_custom_model_prompt_transcription,
             R.string.system_prompt_transcription_title,
             R.string.system_prompt_transcription_description,
+            first = false,
+        )
+        addSystemPromptSection(
+            prompts,
+            TonePromptPreferences(this).forCustomModel(),
+            R.id.edit_custom_model_prompt_tone,
+            R.string.system_prompt_tone_title,
+            R.string.system_prompt_tone_description,
+            first = false,
+        )
+        addSystemPromptSection(
+            prompts,
+            TranslationPromptPreferences(this).forCustomModel(),
+            R.id.edit_custom_model_prompt_translation,
+            R.string.system_prompt_translation_title,
+            R.string.system_prompt_translation_description,
             first = false,
         )
     }

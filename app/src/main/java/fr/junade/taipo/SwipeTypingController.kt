@@ -47,6 +47,9 @@ internal class SwipeTypingController(private val scope: CoroutineScope, private 
 
         /** Le mot glissé vient d'être effacé par ⌫ : barre et majuscule resynchronisées. */
         fun onWordErased()
+
+        /** [word] a été bloqué par l'utilisateur (« Retirer du dictionnaire ») : il n'est jamais écrit par un glissement. */
+        fun isBlocked(word: String): Boolean
     }
 
     /** Dernier mot glissé, tant qu'aucune autre touche n'a été frappée : ⌫ l'efface entier, une lettre ajoute une espace. */
@@ -76,7 +79,9 @@ internal class SwipeTypingController(private val scope: CoroutineScope, private 
         if (host.blocked()) return
         val ic = host.inputConnection() ?: return
         val dictionary = DictionaryLoader.peek(host.language()) ?: return
-        val candidates = decoderFor(dictionary, keys.keys).decode(path, keys, host.personalWords(), CANDIDATES)
+        val candidates = decoderFor(dictionary, keys.keys).decode(path, keys, host.personalWords(), CANDIDATES + BLOCKED_MARGIN)
+            .filterNot { host.isBlocked(it.word) }
+            .take(CANDIDATES)
         if (candidates.isEmpty()) return
         val shifted = host.isShifted()
         val capsLock = host.isCapsLock()
@@ -141,6 +146,9 @@ internal class SwipeTypingController(private val scope: CoroutineScope, private 
     private companion object {
         /** Mots demandés au décodeur : le mot écrit et deux autres pour la bande (un de plus si deux ne diffèrent que par la casse). */
         const val CANDIDATES = 4
+
+        /** Candidats en plus demandés au décodeur, pour en garder assez une fois les mots bloqués écartés. */
+        const val BLOCKED_MARGIN = 3
         const val LOOKBEHIND = 64
     }
 }

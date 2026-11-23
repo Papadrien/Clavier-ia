@@ -7,7 +7,7 @@ Achat unique, à vie, **2,99 €** (produit `pass_premium` de type « achat uniq
 | | Sans pass | Avec le pass |
 |---|---|---|
 | Couleurs du clavier (page Thème) | Violet Taipo | Les 9 couleurs (`AccentPalette`) |
-| Prompts système (correction, chat, transcription) | Prompts par défaut | Prompts personnalisés |
+| Prompts système (correction, chat, transcription, ton, traduction) | Prompts par défaut | Prompts personnalisés |
 | Historique du presse-papiers | 12 h | 7 jours |
 | Éléments épinglés | 5 | 50 |
 | Fond du clavier (page Apparence) | Uni | + 7 fonds animés : Rubans, Bulles, Cristal, Ondes, Cœurs, Fleurs, Processeur, et le fond « Image » (image choisie par l'utilisateur, `PhotoBackdrop`) (`KeyboardBackdrop`) |
@@ -34,11 +34,25 @@ Règles de passage gratuit ↔ premium :
   l'accueil et à l'ouverture de l'écran du pass (un remboursement retire le pass), lit le prix (promotion comprise), ouvre la
   fenêtre de paiement, confirme chaque achat (sans confirmation, Google Play rembourse au bout de 3 jours), gère les paiements
   en attente.
-- Pas de serveur de vérification pour l'instant (Play Integrity plus tard si besoin).
+- **Vérification des achats** (21/11/2026, `premium/PurchaseVerifier.kt`) : un achat n'active le pack que si sa signature
+  (`Purchase.signature`, SHA1withRSA sur `Purchase.originalJson`) est valide pour la clé publique de licence de l'application et
+  qu'il porte le nom de paquet de Taipo. Un achat inventé par une fausse bibliothèque Google Play (outils de contournement sur
+  appareil rooté) est refusé, et un pack activé par un tel achat est retiré à la relecture suivante. `ITEM_ALREADY_OWNED` relit
+  et vérifie les achats au lieu d'activer le pack sur parole.
+  - Clé : Play Console > Monétiser > Configuration de la monétisation > Licences, « Clé publique encodée en base64 », dans
+    `BuildConfig.PLAY_LICENSE_KEY` (sources : `playLicenseKey=` dans `key.properties`, propriété Gradle `taipo.playLicenseKey`,
+    variable `TAIPO_PLAY_LICENSE_KEY` ; voir l'en-tête de `app/build.gradle.kts`). Elle n'est pas secrète.
+  - Sans clé : un build debug accepte les achats sans les vérifier (comptes testeurs) ; un build release est refusé
+    (`checkPlayLicenseKey`). Une clé présente mais illisible ne retire jamais le pack (état connu gardé, message d'erreur à
+    l'écran du pass) : une mauvaise copie de la clé ne pénalise pas les vrais acheteurs.
+  - Pas de serveur : une vérification côté serveur (API Google Play Developer) ou Play Integrity resterait plus sûre.
 
 ## Mise en avant
 
-- Écran **Pass premium** (`PremiumActivity`) : prix, les quatre avantages (couleurs, prompts, presse-papiers, apparence ; textes mis à jour le 13/11/2026), rappel de ce qui reste gratuit, Acheter, Restaurer.
+- Écran **Pack premium** (`PremiumActivity`, revu le 22/11/2026) : bouton **Acheter** tout en haut sous le titre (message d'état juste
+  dessous), prix, puis une carte par avantage, chacune avec son icône : couleurs, consignes pour l'IA (correction, chat, dictée, ton,
+  traduction), modèle personnalisé, presse-papiers étendu, apparence (fonds animés, photo, formes, polices), animations (9 styles) ;
+  rappel de ce qui reste gratuit, Restaurer.
 - **Accueil** : carte d'offre une fois les 3 étapes faites, masquable (elle ne revient pas) ; ligne « Pass premium » dans
   sa propre carte encadrée de violet, en tête de « À propos ».
 - **Thème** : cadenas sur les 8 couleurs ; en toucher une l'essaie sur les aperçus, avec « Débloquer avec le pass » ; au retour
@@ -56,5 +70,7 @@ Builds debug : section « Debug » tout en bas de l'accueil, un bouton qui passe
 ## À faire hors du code
 
 - Play Console : créer le produit `pass_premium` (achat unique, 2,99 €), ajouter des testeurs de licence.
+- Clé publique de licence : renseignée le 22/11/2026 dans `gradle.properties` (`taipo.playLicenseKey`). À changer seulement si
+  la Play Console en donne une autre ; sans elle, la release ne se construit pas.
 - Fiche « Sécurité des données » : historique d'achats (géré par Google Play).
 - Page Confidentialité : mentionner que l'achat passe par Google Play, sans donnée envoyée par Taipo.

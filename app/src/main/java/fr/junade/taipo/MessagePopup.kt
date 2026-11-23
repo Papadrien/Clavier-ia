@@ -120,6 +120,31 @@ class MessagePopup(private val context: Context, private val host: Host) {
         }
     }
 
+    /**
+     * Pop-up d'un mot de la bande de suggestions (appui long, 23/11/2026) : le mot en titre, « Ajouter au dictionnaire » et
+     * « Retirer du dictionnaire ». Toucher à côté le ferme sans rien faire. Faux s'il n'a pas pu s'afficher (clavier masqué).
+     */
+    fun showWordActions(word: String, onAdd: () -> Unit, onRemove: () -> Unit): Boolean {
+        val token = host.windowToken() ?: return false
+        dismiss()
+        val created = AlertDialog.Builder(ContextThemeWrapper(KeyboardTheme.themed(context), R.style.MessageDialogTheme))
+            .setTitle(context.getString(R.string.suggestion_word_popup_title, word))
+            .setPositiveButton(R.string.suggestion_word_add_action) { _, _ -> onAdd() }
+            .setNegativeButton(R.string.suggestion_word_remove_action) { _, _ -> onRemove() }
+            .create()
+        attach(created, token)
+        dialog = created
+        return try {
+            created.show()
+            created.window?.decorView?.applyTaipoFontToTree()
+            true
+        } catch (e: WindowManager.BadTokenException) {
+            dialog = null
+            AppLog.w(TAG, "pop-up du mot impossible à afficher", e)
+            false
+        }
+    }
+
     /** Ferme le pop-up, le bandeau et l'astuce en cours, s'il y en a. */
     fun dismiss() {
         dialog?.dismiss()

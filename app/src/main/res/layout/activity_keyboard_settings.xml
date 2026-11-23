@@ -14,12 +14,14 @@
         android:padding="@dimen/taipo_settings_screen_padding">
 
         <TextView
+            android:id="@+id/keyboard_settings_heading"
             style="@style/TaipoText.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/keyboard_settings_title" />
 
         <TextView
+            android:id="@+id/section_title_languages"
             style="@style/TaipoText.Section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,6 +31,7 @@
 
         <!-- Une ligne vers l'écran « Langues » (liste des langues, disposition et dictionnaire de chacune) ; résumé posé par KeyboardSettingsActivity. -->
         <LinearLayout
+            android:id="@+id/card_languages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -43,12 +46,20 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/section_title_layout"
             style="@style/TaipoText.Section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/taipo_settings_gap_xl"
             android:layout_marginBottom="@dimen/taipo_settings_gap_sm"
             android:text="@string/keyboard_settings_layout_title" />
+
+        <!-- 22/11/2026 : trois cartes (rangée de chiffres, touches du bas, bulle) dans un même groupe, masqué ou montré d'un bloc. -->
+        <LinearLayout
+            android:id="@+id/card_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
         <LinearLayout
             style="@style/TaipoSettingsCard">
@@ -66,8 +77,11 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="@string/keyboard_settings_number_row_passwords" />
+        </LinearLayout>
 
-            <View style="@style/TaipoSettingsCardDivider" />
+        <LinearLayout
+            style="@style/TaipoSettingsCard"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md">
 
             <TextView
                 style="@style/TaipoText.Label"
@@ -95,8 +109,11 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="@string/keyboard_settings_show_period_key" />
+        </LinearLayout>
 
-            <View style="@style/TaipoSettingsCardDivider" />
+        <LinearLayout
+            style="@style/TaipoSettingsCard"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md">
 
             <Switch
                 android:id="@+id/switch_key_preview"
@@ -105,8 +122,10 @@
                 android:textStyle="bold"
                 android:text="@string/keyboard_settings_key_preview" />
         </LinearLayout>
+        </LinearLayout>
 
         <TextView
+            android:id="@+id/section_title_size"
             style="@style/TaipoText.Section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -115,6 +134,7 @@
             android:text="@string/keyboard_settings_size_title" />
 
         <LinearLayout
+            android:id="@+id/card_size"
             style="@style/TaipoSettingsCard">
 
             <TextView
@@ -249,6 +269,7 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/section_title_sounds"
             style="@style/TaipoText.Section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -257,6 +278,7 @@
             android:text="@string/keyboard_settings_sounds_title" />
 
         <LinearLayout
+            android:id="@+id/card_sounds"
             style="@style/TaipoSettingsCard">
 
             <TextView
@@ -332,6 +354,7 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/section_title_smart"
             style="@style/TaipoText.Section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -340,6 +363,7 @@
             android:text="@string/keyboard_settings_smart_title" />
 
         <LinearLayout
+            android:id="@+id/card_smart"
             style="@style/TaipoSettingsCard">
 
             <!-- Saisie par glissement (19/11/2026) : glisser de lettre en lettre, le mot s'écrit au relâchement. -->

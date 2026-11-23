@@ -1,6 +1,9 @@
-Nyheter i Taipo 3
-• Flytende tastatur
-• 15 språk: engelsk, fransk, tysk, spansk, italiensk, portugisisk, nederlandsk, polsk, rumensk, tsjekkisk, ungarsk, svensk, dansk, norsk og finsk
-• Et utseende du liker
-• AI-transkripsjon med alle modeller
-• Enda mer personvern
+Nytt i Taipo 4
+• All AI i ett panel
+• Endre tonen
+• Oversettelse på telefonen
+• Raskere AI
+• Sveipeskriving
+• Lim inn et passord
+• Ditt bilde som bakgrunn
+• Ny bakgrunn Prosessor

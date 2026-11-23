@@ -13,6 +13,8 @@ data class BackupData(
     val pins: List<BackupPin>,
     val keyboard: BackupKeyboardSettings,
     val ai: BackupAiSettings,
+    /** Mots bloqués (« Retirer du dictionnaire », 23/11/2026) ; absent d'un fichier plus ancien. */
+    val blockedWords: List<String> = emptyList(),
 )
 
 /** Élément épinglé du Smart Clipboard, avec son étiquette éventuelle. */
@@ -43,10 +45,14 @@ data class BackupKeyboardSettings(
     val keySound: Boolean? = null,
     /** Bulle au-dessus des touches (16/11/2026). Facultatif. */
     val keyPreview: Boolean? = null,
+    /** Actions IA épinglées dans la barre, clés de [fr.junade.taipo.AiAction] séparées par des virgules (20/11/2026). Facultatif. */
+    val pinnedAiActions: String? = null,
     val barSound: Boolean? = null,
     val keySoundVolume: Int? = null,
     val bottomMarginDp: Int? = null,
     val adaptiveTouch: Boolean? = null,
+    /** Saisie par glissement (19/11/2026). Facultatif. */
+    val swipeTyping: Boolean? = null,
     val clipboardHistory: Boolean? = null,
     val oneHandedMode: String? = null,
     val oneHandedWidth: Int? = null,
@@ -72,6 +78,8 @@ data class BackupAiSettings(
         const val PROMPT_CORRECTION = "correction"
         const val PROMPT_GENERATION = "generation"
         const val PROMPT_TRANSCRIPTION = "transcription"
+        const val PROMPT_TONE = "tone"
+        const val PROMPT_TRANSLATION = "translation"
 
         /** Préfixe des prompts du modèle personnalisé dans le fichier (« custom_model_correction »...). */
         const val CUSTOM_MODEL_PREFIX = "custom_model_"

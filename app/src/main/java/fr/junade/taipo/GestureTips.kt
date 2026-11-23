@@ -10,6 +10,8 @@ import android.content.Context
  * - [Tip.MOVE_CURSOR] : le curseur déplacé à la main plusieurs fois dans le champ → glisser sur l'espace le déplace.
  * - [Tip.SWITCH_LANGUAGE] : clavier multilingue → appui long sur Entrée pour changer de langue.
  * - [Tip.DIGITS] : un chiffre tapé depuis la page des symboles, sans rangée de chiffres → appui long sur la rangée du haut.
+ * - [Tip.DICTIONARY] (23/11/2026) : la [SUGGESTIONS_FOR_TIP]-ième suggestion touchée → appui long sur une suggestion pour
+ *   l'ajouter au dictionnaire ou l'en retirer. Elle vient après les autres : il faut d'abord avoir pris l'habitude des suggestions.
  *
  * Les compteurs sont dans [Counter] (logique pure, testée en JVM) ; les astuces déjà montrées ou apprises sont gardées dans les
  * préférences.
@@ -21,6 +23,7 @@ class GestureTips(context: Context) {
         MOVE_CURSOR("move_cursor"),
         SWITCH_LANGUAGE("switch_language"),
         DIGITS("digits"),
+        DICTIONARY("dictionary"),
     }
 
     private val prefs = context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -40,6 +43,9 @@ class GestureTips(context: Context) {
     /** Le curseur a été déplacé à la main dans le champ (pas par la frappe). */
     fun onManualCursorMove(): Tip? = if (counter.onManualCursorMove()) claim(Tip.MOVE_CURSOR) else null
 
+    /** Une suggestion de mot vient d'être touchée. */
+    fun onSuggestionTapped(): Tip? = if (counter.onSuggestionTapped()) claim(Tip.DICTIONARY) else null
+
     /** Ouverture d'un champ avec le clavier multilingue. */
     fun onMultilingualField(): Tip? = claim(Tip.SWITCH_LANGUAGE)
 
@@ -55,11 +61,18 @@ class GestureTips(context: Context) {
     class Counter {
         private var backspaces = 0
         private var cursorMoves = 0
+        private var suggestionTaps = 0
 
         /** Vrai quand [BACKSPACES_FOR_TIP] appuis consécutifs sur ⌫ viennent d'être faits. */
         fun onKey(backspace: Boolean): Boolean {
             backspaces = if (backspace) backspaces + 1 else 0
             return backspaces == BACKSPACES_FOR_TIP
+        }
+
+        /** Vrai à la [SUGGESTIONS_FOR_TIP]-ième suggestion touchée. */
+        fun onSuggestionTapped(): Boolean {
+            suggestionTaps++
+            return suggestionTaps == SUGGESTIONS_FOR_TIP
         }
 
         /** Vrai au [CURSOR_MOVES_FOR_TIP]-ième déplacement à la main. */
@@ -72,6 +85,7 @@ class GestureTips(context: Context) {
     companion object {
         const val BACKSPACES_FOR_TIP = 5
         const val CURSOR_MOVES_FOR_TIP = 3
+        const val SUGGESTIONS_FOR_TIP = 5
         private const val PREFS_NAME = "gesture_tips"
 
         /**

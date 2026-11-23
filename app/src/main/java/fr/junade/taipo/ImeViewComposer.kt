@@ -105,6 +105,15 @@ class ImeViewComposer(
 
         fun onWordSuggestionClicked(suggestion: WordSuggestion)
 
+        /** Appui long sur un mot suggéré : pop-up « Ajouter au dictionnaire » / « Retirer du dictionnaire ». */
+        fun onWordSuggestionLongPress(suggestion: WordSuggestion)
+
+        /** Ajout du mot au dictionnaire personnel (action TalkBack, ou bouton du pop-up). */
+        fun onWordSuggestionAdd(suggestion: WordSuggestion)
+
+        /** Retrait du mot du dictionnaire personnel (action TalkBack, ou bouton du pop-up). */
+        fun onWordSuggestionRemove(suggestion: WordSuggestion)
+
         fun openAppHome()
 
         fun onEmojiSelected(emoji: String)
@@ -115,6 +124,13 @@ class ImeViewComposer(
 
         /** Appui sur un onglet de catégorie du panneau emoji : retour haptique. */
         fun onEmojiTabSelected()
+
+        /** Bouton IA de la barre : ouvre ou referme le panneau IA. */
+        fun onAiPanelClick()
+
+        /** Actions « Ton » et « Traduire » épinglées dans la barre. */
+        fun onToneClick()
+        fun onTranslateClick()
 
         /** Les vues sont toutes créées et assemblées : l'IME peut les mettre à jour (état des touches...). */
         fun onViewsCreated()
@@ -169,6 +185,10 @@ class ImeViewComposer(
 
     /** Story 1.15 : panneau emoji, superposé au clavier (même taille) tant qu'il est affiché. */
     lateinit var emojiPanel: EmojiPanelView
+        private set
+
+    /** Panneau IA (20/11/2026), superposé au clavier (même taille) tant qu'il est affiché. */
+    internal lateinit var aiPanel: AiPanelView
         private set
 
     /** Barre des emojis récents (champs de messagerie), au-dessus de la barre du haut. */
@@ -288,6 +308,13 @@ class ImeViewComposer(
             host.playKeySound(KeySound.KEY)
             host.onWordSuggestionClicked(suggestion)
         }
+        correctionBar.setOnWordSuggestionEditListener(
+            object : SuggestionStripView.OnWordEditListener {
+                override fun onWordLongPress(suggestion: WordSuggestion) = host.onWordSuggestionLongPress(suggestion)
+                override fun onWordAdd(suggestion: WordSuggestion) = host.onWordSuggestionAdd(suggestion)
+                override fun onWordRemove(suggestion: WordSuggestion) = host.onWordSuggestionRemove(suggestion)
+            },
+        )
 
         emojiPanel = EmojiPanelView(context)
         emojiPanel.visibility = View.GONE
@@ -298,6 +325,21 @@ class ImeViewComposer(
         emojiPanel.setOnBackspaceListener { host.onEmojiBackspace() }
         emojiPanel.setOnCloseListener { host.onEmojiPanelClose() }
         emojiPanel.setOnTabTappedListener { host.onEmojiTabSelected() }
+
+        aiPanel = AiPanelView(context)
+        aiPanel.visibility = View.GONE
+        correctionBar.setOnAiPanelClickListener {
+            host.haptic()
+            host.onAiPanelClick()
+        }
+        correctionBar.setOnToneClickListener {
+            if (blockedBySensitiveField()) return@setOnToneClickListener
+            host.onToneClick()
+        }
+        correctionBar.setOnTranslateClickListener {
+            if (blockedBySensitiveField()) return@setOnTranslateClickListener
+            host.onTranslateClick()
+        }
 
         val clipboardPanel = clipboard.createPanel()
 
@@ -324,6 +366,11 @@ class ImeViewComposer(
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
             )
             // Phase 5.1-4 : la barre du mode prompt prend la place de la barre du haut (masquée en dehors du mode).
+            // Mode Traduction : bandeau des langues juste au-dessus de la zone de saisie (masqué en dehors du mode).
+            addView(
+                prompt.translationBar,
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
+            )
             addView(
                 prompt.promptBar,
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
@@ -349,6 +396,20 @@ class ImeViewComposer(
                     )
                     addView(
                         emojiPanel,
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                        ),
+                    )
+                    addView(
+                        aiPanel,
+                        FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                        ),
+                    )
+                    addView(
+                        prompt.translationPanel,
                         FrameLayout.LayoutParams(
                             FrameLayout.LayoutParams.MATCH_PARENT,
                             FrameLayout.LayoutParams.MATCH_PARENT,

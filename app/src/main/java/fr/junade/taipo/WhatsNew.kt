@@ -17,7 +17,7 @@ import androidx.annotation.StringRes
 object WhatsNew {
 
     /** Version annoncée. */
-    const val RELEASE = "3.0"
+    const val RELEASE = "4.0"
 
     /** Nombre d'ouvertures du clavier où la pilule est montrée, au plus. */
     const val MAX_SHOWS = 3
@@ -25,13 +25,19 @@ object WhatsNew {
     /** Une nouveauté : titre, et texte facultatif (sans texte, la carte ne montre que le titre). */
     data class Item(@StringRes val title: Int, @StringRes val body: Int? = null)
 
-    /** Nouveautés de [RELEASE], dans l'ordre de la page. */
+    /**
+     * Nouveautés de [RELEASE], dans l'ordre de la page : les principaux changements depuis la 3.0 (la 3.1 n'a pas été annoncée à
+     * part). Les titres sont aussi les lignes des notes de version Play (`distribution/release-notes`).
+     */
     val items: List<Item> = listOf(
-        Item(R.string.whats_new_floating_title),
-        Item(R.string.whats_new_languages_title, R.string.whats_new_languages_body),
-        Item(R.string.whats_new_appearance_title, R.string.whats_new_appearance_body),
-        Item(R.string.whats_new_dictation_title),
-        Item(R.string.whats_new_privacy_title, R.string.whats_new_privacy_body),
+        Item(R.string.whats_new_ai_panel_title, R.string.whats_new_ai_panel_body),
+        Item(R.string.whats_new_tone_title, R.string.whats_new_tone_body),
+        Item(R.string.whats_new_translation_title, R.string.whats_new_translation_body),
+        Item(R.string.whats_new_faster_ai_title, R.string.whats_new_faster_ai_body),
+        Item(R.string.whats_new_swipe_title, R.string.whats_new_swipe_body),
+        Item(R.string.whats_new_password_paste_title, R.string.whats_new_password_paste_body),
+        Item(R.string.whats_new_photo_title, R.string.whats_new_photo_body),
+        Item(R.string.whats_new_processor_title, R.string.whats_new_processor_body),
     )
 
     /** La pilule peut être montrée : version pas encore ouverte, et montrée moins de [MAX_SHOWS] fois. Logique pure. */

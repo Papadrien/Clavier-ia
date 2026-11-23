@@ -25,8 +25,9 @@ https://github.com/k2-fsa/sherpa-onnx/tree/master/sherpa-onnx/kotlin-api
 (ex. `VersionInfo.kt`), le recopier de la même façon.
 
 ⚠️ La version des sources doit correspondre à celle des `.so` de `jniLibs/` (sinon incompatibilité
-d'API). Ce projet cible sherpa-onnx v1.13.5 ou plus récent (export multilingue français de
-Nemotron 3.5 ASR Streaming).
+d'API). Version embarquée : **sherpa-onnx v2.0.2** (21/11/2026, depuis la 1.13.8), prise dans
+`sherpa-onnx-2.0.2.aar` de la release GitHub (empreinte vérifiée contre `checksum.txt`) ; la seule différence d'API avec les
+sources d'avant est le champ `QnnConfig.htpPerfMode`. Minimum : v1.13.5 (export multilingue de Nemotron 3.5 ASR Streaming).
 
 Les règles R8 (`app/proguard-rules.pro`) conservent tout le paquet `com.k2fsa.sherpa.onnx.**` :
 le code natif retrouve ces classes et leurs champs par nom.

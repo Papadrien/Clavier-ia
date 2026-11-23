@@ -2,6 +2,7 @@ package fr.junade.taipo
 
 import android.animation.ValueAnimator
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Layout
@@ -113,6 +114,7 @@ class ThemeActivity : ComponentActivity() {
         setContentView(R.layout.activity_theme)
         preferences = KeyboardPreferences(this)
         ViewCompat.setAccessibilityHeading(findViewById(R.id.theme_heading), true)
+        AppearanceSection.fromKey(intent.getStringExtra(EXTRA_SECTION))?.let(::showOnly)
 
         val container = findViewById<LinearLayout>(R.id.theme_cards)
         val inflater = LayoutInflater.from(this)
@@ -241,6 +243,24 @@ class ThemeActivity : ComponentActivity() {
             val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
             if (rowIndex > 0) params.topMargin = gap
             container.addView(row, params)
+        }
+    }
+
+    /**
+     * Page d'un seul thème (ouverte depuis une ligne de la carte « Apparence » de l'accueil) : son titre devient celui de la page,
+     * les autres groupes sont masqués. Sans section : toute la page, comme avant.
+     */
+    private fun showOnly(section: AppearanceSection) {
+        title = getString(section.titleRes)
+        findViewById<TextView>(R.id.theme_heading).setText(section.titleRes)
+        AppearanceSection.allGroups.forEach { id -> findViewById<View>(id).visibility = if (id in section.groups) View.VISIBLE else View.GONE }
+        // Le premier titre de section suit directement celui de la page : sans sa grande marge du haut.
+        val first = findViewById<ViewGroup>(section.groups.first())
+        (0 until first.childCount).map(first::getChildAt).firstOrNull { it is TextView }?.let { heading ->
+            (heading.layoutParams as? ViewGroup.MarginLayoutParams)?.let { params ->
+                params.topMargin = 0
+                heading.layoutParams = params
+            }
         }
     }
 
@@ -709,10 +729,16 @@ class ThemeActivity : ComponentActivity() {
     private fun fullLabel(choice: ThemeChoice): Int =
         if (choice == ThemeChoice.SYSTEM) R.string.theme_choice_system_description else shortLabel(choice)
 
-    private companion object {
-        const val CARDS_PER_ROW = 3
-        const val SWATCHES_PER_ROW = 5
-        const val BACKDROPS_PER_ROW = 2
+    companion object {
+        private const val CARDS_PER_ROW = 3
+        private const val SWATCHES_PER_ROW = 5
+        private const val BACKDROPS_PER_ROW = 2
+
+        /** Section à afficher seule ([AppearanceSection.storageKey]) ; absente : toute la page. */
+        const val EXTRA_SECTION = "fr.junade.taipo.extra.APPEARANCE_SECTION"
+
+        fun intent(context: Context, section: AppearanceSection): Intent =
+            Intent(context, ThemeActivity::class.java).putExtra(EXTRA_SECTION, section.storageKey)
     }
 }
 

@@ -16,6 +16,18 @@
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground">
 
+    <!-- Icône de la ligne (22/11/2026), posée par MainActivity.bindRowIcons ; masquée sans icône. Décorative : le titre porte le sens. -->
+    <ImageView
+        android:id="@+id/row_icon"
+        android:layout_width="@dimen/taipo_settings_row_icon_tile"
+        android:layout_height="@dimen/taipo_settings_row_icon_tile"
+        android:layout_marginEnd="@dimen/taipo_settings_gap_md"
+        android:background="@drawable/bg_settings_row_icon"
+        android:padding="@dimen/taipo_settings_gap_sm"
+        android:scaleType="fitCenter"
+        android:importantForAccessibility="no"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
