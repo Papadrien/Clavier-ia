@@ -100,3 +100,17 @@ l'ouverture du menu, avant Paramètres, Smart Clipboard et Annuler.
 Chaque bouton du panneau emoji vibre à l'appui, avec la vibration d'une touche du clavier (réglage d'intensité des paramètres) :
 emoji (`EmojiController.onSelected`), retour arrière (`onBackspace`, à chaque répétition), touche ABC (`ViewComposerHost.onEmojiPanelClose`)
 et onglets de catégories (`EmojiPanelView.setOnTabTappedListener`).
+
+## Transcription en direct et contexte (23/11/2026, d'après Typeless)
+- **En direct** (`ai/LiveDictation.kt`, `LiveRewrite`) : le modèle vocal écrit pendant l'écoute (l'enregistreur donne chaque bloc
+  d'audio, `AiTranscriptionRecorder.onAudio`) ; dès qu'un passage d'au plus 60 mots est terminé (fin de phrase, ou 60 mots) et qu'un
+  autre mot le suit, il part en reformulation pendant que l'utilisateur continue. À l'arrêt, seule la fin reste à reformuler ; le
+  premier bloc charge aussi le modèle de texte pendant l'écoute. Les blocs se recollent en prose (retour à la ligne autour d'une
+  liste). Le texte d'un transducteur en recherche gloutonne ne fait que s'allonger : un mot suivi d'un autre ne change plus.
+- **Contexte** (`ai/DictationContext.kt`, `TranscriptionPrompt.dictationUserTurn`) : type de champ (message : naturel et concis, sans
+  formule ajoutée ; e-mail : paragraphes), fin du texte déjà écrit avant le curseur et de ce qui a été reformulé (300 caractères,
+  continuité, à ne pas répéter), orthographe des mots personnels proches du bloc dicté (dictionnaire de Taipo et du système, sans
+  accents ni majuscules, distance d'édition d'un quart du mot, deux mots collés compris ; 20 au plus).
+- **Pas encore fait** : favoriser les mots personnels dans la reconnaissance vocale elle-même (« hotwords » de sherpa-onnx). Il faut
+  la recherche en faisceau (plus lente) et le fichier `bpe.vocab` du modèle, absent des 4 fichiers téléchargés : à évaluer à part.
+- Audio natif (modèle personnalisé réglé ainsi) : inchangé, tout est traité à l'arrêt.

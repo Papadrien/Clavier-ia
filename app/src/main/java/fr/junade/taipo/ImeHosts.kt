@@ -442,6 +442,17 @@ internal class AiTranscriptionHost(private val ime: ImeHostContext) : AiTranscri
     override fun setLevel(level: Float) = ime.correctionBar.setAiTranscriptionLevel(level)
     override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
     override fun playSound(sound: KeySound) = ime.playSound(sound)
+
+    // Contexte de la reformulation (23/11/2026) : fin du texte avant le curseur et type de champ ; jamais journalisé.
+    override fun dictationContext(): fr.junade.taipo.ai.DictationContext {
+        val before = ime.inputConnection()?.getTextBeforeCursor(fr.junade.taipo.ai.DictationContext.MAX_TEXT_BEFORE * 2, 0)?.toString()
+        val info = ime.editorInfo()
+        return fr.junade.taipo.ai.DictationContext(
+            textBefore = fr.junade.taipo.ai.DictationContext.tail(before.orEmpty()),
+            kind = fr.junade.taipo.ai.DictationContext.fieldKind(info?.packageName, info?.inputType ?: 0, ime.messagingField),
+        )
+    }
+    override fun personalWords(): List<String> = ime.personalWords()
 }
 
 /** Glissement de suppression depuis la touche retour arrière (story 1.9) : voir [DeleteSwipeController]. */

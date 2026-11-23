@@ -8,8 +8,10 @@ import android.os.SystemClock
 import androidx.annotation.StringRes
 import fr.junade.taipo.ai.AiTranscriptionEngine
 import fr.junade.taipo.ai.AiTranscriptionRecorder
+import fr.junade.taipo.ai.DictationContext
 import fr.junade.taipo.ai.InferenceFailureCause
 import fr.junade.taipo.ai.InferenceFailureClassifier
+import fr.junade.taipo.ai.LiveDictation
 import fr.junade.taipo.ai.MicUnavailableException
 import fr.junade.taipo.ai.WavEncoder
 import fr.junade.taipo.analytics.Analytics
@@ -69,12 +71,21 @@ class AiTranscriptionController(
 
         /** Joue un son de la transcription IA (démarrage, fin d'écoute, fin de traitement). */
         fun playSound(sound: KeySound)
+
+        /** Contexte de la reformulation : fin du texte avant le curseur et type de champ (lu au début de l'écoute). */
+        fun dictationContext(): DictationContext
+
+        /** Mots personnels (dictionnaire de Taipo et du système) : orthographe des noms donnée au modèle. */
+        fun personalWords(): List<String>
     }
 
     private val recorder = AiTranscriptionRecorder(context, scope)
     private val voiceModelPreferences by lazy { VoiceModelPreferences(context.applicationContext) }
     private var job: Job? = null
     private var state = AiTranscriptionBarState.IDLE
+
+    /** Transcription en direct (dictée puis reformulation pendant l'écoute), hors audio natif ; null sinon. */
+    private var live: LiveDictation? = null
 
     /** Le modèle traite l'enregistrement (après l'écoute, avant l'insertion du texte). */
     val isProcessing: Boolean get() = state == AiTranscriptionBarState.PROCESSING
@@ -106,6 +117,7 @@ class AiTranscriptionController(
         when (state) {
             AiTranscriptionBarState.RECORDING -> {
                 recorder.cancel()
+                stopLive()
                 setState(AiTranscriptionBarState.IDLE)
             }
             AiTranscriptionBarState.PROCESSING, AiTranscriptionBarState.CANCELLING -> insertAllowed = false
@@ -116,7 +128,30 @@ class AiTranscriptionController(
     /** Destruction du service : micro libéré, traitement interrompu côté Kotlin. */
     fun release() {
         recorder.cancel()
+        stopLive()
         job?.cancel()
+    }
+
+    private fun stopLive() {
+        recorder.onAudio = null
+        live?.cancel()
+        live = null
+    }
+
+    /**
+     * Transcription en direct (23/11/2026) : la dictée et la reformulation de chaque bloc terminé tournent pendant l'écoute, avec le
+     * contexte du champ (lu maintenant) et les mots personnels proches de chaque bloc.
+     */
+    private fun startLive(model: AiModel) {
+        val fieldContext = host.dictationContext()
+        val personal = host.personalWords()
+        val session = LiveDictation(scope, engine.voiceEngine) { chunk, previous ->
+            val context = fieldContext.continuedBy(previous).copy(names = DictationContext.relevantNames(personal, chunk))
+            engine.rewriteChunk(model, chunk, context, isCancelled = { cancelled })
+        }
+        live = session
+        recorder.onAudio = { samples -> session.offer(samples) }
+        session.start()
     }
 
     /**
@@ -146,15 +181,17 @@ class AiTranscriptionController(
             context.startActivity(Intent(context, VoicePermissionActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             return
         }
+        insertAllowed = true
+        cancelled = false
+        if (!nativeAudio(model)) startLive(model) else recorder.onAudio = null
         try {
             recorder.start(if (nativeAudio(model)) AiTranscriptionRecorder.MAX_SECONDS else AiTranscriptionRecorder.DICTATION_MAX_SECONDS)
         } catch (e: MicUnavailableException) {
             AppLog.w(TAG, "micro indisponible", e)
+            stopLive()
             host.showMessage(context.getString(R.string.ai_transcription_mic_unavailable))
             return
         }
-        insertAllowed = true
-        cancelled = false
         host.hapticAi(AiHapticCue.ACTION_START)
         host.playSound(KeySound.TRANSCRIPTION_START) // le micro est ouvert : on peut parler
         setState(AiTranscriptionBarState.RECORDING)
@@ -180,11 +217,16 @@ class AiTranscriptionController(
         job = scope.launch {
             try {
                 val samples = recorder.stop()
+                recorder.onAudio = null
+                val session = live
+                live = null
                 if (samples.size < MIN_SAMPLES) {
+                    session?.cancel()
                     host.showMessage(context.getString(R.string.ai_transcription_too_short))
                     return@launch
                 }
                 if (model == null) {
+                    session?.cancel()
                     host.showMessage(context.getString(R.string.ai_transcription_no_audio_model))
                     return@launch
                 }
@@ -192,8 +234,11 @@ class AiTranscriptionController(
                     val seconds = samples.size.toDouble() / AiTranscriptionRecorder.SAMPLE_RATE
                     val wav = withContext(Dispatchers.Default) { WavEncoder.pcm16Mono(samples, AiTranscriptionRecorder.SAMPLE_RATE) }
                     engine.transcribe(model, wav, seconds, isCancelled = { cancelled }, onLoading = { })
+                } else if (session != null) {
+                    // Dictée puis reformulation, faites en direct pendant l'écoute : il ne reste que la fin du texte.
+                    session.finish()
                 } else {
-                    // Gemma 3 : dictée, puis reformulation du texte brut (le texte brut est gardé si la réponse est écartée).
+                    // Repli (pas de session en direct) : dictée, puis reformulation du texte brut.
                     val raw = engine.dictate(samples, isCancelled = { cancelled })
                     if (raw.isEmpty() || cancelled) raw else engine.rewrite(model, raw, isCancelled = { cancelled }, onLoading = { })
                 }
