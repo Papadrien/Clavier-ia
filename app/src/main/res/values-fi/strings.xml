@@ -883,4 +883,6 @@
     <string name="suggestion_word_failed">Sanakirjaa ei voitu muuttaa. Yritä uudelleen.</string>
     <string name="suggestion_word_add_action">Lisää sanakirjaan</string>
     <string name="suggestion_word_remove_action">Poista sanakirjasta</string>
+    <string name="tip_dictionary">Vinkki: lisää ehdotus sanakirjaan tai poista se pitkällä painalluksella.</string>
+    <string name="suggestion_word_popup_title">”%1$s”</string>
 </resources>

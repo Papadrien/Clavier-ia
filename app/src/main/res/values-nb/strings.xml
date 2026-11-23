@@ -883,4 +883,6 @@
     <string name="suggestion_word_failed">Ordboken kunne ikke endres. Prøv igjen.</string>
     <string name="suggestion_word_add_action">Legg til i ordboken</string>
     <string name="suggestion_word_remove_action">Fjern fra ordboken</string>
+    <string name="tip_dictionary">Tips: hold inne et forslag for å legge det til i ordboken eller fjerne det.</string>
+    <string name="suggestion_word_popup_title">«%1$s»</string>
 </resources>

@@ -934,4 +934,6 @@
     <string name="suggestion_word_failed">Votre dictionnaire n\'a pas pu être modifié. Réessayez.</string>
     <string name="suggestion_word_add_action">Ajouter au dictionnaire</string>
     <string name="suggestion_word_remove_action">Retirer du dictionnaire</string>
+    <string name="tip_dictionary">Astuce : appui long sur une suggestion pour l\'ajouter au dictionnaire ou l\'en retirer.</string>
+    <string name="suggestion_word_popup_title">« %1$s »</string>
 </resources>

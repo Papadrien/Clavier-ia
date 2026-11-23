@@ -883,4 +883,6 @@
     <string name="suggestion_word_failed">Ihr Wörterbuch konnte nicht geändert werden. Versuchen Sie es erneut.</string>
     <string name="suggestion_word_add_action">Zum Wörterbuch hinzufügen</string>
     <string name="suggestion_word_remove_action">Aus dem Wörterbuch entfernen</string>
+    <string name="tip_dictionary">Tipp: Lange auf einen Vorschlag drücken, um ihn zum Wörterbuch hinzuzufügen oder daraus zu entfernen.</string>
+    <string name="suggestion_word_popup_title">„%1$s“</string>
 </resources>

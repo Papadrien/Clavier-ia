@@ -917,4 +917,6 @@
     <string name="suggestion_word_failed">Your dictionary could not be changed. Try again.</string>
     <string name="suggestion_word_add_action">Add to dictionary</string>
     <string name="suggestion_word_remove_action">Remove from dictionary</string>
+    <string name="tip_dictionary">Tip: long-press a suggestion to add it to your dictionary or remove it.</string>
+    <string name="suggestion_word_popup_title">“%1$s”</string>
 </resources>

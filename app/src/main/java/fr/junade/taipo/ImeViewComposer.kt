@@ -105,10 +105,13 @@ class ImeViewComposer(
 
         fun onWordSuggestionClicked(suggestion: WordSuggestion)
 
-        /** Appui long sur un mot suggéré relâché hors de la poubelle : ajout au dictionnaire personnel. */
+        /** Appui long sur un mot suggéré : pop-up « Ajouter au dictionnaire » / « Retirer du dictionnaire ». */
+        fun onWordSuggestionLongPress(suggestion: WordSuggestion)
+
+        /** Ajout du mot au dictionnaire personnel (action TalkBack, ou bouton du pop-up). */
         fun onWordSuggestionAdd(suggestion: WordSuggestion)
 
-        /** Mot suggéré déposé sur la poubelle : retrait du dictionnaire personnel. */
+        /** Retrait du mot du dictionnaire personnel (action TalkBack, ou bouton du pop-up). */
         fun onWordSuggestionRemove(suggestion: WordSuggestion)
 
         fun openAppHome()
@@ -307,6 +310,7 @@ class ImeViewComposer(
         }
         correctionBar.setOnWordSuggestionEditListener(
             object : SuggestionStripView.OnWordEditListener {
+                override fun onWordLongPress(suggestion: WordSuggestion) = host.onWordSuggestionLongPress(suggestion)
                 override fun onWordAdd(suggestion: WordSuggestion) = host.onWordSuggestionAdd(suggestion)
                 override fun onWordRemove(suggestion: WordSuggestion) = host.onWordSuggestionRemove(suggestion)
             },

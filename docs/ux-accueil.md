@@ -126,10 +126,13 @@ de langue à l'ouverture d'un champ, étape 4 avec et sans modèle installé.
   que la carte d'offre du pack est affichée, pour ne pas faire doublon.
 - Page « Disposition des touches » : trois cartes (rangée de chiffres ; touches de la rangée du bas ; bulle des touches).
 
-## Dictionnaire depuis la bande de suggestions (23/11/2026, comme Gboard)
-- Appui long sur un mot suggéré (mot tapé entre guillemets compris, pas une adresse e-mail) : le mot se détache, suit le doigt, et
-  une poubelle apparaît au milieu de la bande (`SuggestionStripView`, `SuggestionWordDrag`).
-  - Relâché ailleurs : le mot est ajouté au dictionnaire personnel (« déjà dans votre dictionnaire » s'il y est).
-  - Déposé sur la poubelle (rouge au survol) : il est retiré du dictionnaire personnel. Un mot du dictionnaire de la langue ou du
-    téléphone (lecture seule) ne peut pas l'être : un message le dit.
+## Dictionnaire depuis la bande de suggestions (23/11/2026)
+- Appui long sur un mot suggéré (mot tapé entre guillemets compris, pas une adresse e-mail) : pop-up avec le mot en titre et deux
+  boutons, « Ajouter au dictionnaire » et « Retirer du dictionnaire » (`MessagePopup.showWordActions`). Toucher à côté le ferme.
+  - Ajouter : le mot entre dans le dictionnaire personnel (« déjà dans votre dictionnaire » s'il y est).
+  - Retirer : il en sort. Un mot du dictionnaire de la langue ou du dictionnaire du téléphone (lecture seule) ne peut pas l'être :
+    un message le dit.
+- Le glisser-déposer vers une poubelle (façon Gboard), essayé d'abord, a été abandonné : jugé peu intuitif.
+- Astuce `GestureTips.Tip.DICTIONARY` : à la 5ᵉ suggestion touchée, une fois (« appui long sur une suggestion… ») ; jamais si le
+  pop-up a déjà été ouvert.
 - TalkBack : actions « Ajouter au dictionnaire » et « Retirer du dictionnaire » sur chaque mot.

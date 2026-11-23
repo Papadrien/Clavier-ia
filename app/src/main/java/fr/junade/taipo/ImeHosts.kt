@@ -115,10 +115,13 @@ internal interface ImeHostContext {
     fun replaceTextBeforeCursor(previous: String, text: String): String?
     fun onWordSuggestionTapped(suggestion: WordSuggestion)
 
+    /** Appui long sur une suggestion : pop-up « Ajouter » / « Retirer » pour [word]. */
+    fun showWordDictionaryActions(word: String)
+
     /** Ajoute [word] au dictionnaire personnel (appui long sur une suggestion), avec un message. */
     fun addSuggestionToDictionary(word: String)
 
-    /** Retire [word] du dictionnaire personnel (suggestion déposée sur la poubelle), avec un message. */
+    /** Retire [word] du dictionnaire personnel (bouton du pop-up d'une suggestion), avec un message. */
     fun removeSuggestionFromDictionary(word: String)
     fun onKeyPressed(key: Key)
     fun onCursorMoved(steps: Int)
@@ -537,6 +540,7 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
     override fun onAiTranscriptionClick() = ime.aiTranscription.onClick()
     override fun onEmojiSuggestionClicked() = ime.emoji.onSuggestionTapped()
     override fun onWordSuggestionClicked(suggestion: WordSuggestion) = ime.onWordSuggestionTapped(suggestion)
+    override fun onWordSuggestionLongPress(suggestion: WordSuggestion) = ime.showWordDictionaryActions(suggestion.text)
     override fun onWordSuggestionAdd(suggestion: WordSuggestion) = ime.addSuggestionToDictionary(suggestion.text)
     override fun onWordSuggestionRemove(suggestion: WordSuggestion) = ime.removeSuggestionFromDictionary(suggestion.text)
     override fun openAppHome() = ime.openAppHome()

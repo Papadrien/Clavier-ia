@@ -887,4 +887,6 @@
     <string name="suggestion_word_failed">Impossibile modificare il dizionario. Riprova.</string>
     <string name="suggestion_word_add_action">Aggiungi al dizionario</string>
     <string name="suggestion_word_remove_action">Rimuovi dal dizionario</string>
+    <string name="tip_dictionary">Suggerimento: tieni premuto un suggerimento per aggiungerlo al dizionario o rimuoverlo.</string>
+    <string name="suggestion_word_popup_title">«%1$s»</string>
 </resources>

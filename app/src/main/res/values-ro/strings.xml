@@ -887,4 +887,6 @@
     <string name="suggestion_word_failed">Dicționarul nu a putut fi modificat. Încearcă din nou.</string>
     <string name="suggestion_word_add_action">Adaugă în dicționar</string>
     <string name="suggestion_word_remove_action">Elimină din dicționar</string>
+    <string name="tip_dictionary">Sfat: ține apăsat pe o sugestie ca s-o adaugi în dicționar sau s-o elimini.</string>
+    <string name="suggestion_word_popup_title">„%1$s”</string>
 </resources>

@@ -140,6 +140,7 @@ class TaipoIme : InputMethodService() {
         override fun replaceTextBeforeCursor(previous: String, text: String): String? =
             this@TaipoIme.fieldEditor.replaceTextBeforeCursor(previous, text)
         override fun onWordSuggestionTapped(suggestion: WordSuggestion) = this@TaipoIme.onWordSuggestionTapped(suggestion)
+        override fun showWordDictionaryActions(word: String) = this@TaipoIme.showWordDictionaryActions(word)
         override fun addSuggestionToDictionary(word: String) = this@TaipoIme.addSuggestionToDictionary(word)
         override fun removeSuggestionFromDictionary(word: String) = this@TaipoIme.removeSuggestionFromDictionary(word)
         override fun onKeyPressed(key: Key) = this@TaipoIme.onKeyPressed(key)
@@ -321,6 +322,7 @@ class TaipoIme : InputMethodService() {
                     GestureTips.Tip.MOVE_CURSOR -> R.string.tip_move_cursor
                     GestureTips.Tip.SWITCH_LANGUAGE -> R.string.tip_switch_language
                     GestureTips.Tip.DIGITS -> R.string.tip_digits
+                    GestureTips.Tip.DICTIONARY -> R.string.tip_dictionary
                 },
             ),
         )
@@ -1062,8 +1064,15 @@ class TaipoIme : InputMethodService() {
      * - mot tapé (entre guillemets) : conservé tel quel, sans correction ;
      * - complétion : remplace le mot en cours.
      */
+    /** Appui long sur une suggestion (23/11/2026) : pop-up « Ajouter au dictionnaire » / « Retirer du dictionnaire ». */
+    private fun showWordDictionaryActions(word: String) {
+        hapticFeedback.perform(hapticIntensity)
+        gestureTips.learned(GestureTips.Tip.DICTIONARY) // le geste est connu : l'astuce ne viendra plus
+        messagePopup.showWordActions(word, onAdd = { addSuggestionToDictionary(word) }, onRemove = { removeSuggestionFromDictionary(word) })
+    }
+
     /**
-     * Appui long sur une suggestion relâché hors de la poubelle (23/11/2026, comme Gboard) : le mot entre dans le dictionnaire
+     * Bouton « Ajouter au dictionnaire » du pop-up d'une suggestion (23/11/2026) : le mot entre dans le dictionnaire
      * personnel (jamais corrigé, proposé ensuite). Message selon le résultat ; la base est écrite hors du thread principal.
      */
     private fun addSuggestionToDictionary(word: String) {
@@ -1089,7 +1098,7 @@ class TaipoIme : InputMethodService() {
     }
 
     /**
-     * Suggestion déposée sur la poubelle : le mot est retiré du dictionnaire personnel. Un mot du dictionnaire de la langue (ou du
+     * Bouton « Retirer du dictionnaire » du pop-up d'une suggestion : le mot est retiré du dictionnaire personnel. Un mot du dictionnaire de la langue (ou du
      * dictionnaire du téléphone, en lecture seule) ne peut pas l'être : un message le dit.
      */
     private fun removeSuggestionFromDictionary(word: String) {
@@ -1121,6 +1130,8 @@ class TaipoIme : InputMethodService() {
             return
         }
         if (suggestion !in currentWordSuggestions) return
+        // Astuce : après quelques suggestions touchées, l'appui long pour le dictionnaire (une fois, après les autres).
+        if (SuggestionWordActions.canEdit(suggestion)) showGestureTip(gestureTips.onSuggestionTapped())
         swipeTyping.clear() // une autre possibilité du mot glissé, ou un mot de la bande : le glissement est terminé
         // Pendant la dictée, seules les alternatives d'un mot touché pour le corriger sont proposées (voir VoiceWordPick).
         if ((isRecording && !voice.wordPickActive) || correctionInProgress || fieldEditor.hasSelection()) return

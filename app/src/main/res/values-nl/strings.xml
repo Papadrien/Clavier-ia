@@ -883,4 +883,6 @@
     <string name="suggestion_word_failed">Je woordenboek kon niet worden gewijzigd. Probeer het opnieuw.</string>
     <string name="suggestion_word_add_action">Aan woordenboek toevoegen</string>
     <string name="suggestion_word_remove_action">Uit woordenboek verwijderen</string>
+    <string name="tip_dictionary">Tip: houd een suggestie ingedrukt om ze aan je woordenboek toe te voegen of eruit te verwijderen.</string>
+    <string name="suggestion_word_popup_title">‘%1$s’</string>
 </resources>

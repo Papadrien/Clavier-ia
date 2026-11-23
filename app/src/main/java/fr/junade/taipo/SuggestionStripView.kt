@@ -2,19 +2,11 @@ package fr.junade.taipo
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.RectF
-import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.view.Gravity
-import android.view.HapticFeedbackConstants
-import android.view.MotionEvent
 import android.view.View
-import android.view.ViewConfiguration
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import fr.junade.taipo.dictionary.WordSuggestion
 
@@ -51,8 +43,12 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         fun onWordClick(suggestion: WordSuggestion)
     }
 
-    /** Appui long sur un mot (23/11/2026, [SuggestionWordDrag]) : relâché ailleurs, ajout ; déposé sur la poubelle, retrait. */
+    /**
+     * Mot du dictionnaire personnel depuis la bande (23/11/2026) : l'appui long ouvre un pop-up « Ajouter au dictionnaire » /
+     * « Retirer du dictionnaire » ([onWordLongPress]) ; TalkBack propose les deux actions directement ([onWordAdd], [onWordRemove]).
+     */
     interface OnWordEditListener {
+        fun onWordLongPress(suggestion: WordSuggestion)
         fun onWordAdd(suggestion: WordSuggestion)
         fun onWordRemove(suggestion: WordSuggestion)
     }
@@ -69,28 +65,6 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
     private var pasteListener: (() -> Unit)? = null
     private var editListener: OnWordEditListener? = null
 
-    // Appui long et glisser-déposer d'un mot (voir SuggestionWordDrag).
-    private val longPressTimeout = ViewConfiguration.getLongPressTimeout().toLong()
-    private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
-    private var pressedIndex = -1
-    private var pressDownX = 0f
-    private var pressDownY = 0f
-    private var pressMoved = false
-    private var dragged: WordSuggestion? = null
-    private var dragX = 0f
-    private var dragY = 0f
-    private var overTrash = false
-    private val longPressRunnable = Runnable { startDrag() }
-    private val trashIcon: Drawable? = ContextCompat.getDrawable(context, R.drawable.ic_trash)?.mutate()
-    private val trashPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val dragPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = context.themeColor(R.color.accent) }
-    private val dragTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = context.themeColor(R.color.text_on_accent)
-        textSize = dimen(R.dimen.taipo_suggestion_text_size)
-        textAlign = Paint.Align.CENTER
-        typeface = TaipoType.typeface(context, TaipoType.Weight.BOLD)
-    }
-    private val dragRect = RectF()
     private val a11yAddIds = IntArray(WORD_SLOT_COUNT) { View.NO_ID }
     private val a11yRemoveIds = IntArray(WORD_SLOT_COUNT) { View.NO_ID }
 
@@ -120,7 +94,16 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
             slot.setPadding(slotPadding, 0, slotPadding, shadow)
             slot.visibility = View.GONE
             slot.setOnClickListener { words.getOrNull(index)?.let { wordListener?.onWordClick(it) } }
-            slot.setOnTouchListener { view, event -> onSlotTouch(index, view, event) }
+            slot.setOnLongClickListener {
+                val suggestion = words.getOrNull(index)
+                val listener = editListener
+                if (suggestion != null && listener != null && SuggestionWordActions.canEdit(suggestion)) {
+                    listener.onWordLongPress(suggestion)
+                    true
+                } else {
+                    false
+                }
+            }
             slot.announceAsButton() // lot 20
             addView(slot, LayoutParams(0, LayoutParams.MATCH_PARENT, 1f))
         }
@@ -204,118 +187,6 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         editListener = listener
     }
 
-    /**
-     * Toucher d'un emplacement de mot : un toucher court reste un clic ; tenu sans bouger ([longPressTimeout]), le mot se détache
-     * ([startDrag]) et suit le doigt jusqu'au relâchement ([endDrag]).
-     */
-    @SuppressLint("ClickableViewAccessibility") // le clic court passe par performClick ; actions TalkBack dans setWords
-    private fun onSlotTouch(index: Int, view: View, event: MotionEvent): Boolean {
-        val stripX = event.x + view.left
-        val stripY = event.y + view.top
-        when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> {
-                pressedIndex = index
-                pressDownX = stripX
-                pressDownY = stripY
-                pressMoved = false
-                view.isPressed = true
-                val suggestion = words.getOrNull(index)
-                if (editListener != null && suggestion != null && SuggestionWordDrag.canDrag(suggestion)) {
-                    postDelayed(longPressRunnable, longPressTimeout)
-                }
-            }
-            MotionEvent.ACTION_MOVE -> if (dragged != null) {
-                dragX = stripX
-                dragY = stripY
-                overTrash = SuggestionWordDrag.isOverTrash(dragX, dragY, width / 2f, trashRadius(), height.toFloat())
-                invalidate()
-            } else if (!pressMoved && (kotlin.math.abs(stripX - pressDownX) > touchSlop || kotlin.math.abs(stripY - pressDownY) > touchSlop)) {
-                pressMoved = true
-                removeCallbacks(longPressRunnable)
-                view.isPressed = false
-            }
-            MotionEvent.ACTION_UP -> {
-                removeCallbacks(longPressRunnable)
-                view.isPressed = false
-                if (dragged != null) {
-                    endDrag(drop = true)
-                } else if (!pressMoved) {
-                    view.performClick()
-                }
-            }
-            MotionEvent.ACTION_CANCEL -> {
-                removeCallbacks(longPressRunnable)
-                view.isPressed = false
-                endDrag(drop = false)
-            }
-        }
-        return true
-    }
-
-    private fun startDrag() {
-        val suggestion = words.getOrNull(pressedIndex) ?: return
-        dragged = suggestion
-        dragX = pressDownX
-        dragY = pressDownY
-        overTrash = false
-        wordSlots.getOrNull(pressedIndex)?.isPressed = false
-        parent?.requestDisallowInterceptTouchEvent(true)
-        performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-        for (child in wordSlots + pasteSlot + emojiSlot) child.alpha = DIMMED_ALPHA
-        invalidate()
-    }
-
-    /** Fin du glisser : [drop] faux (geste annulé) ne fait rien ; sinon retrait sur la poubelle, ajout ailleurs. */
-    private fun endDrag(drop: Boolean) {
-        val suggestion = dragged ?: return
-        val removing = overTrash
-        dragged = null
-        overTrash = false
-        for (child in wordSlots + pasteSlot + emojiSlot) child.alpha = 1f
-        invalidate()
-        if (!drop) return
-        if (removing) {
-            performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-            editListener?.onWordRemove(suggestion)
-        } else {
-            editListener?.onWordAdd(suggestion)
-        }
-    }
-
-    private fun trashRadius(): Float = minOf(height * TRASH_HEIGHT_RATIO, dimen(R.dimen.taipo_icon_size))
-
-    override fun dispatchDraw(canvas: Canvas) {
-        super.dispatchDraw(canvas)
-        val suggestion = dragged ?: return
-        // Poubelle au milieu de la bande : rouge quand le mot est dessus.
-        val cx = width / 2f
-        val cy = height / 2f
-        val radius = trashRadius()
-        trashPaint.color = if (overTrash) TRASH_ACTIVE else context.themeColor(R.color.surface_button)
-        canvas.drawCircle(cx, cy, radius, trashPaint)
-        trashIcon?.let { icon ->
-            icon.setTint(if (overTrash) TRASH_ICON_ACTIVE else context.themeColor(R.color.text_primary))
-            val half = (radius * TRASH_ICON_RATIO).toInt()
-            icon.setBounds((cx - half).toInt(), (cy - half).toInt(), (cx + half).toInt(), (cy + half).toInt())
-            icon.draw(canvas)
-        }
-        // Le mot détaché suit le doigt, dans une pastille de la couleur d'accent.
-        val text = suggestion.text
-        val textWidth = dragTextPaint.measureText(text)
-        val pad = dimen(R.dimen.taipo_suggestion_slot_padding)
-        val pillHalfHeight = dragTextPaint.textSize * PILL_HEIGHT_RATIO
-        val y = dragY.coerceIn(pillHalfHeight, height - pillHalfHeight)
-        dragRect.set(dragX - textWidth / 2f - pad, y - pillHalfHeight, dragX + textWidth / 2f + pad, y + pillHalfHeight)
-        canvas.drawRoundRect(dragRect, pillHalfHeight, pillHalfHeight, dragPaint)
-        canvas.drawText(text, dragX, y - (dragTextPaint.descent() + dragTextPaint.ascent()) / 2f, dragTextPaint)
-    }
-
-    override fun onDetachedFromWindow() {
-        removeCallbacks(longPressRunnable)
-        endDrag(drop = false)
-        super.onDetachedFromWindow()
-    }
-
     /** Lot 20 : TalkBack propose « Ajouter au dictionnaire » et « Retirer du dictionnaire » sur chaque mot (pas d'appui long). */
     private fun updateEditActions(index: Int, slot: TextView, suggestion: WordSuggestion?) {
         if (a11yAddIds[index] != View.NO_ID) ViewCompat.removeAccessibilityAction(slot, a11yAddIds[index])
@@ -323,7 +194,7 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
         a11yAddIds[index] = View.NO_ID
         a11yRemoveIds[index] = View.NO_ID
         val listener = editListener ?: return
-        if (suggestion == null || !SuggestionWordDrag.canDrag(suggestion)) return
+        if (suggestion == null || !SuggestionWordActions.canEdit(suggestion)) return
         a11yAddIds[index] = ViewCompat.addAccessibilityAction(slot, context.getString(R.string.suggestion_word_add_action)) { _, _ ->
             listener.onWordAdd(suggestion)
             true
@@ -394,17 +265,5 @@ class SuggestionStripView(context: Context) : LinearLayout(context) {
 
     companion object {
         const val WORD_SLOT_COUNT = 3
-
-        /** Opacité des emplacements pendant qu'un mot est glissé. */
-        private const val DIMMED_ALPHA = 0.25f
-
-        /** Rayon de la poubelle, en part de la hauteur de la bande (plafonné à la taille d'une icône). */
-        private const val TRASH_HEIGHT_RATIO = 0.42f
-        private const val TRASH_ICON_RATIO = 0.55f
-        private const val PILL_HEIGHT_RATIO = 0.95f
-
-        /** Rouge de la poubelle survolée : lisible en thème clair comme sombre. */
-        private const val TRASH_ACTIVE = 0xFFE5484D.toInt()
-        private const val TRASH_ICON_ACTIVE = 0xFFFFFFFF.toInt()
     }
 }
