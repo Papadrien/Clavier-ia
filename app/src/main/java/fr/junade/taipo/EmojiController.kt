@@ -108,7 +108,9 @@ class EmojiController(private val host: Host) {
         if (panel.visibility != View.VISIBLE) return
         // Bouton ABC : le store remonte ; changement de champ ou rotation ([resync] faux) : retour direct.
         if (resync) {
-            PanelShade.hide(panel, host.keyboardView())
+            // Le panneau reste visible pendant qu'il remonte : la barre des récents n'est montrée qu'à la fin de l'animation
+            // (sans ce rappel, elle restait réservée mais vide jusqu'au prochain champ).
+            PanelShade.hide(panel, host.keyboardView()) { refreshRecentBar() }
         } else {
             PanelShade.hideNow(panel, host.keyboardView())
         }

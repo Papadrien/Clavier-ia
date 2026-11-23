@@ -125,3 +125,18 @@ de langue à l'ouverture d'un champ, étape 4 avec et sans modèle installé.
 - La carte « Pack premium » (ligne encadrée de violet, auparavant en tête de « À propos ») est juste sous le tutoriel ; masquée tant
   que la carte d'offre du pack est affichée, pour ne pas faire doublon.
 - Page « Disposition des touches » : trois cartes (rangée de chiffres ; touches de la rangée du bas ; bulle des touches).
+
+## Dictionnaire depuis la bande de suggestions (23/11/2026)
+- Appui long sur un mot suggéré (mot tapé entre guillemets compris, pas une adresse e-mail) : pop-up avec le mot en titre et deux
+  boutons, « Ajouter au dictionnaire » et « Retirer du dictionnaire » (`MessagePopup.showWordActions`). Toucher à côté le ferme.
+  - Ajouter : le mot entre dans le dictionnaire personnel (« déjà dans votre dictionnaire » s'il y est).
+  - Retirer : il sort du dictionnaire personnel et entre dans les **mots bloqués** (`dictionary/BlockedWords`, préférences
+    `blocked_words`, 1 000 au plus) : plus jamais proposé (bande, mot suivant, saisie par glissement) ni utilisé pour corriger un autre
+    mot ; tapé tel quel, il reste. Le dictionnaire de la langue (fichier téléchargé, commun à tous) et celui du téléphone (lecture
+    seule) ne sont jamais modifiés : la liste est à part. « Ajouter au dictionnaire » débloque le mot.
+  - Écran du dictionnaire personnel : bouton « Mots bloqués (n) » (visible s'il y en a), liste à cocher pour débloquer.
+  - Sauvegarde : `blockedWords` (facultatif) ; une restauration ajoute les mots bloqués, n'en débloque aucun.
+- Le glisser-déposer vers une poubelle (façon Gboard), essayé d'abord, a été abandonné : jugé peu intuitif.
+- Astuce `GestureTips.Tip.DICTIONARY` : à la 5ᵉ suggestion touchée, une fois (« appui long sur une suggestion… ») ; jamais si le
+  pop-up a déjà été ouvert.
+- TalkBack : actions « Ajouter au dictionnaire » et « Retirer du dictionnaire » sur chaque mot.

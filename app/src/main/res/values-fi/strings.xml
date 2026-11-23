@@ -679,12 +679,12 @@
     <string name="premium_colors_title">Yhdeksän näppäimistöväriä</string>
     <string name="premium_colors_text">Indigo, Laguuni, Vadelma… Enter-näppäin, painikkeet ja valinnat saavat valitun värin vaaleassa ja tummassa tilassa.</string>
     <string name="premium_prompts_title">Omat tekoälyohjeet</string>
-    <string name="premium_prompts_text">Kirjoita korjauksen, chatin ja sanelun ohjeet uudelleen, jotta tekoäly kirjoittaa kuten sinä.</string>
+    <string name="premium_prompts_text">Kirjoita korjauksen, chatin, sanelun, sävyn ja käännöksen ohjeet uudelleen, jotta tekoäly kirjoittaa kuten sinä.</string>
     <string name="premium_prompts_example">”Korjaa virheet muuttamatta tyyliäni tai sanamuotojani.”</string>
     <string name="premium_clipboard_title">Laajennettu leikepöytä</string>
     <string name="premium_clipboard_text">Kopiot säilyvät 7 päivää 12 tunnin sijaan. Enintään 50 kiinnitettyä kohdetta 5:n sijaan.</string>
     <string name="premium_style_title">Näppäimistö sinun tyyliisi</string>
-    <string name="premium_style_text">Seitsemän animoitua taustaa, jotka liikkuvat kirjoittaessa, viisi uutta näppäinmuotoa, yhdeksän näppäimistön fonttia (mukana OpenDyslexic) ja viisi animaatiotyyliä: Ripeä, Hyytelö, Lento, Pisara ja Liuku.</string>
+    <string name="premium_style_text">Seitsemän animoitua taustaa, jotka liikkuvat kirjoittaessa, oma kuvasi näppäinten takana, viisi uutta näppäinmuotoa ja yhdeksän näppäimistön fonttia (mukana OpenDyslexic).</string>
     <string name="premium_free_reminder">Kirjoittaminen, kielet, tekoäly ja varmuuskopiointi ovat edelleen ilmaisia paketin kanssa tai ilman.</string>
     <string name="premium_buy">Osta paketti</string>
     <string name="premium_buy_with_price">Osta paketti · %1$s</string>
@@ -692,7 +692,7 @@
     <string name="premium_back_home">Takaisin alkuun</string>
     <string name="back_arrow_description">Takaisin</string>
     <string name="premium_active_title">Paketti käytössä</string>
-    <string name="premium_active_thanks">Kiitos! Värit, animoidut taustat, näppäinmuodot, fontit, tekoälyohjeesi ja laajennettu leikepöytä ovat käytössä.</string>
+    <string name="premium_active_thanks">Kiitos! Värit, animoidut taustat ja oma kuvasi, näppäinmuodot, fontit, animaatiotyylit, tekoälyohjeesi, oma mallisi ja laajennettu leikepöytä ovat käytössä.</string>
     <string name="premium_status_pending">Maksu odottaa: paketti otetaan käyttöön heti, kun Google Play vahvistaa sen.</string>
     <string name="premium_status_unavailable">Google Play ei ole käytettävissä tällä laitteella, tai pakettia ei voitu ladata. Tarkista yhteys ja yritä uudelleen.</string>
     <string name="premium_status_error">Ostos ei onnistunut. Mitään ei veloitettu; voit yrittää uudelleen.</string>
@@ -875,4 +875,17 @@
     <string name="onboarding_done_title">Taipo on valmis</string>
     <string name="onboarding_done_show">Kaikki 6 vaihetta on tehty. Näytä ne uudelleen napauttamalla.</string>
     <string name="onboarding_done_hide">Piilota vaiheet napauttamalla.</string>
+    <string name="premium_motion_title">Animaatiot makusi mukaan</string>
+    <string name="premium_motion_text">Yhdeksän tyyliä kaikkiin näppäimistön animaatioihin: Ripeä, Hyytelö, Lento, Pisara ja Liuku sekä hiukkastyylit Kipinät, Pikselit, Sydänkupla ja Kukinta.</string>
+    <string name="suggestion_word_already">”%1$s” on jo sanakirjassasi</string>
+    <string name="suggestion_word_removed">”%1$s” poistettu: sitä ei enää ehdoteta</string>
+    <string name="suggestion_word_failed">Sanakirjaa ei voitu muuttaa. Yritä uudelleen.</string>
+    <string name="suggestion_word_add_action">Lisää sanakirjaan</string>
+    <string name="suggestion_word_remove_action">Poista sanakirjasta</string>
+    <string name="tip_dictionary">Vinkki: lisää ehdotus sanakirjaan tai poista se pitkällä painalluksella.</string>
+    <string name="suggestion_word_popup_title">”%1$s”</string>
+    <string name="personal_dictionary_blocked_button">Estetyt sanat (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Estetyt sanat</string>
+    <string name="personal_dictionary_unblock">Poista esto</string>
+    <string name="personal_dictionary_unblocked">Esto poistettu: sanoja voidaan taas ehdottaa.</string>
 </resources>

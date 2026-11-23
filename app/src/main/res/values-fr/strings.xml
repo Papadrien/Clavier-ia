@@ -727,12 +727,12 @@
     <string name="premium_colors_title">Neuf couleurs pour le clavier</string>
     <string name="premium_colors_text">Indigo, Lagon, Framboise… La touche Entrée, les boutons et les sélections prennent la couleur choisie, en clair comme en sombre.</string>
     <string name="premium_prompts_title">Vos propres consignes pour l\'IA</string>
-    <string name="premium_prompts_text">Réécrivez les consignes de la correction, du chat et de la dictée pour que l\'IA écrive comme vous.</string>
+    <string name="premium_prompts_text">Réécrivez les consignes de la correction, du chat, de la dictée, du ton et de la traduction pour que l\'IA écrive comme vous.</string>
     <string name="premium_prompts_example">« Corrige les fautes sans changer mon style ni mes tournures. »</string>
     <string name="premium_clipboard_title">Presse-papiers étendu</string>
     <string name="premium_clipboard_text">Copies gardées 7 jours au lieu de 12 h. Jusqu\'à 50 éléments épinglés au lieu de 5.</string>
     <string name="premium_style_title">Un clavier à votre style</string>
-    <string name="premium_style_text">Sept fonds animés qui bougent pendant la frappe, cinq formes de touches en plus, neuf polices pour le clavier (dont OpenDyslexic) et cinq styles d\'animation : Vif, Gelée, Envol, Goutte et Glisse.</string>
+    <string name="premium_style_text">Sept fonds animés qui bougent pendant la frappe, votre propre photo derrière les touches, cinq formes de touches en plus et neuf polices pour le clavier (dont OpenDyslexic).</string>
     <string name="premium_free_reminder">La frappe, les langues, l\'IA et la sauvegarde restent gratuites, avec ou sans pack.</string>
     <string name="premium_buy">Acheter le pack</string>
     <string name="premium_buy_with_price">Acheter le pack · %1$s</string>
@@ -740,7 +740,7 @@
     <string name="premium_back_home">Retour à l\'accueil</string>
     <string name="back_arrow_description">Retour</string>
     <string name="premium_active_title">Pack actif</string>
-    <string name="premium_active_thanks">Merci ! Les couleurs, les fonds animés, les formes de touches, les polices, vos consignes pour l\'IA et le presse-papiers étendu sont débloqués.</string>
+    <string name="premium_active_thanks">Merci ! Les couleurs, les fonds animés et votre photo, les formes de touches, les polices, les styles d\'animation, vos consignes pour l\'IA, votre propre modèle et le presse-papiers étendu sont débloqués.</string>
     <string name="premium_status_pending">Paiement en attente : le pack s\'activera dès que Google Play l\'aura confirmé.</string>
     <string name="premium_status_unavailable">Google Play n\'est pas disponible sur cet appareil, ou le pack n\'a pas pu être chargé. Vérifiez votre connexion puis réessayez.</string>
     <string name="premium_status_error">L\'achat n\'a pas abouti. Aucun montant n\'a été débité ; vous pouvez réessayer.</string>
@@ -926,4 +926,17 @@
     <string name="onboarding_done_title">Taipo est prêt</string>
     <string name="onboarding_done_show">Les 6 étapes sont faites. Touchez pour les revoir.</string>
     <string name="onboarding_done_hide">Touchez pour masquer les étapes.</string>
+    <string name="premium_motion_title">Des animations à votre goût</string>
+    <string name="premium_motion_text">Neuf styles pour toutes les animations du clavier : Vif, Gelée, Envol, Goutte et Glisse, et les styles à particules Étincelles, Pixels, Bulle cœur et Éclosion.</string>
+    <string name="suggestion_word_already">« %1$s » est déjà dans votre dictionnaire</string>
+    <string name="suggestion_word_removed">« %1$s » retiré : il ne sera plus proposé</string>
+    <string name="suggestion_word_failed">Votre dictionnaire n\'a pas pu être modifié. Réessayez.</string>
+    <string name="suggestion_word_add_action">Ajouter au dictionnaire</string>
+    <string name="suggestion_word_remove_action">Retirer du dictionnaire</string>
+    <string name="tip_dictionary">Astuce : appui long sur une suggestion pour l\'ajouter au dictionnaire ou l\'en retirer.</string>
+    <string name="suggestion_word_popup_title">« %1$s »</string>
+    <string name="personal_dictionary_blocked_button">Mots bloqués (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Mots bloqués</string>
+    <string name="personal_dictionary_unblock">Débloquer</string>
+    <string name="personal_dictionary_unblocked">Mots débloqués : ils peuvent de nouveau être proposés.</string>
 </resources>

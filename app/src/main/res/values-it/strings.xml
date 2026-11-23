@@ -683,12 +683,12 @@
     <string name="premium_colors_title">Nove colori per la tastiera</string>
     <string name="premium_colors_text">Indaco, Laguna, Lampone… Il tasto Invio, i pulsanti e le selezioni prendono il colore scelto, in chiaro e in scuro.</string>
     <string name="premium_prompts_title">Le tue istruzioni per l\'IA</string>
-    <string name="premium_prompts_text">Riscrivi le istruzioni di correzione, chat e dettatura perché l\'IA scriva come te.</string>
+    <string name="premium_prompts_text">Riscrivi le istruzioni di correzione, chat, dettatura, tono e traduzione perché l\'IA scriva come te.</string>
     <string name="premium_prompts_example">«Correggi gli errori senza cambiare il mio stile né le mie espressioni.»</string>
     <string name="premium_clipboard_title">Appunti estesi</string>
     <string name="premium_clipboard_text">Copie conservate 7 giorni invece di 12 h. Fino a 50 elementi fissati invece di 5.</string>
     <string name="premium_style_title">Una tastiera nel tuo stile</string>
-    <string name="premium_style_text">Sette sfondi animati che si muovono mentre scrivi, cinque forme dei tasti in più, nove caratteri per la tastiera (tra cui OpenDyslexic) e cinque stili di animazione: Scattante, Gelatina, Volo, Goccia e Scivola.</string>
+    <string name="premium_style_text">Sette sfondi animati che si muovono mentre scrivi, la tua foto dietro i tasti, cinque forme dei tasti in più e nove caratteri per la tastiera (tra cui OpenDyslexic).</string>
     <string name="premium_free_reminder">Scrittura, lingue, IA e backup restano gratuiti, con o senza il pacchetto.</string>
     <string name="premium_buy">Acquista il pacchetto</string>
     <string name="premium_buy_with_price">Acquista il pacchetto · %1$s</string>
@@ -696,7 +696,7 @@
     <string name="premium_back_home">Torna alla home</string>
     <string name="back_arrow_description">Indietro</string>
     <string name="premium_active_title">Pacchetto attivo</string>
-    <string name="premium_active_thanks">Grazie! Colori, sfondi animati, forme dei tasti, caratteri, le tue istruzioni per l\'IA e gli appunti estesi sono sbloccati.</string>
+    <string name="premium_active_thanks">Grazie! Colori, sfondi animati e la tua foto, forme dei tasti, caratteri, stili di animazione, le tue istruzioni per l\'IA, il tuo modello e gli appunti estesi sono sbloccati.</string>
     <string name="premium_status_pending">Pagamento in sospeso: il pacchetto si attiverà appena Google Play lo confermerà.</string>
     <string name="premium_status_unavailable">Google Play non è disponibile su questo dispositivo, oppure non è stato possibile caricare il pacchetto. Controlla la connessione e riprova.</string>
     <string name="premium_status_error">L\'acquisto non è andato a buon fine. Non è stato addebitato nulla; puoi riprovare.</string>
@@ -879,4 +879,17 @@
     <string name="onboarding_done_title">Taipo è pronto</string>
     <string name="onboarding_done_show">Tutti e 6 i passaggi sono fatti. Tocca per rivederli.</string>
     <string name="onboarding_done_hide">Tocca per nascondere i passaggi.</string>
+    <string name="premium_motion_title">Animazioni a tuo gusto</string>
+    <string name="premium_motion_text">Nove stili per tutte le animazioni della tastiera: Scattante, Gelatina, Volo, Goccia e Scivola, più gli stili a particelle Scintille, Pixel, Bolla cuore e Fioritura.</string>
+    <string name="suggestion_word_already">«%1$s» è già nel tuo dizionario</string>
+    <string name="suggestion_word_removed">«%1$s» rimosso: non verrà più suggerito</string>
+    <string name="suggestion_word_failed">Impossibile modificare il dizionario. Riprova.</string>
+    <string name="suggestion_word_add_action">Aggiungi al dizionario</string>
+    <string name="suggestion_word_remove_action">Rimuovi dal dizionario</string>
+    <string name="tip_dictionary">Suggerimento: tieni premuto un suggerimento per aggiungerlo al dizionario o rimuoverlo.</string>
+    <string name="suggestion_word_popup_title">«%1$s»</string>
+    <string name="personal_dictionary_blocked_button">Parole bloccate (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Parole bloccate</string>
+    <string name="personal_dictionary_unblock">Sblocca</string>
+    <string name="personal_dictionary_unblocked">Parole sbloccate: possono essere suggerite di nuovo.</string>
 </resources>

@@ -53,6 +53,7 @@ class BackupCodecTest {
             activeModelId = "equilibre",
             prompts = mapOf(BackupAiSettings.PROMPT_TRANSCRIPTION to "Ligne 1\nLigne 2 « ok »"),
         ),
+        blockedWords = listOf("bonsoir", "été"),
     )
 
     @Test

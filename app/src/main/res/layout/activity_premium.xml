@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Écran « Pass premium » (PremiumActivity) : prix, les quatre avantages (couleurs, prompts, presse-papiers, apparence), ce qui reste gratuit,
-     achat et restauration. Pass actif : remerciement à la place des boutons d'achat. -->
+<!-- Écran « Pack premium » (PremiumActivity) : titre, achat (bouton en haut), prix, les avantages (couleurs, consignes, modèle, presse-papiers,
+     apparence, animations), ce qui reste gratuit, restauration. Pass actif : remerciement à la place des boutons d'achat. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -17,6 +17,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/premium_title" />
+
+        <!-- 22/11/2026 : l'achat tout en haut, sous le titre ; le message d'état (attente, erreur) juste dessous. -->
+        <Button
+            style="@style/TaipoButton.Primary"
+            android:id="@+id/button_premium_buy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md"
+            android:text="@string/premium_buy" />
+        <TextView
+            style="@style/TaipoText.Info"
+            android:id="@+id/premium_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/taipo_settings_gap_sm"
+            android:visibility="gone" />
 
         <TextView
             style="@style/TaipoText.Display"
@@ -43,11 +59,29 @@
             android:padding="@dimen/taipo_settings_card_padding"
             android:layout_marginTop="@dimen/taipo_settings_gap_xl">
 
-            <TextView
-                style="@style/TaipoText.Section"
+            <!-- Titre de l'avantage, avec son icône (22/11/2026). -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/premium_colors_title" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/taipo_settings_row_icon_tile"
+                    android:layout_height="@dimen/taipo_settings_row_icon_tile"
+                    android:layout_marginEnd="@dimen/taipo_settings_gap_md"
+                    android:background="@drawable/bg_settings_row_icon"
+                    android:padding="@dimen/taipo_settings_gap_sm"
+                    android:src="@drawable/ic_row_theme"
+                    android:importantForAccessibility="no" />
+
+                <TextView
+                    style="@style/TaipoText.Section"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/premium_colors_title" />
+            </LinearLayout>
 
             <TextView
                 style="@style/TaipoText.Caption"
@@ -73,11 +107,29 @@
             android:padding="@dimen/taipo_settings_card_padding"
             android:layout_marginTop="@dimen/taipo_settings_gap_md">
 
-            <TextView
-                style="@style/TaipoText.Section"
+            <!-- Titre de l'avantage, avec son icône (22/11/2026). -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/premium_prompts_title" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/taipo_settings_row_icon_tile"
+                    android:layout_height="@dimen/taipo_settings_row_icon_tile"
+                    android:layout_marginEnd="@dimen/taipo_settings_gap_md"
+                    android:background="@drawable/bg_settings_row_icon"
+                    android:padding="@dimen/taipo_settings_gap_sm"
+                    android:src="@drawable/ic_row_prompts"
+                    android:importantForAccessibility="no" />
+
+                <TextView
+                    style="@style/TaipoText.Section"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/premium_prompts_title" />
+            </LinearLayout>
 
             <TextView
                 style="@style/TaipoText.Caption"
@@ -106,11 +158,29 @@
             android:padding="@dimen/taipo_settings_card_padding"
             android:layout_marginTop="@dimen/taipo_settings_gap_md">
 
-            <TextView
-                style="@style/TaipoText.Section"
+            <!-- Titre de l'avantage, avec son icône (22/11/2026). -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/premium_custom_model_title" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/taipo_settings_row_icon_tile"
+                    android:layout_height="@dimen/taipo_settings_row_icon_tile"
+                    android:layout_marginEnd="@dimen/taipo_settings_gap_md"
+                    android:background="@drawable/bg_settings_row_icon"
+                    android:padding="@dimen/taipo_settings_gap_sm"
+                    android:src="@drawable/ic_row_custom_model"
+                    android:importantForAccessibility="no" />
+
+                <TextView
+                    style="@style/TaipoText.Section"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/premium_custom_model_title" />
+            </LinearLayout>
 
             <TextView
                 style="@style/TaipoText.Caption"
@@ -129,11 +199,29 @@
             android:padding="@dimen/taipo_settings_card_padding"
             android:layout_marginTop="@dimen/taipo_settings_gap_md">
 
-            <TextView
-                style="@style/TaipoText.Section"
+            <!-- Titre de l'avantage, avec son icône (22/11/2026). -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/premium_clipboard_title" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/taipo_settings_row_icon_tile"
+                    android:layout_height="@dimen/taipo_settings_row_icon_tile"
+                    android:layout_marginEnd="@dimen/taipo_settings_gap_md"
+                    android:background="@drawable/bg_settings_row_icon"
+                    android:padding="@dimen/taipo_settings_gap_sm"
+                    android:src="@drawable/ic_row_clipboard"
+                    android:importantForAccessibility="no" />
+
+                <TextView
+                    style="@style/TaipoText.Section"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/premium_clipboard_title" />
+            </LinearLayout>
 
             <TextView
                 style="@style/TaipoText.Caption"
@@ -152,11 +240,29 @@
             android:padding="@dimen/taipo_settings_card_padding"
             android:layout_marginTop="@dimen/taipo_settings_gap_md">
 
-            <TextView
-                style="@style/TaipoText.Section"
+            <!-- Titre de l'avantage, avec son icône (22/11/2026). -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/premium_style_title" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/taipo_settings_row_icon_tile"
+                    android:layout_height="@dimen/taipo_settings_row_icon_tile"
+                    android:layout_marginEnd="@dimen/taipo_settings_gap_md"
+                    android:background="@drawable/bg_settings_row_icon"
+                    android:padding="@dimen/taipo_settings_gap_sm"
+                    android:src="@drawable/ic_row_backdrop"
+                    android:importantForAccessibility="no" />
+
+                <TextView
+                    style="@style/TaipoText.Section"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/premium_style_title" />
+            </LinearLayout>
 
             <TextView
                 style="@style/TaipoText.Caption"
@@ -164,6 +270,44 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/taipo_settings_gap_xs"
                 android:text="@string/premium_style_text" />
+        </LinearLayout>
+        <!-- Avantage : styles d'animation (22/11/2026). -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_settings_card"
+            android:padding="@dimen/taipo_settings_card_padding"
+            android:layout_marginTop="@dimen/taipo_settings_gap_md">
+            <!-- Titre de l'avantage, avec son icône (22/11/2026). -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/taipo_settings_row_icon_tile"
+                    android:layout_height="@dimen/taipo_settings_row_icon_tile"
+                    android:layout_marginEnd="@dimen/taipo_settings_gap_md"
+                    android:background="@drawable/bg_settings_row_icon"
+                    android:padding="@dimen/taipo_settings_gap_sm"
+                    android:src="@drawable/ic_row_motion"
+                    android:importantForAccessibility="no" />
+
+                <TextView
+                    style="@style/TaipoText.Section"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/premium_motion_title" />
+            </LinearLayout>
+            <TextView
+                style="@style/TaipoText.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/taipo_settings_gap_xs"
+                android:text="@string/premium_motion_text" />
         </LinearLayout>
 
         <TextView
@@ -173,21 +317,7 @@
             android:layout_marginTop="@dimen/taipo_settings_gap_lg"
             android:text="@string/premium_free_reminder" />
 
-        <TextView
-            style="@style/TaipoText.Info"
-            android:id="@+id/premium_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_lg"
-            android:visibility="gone" />
 
-        <Button
-            style="@style/TaipoButton.Primary"
-            android:id="@+id/button_premium_buy"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/taipo_settings_gap_lg"
-            android:text="@string/premium_buy" />
 
         <Button
             style="@style/TaipoButton.Secondary"

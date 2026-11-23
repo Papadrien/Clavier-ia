@@ -114,6 +114,15 @@ internal interface ImeHostContext {
     /** Traduction en direct : voir [FieldEditor.replaceTextBeforeCursor]. */
     fun replaceTextBeforeCursor(previous: String, text: String): String?
     fun onWordSuggestionTapped(suggestion: WordSuggestion)
+
+    /** Appui long sur une suggestion : pop-up « Ajouter » / « Retirer » pour [word]. */
+    fun showWordDictionaryActions(word: String)
+
+    /** Ajoute [word] au dictionnaire personnel (appui long sur une suggestion), avec un message. */
+    fun addSuggestionToDictionary(word: String)
+
+    /** Retire [word] du dictionnaire personnel (bouton du pop-up d'une suggestion), avec un message. */
+    fun removeSuggestionFromDictionary(word: String)
     fun onKeyPressed(key: Key)
     fun onCursorMoved(steps: Int)
     fun onGesture(path: List<GestureDecoder.Point>, keys: Map<Char, GestureDecoder.Point>)
@@ -442,6 +451,17 @@ internal class AiTranscriptionHost(private val ime: ImeHostContext) : AiTranscri
     override fun setLevel(level: Float) = ime.correctionBar.setAiTranscriptionLevel(level)
     override fun hapticAi(cue: AiHapticCue) = ime.hapticAi(cue)
     override fun playSound(sound: KeySound) = ime.playSound(sound)
+
+    // Contexte de la reformulation (23/11/2026) : fin du texte avant le curseur et type de champ ; jamais journalisé.
+    override fun dictationContext(): fr.junade.taipo.ai.DictationContext {
+        val before = ime.inputConnection()?.getTextBeforeCursor(fr.junade.taipo.ai.DictationContext.MAX_TEXT_BEFORE * 2, 0)?.toString()
+        val info = ime.editorInfo()
+        return fr.junade.taipo.ai.DictationContext(
+            textBefore = fr.junade.taipo.ai.DictationContext.tail(before.orEmpty()),
+            kind = fr.junade.taipo.ai.DictationContext.fieldKind(info?.packageName, info?.inputType ?: 0, ime.messagingField),
+        )
+    }
+    override fun personalWords(): List<String> = ime.personalWords()
 }
 
 /** Glissement de suppression depuis la touche retour arrière (story 1.9) : voir [DeleteSwipeController]. */
@@ -520,6 +540,9 @@ internal class ViewComposerHost(private val ime: ImeHostContext) : ImeViewCompos
     override fun onAiTranscriptionClick() = ime.aiTranscription.onClick()
     override fun onEmojiSuggestionClicked() = ime.emoji.onSuggestionTapped()
     override fun onWordSuggestionClicked(suggestion: WordSuggestion) = ime.onWordSuggestionTapped(suggestion)
+    override fun onWordSuggestionLongPress(suggestion: WordSuggestion) = ime.showWordDictionaryActions(suggestion.text)
+    override fun onWordSuggestionAdd(suggestion: WordSuggestion) = ime.addSuggestionToDictionary(suggestion.text)
+    override fun onWordSuggestionRemove(suggestion: WordSuggestion) = ime.removeSuggestionFromDictionary(suggestion.text)
     override fun openAppHome() = ime.openAppHome()
     override fun onEmojiSelected(emoji: String) = ime.emoji.onSelected(emoji)
     override fun onEmojiBackspace() = ime.emoji.onBackspace()

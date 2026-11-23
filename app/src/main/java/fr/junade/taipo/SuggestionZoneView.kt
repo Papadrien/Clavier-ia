@@ -67,6 +67,10 @@ internal class SuggestionZoneView(context: Context) : FrameLayout(context) {
         suggestionStrip.setWords(words)
     }
 
+    fun setOnWordSuggestionEditListener(listener: SuggestionStripView.OnWordEditListener?) {
+        suggestionStrip.setOnWordEditListener(listener)
+    }
+
     fun setOnWordSuggestionClickListener(listener: SuggestionStripView.OnWordClickListener) {
         suggestionStrip.setOnWordClickListener(listener)
     }

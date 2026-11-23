@@ -43,6 +43,9 @@ class AiTranscriptionRecorder(context: Context, private val scope: CoroutineScop
     /** Appelé (thread d'arrière-plan) à chaque bloc lu, avec le niveau sonore de 0 à 1 : il anime l'icône du bouton. */
     var onLevel: ((Float) -> Unit)? = null
 
+    /** Appelé (thread d'arrière-plan) avec une copie de chaque bloc lu : la transcription en direct ([LiveDictation]) le décode aussitôt. */
+    var onAudio: ((ShortArray) -> Unit)? = null
+
     val isRecording: Boolean get() = record != null
 
     /** Durée maximale de l'enregistrement en cours, en échantillons. */
@@ -95,6 +98,7 @@ class AiTranscriptionRecorder(context: Context, private val scope: CoroutineScop
                 when {
                     read > 0 -> {
                         onLevel?.invoke(VoiceLevel.fromRms(rms(samples, filled, read)))
+                        onAudio?.invoke(samples.copyOfRange(filled, filled + read))
                         filled += read
                     }
                     read == 0 -> delay(EMPTY_READ_DELAY_MS)

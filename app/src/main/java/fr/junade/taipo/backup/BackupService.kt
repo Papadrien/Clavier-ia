@@ -59,6 +59,7 @@ object BackupService {
         return BackupData(
             exportedAtMillis = nowMillis,
             dictionary = PersonalDictionaryProvider.repository(appContext).all(),
+            blockedWords = fr.junade.taipo.dictionary.BlockedWords.all(appContext),
             // Du plus ancien au plus récent : la restauration les épingle dans cet ordre.
             pins = ClipboardProvider.repository(appContext).all()
                 .sortedWith(compareBy({ it.pinnedAtMillis }, { it.id }))
@@ -114,6 +115,8 @@ object BackupService {
         var wordsKnown = 0
         var wordsRefused = 0
         val dictionary = PersonalDictionaryProvider.repository(appContext)
+        // Mots bloqués : ajoutés à ceux de l'appareil (rien n'est débloqué par une restauration).
+        fr.junade.taipo.dictionary.BlockedWords.addAll(appContext, data.blockedWords)
         data.dictionary.forEach { word ->
             when (dictionary.add(word)) {
                 PersonalDictionary.AddResult.ADDED -> wordsAdded++

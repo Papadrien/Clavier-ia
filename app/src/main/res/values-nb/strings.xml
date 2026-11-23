@@ -679,12 +679,12 @@
     <string name="premium_colors_title">Ni tastaturfarger</string>
     <string name="premium_colors_text">Indigo, Lagune, Bringebær … Enter-tasten, knappene og markeringene får fargen du velger, i lyst og mørkt tema.</string>
     <string name="premium_prompts_title">Egne AI-instruksjoner</string>
-    <string name="premium_prompts_text">Skriv om instruksjonene for retting, chat og diktering, slik at AI-en skriver som deg.</string>
+    <string name="premium_prompts_text">Skriv om instruksjonene for retting, chat, diktering, tone og oversettelse, slik at AI-en skriver som deg.</string>
     <string name="premium_prompts_example">«Rett feilene uten å endre stilen eller formuleringene mine.»</string>
     <string name="premium_clipboard_title">Utvidet utklippstavle</string>
     <string name="premium_clipboard_text">Kopier lagres i 7 dager i stedet for 12 timer. Opptil 50 festede elementer i stedet for 5.</string>
     <string name="premium_style_title">Et tastatur i din stil</string>
-    <string name="premium_style_text">Sju animerte bakgrunner som beveger seg mens du skriver, fem ekstra tasteformer, ni skrifttyper for tastaturet (blant annet OpenDyslexic) og fem animasjonsstiler: Kvikk, Gelé, Avgang, Dråpe og Gli.</string>
+    <string name="premium_style_text">Sju animerte bakgrunner som beveger seg mens du skriver, ditt eget bilde bak tastene, fem ekstra tasteformer og ni skrifttyper for tastaturet (blant annet OpenDyslexic).</string>
     <string name="premium_free_reminder">Skriving, språk, AI og sikkerhetskopiering er fortsatt gratis, med eller uten pakken.</string>
     <string name="premium_buy">Kjøp pakken</string>
     <string name="premium_buy_with_price">Kjøp pakken · %1$s</string>
@@ -692,7 +692,7 @@
     <string name="premium_back_home">Tilbake til start</string>
     <string name="back_arrow_description">Tilbake</string>
     <string name="premium_active_title">Pakken er aktiv</string>
-    <string name="premium_active_thanks">Takk! Farger, animerte bakgrunner, tasteformer, skrifttyper, AI-instruksjonene dine og den utvidede utklippstavlen er låst opp.</string>
+    <string name="premium_active_thanks">Takk! Farger, animerte bakgrunner og bildet ditt, tasteformer, skrifttyper, animasjonsstiler, AI-instruksjonene dine, din egen modell og den utvidede utklippstavlen er låst opp.</string>
     <string name="premium_status_pending">Betalingen venter: pakken aktiveres så snart Google Play har bekreftet den.</string>
     <string name="premium_status_unavailable">Google Play er ikke tilgjengelig på denne enheten, eller pakken kunne ikke lastes inn. Sjekk tilkoblingen og prøv igjen.</string>
     <string name="premium_status_error">Kjøpet ble ikke gjennomført. Ingenting er belastet; du kan prøve igjen.</string>
@@ -875,4 +875,17 @@
     <string name="onboarding_done_title">Taipo er klart</string>
     <string name="onboarding_done_show">Alle 6 trinnene er gjort. Trykk for å se dem igjen.</string>
     <string name="onboarding_done_hide">Trykk for å skjule trinnene.</string>
+    <string name="premium_motion_title">Animasjoner etter din smak</string>
+    <string name="premium_motion_text">Ni stiler for alle tastaturets animasjoner: Kvikk, Gelé, Avgang, Dråpe og Gli, pluss partikkelstilene Gnister, Piksler, Hjerteboble og Blomstring.</string>
+    <string name="suggestion_word_already">«%1$s» er allerede i ordboken din</string>
+    <string name="suggestion_word_removed">«%1$s» fjernet: foreslås ikke lenger</string>
+    <string name="suggestion_word_failed">Ordboken kunne ikke endres. Prøv igjen.</string>
+    <string name="suggestion_word_add_action">Legg til i ordboken</string>
+    <string name="suggestion_word_remove_action">Fjern fra ordboken</string>
+    <string name="tip_dictionary">Tips: hold inne et forslag for å legge det til i ordboken eller fjerne det.</string>
+    <string name="suggestion_word_popup_title">«%1$s»</string>
+    <string name="personal_dictionary_blocked_button">Blokkerte ord (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Blokkerte ord</string>
+    <string name="personal_dictionary_unblock">Opphev blokkering</string>
+    <string name="personal_dictionary_unblocked">Blokkering opphevet: ordene kan foreslås igjen.</string>
 </resources>

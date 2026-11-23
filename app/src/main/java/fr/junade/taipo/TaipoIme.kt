@@ -24,6 +24,7 @@ import fr.junade.taipo.ai.RewriteEngine
 import fr.junade.taipo.ai.TranscriptionPromptPreferences
 import fr.junade.taipo.analytics.Analytics
 import fr.junade.taipo.analytics.AnalyticsEvents
+import fr.junade.taipo.dictionary.PersonalDictionary
 import fr.junade.taipo.dictionary.PersonalDictionaryProvider
 import fr.junade.taipo.dictionary.SystemDictionaryWords
 import fr.junade.taipo.dictionary.SystemUserDictionary
@@ -38,6 +39,7 @@ import fr.junade.taipo.suggestion.NextWordRepository
 import fr.junade.taipo.suggestion.SuggestionPolicy
 import fr.junade.taipo.suggestion.WordText
 import kotlin.math.abs
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -138,6 +140,9 @@ class TaipoIme : InputMethodService() {
         override fun replaceTextBeforeCursor(previous: String, text: String): String? =
             this@TaipoIme.fieldEditor.replaceTextBeforeCursor(previous, text)
         override fun onWordSuggestionTapped(suggestion: WordSuggestion) = this@TaipoIme.onWordSuggestionTapped(suggestion)
+        override fun showWordDictionaryActions(word: String) = this@TaipoIme.showWordDictionaryActions(word)
+        override fun addSuggestionToDictionary(word: String) = this@TaipoIme.addSuggestionToDictionary(word)
+        override fun removeSuggestionFromDictionary(word: String) = this@TaipoIme.removeSuggestionFromDictionary(word)
         override fun onKeyPressed(key: Key) = this@TaipoIme.onKeyPressed(key)
         override fun onCursorMoved(steps: Int) = this@TaipoIme.onCursorMoved(steps)
         override fun onGesture(
@@ -274,6 +279,8 @@ class TaipoIme : InputMethodService() {
                     learnFromTyping() // le mot glissé compte comme un mot tapé (prédiction du mot suivant)
                     afterFieldEdit()
                 }
+                override fun isBlocked(word: String): Boolean =
+                    fr.junade.taipo.dictionary.BlockedWords.isBlocked(applicationContext, word)
                 override fun onWordErased() {
                     onUserTyped()
                     afterFieldEdit()
@@ -317,6 +324,7 @@ class TaipoIme : InputMethodService() {
                     GestureTips.Tip.MOVE_CURSOR -> R.string.tip_move_cursor
                     GestureTips.Tip.SWITCH_LANGUAGE -> R.string.tip_switch_language
                     GestureTips.Tip.DIGITS -> R.string.tip_digits
+                    GestureTips.Tip.DICTIONARY -> R.string.tip_dictionary
                 },
             ),
         )
@@ -1058,12 +1066,76 @@ class TaipoIme : InputMethodService() {
      * - mot tapé (entre guillemets) : conservé tel quel, sans correction ;
      * - complétion : remplace le mot en cours.
      */
+    /** Appui long sur une suggestion (23/11/2026) : pop-up « Ajouter au dictionnaire » / « Retirer du dictionnaire ». */
+    private fun showWordDictionaryActions(word: String) {
+        hapticFeedback.perform(hapticIntensity)
+        gestureTips.learned(GestureTips.Tip.DICTIONARY) // le geste est connu : l'astuce ne viendra plus
+        messagePopup.showWordActions(word, onAdd = { addSuggestionToDictionary(word) }, onRemove = { removeSuggestionFromDictionary(word) })
+    }
+
+    /**
+     * Bouton « Ajouter au dictionnaire » du pop-up d'une suggestion (23/11/2026) : le mot entre dans le dictionnaire
+     * personnel (jamais corrigé, proposé ensuite). Message selon le résultat ; la base est écrite hors du thread principal.
+     */
+    private fun addSuggestionToDictionary(word: String) {
+        serviceScope.launch {
+            // Un mot ajouté n'est plus bloqué (s'il l'avait été par « Retirer du dictionnaire »).
+            val unblocked = fr.junade.taipo.dictionary.BlockedWords.unblock(applicationContext, listOf(word))
+            val result = try {
+                withContext(Dispatchers.IO) { personalDictionary.add(word) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) { // base inaccessible : simple message
+                AppLog.e(TAG, "ajout au dictionnaire personnel en échec", e)
+                null
+            }
+            val message = when (result) {
+                PersonalDictionary.AddResult.ADDED -> getString(R.string.personal_dictionary_added, word)
+                PersonalDictionary.AddResult.ALREADY_PRESENT ->
+                    getString(if (unblocked) R.string.personal_dictionary_added else R.string.suggestion_word_already, word)
+                PersonalDictionary.AddResult.INVALID -> getString(R.string.personal_dictionary_invalid)
+                PersonalDictionary.AddResult.FULL -> getString(R.string.personal_dictionary_full, PersonalDictionary.MAX_WORDS)
+                null -> getString(R.string.suggestion_word_failed)
+            }
+            if (result == PersonalDictionary.AddResult.ADDED || unblocked) suggestions.invalidate()
+            messagePopup.show(message)
+        }
+    }
+
+    /**
+     * Bouton « Retirer du dictionnaire » du pop-up d'une suggestion : le mot sort du dictionnaire personnel (s'il y était) et entre
+     * dans les mots bloqués ([fr.junade.taipo.dictionary.BlockedWords]) : il n'est plus proposé ni utilisé pour corriger, même s'il
+     * vient du dictionnaire de la langue ou de celui du téléphone (qui, eux, ne sont jamais modifiés).
+     */
+    private fun removeSuggestionFromDictionary(word: String) {
+        serviceScope.launch {
+            val removedFromPersonal = try {
+                withContext(Dispatchers.IO) { personalDictionary.remove(word) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+                AppLog.e(TAG, "retrait du dictionnaire personnel en échec", e)
+                null
+            }
+            if (removedFromPersonal == null) {
+                messagePopup.show(getString(R.string.suggestion_word_failed))
+                return@launch
+            }
+            fr.junade.taipo.dictionary.BlockedWords.block(applicationContext, word)
+            suggestions.invalidate()
+            refreshSuggestions(currentInputConnection?.getTextBeforeCursor(TEXT_CONTEXT_LOOKBEHIND, 0)?.toString().orEmpty())
+            messagePopup.show(getString(R.string.suggestion_word_removed, word))
+        }
+    }
+
     private fun onWordSuggestionTapped(suggestion: WordSuggestion) {
         if (prompt.active) {
             promptKeys.onWordSuggestionTapped(suggestion)
             return
         }
         if (suggestion !in currentWordSuggestions) return
+        // Astuce : après quelques suggestions touchées, l'appui long pour le dictionnaire (une fois, après les autres).
+        if (SuggestionWordActions.canEdit(suggestion)) showGestureTip(gestureTips.onSuggestionTapped())
         swipeTyping.clear() // une autre possibilité du mot glissé, ou un mot de la bande : le glissement est terminé
         // Pendant la dictée, seules les alternatives d'un mot touché pour le corriger sont proposées (voir VoiceWordPick).
         if ((isRecording && !voice.wordPickActive) || correctionInProgress || fieldEditor.hasSelection()) return

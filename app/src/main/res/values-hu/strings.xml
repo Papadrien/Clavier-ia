@@ -679,12 +679,12 @@
     <string name="premium_colors_title">Kilenc billentyűzetszín</string>
     <string name="premium_colors_text">Indigó, Lagúna, Málna… Az Enter billentyű, a gombok és a kijelölések a választott színt kapják, világos és sötét módban is.</string>
     <string name="premium_prompts_title">Saját MI-utasítások</string>
-    <string name="premium_prompts_text">Írja át a javítás, a csevegés és a diktálás utasításait, hogy az MI úgy írjon, mint Ön.</string>
+    <string name="premium_prompts_text">Írja át a javítás, a csevegés, a diktálás, a hangnem és a fordítás utasításait, hogy az MI úgy írjon, mint Ön.</string>
     <string name="premium_prompts_example">„Javítsd a hibákat a stílusom és a megfogalmazásom megváltoztatása nélkül.”</string>
     <string name="premium_clipboard_title">Bővített vágólap</string>
     <string name="premium_clipboard_text">A másolatok 12 óra helyett 7 napig maradnak meg. 5 helyett legfeljebb 50 rögzített elem.</string>
     <string name="premium_style_title">Billentyűzet az Ön stílusában</string>
-    <string name="premium_style_text">Hét animált háttér, amely gépelés közben mozog, öt további billentyűforma, kilenc billentyűzet-betűtípus (köztük az OpenDyslexic) és öt animációs stílus: Fürge, Zselé, Elrepülés, Csepp és Csúszás.</string>
+    <string name="premium_style_text">Hét animált háttér, amely gépelés közben mozog, saját fotója a billentyűk mögött, öt további billentyűforma és kilenc billentyűzet-betűtípus (köztük az OpenDyslexic).</string>
     <string name="premium_free_reminder">A gépelés, a nyelvek, az MI és a biztonsági mentés ingyenes marad, csomaggal vagy anélkül.</string>
     <string name="premium_buy">A csomag megvásárlása</string>
     <string name="premium_buy_with_price">A csomag megvásárlása · %1$s</string>
@@ -692,7 +692,7 @@
     <string name="premium_back_home">Vissza a kezdőlapra</string>
     <string name="back_arrow_description">Vissza</string>
     <string name="premium_active_title">A csomag aktív</string>
-    <string name="premium_active_thanks">Köszönjük! A színek, az animált hátterek, a billentyűformák, a betűtípusok, az MI-utasításai és a bővített vágólap feloldva.</string>
+    <string name="premium_active_thanks">Köszönjük! A színek, az animált hátterek és a fotója, a billentyűformák, a betűtípusok, az animációs stílusok, az MI-utasításai, a saját modellje és a bővített vágólap feloldva.</string>
     <string name="premium_status_pending">Fizetés folyamatban: a csomag azonnal bekapcsol, amint a Google Play megerősíti.</string>
     <string name="premium_status_unavailable">A Google Play nem érhető el ezen az eszközön, vagy a csomagot nem sikerült betölteni. Ellenőrizze a kapcsolatot, és próbálja újra.</string>
     <string name="premium_status_error">A vásárlás nem ment végbe. Nem történt terhelés; újra megpróbálhatja.</string>
@@ -875,4 +875,17 @@
     <string name="onboarding_done_title">A Taipo készen áll</string>
     <string name="onboarding_done_show">Mind a 6 lépés kész. Koppintson, hogy újra lássa őket.</string>
     <string name="onboarding_done_hide">Koppintson a lépések elrejtéséhez.</string>
+    <string name="premium_motion_title">Animációk az Ön ízlése szerint</string>
+    <string name="premium_motion_text">Kilenc stílus a billentyűzet összes animációjához: Fürge, Zselé, Elrepülés, Csepp és Csúszás, valamint a részecskés Szikrák, Pixelek, Szívbuborék és Virágzás.</string>
+    <string name="suggestion_word_already">„%1$s” már szerepel a szótárában</string>
+    <string name="suggestion_word_removed">„%1$s” eltávolítva: többé nem jelenik meg javaslatként</string>
+    <string name="suggestion_word_failed">A szótárat nem sikerült módosítani. Próbálja újra.</string>
+    <string name="suggestion_word_add_action">Hozzáadás a szótárhoz</string>
+    <string name="suggestion_word_remove_action">Eltávolítás a szótárból</string>
+    <string name="tip_dictionary">Tipp: nyomja hosszan a javaslatot, hogy felvegye a szótárba vagy törölje onnan.</string>
+    <string name="suggestion_word_popup_title">„%1$s”</string>
+    <string name="personal_dictionary_blocked_button">Letiltott szavak (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Letiltott szavak</string>
+    <string name="personal_dictionary_unblock">Feloldás</string>
+    <string name="personal_dictionary_unblocked">Szavak feloldva: újra megjelenhetnek javaslatként.</string>
 </resources>

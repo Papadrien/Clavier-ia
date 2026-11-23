@@ -105,6 +105,15 @@ class ImeViewComposer(
 
         fun onWordSuggestionClicked(suggestion: WordSuggestion)
 
+        /** Appui long sur un mot suggéré : pop-up « Ajouter au dictionnaire » / « Retirer du dictionnaire ». */
+        fun onWordSuggestionLongPress(suggestion: WordSuggestion)
+
+        /** Ajout du mot au dictionnaire personnel (action TalkBack, ou bouton du pop-up). */
+        fun onWordSuggestionAdd(suggestion: WordSuggestion)
+
+        /** Retrait du mot du dictionnaire personnel (action TalkBack, ou bouton du pop-up). */
+        fun onWordSuggestionRemove(suggestion: WordSuggestion)
+
         fun openAppHome()
 
         fun onEmojiSelected(emoji: String)
@@ -299,6 +308,13 @@ class ImeViewComposer(
             host.playKeySound(KeySound.KEY)
             host.onWordSuggestionClicked(suggestion)
         }
+        correctionBar.setOnWordSuggestionEditListener(
+            object : SuggestionStripView.OnWordEditListener {
+                override fun onWordLongPress(suggestion: WordSuggestion) = host.onWordSuggestionLongPress(suggestion)
+                override fun onWordAdd(suggestion: WordSuggestion) = host.onWordSuggestionAdd(suggestion)
+                override fun onWordRemove(suggestion: WordSuggestion) = host.onWordSuggestionRemove(suggestion)
+            },
+        )
 
         emojiPanel = EmojiPanelView(context)
         emojiPanel.visibility = View.GONE

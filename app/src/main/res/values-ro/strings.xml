@@ -683,12 +683,12 @@
     <string name="premium_colors_title">Nouă culori pentru tastatură</string>
     <string name="premium_colors_text">Indigo, Lagună, Zmeură… Tasta Enter, butoanele și selecțiile preiau culoarea aleasă, în modul luminos și întunecat.</string>
     <string name="premium_prompts_title">Propriile instrucțiuni AI</string>
-    <string name="premium_prompts_text">Rescrie instrucțiunile pentru corectare, chat și dictare, astfel încât AI-ul să scrie ca tine.</string>
+    <string name="premium_prompts_text">Rescrie instrucțiunile pentru corectare, chat, dictare, ton și traducere, astfel încât AI-ul să scrie ca tine.</string>
     <string name="premium_prompts_example">„Corectează greșelile fără să-mi schimbi stilul sau formulările.”</string>
     <string name="premium_clipboard_title">Clipboard extins</string>
     <string name="premium_clipboard_text">Copii păstrate 7 zile în loc de 12 ore. Până la 50 de elemente fixate în loc de 5.</string>
     <string name="premium_style_title">O tastatură în stilul tău</string>
-    <string name="premium_style_text">Șapte fundaluri animate care se mișcă în timp ce scrii, încă cinci forme de taste, nouă fonturi pentru tastatură (inclusiv OpenDyslexic) și cinci stiluri de animație: Vioi, Jeleu, Zbor, Picătură și Alunecare.</string>
+    <string name="premium_style_text">Șapte fundaluri animate care se mișcă în timp ce scrii, propria ta fotografie în spatele tastelor, încă cinci forme de taste și nouă fonturi pentru tastatură (inclusiv OpenDyslexic).</string>
     <string name="premium_free_reminder">Scrierea, limbile, AI-ul și backupul rămân gratuite, cu sau fără pachet.</string>
     <string name="premium_buy">Cumpără pachetul</string>
     <string name="premium_buy_with_price">Cumpără pachetul · %1$s</string>
@@ -696,7 +696,7 @@
     <string name="premium_back_home">Înapoi la ecranul principal</string>
     <string name="back_arrow_description">Înapoi</string>
     <string name="premium_active_title">Pachet activ</string>
-    <string name="premium_active_thanks">Mulțumim! Culorile, fundalurile animate, formele de taste, fonturile, instrucțiunile tale pentru AI și clipboardul extins sunt deblocate.</string>
+    <string name="premium_active_thanks">Mulțumim! Culorile, fundalurile animate și fotografia ta, formele de taste, fonturile, stilurile de animație, instrucțiunile tale pentru AI, propriul tău model și clipboardul extins sunt deblocate.</string>
     <string name="premium_status_pending">Plată în așteptare: pachetul se va activa imediat ce Google Play o confirmă.</string>
     <string name="premium_status_unavailable">Google Play nu este disponibil pe acest dispozitiv sau pachetul nu a putut fi încărcat. Verifică conexiunea și încearcă din nou.</string>
     <string name="premium_status_error">Achiziția nu a fost finalizată. Nu s-a perceput nimic; poți încerca din nou.</string>
@@ -879,4 +879,17 @@
     <string name="onboarding_done_title">Taipo este gata</string>
     <string name="onboarding_done_show">Toți cei 6 pași sunt făcuți. Atinge pentru a-i revedea.</string>
     <string name="onboarding_done_hide">Atinge pentru a ascunde pașii.</string>
+    <string name="premium_motion_title">Animații pe gustul tău</string>
+    <string name="premium_motion_text">Nouă stiluri pentru toate animațiile tastaturii: Vioi, Jeleu, Zbor, Picătură și Alunecare, plus stilurile cu particule Scântei, Pixeli, Bulă inimă și Înflorire.</string>
+    <string name="suggestion_word_already">„%1$s” este deja în dicționarul tău</string>
+    <string name="suggestion_word_removed">„%1$s” eliminat: nu va mai fi sugerat</string>
+    <string name="suggestion_word_failed">Dicționarul nu a putut fi modificat. Încearcă din nou.</string>
+    <string name="suggestion_word_add_action">Adaugă în dicționar</string>
+    <string name="suggestion_word_remove_action">Elimină din dicționar</string>
+    <string name="tip_dictionary">Sfat: ține apăsat pe o sugestie ca s-o adaugi în dicționar sau s-o elimini.</string>
+    <string name="suggestion_word_popup_title">„%1$s”</string>
+    <string name="personal_dictionary_blocked_button">Cuvinte blocate (%1$d)</string>
+    <string name="personal_dictionary_blocked_title">Cuvinte blocate</string>
+    <string name="personal_dictionary_unblock">Deblochează</string>
+    <string name="personal_dictionary_unblocked">Cuvinte deblocate: pot fi sugerate din nou.</string>
 </resources>
