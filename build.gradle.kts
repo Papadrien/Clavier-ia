@@ -24,7 +24,7 @@ plugins {
 // classpath buildscript, sans réappliquer le plugin kotlin.android.
 buildscript {
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.21")
     }
 }
 
