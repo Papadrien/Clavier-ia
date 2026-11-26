@@ -1,5 +1,5 @@
 plugins {
-    id("com.android.application") version "9.4.0" apply false
+    id("com.android.application") version "9.5.3" apply false
 
     // Room (dictionnaire personnel chiffré, story 1.4) : KSP pour le
     // compilateur Room (kapt est incompatible avec le Kotlin intégré d'AGP 9)
