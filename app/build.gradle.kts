@@ -240,7 +240,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     // Fournit SupportOpenHelperFactory (passerelle Room <-> SQLCipher).
     // androidx.sqlite arrive déjà via room-runtime.
-    implementation("net.zetetic:sqlcipher-android:4.18.0@aar")
+    implementation("net.zetetic:sqlcipher-android:4.20.0@aar")
 
     // junit-jupiter embarque junit-jupiter-params (@ParameterizedTest, lot 3.3).
     testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
