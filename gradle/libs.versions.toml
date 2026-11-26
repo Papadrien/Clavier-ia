@@ -36,7 +36,7 @@ aptabase = "0.1.0"
 
 # Audit TEST-01 : Robolectric, pour tester sur la JVM les classes qui manipulent le framework Android (contrôleurs du clavier,
 # InputConnection, EditorInfo). Ses tests sont en JUnit 4, lancés par le moteur Vintage de JUnit à côté des tests JUnit 5.
-robolectric = "4.18"
+robolectric = "4.18.1"
 junit-vintage = "6.1.3"
 
 [libraries]
